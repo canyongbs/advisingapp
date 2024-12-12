@@ -42,7 +42,6 @@ use AdvisingApp\BasicNeeds\BasicNeedsPlugin;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsCategory;
-use AdvisingApp\BasicNeeds\Observers\BasicNeedsCategoryObserver;
 
 class BasicNeedsServiceProvider extends ServiceProvider
 {
@@ -57,7 +56,5 @@ class BasicNeedsServiceProvider extends ServiceProvider
             'basic_needs_category' => BasicNeedsCategory::class,
             'basic_needs_program' => BasicNeedsProgram::class,
         ]);
-
-        BasicNeedsCategory::observe(BasicNeedsCategoryObserver::class);
     }
 }

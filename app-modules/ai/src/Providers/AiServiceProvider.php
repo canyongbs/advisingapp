@@ -52,12 +52,9 @@ use AdvisingApp\Ai\Events\AiThreadTrashed;
 use AdvisingApp\Ai\Models\AiAssistantFile;
 use AdvisingApp\Ai\Events\AiMessageCreated;
 use AdvisingApp\Ai\Events\AiMessageTrashed;
-use AdvisingApp\Ai\Observers\PromptObserver;
 use AdvisingApp\Ai\Events\AiThreadForceDeleting;
-use AdvisingApp\Ai\Observers\AiAssistantObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Ai\Events\AiMessageFileForceDeleting;
-use AdvisingApp\Ai\Observers\AiAssistantFileObserver;
 use AdvisingApp\Ai\Events\AssistantFilesFinishedUploading;
 use AdvisingApp\Ai\Listeners\HandleAssistantFilesFinishedUploading;
 
@@ -102,17 +99,8 @@ class AiServiceProvider extends ServiceProvider
             'prompt' => Prompt::class,
         ]);
 
-        $this->registerObservers();
-
         $this->discoverSchema(__DIR__ . '/../../graphql/*');
 
         $this->mergeConfigFrom(__DIR__ . '/../../config/ai.php', 'ai');
-    }
-
-    protected function registerObservers(): void
-    {
-        AiAssistant::observe(AiAssistantObserver::class);
-        AiAssistantFile::observe(AiAssistantFileObserver::class);
-        Prompt::observe(PromptObserver::class);
     }
 }

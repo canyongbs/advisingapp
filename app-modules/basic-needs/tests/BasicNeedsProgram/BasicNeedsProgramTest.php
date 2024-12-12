@@ -58,7 +58,7 @@ it('can render list page', function () {
             BasicNeedsProgramResource::getUrl('index')
         )->assertForbidden();
 
-    $user->givePermissionTo('basic_needs_program.view-any');
+    $user->givePermissionTo('product_admin.view-any');
 
     actingAs($user)->get(BasicNeedsProgramResource::getUrl('index'))
         ->assertSuccessful();
@@ -69,11 +69,12 @@ it('can render data in list page', function () {
 
     actingAs($user);
 
-    $user->givePermissionTo('basic_needs_program.view-any');
+    $user->givePermissionTo('product_admin.view-any');
 
     $basicNeedsPrograms = BasicNeedsProgram::factory()->count(10)->create();
 
     livewire(ListBasicNeedsPrograms::class)
+        ->set('tableRecordsPerPage', 10)
         ->assertCanSeeTableRecords($basicNeedsPrograms);
 });
 
@@ -85,8 +86,8 @@ it('can render create page', function () {
             BasicNeedsProgramResource::getUrl('create')
         )->assertForbidden();
 
-    $user->givePermissionTo('basic_needs_program.view-any');
-    $user->givePermissionTo('basic_needs_program.create');
+    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('product_admin.create');
 
     actingAs($user)->get(BasicNeedsProgramResource::getUrl('create'))
         ->assertSuccessful();
@@ -100,8 +101,8 @@ it('can validate input on create page', function () {
             BasicNeedsProgramResource::getUrl('create')
         )->assertForbidden();
 
-    $user->givePermissionTo('basic_needs_program.view-any');
-    $user->givePermissionTo('basic_needs_program.create');
+    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('product_admin.create');
 
     livewire(CreateBasicNeedsProgram::class)
         ->fillForm([
@@ -117,8 +118,8 @@ it('can create basic needs program', function () {
 
     actingAs($user);
 
-    $user->givePermissionTo('basic_needs_program.view-any');
-    $user->givePermissionTo('basic_needs_program.create');
+    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('product_admin.create');
 
     $newBasicNeedsProgram = BasicNeedsProgram::factory()->make();
 
@@ -162,8 +163,8 @@ it('can render edit page', function () {
         ])
     )->assertForbidden();
 
-    $user->givePermissionTo('basic_needs_program.view-any');
-    $user->givePermissionTo('basic_needs_program.*.update');
+    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('product_admin.*.update');
 
     actingAs($user)->get(BasicNeedsProgramResource::getUrl('edit', [
         'record' => $basicNeedsProgram->getRouteKey(),
@@ -180,8 +181,8 @@ it('can retrieve data', function () {
         ])
     )->assertForbidden();
 
-    $user->givePermissionTo('basic_needs_program.view-any');
-    $user->givePermissionTo('basic_needs_program.*.update');
+    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('product_admin.*.update');
 
     livewire(EditBasicNeedsProgram::class, [
         'record' => $basicNeedsProgram->getRouteKey(),
@@ -210,8 +211,8 @@ it('can validate input on edit page', function () {
         ])
     )->assertForbidden();
 
-    $user->givePermissionTo('basic_needs_program.view-any');
-    $user->givePermissionTo('basic_needs_program.*.update');
+    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('product_admin.*.update');
 
     livewire(EditBasicNeedsProgram::class, [
         'record' => $basicNeedsProgram->getRouteKey(),
@@ -235,8 +236,8 @@ it('can save basic needs program', function () {
         ])
     )->assertForbidden();
 
-    $user->givePermissionTo('basic_needs_program.view-any');
-    $user->givePermissionTo('basic_needs_program.*.update');
+    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('product_admin.*.update');
 
     livewire(EditBasicNeedsProgram::class, [
         'record' => $oldBasicNeedsProgram->getRouteKey(),
@@ -279,8 +280,8 @@ it('can render view page', function () {
         ])
     )->assertForbidden();
 
-    $user->givePermissionTo('basic_needs_program.view-any');
-    $user->givePermissionTo('basic_needs_program.*.view');
+    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('product_admin.*.view');
 
     actingAs($user)->get(BasicNeedsProgramResource::getUrl('view', [
         'record' => $basicNeedsProgram->getRouteKey(),
@@ -297,9 +298,9 @@ it('can delete basic needs program', function () {
         ])
     )->assertForbidden();
 
-    $user->givePermissionTo('basic_needs_program.view-any');
-    $user->givePermissionTo('basic_needs_program.*.update');
-    $user->givePermissionTo('basic_needs_program.*.delete');
+    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('product_admin.*.update');
+    $user->givePermissionTo('product_admin.*.delete');
 
     livewire(EditBasicNeedsProgram::class, [
         'record' => $basicNeedsProgram->getRouteKey(),
@@ -320,11 +321,12 @@ it('can bulk delete basic needs programs', function () {
             BasicNeedsProgramResource::getUrl('index')
         )->assertForbidden();
 
-    $user->givePermissionTo('basic_needs_program.view-any');
-    $user->givePermissionTo('basic_needs_program.*.update');
-    $user->givePermissionTo('basic_needs_program.*.delete');
+    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('product_admin.*.update');
+    $user->givePermissionTo('product_admin.*.delete');
 
     livewire(ListBasicNeedsPrograms::class)
+        ->set('tableRecordsPerPage', 10)
         ->callTableBulkAction(DeleteBulkAction::class, $basicNeedsPrograms);
 
     foreach ($basicNeedsPrograms as $basicNeedsProgram) {
@@ -342,9 +344,10 @@ it('can filter basic needs program by `program category`', function () {
             BasicNeedsProgramResource::getUrl('index')
         )->assertForbidden();
 
-    $user->givePermissionTo('basic_needs_program.view-any');
+    $user->givePermissionTo('product_admin.view-any');
 
     livewire(ListBasicNeedsPrograms::class)
+        ->set('tableRecordsPerPage', 10)
         ->assertCanSeeTableRecords($basicNeedsPrograms)
         ->filterTable('basic_category_id', $basic_needs_category_id)
         ->assertCanSeeTableRecords($basicNeedsPrograms->where('basic_needs_category_id', $basic_needs_category_id))

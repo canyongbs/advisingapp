@@ -63,7 +63,7 @@ class ManageLicenseSettings extends SettingsPage
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->hasRole(Authenticatable::SUPER_ADMIN_ROLE) && parent::canAccess();
+        return $user->hasRole(Authenticatable::SUPER_ADMIN_ROLE);
     }
 
     public function form(Form $form): Form
@@ -151,7 +151,7 @@ class ManageLicenseSettings extends SettingsPage
                                 ->label('Online Admissions'),
                             Toggle::make('data.addons.serviceManagement')
                                 ->label('Case Management'),
-                            Toggle::make('data.addons.knowledgeManagement')
+                            Toggle::make('data.addons.resourceHub')
                                 ->label('Resource Hub'),
                             Toggle::make('data.addons.eventManagement')
                                 ->label('Event Management'),

@@ -77,7 +77,7 @@ class CaseModelPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["case.{$case->id}.view"],
+            abilities: ["case.{$case->getKey()}.view"],
             denyResponse: 'You do not have permission to view this case.'
         );
     }
@@ -97,7 +97,7 @@ class CaseModelPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["case.{$case->id}.update"],
+            abilities: ["case.{$case->getKey()}.update"],
             denyResponse: 'You do not have permission to update this case.'
         );
     }
@@ -109,7 +109,7 @@ class CaseModelPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["case.{$case->id}.delete"],
+            abilities: ["case.{$case->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this case.'
         );
     }
@@ -121,7 +121,7 @@ class CaseModelPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["case.{$case->id}.restore"],
+            abilities: ["case.{$case->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore this case.'
         );
     }
@@ -133,7 +133,7 @@ class CaseModelPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["case.{$case->id}.force-delete"],
+            abilities: ["case.{$case->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this case.'
         );
     }

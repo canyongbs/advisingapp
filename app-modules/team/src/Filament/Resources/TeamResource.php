@@ -38,7 +38,6 @@ namespace AdvisingApp\Team\Filament\Resources;
 
 use Filament\Resources\Resource;
 use AdvisingApp\Team\Models\Team;
-use App\Filament\Clusters\UserManagement;
 use AdvisingApp\Team\Filament\Resources\TeamResource\Pages\EditTeam;
 use AdvisingApp\Team\Filament\Resources\TeamResource\Pages\ViewTeam;
 use AdvisingApp\Team\Filament\Resources\TeamResource\Pages\ListTeams;
@@ -49,9 +48,7 @@ class TeamResource extends Resource
 {
     protected static ?string $model = Team::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-user-group';
-
-    protected static ?string $cluster = UserManagement::class;
+    protected static ?string $navigationGroup = 'People Administration';
 
     protected static ?int $navigationSort = 20;
 

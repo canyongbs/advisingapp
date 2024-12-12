@@ -52,8 +52,8 @@ test('EditInteractionRelation is gated with proper access control', function () 
             InteractionRelationResource::getUrl('edit', ['record' => $relation])
         )->assertForbidden();
 
-    $user->givePermissionTo('interaction_relation.view-any');
-    $user->givePermissionTo('interaction_relation.*.update');
+    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('product_admin.*.update');
 
     actingAs($user)
         ->get(

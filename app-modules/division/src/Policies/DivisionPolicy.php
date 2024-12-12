@@ -53,7 +53,7 @@ class DivisionPolicy
     public function view(Authenticatable $authenticatable, Division $division): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["division.{$division->id}.view"],
+            abilities: ["division.{$division->getKey()}.view"],
             denyResponse: 'You do not have permission to view this division.'
         );
     }
@@ -69,7 +69,7 @@ class DivisionPolicy
     public function update(Authenticatable $authenticatable, Division $division): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["division.{$division->id}.update"],
+            abilities: ["division.{$division->getKey()}.update"],
             denyResponse: 'You do not have permission to update this division.'
         );
     }
@@ -77,7 +77,7 @@ class DivisionPolicy
     public function delete(Authenticatable $authenticatable, Division $division): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["division.{$division->id}.delete"],
+            abilities: ["division.{$division->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this division.'
         );
     }
@@ -85,7 +85,7 @@ class DivisionPolicy
     public function restore(Authenticatable $authenticatable, Division $division): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["division.{$division->id}.restore"],
+            abilities: ["division.{$division->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore this division.'
         );
     }
@@ -93,7 +93,7 @@ class DivisionPolicy
     public function forceDelete(Authenticatable $authenticatable, Division $division): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["division.{$division->id}.force-delete"],
+            abilities: ["division.{$division->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this division.'
         );
     }

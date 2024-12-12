@@ -50,7 +50,7 @@ enum Feature: string
 
     case ServiceManagement = 'service-management';
 
-    case KnowledgeManagement = 'knowledge-management';
+    case ResourceHub = 'resource-hub';
 
     case EventManagement = 'event-management';
     case RealtimeChat = 'realtime-chat';

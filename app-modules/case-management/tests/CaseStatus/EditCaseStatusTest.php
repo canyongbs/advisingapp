@@ -131,8 +131,8 @@ test('EditCaseStatus is gated with proper access control', function () {
     ])
         ->assertForbidden();
 
-    $user->givePermissionTo('case_status.view-any');
-    $user->givePermissionTo('case_status.*.update');
+    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('product_admin.*.update');
 
     actingAs($user)
         ->get(
@@ -162,8 +162,8 @@ test('EditCaseStatus is gated with proper feature access control', function () {
 
     $user = User::factory()->licensed([Student::getLicenseType(), Prospect::getLicenseType()])->create();
 
-    $user->givePermissionTo('case_status.view-any');
-    $user->givePermissionTo('case_status.*.update');
+    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('product_admin.*.update');
 
     $caseStatus = CaseStatus::factory()->create();
 

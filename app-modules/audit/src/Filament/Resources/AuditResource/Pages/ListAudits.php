@@ -36,15 +36,18 @@
 
 namespace AdvisingApp\Audit\Filament\Resources\AuditResource\Pages;
 
+use Carbon\Carbon;
 use App\Models\User;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Filament\Actions\ExportAction;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\Indicator;
 use Filament\Forms\Components\Checkbox;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use App\Filament\Tables\Columns\IdColumn;
+use Filament\Forms\Components\DatePicker;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
@@ -76,6 +79,9 @@ class ListAudits extends ListRecords
                 TextColumn::make('event')
                     ->label('Event')
                     ->sortable(),
+                TextColumn::make('created_at')
+                    ->label('Occurred At')
+                    ->formatStateUsing(fn (string $state) => Carbon::parse($state)->format('m-d-Y h:i A')),
             ])
             ->defaultSort('id', 'desc')
             ->filters([
@@ -98,6 +104,39 @@ class ListAudits extends ListRecords
                     ->label('Auditable')
                     ->options(AuditableModels::all())
                     ->query(fn (Builder $query, array $data) => $data['value'] ? $query->where('auditable_type', $data['value']) : null),
+                Filter::make('created_at')
+                    ->form([
+                        DatePicker::make('created_from')
+                            ->label('Start Date'),
+                        DatePicker::make('created_until')
+                            ->label('End Date'),
+                    ])
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+
+                        if ($data['created_from'] ?? null) {
+                            $indicators[] = Indicator::make('Start Date: ' . Carbon::parse($data['created_from'])->format('m-d-Y'))
+                                ->removeField('created_from');
+                        }
+
+                        if ($data['created_until'] ?? null) {
+                            $indicators[] = Indicator::make('End Date: ' . Carbon::parse($data['created_until'])->format('m-d-Y'))
+                                ->removeField('created_until');
+                        }
+
+                        return $indicators;
+                    })
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['created_from'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                            )
+                            ->when(
+                                $data['created_until'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                            );
+                    }),
             ])
             ->actions([
                 ViewAction::make(),

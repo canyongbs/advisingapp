@@ -36,22 +36,11 @@
 
 namespace App\Filament\Clusters;
 
-use App\Models\User;
 use Filament\Clusters\Cluster;
-use AdvisingApp\Authorization\Enums\LicenseType;
 
 class CaseManagement extends Cluster
 {
     protected static ?string $navigationGroup = 'Premium Features';
 
     protected static ?int $navigationSort = 30;
-
-    // TODO Move into policy once created...
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]);
-    }
 }

@@ -66,8 +66,8 @@ test('CreateResourceHubQuality is gated with proper access control', function ()
     livewire(CreateResourceHubQuality::class)
         ->assertForbidden();
 
-    $user->givePermissionTo('resource_hub_quality.view-any');
-    $user->givePermissionTo('resource_hub_quality.create');
+    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('product_admin.create');
 
     actingAs($user)
         ->get(
@@ -89,14 +89,14 @@ test('CreateResourceHubQuality is gated with proper access control', function ()
 test('CreateResourceHubQuality is gated with proper feature ccess control', function () {
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->knowledgeManagement = false;
+    $settings->data->addons->resourceHub = false;
 
     $settings->save();
 
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    $user->givePermissionTo('resource_hub_quality.view-any');
-    $user->givePermissionTo('resource_hub_quality.create');
+    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('product_admin.create');
 
     actingAs($user)
         ->get(
@@ -106,7 +106,7 @@ test('CreateResourceHubQuality is gated with proper feature ccess control', func
     livewire(CreateResourceHubQuality::class)
         ->assertForbidden();
 
-    $settings->data->addons->knowledgeManagement = true;
+    $settings->data->addons->resourceHub = true;
 
     $settings->save();
 

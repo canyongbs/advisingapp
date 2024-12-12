@@ -74,7 +74,7 @@ class EventAttendeePolicy implements PerformsChecksBeforeAuthorization
     public function view(Authenticatable $authenticatable, EventAttendee $eventAttendee): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["event_attendee.{$eventAttendee->id}.view"],
+            abilities: ["event_attendee.{$eventAttendee->getKey()}.view"],
             denyResponse: 'You do not have permissions to view this event attendee.'
         );
     }
@@ -90,7 +90,7 @@ class EventAttendeePolicy implements PerformsChecksBeforeAuthorization
     public function update(Authenticatable $authenticatable, EventAttendee $eventAttendee): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["event_attendee.{$eventAttendee->id}.update"],
+            abilities: ["event_attendee.{$eventAttendee->getKey()}.update"],
             denyResponse: 'You do not have permissions to update this event attendee.'
         );
     }
@@ -98,7 +98,7 @@ class EventAttendeePolicy implements PerformsChecksBeforeAuthorization
     public function delete(Authenticatable $authenticatable, EventAttendee $eventAttendee): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["event_attendee.{$eventAttendee->id}.delete"],
+            abilities: ["event_attendee.{$eventAttendee->getKey()}.delete"],
             denyResponse: 'You do not have permissions to delete this event attendee.'
         );
     }
@@ -106,7 +106,7 @@ class EventAttendeePolicy implements PerformsChecksBeforeAuthorization
     public function restore(Authenticatable $authenticatable, EventAttendee $eventAttendee): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["event_attendee.{$eventAttendee->id}.restore"],
+            abilities: ["event_attendee.{$eventAttendee->getKey()}.restore"],
             denyResponse: 'You do not have permissions to restore this event attendee.'
         );
     }
@@ -114,7 +114,7 @@ class EventAttendeePolicy implements PerformsChecksBeforeAuthorization
     public function forceDelete(Authenticatable $authenticatable, EventAttendee $eventAttendee): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["event_attendee.{$eventAttendee->id}.force-delete"],
+            abilities: ["event_attendee.{$eventAttendee->getKey()}.force-delete"],
             denyResponse: 'You do not have permissions to permanently delete this event attendee.'
         );
     }

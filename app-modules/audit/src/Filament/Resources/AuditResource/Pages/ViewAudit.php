@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Audit\Filament\Resources\AuditResource\Pages;
 
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Filament\Infolists\Infolist;
 use AdvisingApp\Audit\Models\Audit;
@@ -70,6 +71,9 @@ class ViewAudit extends ViewRecord
                             ->label('IP Address'),
                         TextEntry::make('user_agent')
                             ->label('User Agent'),
+                        TextEntry::make('created_at')
+                            ->label('Occurred At')
+                            ->formatStateUsing(fn (string $state) => Carbon::parse($state)->format('m-d-Y h:i A')),
                         TextEntry::make('getModified')
                             ->label('Changes')
                             ->columnSpanFull()

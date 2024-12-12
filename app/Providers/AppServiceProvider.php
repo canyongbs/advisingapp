@@ -39,6 +39,7 @@ namespace App\Providers;
 use App\Models\Tenant;
 use Sentry\State\Scope;
 use App\Models\SystemUser;
+use Filament\Tables\Table;
 use Laravel\Pennant\Feature;
 use Rector\Caching\CacheFactory;
 
@@ -153,5 +154,11 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Feature::discover();
+
+        Table::configureUsing(function (Table $table): void {
+            $table
+                ->paginationPageOptions([5, 10, 20, 'all'])
+                ->defaultPaginationPageOption(5);
+        });
     }
 }

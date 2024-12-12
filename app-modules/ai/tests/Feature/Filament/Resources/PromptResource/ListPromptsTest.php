@@ -98,6 +98,7 @@ it('can list records', function () use ($licenses, $permissions) {
     assertDatabaseCount(Prompt::class, $records->count());
 
     livewire(ListPrompts::class)
+        ->set('tableRecordsPerPage', 10)
         ->assertSuccessful()
         ->assertCountTableRecords($records->count())
         ->assertCanSeeTableRecords($records);

@@ -75,8 +75,8 @@ test('ViewProspectSource is gated with proper access control', function () {
             ])
         )->assertForbidden();
 
-    $user->givePermissionTo('prospect_source.view-any');
-    $user->givePermissionTo('prospect_source.*.view');
+    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('product_admin.*.view');
 
     actingAs($user)
         ->get(

@@ -52,9 +52,9 @@ $licenses = [
 ];
 
 $permissions = [
-    'prompt_type.view-any',
-    'prompt_type.create',
-    'prompt_type.*.view',
+    'product_admin.view-any',
+    'product_admin.create',
+    'product_admin.*.view',
 ];
 
 it('cannot render without a license', function () use ($permissions) {
@@ -98,6 +98,7 @@ it('can list records', function () use ($licenses, $permissions) {
     assertDatabaseCount(PromptType::class, $records->count());
 
     livewire(ListPromptTypes::class)
+        ->set('tableRecordsPerPage', 10)
         ->assertSuccessful()
         ->assertCountTableRecords($records->count())
         ->assertCanSeeTableRecords($records);

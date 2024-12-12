@@ -47,22 +47,22 @@ beforeEach(function () {
 it('creates the proper permissions record when a Task is created', function () {
     $task = Task::factory()->create();
 
-    expect(Permission::where('name', "task.{$task->id}.update")->exists())->toBeTrue();
+    expect(Permission::where('name', "task.{$task->getKey()}.update")->exists())->toBeTrue();
 });
 
 it('gives the proper permission to the creator of a Task', function () {
     /** @var Task $task */
     $task = Task::factory()->create();
 
-    expect($task->createdBy->can("task.{$task->id}.update"))->toBeTrue();
+    expect($task->createdBy->can("task.{$task->getKey()}.update"))->toBeTrue();
 });
 
 it('gives the proper permission to the assigned User of a Task on create and update', function () {
     /** @var Task $task */
     $task = Task::factory()->assigned()->create();
 
-    expect($task->createdBy->can("task.{$task->id}.update"))->toBeTrue()
-        ->and($task->assignedTo->can("task.{$task->id}.update"))->toBeTrue();
+    expect($task->createdBy->can("task.{$task->getKey()}.update"))->toBeTrue()
+        ->and($task->assignedTo->can("task.{$task->getKey()}.update"))->toBeTrue();
 
     $originalAssignedUser = $task->assignedTo;
 
@@ -74,9 +74,9 @@ it('gives the proper permission to the assigned User of a Task on create and upd
     $originalAssignedUser->refresh();
     $newAssignedUser->refresh();
 
-    expect($task->createdBy->can("task.{$task->id}.update"))->toBeTrue()
-        ->and($newAssignedUser->can("task.{$task->id}.update"))->toBeTrue()
-        ->and($originalAssignedUser->can("task.{$task->id}.update"))->toBeFalse();
+    expect($task->createdBy->can("task.{$task->getKey()}.update"))->toBeTrue()
+        ->and($newAssignedUser->can("task.{$task->getKey()}.update"))->toBeTrue()
+        ->and($originalAssignedUser->can("task.{$task->getKey()}.update"))->toBeFalse();
 });
 
 it('sends the proper notification to the assigned User', function () {

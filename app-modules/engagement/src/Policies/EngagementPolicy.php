@@ -68,7 +68,7 @@ class EngagementPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["engagement.{$engagement->id}.view"],
+            abilities: ["engagement.{$engagement->getKey()}.view"],
             denyResponse: 'You do not have permission to view this engagement.'
         );
     }
@@ -96,7 +96,7 @@ class EngagementPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["engagement.{$engagement->id}.update"],
+            abilities: ["engagement.{$engagement->getKey()}.update"],
             denyResponse: 'You do not have permission to update this engagement.'
         );
     }
@@ -112,7 +112,7 @@ class EngagementPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["engagement.{$engagement->id}.delete"],
+            abilities: ["engagement.{$engagement->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this engagement.'
         );
     }
@@ -124,7 +124,7 @@ class EngagementPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["engagement.{$engagement->id}.restore"],
+            abilities: ["engagement.{$engagement->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore this engagement.'
         );
     }
@@ -140,7 +140,7 @@ class EngagementPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["engagement.{$engagement->id}.force-delete"],
+            abilities: ["engagement.{$engagement->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this engagement.'
         );
     }

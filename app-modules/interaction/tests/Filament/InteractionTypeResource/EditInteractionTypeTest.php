@@ -52,8 +52,8 @@ test('EditInteractionType is gated with proper access control', function () {
             InteractionTypeResource::getUrl('edit', ['record' => $type])
         )->assertForbidden();
 
-    $user->givePermissionTo('interaction_type.view-any');
-    $user->givePermissionTo('interaction_type.*.update');
+    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('product_admin.*.update');
 
     actingAs($user)
         ->get(

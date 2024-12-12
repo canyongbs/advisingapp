@@ -48,7 +48,7 @@ class AuthenticateIfRequiredByPortalDefinition
     {
         $settings = resolve(PortalSettings::class);
 
-        if (! $settings->knowledge_management_portal_requires_authentication) {
+        if (! $settings->resource_hub_portal_requires_authentication) {
             return $next($request);
         }
 

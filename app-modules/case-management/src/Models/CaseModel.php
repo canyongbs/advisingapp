@@ -57,6 +57,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
+use AdvisingApp\CaseManagement\Observers\CaseObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\CaseManagement\Enums\CaseUpdateDirection;
 use AdvisingApp\CaseManagement\Enums\SlaComplianceStatus;
@@ -80,6 +82,7 @@ use AdvisingApp\CaseManagement\Cases\CaseNumber\Contracts\CaseNumberGenerator;
  *
  * @mixin IdeHelperCaseModel
  */
+#[ObservedBy([CaseObserver::class])]
 class CaseModel extends BaseModel implements Auditable, CanTriggerAutoSubscription, Identifiable, ExecutableFromACampaignAction
 {
     use BelongsToEducatable;

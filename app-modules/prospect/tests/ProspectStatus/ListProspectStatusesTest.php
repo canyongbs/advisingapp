@@ -54,7 +54,8 @@ test('The correct details are displayed on the ListProspectStatuses page', funct
 
     asSuperAdmin();
 
-    $component = livewire(ListProspectStatuses::class);
+    $component = livewire(ListProspectStatuses::class)
+        ->set('tableRecordsPerPage', 10);
 
     $component
         ->assertSuccessful()
@@ -100,7 +101,7 @@ test('ListProspectStatuses is gated with proper access control', function () {
             ProspectStatusResource::getUrl('index')
         )->assertForbidden();
 
-    $user->givePermissionTo('prospect_status.view-any');
+    $user->givePermissionTo('product_admin.view-any');
 
     actingAs($user)
         ->get(

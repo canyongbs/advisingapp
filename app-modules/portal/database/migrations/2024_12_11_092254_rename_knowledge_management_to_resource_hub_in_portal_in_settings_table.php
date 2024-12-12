@@ -34,15 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use Filament\Clusters\Cluster;
+return new class () extends SettingsMigration {
+    public function up(): void
+    {
+        $this->migrator->rename('portal.knowledge_management_portal_enabled', 'portal.resource_hub_portal_enabled');
+        $this->migrator->rename('portal.knowledge_management_portal_service_management', 'portal.resource_hub_portal_service_management');
+        $this->migrator->rename('portal.knowledge_management_portal_primary_color', 'portal.resource_hub_portal_primary_color');
+        $this->migrator->rename('portal.knowledge_management_portal_rounding', 'portal.resource_hub_portal_rounding');
+        $this->migrator->rename('portal.knowledge_management_portal_authorized_domain', 'portal.resource_hub_portal_authorized_domain');
+    }
 
-class UserManagement extends Cluster
-{
-    protected static ?string $navigationGroup = 'Product Administration';
-
-    protected static ?string $navigationLabel = 'User Management';
-
-    protected static ?int $navigationSort = 10;
-}
+    public function down(): void
+    {
+        $this->migrator->rename('portal.resource_hub_portal_enabled', 'portal.knowledge_management_portal_enabled');
+        $this->migrator->rename('portal.resource_hub_portal_service_management', 'portal.knowledge_management_portal_service_management');
+        $this->migrator->rename('portal.resource_hub_portal_primary_color', 'portal.knowledge_management_portal_primary_color');
+        $this->migrator->rename('portal.resource_hub_portal_rounding', 'portal.knowledge_management_portal_rounding');
+        $this->migrator->rename('portal.resource_hub_portal_authorized_domain', 'portal.knowledge_management_portal_authorized_domain');
+    }
+};

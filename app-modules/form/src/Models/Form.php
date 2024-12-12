@@ -37,12 +37,15 @@
 namespace AdvisingApp\Form\Models;
 
 use AdvisingApp\Form\Enums\Rounding;
+use AdvisingApp\Form\Observers\FormObserver;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 
 /**
  * @mixin IdeHelperForm
  */
+#[ObservedBy([FormObserver::class])]
 class Form extends Submissible
 {
     protected $fillable = [

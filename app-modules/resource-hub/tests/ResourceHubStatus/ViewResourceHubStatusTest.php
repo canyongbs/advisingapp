@@ -60,8 +60,8 @@ test('ViewResourceHubStatus is gated with proper access control', function () {
             ])
         )->assertForbidden();
 
-    $user->givePermissionTo('resource_hub_status.view-any');
-    $user->givePermissionTo('resource_hub_status.*.view');
+    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('product_admin.*.view');
 
     actingAs($user)
         ->get(
@@ -74,14 +74,14 @@ test('ViewResourceHubStatus is gated with proper access control', function () {
 test('ViewResourceHubStatus is gated with proper feature access control', function () {
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->knowledgeManagement = false;
+    $settings->data->addons->resourceHub = false;
 
     $settings->save();
 
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    $user->givePermissionTo('resource_hub_status.view-any');
-    $user->givePermissionTo('resource_hub_status.*.view');
+    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('product_admin.*.view');
 
     $resourceHubStatus = ResourceHubStatus::factory()->create();
 
@@ -92,7 +92,7 @@ test('ViewResourceHubStatus is gated with proper feature access control', functi
             ])
         )->assertForbidden();
 
-    $settings->data->addons->knowledgeManagement = true;
+    $settings->data->addons->resourceHub = true;
 
     $settings->save();
 

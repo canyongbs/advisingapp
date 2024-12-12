@@ -49,9 +49,9 @@ class ResourceHubPortalController extends Controller
         $settings = resolve(PortalSettings::class);
 
         return response()->json([
-            'primary_color' => Color::all()[$settings->knowledge_management_portal_primary_color ?? 'blue'],
-            'rounding' => $settings->knowledge_management_portal_rounding,
-            'requires_authentication' => $settings->knowledge_management_portal_requires_authentication,
+            'primary_color' => Color::all()[$settings->resource_hub_portal_primary_color ?? 'blue'],
+            'rounding' => $settings->resource_hub_portal_rounding,
+            'requires_authentication' => $settings->resource_hub_portal_requires_authentication,
             'authentication_url' => URL::to(
                 URL::signedRoute(
                     name: 'api.portal.resource-hub.request-authentication',

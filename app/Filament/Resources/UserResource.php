@@ -39,7 +39,6 @@ namespace App\Filament\Resources;
 use App\Models\User;
 use Filament\Resources\Resource;
 use App\Models\Scopes\WithoutSuperAdmin;
-use App\Filament\Clusters\UserManagement;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\UserResource\Pages\EditUser;
 use App\Filament\Resources\UserResource\Pages\ViewUser;
@@ -52,9 +51,7 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-users';
-
-    protected static ?string $cluster = UserManagement::class;
+    protected static ?string $navigationGroup = 'People Administration';
 
     protected static ?int $navigationSort = 10;
 
