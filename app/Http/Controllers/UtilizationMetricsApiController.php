@@ -71,7 +71,7 @@ class UtilizationMetricsApiController extends Controller
                     'ai_users' => User::whereHas('licenses', function ($query) {
                         $query->where('type', LicenseType::ConversationalAi);
                     })->count(),
-                    'ai_exchanges' => TrackedEventCount::where('type', TrackedEventType::AiExchange)->sum('count'),
+                    'ai_exchanges' => TrackedEventCount::where('type', TrackedEventType::AiExchange)->value('count'),
                     'saved_ai_chats' => AiThread::whereNotNull('name')->whereNotNUll('saved_at')->count(),
                     'saved_prompts' => Prompt::count(),
                     'prompts_inserted' => PromptUse::count(),

@@ -107,17 +107,15 @@ it('checks the API returns AI Users', function () {
 });
 
 it('checks the API returns AI Exchanges', function () {
-    $randomRecords = 1;
-
-    TrackedEventCount::factory()->count($randomRecords)->create([
+    TrackedEventCount::factory()->create([
         'type' => TrackedEventType::AiExchange,
     ]);
 
-    TrackedEventCount::factory()->count($randomRecords)->create([
+    TrackedEventCount::factory()->create([
         'type' => TrackedEventType::AiThreadSaved,
     ]);
 
-    $totalExchanges = TrackedEventCount::where('type', TrackedEventType::AiExchange)->sum('count');
+    $totalExchanges = TrackedEventCount::where('type', TrackedEventType::AiExchange)->value('count');
 
     $response = get('/api/utilization-metrics');
 
