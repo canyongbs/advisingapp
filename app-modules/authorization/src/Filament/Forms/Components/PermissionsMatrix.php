@@ -59,6 +59,7 @@ class PermissionsMatrix extends Field
 
         $this->saveRelationshipsUsing(function (Model $record, array $state) {
             $record->permissions()->sync($state);
+            $record->forgetCachedPermissions();
         });
 
         $this->dehydrated(false);
