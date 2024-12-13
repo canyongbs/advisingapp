@@ -89,7 +89,7 @@ enum CampaignActionType: string implements HasLabel
             SubscriptionBlock::make(),
         ];
 
-        if (app(LicenseSettings::class)->data->addons->serviceManagement) {
+        if (app(LicenseSettings::class)->data->addons->caseManagement) {
             $blocks[] = CaseBlock::make();
         }
 

@@ -233,7 +233,7 @@ class CaseModel extends BaseModel implements Auditable, CanTriggerAutoSubscripti
 
     public static function executeFromCampaignAction(CampaignAction $action): bool|string
     {
-        if (app(LicenseSettings::class)->data->addons->serviceManagement) {
+        if (app(LicenseSettings::class)->data->addons->caseManagement) {
             try {
                 $action
                     ->campaign

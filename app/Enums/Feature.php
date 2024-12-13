@@ -48,7 +48,7 @@ enum Feature: string
 
     case OnlineAdmissions = 'online-admissions';
 
-    case ServiceManagement = 'service-management';
+    case CaseManagement = 'case-management';
 
     case ResourceHub = 'resource-hub';
 

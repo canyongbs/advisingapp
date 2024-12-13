@@ -34,32 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Http\Requests;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use Illuminate\Http\Request;
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Contracts\Validation\ValidationRule;
-
-class RetryMessageRequest extends FormRequest
-{
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
+return new class () extends SettingsMigration {
+    public function up(): void
     {
-        return $this->thread->user()->is(auth()->user());
+        $this->migrator->rename('portal.resource_hub_portal_service_management', 'portal.resource_hub_portal_case_management');
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
-     */
-    public function rules(): array
+    public function down(): void
     {
-        return [
-            'content' => ['required', 'string', 'max:1000'],
-            'files' => ['array', 'max:1'],
-        ];
+        $this->migrator->rename('portal.resource_hub_portal_case_management', 'portal.resource_hub_portal_service_management');
     }
-}
+};
