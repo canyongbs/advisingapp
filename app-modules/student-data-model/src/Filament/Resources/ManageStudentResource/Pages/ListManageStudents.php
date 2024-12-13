@@ -40,20 +40,20 @@ use App\Models\User;
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
 use Filament\Actions\ImportAction;
+use Illuminate\Support\HtmlString;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\DeleteAction;
+use Illuminate\Contracts\Support\Htmlable;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Actions\DeleteStudent;
 use AdvisingApp\StudentDataModel\Filament\Imports\StudentImporter;
 use AdvisingApp\StudentDataModel\Filament\Resources\ManageStudentResource;
-use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\HtmlString;
 
 class ListManageStudents extends ListRecords
 {
@@ -114,7 +114,7 @@ class ListManageStudents extends ListRecords
         return [
             CreateAction::make(),
             ImportAction::make()
-                ->modalDescription(fn (ImportAction $action): Htmlable => new HtmlString('Import student records from a CSV file. Records with matched SIS IDs will be updated, while new records will be created. <br><br>'. $action->getModalAction('downloadExample')->toHtml()))
+                ->modalDescription(fn (ImportAction $action): Htmlable => new HtmlString('Import student records from a CSV file. Records with matched SIS IDs will be updated, while new records will be created. <br><br>' . $action->getModalAction('downloadExample')->toHtml()))
                 ->importer(StudentImporter::class)
                 ->authorize('import', Student::class),
         ];
