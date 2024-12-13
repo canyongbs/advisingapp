@@ -40,12 +40,14 @@ use Filament\Support\Contracts\HasLabel;
 
 enum TrackedEventType: string implements HasLabel
 {
-    case AiExchange = 'ai-exchange';
+  case AiExchange = 'ai-exchange';
 
-    case AiThreadSaved = 'ai-thread-saved';
+  case AiThreadSaved = 'ai-thread-saved';
 
-    public function getLabel(): ?string
-    {
-        return $this->name;
-    }
+  case UserLogin = 'user-login';
+
+  public function getLabel(): ?string
+  {
+    return $this->name;
+  }
 }
