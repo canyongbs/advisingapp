@@ -52,7 +52,6 @@ use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Form\Models\FormSubmission;
 use AdvisingApp\MeetingCenter\Models\Event;
-use AdvisingApp\Authorization\Models\License;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Survey\Models\SurveySubmission;
@@ -61,39 +60,45 @@ use AdvisingApp\Report\Models\TrackedEventCount;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 
-class UtilizationMetricsApisController extends Controller
+class UtilizationMetricsApiController extends Controller
 {
     public function __invoke(Request $request): JsonResponse
     {
         try {
-            $metrics = [
-                'users' => User::count(),
-                'ai_users' => License::where('type', LicenseType::ConversationalAi)->count(),
-                'ai_exchanges' => TrackedEventCount::where('type', TrackedEventType::AiExchange)->sum('count'),
-                'saved_ai_chats' => AiThread::whereNotNull('name')->count(),
-                'saved_prompts' => Prompt::count(),
-                'prompts_inserted' => PromptUse::count(),
-                'retention_crm_users' => License::where('type', LicenseType::RetentionCrm)->count(),
-                'recruitment_crm_users' => License::where('type', LicenseType::RecruitmentCrm)->count(),
-                'student_records' => Student::count(),
-                'prospect_records' => Prospect::count(),
-                'campaigns' => Campaign::count(),
-                'journey_steps_executed' => CampaignAction::whereNotNull('execute_at')->count(),
-                'tasks' => Task::count(),
-                'alerts' => Alert::count(),
-                'segments' => Segment::count(),
-                'resource_hub_articles' => ResourceHubArticle::count(),
-                'events_created' => Event::count(),
-                'forms_created' => Form::count(),
-                'forms_submitted' => FormSubmission::count(),
-                'surveys_created' => Survey::count(),
-                'surveys_submitted' => SurveySubmission::count(),
-            ];
-
             return response()->json([
-                'data' => $metrics,
+                'data' => [
+                    'users' => User::count(),
+                    'ai_users' => User::whereHas('licenses', function ($query) {
+                        $query->where('type', LicenseType::ConversationalAi);
+                    })->count(),
+                    'ai_exchanges' => TrackedEventCount::where('type', TrackedEventType::AiExchange)->sum('count'),
+                    'saved_ai_chats' => AiThread::whereNotNull('name')->whereNotNUll('saved_at')->count(),
+                    'saved_prompts' => Prompt::count(),
+                    'prompts_inserted' => PromptUse::count(),
+                    'retention_crm_users' => User::whereHas('licenses', function ($query) {
+                        $query->where('type', LicenseType::RetentionCrm);
+                    })->count(),
+                    'recruitment_crm_users' => User::whereHas('licenses', function ($query) {
+                        $query->where('type', LicenseType::RecruitmentCrm);
+                    })->count(),
+                    'student_records' => Student::count(),
+                    'prospect_records' => Prospect::count(),
+                    'campaigns' => Campaign::count(),
+                    'journey_steps_executed' => CampaignAction::whereNotNull('successfully_executed_at')->count(),
+                    'tasks' => Task::count(),
+                    'alerts' => Alert::count(),
+                    'segments' => Segment::count(),
+                    'resource_hub_articles' => ResourceHubArticle::count(),
+                    'events_created' => Event::count(),
+                    'forms_created' => Form::count(),
+                    'forms_submitted' => FormSubmission::count(),
+                    'surveys_created' => Survey::count(),
+                    'surveys_submitted' => SurveySubmission::count(),
+                ],
             ], 200);
         } catch (Exception $e) {
+            report($e);
+
             return response()->json([
             ], 500);
         }

@@ -63,12 +63,17 @@ use AdvisingApp\Report\Models\TrackedEventCount;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 
-it('checks the API returns users', function () {
+beforeEach(function () {
     withoutMiddleware(CheckOlympusKey::class);
+});
 
+it('checks the API returns users', function () {
     $randomRecords = random_int(1, 10);
 
     User::factory()->count($randomRecords)->create();
+
+    $softDeleteUser = User::factory()->create();
+    $softDeleteUser->delete();
 
     $response = get('/api/utilization-metrics');
 
@@ -80,16 +85,17 @@ it('checks the API returns users', function () {
 });
 
 it('checks the API returns AI Users', function () {
-    withoutMiddleware(CheckOlympusKey::class);
-
     $randomRecords = random_int(1, 10);
 
     $licenseSettings = app(LicenseSettings::class);
 
-    $licenseSettings->data->limits->conversationalAiSeats = $randomRecords;
+    $licenseSettings->data->limits->conversationalAiSeats = $randomRecords + 1;
     $licenseSettings->save();
 
     User::factory()->count($randomRecords)->licensed([LicenseType::ConversationalAi])->create();
+
+    $softDeleteAiUser = User::factory()->licensed([LicenseType::ConversationalAi])->create();
+    $softDeleteAiUser->delete();
 
     $response = get('/api/utilization-metrics');
 
@@ -101,13 +107,15 @@ it('checks the API returns AI Users', function () {
 });
 
 it('checks the API returns AI Exchanges', function () {
-    TrackedEventCount::truncate();
+    $randomRecords = 1;
 
-    withoutMiddleware(CheckOlympusKey::class);
+    TrackedEventCount::factory()->count($randomRecords)->create([
+        'type' => TrackedEventType::AiExchange,
+    ]);
 
-    $randomRecords = 2;
-
-    TrackedEventCount::factory()->count($randomRecords)->create();
+    TrackedEventCount::factory()->count($randomRecords)->create([
+        'type' => TrackedEventType::AiThreadSaved,
+    ]);
 
     $totalExchanges = TrackedEventCount::where('type', TrackedEventType::AiExchange)->sum('count');
 
@@ -121,11 +129,12 @@ it('checks the API returns AI Exchanges', function () {
 });
 
 it('checks the API returns Saved AI Chats', function () {
-    withoutMiddleware(CheckOlympusKey::class);
-
     $randomRecords = random_int(1, 10);
 
-    AiThread::factory()->count($randomRecords)->create();
+    AiThread::factory()->count($randomRecords)->saved()->create();
+
+    $softDeleteAiThread = AiThread::factory()->saved()->create();
+    $softDeleteAiThread->delete();
 
     $response = get('/api/utilization-metrics');
 
@@ -137,8 +146,6 @@ it('checks the API returns Saved AI Chats', function () {
 });
 
 it('checks the API returns Saved Prompts', function () {
-    withoutMiddleware(CheckOlympusKey::class);
-
     $randomRecords = random_int(1, 10);
 
     Prompt::factory()->count($randomRecords)->create();
@@ -153,11 +160,12 @@ it('checks the API returns Saved Prompts', function () {
 });
 
 it('checks the API returns Prompts Inserted', function () {
-    withoutMiddleware(CheckOlympusKey::class);
-
     $randomRecords = random_int(1, 10);
 
     PromptUse::factory()->count($randomRecords)->create();
+
+    $softDeletePromptUse = PromptUse::factory()->create();
+    $softDeletePromptUse->delete();
 
     $response = get('/api/utilization-metrics');
 
@@ -169,16 +177,17 @@ it('checks the API returns Prompts Inserted', function () {
 });
 
 it('checks the API returns Retention CRM Users', function () {
-    withoutMiddleware(CheckOlympusKey::class);
-
     $randomRecords = random_int(1, 10);
 
     $licenseSettings = app(LicenseSettings::class);
 
-    $licenseSettings->data->limits->retentionCrmSeats = $randomRecords;
+    $licenseSettings->data->limits->retentionCrmSeats = $randomRecords + 1;
     $licenseSettings->save();
 
     User::factory()->count($randomRecords)->licensed([LicenseType::RetentionCrm])->create();
+
+    $softDeleteRetentionCrmUser = User::factory()->licensed([LicenseType::RetentionCrm])->create();
+    $softDeleteRetentionCrmUser->delete();
 
     $response = get('/api/utilization-metrics');
 
@@ -190,16 +199,17 @@ it('checks the API returns Retention CRM Users', function () {
 });
 
 it('checks the API returns Recruitment CRM Users', function () {
-    withoutMiddleware(CheckOlympusKey::class);
-
     $randomRecords = random_int(1, 10);
 
     $licenseSettings = app(LicenseSettings::class);
 
-    $licenseSettings->data->limits->recruitmentCrmSeats = $randomRecords;
+    $licenseSettings->data->limits->recruitmentCrmSeats = $randomRecords + 1;
     $licenseSettings->save();
 
     User::factory()->count($randomRecords)->licensed([LicenseType::RecruitmentCrm])->create();
+
+    $softDeleteRecruitmentCrmUser = User::factory()->licensed([LicenseType::RecruitmentCrm])->create();
+    $softDeleteRecruitmentCrmUser->delete();
 
     $response = get('/api/utilization-metrics');
 
@@ -211,13 +221,14 @@ it('checks the API returns Recruitment CRM Users', function () {
 });
 
 it('checks the API returns Student Records', function () {
-    withoutMiddleware(CheckOlympusKey::class);
-
     $randomRecords = random_int(1, 10);
 
     $totalRecords = $randomRecords + (Student::count());
 
     Student::factory()->count($randomRecords)->create();
+
+    $softDeleteStudent = Student::factory()->create();
+    $softDeleteStudent->delete();
 
     $response = get('/api/utilization-metrics');
 
@@ -229,11 +240,12 @@ it('checks the API returns Student Records', function () {
 });
 
 it('checks the API returns Prospects Records', function () {
-    withoutMiddleware(CheckOlympusKey::class);
-
     $randomRecords = random_int(1, 10);
 
     Prospect::factory()->count($randomRecords)->create();
+
+    $softDeleteProspect = Prospect::factory()->create();
+    $softDeleteProspect->delete();
 
     $response = get('/api/utilization-metrics');
 
@@ -245,11 +257,12 @@ it('checks the API returns Prospects Records', function () {
 });
 
 it('checks the API returns Campaigns', function () {
-    withoutMiddleware(CheckOlympusKey::class);
-
     $randomRecords = random_int(1, 10);
 
     Campaign::factory()->count($randomRecords)->create();
+
+    $softDeleteCampaign = Campaign::factory()->create();
+    $softDeleteCampaign->delete();
 
     $response = get('/api/utilization-metrics');
 
@@ -261,11 +274,14 @@ it('checks the API returns Campaigns', function () {
 });
 
 it('checks the API returns Journey Steps Executed', function () {
-    withoutMiddleware(CheckOlympusKey::class);
-
     $randomRecords = random_int(1, 10);
 
     CampaignAction::factory()->count($randomRecords)->create();
+
+    $softDeleteCampaignAction = CampaignAction::factory()->successfulExecution()->create();
+    $softDeleteCampaignAction->delete();
+
+    CampaignAction::factory()->count($randomRecords)->successfulExecution()->create();
 
     $response = get('/api/utilization-metrics');
 
@@ -277,11 +293,12 @@ it('checks the API returns Journey Steps Executed', function () {
 });
 
 it('checks the API returns Tasks', function () {
-    withoutMiddleware(CheckOlympusKey::class);
-
     $randomRecords = random_int(1, 10);
 
     Task::factory()->count($randomRecords)->create();
+
+    $softDeleteTask = Task::factory()->create();
+    $softDeleteTask->delete();
 
     $response = get('/api/utilization-metrics');
 
@@ -293,11 +310,12 @@ it('checks the API returns Tasks', function () {
 });
 
 it('checks the API returns Alerts', function () {
-    withoutMiddleware(CheckOlympusKey::class);
-
     $randomRecords = random_int(1, 10);
 
     Alert::factory()->count($randomRecords)->create();
+
+    $softDeleteAlert = Alert::factory()->create();
+    $softDeleteAlert->delete();
 
     $response = get('/api/utilization-metrics');
 
@@ -309,11 +327,12 @@ it('checks the API returns Alerts', function () {
 });
 
 it('checks the API returns Segments', function () {
-    withoutMiddleware(CheckOlympusKey::class);
-
     $randomRecords = random_int(1, 10);
 
     Segment::factory()->count($randomRecords)->create();
+
+    $softDeleteSegment = Segment::factory()->create();
+    $softDeleteSegment->delete();
 
     $response = get('/api/utilization-metrics');
 
@@ -325,11 +344,12 @@ it('checks the API returns Segments', function () {
 });
 
 it('checks the API returns Resource Hub Articles', function () {
-    withoutMiddleware(CheckOlympusKey::class);
-
     $randomRecords = random_int(1, 10);
 
     ResourceHubArticle::factory()->count($randomRecords)->create();
+
+    $softDeleteResourceHubArticle = ResourceHubArticle::factory()->create();
+    $softDeleteResourceHubArticle->delete();
 
     $response = get('/api/utilization-metrics');
 
@@ -341,11 +361,12 @@ it('checks the API returns Resource Hub Articles', function () {
 });
 
 it('checks the API returns Events Created', function () {
-    withoutMiddleware(CheckOlympusKey::class);
-
     $randomRecords = random_int(1, 10);
 
     Event::factory()->count($randomRecords)->create();
+
+    $softDeleteEvent = Event::factory()->create();
+    $softDeleteEvent->delete();
 
     $response = get('/api/utilization-metrics');
 
@@ -357,8 +378,6 @@ it('checks the API returns Events Created', function () {
 });
 
 it('checks the API returns Forms Created', function () {
-    withoutMiddleware(CheckOlympusKey::class);
-
     $randomRecords = random_int(1, 10);
 
     Form::factory()->count($randomRecords)->create();
@@ -373,8 +392,6 @@ it('checks the API returns Forms Created', function () {
 });
 
 it('checks the API returns Forms Submitted', function () {
-    withoutMiddleware(CheckOlympusKey::class);
-
     $randomRecords = random_int(1, 10);
 
     FormSubmission::factory()->count($randomRecords)->create();
@@ -389,8 +406,6 @@ it('checks the API returns Forms Submitted', function () {
 });
 
 it('checks the API returns Surveys Created', function () {
-    withoutMiddleware(CheckOlympusKey::class);
-
     $randomRecords = random_int(1, 10);
 
     $totalRecords = $randomRecords + (Survey::count());
@@ -408,8 +423,6 @@ it('checks the API returns Surveys Created', function () {
 
 it('checks the API returns Surveys Submitted', function () {
     SurveySubmission::truncate();
-
-    withoutMiddleware(CheckOlympusKey::class);
 
     $randomRecords = random_int(1, 10);
 
