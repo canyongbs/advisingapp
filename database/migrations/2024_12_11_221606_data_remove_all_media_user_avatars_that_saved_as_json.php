@@ -34,44 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace App\Enums;
+use Illuminate\Database\Migrations\Migration;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-use App\Models\Authenticatable;
-use App\Settings\LicenseSettings;
-use Illuminate\Support\Facades\Gate;
-
-enum Feature: string
-{
-    case OnlineForms = 'online-forms';
-
-    case OnlineSurveys = 'online-surveys';
-
-    case OnlineAdmissions = 'online-admissions';
-
-    case ServiceManagement = 'service-management';
-
-    case ResourceHub = 'resource-hub';
-
-    case EventManagement = 'event-management';
-    case RealtimeChat = 'realtime-chat';
-
-    case MobileApps = 'mobile-apps';
-
-    case ScheduleAndAppointments = 'schedule-and-appointments';
-
-    case CustomAiAssistants = 'custom-ai-assistants';
-
-    public function generateGate(): void
+return new class () extends Migration {
+    public function up(): void
     {
-        // If features are added that are not based on a License Addon we will need to update this
-        Gate::define(
-            $this->getGateName(),
-            fn (?Authenticatable $authenticatable) => app(LicenseSettings::class)->data->addons->{str($this->value)->camel()}
-        );
+        Media::query()
+            ->where('model_type', 'user')
+            ->where('collection_name', 'avatar')
+            ->where('mime_type', 'application/json')
+            ->get()
+            ->each(function (Media $media) {
+                $media->forceDelete();
+            });
     }
 
-    public function getGateName(): string
+    public function down(): void
     {
-        return "feature-{$this->value}";
+        // Not possible to revert
     }
-}
+};

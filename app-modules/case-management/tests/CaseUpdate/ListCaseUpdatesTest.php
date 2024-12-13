@@ -59,7 +59,8 @@ test('The correct details are displayed on the ListCaseUpdates page', function (
 
     asSuperAdmin();
 
-    $component = livewire(ListCaseUpdates::class);
+    $component = livewire(ListCaseUpdates::class)
+        ->set('tableRecordsPerPage', 10);
 
     $component->assertSuccessful()
         ->assertCanSeeTableRecords($caseUpdates)

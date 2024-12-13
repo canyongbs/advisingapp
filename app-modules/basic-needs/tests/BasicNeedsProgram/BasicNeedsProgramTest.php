@@ -74,6 +74,7 @@ it('can render data in list page', function () {
     $basicNeedsPrograms = BasicNeedsProgram::factory()->count(10)->create();
 
     livewire(ListBasicNeedsPrograms::class)
+        ->set('tableRecordsPerPage', 10)
         ->assertCanSeeTableRecords($basicNeedsPrograms);
 });
 
@@ -325,6 +326,7 @@ it('can bulk delete basic needs programs', function () {
     $user->givePermissionTo('product_admin.*.delete');
 
     livewire(ListBasicNeedsPrograms::class)
+        ->set('tableRecordsPerPage', 10)
         ->callTableBulkAction(DeleteBulkAction::class, $basicNeedsPrograms);
 
     foreach ($basicNeedsPrograms as $basicNeedsProgram) {
@@ -345,6 +347,7 @@ it('can filter basic needs program by `program category`', function () {
     $user->givePermissionTo('product_admin.view-any');
 
     livewire(ListBasicNeedsPrograms::class)
+        ->set('tableRecordsPerPage', 10)
         ->assertCanSeeTableRecords($basicNeedsPrograms)
         ->filterTable('basic_category_id', $basic_needs_category_id)
         ->assertCanSeeTableRecords($basicNeedsPrograms->where('basic_needs_category_id', $basic_needs_category_id))

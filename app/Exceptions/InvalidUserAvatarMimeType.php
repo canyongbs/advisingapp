@@ -34,44 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace App\Enums;
+namespace App\Exceptions;
 
-use App\Models\Authenticatable;
-use App\Settings\LicenseSettings;
-use Illuminate\Support\Facades\Gate;
+use Exception;
+use App\Models\User;
 
-enum Feature: string
+class InvalidUserAvatarMimeType extends Exception
 {
-    case OnlineForms = 'online-forms';
-
-    case OnlineSurveys = 'online-surveys';
-
-    case OnlineAdmissions = 'online-admissions';
-
-    case ServiceManagement = 'service-management';
-
-    case ResourceHub = 'resource-hub';
-
-    case EventManagement = 'event-management';
-    case RealtimeChat = 'realtime-chat';
-
-    case MobileApps = 'mobile-apps';
-
-    case ScheduleAndAppointments = 'schedule-and-appointments';
-
-    case CustomAiAssistants = 'custom-ai-assistants';
-
-    public function generateGate(): void
-    {
-        // If features are added that are not based on a License Addon we will need to update this
-        Gate::define(
-            $this->getGateName(),
-            fn (?Authenticatable $authenticatable) => app(LicenseSettings::class)->data->addons->{str($this->value)->camel()}
+    public function __construct(
+        protected string $mimeType,
+        protected User $user
+    ) {
+        parent::__construct(
+            "The provided avatar image for user {$user->getKey()} has an invalid MIME type: {$mimeType}."
         );
-    }
-
-    public function getGateName(): string
-    {
-        return "feature-{$this->value}";
     }
 }

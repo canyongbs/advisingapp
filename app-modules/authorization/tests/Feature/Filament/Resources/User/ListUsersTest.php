@@ -260,6 +260,7 @@ it('can filter users by multiple teams', function () {
         ->create();
 
     livewire(ListUsers::class)
+        ->set('tableRecordsPerPage', 10)
         ->assertCanSeeTableRecords($adminTeamGroup->merge($modsTeamGroup)->merge($supportTeamGroup))
         ->filterTable('teams', [$adminTeam->id, $modTeam->id])
         ->assertCanSeeTableRecords(
@@ -287,6 +288,7 @@ it('it filters users based on team', function () {
     $unassignedUser = User::factory()->count(2)->create();
 
     livewire(ListUsers::class)
+        ->set('tableRecordsPerPage', 10)
         ->assertCanSeeTableRecords($unassignedUser->merge($userInTeamA)->merge($userInTeamB))
         ->filterTable('teams', [$teamA->getKey()])
         ->assertCanSeeTableRecords(
@@ -342,6 +344,7 @@ it('filters users based on roles', function () {
     $noRolesUsers = User::factory()->count(2)->create();
 
     livewire(ListUsers::class)
+        ->set('tableRecordsPerPage', 10)
         ->filterTable('roles', [$roleA->getKey()])
         ->assertCanSeeTableRecords(
             $usersInRoleA

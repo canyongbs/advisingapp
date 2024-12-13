@@ -64,7 +64,7 @@ testResourceRequiresPermissionForAccess(
 test('ListResourceHubArticles is gated with proper feature access control', function () {
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->knowledgeManagement = false;
+    $settings->data->addons->resourceHub = false;
 
     $settings->save();
 
@@ -78,7 +78,7 @@ test('ListResourceHubArticles is gated with proper feature access control', func
         ResourceHubArticleResource::getUrl('index')
     )->assertForbidden();
 
-    $settings->data->addons->knowledgeManagement = true;
+    $settings->data->addons->resourceHub = true;
 
     $settings->save();
 
@@ -91,7 +91,7 @@ test('ListResourceHubArticles is gated with proper license access control', func
     $settings = app(LicenseSettings::class);
 
     // When the feature is enabled
-    $settings->data->addons->knowledgeManagement = true;
+    $settings->data->addons->resourceHub = true;
 
     $settings->save();
 
