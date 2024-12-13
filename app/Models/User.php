@@ -88,6 +88,9 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
+use AdvisingApp\Report\Models\TrackedEvent;
+use AdvisingApp\Report\Models\TrackedEventCount;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
  * @mixin IdeHelperUser
@@ -316,7 +319,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
 
     public function scopeAdmins()
     {
-        return $this->whereHas('roles', fn ($q) => $q->where('title', 'Admin'));
+        return $this->whereHas('roles', fn($q) => $q->where('title', 'Admin'));
     }
 
     public function pronouns(): BelongsTo
@@ -365,6 +368,16 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function calendar(): HasOne
     {
         return $this->hasOne(Calendar::class);
+    }
+
+    public function logins(): MorphMany
+    {
+        return $this->morphMany(TrackedEvent::class, 'relatedTo');
+    }
+
+    public function loginsCount(): MorphMany
+    {
+        return $this->morphMany(TrackedEventCount::class, 'relatedTo');
     }
 
     public function canAccessPanel(Panel $panel): bool

@@ -38,20 +38,26 @@ namespace AdvisingApp\Report\Models;
 
 use AdvisingApp\Report\Enums\TrackedEventType;
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * @mixin IdeHelperTrackedEventCount
  */
 class TrackedEventCount extends BaseModel
 {
-    protected $fillable = [
-        'type',
-        'count',
-        'last_occurred_at',
-    ];
+  protected $fillable = [
+    'type',
+    'count',
+    'last_occurred_at',
+  ];
 
-    protected $casts = [
-        'type' => TrackedEventType::class,
-        'last_occurred_at' => 'datetime',
-    ];
+  protected $casts = [
+    'type' => TrackedEventType::class,
+    'last_occurred_at' => 'datetime',
+  ];
+
+  public function relatedTo(): MorphTo
+  {
+    return $this->morphTo();
+  }
 }
