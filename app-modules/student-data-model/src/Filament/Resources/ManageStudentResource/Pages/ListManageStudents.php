@@ -52,6 +52,8 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Actions\DeleteStudent;
 use AdvisingApp\StudentDataModel\Filament\Imports\StudentImporter;
 use AdvisingApp\StudentDataModel\Filament\Resources\ManageStudentResource;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\HtmlString;
 
 class ListManageStudents extends ListRecords
 {
@@ -112,7 +114,7 @@ class ListManageStudents extends ListRecords
         return [
             CreateAction::make(),
             ImportAction::make()
-                ->modalDescription('Import student records from a CSV file. Records with matched SIS IDs will be updated, while new records will be created.')
+                ->modalDescription(fn (ImportAction $action): Htmlable => new HtmlString('Import student records from a CSV file. Records with matched SIS IDs will be updated, while new records will be created. <br><br>'. $action->getModalAction('downloadExample')->toHtml()))
                 ->importer(StudentImporter::class)
                 ->authorize('import', Student::class),
         ];
