@@ -55,6 +55,7 @@ use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Authorization\Models\Role;
 use Lab404\Impersonate\Models\Impersonate;
+use AdvisingApp\Report\Models\TrackedEvent;
 use Filament\Models\Contracts\FilamentUser;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use AdvisingApp\Ai\Models\AiAssistantUpvote;
@@ -62,6 +63,7 @@ use AdvisingApp\Authorization\Models\License;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Report\Models\TrackedEventCount;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use AdvisingApp\Notification\Models\Subscription;
@@ -73,6 +75,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use AdvisingApp\CaseManagement\Models\ChangeRequest;
 use AdvisingApp\CaseManagement\Models\CaseAssignment;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -91,9 +94,6 @@ use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Engagement\Models\Concerns\HasManyEngagementBatches;
 use AdvisingApp\MultifactorAuthentication\Traits\MultifactorAuthenticatable;
-use AdvisingApp\Report\Models\TrackedEvent;
-use AdvisingApp\Report\Models\TrackedEventCount;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
  * @mixin IdeHelperUser
@@ -337,7 +337,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
 
     public function scopeAdmins()
     {
-        return $this->whereHas('roles', fn($q) => $q->where('title', 'Admin'));
+        return $this->whereHas('roles', fn ($q) => $q->where('title', 'Admin'));
     }
 
     public function pronouns(): BelongsTo
