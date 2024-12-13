@@ -140,6 +140,6 @@ class CaseModelPolicy
 
     protected function requiredFeatures(): array
     {
-        return [Feature::ServiceManagement];
+        return [Feature::CaseManagement];
     }
 }

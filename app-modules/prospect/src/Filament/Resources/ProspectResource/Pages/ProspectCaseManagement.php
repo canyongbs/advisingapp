@@ -68,7 +68,7 @@ class ProspectCaseManagement extends ManageRelatedRecords
 
     public static function canAccess(array $parameters = []): bool
     {
-        return parent::canAccess($parameters) && Gate::check(Feature::ServiceManagement->getGateName()) && count(static::managers($parameters['record'] ?? null));
+        return parent::canAccess($parameters) && Gate::check(Feature::CaseManagement->getGateName()) && count(static::managers($parameters['record'] ?? null));
     }
 
     public function getRelationManagers(): array
