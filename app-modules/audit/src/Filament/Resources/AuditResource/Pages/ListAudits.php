@@ -39,6 +39,7 @@ namespace AdvisingApp\Audit\Filament\Resources\AuditResource\Pages;
 use Carbon\Carbon;
 use App\Models\User;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 use Filament\Actions\ExportAction;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\Indicator;
@@ -69,7 +70,8 @@ class ListAudits extends ListRecords
                 IdColumn::make(),
                 TextColumn::make('auditable_type')
                     ->label('Auditable')
-                    ->sortable(),
+                    ->sortable()
+                    ->formatStateUsing(fn ($state) => Str::of($state)->headline()),
                 TextColumn::make('change_agent_name')
                     ->label('Change Agent (User)')
                     ->sortable()
