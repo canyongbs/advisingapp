@@ -157,6 +157,7 @@
                                 :x-show="'Object.keys(availablePermissions[group]).includes(' .
                                     Js::from($operation) .
                                     ')'"
+                                @class(['disabled:checked:ring-1 disabled:checked:bg-gray-400'])
                             />
 
                             <span class="xl:sr-only">
