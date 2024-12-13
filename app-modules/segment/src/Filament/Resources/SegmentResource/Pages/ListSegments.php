@@ -39,6 +39,7 @@ namespace AdvisingApp\Segment\Filament\Resources\SegmentResource\Pages;
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Filters\Filter;
+use AdvisingApp\Segment\Models\Segment;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -46,6 +47,7 @@ use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\DeleteAction;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Auth\Access\AuthorizationException;
 use AdvisingApp\Segment\Filament\Resources\SegmentResource;
 
 class ListSegments extends ListRecords
@@ -76,7 +78,19 @@ class ListSegments extends ListRecords
             ])
             ->actions([
                 EditAction::make(),
-                DeleteAction::make(),
+                DeleteAction::make()
+                    ->authorize(function () {
+                        return auth()->user()->can('delete');
+                    })
+                    ->action(function (DeleteAction $action, Segment $record) {
+                        try {
+                            $this->authorize('delete', $record);
+                            $record->delete();
+                            $action->successNotificationTitle('Deleted')->sendSuccessNotification();
+                        } catch (AuthorizationException $e) {
+                            $action->failureNotificationTitle($e->getMessage())->sendFailureNotification();
+                        }
+                    }),
             ])
             ->filters([
                 Filter::make('my_segments')

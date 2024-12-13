@@ -154,7 +154,7 @@ class CreateTenant extends Command
                     onlineForms: true,
                     onlineSurveys: true,
                     onlineAdmissions: true,
-                    serviceManagement: true,
+                    caseManagement: true,
                     resourceHub: true,
                     eventManagement: true,
                     realtimeChat: true,

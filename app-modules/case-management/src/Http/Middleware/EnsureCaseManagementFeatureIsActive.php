@@ -45,7 +45,7 @@ class EnsureCaseManagementFeatureIsActive
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (! app(LicenseSettings::class)->data->addons->serviceManagement) {
+        if (! app(LicenseSettings::class)->data->addons->caseManagement) {
             return response()->json(['error' => 'Case Management is not enabled.'], 403);
         }
 
