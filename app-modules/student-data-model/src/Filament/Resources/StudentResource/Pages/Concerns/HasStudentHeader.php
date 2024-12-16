@@ -38,17 +38,15 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\
 
 use App\Settings\DisplaySettings;
 use Illuminate\Contracts\View\View;
-use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Actions\StudentTagsAction;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Actions\SyncStudentSisAction;
 
 trait HasStudentHeader
 {
     public function getHeader(): ?View
     {
+        $resource = static::getResource();
+        $name = static::getName();
+
         $sisSettings = app(StudentInformationSystemSettings::class);
 
         $student = $this->getRecord();
@@ -58,10 +56,8 @@ trait HasStudentHeader
 
         return view('student-data-model::filament.resources.educatable-resource.view-educatable.header', [
             'actions' => $this->getCachedHeaderActions(),
-            'backButtonLabel' => 'Back to student',
-            'backButtonUrl' => $this instanceof ViewStudent
-                ? null
-                : StudentResource::getUrl('view', ['record' => $this->getRecord()]),
+            'backButtonLabel' => 'Back to ' . $name,
+            'backButtonUrl' => $resource::getUrl('view', ['record' => $this->getRecord()]),
             'badges' => [
                 ...($student->firstgen ? ['First Gen'] : []),
                 ...($student->dual ? ['Dual'] : []),
@@ -86,14 +82,5 @@ trait HasStudentHeader
             'educatableName' => $studentName,
             'timezone' => app(DisplaySettings::class)->getTimezone(),
         ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            StudentTagsAction::make()->visible(fn (): bool => auth()->user()->can('student.tags.manage')),
-            SyncStudentSisAction::make(),
-            SubscribeHeaderAction::make(),
-        ];
     }
 }

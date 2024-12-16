@@ -71,25 +71,25 @@ class ProspectResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'full_name';
 
-    public static function getRecordSubNavigation(Page $page): array
-    {
-        return $page->generateNavigationItems([
-            ViewProspect::class,
-            EditProspect::class,
-            ManageProspectEngagement::class,
-            ManageProspectFiles::class,
-            ManageProspectAlerts::class,
-            ManageProspectTasks::class,
-            ManageProspectSubscriptions::class,
-            ManageProspectInteractions::class,
-            ProspectEngagementTimeline::class,
-            ManageProspectCareTeam::class,
-            ManageProspectFormSubmissions::class,
-            ManageProspectApplicationSubmissions::class,
-            ProspectCaseManagement::class,
-            ManageProspectEvents::class,
-        ]);
-    }
+    // public static function getRecordSubNavigation(Page $page): array
+    // {
+    //     return $page->generateNavigationItems([
+    //         ViewProspect::class,
+    //         EditProspect::class,
+    //         ManageProspectEngagement::class,
+    //         ManageProspectFiles::class,
+    //         ManageProspectAlerts::class,
+    //         ManageProspectTasks::class,
+    //         ManageProspectSubscriptions::class,
+    //         ManageProspectInteractions::class,
+    //         ProspectEngagementTimeline::class,
+    //         ManageProspectCareTeam::class,
+    //         ManageProspectFormSubmissions::class,
+    //         ManageProspectApplicationSubmissions::class,
+    //         ProspectCaseManagement::class,
+    //         ManageProspectEvents::class,
+    //     ]);
+    // }
 
     public static function modifyGlobalSearchQuery(Builder $query, string $search): void
     {

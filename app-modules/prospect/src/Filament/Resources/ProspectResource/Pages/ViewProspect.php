@@ -49,92 +49,31 @@ use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ConvertToStudent;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ProspectTagsAction;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\DisassociateStudent;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Schemas\ProspectProfileInfolist;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concerns\HasStudentHeader;
 
 class ViewProspect extends ViewRecord
 {
     use ProspectHolisticViewPage;
+    use HasStudentHeader;
 
     protected static string $resource = ProspectResource::class;
 
     // TODO: Automatically set from Filament
     protected static ?string $navigationLabel = 'View';
 
-    public function infolist(Infolist $infolist): Infolist
+    protected static string $view = 'prospect::filament.resources.prospect-resource.view-prospect';
+
+    public string $name = 'prospect';
+
+    public function profile(Infolist $infolist): Infolist
     {
-        return $infolist
-            ->schema([
-                Section::make('Demographics')
-                    ->schema([
-                        TextEntry::make('first_name')
-                            ->label('First Name'),
-                        TextEntry::make('last_name')
-                            ->label('Last Name'),
-                        TextEntry::make(Prospect::displayNameKey())
-                            ->label('Full Name'),
-                        TextEntry::make('preferred')
-                            ->label('Preferred Name'),
-                        TextEntry::make('birthdate')
-                            ->label('Birthdate'),
-                        TextEntry::make('hsgrad')
-                            ->label('High School Grad'),
-                    ])
-                    ->columns(2),
-                Section::make('Contact Information')
-                    ->schema([
-                        TextEntry::make('email')
-                            ->label('Email'),
-                        TextEntry::make('email_2')
-                            ->label('Alternate Email'),
-                        TextEntry::make('mobile')
-                            ->label('Mobile'),
-                        TextEntry::make('phone')
-                            ->label('Phone'),
-                        TextEntry::make('address')
-                            ->label('Address'),
-                        TextEntry::make('address_2')
-                            ->label('Apartment/Unit Number'),
-                        TextEntry::make('address_3')
-                            ->label('Additional Address'),
-                        TextEntry::make('city')
-                            ->label('City'),
-                        TextEntry::make('state')
-                            ->label('State'),
-                        TextEntry::make('postal')
-                            ->label('Postal'),
-                    ])
-                    ->columns(2),
-                Section::make('Classification')
-                    ->schema([
-                        TextEntry::make('status.name')
-                            ->label('Status'),
-                        TextEntry::make('source.name')
-                            ->label('Source'),
-                        TextEntry::make('description')
-                            ->label('Description')
-                            ->columnSpanFull(),
-                        TextEntry::make('tags.name')
-                            ->label('Tags')
-                            ->badge()
-                            ->placeholder('-'),
-                    ])
-                    ->columns(2),
-                Section::make('Engagement Restrictions')
-                    ->schema([
-                        IconEntry::make('sms_opt_out')
-                            ->label('SMS Opt Out')
-                            ->boolean(),
-                        IconEntry::make('email_bounce')
-                            ->label('Email Bounce')
-                            ->boolean(),
-                    ])
-                    ->columns(2),
-                Section::make('Record Details')
-                    ->schema([
-                        TextEntry::make('createdBy.name')
-                            ->label('Created By'),
-                    ])
-                    ->columns(2),
-            ]);
+        return ProspectProfileInfolist::configure($infolist);
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
     }
 
     protected function getHeaderActions(): array
