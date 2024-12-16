@@ -37,7 +37,6 @@
 namespace AdvisingApp\Prospect\Filament\Resources;
 
 use Filament\Resources\Resource;
-use Filament\Resources\Pages\Page;
 use Illuminate\Database\Eloquent\Model;
 use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
@@ -53,6 +52,7 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspec
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectCareTeam;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ProspectCaseManagement;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectEngagement;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspectActivityFeed;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectInteractions;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ProspectEngagementTimeline;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectSubscriptions;
@@ -70,26 +70,6 @@ class ProspectResource extends Resource
     protected static ?string $navigationGroup = 'Recruitment CRM';
 
     protected static ?string $recordTitleAttribute = 'full_name';
-
-    // public static function getRecordSubNavigation(Page $page): array
-    // {
-    //     return $page->generateNavigationItems([
-    //         ViewProspect::class,
-    //         EditProspect::class,
-    //         ManageProspectEngagement::class,
-    //         ManageProspectFiles::class,
-    //         ManageProspectAlerts::class,
-    //         ManageProspectTasks::class,
-    //         ManageProspectSubscriptions::class,
-    //         ManageProspectInteractions::class,
-    //         ProspectEngagementTimeline::class,
-    //         ManageProspectCareTeam::class,
-    //         ManageProspectFormSubmissions::class,
-    //         ManageProspectApplicationSubmissions::class,
-    //         ProspectCaseManagement::class,
-    //         ManageProspectEvents::class,
-    //     ]);
-    // }
 
     public static function modifyGlobalSearchQuery(Builder $query, string $search): void
     {
@@ -136,6 +116,7 @@ class ProspectResource extends Resource
             'manage-subscriptions' => ManageProspectSubscriptions::route('/{record}/subscriptions'),
             'manage-tasks' => ManageProspectTasks::route('/{record}/tasks'),
             'view' => ViewProspect::route('/{record}'),
+            'activity-feed' => ViewProspectActivityFeed::route('/{record}/activity'),
             'timeline' => ProspectEngagementTimeline::route('/{record}/timeline'),
             'care-team' => ManageProspectCareTeam::route('/{record}/care-team'),
             'case-management' => ProspectCaseManagement::route('/{record}/case-management'),

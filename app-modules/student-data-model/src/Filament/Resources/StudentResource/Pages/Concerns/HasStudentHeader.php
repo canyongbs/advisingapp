@@ -38,14 +38,17 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\
 
 use App\Settings\DisplaySettings;
 use Illuminate\Contracts\View\View;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspect;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
 
 trait HasStudentHeader
 {
     public function getHeader(): ?View
     {
         $resource = static::getResource();
-        $name = static::getName();
+        $name = $resource === ProspectResource::class ? 'prospect' : 'student';
 
         $sisSettings = app(StudentInformationSystemSettings::class);
 
@@ -57,7 +60,9 @@ trait HasStudentHeader
         return view('student-data-model::filament.resources.educatable-resource.view-educatable.header', [
             'actions' => $this->getCachedHeaderActions(),
             'backButtonLabel' => 'Back to ' . $name,
-            'backButtonUrl' => $resource::getUrl('view', ['record' => $this->getRecord()]),
+            'backButtonUrl' => $this instanceof ViewStudent || $this instanceof ViewProspect
+                ? null
+                : $resource::getUrl('view', ['record' => $this->getRecord()]),
             'badges' => [
                 ...($student->firstgen ? ['First Gen'] : []),
                 ...($student->dual ? ['Dual'] : []),
