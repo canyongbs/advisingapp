@@ -141,6 +141,8 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'are_working_hours_visible_on_profile' => 'boolean',
         'working_hours' => 'array',
         'last_chat_ping_at' => 'immutable_datetime',
+        'first_login_at' => 'datetime',
+        'last_logged_in_at' => 'datetime',
     ];
 
     protected $fillable = [
@@ -176,6 +178,8 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'job_title',
         'last_chat_ping_at',
         'is_branding_bar_dismissed',
+        'first_login_at',
+        'last_logged_in_at',
     ];
 
     public $orderable = [
@@ -337,7 +341,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
 
     public function scopeAdmins()
     {
-        return $this->whereHas('roles', fn ($q) => $q->where('title', 'Admin'));
+        return $this->whereHas('roles', fn($q) => $q->where('title', 'Admin'));
     }
 
     public function pronouns(): BelongsTo
