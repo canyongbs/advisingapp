@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Survey\Database\Factories;
 
-use Illuminate\Support\Str;
 use AdvisingApp\Survey\Models\Survey;
 use AdvisingApp\Survey\Models\SurveyField;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -81,21 +80,6 @@ class SurveyFactory extends Factory
                     ])->all(),
                 ];
                 $survey->save();
-            }
-
-            if ($survey->submissions()->doesntExist()) {
-                for ($i = 0; $i < rand(1, 3); $i++) {
-                    $submission = $survey->submissions()->create([
-                        'submitted_at' => now(),
-                    ]);
-
-                    foreach ($survey->fields as $field) {
-                        $submission->fields()->attach(
-                            $field,
-                            ['id' => Str::orderedUuid(), 'response' => fake()->words(rand(1, 10), true)],
-                        );
-                    }
-                }
             }
         });
     }

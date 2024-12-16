@@ -34,21 +34,28 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Middleware\CheckOlympusKey;
-use App\Http\Controllers\UtilizationMetricsApiController;
-use App\Http\Controllers\UpdateAzureSsoSettingsController;
-use Spatie\Health\Http\Controllers\HealthCheckJsonResultsController;
+namespace AdvisingApp\Ai\Database\Factories;
 
-Route::middleware([
-    CheckOlympusKey::class,
-])->group(function () {
-    Route::post('/azure-sso/update', UpdateAzureSsoSettingsController::class)
-        ->name('azure-sso.update');
+use App\Models\User;
+use AdvisingApp\Ai\Models\Prompt;
+use AdvisingApp\Ai\Models\PromptUse;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-    Route::get('/health', HealthCheckJsonResultsController::class)
-        ->name('health');
-
-    Route::get('/utilization-metrics', UtilizationMetricsApiController::class)
-        ->name('utilization-metrics');
-});
+/**
+ * @extends PromptUse
+ */
+class PromptUseFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'prompt_id' => Prompt::factory(),
+            'user_id' => User::factory(),
+        ];
+    }
+}
