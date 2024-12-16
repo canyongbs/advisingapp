@@ -36,24 +36,26 @@
 
 namespace AdvisingApp\Report\Jobs;
 
-use AdvisingApp\Report\Enums\TrackedEventType;
-use AdvisingApp\Report\Models\TrackedEvent;
-use AdvisingApp\Report\Models\TrackedEventCount;
-use Carbon\Carbon;
-use Illuminate\Bus\Queueable;
-use App\Models\Authenticatable;
-use App\Models\User;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\DB;
+use Log;
 use Throwable;
+use Carbon\Carbon;
+use App\Models\User;
+use Illuminate\Bus\Queueable;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use AdvisingApp\Report\Models\TrackedEvent;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use AdvisingApp\Report\Enums\TrackedEventType;
+use AdvisingApp\Report\Models\TrackedEventCount;
 
 class RecordUserTrackedEvent implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     /**
      * Create a new job instance.
@@ -70,7 +72,7 @@ class RecordUserTrackedEvent implements ShouldQueue
     public function handle(): void
     {
         try {
-            \Log::debug('handle');
+            Log::debug('handle');
             DB::beginTransaction();
 
             TrackedEvent::create([
@@ -105,7 +107,7 @@ class RecordUserTrackedEvent implements ShouldQueue
             $this->user
                 ->update([
                     'first_login_at' => $this->user->first_login_at ?? now(),
-                    'last_logged_in_at' => now()
+                    'last_logged_in_at' => now(),
                 ]);
 
             DB::commit();

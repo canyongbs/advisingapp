@@ -46,17 +46,17 @@ use Sentry\State\Scope;
 
 class SetSentryUser
 {
-  public function handle(Login|Authenticated $event): void
-  {
-    /** @var Authenticatable $user */
-    $user = $event->user;
+    public function handle(Login|Authenticated $event): void
+    {
+        /** @var Authenticatable $user */
+        $user = $event->user;
 
-    if (filled($user)) {
-      configureScope(function (Scope $scope) use ($user): void {
-        $scope->setUser([
-          'id' => $user->getKey(),
-        ]);
-      });
+        if (filled($user)) {
+            configureScope(function (Scope $scope) use ($user): void {
+                $scope->setUser([
+                    'id' => $user->getKey(),
+                ]);
+            });
+        }
     }
-  }
 }
