@@ -75,7 +75,7 @@ it('checks the API returns users', function () {
     $softDeleteUser = User::factory()->create();
     $softDeleteUser->delete();
 
-    $response = get('/api/utilization-metrics');
+    $response = get(route('utilization-metrics'));
 
     $data = $response->json('data');
 
@@ -97,7 +97,7 @@ it('checks the API returns AI Users', function () {
     $softDeleteAiUser = User::factory()->licensed([LicenseType::ConversationalAi])->create();
     $softDeleteAiUser->delete();
 
-    $response = get('/api/utilization-metrics');
+    $response = get(route('utilization-metrics'));
 
     $data = $response->json('data');
 
@@ -117,7 +117,7 @@ it('checks the API returns AI Exchanges', function () {
 
     $totalExchanges = TrackedEventCount::where('type', TrackedEventType::AiExchange)->value('count');
 
-    $response = get('/api/utilization-metrics');
+    $response = get(route('utilization-metrics'));
 
     $data = $response->json('data');
 
@@ -134,7 +134,7 @@ it('checks the API returns Saved AI Chats', function () {
     $softDeleteAiThread = AiThread::factory()->saved()->create();
     $softDeleteAiThread->delete();
 
-    $response = get('/api/utilization-metrics');
+    $response = get(route('utilization-metrics'));
 
     $data = $response->json('data');
 
@@ -148,7 +148,7 @@ it('checks the API returns Saved Prompts', function () {
 
     Prompt::factory()->count($randomRecords)->create();
 
-    $response = get('/api/utilization-metrics');
+    $response = get(route('utilization-metrics'));
 
     $data = $response->json('data');
 
@@ -165,7 +165,7 @@ it('checks the API returns Prompts Inserted', function () {
     $softDeletePromptUse = PromptUse::factory()->create();
     $softDeletePromptUse->delete();
 
-    $response = get('/api/utilization-metrics');
+    $response = get(route('utilization-metrics'));
 
     $data = $response->json('data');
 
@@ -187,7 +187,7 @@ it('checks the API returns Retention CRM Users', function () {
     $softDeleteRetentionCrmUser = User::factory()->licensed([LicenseType::RetentionCrm])->create();
     $softDeleteRetentionCrmUser->delete();
 
-    $response = get('/api/utilization-metrics');
+    $response = get(route('utilization-metrics'));
 
     $data = $response->json('data');
 
@@ -209,7 +209,7 @@ it('checks the API returns Recruitment CRM Users', function () {
     $softDeleteRecruitmentCrmUser = User::factory()->licensed([LicenseType::RecruitmentCrm])->create();
     $softDeleteRecruitmentCrmUser->delete();
 
-    $response = get('/api/utilization-metrics');
+    $response = get(route('utilization-metrics'));
 
     $data = $response->json('data');
 
@@ -228,7 +228,7 @@ it('checks the API returns Student Records', function () {
     $softDeleteStudent = Student::factory()->create();
     $softDeleteStudent->delete();
 
-    $response = get('/api/utilization-metrics');
+    $response = get(route('utilization-metrics'));
 
     $data = $response->json('data');
 
@@ -245,7 +245,7 @@ it('checks the API returns Prospects Records', function () {
     $softDeleteProspect = Prospect::factory()->create();
     $softDeleteProspect->delete();
 
-    $response = get('/api/utilization-metrics');
+    $response = get(route('utilization-metrics'));
 
     $data = $response->json('data');
 
@@ -262,7 +262,7 @@ it('checks the API returns Campaigns', function () {
     $softDeleteCampaign = Campaign::factory()->create();
     $softDeleteCampaign->delete();
 
-    $response = get('/api/utilization-metrics');
+    $response = get(route('utilization-metrics'));
 
     $data = $response->json('data');
 
@@ -281,7 +281,7 @@ it('checks the API returns Journey Steps Executed', function () {
 
     CampaignAction::factory()->count($randomRecords)->successfulExecution()->create();
 
-    $response = get('/api/utilization-metrics');
+    $response = get(route('utilization-metrics'));
 
     $data = $response->json('data');
 
@@ -298,7 +298,7 @@ it('checks the API returns Tasks', function () {
     $softDeleteTask = Task::factory()->create();
     $softDeleteTask->delete();
 
-    $response = get('/api/utilization-metrics');
+    $response = get(route('utilization-metrics'));
 
     $data = $response->json('data');
 
@@ -315,7 +315,7 @@ it('checks the API returns Alerts', function () {
     $softDeleteAlert = Alert::factory()->create();
     $softDeleteAlert->delete();
 
-    $response = get('/api/utilization-metrics');
+    $response = get(route('utilization-metrics'));
 
     $data = $response->json('data');
 
@@ -332,7 +332,7 @@ it('checks the API returns Segments', function () {
     $softDeleteSegment = Segment::factory()->create();
     $softDeleteSegment->delete();
 
-    $response = get('/api/utilization-metrics');
+    $response = get(route('utilization-metrics'));
 
     $data = $response->json('data');
 
@@ -349,7 +349,7 @@ it('checks the API returns Resource Hub Articles', function () {
     $softDeleteResourceHubArticle = ResourceHubArticle::factory()->create();
     $softDeleteResourceHubArticle->delete();
 
-    $response = get('/api/utilization-metrics');
+    $response = get(route('utilization-metrics'));
 
     $data = $response->json('data');
 
@@ -366,7 +366,7 @@ it('checks the API returns Events Created', function () {
     $softDeleteEvent = Event::factory()->create();
     $softDeleteEvent->delete();
 
-    $response = get('/api/utilization-metrics');
+    $response = get(route('utilization-metrics'));
 
     $data = $response->json('data');
 
@@ -380,7 +380,7 @@ it('checks the API returns Forms Created', function () {
 
     Form::factory()->count($randomRecords)->create();
 
-    $response = get('/api/utilization-metrics');
+    $response = get(route('utilization-metrics'));
 
     $data = $response->json('data');
 
@@ -394,7 +394,7 @@ it('checks the API returns Forms Submitted', function () {
 
     FormSubmission::factory()->count($randomRecords)->create();
 
-    $response = get('/api/utilization-metrics');
+    $response = get(route('utilization-metrics'));
 
     $data = $response->json('data');
 
@@ -410,7 +410,7 @@ it('checks the API returns Surveys Created', function () {
 
     Survey::factory()->count($randomRecords)->create();
 
-    $response = get('/api/utilization-metrics');
+    $response = get(route('utilization-metrics'));
 
     $data = $response->json('data');
 
@@ -420,13 +420,11 @@ it('checks the API returns Surveys Created', function () {
 });
 
 it('checks the API returns Surveys Submitted', function () {
-    SurveySubmission::truncate();
-
     $randomRecords = random_int(1, 10);
 
     SurveySubmission::factory()->count($randomRecords)->create();
 
-    $response = get('/api/utilization-metrics');
+    $response = get(route('utilization-metrics'));
 
     $data = $response->json('data');
 

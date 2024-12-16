@@ -68,19 +68,13 @@ class UtilizationMetricsApiController extends Controller
             return response()->json([
                 'data' => [
                     'users' => User::count(),
-                    'ai_users' => User::whereHas('licenses', function ($query) {
-                        $query->where('type', LicenseType::ConversationalAi);
-                    })->count(),
+                    'ai_users' => User::whereRelation('licenses', 'type', LicenseType::ConversationalAi)->count(),
                     'ai_exchanges' => TrackedEventCount::where('type', TrackedEventType::AiExchange)->value('count'),
                     'saved_ai_chats' => AiThread::whereNotNull('name')->whereNotNUll('saved_at')->count(),
                     'saved_prompts' => Prompt::count(),
                     'prompts_inserted' => PromptUse::count(),
-                    'retention_crm_users' => User::whereHas('licenses', function ($query) {
-                        $query->where('type', LicenseType::RetentionCrm);
-                    })->count(),
-                    'recruitment_crm_users' => User::whereHas('licenses', function ($query) {
-                        $query->where('type', LicenseType::RecruitmentCrm);
-                    })->count(),
+                    'retention_crm_users' => User::whereRelation('licenses', 'type', LicenseType::RetentionCrm)->count(),
+                    'recruitment_crm_users' => User::whereRelation('licenses', 'type', LicenseType::RecruitmentCrm)->count(),
                     'student_records' => Student::count(),
                     'prospect_records' => Prospect::count(),
                     'campaigns' => Campaign::count(),
