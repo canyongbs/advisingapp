@@ -44,6 +44,7 @@ use AdvisingApp\Engagement\Observers\EngagementObserver;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
@@ -59,6 +60,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -130,6 +132,16 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     public function engagementDeliverable(): HasOne
     {
         return $this->hasOne(EngagementDeliverable::class);
+    }
+
+    public function outboundDeliverable(): MorphMany
+    {
+        return $this->morphMany(OutboundDeliverable::class, 'related');
+    }
+
+    public function latestOutboundDeliverable(): MorphOne
+    {
+        return $this->morphOne(OutboundDeliverable::class, 'related')->latestOfMany();
     }
 
     public function deliverable(): HasOne
