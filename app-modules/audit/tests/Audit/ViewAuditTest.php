@@ -41,8 +41,7 @@ use function Pest\Laravel\actingAs;
 
 use AdvisingApp\Audit\Filament\Resources\AuditResource;
 
-// TODO: Write tests for ViewAudit page
-test('The correct details are displayed on the ViewAudit page', function () {});
+test('The correct details are displayed on the ViewAudit page', function () {})->todo();
 
 // Permission Tests
 
