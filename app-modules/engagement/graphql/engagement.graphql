@@ -5,8 +5,6 @@ type Engagement @model(class: "AdvisingApp\\Engagement\\Models\\Engagement") {
 
     body: String @method(name: "getBody")
 
-    scheduled: Boolean!
-
     deliver_at: DateTime!
 
     created_at: DateTime
@@ -37,8 +35,6 @@ input EngagementsQuery {
     subject: String
 
     body: JSON
-
-    scheduled: Boolean
 
     deliver_at: DateTime
 
@@ -75,9 +71,7 @@ extend type Query {
 input CreateEngagementSMSInput {
     body: String! @rules(apply: ["required", "string", "max:320"])
 
-    scheduled: Boolean
-
-    deliver_at: DateTime @rules(apply: ["required_if:scheduled,true"])
+    deliver_at: DateTime @rules(apply: ["required"])
 
     recipient_id: EducatableId!
         @rules(
@@ -96,9 +90,7 @@ input CreateEngagementEmailInput {
 
     body: String! @rules(apply: ["required", "string", "max:65535"])
 
-    scheduled: Boolean
-
-    deliver_at: DateTime @rules(apply: ["required_if:scheduled,true"])
+    deliver_at: DateTime @rules(apply: ["required"])
 
     recipient_id: EducatableId!
         @rules(
@@ -115,9 +107,7 @@ input CreateEngagementEmailInput {
 input UpdateEngagementSMSInput {
     body: String @rules(apply: ["string", "max:320"])
 
-    scheduled: Boolean
-
-    deliver_at: DateTime @rules(apply: ["required_if:scheduled,true"])
+    deliver_at: DateTime @rules(apply: ["required"])
 }
 
 input UpdateEngagementEmailInput {
@@ -125,9 +115,7 @@ input UpdateEngagementEmailInput {
 
     body: String @rules(apply: ["string", "max:65535"])
 
-    scheduled: Boolean
-
-    deliver_at: DateTime @rules(apply: ["required_if:scheduled,true"])
+    deliver_at: DateTime @rules(apply: ["required"])
 }
 
 type EngagementMutations {

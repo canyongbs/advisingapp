@@ -141,21 +141,3 @@ it('will not dispatch a job to send an engagement that is part of a batch', func
     // This engagement should not be picked up and delivered
     Queue::assertPushed(EngagementEmailChannelDelivery::class, 0);
 });
-
-it('will only dispatch a job to send an engagement that is scheduled', function () {
-    Queue::fake(EngagementEmailChannelDelivery::class);
-    Notification::fake();
-
-    // Given that we have an engagement that is not scheduled but should otherwise be delivered
-    Engagement::factory()
-        ->onDemand()
-        ->deliverNow()
-        ->has(EngagementDeliverable::factory()->email()->count(1))
-        ->create();
-
-    // When our job runs to pick up engagements
-    DeliverEngagements::dispatchSync();
-
-    // This engagement should not be picked up and delivered
-    Queue::assertPushed(EngagementEmailChannelDelivery::class, 0);
-});
