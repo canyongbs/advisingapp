@@ -38,10 +38,10 @@ namespace AdvisingApp\Engagement\Filament\Actions;
 
 use AdvisingApp\Engagement\Actions\CreateEngagementBatch;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementBatchCreationData;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Filament\Actions\Contracts\HasBulkEngagementAction;
 use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Fields\EngagementSmsBodyField;
 use AdvisingApp\Engagement\Models\EmailTemplate;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
@@ -72,9 +72,9 @@ class BulkEngagementAction
                     ->schema([
                         Select::make('delivery_method')
                             ->label('How would you like to send this engagement?')
-                            ->options(EngagementDeliveryMethod::getOptions())
-                            ->default(EngagementDeliveryMethod::Email->value)
-                            ->disableOptionWhen(fn (string $value): bool => EngagementDeliveryMethod::tryFrom($value)?->getCaseDisabled())
+                            ->options(NotificationChannel::getEngagementOptions())
+                            ->default(NotificationChannel::Email->value)
+                            ->disableOptionWhen(fn (string $value): bool => NotificationChannel::tryFrom($value)?->getCaseDisabled())
                             ->selectablePlaceholder(false)
                             ->live(),
                     ]),
@@ -85,7 +85,7 @@ class BulkEngagementAction
                             ->autofocus()
                             ->required()
                             ->placeholder(__('Subject'))
-                            ->hidden(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
+                            ->hidden(fn (Get $get): bool => $get('delivery_method') === NotificationChannel::Sms->value)
                             ->columnSpanFull(),
                         TiptapEditor::make('body')
                             ->disk('s3-public')
@@ -151,7 +151,7 @@ class BulkEngagementAction
                                         $component->generateImageUrls($template->content),
                                     );
                                 }))
-                            ->hidden(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
+                            ->hidden(fn (Get $get): bool => $get('delivery_method') === NotificationChannel::Sms->value)
                             ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
                             ->columnSpanFull(),
                         EngagementSmsBodyField::make(context: 'create'),
