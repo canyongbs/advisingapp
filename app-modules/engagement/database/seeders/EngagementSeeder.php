@@ -47,7 +47,7 @@ class EngagementSeeder extends Seeder
         // For Student - deliver now
         Engagement::factory()
             ->count(10)
-            ->has(EngagementDeliverable::factory()->deliverySuccessful()->count(1), 'engagementDeliverable')
+            ->has(EngagementDeliverable::factory()->deliverySuccessful()->count(1), 'deliverable')
             ->forStudent()
             ->deliverNow()
             ->create();
@@ -55,7 +55,7 @@ class EngagementSeeder extends Seeder
         // For Student - deliver later
         Engagement::factory()
             ->count(7)
-            ->has(EngagementDeliverable::factory()->count(1), 'engagementDeliverable')
+            ->has(EngagementDeliverable::factory()->count(1), 'deliverable')
             ->forStudent()
             ->deliverLater()
             ->create();
@@ -63,7 +63,7 @@ class EngagementSeeder extends Seeder
         // For Prospect - deliver now
         Engagement::factory()
             ->count(10)
-            ->has(EngagementDeliverable::factory()->deliverySuccessful()->count(1), 'engagementDeliverable')
+            ->has(EngagementDeliverable::factory()->deliverySuccessful()->count(1), 'deliverable')
             ->forProspect()
             ->deliverNow()
             ->create();
@@ -71,7 +71,7 @@ class EngagementSeeder extends Seeder
         // For Prospect - deliver later
         Engagement::factory()
             ->count(7)
-            ->has(EngagementDeliverable::factory()->count(1), 'engagementDeliverable')
+            ->has(EngagementDeliverable::factory()->count(1), 'deliverable')
             ->forProspect()
             ->deliverLater()
             ->create();
