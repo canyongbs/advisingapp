@@ -56,7 +56,6 @@ class DeliverEngagements implements ShouldQueue
     {
         Engagement::query()
             ->where('deliver_at', '<=', now())
-            ->isAwaitingDelivery()
             ->isNotPartOfABatch()
             ->hasNotBeenDelivered()
             ->cursor()

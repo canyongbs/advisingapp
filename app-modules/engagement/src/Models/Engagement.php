@@ -64,7 +64,6 @@ use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
-use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Engagement\Actions\GenerateEngagementBodyContent;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
@@ -164,13 +163,6 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     public function batch(): BelongsTo
     {
         return $this->engagementBatch();
-    }
-
-    public function scopeIsAwaitingDelivery(Builder $query): void
-    {
-        $query->whereHas('engagementDeliverable', function (Builder $query) {
-            $query->where('delivery_status', NotificationDeliveryStatus::Awaiting);
-        });
     }
 
     public function scopeHasBeenDelivered(Builder $query): void
