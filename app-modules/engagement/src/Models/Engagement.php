@@ -55,6 +55,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Timeline\Timelines\EngagementTimeline;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use AdvisingApp\Engagement\Observers\EngagementObserver;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
@@ -91,12 +92,14 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         'recipient_type',
         'scheduled',
         'deliver_at',
+        'channel',
     ];
 
     protected $casts = [
         'body' => 'array',
         'deliver_at' => 'datetime',
         'scheduled' => 'boolean',
+        'channel' => NotificationChannel::class,
     ];
 
     // TODO Consider changing this relationship if we ever needed to timeline something else where records might be shared across entities
