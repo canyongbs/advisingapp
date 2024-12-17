@@ -38,7 +38,6 @@ namespace AdvisingApp\Engagement\Providers;
 
 use AdvisingApp\Engagement\Actions\DeliverEngagements;
 use AdvisingApp\Engagement\EngagementPlugin;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Models\Engagement;
@@ -47,6 +46,7 @@ use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Engagement\Models\SmsTemplate;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use App\Concerns\ImplementsGraphQL;
 use App\Models\Scopes\SetupIsComplete;
 use App\Models\Tenant;
@@ -100,7 +100,7 @@ class EngagementServiceProvider extends ServiceProvider
     {
         $this->discoverSchema(__DIR__ . '/../../graphql/*');
 
-        $this->registerEnum(EngagementDeliveryMethod::class);
+        $this->registerEnum(NotificationChannel::class);
         $this->registerEnum(EngagementDeliveryStatus::class);
     }
 }

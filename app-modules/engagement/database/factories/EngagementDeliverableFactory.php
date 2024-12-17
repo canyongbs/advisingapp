@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Engagement\Database\Factories;
 
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use Database\Factories\Concerns\RandomizeState;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -54,7 +54,7 @@ class EngagementDeliverableFactory extends Factory
     {
         return [
             'engagement_id' => Engagement::factory(),
-            'channel' => fake()->randomElement(EngagementDeliveryMethod::cases()),
+            'channel' => fake()->randomElement(NotificationChannel::cases()),
             'delivery_status' => EngagementDeliveryStatus::Awaiting,
             'delivered_at' => null,
             'delivery_response' => null,
@@ -64,14 +64,14 @@ class EngagementDeliverableFactory extends Factory
     public function email(): self
     {
         return $this->state([
-            'channel' => EngagementDeliveryMethod::Email,
+            'channel' => NotificationChannel::Email,
         ]);
     }
 
     public function sms(): self
     {
         return $this->state([
-            'channel' => EngagementDeliveryMethod::Sms,
+            'channel' => NotificationChannel::Sms,
         ]);
     }
 

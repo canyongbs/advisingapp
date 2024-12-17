@@ -40,8 +40,8 @@ use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Engagement\Drivers\Contracts\EngagementDeliverableDriver;
 use AdvisingApp\Engagement\Drivers\EngagementEmailDriver;
 use AdvisingApp\Engagement\Drivers\EngagementSmsDriver;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use App\Models\BaseModel;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -67,7 +67,7 @@ class EngagementDeliverable extends BaseModel implements Auditable
     ];
 
     protected $casts = [
-        'channel' => EngagementDeliveryMethod::class,
+        'channel' => NotificationChannel::class,
         'delivery_status' => EngagementDeliveryStatus::class,
         'delivered_at' => 'datetime',
         'last_delivery_attempt' => 'datetime',
@@ -108,8 +108,8 @@ class EngagementDeliverable extends BaseModel implements Auditable
     public function driver(): EngagementDeliverableDriver
     {
         return match ($this->channel) {
-            EngagementDeliveryMethod::Email => new EngagementEmailDriver($this),
-            EngagementDeliveryMethod::Sms => new EngagementSmsDriver($this),
+            NotificationChannel::Email => new EngagementEmailDriver($this),
+            NotificationChannel::Sms => new EngagementSmsDriver($this),
         };
     }
 }
