@@ -56,8 +56,8 @@ class DeliverEngagements implements ShouldQueue
     {
         Engagement::query()
             ->where('deliver_at', '<=', now())
+            ->whereDoesntHave('outboundDeliverables')
             ->isNotPartOfABatch()
-            ->hasNotBeenDelivered()
             ->cursor()
             ->each(function (Engagement $engagement) {
                 $engagement->deliverable->driver()->deliver();

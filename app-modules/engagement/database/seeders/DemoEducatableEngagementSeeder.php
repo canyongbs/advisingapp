@@ -60,7 +60,7 @@ class DemoEducatableEngagementSeeder extends Seeder
 
         Engagement::factory()
             ->count(7)
-            ->has(EngagementDeliverable::factory()->deliverySuccessful()->count(1), 'engagementDeliverable')
+            ->has(EngagementDeliverable::factory()->deliverySuccessful()->count(1), 'deliverable')
             ->for($sampleStudentForDemo, 'recipient')
             ->create();
 
@@ -77,7 +77,7 @@ class DemoEducatableEngagementSeeder extends Seeder
 
         Engagement::factory()
             ->count(7)
-            ->has(EngagementDeliverable::factory()->deliverySuccessful()->count(1), 'engagementDeliverable')
+            ->has(EngagementDeliverable::factory()->deliverySuccessful()->count(1), 'deliverable')
             ->for($sampleProspectForDemo, 'recipient')
             ->create();
     }

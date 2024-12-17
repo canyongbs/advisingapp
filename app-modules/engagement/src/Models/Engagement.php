@@ -126,12 +126,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         return $this->user();
     }
 
-    public function engagementDeliverable(): HasOne
-    {
-        return $this->hasOne(EngagementDeliverable::class);
-    }
-
-    public function outboundDeliverable(): MorphMany
+    public function outboundDeliverables(): MorphMany
     {
         return $this->morphMany(OutboundDeliverable::class, 'related');
     }
@@ -143,7 +138,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
 
     public function deliverable(): HasOne
     {
-        return $this->engagementDeliverable();
+        return $this->hasOne(EngagementDeliverable::class);
     }
 
     public function recipient(): MorphTo
@@ -165,20 +160,6 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         return $this->engagementBatch();
     }
 
-    public function scopeHasBeenDelivered(Builder $query): void
-    {
-        $query->whereDoesntHave('engagementDeliverable', function (Builder $query) {
-            $query->whereNull('delivered_at');
-        });
-    }
-
-    public function scopeHasNotBeenDelivered(Builder $query): void
-    {
-        $query->whereDoesntHave('engagementDeliverable', function (Builder $query) {
-            $query->whereNotNull('delivered_at');
-        });
-    }
-
     public function scopeIsNotPartOfABatch(Builder $query): void
     {
         $query->whereNull('engagement_batch_id');
@@ -196,7 +177,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
 
     public function hasBeenDelivered(): bool
     {
-        return $this->deliverable->hasBeenDelivered();
+        return $this->latestOutboundDeliverable->hasBeenDelivered();
     }
 
     public function getSubscribable(): ?Subscribable
