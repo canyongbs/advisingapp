@@ -34,67 +34,48 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Jobs;
+namespace AdvisingApp\Report\Filament\Widgets;
 
-use Throwable;
-use Illuminate\Bus\Queueable;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use AdvisingApp\Report\Models\TrackedEvent;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Support\Number;
+use AdvisingApp\Task\Models\Task;
+use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\Report\Enums\TrackedEventType;
-use AdvisingApp\Report\Models\TrackedEventCount;
+use Illuminate\Support\Facades\Cache;
+use AdvisingApp\Segment\Models\Segment;
+use AdvisingApp\Segment\Enums\SegmentModel;
+use App\Models\User;
+use Carbon\Carbon;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 
-class RecordTrackedEvent implements ShouldQueue
+class UsersStats extends StatsOverviewReportWidget
 {
-  use Dispatchable;
-  use InteractsWithQueue;
-  use Queueable;
-  use SerializesModels;
+  protected int | string | array $columnSpan = [
+    'sm' => 2,
+    'md' => 4,
+    'lg' => 4,
+  ];
 
-  public function __construct(
-    public TrackedEventType $type,
-    public Carbon $occurredAt,
-  ) {}
-
-  public function handle(): void
+  protected function getStats(): array
   {
-    try {
-      DB::beginTransaction();
-
-      TrackedEvent::create([
-        'type' => $this->type,
-        'occurred_at' => $this->occurredAt,
-      ]);
-
-      DB::table('tracked_event_counts')
-        ->upsert(
-          [
-            [
-              'id' => (new TrackedEventCount())->newUniqueId(),
-              'type' => $this->type,
-              'count' => 1,
-              'last_occurred_at' => $this->occurredAt,
-              'updated_at' => now(),
-              'created_at' => now(),
-            ],
-          ],
-          ['type', 'related_to_id', 'related_to_type'],
-          [
-            'count' => DB::raw('tracked_event_counts.count + 1'),
-            'last_occurred_at' => DB::raw("GREATEST(tracked_event_counts.last_occurred_at, '{$this->occurredAt}')"),
-            'updated_at' => now(),
-          ]
-        );
-
-      DB::commit();
-    } catch (Throwable $e) {
-      DB::rollBack();
-
-      throw $e;
-    }
+    return [
+      Stat::make('Total Users', Number::abbreviate(
+        Cache::tags([$this->cacheTag])->remember('total-users-count', now()->addHours(24), function (): int {
+          return User::count();
+        }),
+        maxPrecision: 2,
+      )),
+      Stat::make('New Users', Number::abbreviate(
+        Cache::tags([$this->cacheTag])->remember('new-users-count', now()->addHours(24), function (): int {
+          return User::where('created_at', '>=', Carbon::now()->subDays(30))->count();
+        }),
+        maxPrecision: 2,
+      )),
+      Stat::make('Unique Logins', Number::abbreviate(
+        Cache::tags([$this->cacheTag])->remember('unique-logins-count', now()->addHours(24), function (): int {
+          return User::whereRelation('logins', 'type', TrackedEventType::UserLogin)->count();
+        }),
+        maxPrecision: 2,
+      )),
+    ];
   }
 }

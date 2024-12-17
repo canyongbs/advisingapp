@@ -42,22 +42,21 @@ use Illuminate\Auth\Events\Login;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordUserTrackedEvent;
 
-class CheckLoggedInUser
+class CheckUserTrackedEvent
 {
-    /**
-     * Handle the event.
-     */
-    public function handle(Login $event): void
-    {
-        $user = $event->user;
+  /**
+   * Handle the event.
+   */
+  public function handle(Login $event): void
+  {
+    $user = $event->user;
 
-        if ($user instanceof User) {
-            Log::debug('listener');
-            dispatch(new RecordUserTrackedEvent(
-                type: TrackedEventType::UserLogin,
-                occurredAt: now(),
-                user: $user,
-            ));
-        }
+    if ($user instanceof User) {
+      dispatch(new RecordUserTrackedEvent(
+        type: TrackedEventType::UserLogin,
+        occurredAt: now(),
+        user: $user,
+      ));
     }
+  }
 }
