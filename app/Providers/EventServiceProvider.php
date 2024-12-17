@@ -43,18 +43,18 @@ use App\Listeners\SetSentryUser;
 use AdvisingApp\Report\Listeners\CheckLoggedInUser;
 use App\Multitenancy\Listeners\SetSentryTenantTag;
 use Spatie\LaravelSettings\Events\LoadingSettings;
-use AdvisingApp\Report\Listeners\CheckUserTrackedEvent;
 use Illuminate\Console\Events\ScheduledTaskStarting;
 use App\Multitenancy\Listeners\RemoveSentryTenantTag;
 use Illuminate\Auth\Events\Authenticated;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Auth\Events\Registered;
+use AdvisingApp\Report\Listeners\CheckUserTrackedEvent;
+use Spatie\Multitenancy\Events\ForgotCurrentTenantEvent;
+use Spatie\Multitenancy\Events\MakingTenantCurrentEvent;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use OwenIt\Auditing\Events\Auditing;
-use Spatie\Multitenancy\Events\ForgotCurrentTenantEvent;
-use Spatie\Multitenancy\Events\MakingTenantCurrentEvent;
 
 class EventServiceProvider extends ServiceProvider
 {
