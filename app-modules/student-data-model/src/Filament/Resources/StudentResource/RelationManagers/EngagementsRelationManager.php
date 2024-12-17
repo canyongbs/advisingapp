@@ -37,7 +37,6 @@
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
 use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
 use AdvisingApp\Engagement\Filament\ManageRelatedRecords\ManageRelatedEngagementRecords\Actions\DraftWithAiAction;
 use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Fields\EngagementSmsBodyField;
 use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
@@ -45,6 +44,7 @@ use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Timeline\Models\Timeline;
@@ -112,9 +112,9 @@ class EngagementsRelationManager extends RelationManager
                                 return $timelineable->getDeliveryMethod()->getLabel();
                             }),
                         IconEntry::make('deliverable.delivery_status')
-                            ->getStateUsing(fn (Timeline $record): EngagementDeliveryStatus => $record->timelineable->deliverable->delivery_status)
-                            ->icon(fn (EngagementDeliveryStatus $state): string => $state->getIconClass())
-                            ->color(fn (EngagementDeliveryStatus $state): string => $state->getColor())
+                            ->getStateUsing(fn (Timeline $record): NotificationDeliveryStatus => $record->timelineable->deliverable->delivery_status)
+                            ->icon(fn (NotificationDeliveryStatus $state): string => $state->getIconClass())
+                            ->color(fn (NotificationDeliveryStatus $state): string => $state->getColor())
                             ->label('Status'),
                         TextEntry::make('deliverable.delivered_at')
                             ->getStateUsing(fn (Timeline $record): string => $record->timelineable->deliverable->delivered_at)
