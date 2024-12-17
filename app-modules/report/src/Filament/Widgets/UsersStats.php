@@ -36,46 +36,42 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use Illuminate\Support\Number;
-use AdvisingApp\Task\Models\Task;
-use AdvisingApp\Alert\Models\Alert;
-use AdvisingApp\Report\Enums\TrackedEventType;
-use Illuminate\Support\Facades\Cache;
-use AdvisingApp\Segment\Models\Segment;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use App\Models\User;
 use Carbon\Carbon;
+use App\Models\User;
+use Illuminate\Support\Number;
+use Illuminate\Support\Facades\Cache;
+use AdvisingApp\Report\Enums\TrackedEventType;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class UsersStats extends StatsOverviewReportWidget
 {
-  protected int | string | array $columnSpan = [
-    'sm' => 2,
-    'md' => 4,
-    'lg' => 4,
-  ];
-
-  protected function getStats(): array
-  {
-    return [
-      Stat::make('Total Users', Number::abbreviate(
-        Cache::tags([$this->cacheTag])->remember('total-users-count', now()->addHours(24), function (): int {
-          return User::count();
-        }),
-        maxPrecision: 2,
-      )),
-      Stat::make('New Users', Number::abbreviate(
-        Cache::tags([$this->cacheTag])->remember('new-users-count', now()->addHours(24), function (): int {
-          return User::where('created_at', '>=', Carbon::now()->subDays(30))->count();
-        }),
-        maxPrecision: 2,
-      )),
-      Stat::make('Unique Logins', Number::abbreviate(
-        Cache::tags([$this->cacheTag])->remember('unique-logins-count', now()->addHours(24), function (): int {
-          return User::whereRelation('logins', 'type', TrackedEventType::UserLogin)->count();
-        }),
-        maxPrecision: 2,
-      )),
+    protected int | string | array $columnSpan = [
+        'sm' => 2,
+        'md' => 4,
+        'lg' => 4,
     ];
-  }
+
+    protected function getStats(): array
+    {
+        return [
+            Stat::make('Total Users', Number::abbreviate(
+                Cache::tags([$this->cacheTag])->remember('total-users-count', now()->addHours(24), function (): int {
+                    return User::count();
+                }),
+                maxPrecision: 2,
+            )),
+            Stat::make('New Users', Number::abbreviate(
+                Cache::tags([$this->cacheTag])->remember('new-users-count', now()->addHours(24), function (): int {
+                    return User::where('created_at', '>=', Carbon::now()->subDays(30))->count();
+                }),
+                maxPrecision: 2,
+            )),
+            Stat::make('Unique Logins', Number::abbreviate(
+                Cache::tags([$this->cacheTag])->remember('unique-logins-count', now()->addHours(24), function (): int {
+                    return User::whereRelation('logins', 'type', TrackedEventType::UserLogin)->count();
+                }),
+                maxPrecision: 2,
+            )),
+        ];
+    }
 }
