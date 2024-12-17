@@ -37,8 +37,8 @@
 namespace AdvisingApp\Engagement\Actions;
 
 use App\Features\TwilioDemoAutoReplyModeFeature;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
+use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Engagement\Notifications\EngagementSmsNotification;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementResponseData;
 
@@ -50,7 +50,7 @@ class EngagementSmsChannelDelivery extends QueuedEngagementDelivery
 
         if (! $recipient->canRecieveSms()) {
             $this->deliverable->update([
-                'delivery_status' => EngagementDeliveryStatus::DispatchFailed,
+                'delivery_status' => NotificationDeliveryStatus::DispatchFailed,
                 'last_delivery_attempt' => now(),
                 'delivery_response' => 'System determined recipient cannot receive SMS messages.',
             ]);

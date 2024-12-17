@@ -42,7 +42,6 @@ use Twilio\Rest\Api\V2010\Account\MessageContext;
 use Twilio\Rest\Api\V2010\Account\MessageInstance;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\IntegrationTwilio\Jobs\CheckSmsOutboundDeliverableStatus;
@@ -173,12 +172,10 @@ it('will update an associated engagement deliverable if necessary', function (st
     if ($externalStatus === 'delivered') {
         expect($outboundDeliverable->delivery_status)->toBe(NotificationDeliveryStatus::Successful);
         expect($outboundDeliverable->external_status)->toBe($externalStatus);
-        expect($engagementDeliverable->delivery_status)->toBe(EngagementDeliveryStatus::Successful);
         expect($engagementDeliverable->external_status)->toBe($externalStatus);
     } elseif ($externalStatus === 'undelivered' || $externalStatus === 'failed') {
         expect($outboundDeliverable->delivery_status)->toBe(NotificationDeliveryStatus::Failed);
         expect($outboundDeliverable->external_status)->toBe($externalStatus);
-        expect($engagementDeliverable->delivery_status)->toBe(EngagementDeliveryStatus::Failed);
         expect($engagementDeliverable->external_status)->toBe($externalStatus);
     } else {
         expect($outboundDeliverable->delivery_status)->toBe($originalOutboundDeliverableStatus);

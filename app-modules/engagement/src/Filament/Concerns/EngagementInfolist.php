@@ -41,7 +41,7 @@ use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
+use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 
 // TODO Re-use this trait across other places where infolist is rendered
 trait EngagementInfolist
@@ -67,8 +67,8 @@ trait EngagementInfolist
                     TextEntry::make('deliverable.channel')
                         ->label('Channel'),
                     IconEntry::make('deliverable.delivery_status')
-                        ->icon(fn (EngagementDeliveryStatus $state): string => $state->getIconClass())
-                        ->color(fn (EngagementDeliveryStatus $state): string => $state->getColor())
+                        ->icon(fn (NotificationDeliveryStatus $state): string => $state->getIconClass())
+                        ->color(fn (NotificationDeliveryStatus $state): string => $state->getColor())
                         ->label('Status'),
                     TextEntry::make('deliverable.delivered_at')
                         ->label('Delivered At')

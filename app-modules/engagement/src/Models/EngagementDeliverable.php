@@ -44,7 +44,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Engagement\Drivers\EngagementSmsDriver;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Engagement\Drivers\EngagementEmailDriver;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
+use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Engagement\Drivers\Contracts\EngagementDeliverableDriver;
 
@@ -68,7 +68,7 @@ class EngagementDeliverable extends BaseModel implements Auditable
 
     protected $casts = [
         'channel' => NotificationChannel::class,
-        'delivery_status' => EngagementDeliveryStatus::class,
+        'delivery_status' => NotificationDeliveryStatus::class,
         'delivered_at' => 'datetime',
         'last_delivery_attempt' => 'datetime',
     ];
@@ -87,7 +87,7 @@ class EngagementDeliverable extends BaseModel implements Auditable
     {
         if (! $this->hasBeenDelivered()) {
             $this->update([
-                'delivery_status' => EngagementDeliveryStatus::Successful,
+                'delivery_status' => NotificationDeliveryStatus::Successful,
                 'delivered_at' => $at ?? now(),
                 'last_delivery_attempt' => $at ?? now(),
             ]);
@@ -98,7 +98,7 @@ class EngagementDeliverable extends BaseModel implements Auditable
     {
         if (! $this->hasBeenDelivered()) {
             $this->update([
-                'delivery_status' => EngagementDeliveryStatus::Failed,
+                'delivery_status' => NotificationDeliveryStatus::Failed,
                 'last_delivery_attempt' => now(),
                 'delivery_response' => $reason,
             ]);

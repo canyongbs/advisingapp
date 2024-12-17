@@ -60,11 +60,11 @@ use AdvisingApp\Notification\Enums\NotificationChannel;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use AdvisingApp\Engagement\Observers\EngagementObserver;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
+use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Engagement\Actions\GenerateEngagementBodyContent;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
@@ -169,7 +169,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     public function scopeIsAwaitingDelivery(Builder $query): void
     {
         $query->whereHas('engagementDeliverable', function (Builder $query) {
-            $query->where('delivery_status', EngagementDeliveryStatus::Awaiting);
+            $query->where('delivery_status', NotificationDeliveryStatus::Awaiting);
         });
     }
 

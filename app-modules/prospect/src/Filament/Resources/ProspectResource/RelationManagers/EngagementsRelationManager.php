@@ -50,7 +50,7 @@ use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\TextEntry;
 use AdvisingApp\Engagement\Models\Engagement;
 use Filament\Resources\RelationManagers\RelationManager;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
+use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
 use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Pages\CreateEngagement;
 
@@ -90,8 +90,8 @@ class EngagementsRelationManager extends RelationManager
                             ->label('Channel'),
                         TextEntry::make('deliverable.delivery_status')
                             ->iconPosition(IconPosition::After)
-                            ->icon(fn (EngagementDeliveryStatus $state): string => $state->getIconClass())
-                            ->iconColor(fn (EngagementDeliveryStatus $state): string => $state->getColor())
+                            ->icon(fn (NotificationDeliveryStatus $state): string => $state->getIconClass())
+                            ->iconColor(fn (NotificationDeliveryStatus $state): string => $state->getColor())
                             ->label('Status')
                             ->formatStateUsing(fn (Engagement $engagement): string => $engagement->deliverable->delivery_status->getMessage()),
                         TextEntry::make('deliverable.delivered_at')

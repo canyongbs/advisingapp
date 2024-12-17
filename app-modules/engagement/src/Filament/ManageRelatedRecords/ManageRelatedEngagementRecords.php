@@ -68,8 +68,8 @@ use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use Filament\Resources\RelationManagers\RelationManager;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
 use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
+use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
 use Filament\Infolists\Components\Fieldset as InfolistFieldset;
 use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Fields\EngagementSmsBodyField;
@@ -116,9 +116,9 @@ class ManageRelatedEngagementRecords extends ManageRelatedRecords
                                 return $timelineable->getDeliveryMethod()->getLabel();
                             }),
                         IconEntry::make('deliverable.delivery_status')
-                            ->getStateUsing(fn (Timeline $record): EngagementDeliveryStatus => $record->timelineable->deliverable->delivery_status)
-                            ->icon(fn (EngagementDeliveryStatus $state): string => $state->getIconClass())
-                            ->color(fn (EngagementDeliveryStatus $state): string => $state->getColor())
+                            ->getStateUsing(fn (Timeline $record): NotificationDeliveryStatus => $record->timelineable->deliverable->delivery_status)
+                            ->icon(fn (NotificationDeliveryStatus $state): string => $state->getIconClass())
+                            ->color(fn (NotificationDeliveryStatus $state): string => $state->getColor())
                             ->label('Status'),
                         TextEntry::make('deliverable.delivered_at')
                             ->getStateUsing(fn (Timeline $record): string => $record->timelineable->deliverable->delivered_at)

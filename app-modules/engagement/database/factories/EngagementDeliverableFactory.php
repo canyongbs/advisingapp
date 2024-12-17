@@ -41,7 +41,7 @@ use Database\Factories\Concerns\RandomizeState;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
+use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 
 /**
  * @extends Factory<EngagementDeliverable>
@@ -55,7 +55,7 @@ class EngagementDeliverableFactory extends Factory
         return [
             'engagement_id' => Engagement::factory(),
             'channel' => fake()->randomElement(NotificationChannel::cases()),
-            'delivery_status' => EngagementDeliveryStatus::Awaiting,
+            'delivery_status' => NotificationDeliveryStatus::Awaiting,
             'delivered_at' => null,
             'delivery_response' => null,
         ];
@@ -78,7 +78,7 @@ class EngagementDeliverableFactory extends Factory
     public function deliveryAwaiting(): self
     {
         return $this->state([
-            'delivery_status' => EngagementDeliveryStatus::Awaiting,
+            'delivery_status' => NotificationDeliveryStatus::Awaiting,
             'delivered_at' => null,
             'delivery_response' => null,
         ]);
@@ -87,7 +87,7 @@ class EngagementDeliverableFactory extends Factory
     public function deliverySuccessful(): self
     {
         return $this->state([
-            'delivery_status' => EngagementDeliveryStatus::Successful,
+            'delivery_status' => NotificationDeliveryStatus::Successful,
             'delivered_at' => now(),
         ]);
     }
@@ -95,7 +95,7 @@ class EngagementDeliverableFactory extends Factory
     public function deliveryFailed(): self
     {
         return $this->state([
-            'delivery_status' => EngagementDeliveryStatus::Failed,
+            'delivery_status' => NotificationDeliveryStatus::Failed,
             'delivered_at' => null,
             'delivery_response' => 'Something went wrong when trying to deliver the engagement.',
         ]);

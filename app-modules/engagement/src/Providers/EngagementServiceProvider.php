@@ -53,7 +53,7 @@ use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Engagement\Actions\DeliverEngagements;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
+use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 
 class EngagementServiceProvider extends ServiceProvider
 {
@@ -101,6 +101,6 @@ class EngagementServiceProvider extends ServiceProvider
         $this->discoverSchema(__DIR__ . '/../../graphql/*');
 
         $this->registerEnum(NotificationChannel::class);
-        $this->registerEnum(EngagementDeliveryStatus::class);
+        $this->registerEnum(NotificationDeliveryStatus::class);
     }
 }
