@@ -36,19 +36,83 @@
 
 namespace AdvisingApp\Notification\Enums;
 
+use App\Enums\Integration;
+use Filament\Support\Contracts\HasIcon;
+use App\Exceptions\IntegrationException;
 use Filament\Support\Contracts\HasLabel;
 
-enum NotificationChannel: string implements HasLabel
+enum NotificationChannel: string implements HasLabel, HasIcon
 {
     case Email = 'email';
     case Sms = 'sms';
     case Database = 'database';
 
-    public function getLabel(): ?string
+    public function getLabel(): string
     {
         return match ($this) {
-            static::Sms => 'SMS',
+            static::Sms => 'Text',
             default => $this->name,
+        };
+    }
+
+    public function getIcon(): ?string
+    {
+        return match ($this) {
+            NotificationChannel::Email => 'heroicon-o-envelope',
+            NotificationChannel::Sms => 'heroicon-o-chat-bubble-bottom-center-text',
+            NotificationChannel::Database => 'heroicon-o-bell',
+        };
+    }
+
+    public function getDefault(): NotificationChannel
+    {
+        return NotificationChannel::Email;
+    }
+
+    public function getCaseDisabled(): bool
+    {
+        return $this->caseDependsOnIntegration()?->isOff() ?? false;
+    }
+
+    public function getLabelForIntegrationState(): string
+    {
+        $integration = $this->caseDependsOnIntegration();
+
+        return $this->getCaseDisabled() && $integration
+            ? sprintf(
+                '%s (%s)',
+                $this->getLabel(),
+                IntegrationException::make($integration)->getMessage()
+            )
+            : $this->getLabel();
+    }
+
+    public static function getEngagementOptions(): array
+    {
+        return [
+            NotificationChannel::Email->value => NotificationChannel::Email->getLabelForIntegrationState(),
+            NotificationChannel::Sms->value => NotificationChannel::Sms->getLabelForIntegrationState(),
+        ];
+    }
+
+    public static function parse(string | self | null $value): ?self
+    {
+        if (blank($value)) {
+            return null;
+        }
+
+        if ($value instanceof self) {
+            return $value;
+        }
+
+        return self::tryFrom($value);
+    }
+
+    private function caseDependsOnIntegration(): ?Integration
+    {
+        return match ($this) {
+            NotificationChannel::Sms => Integration::Twilio,
+            default => null,
         };
     }
 }
