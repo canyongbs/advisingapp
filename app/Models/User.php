@@ -376,12 +376,12 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
 
     public function logins(): MorphMany
     {
-        return $this->morphMany(TrackedEvent::class, 'relatedTo');
+        return $this->morphMany(TrackedEvent::class, 'related_to');
     }
 
     public function loginsCount(): MorphMany
     {
-        return $this->morphMany(TrackedEventCount::class, 'relatedTo');
+        return $this->morphMany(TrackedEventCount::class, 'related_to');
     }
 
     public function canAccessPanel(Panel $panel): bool

@@ -72,15 +72,14 @@ class RecordUserTrackedEvent implements ShouldQueue
     public function handle(): void
     {
         try {
-            Log::debug('handle');
             DB::beginTransaction();
 
-            TrackedEvent::create([
-                'type' => $this->type,
-                'occurred_at' => $this->occurredAt,
-                'related_to_id' => $this->user->id,
-                'related_to_type' => $this->user,
-            ]);
+            $this->user
+                ->logins()
+                ->create([
+                    'type' => $this->type,
+                    'occurred_at' => $this->occurredAt,
+                ]);
 
             DB::table('tracked_event_counts')
                 ->upsert(
@@ -93,7 +92,7 @@ class RecordUserTrackedEvent implements ShouldQueue
                             'updated_at' => now(),
                             'created_at' => now(),
                             'related_to_id' => $this->user->id,
-                            'related_to_type' => $this->user,
+                            'related_to_type' => $this->user->getMorphClass()
                         ],
                     ],
                     ['type', 'related_to_id', 'related_to_type'],
@@ -104,11 +103,10 @@ class RecordUserTrackedEvent implements ShouldQueue
                     ]
                 );
 
-            $this->user
-                ->update([
-                    'first_login_at' => $this->user->first_login_at ?? now(),
-                    'last_logged_in_at' => now(),
-                ]);
+            $this->user->update([
+                'first_login_at' => $this->user->first_login_at ?? now(),
+                'last_logged_in_at' => now(),
+            ]);
 
             DB::commit();
         } catch (Throwable $e) {
