@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Report\Jobs;
 
-use Log;
 use Throwable;
 use Carbon\Carbon;
 use App\Models\User;
@@ -44,7 +43,6 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
-use AdvisingApp\Report\Models\TrackedEvent;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use AdvisingApp\Report\Enums\TrackedEventType;
@@ -92,7 +90,7 @@ class RecordUserTrackedEvent implements ShouldQueue
                             'updated_at' => now(),
                             'created_at' => now(),
                             'related_to_id' => $this->user->id,
-                            'related_to_type' => $this->user->getMorphClass()
+                            'related_to_type' => $this->user->getMorphClass(),
                         ],
                     ],
                     ['type', 'related_to_id', 'related_to_type'],
