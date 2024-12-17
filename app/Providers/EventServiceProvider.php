@@ -43,6 +43,7 @@ use App\Listeners\SetSentryUser;
 use AdvisingApp\Report\Listeners\CheckLoggedInUser;
 use App\Multitenancy\Listeners\SetSentryTenantTag;
 use Spatie\LaravelSettings\Events\LoadingSettings;
+use AdvisingApp\Report\Listeners\CheckUserTrackedEvent;
 use Illuminate\Console\Events\ScheduledTaskStarting;
 use App\Multitenancy\Listeners\RemoveSentryTenantTag;
 use Illuminate\Auth\Events\Authenticated;
@@ -77,7 +78,7 @@ class EventServiceProvider extends ServiceProvider
         ],
         Login::class => [
             SetSentryUser::class,
-            CheckLoggedInUser::class,
+            CheckUserTrackedEvent::class,
         ],
         Authenticated::class => [
             SetSentryUser::class,
