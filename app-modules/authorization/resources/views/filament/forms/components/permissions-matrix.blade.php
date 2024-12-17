@@ -40,36 +40,36 @@
 <div
     class="grid gap-3"
     x-data="{
-    
+
         state: $wire.$entangle(@js($getStatePath())),
-    
+
         availablePermissions: @js($getAvailablePermissions()),
-    
+
         visiblePermissionGroups: [],
-    
+
         init: function() {
             this.visiblePermissionGroups = Object.keys(this.availablePermissions)
                 .filter((group) => Object.values(this.availablePermissions[group]).some(
                     (permission) => this.state.includes(permission)
                 ))
         },
-    
+
         addGroup: function(group) {
             this.visiblePermissionGroups.push(group)
         },
-    
+
         removeGroup: function(group) {
             this.deselectPermissionsInGroup(group)
-    
+
             this.visiblePermissionGroups = this.visiblePermissionGroups.filter((visibleGroup) => visibleGroup !== group)
         },
-    
+
         deselectPermissionsInGroup: function(group) {
             const permissions = Object.values(this.availablePermissions[group])
-    
+
             this.state = this.state.filter((permission) => !permissions.includes(permission))
         },
-    
+
     }"
     wire:key="{{ $getKey() }}.{{ $getGuard() }}"
 >
@@ -157,7 +157,6 @@
                                 :x-show="'Object.keys(availablePermissions[group]).includes(' .
                                     Js::from($operation) .
                                     ')'"
-                                @class(['disabled:checked:ring-1 disabled:checked:bg-gray-400'])
                             />
 
                             <span class="xl:sr-only">
