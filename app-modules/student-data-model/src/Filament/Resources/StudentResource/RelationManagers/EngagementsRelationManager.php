@@ -67,8 +67,8 @@ use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Engagement\Models\EngagementResponse;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use Filament\Resources\RelationManagers\RelationManager;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
 use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
 use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
@@ -140,9 +140,9 @@ class EngagementsRelationManager extends RelationManager
         return $form->schema([
             Select::make('delivery_method')
                 ->label('What would you like to send?')
-                ->options(EngagementDeliveryMethod::getOptions())
-                ->default(EngagementDeliveryMethod::Email->value)
-                ->disableOptionWhen(fn (string $value): bool => (($value == (EngagementDeliveryMethod::Sms->value) && ! $this->getOwnerRecord()->canRecieveSms())) || EngagementDeliveryMethod::tryFrom($value)?->getCaseDisabled())
+                ->options(NotificationChannel::getEngagementOptions())
+                ->default(NotificationChannel::Email->value)
+                ->disableOptionWhen(fn (string $value): bool => (($value == (NotificationChannel::Sms->value) && ! $this->getOwnerRecord()->canRecieveSms())) || NotificationChannel::tryFrom($value)?->getCaseDisabled())
                 ->selectablePlaceholder(false)
                 ->live(),
             Fieldset::make('Content')
@@ -151,7 +151,7 @@ class EngagementsRelationManager extends RelationManager
                         ->autofocus()
                         ->required()
                         ->placeholder(__('Subject'))
-                        ->hidden(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
+                        ->hidden(fn (Get $get): bool => $get('delivery_method') === NotificationChannel::Sms->value)
                         ->columnSpanFull(),
                     TiptapEditor::make('body')
                         ->disk('s3-public')
@@ -217,7 +217,7 @@ class EngagementsRelationManager extends RelationManager
                                     $component->generateImageUrls($template->content),
                                 );
                             }))
-                        ->hidden(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
+                        ->hidden(fn (Get $get): bool => $get('delivery_method') === NotificationChannel::Sms->value)
                         ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
                         ->columnSpanFull(),
                     EngagementSmsBodyField::make(context: 'create', form: $form),
@@ -283,7 +283,7 @@ class EngagementsRelationManager extends RelationManager
                     })
                     ->createAnother(false)
                     ->action(function (CreateAction $action, array $data, Form $form) {
-                        if ($data['delivery_method'] == EngagementDeliveryMethod::Sms->value && ! $this->getOwnerRecord()->canRecieveSms()) {
+                        if ($data['delivery_method'] == NotificationChannel::Sms->value && ! $this->getOwnerRecord()->canRecieveSms()) {
                             Notification::make()
                                 ->title('Student does not have mobile number.')
                                 ->danger()
@@ -327,11 +327,11 @@ class EngagementsRelationManager extends RelationManager
                     )
                     ->visible($canAccessEngagements && $canAccessEngagementResponses),
                 SelectFilter::make('type')
-                    ->options(EngagementDeliveryMethod::class)
+                    ->options(NotificationChannel::class)
                     ->modifyQueryUsing(
                         fn (Builder $query, array $data) => $query
                             ->when(
-                                $data['value'] === EngagementDeliveryMethod::Email->value,
+                                $data['value'] === NotificationChannel::Email->value,
                                 fn (Builder $query) => $query
                                     ->whereHasMorph(
                                         'timelineable',
@@ -342,7 +342,7 @@ class EngagementsRelationManager extends RelationManager
                                     )
                             )
                             ->when(
-                                $data['value'] === EngagementDeliveryMethod::Sms->value,
+                                $data['value'] === NotificationChannel::Sms->value,
                                 fn (Builder $query) => $query->whereHasMorph(
                                     'timelineable',
                                     [Engagement::class, EngagementResponse::class],
