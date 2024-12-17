@@ -41,7 +41,6 @@ use AdvisingApp\Engagement\Actions\GenerateEngagementBodyContent;
 use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
 use AdvisingApp\Engagement\Observers\EngagementObserver;
 use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
@@ -164,13 +163,6 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     public function batch(): BelongsTo
     {
         return $this->engagementBatch();
-    }
-
-    public function scopeIsAwaitingDelivery(Builder $query): void
-    {
-        $query->whereHas('engagementDeliverable', function (Builder $query) {
-            $query->where('delivery_status', NotificationDeliveryStatus::Awaiting);
-        });
     }
 
     public function scopeHasBeenDelivered(Builder $query): void
