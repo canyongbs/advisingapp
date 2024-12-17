@@ -42,6 +42,7 @@ use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
 use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
 use AdvisingApp\Engagement\Observers\EngagementObserver;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -91,12 +92,14 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         'recipient_type',
         'scheduled',
         'deliver_at',
+        'channel',
     ];
 
     protected $casts = [
         'body' => 'array',
         'deliver_at' => 'datetime',
         'scheduled' => 'boolean',
+        'channel' => NotificationChannel::class,
     ];
 
     // TODO Consider changing this relationship if we ever needed to timeline something else where records might be shared across entities
