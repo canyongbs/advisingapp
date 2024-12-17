@@ -55,16 +55,9 @@ class ViewStudent extends ViewRecord
 
     protected static ?string $navigationLabel = 'View';
 
-    public string $name = 'student';
-
     public function profile(Infolist $infolist): Infolist
     {
         return StudentProfileInfolist::configure($infolist);
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
     }
 
     protected function getHeaderActions(): array

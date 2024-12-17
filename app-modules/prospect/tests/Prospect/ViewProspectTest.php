@@ -146,7 +146,7 @@ test('convert prospect to student', function () {
         ->create();
 
     livewire(ViewProspect::class, [
-        'record' => $prospect->getRouteKey(),
+        'record' => $prospect->getKey(),
     ])
         ->callAction(
             ConvertToStudent::class,

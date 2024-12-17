@@ -61,16 +61,9 @@ class ViewProspect extends ViewRecord
 
     protected static string $view = 'prospect::filament.resources.prospect-resource.view-prospect';
 
-    public string $name = 'prospect';
-
     public function profile(Infolist $infolist): Infolist
     {
         return ProspectProfileInfolist::configure($infolist);
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
     }
 
     protected function getHeaderActions(): array
