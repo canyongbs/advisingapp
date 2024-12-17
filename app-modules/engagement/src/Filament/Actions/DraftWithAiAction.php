@@ -51,8 +51,8 @@ use AdvisingApp\Ai\Actions\CompletePrompt;
 use Filament\Forms\Components\Actions\Action;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Ai\Exceptions\MessageResponseException;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 
 class DraftWithAiAction extends Action
 {
@@ -94,7 +94,7 @@ class DraftWithAiAction extends Action
                     HTML)
                     ->join(', ', ' and ');
 
-                if ($get('delivery_method') === EngagementDeliveryMethod::Sms->value) {
+                if ($get('delivery_method') === NotificationChannel::Sms->value) {
                     try {
                         $content = app(CompletePrompt::class)->execute(
                             aiModel: $model,

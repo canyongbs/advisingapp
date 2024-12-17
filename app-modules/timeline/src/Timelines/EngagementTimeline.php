@@ -39,7 +39,7 @@ namespace AdvisingApp\Timeline\Timelines;
 use Filament\Actions\ViewAction;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Timeline\Models\CustomTimeline;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Components\EngagementViewAction;
 
 // TODO Decide where these belong - might want to keep these in the context of the original module
@@ -52,8 +52,8 @@ class EngagementTimeline extends CustomTimeline
     public function icon(): string
     {
         return match ($this->engagement->getDeliveryMethod()) {
-            EngagementDeliveryMethod::Email => 'heroicon-o-envelope',
-            EngagementDeliveryMethod::Sms => 'heroicon-o-chat-bubble-left',
+            NotificationChannel::Email => 'heroicon-o-envelope',
+            NotificationChannel::Sms => 'heroicon-o-chat-bubble-left',
             default => 'heroicon-o-arrow-small-right',
         };
     }

@@ -39,9 +39,9 @@ namespace AdvisingApp\Engagement\GraphQL\Mutations;
 use Illuminate\Support\Stringable;
 use Nuwave\Lighthouse\Execution\ResolveInfo;
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 use AdvisingApp\Engagement\Actions\GenerateTipTapBodyJson;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
 
 class UpdateEmail
@@ -67,7 +67,7 @@ class UpdateEmail
 
         $engagement->deliverable->delete();
 
-        app(CreateEngagementDeliverable::class)(engagement: $engagement, deliveryMethod: EngagementDeliveryMethod::Email->value);
+        app(CreateEngagementDeliverable::class)(engagement: $engagement, deliveryMethod: NotificationChannel::Email->value);
 
         return $engagement->refresh();
     }

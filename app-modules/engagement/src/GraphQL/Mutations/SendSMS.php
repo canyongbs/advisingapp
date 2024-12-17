@@ -43,9 +43,9 @@ use Nuwave\Lighthouse\Execution\ResolveInfo;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 use AdvisingApp\Engagement\Actions\GenerateTipTapBodyJson;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
 
 class SendSMS
@@ -74,7 +74,7 @@ class SendSMS
 
         $engagement = Engagement::create($args);
 
-        app(CreateEngagementDeliverable::class)(engagement: $engagement, deliveryMethod: EngagementDeliveryMethod::Sms->value);
+        app(CreateEngagementDeliverable::class)(engagement: $engagement, deliveryMethod: NotificationChannel::Sms->value);
 
         return $engagement->refresh();
     }

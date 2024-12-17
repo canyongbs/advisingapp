@@ -39,7 +39,7 @@ namespace AdvisingApp\Engagement\Notifications;
 use App\Models\User;
 use App\Models\NotificationSetting;
 use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\DatabaseNotification;
@@ -71,8 +71,8 @@ class EngagementFailedNotification extends BaseNotification implements EmailNoti
     public function toDatabase(object $notifiable): array
     {
         $engagementType = match ($this->engagement->deliverable->channel) {
-            EngagementDeliveryMethod::Email => 'Email',
-            EngagementDeliveryMethod::Sms => 'SMS',
+            NotificationChannel::Email => 'Email',
+            NotificationChannel::Sms => 'SMS',
             default => ''
         };
 

@@ -51,7 +51,7 @@ use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Campaign\Filament\Blocks\Actions\DraftCampaignEngagementBlockWithAi;
 
 class EngagementBatchEmailBlock extends CampaignActionBlock
@@ -69,7 +69,7 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
     {
         return [
             Hidden::make($fieldPrefix . 'delivery_method')
-                ->default(EngagementDeliveryMethod::Email->value),
+                ->default(NotificationChannel::Email->value),
             TextInput::make($fieldPrefix . 'subject')
                 ->columnSpanFull()
                 ->placeholder(__('Subject'))
@@ -142,7 +142,7 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
                 ->columnSpanFull(),
             Actions::make([
                 DraftCampaignEngagementBlockWithAi::make()
-                    ->deliveryMethod(EngagementDeliveryMethod::Email)
+                    ->deliveryMethod(NotificationChannel::Email)
                     ->fieldPrefix($fieldPrefix)
                     ->mergeTags($mergeTags),
             ]),

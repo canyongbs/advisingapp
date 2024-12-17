@@ -58,7 +58,6 @@ use AdvisingApp\Timeline\Timelines\EngagementTimeline;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use AdvisingApp\Engagement\Observers\EngagementObserver;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
@@ -251,9 +250,9 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         };
     }
 
-    public function getDeliveryMethod(): EngagementDeliveryMethod
+    public function getDeliveryMethod(): NotificationChannel
     {
-        return $this->deliverable->channel;
+        return $this->channel;
     }
 
     protected static function booted(): void

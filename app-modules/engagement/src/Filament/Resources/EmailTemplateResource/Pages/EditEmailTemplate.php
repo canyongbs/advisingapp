@@ -43,7 +43,7 @@ use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource;
 use AdvisingApp\Engagement\Filament\Resources\Actions\DraftTemplateWithAiAction;
 
@@ -77,7 +77,7 @@ class EditEmailTemplate extends EditRecord
                     ->required(),
                 Actions::make([
                     DraftTemplateWithAiAction::make()
-                        ->deliveryMethod(EngagementDeliveryMethod::Email)
+                        ->deliveryMethod(NotificationChannel::Email)
                         ->mergeTags($mergeTags),
                 ]),
             ]);

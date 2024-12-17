@@ -48,8 +48,8 @@ use Illuminate\Database\Query\Expression;
 use AdvisingApp\Engagement\Models\Engagement;
 use Filament\Forms\Components\Actions\Action;
 use AdvisingApp\Engagement\Models\SmsTemplate;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use Filament\Resources\RelationManagers\RelationManager;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 
 class EngagementSmsBodyField
 {
@@ -121,10 +121,10 @@ class EngagementSmsBodyField
                     $component->state($template->content);
                 }))
             ->when($context === 'create', function (Field $field) {
-                $field->hidden(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Email->value);
+                $field->hidden(fn (Get $get): bool => $get('delivery_method') === NotificationChannel::Email->value);
             })
             ->when($context === 'edit', function (Field $field) {
-                $field->visible(fn (Engagement $record): bool => $record->deliverable->channel === EngagementDeliveryMethod::Sms);
+                $field->visible(fn (Engagement $record): bool => $record->deliverable->channel === NotificationChannel::Sms);
             })
             ->helperText('You can insert student information by typing {{ and choosing a tag to insert.')
             ->columnSpanFull();

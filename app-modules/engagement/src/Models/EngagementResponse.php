@@ -47,8 +47,8 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
 use AdvisingApp\Timeline\Timelines\EngagementResponseTimeline;
@@ -109,9 +109,8 @@ class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeli
         $query->where('sender_type', resolve(Prospect::class)->getMorphClass());
     }
 
-    public function getDeliveryMethod(): EngagementDeliveryMethod
+    public function getDeliveryMethod(): NotificationChannel
     {
-        //Only sms for now
-        return EngagementDeliveryMethod::Sms;
+        return NotificationChannel::Sms;
     }
 }

@@ -59,7 +59,7 @@ use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Forms\Components\EducatableSelect;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Engagement\Filament\Resources\EngagementResource;
 use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Fields\EngagementSmsBodyField;
 
@@ -76,7 +76,7 @@ class EditEngagement extends EditRecord
                     ->required()
                     ->placeholder(__('Subject'))
                     ->columnSpanFull()
-                    ->visible(fn (Engagement $record): bool => $record->deliverable->channel === EngagementDeliveryMethod::Email),
+                    ->visible(fn (Engagement $record): bool => $record->deliverable->channel === NotificationChannel::Email),
                 TiptapEditor::make('body')
                     ->disk('s3-public')
                     ->label('Body')
@@ -137,7 +137,7 @@ class EditEngagement extends EditRecord
                                 $component->generateImageUrls($template->content),
                             );
                         }))
-                    ->visible(fn (Engagement $record): bool => $record->deliverable->channel === EngagementDeliveryMethod::Email)
+                    ->visible(fn (Engagement $record): bool => $record->deliverable->channel === NotificationChannel::Email)
                     ->showMergeTagsInBlocksPanel($form->getLivewire() instanceof Page)
                     ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
                     ->columnSpanFull(),

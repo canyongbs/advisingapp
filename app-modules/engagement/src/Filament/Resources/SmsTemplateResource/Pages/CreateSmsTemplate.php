@@ -43,7 +43,7 @@ use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource;
 use AdvisingApp\Engagement\Filament\Resources\Actions\DraftTemplateWithAiAction;
 
@@ -78,7 +78,7 @@ class CreateSmsTemplate extends CreateRecord
                     ->required(),
                 Actions::make([
                     DraftTemplateWithAiAction::make()
-                        ->deliveryMethod(EngagementDeliveryMethod::Sms)
+                        ->deliveryMethod(NotificationChannel::Sms)
                         ->mergeTags($mergeTags),
                 ]),
             ]);

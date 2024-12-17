@@ -40,9 +40,9 @@ use App\Enums\Integration;
 use App\Exceptions\IntegrationException;
 use Nuwave\Lighthouse\Execution\ResolveInfo;
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 use AdvisingApp\Engagement\Actions\GenerateTipTapBodyJson;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
 
 class UpdateSMS
@@ -72,7 +72,7 @@ class UpdateSMS
 
         $engagement->deliverable->delete();
 
-        app(CreateEngagementDeliverable::class)(engagement: $engagement, deliveryMethod: EngagementDeliveryMethod::Sms->value);
+        app(CreateEngagementDeliverable::class)(engagement: $engagement, deliveryMethod: NotificationChannel::Sms->value);
 
         return $engagement->refresh();
     }

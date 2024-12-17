@@ -41,7 +41,7 @@ use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Campaign\Filament\Blocks\Actions\DraftCampaignEngagementBlockWithAi;
 use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Fields\EngagementSmsBodyField;
 
@@ -60,11 +60,11 @@ class EngagementBatchSmsBlock extends CampaignActionBlock
     {
         return [
             Hidden::make($fieldPrefix . 'delivery_method')
-                ->default(EngagementDeliveryMethod::Sms->value),
+                ->default(NotificationChannel::Sms->value),
             EngagementSmsBodyField::make(context: 'create', fieldPrefix: $fieldPrefix),
             Actions::make([
                 DraftCampaignEngagementBlockWithAi::make()
-                    ->deliveryMethod(EngagementDeliveryMethod::Sms)
+                    ->deliveryMethod(NotificationChannel::Sms)
                     ->mergeTags([
                         'student first name',
                         'student last name',
