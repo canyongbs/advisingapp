@@ -91,7 +91,6 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         'body',
         'recipient_id',
         'recipient_type',
-        'scheduled',
         'deliver_at',
         'channel',
     ];
@@ -99,7 +98,6 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     protected $casts = [
         'body' => 'array',
         'deliver_at' => 'datetime',
-        'scheduled' => 'boolean',
         'channel' => NotificationChannel::class,
     ];
 
@@ -166,11 +164,6 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     public function batch(): BelongsTo
     {
         return $this->engagementBatch();
-    }
-
-    public function scopeIsScheduled(Builder $query): void
-    {
-        $query->where('scheduled', true);
     }
 
     public function scopeIsAwaitingDelivery(Builder $query): void
