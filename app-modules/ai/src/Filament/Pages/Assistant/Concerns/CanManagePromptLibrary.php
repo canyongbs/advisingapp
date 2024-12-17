@@ -176,7 +176,8 @@ trait CanManagePromptLibrary
                     return;
                 }
 
-                $this->dispatch('set-chat-message', content: $prompt->prompt);
+                $this->dispatch('send-prompt', prompt: $prompt->getKey());
+                //$this->dispatch('set-chat-message', content: $prompt->prompt);
 
                 $use = $prompt->uses()->make();
                 $use->user()->associate(auth()->user());

@@ -481,6 +481,7 @@
                     userId: @js(auth()->user()->id),
                     threadId: @js($this->thread->id)
                 })"
+                x-on:send-prompt.window="await sendMessage($event.detail.prompt)"
                 wire:key="thread{{ $this->thread->id }}"
             >
                 <div class="flex items-center justify-between gap-3">
@@ -629,7 +630,7 @@
                     </div>
                 </div>
                 @if (!$this->thread->assistant->archived_at)
-                    <form x-on:submit.prevent="sendMessage">
+                    <form x-on:submit.prevent="sendMessage()">
                         <div
                             class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
                             @if ($this->thread->assistant->model->getService()->supportsMessageFileUploads())

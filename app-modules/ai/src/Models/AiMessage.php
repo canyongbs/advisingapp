@@ -65,10 +65,12 @@ class AiMessage extends BaseModel
         'request',
         'thread_id',
         'user_id',
+        'is_secret',
     ];
 
     protected $casts = [
         'request' => 'encrypted:array',
+        'is_secret' => 'boolean',
     ];
 
     protected $table = 'ai_messages';

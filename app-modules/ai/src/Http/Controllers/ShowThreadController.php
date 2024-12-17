@@ -50,6 +50,7 @@ class ShowThreadController
     {
         return response()->json([
             'messages' => $thread->messages()
+                ->where('is_secret', false)
                 ->oldest('id')
                 ->get()
                 ->toBase()

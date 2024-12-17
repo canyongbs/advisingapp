@@ -78,7 +78,7 @@ class CloneAiThread implements ShouldQueue
             $threadReplica->user()->associate($this->recipient);
             $threadReplica->save();
 
-            foreach ($this->thread->messages as $message) {
+            foreach ($this->thread->messages()->where('is_secret', false)->get() as $message) {
                 $messageReplica = $message->replicate(['id', 'message_id']);
                 $messageReplica->thread()->associate($threadReplica);
                 $messageReplica->save();

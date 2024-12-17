@@ -36,7 +36,9 @@
 
 namespace AdvisingApp\Ai\Http\Controllers;
 
+use Log;
 use Throwable;
+use AdvisingApp\Ai\Models\Prompt;
 use Illuminate\Http\JsonResponse;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Actions\SendMessage;
@@ -53,7 +55,7 @@ class SendMessageController
             return response()->stream(
                 app(SendMessage::class)(
                     $thread,
-                    $request->validated('content'),
+                    $request->validated('prompt_id') ? Prompt::find($request->validated('prompt_id')) : $request->validated('content'),
                     $request->validated('files'),
                 ),
                 headers: [
@@ -63,15 +65,20 @@ class SendMessageController
                 ],
             );
         } catch (AiAssistantArchivedException $exception) {
+            Log::debug($exception::class);
+
             return response()->json([
                 'message' => $exception->getMessage(),
             ], 404);
         } catch (AiThreadLockedException $exception) {
+            Log::debug($exception::class);
+
             return response()->json([
                 'isThreadLocked' => true,
                 'message' => $exception->getMessage(),
             ], 503);
         } catch (Throwable $exception) {
+            Log::debug($exception::class);
             report($exception);
 
             return response()->json([
