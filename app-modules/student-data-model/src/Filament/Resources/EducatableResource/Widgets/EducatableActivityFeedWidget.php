@@ -37,10 +37,10 @@
 namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets;
 
 use AdvisingApp\Alert\Histories\AlertHistory;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -94,7 +94,7 @@ class EducatableActivityFeedWidget extends Widget implements HasActions, HasForm
         return match ($record->getMorphClass()) {
             'interaction' => 'Interaction Created',
             'engagement' => match ($record->getDeliveryMethod()) {
-                EngagementDeliveryMethod::Sms => 'SMS Sent',
+                NotificationChannel::Sms => 'SMS Sent',
                 default => 'Email Sent',
             },
             'engagement_response' => $record->sender?->full_name,
@@ -108,7 +108,7 @@ class EducatableActivityFeedWidget extends Widget implements HasActions, HasForm
         return (string) str(match ($record->getMorphClass()) {
             'interaction' => "Subject: {$record->subject}",
             'engagement' => match ($record->getDeliveryMethod()) {
-                EngagementDeliveryMethod::Sms => "Preview: {$record->getBodyMarkdown()}",
+                NotificationChannel::Sms => "Preview: {$record->getBodyMarkdown()}",
                 default => "Subject: {$record->subject}",
             },
             'engagement_response' => "Preview: {$record->content}",

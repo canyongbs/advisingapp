@@ -40,7 +40,6 @@ use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Pages\CreateEng
 use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Pages\EditEngagement;
 use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Pages\ListEngagements;
 use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Pages\ViewEngagement;
-use AdvisingApp\Engagement\Filament\Resources\EngagementResource\RelationManagers\EngagementDeliverablesRelationManager;
 use AdvisingApp\Engagement\Models\Engagement;
 use Filament\Resources\Resource;
 
@@ -53,13 +52,6 @@ class EngagementResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-bottom-center-text';
 
     protected static bool $shouldRegisterNavigation = false;
-
-    public static function getRelations(): array
-    {
-        return [
-            EngagementDeliverablesRelationManager::class,
-        ];
-    }
 
     public static function getPages(): array
     {

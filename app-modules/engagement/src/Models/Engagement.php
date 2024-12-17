@@ -38,7 +38,6 @@ namespace AdvisingApp\Engagement\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Engagement\Actions\GenerateEngagementBodyContent;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
 use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
 use AdvisingApp\Engagement\Observers\EngagementObserver;
@@ -251,9 +250,9 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         };
     }
 
-    public function getDeliveryMethod(): EngagementDeliveryMethod
+    public function getDeliveryMethod(): NotificationChannel
     {
-        return $this->deliverable->channel;
+        return $this->channel;
     }
 
     protected static function booted(): void

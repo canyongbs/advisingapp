@@ -41,7 +41,7 @@ use AdvisingApp\Ai\Exceptions\MessageResponseException;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use App\Settings\LicenseSettings;
 use Closure;
 use Exception;
@@ -58,7 +58,7 @@ class DraftTemplateWithAiAction extends Action
 {
     protected array | Closure $mergeTags = [];
 
-    protected EngagementDeliveryMethod | Closure $deliveryMethod;
+    protected NotificationChannel | Closure $deliveryMethod;
 
     protected function setUp(): void
     {
@@ -94,7 +94,7 @@ class DraftTemplateWithAiAction extends Action
                     HTML)
                     ->join(', ', ' and ');
 
-                if ($this->getDeliveryMethod() === EngagementDeliveryMethod::Sms) {
+                if ($this->getDeliveryMethod() === NotificationChannel::Sms) {
                     try {
                         $content = app(CompletePrompt::class)->execute(
                             aiModel: $model,
@@ -185,14 +185,14 @@ class DraftTemplateWithAiAction extends Action
         return $this->evaluate($this->mergeTags);
     }
 
-    public function deliveryMethod(EngagementDeliveryMethod | Closure $method): static
+    public function deliveryMethod(NotificationChannel | Closure $method): static
     {
         $this->deliveryMethod = $method;
 
         return $this;
     }
 
-    public function getDeliveryMethod(): EngagementDeliveryMethod
+    public function getDeliveryMethod(): NotificationChannel
     {
         return $this->evaluate($this->deliveryMethod ?? throw new Exception('The [deliveryMethod()] must be set when using [' . static::class . '].'));
     }
