@@ -43,25 +43,25 @@ use Illuminate\Validation\Rule;
 
 class SendMessageRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
-    {
-        return $this->thread->user()->is(auth()->user());
-    }
+  /**
+   * Determine if the user is authorized to make this request.
+   */
+  public function authorize(): bool
+  {
+    return $this->thread->user()->is(auth()->user());
+  }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
-     */
-    public function rules(): array
-    {
-        return [
-            'content' => ['required_without:prompt_id', 'string', 'max:25000'],
-            'files' => ['array', 'max:1'],
-            'prompt_id' => ['nullable', 'uuid', Rule::exists(Prompt::class, 'id')],
-        ];
-    }
+  /**
+   * Get the validation rules that apply to the request.
+   *
+   * @return array<string, ValidationRule|array<mixed>|string>
+   */
+  public function rules(): array
+  {
+    return [
+      'content' => ['required_without:prompt_id', 'string', 'max:25000'],
+      'files' => ['array', 'max:1'],
+      'prompt_id' => ['nullable', 'uuid', Rule::exists(Prompt::class, 'id')],
+    ];
+  }
 }
