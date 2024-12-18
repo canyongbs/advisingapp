@@ -46,13 +46,14 @@ use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ConvertToStudent;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ProspectTagsAction;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\DisassociateStudent;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\Concerns\HasProspectHeader;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Schemas\ProspectProfileInfolist;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concerns\HasStudentHeader;
 
 class ViewProspect extends ViewRecord
 {
     use ProspectHolisticViewPage;
-    use HasStudentHeader;
+    use HasProspectHeader;
 
     protected static string $resource = ProspectResource::class;
 

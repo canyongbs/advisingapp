@@ -56,8 +56,6 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspectA
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectInteractions;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ProspectEngagementTimeline;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectSubscriptions;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectFormSubmissions;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectApplicationSubmissions;
 
 class ProspectResource extends Resource
 {
@@ -108,19 +106,11 @@ class ProspectResource extends Resource
             'create' => CreateProspect::route('/create'),
             'edit' => EditProspect::route('/{record}/edit'),
             'manage-alerts' => ManageProspectAlerts::route('/{record}/alerts'),
-            'manage-engagement' => ManageProspectEngagement::route('/{record}/engagement'),
-            'manage-files' => ManageProspectFiles::route('/{record}/files'),
-            'manage-form-submissions' => ManageProspectFormSubmissions::route('/{record}/form-submissions'),
-            'manage-application-submissions' => ManageProspectApplicationSubmissions::route('/{record}/application-submissions'),
-            'manage-interactions' => ManageProspectInteractions::route('/{record}/interactions'),
             'manage-subscriptions' => ManageProspectSubscriptions::route('/{record}/subscriptions'),
             'manage-tasks' => ManageProspectTasks::route('/{record}/tasks'),
             'view' => ViewProspect::route('/{record}'),
             'activity-feed' => ViewProspectActivityFeed::route('/{record}/activity'),
-            'timeline' => ProspectEngagementTimeline::route('/{record}/timeline'),
             'care-team' => ManageProspectCareTeam::route('/{record}/care-team'),
-            'case-management' => ProspectCaseManagement::route('/{record}/case-management'),
-            'events' => ManageProspectEvents::route('/{record}/events'),
         ];
     }
 }

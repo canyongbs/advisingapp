@@ -34,55 +34,54 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concerns;
+namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\Concerns;
 
 use App\Settings\DisplaySettings;
 use Illuminate\Contracts\View\View;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspect;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
 
-trait HasStudentHeader
+trait HasProspectHeader
 {
     public function getHeader(): ?View
     {
         $sisSettings = app(StudentInformationSystemSettings::class);
 
-        $student = $this->getRecord();
-        $studentName = filled($student->full_name)
-            ? $student->full_name
-            : "{$student->first} {$student->last}";
+        $prospect = $this->getRecord();
+        $prospectName = filled($prospect->full_name)
+            ? $prospect->full_name
+            : "{$prospect->first_name} {$prospect->last_name}";
 
         return view('student-data-model::filament.resources.educatable-resource.view-educatable.header', [
             'actions' => $this->getCachedHeaderActions(),
-            'backButtonLabel' => 'Back to student',
-            'backButtonUrl' => $this instanceof ViewStudent
+            'backButtonLabel' => 'Back to prospect',
+            'backButtonUrl' => $this instanceof ViewProspect
                 ? null
-                : StudentResource::getUrl('view', ['record' => $this->getRecord()]),
+                : ProspectResource::getUrl('view', ['record' => $this->getRecord()]),
             'badges' => [
-                ...($student->firstgen ? ['First Gen'] : []),
-                ...($student->dual ? ['Dual'] : []),
-                ...($student->sap ? ['SAP'] : []),
-                ...(filled($student->dfw) ? ["DFW {$student->dfw->format('m/d/Y')}"] : []),
+                ...($prospect->firstgen ? ['First Gen'] : []),
+                ...($prospect->dual ? ['Dual'] : []),
+                ...($prospect->sap ? ['SAP'] : []),
+                ...(filled($prospect->dfw) ? ["DFW {$prospect->dfw->format('m/d/Y')}"] : []),
             ],
             'breadcrumbs' => $this->getBreadcrumbs(),
             'details' => [
-                ['Student', 'heroicon-m-user'],
-                ...(filled($student->preferred) ? [["Goes by \"{$student->preferred}\"", 'heroicon-m-heart']] : []),
-                ...(filled($student->phone) ? [[$student->phone, 'heroicon-m-phone']] : []),
-                ...(filled($student->email) ? [[$student->email, 'heroicon-m-envelope']] : []),
-                ...(filled($student->hsgrad) ? [[$student->hsgrad, 'heroicon-m-building-library']] : []),
+                ['Prospect', 'heroicon-m-magnifying-glass-circle'],
+                ...(filled($prospect->preferred) ? [["Goes by \"{$prospect->preferred}\"", 'heroicon-m-heart']] : []),
+                ...(filled($prospect->phone) ? [[$prospect->phone, 'heroicon-m-phone']] : []),
+                ...(filled($prospect->email) ? [[$prospect->email, 'heroicon-m-envelope']] : []),
+                ...(filled($prospect->hsgrad) ? [[$prospect->hsgrad, 'heroicon-m-building-library']] : []),
             ],
             'hasSisSystem' => $sisSettings->is_enabled && $sisSettings->sis_system,
-            'educatable' => $student,
-            'educatableInitials' => str($studentName)
+            'educatable' => $prospect,
+            'educatableInitials' => str($prospectName)
                 ->trim()
                 ->explode(' ')
                 ->map(fn (string $segment): string => filled($segment) ? mb_substr($segment, 0, 1) : '')
                 ->join(' '),
-            'educatableName' => $studentName,
+            'educatableName' => $prospectName,
             'timezone' => app(DisplaySettings::class)->getTimezone(),
         ]);
     }
