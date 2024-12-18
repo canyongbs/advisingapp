@@ -50,51 +50,51 @@ use Throwable;
 
 class RecordTrackedEvent implements ShouldQueue
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
+  use Dispatchable;
+  use InteractsWithQueue;
+  use Queueable;
+  use SerializesModels;
 
-    public function __construct(
-        public TrackedEventType $type,
-        public Carbon $occurredAt,
-    ) {}
+  public function __construct(
+    public TrackedEventType $type,
+    public Carbon $occurredAt,
+  ) {}
 
-    public function handle(): void
-    {
-        try {
-            DB::beginTransaction();
+  public function handle(): void
+  {
+    try {
+      DB::beginTransaction();
 
-            TrackedEvent::create([
-                'type' => $this->type,
-                'occurred_at' => $this->occurredAt,
-            ]);
+      TrackedEvent::create([
+        'type' => $this->type,
+        'occurred_at' => $this->occurredAt,
+      ]);
 
-            DB::table('tracked_event_counts')
-                ->upsert(
-                    [
-                        [
-                            'id' => (new TrackedEventCount())->newUniqueId(),
-                            'type' => $this->type,
-                            'count' => 1,
-                            'last_occurred_at' => $this->occurredAt,
-                            'updated_at' => now(),
-                            'created_at' => now(),
-                        ],
-                    ],
-                    ['type', 'related_to_id', 'related_to_type'],
-                    [
-                        'count' => DB::raw('tracked_event_counts.count + 1'),
-                        'last_occurred_at' => DB::raw("GREATEST(tracked_event_counts.last_occurred_at, '{$this->occurredAt}')"),
-                        'updated_at' => now(),
-                    ]
-                );
+      DB::table('tracked_event_counts')
+        ->upsert(
+          [
+            [
+              'id' => (new TrackedEventCount())->newUniqueId(),
+              'type' => $this->type,
+              'count' => 1,
+              'last_occurred_at' => $this->occurredAt,
+              'updated_at' => now(),
+              'created_at' => now(),
+            ],
+          ],
+          ['type', 'related_to_id', 'related_to_type'],
+          [
+            'count' => DB::raw('tracked_event_counts.count + 1'),
+            'last_occurred_at' => DB::raw("GREATEST(tracked_event_counts.last_occurred_at, '{$this->occurredAt}')"),
+            'updated_at' => now(),
+          ]
+        );
 
-            DB::commit();
-        } catch (Throwable $e) {
-            DB::rollBack();
+      DB::commit();
+    } catch (Throwable $e) {
+      DB::rollBack();
 
-            throw $e;
-        }
+      throw $e;
     }
+  }
 }
