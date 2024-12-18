@@ -78,7 +78,8 @@ trait CanManagePromptLibrary
                     ])
                     ->live()
                     ->afterStateUpdated(fn (Set $set) => $set('promptId', null))
-                    ->grouped(),
+                    ->grouped()
+                    ->required(),
                 Select::make('typeId')
                     ->label('Filter by type')
                     ->hint('Optional')

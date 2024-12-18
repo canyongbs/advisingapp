@@ -143,7 +143,8 @@ it('can delete a record', function () use ($licenses, $permissions) {
         ->assertActionEnabled(DeleteAction::class)
         ->callAction(DeleteAction::class);
 
-    assertDatabaseCount(Prompt::class, 0);
+    expect($record->refresh()->deleted_at)
+        ->not->toBeNull();
 
     assertModelMissing($record);
 });
