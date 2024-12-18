@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Report\Abstract;
 
-use Filament\Pages\Dashboard;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use Filament\Pages\Dashboard;
 
 abstract class StudentReport extends Dashboard
 {

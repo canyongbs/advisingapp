@@ -34,16 +34,15 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
-
-use function Tests\asSuperAdmin;
-use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
-
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource;
 use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages\ViewProspectStatus;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\ProspectStatus;
+use App\Models\User;
+
+use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
 test('The correct details are displayed on the ViewProspectStatus page', function () {
     $prospectStatus = ProspectStatus::factory()->create();

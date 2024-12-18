@@ -37,16 +37,16 @@
 namespace App\Console\Commands;
 
 use App\Models\Tenant;
+use Barryvdh\LaravelIdeHelper\Console\ModelsCommand;
 use GraphQL\Type\Introspection;
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Console\PromptsForMissingInput;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\File;
+use Nuwave\Lighthouse\Console\ValidateSchemaCommand;
 use Nuwave\Lighthouse\Schema\AST\ASTCache;
 use Nuwave\Lighthouse\Schema\SchemaBuilder;
-use Barryvdh\LaravelIdeHelper\Console\ModelsCommand;
-use Nuwave\Lighthouse\Console\ValidateSchemaCommand;
-use Illuminate\Contracts\Console\PromptsForMissingInput;
 
 class ValidateGraphQL extends Command implements PromptsForMissingInput
 {

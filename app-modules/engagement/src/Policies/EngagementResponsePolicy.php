@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Engagement\Policies;
 
+use AdvisingApp\Engagement\Models\EngagementResponse;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
-use AdvisingApp\Engagement\Models\EngagementResponse;
 
 class EngagementResponsePolicy
 {

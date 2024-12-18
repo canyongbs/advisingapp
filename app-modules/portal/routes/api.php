@@ -34,19 +34,19 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Route;
-use App\Multitenancy\Http\Middleware\NeedsTenant;
-use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
-use AdvisingApp\Portal\Http\Middleware\EnsureResourceHubPortalIsEnabled;
-use AdvisingApp\Portal\Http\Controllers\ResourceHub\ResourceHubPortalController;
-use AdvisingApp\Portal\Http\Middleware\AuthenticateIfRequiredByPortalDefinition;
-use AdvisingApp\Portal\Http\Controllers\ResourceHub\ResourceHubPortalLogoutController;
-use AdvisingApp\Portal\Http\Controllers\ResourceHub\ResourceHubPortalSearchController;
 use AdvisingApp\Portal\Http\Controllers\ResourceHub\ResourceHubPortalArticleController;
-use AdvisingApp\Portal\Http\Controllers\ResourceHub\ResourceHubPortalCategoryController;
-use AdvisingApp\Portal\Http\Middleware\EnsureResourceHubPortalIsEmbeddableAndAuthorized;
 use AdvisingApp\Portal\Http\Controllers\ResourceHub\ResourceHubPortalAuthenticateController;
+use AdvisingApp\Portal\Http\Controllers\ResourceHub\ResourceHubPortalCategoryController;
+use AdvisingApp\Portal\Http\Controllers\ResourceHub\ResourceHubPortalController;
+use AdvisingApp\Portal\Http\Controllers\ResourceHub\ResourceHubPortalLogoutController;
 use AdvisingApp\Portal\Http\Controllers\ResourceHub\ResourceHubPortalRequestAuthenticationController;
+use AdvisingApp\Portal\Http\Controllers\ResourceHub\ResourceHubPortalSearchController;
+use AdvisingApp\Portal\Http\Middleware\AuthenticateIfRequiredByPortalDefinition;
+use AdvisingApp\Portal\Http\Middleware\EnsureResourceHubPortalIsEmbeddableAndAuthorized;
+use AdvisingApp\Portal\Http\Middleware\EnsureResourceHubPortalIsEnabled;
+use App\Multitenancy\Http\Middleware\NeedsTenant;
+use Illuminate\Support\Facades\Route;
+use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 Route::prefix('api')
     ->name('api.')

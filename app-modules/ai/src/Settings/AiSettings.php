@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Ai\Settings;
 
+use AdvisingApp\Ai\Enums\AiMaxTokens;
 use AdvisingApp\Ai\Enums\AiModel;
 use Spatie\LaravelSettings\Settings;
-use AdvisingApp\Ai\Enums\AiMaxTokens;
 
 class AiSettings extends Settings
 {

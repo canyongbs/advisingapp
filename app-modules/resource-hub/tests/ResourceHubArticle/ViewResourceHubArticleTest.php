@@ -34,17 +34,14 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource;
+use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use App\Models\User;
-
-use function Pest\Laravel\get;
-
 use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
-
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource;
+use function Pest\Laravel\get;
 
 // TODO: Write ViewResourceHubArticle tests
 //test('The correct details are displayed on the ViewResourceHubArticle page', function () {});

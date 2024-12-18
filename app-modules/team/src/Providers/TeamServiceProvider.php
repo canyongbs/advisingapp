@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Team\Providers;
 
-use Filament\Panel;
-use AdvisingApp\Team\TeamPlugin;
 use AdvisingApp\Team\Models\Team;
-use Illuminate\Support\ServiceProvider;
+use AdvisingApp\Team\TeamPlugin;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\ServiceProvider;
 
 class TeamServiceProvider extends ServiceProvider
 {

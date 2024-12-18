@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\MeetingCenter\Models;
 
-use App\Models\Attributes\NoPermissions;
 use AdvisingApp\Form\Models\SubmissibleStep;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\Attributes\NoPermissions;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[NoPermissions]
 /**

@@ -34,18 +34,17 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource\Pages\EditResourceHubCategory;
+use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
+use AdvisingApp\ResourceHub\Tests\ResourceHubCategory\RequestFactories\EditResourceHubCategoryRequestFactory;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertEquals;
-
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource\Pages\EditResourceHubCategory;
-use AdvisingApp\ResourceHub\Tests\ResourceHubCategory\RequestFactories\EditResourceHubCategoryRequestFactory;
 
 // TODO: Write EditResourceHubCategory tests
 //test('A successful action on the EditResourceHubCategory page', function () {});

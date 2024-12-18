@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Ai\Models\Scopes;
 
-use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Audit\Settings\AuditSettings;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 class AuditableAiMessages

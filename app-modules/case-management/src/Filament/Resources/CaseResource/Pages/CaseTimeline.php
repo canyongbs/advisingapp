@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages;
 
-use AdvisingApp\CaseManagement\Models\CaseUpdate;
-use AdvisingApp\CaseManagement\Models\CaseHistory;
-use AdvisingApp\CaseManagement\Models\CaseAssignment;
-use AdvisingApp\Timeline\Filament\Pages\TimelinePage;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
+use AdvisingApp\CaseManagement\Models\CaseAssignment;
+use AdvisingApp\CaseManagement\Models\CaseHistory;
+use AdvisingApp\CaseManagement\Models\CaseUpdate;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\Timeline\Filament\Pages\TimelinePage;
 
 class CaseTimeline extends TimelinePage
 {

@@ -36,18 +36,18 @@
 
 namespace AdvisingApp\Report\Enums;
 
-use App\Models\User;
-use Filament\Tables\Table;
-use App\Models\Authenticatable;
-use Filament\Support\Contracts\HasLabel;
-use AdvisingApp\Prospect\Models\Prospect;
-use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Report\Filament\Exports\UserExporter;
-use AdvisingApp\Report\Filament\Exports\StudentExporter;
-use AdvisingApp\Report\Filament\Exports\ProspectExporter;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Tables\ProspectsTable;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Report\Filament\Exports\ProspectExporter;
+use AdvisingApp\Report\Filament\Exports\StudentExporter;
+use AdvisingApp\Report\Filament\Exports\UserExporter;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Tables\StudentsTable;
+use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\Authenticatable;
+use App\Models\User;
+use Filament\Support\Contracts\HasLabel;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 enum ReportModel: string implements HasLabel
 {

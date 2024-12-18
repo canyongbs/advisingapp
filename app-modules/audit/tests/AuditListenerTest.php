@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-use function Tests\asSuperAdmin;
-
 use AdvisingApp\Audit\Settings\AuditSettings;
 use AdvisingApp\CaseManagement\Models\CaseModel;
+
+use function Tests\asSuperAdmin;
 
 test('Audit logs are only created if the Model is not set to be excluded from Auditing by audit settings', function () {
     asSuperAdmin();

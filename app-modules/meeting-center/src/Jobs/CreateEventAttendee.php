@@ -36,18 +36,18 @@
 
 namespace AdvisingApp\MeetingCenter\Jobs;
 
+use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
+use AdvisingApp\MeetingCenter\Models\Event;
+use AdvisingApp\MeetingCenter\Models\EventAttendee;
+use AdvisingApp\MeetingCenter\Notifications\SendRegistrationLinkToEventAttendeeNotification;
 use App\Models\User;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use AdvisingApp\MeetingCenter\Models\Event;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use AdvisingApp\MeetingCenter\Models\EventAttendee;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
-use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
-use AdvisingApp\MeetingCenter\Notifications\SendRegistrationLinkToEventAttendeeNotification;
+use Illuminate\Queue\SerializesModels;
 
 class CreateEventAttendee implements ShouldQueue
 {

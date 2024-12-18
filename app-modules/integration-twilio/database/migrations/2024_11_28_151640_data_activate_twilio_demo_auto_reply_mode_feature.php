@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Database\Migrations\Migration;
 use App\Features\TwilioDemoAutoReplyModeFeature;
+use Illuminate\Database\Migrations\Migration;
 
 return new class () extends Migration {
     public function up(): void

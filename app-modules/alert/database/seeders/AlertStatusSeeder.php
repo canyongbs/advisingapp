@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Alert\Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
+use AdvisingApp\Alert\Models\AlertStatus;
+use Illuminate\Database\Seeder;
 
 class AlertStatusSeeder extends Seeder
 {

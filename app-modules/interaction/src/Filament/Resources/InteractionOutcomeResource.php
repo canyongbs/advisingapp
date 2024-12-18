@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources;
 
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\TextInput;
-use App\Filament\Clusters\InteractionManagement;
-use AdvisingApp\Interaction\Models\InteractionOutcome;
+use AdvisingApp\Interaction\Filament\Resources\InteractionOutcomeResource\Pages\CreateInteractionOutcome;
 use AdvisingApp\Interaction\Filament\Resources\InteractionOutcomeResource\Pages\EditInteractionOutcome;
 use AdvisingApp\Interaction\Filament\Resources\InteractionOutcomeResource\Pages\ListInteractionOutcomes;
-use AdvisingApp\Interaction\Filament\Resources\InteractionOutcomeResource\Pages\CreateInteractionOutcome;
+use AdvisingApp\Interaction\Models\InteractionOutcome;
+use App\Filament\Clusters\InteractionManagement;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
 
 class InteractionOutcomeResource extends Resource
 {

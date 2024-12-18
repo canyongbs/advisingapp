@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Form\Models;
 
-use App\Models\BaseModel;
-use Illuminate\Support\Carbon;
 use App\Models\Attributes\NoPermissions;
+use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
 /**
  * @property Carbon|null $created_at

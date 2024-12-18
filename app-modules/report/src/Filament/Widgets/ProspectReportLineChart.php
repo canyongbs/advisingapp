@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
+use AdvisingApp\Prospect\Models\Prospect;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
-use AdvisingApp\Prospect\Models\Prospect;
 
 class ProspectReportLineChart extends ChartReportWidget
 {

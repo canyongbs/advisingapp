@@ -36,35 +36,35 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
-use App\Models\User;
-use Filament\Tables\Table;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Authorization\Models\License;
+use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\Team\Models\Team;
+use App\Filament\Imports\UserImporter;
+use App\Filament\Resources\UserResource;
+use App\Filament\Resources\UserResource\Actions\AssignLicensesBulkAction;
+use App\Filament\Resources\UserResource\Actions\AssignRolesBulkAction;
+use App\Filament\Resources\UserResource\Actions\AssignTeamBulkAction;
+use App\Filament\Tables\Columns\IdColumn;
+use App\Models\User;
 use Filament\Actions\CreateAction;
 use Filament\Actions\ImportAction;
-use App\Filament\Imports\UserImporter;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\RestoreAction;
+use Filament\Tables\Actions\RestoreBulkAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
-use App\Filament\Resources\UserResource;
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TrashedFilter;
+use Filament\Tables\Table;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
-use AdvisingApp\Authorization\Models\Role;
-use Filament\Tables\Actions\RestoreAction;
-use Filament\Tables\Filters\TrashedFilter;
-use Illuminate\Contracts\Support\Htmlable;
-use Filament\Tables\Actions\BulkActionGroup;
-use AdvisingApp\Authorization\Models\License;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\RestoreBulkAction;
-use AdvisingApp\Authorization\Enums\LicenseType;
 use STS\FilamentImpersonate\Tables\Actions\Impersonate;
-use App\Filament\Resources\UserResource\Actions\AssignTeamBulkAction;
-use App\Filament\Resources\UserResource\Actions\AssignRolesBulkAction;
-use App\Filament\Resources\UserResource\Actions\AssignLicensesBulkAction;
 
 class ListUsers extends ListRecords
 {

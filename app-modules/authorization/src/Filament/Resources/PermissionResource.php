@@ -36,18 +36,18 @@
 
 namespace AdvisingApp\Authorization\Filament\Resources;
 
+use AdvisingApp\Authorization\Filament\Resources\PermissionResource\Pages\ListPermissions;
+use AdvisingApp\Authorization\Filament\Resources\PermissionResource\Pages\ViewPermission;
+use AdvisingApp\Authorization\Filament\Resources\PermissionResource\RelationManagers\RolesRelationManager;
+use AdvisingApp\Authorization\Models\Permission;
+use App\Filament\Tables\Columns\IdColumn;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use App\Filament\Tables\Columns\IdColumn;
 use Filament\Tables\Filters\SelectFilter;
-use AdvisingApp\Authorization\Models\Permission;
-use AdvisingApp\Authorization\Filament\Resources\PermissionResource\Pages\ViewPermission;
-use AdvisingApp\Authorization\Filament\Resources\PermissionResource\Pages\ListPermissions;
-use AdvisingApp\Authorization\Filament\Resources\PermissionResource\RelationManagers\RolesRelationManager;
+use Filament\Tables\Table;
 
 class PermissionResource extends Resource
 {

@@ -36,18 +36,18 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\PromptResource\Pages;
 
-use Filament\Forms\Form;
-use App\Models\Authenticatable;
-use Filament\Actions\ViewAction;
-use Filament\Actions\DeleteAction;
+use AdvisingApp\Ai\Filament\Resources\PromptResource;
 use App\Features\SmartPromptsFeature;
-use Filament\Forms\Components\Select;
+use App\Models\Authenticatable;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\EditRecord;
 use Filament\Forms\Components\ToggleButtons;
-use AdvisingApp\Ai\Filament\Resources\PromptResource;
+use Filament\Forms\Form;
+use Filament\Resources\Pages\EditRecord;
 
 class EditPrompt extends EditRecord
 {

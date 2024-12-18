@@ -36,19 +36,19 @@
 
 namespace AdvisingApp\Segment\Filament\Resources\SegmentResource\Pages;
 
-use Filament\Tables\Table;
-use Filament\Actions\CreateAction;
-use Filament\Tables\Filters\Filter;
-use AdvisingApp\Segment\Models\Segment;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Columns\TextColumn;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Segment\Filament\Resources\SegmentResource;
+use AdvisingApp\Segment\Models\Segment;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Tables\Columns\IdColumn;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\DeleteAction;
-use AdvisingApp\StudentDataModel\Models\Student;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Table;
 use Illuminate\Auth\Access\AuthorizationException;
-use AdvisingApp\Segment\Filament\Resources\SegmentResource;
 
 class ListSegments extends ListRecords
 {

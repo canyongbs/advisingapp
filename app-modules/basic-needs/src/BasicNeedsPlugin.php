@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\BasicNeeds;
 
-use Filament\Panel;
 use Filament\Contracts\Plugin;
+use Filament\Panel;
 
 class BasicNeedsPlugin implements Plugin
 {

@@ -34,21 +34,18 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\EditCase;
+use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\CaseManagement\Tests\RequestFactories\EditCaseRequestFactory;
 use App\Models\User;
-
-use function Tests\asSuperAdmin;
-
 use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 use function Pest\Laravel\assertDatabaseHas;
-
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\CaseManagement\Models\CaseModel;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
-use AdvisingApp\CaseManagement\Tests\RequestFactories\EditCaseRequestFactory;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\EditCase;
+use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
 test('A successful action on the EditCase page', function () {
     $case = CaseModel::factory()->create();

@@ -34,24 +34,21 @@
 </COPYRIGHT>
 */
 
-use function Pest\Laravel\get;
-
 use AdvisingApp\Ai\Enums\AiModel;
+use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Pages\EditAiAssistant;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Tests\Feature\Filament\Resources\AiAssistantResource\RequestFactories\EditAiAssistantRequestFactory;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Settings\LicenseSettings;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rules\Enum;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
 
-use Illuminate\Validation\Rules\Enum;
-use AdvisingApp\Ai\Models\AiAssistant;
-use Illuminate\Support\Facades\Storage;
-
-use function Pest\Laravel\assertDatabaseHas;
-
-use AdvisingApp\Authorization\Enums\LicenseType;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Pages\EditAiAssistant;
-use AdvisingApp\Ai\Tests\Feature\Filament\Resources\AiAssistantResource\RequestFactories\EditAiAssistantRequestFactory;
 
 /** @var array<LicenseType> $licenses */
 $licenses = [

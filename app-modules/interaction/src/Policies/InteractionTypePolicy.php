@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Interaction\Policies;
 
-use App\Models\Authenticatable;
-use Illuminate\Auth\Access\Response;
+use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Interaction\Models\InteractionType;
+use App\Models\Authenticatable;
+use Illuminate\Auth\Access\Response;
 
 class InteractionTypePolicy
 {

@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Notification\Filament\Actions;
 
-use Filament\Tables\Actions\Action;
-use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Notification\Actions\SubscriptionToggle;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
+use Filament\Tables\Actions\Action;
+use Illuminate\Database\Eloquent\Builder;
 
 class SubscribeTableAction extends Action
 {

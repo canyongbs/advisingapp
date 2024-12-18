@@ -34,19 +34,18 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Filament\Resources\UserResource\Actions\AssignLicensesBulkAction;
+use App\Filament\Resources\UserResource\Pages\ListUsers;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
-use function PHPUnit\Framework\assertTrue;
 use function PHPUnit\Framework\assertFalse;
-
-use AdvisingApp\Authorization\Enums\LicenseType;
-use App\Filament\Resources\UserResource\Pages\ListUsers;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use App\Filament\Resources\UserResource\Actions\AssignLicensesBulkAction;
+use function PHPUnit\Framework\assertTrue;
 
 /**
  * @param User|null $user

@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Interaction\Policies;
 
-use App\Models\Authenticatable;
-use Illuminate\Auth\Access\Response;
-use App\Concerns\PerformsLicenseChecks;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\Prospect\Models\Prospect;
+use App\Concerns\PerformsLicenseChecks;
+use App\Models\Authenticatable;
 use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
+use Illuminate\Auth\Access\Response;
 
 class InteractionPolicy implements PerformsChecksBeforeAuthorization
 {

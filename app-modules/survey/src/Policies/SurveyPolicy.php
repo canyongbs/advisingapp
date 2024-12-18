@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Survey\Policies;
 
-use App\Enums\Feature;
-use App\Models\Authenticatable;
-use Illuminate\Auth\Access\Response;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Survey\Models\Survey;
 use App\Concerns\PerformsFeatureChecks;
 use App\Concerns\PerformsLicenseChecks;
-use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Enums\Feature;
+use App\Models\Authenticatable;
 use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
+use Illuminate\Auth\Access\Response;
 
 class SurveyPolicy implements PerformsChecksBeforeAuthorization
 {

@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages;
 
+use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource;
 use Filament\Actions;
+use Filament\Infolists\Components\Actions\Action;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Components\Actions\Action;
-use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
-use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource;
 
 class ViewEngagementFile extends ViewRecord
 {

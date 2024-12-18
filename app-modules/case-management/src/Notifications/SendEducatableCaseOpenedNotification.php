@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\CaseManagement\Notifications;
 
-use App\Models\NotificationSetting;
-use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\CaseManagement\Models\CaseModel;
-use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\EmailNotification;
-use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
+use AdvisingApp\Notification\Notifications\EmailNotification;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\NotificationSetting;
 
 class SendEducatableCaseOpenedNotification extends BaseNotification implements EmailNotification
 {

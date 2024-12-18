@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Widgets;
 
+use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource;
+use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use App\Models\User;
 use Livewire\Attributes\On;
 use Saade\FilamentFullCalendar\Data\EventData;
-use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
-use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource;
 
 class CalendarEventWidget extends FullCalendarWidget
 {

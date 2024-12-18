@@ -34,20 +34,17 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\ProspectSource;
+use AdvisingApp\Prospect\Tests\ProspectSource\RequestFactories\EditProspectSourceRequestFactory;
 use App\Models\User;
 
-use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
-
-use AdvisingApp\Prospect\Models\Prospect;
-
 use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertEquals;
-
-use AdvisingApp\Prospect\Models\ProspectSource;
-use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource;
-use AdvisingApp\Prospect\Tests\ProspectSource\RequestFactories\EditProspectSourceRequestFactory;
+use function Tests\asSuperAdmin;
 
 test('A successful action on the EditProspectSource page', function () {
     $prospectSource = ProspectSource::factory()->create();

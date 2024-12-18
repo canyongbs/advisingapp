@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Campaign\Observers;
 
-use App\Models\User;
 use AdvisingApp\Campaign\Models\Campaign;
+use App\Models\User;
 
 class CampaignObserver
 {

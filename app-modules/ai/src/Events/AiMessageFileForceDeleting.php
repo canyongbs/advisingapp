@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Ai\Events;
 
+use AdvisingApp\Ai\Listeners\DeleteExternalAiMessageFile;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use Illuminate\Foundation\Events\Dispatchable;
-use AdvisingApp\Ai\Listeners\DeleteExternalAiMessageFile;
 
 class AiMessageFileForceDeleting
 {

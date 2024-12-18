@@ -36,28 +36,28 @@
 
 namespace AdvisingApp\MeetingCenter\Http\Controllers;
 
-use Closure;
-use Exception;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
-use Filament\Support\Colors\Color;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\URL;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
-use AdvisingApp\MeetingCenter\Models\Event;
-use Illuminate\Support\Facades\Notification;
-use Symfony\Component\HttpFoundation\Response;
-use AdvisingApp\MeetingCenter\Models\EventAttendee;
-use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 use AdvisingApp\Form\Actions\GenerateSubmissibleValidation;
-use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
-use AdvisingApp\MeetingCenter\Models\EventRegistrationFormAuthentication;
 use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 use AdvisingApp\MeetingCenter\Actions\GenerateEventRegistrationFormKitSchema;
+use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
+use AdvisingApp\MeetingCenter\Models\Event;
+use AdvisingApp\MeetingCenter\Models\EventAttendee;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationFormAuthentication;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
 use AdvisingApp\MeetingCenter\Notifications\AuthenticateEventRegistrationFormNotification;
+use App\Http\Controllers\Controller;
+use Closure;
+use Exception;
+use Filament\Support\Colors\Color;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\Response;
 
 class EventRegistrationWidgetController extends Controller
 {

@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\Authorization\Models;
 
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use App\Models\Authenticatable;
-use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
-use Spatie\Permission\PermissionRegistrar;
-use Spatie\Permission\Models\Role as SpatieRole;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Spatie\Permission\Models\Role as SpatieRole;
+use Spatie\Permission\PermissionRegistrar;
 
 /**
  * @mixin IdeHelperRole

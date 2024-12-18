@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Timeline\Timelines;
 
-use Filament\Actions\ViewAction;
-use AdvisingApp\Alert\Histories\AlertHistory;
-use AdvisingApp\Timeline\Models\CustomTimeline;
 use AdvisingApp\Alert\Filament\Actions\AlertHistoryCreatedViewAction;
 use AdvisingApp\Alert\Filament\Actions\AlertHistoryUpdatedViewAction;
+use AdvisingApp\Alert\Histories\AlertHistory;
+use AdvisingApp\Timeline\Models\CustomTimeline;
+use Filament\Actions\ViewAction;
 
 class AlertHistoryTimeline extends CustomTimeline
 {

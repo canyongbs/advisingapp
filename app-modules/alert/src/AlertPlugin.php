@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Alert;
 
-use Filament\Panel;
 use Filament\Contracts\Plugin;
+use Filament\Panel;
 
 class AlertPlugin implements Plugin
 {

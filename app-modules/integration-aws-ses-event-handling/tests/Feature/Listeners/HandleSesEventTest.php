@@ -34,15 +34,14 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\Webhook\Http\Middleware\VerifyAwsSnsRequest;
 use App\Models\Tenant;
 
 use function Pest\Laravel\withHeaders;
-use function Tests\loadFixtureFromModule;
 use function Pest\Laravel\withoutMiddleware;
-
-use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Webhook\Http\Middleware\VerifyAwsSnsRequest;
-use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
+use function Tests\loadFixtureFromModule;
 
 beforeEach(function () {
     withoutMiddleware(VerifyAwsSnsRequest::class);

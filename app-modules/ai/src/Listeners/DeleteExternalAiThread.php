@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Ai\Listeners;
 
-use OpenAI\Exceptions\ErrorException;
 use AdvisingApp\Ai\Events\AiThreadForceDeleting;
+use OpenAI\Exceptions\ErrorException;
 
 class DeleteExternalAiThread
 {

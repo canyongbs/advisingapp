@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Pages;
 
-use Filament\Infolists\Infolist;
-use Filament\Resources\Pages\ViewRecord;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\TextEntry;
-use AdvisingApp\CaseManagement\Models\CaseUpdate;
 use AdvisingApp\CaseManagement\Enums\CaseUpdateDirection;
+use AdvisingApp\CaseManagement\Filament\Concerns\CaseUpdateBreadcrumbs;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;
-use AdvisingApp\CaseManagement\Filament\Concerns\CaseUpdateBreadcrumbs;
+use AdvisingApp\CaseManagement\Models\CaseUpdate;
+use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Pages\ViewRecord;
 
 class ViewCaseUpdate extends ViewRecord
 {

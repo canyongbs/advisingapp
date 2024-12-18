@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource\Pages;
 
-use App\Models\User;
-use Filament\Forms\Form;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TagsInput;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\CreateRecord;
-use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource;
+use App\Models\User;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Resources\Pages\CreateRecord;
 
 class CreateCalendarEvent extends CreateRecord
 {

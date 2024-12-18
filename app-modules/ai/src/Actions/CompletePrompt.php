@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Ai\Actions;
 
-use Illuminate\Support\Arr;
-use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiFeature;
+use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Models\LegacyAiMessageLog;
+use Illuminate\Support\Arr;
 
 class CompletePrompt
 {

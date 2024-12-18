@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Task\Filament\Resources\TaskResource\Pages;
 
+use AdvisingApp\Task\Filament\Resources\TaskResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
-use AdvisingApp\Task\Filament\Resources\TaskResource;
 
 class ViewTask extends ViewRecord
 {

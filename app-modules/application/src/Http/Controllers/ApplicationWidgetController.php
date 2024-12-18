@@ -36,26 +36,26 @@
 
 namespace AdvisingApp\Application\Http\Controllers;
 
-use Closure;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
-use Filament\Support\Colors\Color;
-use Illuminate\Support\Facades\URL;
+use AdvisingApp\Application\Models\Application;
+use AdvisingApp\Application\Models\ApplicationAuthentication;
+use AdvisingApp\Application\Models\ApplicationSubmission;
+use AdvisingApp\Form\Actions\GenerateFormKitSchema;
+use AdvisingApp\Form\Actions\GenerateSubmissibleValidation;
+use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
+use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
+use AdvisingApp\Form\Notifications\AuthenticateFormNotification;
 use App\Http\Controllers\Controller;
+use Closure;
+use Filament\Support\Colors\Color;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
-use AdvisingApp\Application\Models\Application;
-use AdvisingApp\Form\Actions\GenerateFormKitSchema;
-use AdvisingApp\Application\Models\ApplicationSubmission;
-use AdvisingApp\Form\Actions\GenerateSubmissibleValidation;
-use AdvisingApp\Application\Models\ApplicationAuthentication;
-use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
-use AdvisingApp\Form\Notifications\AuthenticateFormNotification;
-use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
 
 class ApplicationWidgetController extends Controller
 {

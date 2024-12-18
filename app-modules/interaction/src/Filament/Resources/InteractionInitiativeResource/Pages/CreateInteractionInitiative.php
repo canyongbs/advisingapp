@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource\Pages;
 
-use Filament\Resources\Pages\CreateRecord;
 use AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource;
+use Filament\Resources\Pages\CreateRecord;
 
 class CreateInteractionInitiative extends CreateRecord
 {

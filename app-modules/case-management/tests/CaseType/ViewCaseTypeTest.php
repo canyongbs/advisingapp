@@ -34,18 +34,15 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
+use AdvisingApp\CaseManagement\Models\CaseType;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
-
-use function Tests\asSuperAdmin;
-
 use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
-
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\CaseManagement\Models\CaseType;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
+use function Tests\asSuperAdmin;
 
 test('The correct details are displayed on the ViewCaseType page', function () {
     $caseType = CaseType::factory()->create();

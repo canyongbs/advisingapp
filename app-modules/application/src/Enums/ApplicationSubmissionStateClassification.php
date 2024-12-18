@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Application\Enums;
 
-use Filament\Support\Contracts\HasLabel;
-use Bvtterfly\ModelStateMachine\Attributes\InitialState;
 use Bvtterfly\ModelStateMachine\Attributes\AllowTransitionTo;
+use Bvtterfly\ModelStateMachine\Attributes\InitialState;
+use Filament\Support\Contracts\HasLabel;
 
 enum ApplicationSubmissionStateClassification: string implements HasLabel
 {

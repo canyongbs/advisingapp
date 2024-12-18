@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Application\Events;
 
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Broadcasting\InteractsWithSockets;
 use AdvisingApp\Application\Models\ApplicationSubmission;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
 
 class ApplicationSubmissionCreated
 {

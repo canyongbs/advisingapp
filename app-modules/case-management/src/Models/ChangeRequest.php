@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\CaseManagement\Models;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use AdvisingApp\CaseManagement\Observers\ChangeRequestObserver;
+use AdvisingApp\Application\Models\Concerns\HasRelationBasedStateMachine;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\CaseManagement\Enums\SystemChangeRequestClassification;
-use AdvisingApp\Application\Models\Concerns\HasRelationBasedStateMachine;
+use AdvisingApp\CaseManagement\Observers\ChangeRequestObserver;
+use App\Models\BaseModel;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @mixin IdeHelperChangeRequest

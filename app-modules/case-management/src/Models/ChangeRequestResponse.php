@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\CaseManagement\Models;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use App\Models\BaseModel;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @mixin IdeHelperChangeRequestResponse

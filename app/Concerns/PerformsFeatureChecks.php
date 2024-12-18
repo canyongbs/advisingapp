@@ -37,8 +37,8 @@
 namespace App\Concerns;
 
 use App\Enums\Feature;
-use Illuminate\Support\Facades\Gate;
 use App\Support\FeatureAccessResponse;
+use Illuminate\Support\Facades\Gate;
 
 trait PerformsFeatureChecks
 {

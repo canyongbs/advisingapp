@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\CaseManagement\Policies;
 
+use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\Feature;
 use App\Models\Authenticatable;
+use App\Support\FeatureAccessResponse;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Gate;
-use App\Support\FeatureAccessResponse;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\CaseManagement\Models\CaseModel;
-use AdvisingApp\StudentDataModel\Models\Student;
 
 class CaseModelPolicy
 {

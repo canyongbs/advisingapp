@@ -36,13 +36,13 @@
 
 namespace App\Filament\Tables;
 
-use App\Models\User;
-use Filament\Tables\Table;
-use Filament\Tables\Actions\ViewAction;
 use App\Filament\Resources\UserResource;
+use App\Models\User;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\QueryBuilder;
 use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
+use Filament\Tables\Table;
 
 class UsersTable
 {

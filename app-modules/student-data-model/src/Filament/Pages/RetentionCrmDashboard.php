@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Pages;
 
+use AdvisingApp\StudentDataModel\Filament\Widgets\StudentStats;
+use AdvisingApp\StudentDataModel\Filament\Widgets\StudentTasks;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Filament\Pages\Dashboard as BaseDashboard;
 use Symfony\Component\HttpFoundation\Response;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\StudentDataModel\Filament\Widgets\StudentStats;
-use AdvisingApp\StudentDataModel\Filament\Widgets\StudentTasks;
 
 class RetentionCrmDashboard extends BaseDashboard
 {

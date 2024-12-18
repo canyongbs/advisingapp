@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Jobs;
 
-use Illuminate\Support\Collection;
-use AdvisingApp\Ai\Models\AiAssistant;
-use Illuminate\Foundation\Bus\Dispatchable;
-use AdvisingApp\Ai\Services\Contracts\AiService;
 use AdvisingApp\Ai\Events\AssistantFilesFinishedUploading;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Services\Contracts\AiService;
 use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Support\Collection;
 
 /**
  * This cannot be queued due to an issue with serialization and CURL: https://github.com/laravel/serializable-closure/issues/26

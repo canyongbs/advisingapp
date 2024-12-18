@@ -36,8 +36,8 @@
 
 namespace App\Filament\Forms\Components;
 
-use Filament\Support\Colors\Color;
 use Filament\Forms\Components\Select;
+use Filament\Support\Colors\Color;
 
 class ColorSelect extends Select
 {

@@ -36,10 +36,10 @@
 
 namespace App\Filament\Widgets;
 
-use Illuminate\Support\Number;
 use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Support\Number;
 
 class MyProspects extends StatsOverviewWidget
 {

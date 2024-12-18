@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\IntegrationGoogleAnalytics\Providers;
 
+use AdvisingApp\IntegrationGoogleAnalytics\IntegrationGoogleAnalyticsPlugin;
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
-use AdvisingApp\IntegrationGoogleAnalytics\IntegrationGoogleAnalyticsPlugin;
 
 class IntegrationGoogleAnalyticsServiceProvider extends ServiceProvider
 {

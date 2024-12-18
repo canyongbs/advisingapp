@@ -36,8 +36,8 @@
 
 namespace App\Models;
 
-use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 use Spatie\Health\Models\HealthCheckResultHistoryItem as SpatieHealthCheckResultHistoryItem;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperHealthCheckResultHistoryItem

@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Timeline\Timelines;
 
-use Filament\Actions\ViewAction;
-use AdvisingApp\Timeline\Models\CustomTimeline;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Filament\Actions\OutboundDeliverableViewAction;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\Timeline\Models\CustomTimeline;
+use Filament\Actions\ViewAction;
 
 class OutboundDeliverableTimeline extends CustomTimeline
 {

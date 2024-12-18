@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use Illuminate\Support\Number;
-use Illuminate\Support\Facades\Cache;
 use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Report\Models\TrackedEvent;
-use AdvisingApp\Report\Enums\TrackedEventType;
-use Filament\Widgets\StatsOverviewWidget\Stat;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Report\Enums\TrackedEventType;
+use AdvisingApp\Report\Models\TrackedEvent;
 use AdvisingApp\Report\Models\TrackedEventCount;
+use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Number;
 
 class AiStats extends StatsOverviewReportWidget
 {

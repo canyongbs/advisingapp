@@ -34,18 +34,17 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
-use App\Models\Authenticatable;
-use AdvisingApp\Team\Models\Team;
-
-use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
-
-use Filament\Forms\Components\Select;
-use Filament\Tables\Actions\AttachAction;
 use AdvisingApp\Team\Filament\Resources\TeamResource;
 use AdvisingApp\Team\Filament\Resources\TeamResource\Pages\EditTeam;
 use AdvisingApp\Team\Filament\Resources\TeamResource\RelationManagers\UsersRelationManager;
+use AdvisingApp\Team\Models\Team;
+use App\Models\Authenticatable;
+use App\Models\User;
+use Filament\Forms\Components\Select;
+use Filament\Tables\Actions\AttachAction;
+
+use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
 
 // Permission Tests
 

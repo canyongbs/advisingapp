@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Form\Observers;
 
-use Illuminate\Support\Facades\Event;
-use AdvisingApp\Form\Models\FormSubmission;
 use AdvisingApp\Form\Events\FormSubmissionCreated;
+use AdvisingApp\Form\Models\FormSubmission;
+use Illuminate\Support\Facades\Event;
 
 class FormSubmissionObserver
 {

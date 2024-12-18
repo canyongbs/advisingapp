@@ -37,8 +37,8 @@
 namespace AdvisingApp\Engagement\DataTransferObjects;
 
 use App\Models\User;
-use Spatie\LaravelData\Data;
 use Illuminate\Support\Collection;
+use Spatie\LaravelData\Data;
 
 class EngagementBatchCreationData extends Data
 {

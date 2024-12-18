@@ -36,16 +36,16 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\UserResource\Pages\CreateUser;
+use App\Filament\Resources\UserResource\Pages\EditUser;
+use App\Filament\Resources\UserResource\Pages\ListUsers;
+use App\Filament\Resources\UserResource\Pages\ViewUser;
+use App\Filament\Resources\UserResource\RelationManagers\PermissionsRelationManager;
+use App\Filament\Resources\UserResource\RelationManagers\RolesRelationManager;
+use App\Models\Scopes\WithoutSuperAdmin;
 use App\Models\User;
 use Filament\Resources\Resource;
-use App\Models\Scopes\WithoutSuperAdmin;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Resources\UserResource\Pages\EditUser;
-use App\Filament\Resources\UserResource\Pages\ViewUser;
-use App\Filament\Resources\UserResource\Pages\ListUsers;
-use App\Filament\Resources\UserResource\Pages\CreateUser;
-use App\Filament\Resources\UserResource\RelationManagers\RolesRelationManager;
-use App\Filament\Resources\UserResource\RelationManagers\PermissionsRelationManager;
 
 class UserResource extends Resource
 {

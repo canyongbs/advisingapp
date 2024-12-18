@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Campaign\Console\Commands;
 
+use AdvisingApp\Campaign\Actions\ExecuteCampaignActions as ExecuteCampaignActionsJob;
 use Illuminate\Console\Command;
 use Spatie\Multitenancy\Commands\Concerns\TenantAware;
-use AdvisingApp\Campaign\Actions\ExecuteCampaignActions as ExecuteCampaignActionsJob;
 
 class ExecuteCampaignActions extends Command
 {

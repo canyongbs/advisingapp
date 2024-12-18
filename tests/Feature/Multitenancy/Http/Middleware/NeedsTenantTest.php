@@ -35,12 +35,12 @@
 */
 
 use App\Models\Tenant;
+use App\Multitenancy\Http\Middleware\NeedsTenant;
 use Illuminate\Http\Request;
 
 use function PHPUnit\Framework\assertTrue;
 
 use Symfony\Component\HttpFoundation\Response;
-use App\Multitenancy\Http\Middleware\NeedsTenant;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 beforeEach(function () {

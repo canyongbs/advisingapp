@@ -34,25 +34,20 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Pages\EditCaseUpdate;
+use AdvisingApp\CaseManagement\Models\CaseUpdate;
+use AdvisingApp\CaseManagement\Tests\RequestFactories\EditCaseUpdateRequestFactory;
 use App\Models\User;
-
-use function Tests\asSuperAdmin;
-
 use App\Settings\LicenseSettings;
-
-use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
-
 use Illuminate\Validation\Rules\Enum;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertEquals;
-
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\CaseManagement\Models\CaseUpdate;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;
-use AdvisingApp\CaseManagement\Tests\RequestFactories\EditCaseUpdateRequestFactory;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Pages\EditCaseUpdate;
+use function Tests\asSuperAdmin;
 
 test('A successful action on the EditCaseUpdate page', function () {
     $caseUpdate = CaseUpdate::factory()->create();

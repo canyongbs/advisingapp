@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Campaign\Database\Factories;
 
-use App\Models\User;
 use AdvisingApp\Segment\Models\Segment;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

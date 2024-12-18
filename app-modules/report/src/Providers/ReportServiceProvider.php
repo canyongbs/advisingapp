@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Report\Providers;
 
-use Filament\Panel;
-use AdvisingApp\Report\ReportPlugin;
 use AdvisingApp\Report\Models\Report;
-use Illuminate\Support\ServiceProvider;
+use AdvisingApp\Report\ReportPlugin;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\ServiceProvider;
 
 class ReportServiceProvider extends ServiceProvider
 {

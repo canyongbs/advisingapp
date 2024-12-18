@@ -36,17 +36,17 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\Concerns;
 
-use Filament\Actions\EditAction;
-use App\Settings\DisplaySettings;
-use Illuminate\Contracts\View\View;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
-use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspect;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ConvertToStudent;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ProspectTagsAction;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\DisassociateStudent;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ProspectTagsAction;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspect;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
+use App\Settings\DisplaySettings;
+use Filament\Actions\EditAction;
+use Illuminate\Contracts\View\View;
 
 trait HasProspectHeader
 {

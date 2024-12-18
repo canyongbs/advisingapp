@@ -36,11 +36,11 @@
 
 namespace App\Multitenancy\Tasks;
 
-use Spatie\Multitenancy\Models\Tenant;
-use Illuminate\Notifications\ChannelManager;
-use Spatie\Multitenancy\Tasks\SwitchTenantTask;
-use Illuminate\Notifications\Channels\MailChannel;
 use App\Multitenancy\DataTransferObjects\TenantMailConfig;
+use Illuminate\Notifications\ChannelManager;
+use Illuminate\Notifications\Channels\MailChannel;
+use Spatie\Multitenancy\Models\Tenant;
+use Spatie\Multitenancy\Tasks\SwitchTenantTask;
 
 class SwitchMailTask implements SwitchTenantTask
 {

@@ -34,13 +34,12 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\User;
 
 use function Pest\Laravel\assertDatabaseHas;
-
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\StudentDataModel\Models\Student;
 
 it('can auto subscribe user when adding in care team', function ($educatable) {
     $user = User::factory()->licensed(LicenseType::cases())->create();

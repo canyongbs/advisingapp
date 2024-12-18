@@ -36,9 +36,9 @@
 
 namespace App\Actions;
 
-use Illuminate\Support\Str;
-use Illuminate\Encryption\Encrypter;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Encryption\Encrypter;
+use Illuminate\Support\Str;
 use Laravel\SerializableClosure\SerializableClosure;
 
 class ChangeAppKey

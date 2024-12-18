@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\MeetingCenter\Managers\Contracts;
 
-use DateTime;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
+use DateTime;
 
 interface CalendarInterface
 {

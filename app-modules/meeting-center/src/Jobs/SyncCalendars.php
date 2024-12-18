@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\MeetingCenter\Jobs;
 
+use AdvisingApp\MeetingCenter\Models\Calendar;
 use App\Models\Tenant;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use AdvisingApp\MeetingCenter\Models\Calendar;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
+use Illuminate\Queue\SerializesModels;
 
 class SyncCalendars implements ShouldQueue
 {

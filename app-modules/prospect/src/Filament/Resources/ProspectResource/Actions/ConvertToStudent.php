@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions;
 
-use Filament\Pages\Page;
-use Filament\Actions\Action;
-use Filament\Support\Enums\MaxWidth;
-use Filament\Forms\Components\Select;
-use Filament\Notifications\Notification;
+use AdvisingApp\Prospect\Enums\SystemProspectClassification;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Prospect\Enums\SystemProspectClassification;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use Filament\Actions\Action;
+use Filament\Forms\Components\Select;
+use Filament\Notifications\Notification;
+use Filament\Pages\Page;
+use Filament\Support\Enums\MaxWidth;
 
 class ConvertToStudent extends Action
 {

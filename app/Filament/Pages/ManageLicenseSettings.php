@@ -36,17 +36,17 @@
 
 namespace App\Filament\Pages;
 
-use App\Models\User;
-use Filament\Forms\Get;
-use Filament\Forms\Form;
+use App\DataTransferObjects\LicenseManagement\LicenseData;
 use App\Models\Authenticatable;
-use Filament\Pages\SettingsPage;
+use App\Models\User;
 use App\Settings\LicenseSettings;
-use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\DatePicker;
-use App\DataTransferObjects\LicenseManagement\LicenseData;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Pages\SettingsPage;
 
 class ManageLicenseSettings extends SettingsPage
 {

@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Ai\Services\Contracts;
 
-use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessageFile;
+use AdvisingApp\Ai\Models\AiThread;
 
 interface AiServiceLifecycleHooks
 {

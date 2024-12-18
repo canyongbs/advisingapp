@@ -37,8 +37,8 @@
 namespace StubModuleNamespace\StubClassNamePrefix\Providers;
 
 use Filament\Panel;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\ServiceProvider;
 use StubModuleNamespace\StubClassNamePrefix\StubClassNamePrefixPlugin;
 
 class StubClassNamePrefixServiceProvider extends ServiceProvider

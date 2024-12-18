@@ -36,12 +36,11 @@
 
 namespace Tests\Helpers;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use Illuminate\Support\Arr;
 
 use function Pest\Laravel\actingAs;
-
-use AdvisingApp\Authorization\Enums\LicenseType;
 
 function testResourceRequiresPermissionForAccess(string $resource, string|array $permissions, string $method)
 {

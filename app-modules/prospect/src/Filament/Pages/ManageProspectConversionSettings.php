@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\Prospect\Filament\Pages;
 
-use Cknow\Money\Money;
-use Filament\Forms\Form;
-use Filament\Pages\SettingsPage;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TextInput;
+use App\Filament\Clusters\ConstituentManagement;
 use App\Filament\Forms\Components\Heading;
 use App\Filament\Forms\Components\Paragraph;
 use App\Settings\ProspectConversionSettings;
-use App\Filament\Clusters\ConstituentManagement;
+use Cknow\Money\Money;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Pages\SettingsPage;
 
 class ManageProspectConversionSettings extends SettingsPage
 {

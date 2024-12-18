@@ -36,10 +36,10 @@
 
 namespace App\Filament\Widgets;
 
-use Illuminate\Support\Carbon;
-use Filament\Widgets\ChartWidget;
-use Illuminate\Support\Facades\Cache;
 use AdvisingApp\Prospect\Models\Prospect;
+use Filament\Widgets\ChartWidget;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 
 class ProspectGrowthChart extends ChartWidget
 {

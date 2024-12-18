@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Audit\Database\Factories;
 
-use App\Models\User;
 use AdvisingApp\Audit\Models\Audit;
 use AdvisingApp\CaseManagement\Models\CaseModel;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

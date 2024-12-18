@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Task\Providers;
 
-use Filament\Panel;
-use AdvisingApp\Task\TaskPlugin;
-use AdvisingApp\Task\Models\Task;
-use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Task\Histories\TaskHistory;
+use AdvisingApp\Task\Models\Task;
+use AdvisingApp\Task\TaskPlugin;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\ServiceProvider;
 
 class TaskServiceProvider extends ServiceProvider
 {

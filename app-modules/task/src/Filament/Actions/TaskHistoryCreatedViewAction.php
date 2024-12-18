@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Task\Filament\Actions;
 
+use AdvisingApp\Task\Histories\TaskHistory;
 use Filament\Actions\ViewAction;
+use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\Split;
-use AdvisingApp\Task\Histories\TaskHistory;
-use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\TextEntry;
 
 class TaskHistoryCreatedViewAction extends ViewAction

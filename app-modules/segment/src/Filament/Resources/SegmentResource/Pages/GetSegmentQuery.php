@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Segment\Filament\Resources\SegmentResource\Pages;
 
-use Filament\Tables\Table;
-use Filament\Tables\Contracts\HasTable;
-use Filament\Resources\Pages\EditRecord;
-use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Segment\Enums\SegmentType;
-use Filament\Tables\Concerns\InteractsWithTable;
 use AdvisingApp\Segment\Filament\Resources\SegmentResourceForProcesses;
+use Filament\Resources\Pages\EditRecord;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class GetSegmentQuery extends EditRecord implements HasTable
 {

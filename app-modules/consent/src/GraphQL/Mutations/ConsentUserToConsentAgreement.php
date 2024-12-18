@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Consent\GraphQL\Mutations;
 
+use AdvisingApp\Consent\Models\ConsentAgreement;
 use App\Models\User;
 use Nuwave\Lighthouse\Execution\ResolveInfo;
-use AdvisingApp\Consent\Models\ConsentAgreement;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class ConsentUserToConsentAgreement

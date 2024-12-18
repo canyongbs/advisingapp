@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets;
 
-use Filament\Widgets\Widget;
-use Livewire\Attributes\Locked;
-use AdvisingApp\Alert\Models\Alert;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
+use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use Filament\Widgets\Widget;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Livewire\Attributes\Locked;
 
 class EducatableAlertsWidget extends Widget
 {

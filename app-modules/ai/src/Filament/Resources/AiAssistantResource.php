@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Ai\Filament\Resources;
 
-use Filament\Resources\Resource;
-use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Pages\CreateAiAssistant;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Pages\EditAiAssistant;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Pages\ListAiAssistants;
-use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Pages\CreateAiAssistant;
+use AdvisingApp\Ai\Models\AiAssistant;
+use Filament\Resources\Resource;
 
 class AiAssistantResource extends Resource
 {

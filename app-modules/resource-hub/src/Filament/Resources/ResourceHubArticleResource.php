@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\ResourceHub\Filament\Resources;
 
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages\CreateResourceHubArticle;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages\EditResourceHubArticle;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages\ListResourceHubArticles;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages\ViewResourceHubArticle;
+use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages\EditResourceHubArticle;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages\ViewResourceHubArticle;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages\ListResourceHubArticles;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages\CreateResourceHubArticle;
+use Illuminate\Database\Eloquent\Model;
 
 class ResourceHubArticleResource extends Resource
 {

@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\MeetingCenter;
 
-use Filament\Panel;
 use Filament\Contracts\Plugin;
+use Filament\Panel;
 
 class MeetingCenterPlugin implements Plugin
 {

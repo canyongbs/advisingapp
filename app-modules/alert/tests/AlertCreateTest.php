@@ -34,15 +34,14 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
 use AdvisingApp\Alert\Models\Alert;
-
-use function Pest\Laravel\actingAs;
-
-use Illuminate\Support\Facades\Notification;
+use AdvisingApp\Alert\Notifications\AlertCreatedNotification;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Alert\Notifications\AlertCreatedNotification;
+use App\Models\User;
+use Illuminate\Support\Facades\Notification;
+
+use function Pest\Laravel\actingAs;
 
 it('creates a subscription for the user that created the Alert', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();

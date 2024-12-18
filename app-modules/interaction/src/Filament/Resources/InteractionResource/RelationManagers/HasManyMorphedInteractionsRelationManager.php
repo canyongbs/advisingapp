@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionResource\RelationManagers;
 
-use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\Interaction\Filament\Concerns\HasManyMorphedInteractionsTrait;
+use Filament\Resources\RelationManagers\RelationManager;
 
 class HasManyMorphedInteractionsRelationManager extends RelationManager
 {

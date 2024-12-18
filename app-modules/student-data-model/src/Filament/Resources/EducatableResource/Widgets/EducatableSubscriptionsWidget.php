@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets;
 
-use Filament\Widgets\Widget;
-use Livewire\Attributes\Locked;
-use Illuminate\Database\Eloquent\Model;
 use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use Filament\Widgets\Widget;
+use Illuminate\Database\Eloquent\Model;
+use Livewire\Attributes\Locked;
 
 class EducatableSubscriptionsWidget extends Widget
 {

@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\CaseManagement\Http\Middleware;
 
+use App\Settings\LicenseSettings;
 use Closure;
 use Illuminate\Http\Request;
-use App\Settings\LicenseSettings;
 use Symfony\Component\HttpFoundation\Response;
 
 class EnsureCaseManagementFeatureIsActive

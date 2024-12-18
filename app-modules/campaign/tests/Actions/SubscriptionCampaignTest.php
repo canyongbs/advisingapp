@@ -34,17 +34,17 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
-use AdvisingApp\Segment\Models\Segment;
-use AdvisingApp\Campaign\Models\Campaign;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Segment\Enums\SegmentType;
-use Illuminate\Database\Eloquent\Collection;
-use AdvisingApp\Campaign\Models\CampaignAction;
-use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Campaign\Enums\CampaignActionType;
+use AdvisingApp\Campaign\Models\Campaign;
+use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Notification\Actions\SubscriptionCreate;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Segment\Enums\SegmentType;
+use AdvisingApp\Segment\Models\Segment;
+use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 
 it('will create the subscription records for subscribables in the segment', function (array $priorSubscriptions, Collection $subscribables, bool $removePrior) {
     $segment = Segment::factory()->create([

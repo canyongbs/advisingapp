@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Ai\Policies;
 
-use App\Models\Authenticatable;
 use AdvisingApp\Ai\Models\Prompt;
-use Illuminate\Auth\Access\Response;
-use App\Concerns\PerformsLicenseChecks;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Concerns\PerformsLicenseChecks;
+use App\Models\Authenticatable;
 use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
+use Illuminate\Auth\Access\Response;
 
 class PromptPolicy implements PerformsChecksBeforeAuthorization
 {

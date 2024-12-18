@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\CaseManagement\Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use AdvisingApp\CaseManagement\Models\ChangeRequestType;
+use Illuminate\Database\Seeder;
 
 class ChangeRequestTypeSeeder extends Seeder
 {

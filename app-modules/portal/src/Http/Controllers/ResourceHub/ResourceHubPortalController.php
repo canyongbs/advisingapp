@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Portal\Http\Controllers\ResourceHub;
 
-use Illuminate\Http\JsonResponse;
-use Filament\Support\Colors\Color;
-use Illuminate\Support\Facades\URL;
-use App\Http\Controllers\Controller;
 use AdvisingApp\Portal\Settings\PortalSettings;
+use App\Http\Controllers\Controller;
+use Filament\Support\Colors\Color;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\URL;
 
 class ResourceHubPortalController extends Controller
 {

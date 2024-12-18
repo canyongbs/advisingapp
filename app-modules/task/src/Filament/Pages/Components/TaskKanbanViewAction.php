@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Task\Filament\Pages\Components;
 
-use Filament\Actions\Action;
-use Filament\Actions\ViewAction;
-use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Filament\Concerns\TaskViewActionInfoList;
+use AdvisingApp\Task\Models\Task;
+use Filament\Actions\Action;
+use Filament\Actions\ViewAction;
 
 class TaskKanbanViewAction extends ViewAction
 {

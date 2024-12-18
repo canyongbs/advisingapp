@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Interaction\Policies;
 
-use App\Models\Authenticatable;
-use Illuminate\Auth\Access\Response;
+use AdvisingApp\Interaction\Models\InteractionRelation;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Interaction\Models\InteractionRelation;
+use App\Models\Authenticatable;
+use Illuminate\Auth\Access\Response;
 
 class InteractionRelationPolicy
 {

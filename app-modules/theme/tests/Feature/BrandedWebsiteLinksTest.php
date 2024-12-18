@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Theme\Tests\Feature;
 
-use App\Models\Tenant;
+use AdvisingApp\Theme\Settings\ThemeSettings;
+use AdvisingApp\Theme\Tests\RequestFactories\BrandedWebsiteLinksRequestFactory;
 use App\Http\Middleware\CheckOlympusKey;
+use App\Models\Tenant;
 
 use function Pest\Laravel\withoutMiddleware;
 
-use AdvisingApp\Theme\Settings\ThemeSettings;
 use Worksome\RequestFactories\RequestFactory;
-use AdvisingApp\Theme\Tests\RequestFactories\BrandedWebsiteLinksRequestFactory;
 
 test('Branded theme api test', function () {
     $tenant = Tenant::current();

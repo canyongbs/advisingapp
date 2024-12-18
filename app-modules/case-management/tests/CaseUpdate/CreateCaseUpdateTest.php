@@ -34,27 +34,22 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Pages\CreateCaseUpdate;
+use AdvisingApp\CaseManagement\Models\CaseUpdate;
+use AdvisingApp\CaseManagement\Tests\RequestFactories\CreateCaseUpdateRequestFactory;
+use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 use App\Models\User;
-
-use function Tests\asSuperAdmin;
-
 use App\Settings\LicenseSettings;
-
-use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
-
 use Illuminate\Support\Facades\Event;
 
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEmpty;
-use function Pest\Laravel\assertDatabaseHas;
-
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\CaseManagement\Models\CaseUpdate;
-use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;
-use AdvisingApp\CaseManagement\Tests\RequestFactories\CreateCaseUpdateRequestFactory;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Pages\CreateCaseUpdate;
+use function Tests\asSuperAdmin;
 
 test('A successful action on the CreateCaseUpdate page', function () {
     // Because we create a Case there is already a Subscription created.

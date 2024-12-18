@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Form\Actions;
 
-use AdvisingApp\Form\Models\Submission;
-use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlock;
+use AdvisingApp\Form\Models\SubmissibleField;
+use AdvisingApp\Form\Models\Submission;
 
 class InjectSubmissionStateIntoTipTapContent
 {

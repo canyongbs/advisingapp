@@ -36,15 +36,14 @@
 
 namespace AdvisingApp\Campaign\Tests\Actions;
 
-use App\Models\User;
-
-use function Tests\asSuperAdmin;
-use function Pest\Livewire\livewire;
-
-use AdvisingApp\Campaign\Models\Campaign;
-use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages\ListCampaigns;
+use AdvisingApp\Campaign\Models\Campaign;
+use AdvisingApp\Campaign\Models\CampaignAction;
+use App\Models\User;
+
+use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
 it('can filter campaigns by `My Campaigns`', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();

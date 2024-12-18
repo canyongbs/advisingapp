@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\Portal\Http\Controllers\ResourceHub;
 
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
-use App\Models\Scopes\SearchBy;
-use App\Http\Controllers\Controller;
-use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
-use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
-use AdvisingApp\Portal\DataTransferObjects\ResourceHubSearchData;
 use AdvisingApp\Portal\DataTransferObjects\ResourceHubArticleData;
 use AdvisingApp\Portal\DataTransferObjects\ResourceHubCategoryData;
+use AdvisingApp\Portal\DataTransferObjects\ResourceHubSearchData;
+use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
+use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
+use App\Http\Controllers\Controller;
+use App\Models\Scopes\SearchBy;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ResourceHubPortalSearchController extends Controller
 {

@@ -34,17 +34,16 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Ai\Enums\AiApplication;
+use AdvisingApp\Ai\Enums\AiModel;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Models\AiThread;
 use App\Models\User;
 use Filament\Facades\Filament;
 
 use function Pest\Laravel\get;
 use function Tests\asSuperAdmin;
-
-use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\AiMessage;
-use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Enums\AiApplication;
 
 it('fetches information about a thread', function () {
     asSuperAdmin();

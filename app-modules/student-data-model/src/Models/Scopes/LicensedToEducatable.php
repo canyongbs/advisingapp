@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\StudentDataModel\Models\Scopes;
 
-use Exception;
-use App\Models\Authenticatable;
 use AdvisingApp\Prospect\Models\Prospect;
-use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\Authenticatable;
+use Exception;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class LicensedToEducatable

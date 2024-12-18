@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Ai\Actions;
 
-use Illuminate\Support\Facades\Bus;
-use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Jobs\ReInitializeAiAssistant;
 use AdvisingApp\Ai\Jobs\ReInitializeAiAssistantThreads;
+use AdvisingApp\Ai\Models\AiAssistant;
+use Illuminate\Support\Facades\Bus;
 
 class ReInitializeAiServiceAssistant
 {

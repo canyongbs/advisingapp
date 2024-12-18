@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Ai\Policies;
 
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Concerns\PerformsLicenseChecks;
 use App\Enums\Feature;
 use App\Models\Authenticatable;
 use App\Settings\LicenseSettings;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Gate;
-use AdvisingApp\Ai\Models\AiAssistant;
-use App\Concerns\PerformsLicenseChecks;
-use AdvisingApp\Authorization\Enums\LicenseType;
 
 class AiAssistantPolicy
 {

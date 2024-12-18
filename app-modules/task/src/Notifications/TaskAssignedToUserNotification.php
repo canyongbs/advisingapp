@@ -36,22 +36,22 @@
 
 namespace AdvisingApp\Task\Notifications;
 
-use App\Models\User;
+use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\Concerns\DatabaseChannelTrait;
+use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
+use AdvisingApp\Notification\Notifications\DatabaseNotification;
+use AdvisingApp\Notification\Notifications\EmailNotification;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspect;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Task\Filament\Resources\TaskResource\Pages\EditTask;
 use AdvisingApp\Task\Models\Task;
 use App\Models\NotificationSetting;
-use Illuminate\Queue\SerializesModels;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\EmailNotification;
-use AdvisingApp\Notification\Notifications\DatabaseNotification;
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use App\Models\User;
 use Filament\Notifications\Notification as FilamentNotification;
-use AdvisingApp\Task\Filament\Resources\TaskResource\Pages\EditTask;
-use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
-use AdvisingApp\Notification\Notifications\Concerns\DatabaseChannelTrait;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspect;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
+use Illuminate\Queue\SerializesModels;
 
 class TaskAssignedToUserNotification extends BaseNotification implements DatabaseNotification, EmailNotification
 {

@@ -36,10 +36,10 @@
 
 namespace App\GraphQL\Execution;
 
+use App\Exceptions\IntegrationException;
 use Closure;
 use GraphQL\Error\Error;
 use Illuminate\Support\Facades\Log;
-use App\Exceptions\IntegrationException;
 use Nuwave\Lighthouse\Execution\ErrorHandler;
 
 class IntegrationErrorHandler implements ErrorHandler

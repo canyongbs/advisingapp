@@ -34,19 +34,18 @@
 </COPYRIGHT>
 */
 
+use App\Filament\Resources\UserResource\Pages\EditUser;
+use App\Filament\Resources\UserResource\Pages\ViewUser;
 use App\Models\User;
-
-use function Tests\asSuperAdmin;
-
 use Illuminate\View\ViewException;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Livewire\livewire;
 
 use STS\FilamentImpersonate\Pages\Actions\Impersonate;
-use App\Filament\Resources\UserResource\Pages\EditUser;
-use App\Filament\Resources\UserResource\Pages\ViewUser;
+
+use function Tests\asSuperAdmin;
 
 it('renders impersonate button for non super admin users when user is super admin', function () {
     asSuperAdmin();

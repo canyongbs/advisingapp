@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
-use Illuminate\Support\Facades\Event;
-use AdvisingApp\Form\Models\FormSubmission;
 use AdvisingApp\Form\Events\FormSubmissionCreated;
 use AdvisingApp\Form\Listeners\NotifySubscribersOfFormSubmission;
+use AdvisingApp\Form\Models\FormSubmission;
 use AdvisingApp\Form\Notifications\AuthorLinkedFormSubmissionCreatedNotification;
+use App\Models\User;
+use Illuminate\Support\Facades\Event;
 
 it('dispatches FormSubmissionCreated Event when a FormSubmission is created', function () {
     Event::fake(FormSubmissionCreated::class);

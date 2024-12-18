@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Timeline\Models\Concerns;
 
-use Illuminate\Support\Collection;
 use AdvisingApp\Timeline\Observers\HistorySubjectObserver;
+use Illuminate\Support\Collection;
 
 trait InteractsWithHistory
 {

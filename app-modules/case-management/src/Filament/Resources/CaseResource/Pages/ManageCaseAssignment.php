@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages;
 
-use Illuminate\Database\Eloquent\Model;
-use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\RelationManagers\CreatedByRelationManager;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\RelationManagers\AssignedToRelationManager;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\RelationManagers\CreatedByRelationManager;
+use Filament\Resources\Pages\ManageRelatedRecords;
+use Illuminate\Database\Eloquent\Model;
 
 class ManageCaseAssignment extends ManageRelatedRecords
 {

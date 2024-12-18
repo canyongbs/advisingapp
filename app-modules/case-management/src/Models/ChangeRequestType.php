@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\CaseManagement\Models;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use AdvisingApp\Audit\Overrides\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Audit\Overrides\BelongsToMany;
+use App\Models\BaseModel;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @mixin IdeHelperChangeRequestType

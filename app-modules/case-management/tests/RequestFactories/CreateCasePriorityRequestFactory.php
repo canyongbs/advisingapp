@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\CaseManagement\Tests\RequestFactories;
 
-use Worksome\RequestFactories\RequestFactory;
 use AdvisingApp\CaseManagement\Models\CasePriority;
+use Worksome\RequestFactories\RequestFactory;
 
 class CreateCasePriorityRequestFactory extends RequestFactory
 {

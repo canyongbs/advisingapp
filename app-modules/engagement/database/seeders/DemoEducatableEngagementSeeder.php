@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Engagement\Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
+use AdvisingApp\Engagement\Models\EngagementResponse;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Database\Seeder;
 
 class DemoEducatableEngagementSeeder extends Seeder
 {

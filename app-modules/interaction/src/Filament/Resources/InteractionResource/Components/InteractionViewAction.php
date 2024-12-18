@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionResource\Components;
 
+use AdvisingApp\Interaction\Models\Interaction;
 use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\TextEntry;
-use AdvisingApp\Interaction\Models\Interaction;
 
 class InteractionViewAction extends ViewAction
 {

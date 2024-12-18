@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Audit\Filament\Actions;
 
+use Filament\Tables\Actions\DetachAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
-use OwenIt\Auditing\Contracts\Auditable;
-use Filament\Tables\Actions\DetachAction;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use OwenIt\Auditing\Contracts\Auditable;
 
 class AuditDetachAction extends DetachAction
 {

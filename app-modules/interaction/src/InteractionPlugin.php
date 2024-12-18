@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Interaction;
 
-use Filament\Panel;
 use Filament\Contracts\Plugin;
+use Filament\Panel;
 
 class InteractionPlugin implements Plugin
 {

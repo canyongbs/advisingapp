@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\CaseManagement\Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use AdvisingApp\CaseManagement\Models\ChangeRequestStatus;
 use AdvisingApp\CaseManagement\Enums\SystemChangeRequestClassification;
+use AdvisingApp\CaseManagement\Models\ChangeRequestStatus;
+use Illuminate\Database\Seeder;
 
 class ChangeRequestStatusSeeder extends Seeder
 {

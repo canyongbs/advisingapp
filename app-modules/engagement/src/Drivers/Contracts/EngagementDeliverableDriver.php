@@ -37,8 +37,8 @@
 namespace AdvisingApp\Engagement\Drivers\Contracts;
 
 use AdvisingApp\Engagement\Actions\QueuedEngagementDelivery;
-use AdvisingApp\Notification\DataTransferObjects\UpdateSmsDeliveryStatusData;
 use AdvisingApp\Notification\DataTransferObjects\UpdateEmailDeliveryStatusData;
+use AdvisingApp\Notification\DataTransferObjects\UpdateSmsDeliveryStatusData;
 
 interface EngagementDeliverableDriver
 {
