@@ -33,8 +33,8 @@
 --}}
 @use('App\Filament\Resources\UserResource')
 <div>
-    @if ($record->user)
-        <div class="flex flex-row justify-between">
+    <div class="flex flex-row justify-between">
+        @if ($record->user)
             <h3 class="mb-1 flex items-center text-lg font-semibold text-gray-500 dark:text-gray-100">
                 <a
                     class="font-medium underline"
@@ -43,12 +43,12 @@
                     {{ $record->user->name }}
                 </a>
             </h3>
+        @endif
 
-            <div>
-                {{ $viewRecordIcon }}
-            </div>
+        <div>
+            {{ $viewRecordIcon }}
         </div>
-    @endif
+    </div>
 
     <time class="mb-2 block text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
         {{ $record?->type?->name }}
