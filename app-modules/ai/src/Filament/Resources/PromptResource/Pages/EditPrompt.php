@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\PromptResource\Pages;
 
-use Filament\Forms\Form;
-use Filament\Actions\ViewAction;
+use AdvisingApp\Ai\Filament\Resources\PromptResource;
 use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\Select;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\Ai\Filament\Resources\PromptResource;
 
 class EditPrompt extends EditRecord
 {

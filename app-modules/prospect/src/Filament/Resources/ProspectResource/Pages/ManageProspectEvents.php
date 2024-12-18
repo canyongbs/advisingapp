@@ -36,18 +36,18 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
-use Filament\Tables\Table;
-use Filament\Tables\Columns\TextColumn;
-use App\Filament\Tables\Columns\IdColumn;
-use Illuminate\Database\Eloquent\Builder;
-use Filament\Resources\Pages\ManageRelatedRecords;
-use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
-use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
 use AdvisingApp\MeetingCenter\Filament\Actions\InviteEventAttendeeAction;
 use AdvisingApp\MeetingCenter\Filament\Actions\Table\ViewEventAttendeeAction;
+use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
+use AdvisingApp\MeetingCenter\Models\EventAttendee;
+use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use App\Filament\Tables\Columns\IdColumn;
+use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class ManageProspectEvents extends ManageRelatedRecords
 {

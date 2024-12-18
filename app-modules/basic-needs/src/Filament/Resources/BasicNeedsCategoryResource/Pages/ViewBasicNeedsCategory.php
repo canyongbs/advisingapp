@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource\Pages;
 
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource;
 use Filament\Actions\EditAction;
-use Filament\Infolists\Infolist;
-use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Pages\ViewRecord;
 
 class ViewBasicNeedsCategory extends ViewRecord
 {

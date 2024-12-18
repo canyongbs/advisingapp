@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Prospect\Policies;
 
+use AdvisingApp\Prospect\Models\Prospect;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
-use AdvisingApp\Prospect\Models\Prospect;
 
 class ProspectPolicy
 {

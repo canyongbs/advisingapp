@@ -37,15 +37,15 @@
 namespace AdvisingApp\MultifactorAuthentication\Services;
 
 use App\Models\User;
+use BaconQrCode\Renderer\Color\Rgb;
+use BaconQrCode\Renderer\Image\SvgImageBackEnd;
+use BaconQrCode\Renderer\ImageRenderer;
+use BaconQrCode\Renderer\RendererStyle\Fill;
+use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
 use Filament\Facades\Filament;
 use Illuminate\Cache\Repository;
 use PragmaRX\Google2FA\Google2FA;
-use BaconQrCode\Renderer\Color\Rgb;
-use BaconQrCode\Renderer\ImageRenderer;
-use BaconQrCode\Renderer\RendererStyle\Fill;
-use BaconQrCode\Renderer\Image\SvgImageBackEnd;
-use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 
 class MultifactorService
 {

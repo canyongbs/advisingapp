@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Authorization\Http\Controllers\Auth;
 
-use Filament\Facades\Filament;
 use AdvisingApp\Authorization\Enums\SocialiteProvider;
-use Filament\Http\Responses\Auth\Contracts\LogoutResponse;
 use AdvisingApp\Authorization\Http\Responses\Auth\SocialiteLogoutResponse;
+use Filament\Facades\Filament;
 use Filament\Http\Controllers\Auth\LogoutController as FilamentLogoutController;
+use Filament\Http\Responses\Auth\Contracts\LogoutResponse;
 
 class LogoutController extends FilamentLogoutController
 {

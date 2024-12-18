@@ -37,10 +37,10 @@
 namespace App\Filament\Imports;
 
 use App\Models\User;
-use Filament\Actions\Imports\Importer;
-use Filament\Actions\Imports\ImportColumn;
-use Filament\Actions\Imports\Models\Import;
 use App\Notifications\SetPasswordNotification;
+use Filament\Actions\Imports\ImportColumn;
+use Filament\Actions\Imports\Importer;
+use Filament\Actions\Imports\Models\Import;
 
 class UserImporter extends Importer
 {

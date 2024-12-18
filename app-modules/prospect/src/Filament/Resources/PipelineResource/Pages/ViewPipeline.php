@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\PipelineResource\Pages;
 
-use Illuminate\Support\Str;
-use Filament\Actions\EditAction;
-use Filament\Infolists\Infolist;
-use Filament\Actions\DeleteAction;
-use Filament\Resources\Pages\ViewRecord;
+use AdvisingApp\Prospect\Filament\Resources\PipelineResource;
 use AdvisingApp\Prospect\Models\Pipeline;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
+use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Components\RepeatableEntry;
-use AdvisingApp\Prospect\Filament\Resources\PipelineResource;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Pages\ViewRecord;
+use Illuminate\Support\Str;
 
 class ViewPipeline extends ViewRecord
 {

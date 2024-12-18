@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\MeetingCenter\Database\Factories;
 
-use Illuminate\Support\Str;
-use AdvisingApp\MeetingCenter\Models\EventAttendee;
-use Illuminate\Database\Eloquent\Factories\Factory;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
+use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends Factory<EventRegistrationFormSubmission>

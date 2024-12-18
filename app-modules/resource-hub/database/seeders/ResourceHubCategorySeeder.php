@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\ResourceHub\Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
+use Illuminate\Database\Seeder;
 
 class ResourceHubCategorySeeder extends Seeder
 {

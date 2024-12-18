@@ -36,21 +36,21 @@
 
 namespace AdvisingApp\Authorization\Filament\Pages\Auth;
 
-use App\Models\User;
-use Filament\Actions\Action;
-use Filament\Facades\Filament;
-use Livewire\Attributes\Locked;
-use Filament\Forms\Components\TextInput;
-use Filament\Models\Contracts\FilamentUser;
-use AdvisingApp\Theme\Settings\ThemeSettings;
-use Illuminate\Validation\ValidationException;
-use Filament\Pages\Auth\Login as FilamentLogin;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
-use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 use AdvisingApp\MultifactorAuthentication\Services\MultifactorService;
 use AdvisingApp\MultifactorAuthentication\Settings\MultifactorSettings;
+use AdvisingApp\Theme\Settings\ThemeSettings;
+use App\Models\User;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
+use Filament\Actions\Action;
+use Filament\Facades\Filament;
+use Filament\Forms\Components\TextInput;
+use Filament\Http\Responses\Auth\Contracts\LoginResponse;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Pages\Auth\Login as FilamentLogin;
+use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Locked;
 
 class Login extends FilamentLogin
 {

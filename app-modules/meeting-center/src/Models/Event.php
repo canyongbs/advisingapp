@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\MeetingCenter\Models;
 
-use Exception;
+use AdvisingApp\Campaign\Models\CampaignAction;
+use AdvisingApp\MeetingCenter\Jobs\CreateEventAttendees;
 use App\Models\BaseModel;
 use App\Settings\LicenseSettings;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use AdvisingApp\Campaign\Models\CampaignAction;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Exception;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use AdvisingApp\MeetingCenter\Jobs\CreateEventAttendees;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @mixin IdeHelperEvent

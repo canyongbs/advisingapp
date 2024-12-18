@@ -36,17 +36,17 @@
 
 namespace AdvisingApp\Portal\Http\Controllers\ResourceHub;
 
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\URL;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Hash;
 use AdvisingApp\Portal\Enums\PortalType;
-use Illuminate\Support\Facades\Notification;
-use Illuminate\Validation\ValidationException;
+use AdvisingApp\Portal\Http\Requests\ResourceHubPortalAuthenticationRequest;
 use AdvisingApp\Portal\Models\PortalAuthentication;
 use AdvisingApp\Portal\Notifications\AuthenticatePortalNotification;
 use AdvisingApp\StudentDataModel\Actions\ResolveEducatableFromEmail;
-use AdvisingApp\Portal\Http\Requests\ResourceHubPortalAuthenticationRequest;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Validation\ValidationException;
 
 class ResourceHubPortalRequestAuthenticationController extends Controller
 {

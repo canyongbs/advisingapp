@@ -36,10 +36,10 @@
 
 namespace Tests\Unit;
 
-use AdvisingApp\Notification\Notifications\SmsNotification;
 use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
 use AdvisingApp\Notification\Notifications\Concerns\SmsChannelTrait;
+use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
+use AdvisingApp\Notification\Notifications\SmsNotification;
 
 class TestSmsNotification extends BaseNotification implements SmsNotification
 {

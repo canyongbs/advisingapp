@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\MeetingCenter\Observers;
 
-use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Managers\CalendarManager;
+use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 
 class CalendarEventObserver
 {

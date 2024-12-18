@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Report\Database\Factories;
 
-use App\Models\User;
-use AdvisingApp\Report\Models\Report;
 use AdvisingApp\Report\Enums\ReportModel;
+use AdvisingApp\Report\Models\Report;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

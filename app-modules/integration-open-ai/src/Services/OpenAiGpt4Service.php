@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Services;
 
-use OpenAI;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use OpenAI;
 
 class OpenAiGpt4Service extends BaseOpenAiService
 {

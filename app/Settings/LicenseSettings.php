@@ -36,8 +36,8 @@
 
 namespace App\Settings;
 
-use Spatie\LaravelSettings\Settings;
 use App\DataTransferObjects\LicenseManagement\LicenseData;
+use Spatie\LaravelSettings\Settings;
 
 class LicenseSettings extends Settings
 {

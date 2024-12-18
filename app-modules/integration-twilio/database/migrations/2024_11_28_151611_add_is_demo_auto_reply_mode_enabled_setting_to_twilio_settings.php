@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
+use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
 use Spatie\LaravelSettings\Migrations\SettingsBlueprint;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
-use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
 
 return new class () extends SettingsMigration {
     public function up(): void

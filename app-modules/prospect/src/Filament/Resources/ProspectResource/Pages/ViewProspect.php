@@ -36,19 +36,19 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
-use Filament\Actions\EditAction;
-use Filament\Infolists\Infolist;
-use Filament\Resources\Pages\ViewRecord;
-use AdvisingApp\Prospect\Models\Prospect;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\TextEntry;
+use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
 use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ConvertToStudent;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ProspectTagsAction;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\DisassociateStudent;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ProspectTagsAction;
+use AdvisingApp\Prospect\Models\Prospect;
+use Filament\Actions\EditAction;
+use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Pages\ViewRecord;
 
 class ViewProspect extends ViewRecord
 {

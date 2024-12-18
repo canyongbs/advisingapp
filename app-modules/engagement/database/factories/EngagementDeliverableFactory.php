@@ -37,11 +37,11 @@
 namespace AdvisingApp\Engagement\Database\Factories;
 
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Engagement\Models\EngagementDeliverable;
+use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use Database\Factories\Concerns\RandomizeState;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Engagement\Models\EngagementDeliverable;
-use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 
 /**
  * @extends Factory<EngagementDeliverable>

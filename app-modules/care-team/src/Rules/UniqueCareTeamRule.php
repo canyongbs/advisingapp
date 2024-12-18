@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\CareTeam\Rules;
 
-use Closure;
 use AdvisingApp\CareTeam\Models\CareTeam;
+use Closure;
 use Illuminate\Contracts\Validation\DataAwareRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 

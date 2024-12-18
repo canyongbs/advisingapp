@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Report\Models;
 
-use App\Models\BaseModel;
 use AdvisingApp\Report\Enums\TrackedEventType;
+use App\Models\BaseModel;
 
 /**
  * @mixin IdeHelperTrackedEvent

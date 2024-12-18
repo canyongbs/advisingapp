@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use App\Livewire\RenderForm;
 use AdvisingApp\Form\Http\Middleware\EnsureFormsFeatureIsActive;
+use App\Livewire\RenderForm;
 
 Route::prefix('forms')
     ->name('forms.')

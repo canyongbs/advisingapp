@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Segment\Policies;
 
-use App\Models\Authenticatable;
-use Illuminate\Auth\Access\Response;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Segment\Models\Segment;
 use App\Concerns\PerformsLicenseChecks;
-use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Models\Authenticatable;
 use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
+use Illuminate\Auth\Access\Response;
 
 class SegmentPolicy implements PerformsChecksBeforeAuthorization
 {

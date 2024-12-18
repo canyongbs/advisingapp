@@ -36,22 +36,22 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
+use AdvisingApp\Application\Filament\Resources\ApplicationResource;
+use AdvisingApp\Application\Models\ApplicationSubmission;
 use App\Enums\Feature;
-use Filament\Tables\Table;
-use Illuminate\Support\Facades\Gate;
-use Filament\Tables\Actions\ViewAction;
-use Filament\Tables\Columns\TextColumn;
-use Illuminate\Database\Eloquent\Model;
 use App\Filament\Tables\Columns\IdColumn;
-use Filament\Tables\Actions\DeleteAction;
-use Illuminate\Database\Eloquent\Builder;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Resources\RelationManagers\RelationManager;
-use AdvisingApp\Application\Models\ApplicationSubmission;
-use AdvisingApp\Application\Filament\Resources\ApplicationResource;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Gate;
 
 class ApplicationSubmissionsRelationManager extends RelationManager
 {

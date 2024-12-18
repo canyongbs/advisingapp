@@ -38,14 +38,14 @@ declare(strict_types = 1);
 
 namespace App\Overrides\LaravelSqsExtended;
 
-use Illuminate\Support\Arr;
-use Illuminate\Contracts\Queue\Job;
-use Spatie\Multitenancy\Models\Tenant;
 use DefectiveCode\LaravelSqsExtended\SqsDiskJob;
-use Spatie\Multitenancy\Concerns\BindAsCurrentTenant;
-use Spatie\Multitenancy\Models\Concerns\UsesTenantModel;
 use DefectiveCode\LaravelSqsExtended\SqsDiskQueue as BaseSqsDiskQueue;
+use Illuminate\Contracts\Queue\Job;
+use Illuminate\Support\Arr;
+use Spatie\Multitenancy\Concerns\BindAsCurrentTenant;
 use Spatie\Multitenancy\Exceptions\CurrentTenantCouldNotBeDeterminedInTenantAwareJob;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantModel;
+use Spatie\Multitenancy\Models\Tenant;
 
 class SqsDiskQueue extends BaseSqsDiskQueue
 {

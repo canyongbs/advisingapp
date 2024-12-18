@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Ai\Observers;
 
-use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Enums\AiApplication;
 use AdvisingApp\Ai\Exceptions\DefaultAssistantLockedPropertyException;
+use AdvisingApp\Ai\Models\AiAssistant;
 
 class AiAssistantObserver
 {

@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use Cknow\Money\Money;
 use App\Settings\ProspectConversionSettings;
+use Cknow\Money\Money;
 
 use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertInstanceOf;

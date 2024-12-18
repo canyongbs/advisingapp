@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\Theme\Filament\Pages;
 
-use App\Models\User;
-use Filament\Forms\Get;
-use Filament\Forms\Form;
-use Filament\Pages\SettingsPage;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\TextInput;
-use App\Settings\CollegeBrandingSettings;
 use App\Filament\Clusters\DisplaySettings;
 use App\Filament\Forms\Components\ColorSelect;
+use App\Models\User;
+use App\Settings\CollegeBrandingSettings;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Pages\SettingsPage;
 
 class ManageCollegeBrandingSettings extends SettingsPage
 {

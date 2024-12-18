@@ -34,17 +34,15 @@
 </COPYRIGHT>
 */
 
-use function Pest\Laravel\artisan;
-
-use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Events\AiThreadForceDeleting;
 use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Models\AiThread;
+use Illuminate\Database\Console\PruneCommand;
 use Illuminate\Support\Facades\Event;
 
+use function Pest\Laravel\artisan;
 use function PHPUnit\Framework\assertNull;
 use function PHPUnit\Framework\assertTrue;
-
-use Illuminate\Database\Console\PruneCommand;
-use AdvisingApp\Ai\Events\AiThreadForceDeleting;
 
 it('properly prunes AiThread models', function (AiThread $thread, bool $shouldPrune) {
     assertTrue($thread->exists);

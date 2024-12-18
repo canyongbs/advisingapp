@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Report\Policies;
 
-use App\Models\User;
-use App\Models\Authenticatable;
-use Illuminate\Auth\Access\Response;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Report\Models\Report;
 use App\Concerns\PerformsLicenseChecks;
-use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Models\Authenticatable;
+use App\Models\User;
 use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
+use Illuminate\Auth\Access\Response;
 
 class ReportPolicy implements PerformsChecksBeforeAuthorization
 {

@@ -34,34 +34,31 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
-
-use function Pest\Laravel\get;
-
-use AdvisingApp\Ai\Models\Prompt;
-use AdvisingApp\Form\Models\Form;
-use AdvisingApp\Task\Models\Task;
-use App\Settings\LicenseSettings;
 use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Alert\Models\Alert;
+use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Models\PromptUse;
-use AdvisingApp\Survey\Models\Survey;
-use AdvisingApp\Segment\Models\Segment;
-use App\Http\Middleware\CheckOlympusKey;
+use AdvisingApp\Alert\Models\Alert;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Campaign\Models\Campaign;
-use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Campaign\Models\CampaignAction;
+use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
 use AdvisingApp\MeetingCenter\Models\Event;
-
-use function Pest\Laravel\withoutMiddleware;
-
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Enums\TrackedEventType;
-use AdvisingApp\Campaign\Models\CampaignAction;
-use AdvisingApp\Survey\Models\SurveySubmission;
-use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Report\Models\TrackedEventCount;
-use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
+use AdvisingApp\Segment\Models\Segment;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Survey\Models\Survey;
+use AdvisingApp\Survey\Models\SurveySubmission;
+use AdvisingApp\Task\Models\Task;
+use App\Http\Middleware\CheckOlympusKey;
+use App\Models\User;
+use App\Settings\LicenseSettings;
+
+use function Pest\Laravel\get;
+use function Pest\Laravel\withoutMiddleware;
 
 beforeEach(function () {
     withoutMiddleware(CheckOlympusKey::class);

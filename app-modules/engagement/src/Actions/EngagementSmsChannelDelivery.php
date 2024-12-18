@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Engagement\Actions;
 
-use App\Features\TwilioDemoAutoReplyModeFeature;
+use AdvisingApp\Engagement\DataTransferObjects\EngagementResponseData;
+use AdvisingApp\Engagement\Notifications\EngagementSmsNotification;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
-use AdvisingApp\Engagement\Notifications\EngagementSmsNotification;
-use AdvisingApp\Engagement\DataTransferObjects\EngagementResponseData;
+use App\Features\TwilioDemoAutoReplyModeFeature;
 
 class EngagementSmsChannelDelivery extends QueuedEngagementDelivery
 {

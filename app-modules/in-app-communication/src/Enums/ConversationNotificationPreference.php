@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\InAppCommunication\Enums;
 
-use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasColor;
-use Filament\Support\Contracts\HasLabel;
 use Filament\Support\Contracts\HasDescription;
+use Filament\Support\Contracts\HasIcon;
+use Filament\Support\Contracts\HasLabel;
 
 enum ConversationNotificationPreference: string implements HasColor, HasDescription, HasLabel, HasIcon
 {

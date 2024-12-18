@@ -34,21 +34,18 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
-use Livewire\Livewire;
-
-use function Tests\asSuperAdmin;
-
-use AdvisingApp\Ai\Enums\AiModel;
-use App\Settings\LicenseSettings;
-
-use function Pest\Laravel\actingAs;
-
-use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Enums\AiApplication;
-use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Filament\Pages\ManageAiSettings;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Models\User;
+use App\Settings\LicenseSettings;
+use Livewire\Livewire;
+
+use function Pest\Laravel\actingAs;
+use function Tests\asSuperAdmin;
 
 it('renders successfully', function () {
     asSuperAdmin();

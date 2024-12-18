@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-use function Tests\asSuperAdmin;
-use function Pest\Livewire\livewire;
-
+use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\ListEvents;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\ListEvents;
+
+use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
 it('can duplicate a event its registration form its steps and its fields', function () {
     asSuperAdmin();

@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionRelationResource\Pages;
 
+use AdvisingApp\Interaction\Filament\Resources\InteractionRelationResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\Interaction\Filament\Resources\InteractionRelationResource;
 
 class EditInteractionRelation extends EditRecord
 {

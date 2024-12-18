@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Notification\Database\Factories;
 
-use Tests\Unit\TestSmsNotification;
-use Tests\Unit\TestEmailNotification;
-use Illuminate\Database\Eloquent\Factories\Factory;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Tests\Unit\TestEmailNotification;
+use Tests\Unit\TestSmsNotification;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Notification\Models\OutboundDeliverable>

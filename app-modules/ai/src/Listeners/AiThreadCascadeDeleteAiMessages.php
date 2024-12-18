@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Ai\Listeners;
 
-use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Events\AiThreadTrashed;
+use AdvisingApp\Ai\Models\AiMessage;
 
 class AiThreadCascadeDeleteAiMessages
 {

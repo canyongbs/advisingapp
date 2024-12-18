@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\CaseManagement\Observers;
 
-use App\Models\User;
-use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Actions\CreateCaseHistory;
-use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
-use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
-use AdvisingApp\CaseManagement\Exceptions\CaseNumberUpdateAttemptException;
 use AdvisingApp\CaseManagement\Cases\CaseNumber\Contracts\CaseNumberGenerator;
+use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
+use AdvisingApp\CaseManagement\Exceptions\CaseNumberUpdateAttemptException;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Notifications\SendEducatableCaseClosedNotification;
 use AdvisingApp\CaseManagement\Notifications\SendEducatableCaseOpenedNotification;
+use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
+use App\Models\User;
 
 class CaseObserver
 {

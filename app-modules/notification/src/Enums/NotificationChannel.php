@@ -37,8 +37,8 @@
 namespace AdvisingApp\Notification\Enums;
 
 use App\Enums\Integration;
-use Filament\Support\Contracts\HasIcon;
 use App\Exceptions\IntegrationException;
+use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
 
 enum NotificationChannel: string implements HasLabel, HasIcon

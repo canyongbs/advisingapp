@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Prospect\Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use AdvisingApp\Prospect\Models\ProspectSource;
+use Illuminate\Database\Seeder;
 
 class ProspectSourceSeeder extends Seeder
 {

@@ -35,9 +35,9 @@
 */
 
 use App\Models\Tenant;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Migrations\Migration;
 use Database\Migrations\Concerns\CanModifySettings;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
 return new class () extends Migration {
     use CanModifySettings;

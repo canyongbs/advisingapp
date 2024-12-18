@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
-use Filament\Forms\Form;
-use Filament\Resources\Pages\ManageRelatedRecords;
-use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Interaction\Filament\Concerns\HasManyMorphedInteractionsTrait;
 use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
+use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use Filament\Forms\Form;
+use Filament\Resources\Pages\ManageRelatedRecords;
 
 class ManageProspectInteractions extends ManageRelatedRecords
 {

@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\CaseManagement\Tests\RequestFactories;
 
+use AdvisingApp\CaseManagement\Models\CasePriority;
+use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\Division\Models\Division;
 use Worksome\RequestFactories\RequestFactory;
-use AdvisingApp\CaseManagement\Models\CaseStatus;
-use AdvisingApp\CaseManagement\Models\CasePriority;
 
 class EditCaseRequestFactory extends RequestFactory
 {

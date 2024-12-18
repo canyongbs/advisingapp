@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\IntegrationTwilio\Jobs;
 
-use Carbon\Carbon;
-use Twilio\Rest\Client;
-use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Twilio\Exceptions\TwilioException;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
+use Carbon\Carbon;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Twilio\Exceptions\TwilioException;
+use Twilio\Rest\Client;
 
 class CheckSmsOutboundDeliverableStatus implements ShouldQueue
 {

@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Notification\Filament\Actions;
 
-use Filament\Actions\Action;
-use Illuminate\Database\Eloquent\Builder;
-use Filament\Pages\Concerns\InteractsWithHeaderActions;
 use AdvisingApp\Notification\Actions\SubscriptionToggle;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
+use Filament\Actions\Action;
+use Filament\Pages\Concerns\InteractsWithHeaderActions;
+use Illuminate\Database\Eloquent\Builder;
 
 class SubscribeHeaderAction extends Action
 {

@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\CaseManagement\Actions;
 
-use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Actions\GenerateFormKitSchema;
+use AdvisingApp\Form\Models\Submissible;
 
 class GenerateCaseFormKitSchema extends GenerateFormKitSchema
 {

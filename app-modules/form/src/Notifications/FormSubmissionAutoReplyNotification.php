@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\Form\Notifications;
 
-use App\Models\Tenant;
 use AdvisingApp\Form\Models\Form;
-use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Form\Models\FormSubmission;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\Tenant;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 
 class FormSubmissionAutoReplyNotification extends BaseNotification implements EmailNotification, ShouldBeUnique
 {

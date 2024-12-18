@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Ai\Database\Factories;
 
-use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiApplication;
+use AdvisingApp\Ai\Enums\AiModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

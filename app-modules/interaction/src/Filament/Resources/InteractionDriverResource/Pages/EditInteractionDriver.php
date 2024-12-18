@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource\Pages;
 
+use AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource;
 
 class EditInteractionDriver extends EditRecord
 {

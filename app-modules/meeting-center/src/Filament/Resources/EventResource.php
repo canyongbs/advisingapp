@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources;
 
-use Filament\Resources\Resource;
-use Filament\Resources\Pages\Page;
-use AdvisingApp\MeetingCenter\Models\Event;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\EditEvent;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\ViewEvent;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\ListEvents;
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\CreateEvent;
+use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\EditEvent;
+use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\ListEvents;
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\ManageEventAttendees;
+use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\ViewEvent;
+use AdvisingApp\MeetingCenter\Models\Event;
+use Filament\Resources\Pages\Page;
+use Filament\Resources\Resource;
 
 class EventResource extends Resource
 {

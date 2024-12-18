@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Route;
-use AdvisingApp\Portal\Livewire\RenderResourceHubPortal;
-use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
-use AdvisingApp\Portal\Http\Middleware\EnsureResourceHubPortalIsEnabled;
-use AdvisingApp\Portal\Http\Middleware\EnsureResourceHubPortalIsEmbeddableAndAuthorized;
 use AdvisingApp\Portal\Http\Controllers\ResourceHub\ResourceHubPortalAuthenticateController;
+use AdvisingApp\Portal\Http\Middleware\EnsureResourceHubPortalIsEmbeddableAndAuthorized;
+use AdvisingApp\Portal\Http\Middleware\EnsureResourceHubPortalIsEnabled;
+use AdvisingApp\Portal\Livewire\RenderResourceHubPortal;
+use Illuminate\Support\Facades\Route;
+use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 Route::prefix('portals')
     ->name('portal.')

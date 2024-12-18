@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\CaseManagement\Policies;
 
-use App\Enums\Feature;
-use App\Models\Authenticatable;
-use Illuminate\Auth\Access\Response;
-use Illuminate\Support\Facades\Gate;
-use App\Support\FeatureAccessResponse;
+use AdvisingApp\CaseManagement\Models\CasePriority;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\CaseManagement\Models\CasePriority;
+use App\Enums\Feature;
+use App\Models\Authenticatable;
+use App\Support\FeatureAccessResponse;
+use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Facades\Gate;
 
 class CasePriorityPolicy
 {

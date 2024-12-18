@@ -36,25 +36,25 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
-use App\Enums\Feature;
-use Filament\Tables\Table;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Cache;
-use Filament\Tables\Actions\ViewAction;
-use Filament\Tables\Columns\TextColumn;
-use AdvisingApp\Prospect\Models\Prospect;
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Tables\Actions\DeleteAction;
-use Illuminate\Database\Eloquent\Builder;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Resources\Pages\ManageRelatedRecords;
-use AdvisingApp\Form\Filament\Resources\FormResource;
 use AdvisingApp\Application\Models\ApplicationSubmission;
+use AdvisingApp\Form\Filament\Resources\FormResource;
 use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Models\Prospect;
+use App\Enums\Feature;
+use App\Filament\Tables\Columns\IdColumn;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Gate;
 
 class ManageProspectApplicationSubmissions extends ManageRelatedRecords
 {

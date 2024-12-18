@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Engagement\GraphQL\Mutations;
 
+use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
+use AdvisingApp\Engagement\Actions\GenerateTipTapBodyJson;
+use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use App\Enums\Integration;
 use App\Exceptions\IntegrationException;
 use Nuwave\Lighthouse\Execution\ResolveInfo;
-use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Notification\Enums\NotificationChannel;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
-use AdvisingApp\Engagement\Actions\GenerateTipTapBodyJson;
-use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
 
 class UpdateSMS
 {

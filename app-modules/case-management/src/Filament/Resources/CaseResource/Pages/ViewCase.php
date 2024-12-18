@@ -36,21 +36,21 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages;
 
+use AdvisingApp\CaseManagement\Enums\SlaComplianceStatus;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
+use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Carbon\CarbonInterval;
 use Filament\Actions\EditAction;
-use Filament\Infolists\Infolist;
 use Filament\Infolists\Components\Group;
-use Filament\Resources\Pages\ViewRecord;
-use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
-use AdvisingApp\CaseManagement\Models\CaseModel;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\CaseManagement\Enums\SlaComplianceStatus;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Pages\ViewRecord;
 
 class ViewCase extends ViewRecord
 {

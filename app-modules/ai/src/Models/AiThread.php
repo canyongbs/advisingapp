@@ -36,22 +36,22 @@
 
 namespace AdvisingApp\Ai\Models;
 
-use Carbon\Carbon;
-use App\Models\User;
-use Livewire\Wireable;
-use App\Models\BaseModel;
-use Carbon\CarbonInterface;
-use App\Settings\DisplaySettings;
-use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\Ai\Events\AiThreadTrashed;
-use Illuminate\Database\Eloquent\Prunable;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\Ai\Events\AiThreadForceDeleting;
+use AdvisingApp\Ai\Events\AiThreadTrashed;
+use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
+use App\Models\BaseModel;
+use App\Models\User;
+use App\Settings\DisplaySettings;
+use Carbon\Carbon;
+use Carbon\CarbonInterface;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Livewire\Wireable;
 
 /**
  * @mixin IdeHelperAiThread

@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Route;
 use AdvisingApp\CaseManagement\Http\Controllers\CaseFormWidgetController;
-use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
 use AdvisingApp\CaseManagement\Http\Middleware\EnsureCaseManagementFeatureIsActive;
+use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
+use Illuminate\Support\Facades\Route;
 
 Route::prefix('api')
     ->middleware([

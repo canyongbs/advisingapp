@@ -34,18 +34,15 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource;
+use AdvisingApp\CaseManagement\Models\CaseStatus;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
-
-use function Tests\asSuperAdmin;
-
 use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
-
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\CaseManagement\Models\CaseStatus;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource;
+use function Tests\asSuperAdmin;
 
 test('The correct details are displayed on the ViewCaseStatus page', function () {
     $caseStatus = CaseStatus::factory()->create();

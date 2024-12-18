@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Engagement\Filament\Concerns;
 
-use Illuminate\Support\HtmlString;
+use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
-use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
+use Illuminate\Support\HtmlString;
 
 // TODO Re-use this trait across other places where infolist is rendered
 trait EngagementInfolist

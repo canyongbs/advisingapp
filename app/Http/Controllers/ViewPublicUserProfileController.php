@@ -37,9 +37,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\Response;
 
 class ViewPublicUserProfileController extends Controller

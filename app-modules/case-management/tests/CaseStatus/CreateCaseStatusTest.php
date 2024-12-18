@@ -34,27 +34,22 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource\Pages\CreateCaseStatus;
+use AdvisingApp\CaseManagement\Models\CaseStatus;
+use AdvisingApp\CaseManagement\Tests\RequestFactories\CreateCaseStatusRequestFactory;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
-
-use function Tests\asSuperAdmin;
-
 use App\Settings\LicenseSettings;
+use Illuminate\Validation\Rules\Enum;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Livewire\livewire;
-
-use Illuminate\Validation\Rules\Enum;
-use AdvisingApp\Prospect\Models\Prospect;
-
 use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEmpty;
-use function Pest\Laravel\assertDatabaseHas;
-
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\CaseManagement\Models\CaseStatus;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource;
-use AdvisingApp\CaseManagement\Tests\RequestFactories\CreateCaseStatusRequestFactory;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource\Pages\CreateCaseStatus;
+use function Tests\asSuperAdmin;
 
 test('A successful action on the CreateCaseStatus page', function () {
     asSuperAdmin()

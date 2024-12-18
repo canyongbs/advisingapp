@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
-use App\Enums\Feature;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Contracts\Support\Htmlable;
-use Filament\Resources\Pages\ManageRelatedRecords;
-use App\Filament\Concerns\FiltersManagersFromGroups;
 use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers\CasesRelationManager;
+use App\Enums\Feature;
+use App\Filament\Concerns\FiltersManagersFromGroups;
+use Filament\Resources\Pages\ManageRelatedRecords;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Gate;
 
 class ProspectCaseManagement extends ManageRelatedRecords
 {

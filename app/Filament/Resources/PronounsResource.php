@@ -36,18 +36,18 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Clusters\ProfileManagement;
+use App\Filament\Resources\PronounsResource\Pages\ManagePronouns;
 use App\Models\Pronouns;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Filament\Tables\Actions\DeleteAction;
-use App\Filament\Clusters\ProfileManagement;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-use App\Filament\Resources\PronounsResource\Pages\ManagePronouns;
+use Filament\Tables\Table;
 
 class PronounsResource extends Resource
 {

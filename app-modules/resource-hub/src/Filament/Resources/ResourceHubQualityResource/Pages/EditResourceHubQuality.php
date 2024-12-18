@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualityResource\Pages;
 
-use Filament\Forms\Form;
-use Filament\Actions\ViewAction;
-use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\EditRecord;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualityResource;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\ViewAction;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Resources\Pages\EditRecord;
 
 class EditResourceHubQuality extends EditRecord
 {

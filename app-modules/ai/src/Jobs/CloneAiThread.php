@@ -36,17 +36,17 @@
 
 namespace AdvisingApp\Ai\Jobs;
 
-use Throwable;
+use AdvisingApp\Ai\Models\AiThread;
 use App\Models\User;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
-use Illuminate\Support\Facades\DB;
-use AdvisingApp\Ai\Models\AiThread;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class CloneAiThread implements ShouldQueue
 {

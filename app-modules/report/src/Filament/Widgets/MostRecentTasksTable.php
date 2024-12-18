@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use Filament\Tables\Table;
-use Livewire\Attributes\On;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
 use Filament\Tables\Columns\TextColumn;
-use AdvisingApp\Prospect\Models\Prospect;
+use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use Livewire\Attributes\On;
 
 class MostRecentTasksTable extends BaseWidget
 {

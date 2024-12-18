@@ -34,15 +34,16 @@
 </COPYRIGHT>
 */
 
-use Mockery\MockInterface;
-use Illuminate\Http\Request;
+use AdvisingApp\Webhook\Http\Middleware\VerifyAwsSnsRequest;
 use Aws\Sns\MessageValidator;
+use Illuminate\Http\Request;
+use Mockery\MockInterface;
 
 use function Pest\Laravel\mock;
-use function Tests\loadFixtureFromModule;
 
-use AdvisingApp\Webhook\Http\Middleware\VerifyAwsSnsRequest;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
+use function Tests\loadFixtureFromModule;
 
 it('will abort the request if the request cannot be verified to have originated from AWS SNS', function () {
     mock(MessageValidator::class, function (MockInterface $mock) {

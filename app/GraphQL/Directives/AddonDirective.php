@@ -39,19 +39,19 @@ declare(strict_types = 1);
 namespace App\GraphQL\Directives;
 
 use App\Enums\Feature;
-use GraphQL\Language\AST\NodeList;
-use Illuminate\Support\Facades\Gate;
-use GraphQL\Language\AST\TypeExtensionNode;
-use Nuwave\Lighthouse\Schema\AST\ASTHelper;
-use GraphQL\Language\AST\TypeDefinitionNode;
 use GraphQL\Language\AST\FieldDefinitionNode;
-use Nuwave\Lighthouse\Schema\AST\DocumentAST;
-use GraphQL\Language\AST\ObjectTypeDefinitionNode;
 use GraphQL\Language\AST\InterfaceTypeDefinitionNode;
+use GraphQL\Language\AST\NodeList;
+use GraphQL\Language\AST\ObjectTypeDefinitionNode;
+use GraphQL\Language\AST\TypeDefinitionNode;
+use GraphQL\Language\AST\TypeExtensionNode;
+use Illuminate\Support\Facades\Gate;
+use Nuwave\Lighthouse\Schema\AST\ASTHelper;
+use Nuwave\Lighthouse\Schema\AST\DocumentAST;
 use Nuwave\Lighthouse\Schema\Directives\BaseDirective;
-use Nuwave\Lighthouse\Support\Contracts\TypeManipulator;
 use Nuwave\Lighthouse\Support\Contracts\FieldManipulator;
 use Nuwave\Lighthouse\Support\Contracts\TypeExtensionManipulator;
+use Nuwave\Lighthouse\Support\Contracts\TypeManipulator;
 
 class AddonDirective extends BaseDirective implements TypeManipulator, TypeExtensionManipulator, FieldManipulator
 {

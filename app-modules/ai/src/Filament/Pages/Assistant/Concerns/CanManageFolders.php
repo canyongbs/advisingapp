@@ -36,20 +36,20 @@
 
 namespace AdvisingApp\Ai\Filament\Pages\Assistant\Concerns;
 
-use Exception;
-use App\Models\User;
-use Filament\Actions\Action;
-use Livewire\Attributes\Locked;
-use Illuminate\Http\JsonResponse;
-use Filament\Actions\StaticAction;
 use AdvisingApp\Ai\Models\AiThread;
-use Filament\Forms\Components\Select;
-use Filament\Support\Enums\ActionSize;
-use Illuminate\Validation\Rules\Unique;
-use Filament\Forms\Components\TextInput;
 use AdvisingApp\Ai\Models\AiThreadFolder;
-use Symfony\Component\HttpFoundation\Response;
+use App\Models\User;
+use Exception;
+use Filament\Actions\Action;
+use Filament\Actions\StaticAction;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Support\Enums\ActionSize;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\Rules\Unique;
+use Livewire\Attributes\Locked;
+use Symfony\Component\HttpFoundation\Response;
 
 trait CanManageFolders
 {

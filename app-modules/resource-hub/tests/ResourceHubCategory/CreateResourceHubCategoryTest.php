@@ -34,19 +34,18 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource\Pages\CreateResourceHubCategory;
+use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
+use AdvisingApp\ResourceHub\Tests\ResourceHubCategory\RequestFactories\CreateResourceHubCategoryRequestFactory;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
-use function Pest\Laravel\assertDatabaseHas;
-
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource\Pages\CreateResourceHubCategory;
-use AdvisingApp\ResourceHub\Tests\ResourceHubCategory\RequestFactories\CreateResourceHubCategoryRequestFactory;
 
 // TODO: Write CreateResourceHubCategory tests
 //test('A successful action on the CreateResourceHubCategory page', function () {});

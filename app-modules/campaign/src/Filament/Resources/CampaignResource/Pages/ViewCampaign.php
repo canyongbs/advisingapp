@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages;
 
-use Filament\Actions\EditAction;
-use Filament\Infolists\Infolist;
-use App\Features\AddCreatedByFeature;
-use Filament\Resources\Pages\ViewRecord;
-use AdvisingApp\Campaign\Models\Campaign;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\TextEntry;
 use AdvisingApp\Campaign\Filament\Resources\CampaignResource;
+use AdvisingApp\Campaign\Models\Campaign;
+use App\Features\AddCreatedByFeature;
+use Filament\Actions\EditAction;
+use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Pages\ViewRecord;
 
 class ViewCampaign extends ViewRecord
 {

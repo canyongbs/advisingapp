@@ -36,19 +36,19 @@
 
 namespace App\Filament\Widgets;
 
-use Filament\Tables\Table;
-use Filament\Tables\Actions\ViewAction;
-use Filament\Tables\Columns\TextColumn;
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Tables\Filters\SelectFilter;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Query\JoinClause;
-use Filament\Widgets\TableWidget as BaseWidget;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Models\CasePriority;
-use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSort;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
 use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSearch;
+use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSort;
+use App\Filament\Tables\Columns\IdColumn;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
+use Filament\Widgets\TableWidget as BaseWidget;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\JoinClause;
 
 class MyCases extends BaseWidget
 {

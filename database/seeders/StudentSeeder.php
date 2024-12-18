@@ -36,11 +36,11 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use Illuminate\Database\Eloquent\Collection;
+use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\StudentDataModel\Models\Enrollment;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Seeder;
 
 class StudentSeeder extends Seeder
 {

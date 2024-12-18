@@ -36,23 +36,23 @@
 
 namespace AdvisingApp\IntegrationAwsSesEventHandling\Providers;
 
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesBounceEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesDeliveryDelayEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesDeliveryEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesRejectEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesRenderingFailureEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\IntegrationAwsSesEventHandlingPlugin;
+use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\EnsureSesConfigurationSetHeadersArePresent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesBounceEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesDeliveryDelayEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesDeliveryEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesRejectEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesRenderingFailureEvent;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Mail\Events\MessageSending;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesBounceEvent;
-use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesRejectEvent;
-use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesDeliveryEvent;
-use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesDeliveryDelayEvent;
-use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesBounceEvent;
-use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesRejectEvent;
-use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesRenderingFailureEvent;
-use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesDeliveryEvent;
-use AdvisingApp\IntegrationAwsSesEventHandling\IntegrationAwsSesEventHandlingPlugin;
-use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesDeliveryDelayEvent;
-use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesRenderingFailureEvent;
-use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\EnsureSesConfigurationSetHeadersArePresent;
 
 class IntegrationAwsSesEventHandlingServiceProvider extends ServiceProvider
 {

@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Notification\Actions;
 
-use App\Models\User;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
+use App\Models\User;
 
 class SubscriptionToggle
 {

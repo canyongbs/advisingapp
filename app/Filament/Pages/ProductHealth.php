@@ -37,10 +37,10 @@
 namespace App\Filament\Pages;
 
 use App\Models\User;
-use Spatie\Health\Enums\Status;
 use Illuminate\Contracts\Support\Htmlable;
-use Spatie\Health\ResultStores\ResultStore;
 use ShuvroRoy\FilamentSpatieLaravelHealth\Pages\HealthCheckResults;
+use Spatie\Health\Enums\Status;
+use Spatie\Health\ResultStores\ResultStore;
 
 class ProductHealth extends HealthCheckResults
 {

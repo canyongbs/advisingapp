@@ -36,30 +36,30 @@
 
 namespace AdvisingApp\CaseManagement\Providers;
 
-use Filament\Panel;
-use App\Concerns\ImplementsGraphQL;
-use Illuminate\Support\ServiceProvider;
-use AdvisingApp\CaseManagement\Models\Sla;
-use AdvisingApp\CaseManagement\Models\CaseForm;
-use AdvisingApp\CaseManagement\Models\CaseType;
-use AdvisingApp\CaseManagement\Models\CaseModel;
-use AdvisingApp\CaseManagement\Models\CaseStatus;
-use AdvisingApp\CaseManagement\Models\CaseUpdate;
-use AdvisingApp\CaseManagement\Models\CaseHistory;
-use AdvisingApp\CaseManagement\Models\CaseFormStep;
-use AdvisingApp\CaseManagement\Models\CasePriority;
 use AdvisingApp\CaseManagement\CaseManagementPlugin;
-use AdvisingApp\CaseManagement\Models\CaseFormField;
-use AdvisingApp\CaseManagement\Models\ChangeRequest;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\CaseManagement\Models\CaseAssignment;
-use AdvisingApp\CaseManagement\Models\ChangeRequestType;
-use AdvisingApp\CaseManagement\Models\CaseFormSubmission;
-use AdvisingApp\CaseManagement\Models\ChangeRequestStatus;
-use AdvisingApp\CaseManagement\Models\ChangeRequestResponse;
-use AdvisingApp\CaseManagement\Models\CaseFormAuthentication;
 use AdvisingApp\CaseManagement\Cases\CaseNumber\Contracts\CaseNumberGenerator;
 use AdvisingApp\CaseManagement\Cases\CaseNumber\SqidPlusSixCaseNumberGenerator;
+use AdvisingApp\CaseManagement\Models\CaseAssignment;
+use AdvisingApp\CaseManagement\Models\CaseForm;
+use AdvisingApp\CaseManagement\Models\CaseFormAuthentication;
+use AdvisingApp\CaseManagement\Models\CaseFormField;
+use AdvisingApp\CaseManagement\Models\CaseFormStep;
+use AdvisingApp\CaseManagement\Models\CaseFormSubmission;
+use AdvisingApp\CaseManagement\Models\CaseHistory;
+use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\CaseManagement\Models\CasePriority;
+use AdvisingApp\CaseManagement\Models\CaseStatus;
+use AdvisingApp\CaseManagement\Models\CaseType;
+use AdvisingApp\CaseManagement\Models\CaseUpdate;
+use AdvisingApp\CaseManagement\Models\ChangeRequest;
+use AdvisingApp\CaseManagement\Models\ChangeRequestResponse;
+use AdvisingApp\CaseManagement\Models\ChangeRequestStatus;
+use AdvisingApp\CaseManagement\Models\ChangeRequestType;
+use AdvisingApp\CaseManagement\Models\Sla;
+use App\Concerns\ImplementsGraphQL;
+use Filament\Panel;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\ServiceProvider;
 
 class CaseManagementServiceProvider extends ServiceProvider
 {

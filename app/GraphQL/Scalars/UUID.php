@@ -39,18 +39,18 @@ declare(strict_types = 1);
 namespace App\GraphQL\Scalars;
 
 use GraphQL\Error\Error;
-use GraphQL\Utils\Utils;
-use GraphQL\Language\AST\Node;
-use GraphQL\Type\Definition\Type;
-use GraphQL\Language\AST\ValueNode;
 use GraphQL\Error\InvariantViolation;
-use GraphQL\Type\Definition\ScalarType;
+use GraphQL\Language\AST\Node;
 use GraphQL\Language\AST\StringValueNode;
 use GraphQL\Language\AST\TypeDefinitionNode;
+use GraphQL\Language\AST\ValueNode;
+use GraphQL\Type\Definition\ScalarType;
+use GraphQL\Type\Definition\Type;
+use GraphQL\Utils\Utils;
 use LastDragon_ru\LaraASP\GraphQL\Builder\BuilderInfo;
-use LastDragon_ru\LaraASP\GraphQL\Builder\Manipulator;
-use LastDragon_ru\LaraASP\GraphQL\Builder\Contracts\TypeSource;
 use LastDragon_ru\LaraASP\GraphQL\Builder\Contracts\TypeDefinition;
+use LastDragon_ru\LaraASP\GraphQL\Builder\Contracts\TypeSource;
+use LastDragon_ru\LaraASP\GraphQL\Builder\Manipulator;
 
 /** Read more about scalars here: https://webonyx.github.io/graphql-php/type-definitions/scalars. */
 class UUID extends ScalarType implements TypeDefinition

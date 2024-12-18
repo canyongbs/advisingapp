@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\Segment\Enums;
 
-use Filament\Tables\Table;
-use Filament\Support\Contracts\HasLabel;
-use AdvisingApp\Prospect\Models\Prospect;
-use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Segment\Importers\StudentSegmentSubjectImporter;
-use AdvisingApp\Segment\Importers\ProspectSegmentSubjectImporter;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Tables\ProspectsTable;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Segment\Importers\ProspectSegmentSubjectImporter;
+use AdvisingApp\Segment\Importers\StudentSegmentSubjectImporter;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Tables\StudentsTable;
+use AdvisingApp\StudentDataModel\Models\Student;
+use Filament\Support\Contracts\HasLabel;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 enum SegmentModel: string implements HasLabel
 {

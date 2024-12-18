@@ -36,26 +36,26 @@
 
 namespace AdvisingApp\MeetingCenter\Managers;
 
-use DateTime;
+use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
+use AdvisingApp\MeetingCenter\Models\Calendar;
+use AdvisingApp\MeetingCenter\Models\CalendarEvent;
+use AdvisingApp\MeetingCenter\Notifications\CalendarRequiresReconnectNotification;
+use AdvisingApp\MeetingCenter\Settings\AzureCalendarSettings;
 use Carbon\Carbon;
+use DateTime;
 use DateTimeInterface;
+use GuzzleHttp\Exception\ClientException;
+use Illuminate\Support\Facades\Http;
+use Microsoft\Graph\Core\GraphConstants;
 use Microsoft\Graph\Graph;
-use Microsoft\Graph\Model\Event;
 use Microsoft\Graph\Model\Attendee;
 use Microsoft\Graph\Model\BodyType;
-use Microsoft\Graph\Model\ItemBody;
-use Illuminate\Support\Facades\Http;
-use Microsoft\Graph\Model\EmailAddress;
-use Microsoft\Graph\Core\GraphConstants;
-use GuzzleHttp\Exception\ClientException;
-use Microsoft\Graph\Model\DateTimeTimeZone;
-use AdvisingApp\MeetingCenter\Models\Calendar;
-use Symfony\Component\HttpFoundation\Response;
-use AdvisingApp\MeetingCenter\Models\CalendarEvent;
-use AdvisingApp\MeetingCenter\Settings\AzureCalendarSettings;
 use Microsoft\Graph\Model\Calendar as MicrosoftGraphCalendar;
-use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
-use AdvisingApp\MeetingCenter\Notifications\CalendarRequiresReconnectNotification;
+use Microsoft\Graph\Model\DateTimeTimeZone;
+use Microsoft\Graph\Model\EmailAddress;
+use Microsoft\Graph\Model\Event;
+use Microsoft\Graph\Model\ItemBody;
+use Symfony\Component\HttpFoundation\Response;
 
 class OutlookCalendarManager implements CalendarInterface
 {

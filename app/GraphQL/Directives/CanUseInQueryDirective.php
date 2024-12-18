@@ -36,10 +36,10 @@
 
 namespace App\GraphQL\Directives;
 
-use RuntimeException;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Gate;
 use Nuwave\Lighthouse\Schema\Directives\BaseDirective;
+use RuntimeException;
 
 class CanUseInQueryDirective extends BaseDirective
 {

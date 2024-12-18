@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Timeline\Timelines;
 
-use Filament\Actions\ViewAction;
+use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Components\InteractionViewAction;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Timeline\Models\CustomTimeline;
-use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Components\InteractionViewAction;
+use Filament\Actions\ViewAction;
 
 class InteractionTimeline extends CustomTimeline
 {

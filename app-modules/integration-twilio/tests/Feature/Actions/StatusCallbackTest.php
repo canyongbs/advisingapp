@@ -34,16 +34,15 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Engagement\Models\EngagementDeliverable;
+use AdvisingApp\IntegrationTwilio\Actions\StatusCallback;
+use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
+use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
 use Illuminate\Http\Request;
 
-use function Tests\replaceKeyInFixture;
 use function Tests\loadFixtureFromModule;
-
-use AdvisingApp\Engagement\Models\EngagementDeliverable;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\IntegrationTwilio\Actions\StatusCallback;
-use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
-use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
+use function Tests\replaceKeyInFixture;
 
 test('it will appropriately update the status of an outbound deliverable based on the payload received', function (string $payloadPath, NotificationDeliveryStatus $expectedStatus) {
     // Given that we have an outbound deliverable

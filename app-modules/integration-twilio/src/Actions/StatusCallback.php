@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\IntegrationTwilio\Actions;
 
+use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
+use AdvisingApp\Notification\Actions\UpdateOutboundDeliverableSmsStatus;
+use AdvisingApp\Notification\Events\CouldNotFindOutboundDeliverableFromExternalReference;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\Actions\UpdateOutboundDeliverableSmsStatus;
-use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
-use AdvisingApp\Notification\Events\CouldNotFindOutboundDeliverableFromExternalReference;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 class StatusCallback implements ShouldQueue
 {

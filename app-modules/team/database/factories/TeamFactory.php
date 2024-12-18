@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Team\Database\Factories;
 
-use AdvisingApp\Team\Models\Team;
 use AdvisingApp\Division\Models\Division;
+use AdvisingApp\Team\Models\Team;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

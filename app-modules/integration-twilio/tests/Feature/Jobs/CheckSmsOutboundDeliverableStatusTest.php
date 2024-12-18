@@ -34,17 +34,17 @@
 </COPYRIGHT>
 */
 
-use Twilio\Rest\Client;
-use Tests\Unit\ClientMock;
-use Twilio\Rest\Api\V2010;
-use Twilio\Rest\MessagingBase;
-use Twilio\Rest\Api\V2010\Account\MessageContext;
-use Twilio\Rest\Api\V2010\Account\MessageInstance;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\IntegrationTwilio\Jobs\CheckSmsOutboundDeliverableStatus;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
-use AdvisingApp\IntegrationTwilio\Jobs\CheckSmsOutboundDeliverableStatus;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
+use Tests\Unit\ClientMock;
+use Twilio\Rest\Api\V2010;
+use Twilio\Rest\Api\V2010\Account\MessageContext;
+use Twilio\Rest\Api\V2010\Account\MessageInstance;
+use Twilio\Rest\Client;
+use Twilio\Rest\MessagingBase;
 
 it('will update the status of an outbound deliverable accordingly', function (string $externalStatus) {
     $settings = app()->make(TwilioSettings::class);

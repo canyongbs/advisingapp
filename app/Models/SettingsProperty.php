@@ -37,8 +37,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 use Spatie\LaravelSettings\Models\SettingsProperty as BaseSettingsProperty;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperSettingsProperty

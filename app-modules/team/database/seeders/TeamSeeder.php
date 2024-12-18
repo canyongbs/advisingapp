@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Team\Database\Seeders;
 
+use AdvisingApp\Team\Models\Team;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use AdvisingApp\Team\Models\Team;
 
 class TeamSeeder extends Seeder
 {

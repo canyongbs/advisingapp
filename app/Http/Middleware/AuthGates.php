@@ -36,8 +36,8 @@
 
 namespace App\Http\Middleware;
 
-use Closure;
 use App\Models\Authenticatable;
+use Closure;
 use Illuminate\Support\Facades\Gate;
 
 class AuthGates

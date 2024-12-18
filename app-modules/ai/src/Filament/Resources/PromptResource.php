@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Ai\Filament\Resources;
 
-use Filament\Resources\Resource;
-use AdvisingApp\Ai\Models\Prompt;
-use AdvisingApp\Ai\Filament\Resources\PromptResource\Pages\EditPrompt;
-use AdvisingApp\Ai\Filament\Resources\PromptResource\Pages\ViewPrompt;
-use AdvisingApp\Ai\Filament\Resources\PromptResource\Pages\ListPrompts;
 use AdvisingApp\Ai\Filament\Resources\PromptResource\Pages\CreatePrompt;
+use AdvisingApp\Ai\Filament\Resources\PromptResource\Pages\EditPrompt;
+use AdvisingApp\Ai\Filament\Resources\PromptResource\Pages\ListPrompts;
+use AdvisingApp\Ai\Filament\Resources\PromptResource\Pages\ViewPrompt;
+use AdvisingApp\Ai\Models\Prompt;
+use Filament\Resources\Resource;
 
 class PromptResource extends Resource
 {

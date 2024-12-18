@@ -36,20 +36,20 @@
 
 namespace AdvisingApp\Form\Providers;
 
-use Filament\Panel;
-use AdvisingApp\Form\FormPlugin;
-use AdvisingApp\Form\Models\Form;
-use Illuminate\Support\Facades\Event;
-use AdvisingApp\Form\Models\FormField;
-use Illuminate\Support\ServiceProvider;
-use AdvisingApp\Form\Models\FormSubmission;
-use AdvisingApp\Form\Models\FormEmailAutoReply;
 use AdvisingApp\Form\Events\FormSubmissionCreated;
-use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Form\FormPlugin;
+use AdvisingApp\Form\Listeners\ClearAuthorFormSubmissionCountCache;
 use AdvisingApp\Form\Listeners\ClearFormFormSubmissionCountCache;
 use AdvisingApp\Form\Listeners\NotifySubscribersOfFormSubmission;
-use AdvisingApp\Form\Listeners\ClearAuthorFormSubmissionCountCache;
 use AdvisingApp\Form\Listeners\SendFormSubmissionAutoReplyEmailToSubmitter;
+use AdvisingApp\Form\Models\Form;
+use AdvisingApp\Form\Models\FormEmailAutoReply;
+use AdvisingApp\Form\Models\FormField;
+use AdvisingApp\Form\Models\FormSubmission;
+use Filament\Panel;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\ServiceProvider;
 
 class FormServiceProvider extends ServiceProvider
 {

@@ -36,24 +36,24 @@
 
 namespace AdvisingApp\Engagement\Models;
 
-use App\Models\BaseModel;
-use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Model;
-use OwenIt\Auditing\Contracts\Auditable;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Timeline\Models\Timeline;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Contracts\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
-use AdvisingApp\Notification\Enums\NotificationChannel;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
-use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
-use AdvisingApp\Timeline\Timelines\EngagementResponseTimeline;
-use AdvisingApp\Engagement\Observers\EngagementResponseObserver;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
+use AdvisingApp\Engagement\Observers\EngagementResponseObserver;
+use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
+use AdvisingApp\Timeline\Models\Timeline;
+use AdvisingApp\Timeline\Timelines\EngagementResponseTimeline;
+use App\Models\BaseModel;
+use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @mixin IdeHelperEngagementResponse

@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\StudentDataModel\Providers;
 
-use Filament\Panel;
-use App\Concerns\ImplementsGraphQL;
-use Illuminate\Support\ServiceProvider;
+use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\StudentDataModel\Models\Enrollment;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\StudentDataModel\StudentDataModelPlugin;
+use App\Concerns\ImplementsGraphQL;
+use Filament\Panel;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\ServiceProvider;
 
 class StudentDataModelServiceProvider extends ServiceProvider
 {

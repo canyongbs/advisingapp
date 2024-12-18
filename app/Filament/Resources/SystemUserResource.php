@@ -36,12 +36,12 @@
 
 namespace App\Filament\Resources;
 
-use App\Models\SystemUser;
-use Filament\Resources\Resource;
+use App\Filament\Resources\SystemUserResource\Pages\CreateSystemUser;
 use App\Filament\Resources\SystemUserResource\Pages\EditSystemUser;
 use App\Filament\Resources\SystemUserResource\Pages\ListSystemUsers;
-use App\Filament\Resources\SystemUserResource\Pages\CreateSystemUser;
 use App\Filament\Resources\SystemUserResource\RelationManagers\PermissionsRelationManager;
+use App\Models\SystemUser;
+use Filament\Resources\Resource;
 
 class SystemUserResource extends Resource
 {

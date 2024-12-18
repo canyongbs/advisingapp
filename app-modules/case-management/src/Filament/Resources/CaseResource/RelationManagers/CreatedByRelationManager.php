@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseResource\RelationManagers;
 
+use App\Filament\Resources\UserResource;
+use App\Filament\Tables\Columns\IdColumn;
 use App\Models\User;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Tables\Table;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use App\Filament\Resources\UserResource;
-use Filament\Forms\Components\TextInput;
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables\Table;
 
 class CreatedByRelationManager extends RelationManager
 {

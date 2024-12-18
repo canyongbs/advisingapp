@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Application\Database\Factories;
 
+use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
+use AdvisingApp\Application\Enums\ApplicationSubmissionStateColorOptions;
 use AdvisingApp\Application\Models\Application;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use AdvisingApp\Application\Enums\ApplicationSubmissionStateColorOptions;
-use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 
 /**
  * @extends Factory<Application>

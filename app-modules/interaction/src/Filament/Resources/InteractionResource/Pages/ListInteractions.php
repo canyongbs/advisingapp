@@ -36,19 +36,19 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages;
 
-use Filament\Tables\Table;
+use AdvisingApp\Interaction\Filament\Resources\InteractionResource;
+use AdvisingApp\Interaction\Imports\InteractionsImporter;
+use AdvisingApp\Interaction\Models\Interaction;
+use App\Filament\Tables\Columns\IdColumn;
 use Carbon\CarbonInterface;
 use Filament\Actions\CreateAction;
 use Filament\Actions\ImportAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Columns\TextColumn;
-use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use AdvisingApp\Interaction\Models\Interaction;
-use AdvisingApp\Interaction\Imports\InteractionsImporter;
-use AdvisingApp\Interaction\Filament\Resources\InteractionResource;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
 class ListInteractions extends ListRecords
 {

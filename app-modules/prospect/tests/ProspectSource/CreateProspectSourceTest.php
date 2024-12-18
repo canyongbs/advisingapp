@@ -34,21 +34,18 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\ProspectSource;
+use AdvisingApp\Prospect\Tests\ProspectSource\RequestFactories\CreateProspectSourceRequestFactory;
 use App\Models\User;
 
-use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Livewire\livewire;
-
-use AdvisingApp\Prospect\Models\Prospect;
-
 use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEmpty;
-use function Pest\Laravel\assertDatabaseHas;
-
-use AdvisingApp\Prospect\Models\ProspectSource;
-use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource;
-use AdvisingApp\Prospect\Tests\ProspectSource\RequestFactories\CreateProspectSourceRequestFactory;
+use function Tests\asSuperAdmin;
 
 test('A successful action on the CreateProspectSource page', function () {
     asSuperAdmin()

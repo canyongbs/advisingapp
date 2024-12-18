@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Audit\Providers;
 
-use Filament\Panel;
 use AdvisingApp\Audit\AuditPlugin;
 use AdvisingApp\Audit\Models\Audit;
 use App\Concerns\ImplementsGraphQL;
-use Illuminate\Support\ServiceProvider;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\ServiceProvider;
 
 class AuditServiceProvider extends ServiceProvider
 {

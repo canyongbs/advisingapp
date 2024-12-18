@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\MeetingCenter\Database\Factories;
 
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\MeetingCenter\Models\Event;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\MeetingCenter\Models\EventAttendee;
-use Illuminate\Database\Eloquent\Factories\Factory;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
+use AdvisingApp\MeetingCenter\Models\Event;
+use AdvisingApp\MeetingCenter\Models\EventAttendee;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<EventAttendee>

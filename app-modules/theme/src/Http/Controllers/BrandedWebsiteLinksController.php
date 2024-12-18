@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Theme\Http\Controllers;
 
+use AdvisingApp\Theme\Http\Requests\BrandedWebsiteLinksRequest;
+use AdvisingApp\Theme\Settings\ThemeSettings;
+use App\Http\Controllers\Controller;
 use App\Models\Tenant;
 use Illuminate\Http\JsonResponse;
-use App\Http\Controllers\Controller;
-use AdvisingApp\Theme\Settings\ThemeSettings;
-use AdvisingApp\Theme\Http\Requests\BrandedWebsiteLinksRequest;
 
 class BrandedWebsiteLinksController extends Controller
 {

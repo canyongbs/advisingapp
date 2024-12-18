@@ -36,8 +36,8 @@
 
 namespace StubModuleNamespace\StubClassNamePrefix;
 
-use Filament\Panel;
 use Filament\Contracts\Plugin;
+use Filament\Panel;
 
 class StubClassNamePrefixPlugin implements Plugin
 {

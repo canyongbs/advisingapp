@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\StudentDataModel\Settings;
 
-use Spatie\LaravelSettings\Settings;
 use AdvisingApp\StudentDataModel\Enums\SisSystem;
+use Spatie\LaravelSettings\Settings;
 
 class StudentInformationSystemSettings extends Settings
 {

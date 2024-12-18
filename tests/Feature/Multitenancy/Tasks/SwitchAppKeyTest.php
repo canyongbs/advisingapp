@@ -35,8 +35,8 @@
 */
 
 use App\Models\Tenant;
-use Illuminate\Support\Arr;
 use App\Multitenancy\Tasks\SwitchAppKey;
+use Illuminate\Support\Arr;
 
 use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertNotEquals;

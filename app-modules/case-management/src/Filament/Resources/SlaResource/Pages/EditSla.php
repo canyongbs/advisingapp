@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\SlaResource\Pages;
 
+use AdvisingApp\CaseManagement\Filament\Resources\SlaResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\CaseManagement\Filament\Resources\SlaResource;
 
 class EditSla extends EditRecord
 {

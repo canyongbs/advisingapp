@@ -36,17 +36,17 @@
 
 namespace AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages;
 
-use Filament\Forms\Get;
-use Filament\Forms\Form;
+use AdvisingApp\Authorization\Filament\Forms\Components\PermissionsMatrix;
+use AdvisingApp\Authorization\Filament\Resources\RoleResource;
+use AdvisingApp\Authorization\Models\Role;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Illuminate\Validation\Rules\Unique;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\Authorization\Models\Role;
-use AdvisingApp\Authorization\Filament\Resources\RoleResource;
-use AdvisingApp\Authorization\Filament\Forms\Components\PermissionsMatrix;
+use Illuminate\Validation\Rules\Unique;
 
 class EditRole extends EditRecord
 {

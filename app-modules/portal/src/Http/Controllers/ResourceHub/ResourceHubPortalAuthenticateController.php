@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Portal\Http\Controllers\ResourceHub;
 
-use Closure;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Hash;
+use AdvisingApp\Portal\Models\PortalAuthentication;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Portal\Models\PortalAuthentication;
+use App\Http\Controllers\Controller;
+use Closure;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class ResourceHubPortalAuthenticateController extends Controller
 {

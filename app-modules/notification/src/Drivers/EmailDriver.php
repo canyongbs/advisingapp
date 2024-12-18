@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Notification\Drivers;
 
-use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\Drivers\Contracts\OutboundDeliverableDriver;
-use AdvisingApp\Notification\DataTransferObjects\UpdateSmsDeliveryStatusData;
-use AdvisingApp\Notification\DataTransferObjects\UpdateEmailDeliveryStatusData;
 use AdvisingApp\IntegrationAwsSesEventHandling\DataTransferObjects\SesEventData;
+use AdvisingApp\Notification\DataTransferObjects\UpdateEmailDeliveryStatusData;
+use AdvisingApp\Notification\DataTransferObjects\UpdateSmsDeliveryStatusData;
+use AdvisingApp\Notification\Drivers\Contracts\OutboundDeliverableDriver;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
 
 class EmailDriver implements OutboundDeliverableDriver
 {

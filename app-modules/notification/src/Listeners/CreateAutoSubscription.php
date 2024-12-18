@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Notification\Listeners;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
 use AdvisingApp\Notification\Actions\SubscriptionCreate;
 use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
 class CreateAutoSubscription implements ShouldQueue
 {

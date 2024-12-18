@@ -36,9 +36,9 @@
 
 namespace App\Settings;
 
+use App\DataTransferObjects\Casts\MoneySettingCast;
 use Cknow\Money\Money;
 use Spatie\LaravelSettings\Settings;
-use App\DataTransferObjects\Casts\MoneySettingCast;
 
 class ProspectConversionSettings extends Settings
 {

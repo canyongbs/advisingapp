@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\CaseManagement\Actions;
 
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use AdvisingApp\CaseManagement\Models\CaseModel;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 class CreateCaseHistory implements ShouldQueue
 {

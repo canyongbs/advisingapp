@@ -36,20 +36,20 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers;
 
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\CreateCase;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\ViewCase;
+use AdvisingApp\CaseManagement\Models\CasePriority;
+use App\Filament\Tables\Columns\IdColumn;
 use Filament\Forms\Form;
-use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\CaseManagement\Models\CasePriority;
-use Filament\Resources\RelationManagers\RelationManager;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\ViewCase;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\CreateCase;
 
 class CasesRelationManager extends RelationManager
 {

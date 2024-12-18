@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Notification\Notifications\Channels;
 
-use Illuminate\Notifications\Notification;
+use AdvisingApp\Notification\DataTransferObjects\DatabaseChannelResultData;
+use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
-use AdvisingApp\Notification\DataTransferObjects\DatabaseChannelResultData;
 use Illuminate\Notifications\Channels\DatabaseChannel as BaseDatabaseChannel;
+use Illuminate\Notifications\Notification;
 
 class DatabaseChannel extends BaseDatabaseChannel
 {

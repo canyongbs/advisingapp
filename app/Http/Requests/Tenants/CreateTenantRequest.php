@@ -37,8 +37,8 @@
 namespace App\Http\Requests\Tenants;
 
 use App\Models\Tenant;
-use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CreateTenantRequest extends FormRequest
 {

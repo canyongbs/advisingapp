@@ -36,17 +36,17 @@
 
 namespace AdvisingApp\Ai\Services;
 
-use Closure;
-use Illuminate\Support\Str;
-use Illuminate\Support\Collection;
-use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiMessageFile;
+use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
+use AdvisingApp\Ai\Services\Contracts\AiService;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
-use AdvisingApp\Ai\Services\Contracts\AiService;
-use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
+use Closure;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 class TestAiService implements AiService
 {

@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\Engagement\GraphQL\Mutations;
 
-use Illuminate\Support\Stringable;
-use AdvisingApp\Prospect\Models\Prospect;
-use Nuwave\Lighthouse\Execution\ResolveInfo;
+use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
+use AdvisingApp\Engagement\Actions\GenerateTipTapBodyJson;
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Notification\Enums\NotificationChannel;
+use Illuminate\Support\Stringable;
+use Nuwave\Lighthouse\Execution\ResolveInfo;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
-use AdvisingApp\Engagement\Actions\GenerateTipTapBodyJson;
-use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
 
 class SendEmail
 {

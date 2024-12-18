@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\SlaResource\Pages;
 
-use Filament\Resources\Pages\CreateRecord;
 use AdvisingApp\CaseManagement\Filament\Resources\SlaResource;
+use Filament\Resources\Pages\CreateRecord;
 
 class CreateSla extends CreateRecord
 {

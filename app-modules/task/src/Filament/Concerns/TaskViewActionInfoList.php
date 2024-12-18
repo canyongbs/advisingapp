@@ -36,17 +36,17 @@
 
 namespace AdvisingApp\Task\Filament\Concerns;
 
-use AdvisingApp\Task\Models\Task;
-use AdvisingApp\Task\Enums\TaskStatus;
-use Filament\Infolists\Components\Grid;
-use App\Filament\Resources\UserResource;
-use Filament\Infolists\Components\Split;
-use AdvisingApp\Prospect\Models\Prospect;
-use Filament\Infolists\Components\Fieldset;
-use Filament\Infolists\Components\TextEntry;
-use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Task\Enums\TaskStatus;
+use AdvisingApp\Task\Models\Task;
+use App\Filament\Resources\UserResource;
+use Filament\Infolists\Components\Fieldset;
+use Filament\Infolists\Components\Grid;
+use Filament\Infolists\Components\Split;
+use Filament\Infolists\Components\TextEntry;
 
 trait TaskViewActionInfoList
 {

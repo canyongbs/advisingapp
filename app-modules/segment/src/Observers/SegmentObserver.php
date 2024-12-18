@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Segment\Observers;
 
+use AdvisingApp\Segment\Enums\SegmentModel;
+use AdvisingApp\Segment\Models\Segment;
 use App\Models\User;
 use Illuminate\Support\Facades\Cache;
-use AdvisingApp\Segment\Models\Segment;
-use AdvisingApp\Segment\Enums\SegmentModel;
 
 class SegmentObserver
 {

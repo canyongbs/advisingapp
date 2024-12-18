@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Ai\Rules;
 
-use Closure;
 use App\Models\User;
+use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Translation\PotentiallyTranslatedString;
 

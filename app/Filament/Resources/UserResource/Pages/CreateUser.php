@@ -36,19 +36,19 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
-use Carbon\Carbon;
-use App\Models\User;
-use Filament\Forms\Form;
-use Filament\Actions\Action;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Section;
-use App\Filament\Resources\UserResource;
-use Filament\Forms\Components\TextInput;
-use App\Rules\EmailNotInUseOrSoftDeleted;
-use Filament\Resources\Pages\CreateRecord;
-use App\Notifications\SetPasswordNotification;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
+use App\Filament\Resources\UserResource;
+use App\Models\User;
+use App\Notifications\SetPasswordNotification;
+use App\Rules\EmailNotInUseOrSoftDeleted;
+use Carbon\Carbon;
+use Filament\Actions\Action;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Form;
+use Filament\Resources\Pages\CreateRecord;
 
 class CreateUser extends CreateRecord
 {

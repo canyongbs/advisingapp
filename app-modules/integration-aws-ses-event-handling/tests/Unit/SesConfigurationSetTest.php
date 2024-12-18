@@ -34,17 +34,17 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
-use App\Models\Tenant;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Mail\Events\MessageSent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
-use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
+use App\Models\Tenant;
+use App\Models\User;
+use Illuminate\Mail\Events\MessageSent;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Mail;
 
 it('Does not send the message if configuration_set is set in settings but is not present in mail', function () {
     Event::fake(MessageSent::class);

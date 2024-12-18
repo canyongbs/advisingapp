@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\IntegrationTwilio\Actions;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
 use AdvisingApp\Engagement\Actions\CreateEngagementResponse;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementResponseData;
 use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioMessageReceivedData;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 class MessageReceived implements ShouldQueue
 {

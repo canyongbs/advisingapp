@@ -36,13 +36,13 @@
 
 namespace App\Listeners;
 
-use Sentry\State\Scope;
 use App\Models\Authenticatable;
+use Illuminate\Auth\Events\Authenticated;
 use Illuminate\Auth\Events\Login;
 
 use function Sentry\configureScope;
 
-use Illuminate\Auth\Events\Authenticated;
+use Sentry\State\Scope;
 
 class SetSentryUser
 {

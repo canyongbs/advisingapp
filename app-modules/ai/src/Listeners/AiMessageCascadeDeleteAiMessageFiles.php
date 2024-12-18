@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Ai\Listeners;
 
-use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Events\AiMessageTrashed;
+use AdvisingApp\Ai\Models\AiMessageFile;
 
 class AiMessageCascadeDeleteAiMessageFiles
 {

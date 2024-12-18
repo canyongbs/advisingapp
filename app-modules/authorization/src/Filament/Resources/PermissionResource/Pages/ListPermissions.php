@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Authorization\Filament\Resources\PermissionResource\Pages;
 
+use AdvisingApp\Authorization\Filament\Resources\PermissionResource;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\Authorization\Filament\Resources\PermissionResource;
 
 class ListPermissions extends ListRecords
 {

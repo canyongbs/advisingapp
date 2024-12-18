@@ -34,15 +34,13 @@
 </COPYRIGHT>
 */
 
-use function Pest\Laravel\artisan;
-
-use Illuminate\Support\Facades\Event;
 use AdvisingApp\Ai\Models\AiMessageFile;
+use Illuminate\Database\Console\PruneCommand;
+use Illuminate\Support\Facades\Event;
 
+use function Pest\Laravel\artisan;
 use function PHPUnit\Framework\assertNull;
 use function PHPUnit\Framework\assertTrue;
-
-use Illuminate\Database\Console\PruneCommand;
 
 it('properly prunes AiMessageFile models', function (AiMessageFile $messageFile, bool $shouldPrune) {
     assertTrue($messageFile->exists);

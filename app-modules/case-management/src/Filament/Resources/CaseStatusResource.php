@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources;
 
+use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource\Pages\CreateCaseStatus;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource\Pages\EditCaseStatus;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource\Pages\ListCaseStatuses;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource\Pages\ViewCaseStatus;
+use AdvisingApp\CaseManagement\Models\CaseStatus;
+use App\Filament\Clusters\CaseManagementAdministration;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\CaseManagement\Models\CaseStatus;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Clusters\CaseManagementAdministration;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource\Pages\EditCaseStatus;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource\Pages\ViewCaseStatus;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource\Pages\CreateCaseStatus;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource\Pages\ListCaseStatuses;
 
 class CaseStatusResource extends Resource
 {

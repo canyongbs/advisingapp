@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\MeetingCenter\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 abstract class CalendarController extends Controller
 {

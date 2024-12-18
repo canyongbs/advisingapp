@@ -34,19 +34,16 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
-
-use function Tests\asSuperAdmin;
-
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Task\Enums\TaskStatus;
+use AdvisingApp\Task\Filament\Resources\TaskResource;
+use AdvisingApp\Task\Filament\Resources\TaskResource\Pages\ListTasks;
 use AdvisingApp\Task\Models\Task;
+use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
-
-use AdvisingApp\Task\Enums\TaskStatus;
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Task\Filament\Resources\TaskResource;
-use AdvisingApp\Task\Filament\Resources\TaskResource\Pages\ListTasks;
+use function Tests\asSuperAdmin;
 
 test('ListTasks page displays the correct details for available my tasks', function () {
     asSuperAdmin();

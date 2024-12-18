@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-use function Tests\Helpers\testResourceRequiresPermissionForAccess;
-
 use AdvisingApp\CaseManagement\Filament\Resources\ChangeRequestResource;
+
+use function Tests\Helpers\testResourceRequiresPermissionForAccess;
 
 testResourceRequiresPermissionForAccess(
     resource: ChangeRequestResource::class,

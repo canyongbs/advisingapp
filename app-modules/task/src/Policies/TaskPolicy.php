@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Task\Policies;
 
-use App\Models\Authenticatable;
-use AdvisingApp\Task\Models\Task;
-use Illuminate\Auth\Access\Response;
-use App\Concerns\PerformsLicenseChecks;
-use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Task\Models\Task;
+use App\Concerns\PerformsLicenseChecks;
+use App\Models\Authenticatable;
 use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
+use Illuminate\Auth\Access\Response;
 
 class TaskPolicy implements PerformsChecksBeforeAuthorization
 {

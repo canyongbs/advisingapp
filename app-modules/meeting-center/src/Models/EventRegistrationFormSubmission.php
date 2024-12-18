@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\MeetingCenter\Models;
 
-use App\Models\User;
-use AdvisingApp\Form\Models\Submission;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use AdvisingApp\Form\Enums\FormSubmissionRequestDeliveryMethod;
+use AdvisingApp\Form\Models\Submission;
+use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * @mixin IdeHelperEventRegistrationFormSubmission

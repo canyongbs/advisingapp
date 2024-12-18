@@ -36,26 +36,26 @@
 
 namespace AdvisingApp\Campaign\Enums;
 
+use AdvisingApp\Alert\Models\Alert;
+use AdvisingApp\Campaign\Filament\Blocks\CareTeamBlock;
+use AdvisingApp\Campaign\Filament\Blocks\CaseBlock;
+use AdvisingApp\Campaign\Filament\Blocks\EngagementBatchEmailBlock;
+use AdvisingApp\Campaign\Filament\Blocks\EngagementBatchSmsBlock;
+use AdvisingApp\Campaign\Filament\Blocks\EventBlock;
+use AdvisingApp\Campaign\Filament\Blocks\InteractionBlock;
+use AdvisingApp\Campaign\Filament\Blocks\ProactiveAlertBlock;
+use AdvisingApp\Campaign\Filament\Blocks\SubscriptionBlock;
+use AdvisingApp\Campaign\Filament\Blocks\TaskBlock;
+use AdvisingApp\Campaign\Models\CampaignAction;
+use AdvisingApp\CareTeam\Models\CareTeam;
+use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\Engagement\Models\EngagementBatch;
+use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\MeetingCenter\Models\Event;
+use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\Task\Models\Task;
 use App\Settings\LicenseSettings;
-use AdvisingApp\Alert\Models\Alert;
 use Filament\Support\Contracts\HasLabel;
-use AdvisingApp\CareTeam\Models\CareTeam;
-use AdvisingApp\MeetingCenter\Models\Event;
-use AdvisingApp\Campaign\Models\CampaignAction;
-use AdvisingApp\Interaction\Models\Interaction;
-use AdvisingApp\CaseManagement\Models\CaseModel;
-use AdvisingApp\Notification\Models\Subscription;
-use AdvisingApp\Engagement\Models\EngagementBatch;
-use AdvisingApp\Campaign\Filament\Blocks\CaseBlock;
-use AdvisingApp\Campaign\Filament\Blocks\TaskBlock;
-use AdvisingApp\Campaign\Filament\Blocks\EventBlock;
-use AdvisingApp\Campaign\Filament\Blocks\CareTeamBlock;
-use AdvisingApp\Campaign\Filament\Blocks\InteractionBlock;
-use AdvisingApp\Campaign\Filament\Blocks\SubscriptionBlock;
-use AdvisingApp\Campaign\Filament\Blocks\ProactiveAlertBlock;
-use AdvisingApp\Campaign\Filament\Blocks\EngagementBatchSmsBlock;
-use AdvisingApp\Campaign\Filament\Blocks\EngagementBatchEmailBlock;
 
 enum CampaignActionType: string implements HasLabel
 {

@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\Ai\Jobs;
 
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\AiThread;
 use Carbon\CarbonInterface;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
-use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\AiAssistant;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Spatie\Multitenancy\Jobs\TenantAware;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Spatie\Multitenancy\Jobs\TenantAware;
 
 class ReInitializeAiAssistantThreads implements ShouldQueue, TenantAware
 {

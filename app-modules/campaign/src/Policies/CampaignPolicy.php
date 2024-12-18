@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Campaign\Policies;
 
-use App\Models\Authenticatable;
-use Illuminate\Auth\Access\Response;
-use App\Concerns\PerformsLicenseChecks;
-use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Campaign\Models\Campaign;
+use App\Concerns\PerformsLicenseChecks;
+use App\Models\Authenticatable;
 use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
+use Illuminate\Auth\Access\Response;
 
 class CampaignPolicy implements PerformsChecksBeforeAuthorization
 {

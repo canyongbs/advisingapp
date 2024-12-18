@@ -36,8 +36,8 @@
 
 namespace App\Filament\Tables\Columns\OpenSearch\Concerns;
 
-use OpenSearch\ScoutDriverPlus\Support\Query;
 use OpenSearch\ScoutDriverPlus\Builders\QueryBuilderInterface;
+use OpenSearch\ScoutDriverPlus\Support\Query;
 
 trait OpenSearchQueryDefault
 {

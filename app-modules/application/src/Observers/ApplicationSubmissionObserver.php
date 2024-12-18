@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Application\Observers;
 
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Event;
+use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
+use AdvisingApp\Application\Events\ApplicationSubmissionCreated;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
-use AdvisingApp\Application\Events\ApplicationSubmissionCreated;
-use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Event;
 
 class ApplicationSubmissionObserver
 {

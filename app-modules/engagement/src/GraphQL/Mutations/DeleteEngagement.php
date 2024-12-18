@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Engagement\GraphQL\Mutations;
 
-use Nuwave\Lighthouse\Execution\ResolveInfo;
 use AdvisingApp\Engagement\Models\Engagement;
+use Nuwave\Lighthouse\Execution\ResolveInfo;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class DeleteEngagement

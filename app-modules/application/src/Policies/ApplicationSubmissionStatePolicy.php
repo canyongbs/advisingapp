@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Application\Policies;
 
+use AdvisingApp\Application\Models\ApplicationSubmissionState;
+use App\Concerns\PerformsFeatureChecks;
 use App\Enums\Feature;
 use App\Models\Authenticatable;
+use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
+use App\Support\FeatureAccessResponse;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Gate;
-use App\Support\FeatureAccessResponse;
-use App\Concerns\PerformsFeatureChecks;
-use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
-use AdvisingApp\Application\Models\ApplicationSubmissionState;
 
 class ApplicationSubmissionStatePolicy implements PerformsChecksBeforeAuthorization
 {

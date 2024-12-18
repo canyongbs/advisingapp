@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Engagement\Models;
 
-use App\Models\User;
+use AdvisingApp\Engagement\Observers\EmailTemplateObserver;
 use App\Models\BaseModel;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use AdvisingApp\Engagement\Observers\EmailTemplateObserver;
 
 /**
  * @mixin IdeHelperEmailTemplate

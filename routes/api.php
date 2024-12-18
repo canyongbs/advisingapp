@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Middleware\CheckOlympusKey;
-use App\Http\Controllers\UtilizationMetricsApiController;
 use App\Http\Controllers\UpdateAzureSsoSettingsController;
+use App\Http\Controllers\UtilizationMetricsApiController;
+use App\Http\Middleware\CheckOlympusKey;
+use Illuminate\Support\Facades\Route;
 use Spatie\Health\Http\Controllers\HealthCheckJsonResultsController;
 
 Route::middleware([

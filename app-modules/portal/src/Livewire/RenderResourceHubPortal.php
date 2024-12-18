@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Portal\Livewire;
 
-use Livewire\Component;
 use Illuminate\Contracts\View\View;
+use Livewire\Component;
 
 class RenderResourceHubPortal extends Component
 {

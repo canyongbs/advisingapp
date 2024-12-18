@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Audit\Overrides\Concerns;
 
-use ReflectionClass;
 use Illuminate\Support\Facades\Event;
-use OwenIt\Auditing\Events\AuditCustom;
 use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Events\AuditCustom;
+use ReflectionClass;
 
 trait AttachOverrides
 {

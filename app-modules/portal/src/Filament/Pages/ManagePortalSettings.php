@@ -36,29 +36,29 @@
 
 namespace AdvisingApp\Portal\Filament\Pages;
 
-use App\Models\User;
-use App\Enums\Feature;
-use Filament\Forms\Get;
-use Filament\Forms\Form;
-use App\Models\Authenticatable;
-use Filament\Pages\SettingsPage;
 use AdvisingApp\Form\Enums\Rounding;
-use Illuminate\Support\Facades\Gate;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Section;
-use FilamentTiptapEditor\TiptapEditor;
-use AdvisingApp\Portal\Enums\PortalType;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\ColorPicker;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Forms\Components\Actions\Action;
-use App\Filament\Forms\Components\ColorSelect;
-use AdvisingApp\Portal\Settings\PortalSettings;
-use AdvisingApp\Portal\Enums\GdprBannerButtonLabel;
 use AdvisingApp\Portal\Actions\GeneratePortalEmbedCode;
+use AdvisingApp\Portal\Enums\GdprBannerButtonLabel;
+use AdvisingApp\Portal\Enums\PortalType;
+use AdvisingApp\Portal\Settings\PortalSettings;
+use App\Enums\Feature;
+use App\Filament\Forms\Components\ColorSelect;
+use App\Models\Authenticatable;
+use App\Models\User;
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\ColorPicker;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Pages\SettingsPage;
+use FilamentTiptapEditor\TiptapEditor;
+use Illuminate\Support\Facades\Gate;
 
 class ManagePortalSettings extends SettingsPage
 {

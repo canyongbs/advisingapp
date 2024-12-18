@@ -34,15 +34,14 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Ai\Actions\CompletePrompt;
+use AdvisingApp\Ai\Enums\AiFeature;
+use AdvisingApp\Ai\Enums\AiModel;
+use AdvisingApp\Ai\Models\LegacyAiMessageLog;
+use AdvisingApp\Ai\Services\TestAiService;
 use Mockery\MockInterface;
 
 use function Tests\asSuperAdmin;
-
-use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Enums\AiFeature;
-use AdvisingApp\Ai\Actions\CompletePrompt;
-use AdvisingApp\Ai\Services\TestAiService;
-use AdvisingApp\Ai\Models\LegacyAiMessageLog;
 
 it('calls the passed AI Models service class complete method', function () {
     asSuperAdmin();

@@ -36,8 +36,8 @@
 
 namespace App\Exceptions;
 
-use Exception;
 use App\Models\User;
+use Exception;
 
 class InvalidUserAvatarMimeType extends Exception
 {

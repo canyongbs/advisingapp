@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Webhook\Http\Middleware;
 
+use Aws\Sns\Message;
+use Aws\Sns\MessageValidator;
 use Closure;
 use Exception;
-use Aws\Sns\Message;
 use Illuminate\Http\Request;
-use Aws\Sns\MessageValidator;
 use Symfony\Component\HttpFoundation\Response;
 
 class VerifyAwsSnsRequest

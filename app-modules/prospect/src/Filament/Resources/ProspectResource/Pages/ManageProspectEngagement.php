@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
-use Illuminate\Contracts\Support\Htmlable;
+use AdvisingApp\Engagement\Filament\ManageRelatedRecords\ManageRelatedEngagementRecords;
 use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Engagement\Filament\ManageRelatedRecords\ManageRelatedEngagementRecords;
+use Illuminate\Contracts\Support\Htmlable;
 
 class ManageProspectEngagement extends ManageRelatedEngagementRecords
 {

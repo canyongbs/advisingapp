@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Components;
 
-use Filament\Actions\ViewAction;
 use AdvisingApp\CaseManagement\Filament\Concerns\CaseAssignmentInfolist;
+use Filament\Actions\ViewAction;
 
 class CaseAssignmentViewAction extends ViewAction
 {

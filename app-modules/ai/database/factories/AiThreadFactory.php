@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Ai\Database\Factories;
 
-use App\Models\User;
 use AdvisingApp\Ai\Models\AiAssistant;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

@@ -36,27 +36,27 @@
 
 namespace AdvisingApp\Notification\Notifications\Channels;
 
-use Exception;
-use App\Models\User;
-use Twilio\Rest\Client;
-use Twilio\Rest\Api\V2010;
-use Illuminate\Support\Str;
-use Twilio\Rest\MessagingBase;
-use App\Settings\LicenseSettings;
-use Illuminate\Support\Facades\DB;
-use Twilio\Exceptions\TwilioException;
-use Twilio\Rest\Api\V2010\Account\MessageInstance;
-use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
-use Talkroute\MessageSegmentCalculator\SegmentCalculator;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
-use AdvisingApp\Notification\Notifications\SmsNotification;
-use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
+use AdvisingApp\Notification\DataTransferObjects\SmsChannelResultData;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
-use AdvisingApp\Notification\DataTransferObjects\SmsChannelResultData;
-use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\SmsNotification;
+use App\Models\User;
+use App\Settings\LicenseSettings;
+use Exception;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Talkroute\MessageSegmentCalculator\SegmentCalculator;
+use Twilio\Exceptions\TwilioException;
+use Twilio\Rest\Api\V2010;
+use Twilio\Rest\Api\V2010\Account\MessageInstance;
+use Twilio\Rest\Client;
+use Twilio\Rest\MessagingBase;
 
 class SmsChannel
 {

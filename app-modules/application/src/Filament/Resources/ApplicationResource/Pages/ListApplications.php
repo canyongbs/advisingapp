@@ -36,22 +36,22 @@
 
 namespace AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages;
 
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Filament\Actions\CreateAction;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Columns\TextColumn;
-use Illuminate\Database\Eloquent\Model;
-use Filament\Forms\Components\TextInput;
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\ReplicateAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Actions\DuplicateApplication;
 use AdvisingApp\Application\Filament\Resources\ApplicationResource;
+use AdvisingApp\Application\Models\Application;
+use App\Filament\Tables\Columns\IdColumn;
+use Filament\Actions\CreateAction;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ReplicateAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class ListApplications extends ListRecords
 {

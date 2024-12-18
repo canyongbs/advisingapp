@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Actions;
 
-use App\Models\Tag;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\TagType;
+use App\Models\Tag;
 use Filament\Actions\Action;
-use Filament\Support\Enums\MaxWidth;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
-use AdvisingApp\StudentDataModel\Models\Student;
+use Filament\Support\Enums\MaxWidth;
 
 class StudentTagsAction extends Action
 {

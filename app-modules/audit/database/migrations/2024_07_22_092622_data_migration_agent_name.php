@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
+use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Migrations\Migration;
 
 return new class () extends Migration {
     public function up(): void

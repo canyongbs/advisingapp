@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Authorization\Filament\Forms\Components;
 
+use AdvisingApp\Authorization\Models\PermissionGroup;
 use Closure;
-use Illuminate\Support\Str;
 use Filament\Forms\Components\Field;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use AdvisingApp\Authorization\Models\PermissionGroup;
+use Illuminate\Support\Str;
 
 class PermissionsMatrix extends Field
 {

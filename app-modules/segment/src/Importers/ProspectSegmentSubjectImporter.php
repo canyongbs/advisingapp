@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Segment\Importers;
 
-use Illuminate\Support\Str;
-use Filament\Actions\Imports\Importer;
-use Illuminate\Database\Eloquent\Model;
 use AdvisingApp\Prospect\Models\Prospect;
-use Filament\Actions\Imports\ImportColumn;
-use Filament\Actions\Imports\Models\Import;
 use AdvisingApp\Segment\Models\SegmentSubject;
+use Filament\Actions\Imports\ImportColumn;
+use Filament\Actions\Imports\Importer;
+use Filament\Actions\Imports\Models\Import;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class ProspectSegmentSubjectImporter extends Importer
 {

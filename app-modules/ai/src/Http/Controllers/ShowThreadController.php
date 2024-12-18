@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Ai\Http\Controllers;
 
+use AdvisingApp\Ai\Http\Requests\ShowThreadRequest;
+use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Models\AiThread;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Stringable;
-use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\AiMessage;
-use AdvisingApp\Ai\Http\Requests\ShowThreadRequest;
 
 class ShowThreadController
 {

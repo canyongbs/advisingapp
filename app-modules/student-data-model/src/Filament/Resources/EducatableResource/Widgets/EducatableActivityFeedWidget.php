@@ -36,25 +36,25 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets;
 
-use App\Models\User;
-use Filament\Widgets\Widget;
-use Livewire\Attributes\Locked;
-use Filament\Forms\Contracts\HasForms;
-use Illuminate\Database\Eloquent\Model;
-use Filament\Actions\Contracts\HasActions;
-use AdvisingApp\Task\Histories\TaskHistory;
 use AdvisingApp\Alert\Histories\AlertHistory;
 use AdvisingApp\Engagement\Models\Engagement;
-use Filament\Infolists\Contracts\HasInfolists;
-use AdvisingApp\Interaction\Models\Interaction;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Actions\Concerns\InteractsWithActions;
 use AdvisingApp\Engagement\Models\EngagementResponse;
+use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Notification\Enums\NotificationChannel;
-use Filament\Infolists\Concerns\InteractsWithInfolists;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
-use AdvisingApp\Timeline\Livewire\Concerns\HasTimelineRecords;
+use AdvisingApp\Task\Histories\TaskHistory;
 use AdvisingApp\Timeline\Livewire\Concerns\CanLoadTimelineRecords;
+use AdvisingApp\Timeline\Livewire\Concerns\HasTimelineRecords;
+use App\Models\User;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Infolists\Concerns\InteractsWithInfolists;
+use Filament\Infolists\Contracts\HasInfolists;
+use Filament\Widgets\Widget;
+use Illuminate\Database\Eloquent\Model;
+use Livewire\Attributes\Locked;
 
 class EducatableActivityFeedWidget extends Widget implements HasActions, HasForms, HasInfolists
 {

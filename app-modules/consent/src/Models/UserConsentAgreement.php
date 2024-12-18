@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Consent\Models;
 
-use App\Models\User;
-use App\Models\BaseModel;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use App\Models\Attributes\NoPermissions;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\BaseModel;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Concerns\AsPivot;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @mixin IdeHelperUserConsentAgreement

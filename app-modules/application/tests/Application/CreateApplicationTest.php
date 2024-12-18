@@ -34,14 +34,13 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Application\Filament\Resources\ApplicationResource;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
-
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Application\Filament\Resources\ApplicationResource;
 
 // TODO: Write CreateApplication tests
 //test('A successful action on the CreateApplication page', function () {});
