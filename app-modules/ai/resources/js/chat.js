@@ -47,6 +47,7 @@ document.addEventListener('alpine:init', () => {
             latestMessage: '',
             message: '',
             rawIncomingResponse: '',
+            latestPrompt: null,
             messages: [],
             users: [],
 
@@ -186,8 +187,8 @@ document.addEventListener('alpine:init', () => {
                 }
             },
 
-            sendMessage: async function () {
-                if (!this.message.replace(/\s/g, '').length) {
+            sendMessage: async function (prompt = null) {
+                if (!this.message.replace(/\s/g, '').length && prompt === null) {
                     // The message is empty / whitespace only.
 
                     return;
@@ -199,16 +200,26 @@ document.addEventListener('alpine:init', () => {
 
                 this.$dispatch('message-sent', { threadId: threadId });
 
-                this.latestMessage = this.message;
-
-                this.messages.push({
-                    content: this.message.replace(/(?:\r\n|\r|\n)/g, '<br />'),
-                    user_id: userId,
-                });
-
                 const message = this.message;
 
-                this.message = '';
+                if (prompt) {
+                    this.latestMessage = '';
+
+                    if (this.messages.slice(-1)[0]?.prompt !== prompt.title) {
+                        this.messages.push({
+                            prompt: prompt.title,
+                        });
+                    }
+                } else {
+                    this.latestMessage = this.message;
+
+                    this.messages.push({
+                        content: this.message.replace(/(?:\r\n|\r|\n)/g, '<br />'),
+                        user_id: userId,
+                    });
+
+                    this.message = '';
+                }
 
                 this.$nextTick(async () => {
                     await this.handleMessageResponse({
@@ -220,7 +231,7 @@ document.addEventListener('alpine:init', () => {
                                 'X-CSRF-TOKEN': csrfToken,
                             },
                             body: JSON.stringify({
-                                content: message,
+                                ...(prompt ? { prompt_id: prompt.id } : { content: message }),
                                 files: this.$wire.files,
                             }),
                         }),
@@ -229,6 +240,14 @@ document.addEventListener('alpine:init', () => {
             },
 
             retryMessage: async function () {
+                if (this.latestMessage === '' && this.latestPrompt) {
+                    return await this.sendMessage(this.latestPrompt);
+                }
+
+                if (this.latestMessage === '') {
+                    return;
+                }
+
                 const isOriginallyIncomplete = this.isIncomplete;
 
                 this.isSendingMessage = true;

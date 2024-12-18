@@ -42,7 +42,7 @@ use Filament\Actions\DeleteAction;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Laravel\assertModelMissing;
+use function Pest\Laravel\assertSoftDeleted;
 use function Pest\Laravel\assertDatabaseCount;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
@@ -143,7 +143,5 @@ it('can delete a record', function () use ($licenses, $permissions) {
         ->assertActionEnabled(DeleteAction::class)
         ->callAction(DeleteAction::class);
 
-    assertDatabaseCount(Prompt::class, 0);
-
-    assertModelMissing($record);
+    assertSoftDeleted($record);
 });

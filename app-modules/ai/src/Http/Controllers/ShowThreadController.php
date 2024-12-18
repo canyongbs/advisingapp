@@ -42,6 +42,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Stringable;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
+use App\Features\SmartPromptsFeature;
 use AdvisingApp\Ai\Http\Requests\ShowThreadRequest;
 
 class ShowThreadController
@@ -51,20 +52,29 @@ class ShowThreadController
         return response()->json([
             'messages' => $thread->messages()
                 ->oldest('id')
+                ->when(SmartPromptsFeature::active(), fn ($query) => $query->with(['prompt']))
                 ->get()
                 ->toBase()
-                ->map(fn (AiMessage $message): array => [
-                    ...$message->attributesToArray(),
-                    'content' => (string) str($message->content)
-                        ->when(
-                            $message->user,
-                            fn (Stringable $string): Stringable => $string
-                                ->pipe(nl2br(...))
-                                ->stripTags(allowedTags: ['br']),
-                            fn (Stringable $string): Stringable => $string->markdown(),
-                        )
-                        ->sanitizeHtml(),
-                ])
+                ->map(function (AiMessage $message): array {
+                    if ($message->prompt) {
+                        return [
+                            'prompt' => $message->prompt->title,
+                        ];
+                    }
+
+                    return [
+                        ...$message->attributesToArray(),
+                        'content' => (string) str($message->content)
+                            ->when(
+                                $message->user,
+                                fn (Stringable $string): Stringable => $string
+                                    ->pipe(nl2br(...))
+                                    ->stripTags(allowedTags: ['br']),
+                                fn (Stringable $string): Stringable => $string->markdown(),
+                            )
+                            ->sanitizeHtml(),
+                    ];
+                })
                 ->all(),
             'users' => $thread->users()
                 ->distinct()

@@ -82,6 +82,10 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
 
     public function update(Authenticatable $authenticatable, PromptType $promptType): Response
     {
+        if ($promptType->prompts()->where('is_smart', true)->exists()) {
+            return Response::deny('The prompt type cannot be updated because it has a smart prompt.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$promptType->getKey()}.update"],
             denyResponse: 'You do not have permission to update this prompt type.'

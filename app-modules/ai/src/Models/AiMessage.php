@@ -65,6 +65,7 @@ class AiMessage extends BaseModel
         'request',
         'thread_id',
         'user_id',
+        'prompt_id',
     ];
 
     protected $casts = [
@@ -86,6 +87,11 @@ class AiMessage extends BaseModel
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function prompt(): BelongsTo
+    {
+        return $this->belongsTo(Prompt::class)->withTrashed();
     }
 
     public function files(): HasMany

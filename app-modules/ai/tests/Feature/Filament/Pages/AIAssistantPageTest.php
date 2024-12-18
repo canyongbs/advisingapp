@@ -849,6 +849,7 @@ it('can insert a prompt from the library', function () use ($setUp) {
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('insertFromPromptLibrary', [
+            'isSmart' => 0,
             'promptId' => $prompt->getKey(),
         ])
         ->assertHasNoActionErrors()
@@ -865,6 +866,7 @@ it('can not insert a missing prompt from the library', function () use ($setUp) 
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('insertFromPromptLibrary', [
+            'isSmart' => 0,
             'promptId' => null,
         ])
         ->assertHasActionErrors(['promptId' => 'required']);
@@ -883,6 +885,7 @@ it('can upvote a prompt from the library while inserting it', function () use ($
     Livewire::test(PersonalAssistant::class)
         ->mountAction('insertFromPromptLibrary')
         ->setActionData([
+            'isSmart' => 0,
             'promptId' => $prompt->getKey(),
         ])
         ->callFormComponentAction('promptId', 'upvote', formName: 'mountedActionForm');
@@ -907,6 +910,7 @@ it('can remove upvote from a prompt from the library while inserting it', functi
     Livewire::test(PersonalAssistant::class)
         ->mountAction('insertFromPromptLibrary')
         ->setActionData([
+            'isSmart' => 0,
             'promptId' => $prompt->getKey(),
         ])
         ->callFormComponentAction('promptId', 'upvote', formName: 'mountedActionForm');

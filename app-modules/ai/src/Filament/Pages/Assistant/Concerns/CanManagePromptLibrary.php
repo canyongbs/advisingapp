@@ -43,10 +43,12 @@ use Filament\Actions\Action;
 use AdvisingApp\Ai\Models\Prompt;
 use Filament\Support\Enums\MaxWidth;
 use AdvisingApp\Ai\Models\PromptType;
+use App\Features\SmartPromptsFeature;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Checkbox;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Components\Actions\Action as FormComponentAction;
 
 trait CanManagePromptLibrary
@@ -68,17 +70,36 @@ trait CanManagePromptLibrary
             ->label('Prompt library')
             ->color('gray')
             ->form([
+                ToggleButtons::make('isSmart')
+                    ->label('Would you like to use a pre-built smart prompt or a custom prompt created by your organization?')
+                    ->options([
+                        1 => 'Smart prompt',
+                        0 => 'Custom prompt',
+                    ])
+                    ->live()
+                    ->afterStateUpdated(fn (Set $set) => $set('promptId', null))
+                    ->grouped()
+                    ->required(),
                 Select::make('typeId')
                     ->label('Filter by type')
                     ->hint('Optional')
-                    ->options(fn (): array => PromptType::query()
+                    ->options(fn (Get $get): array => PromptType::query()
+                        ->when(
+                            SmartPromptsFeature::active() && $get('isSmart'),
+                            fn (Builder $query) => $query->whereRelation('prompts', 'is_smart', true),
+                        )
+                        ->when(
+                            SmartPromptsFeature::active() && ! $get('isSmart'),
+                            fn (Builder $query) => $query->whereRelation('prompts', 'is_smart', false),
+                        )
                         ->orderBy('title')
                         ->pluck('title', 'id')
                         ->all())
                     ->afterStateUpdated(fn (Get $get, Set $set, $state) => (Prompt::find($get('promptId'))?->type_id !== $state) ?
                         $set('promptId', null) :
                         null)
-                    ->live(),
+                    ->live()
+                    ->hidden(fn (Get $get): bool => blank($get('isSmart'))),
                 Checkbox::make('myPrompts')
                     ->label('My prompts only')
                     ->afterStateUpdated(function (Get $get, Set $set, $state) {
@@ -88,13 +109,15 @@ trait CanManagePromptLibrary
 
                         $set('myTeamPrompts', false);
                     })
-                    ->live(),
+                    ->live()
+                    ->hidden(fn (Get $get): bool => blank($get('isSmart')) || $get('isSmart')),
                 Checkbox::make('myTeamPrompts')
                     ->label('My team\'s prompts only')
                     ->afterStateUpdated(function (Set $set) {
                         $set('myPrompts', false);
                         $set('promptId', null);
                     })
+                    ->hidden(fn (Get $get): bool => blank($get('isSmart')))
                     ->visible(fn () => count(auth()->user()->teams) ? true : false)
                     ->live(),
                 Select::make('promptId')
@@ -105,6 +128,14 @@ trait CanManagePromptLibrary
                         fn (Get $get): array => $getPromptOptions(
                             Prompt::query()
                                 ->limit(50)
+                                ->when(
+                                    SmartPromptsFeature::active() && $get('isSmart'),
+                                    fn (Builder $query) => $query->where('is_smart', true),
+                                )
+                                ->when(
+                                    SmartPromptsFeature::active() && ! $get('isSmart'),
+                                    fn (Builder $query) => $query->where('is_smart', false),
+                                )
                                 ->when(
                                     filled($get('typeId')),
                                     fn (Builder $query) => $query->where('type_id', $get('typeId')),
@@ -139,6 +170,14 @@ trait CanManagePromptLibrary
                                 ->orWhere(new Expression('lower(description)'), 'like', $search)
                                 ->orWhere(new Expression('lower(prompt)'), 'like', $search))
                             ->when(
+                                SmartPromptsFeature::active() && $get('isSmart'),
+                                fn (Builder $query) => $query->where('is_smart', true),
+                            )
+                            ->when(
+                                SmartPromptsFeature::active() && ! $get('isSmart'),
+                                fn (Builder $query) => $query->where('is_smart', false),
+                            )
+                            ->when(
                                 filled($get('typeId')),
                                 fn (Builder $query) => $query->where('type_id', $get('typeId')),
                             )
@@ -166,7 +205,8 @@ trait CanManagePromptLibrary
                             ->icon('heroicon-m-chevron-up')
                             ->action(fn () => $prompt->toggleUpvote());
                     })
-                    ->required(),
+                    ->required()
+                    ->hidden(fn (Get $get): bool => blank($get('isSmart'))),
             ])
             ->modalWidth(MaxWidth::ExtraLarge)
             ->action(function (array $data) {
@@ -176,7 +216,11 @@ trait CanManagePromptLibrary
                     return;
                 }
 
-                $this->dispatch('set-chat-message', content: $prompt->prompt);
+                if ($prompt->is_smart) {
+                    $this->dispatch('send-prompt', prompt: ['id' => $prompt->getKey(), 'title' => $prompt->title]);
+                } else {
+                    $this->dispatch('set-chat-message', content: $prompt->prompt);
+                }
 
                 $use = $prompt->uses()->make();
                 $use->user()->associate(auth()->user());

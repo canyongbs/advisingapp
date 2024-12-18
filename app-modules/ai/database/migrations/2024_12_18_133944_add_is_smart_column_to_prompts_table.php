@@ -34,32 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Listeners;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\Ai\Enums\AiFeature;
-use AdvisingApp\Ai\Events\AiMessageCreated;
-use AdvisingApp\Ai\Models\LegacyAiMessageLog;
-
-class CreateAiMessageLog
-{
-    public function handle(AiMessageCreated $event): void
+return new class () extends Migration {
+    public function up(): void
     {
-        $message = $event->aiMessage;
-
-        if (! $message->user || ! $message->request) {
-            return;
-        }
-
-        LegacyAiMessageLog::create([
-            'message' => $message->prompt ? "Starting smart prompt: {$message->prompt->title}" : $message->content,
-            'metadata' => [
-                'context' => $message->context,
-            ],
-            'request' => $message->request,
-            'sent_at' => now(),
-            'user_id' => $message->user_id,
-            'ai_assistant_name' => $message->thread?->assistant?->name,
-            'feature' => AiFeature::Conversations,
-        ]);
+        Schema::table('prompts', function (Blueprint $table) {
+            $table->boolean('is_smart')->default(false);
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('prompts', function (Blueprint $table) {
+            $table->dropColumn('is_smart');
+        });
+    }
+};

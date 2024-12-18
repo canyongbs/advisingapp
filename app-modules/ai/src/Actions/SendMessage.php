@@ -38,8 +38,10 @@ namespace AdvisingApp\Ai\Actions;
 
 use Closure;
 use Illuminate\Support\Arr;
+use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
+use App\Features\SmartPromptsFeature;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
@@ -47,7 +49,7 @@ use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
 
 class SendMessage
 {
-    public function __invoke(AiThread $thread, string $content, array $files = []): Closure
+    public function __invoke(AiThread $thread, string | Prompt $content, array $files = []): Closure
     {
         if ($thread->locked_at) {
             throw new AiThreadLockedException();
@@ -58,7 +60,7 @@ class SendMessage
         }
 
         $message = new AiMessage();
-        $message->content = $content;
+        $message->content = ($content instanceof Prompt) ? $content->prompt : $content;
         $message->request = [
             'headers' => Arr::only(
                 request()->headers->all(),
@@ -68,6 +70,10 @@ class SendMessage
         ];
         $message->thread()->associate($thread);
         $message->user()->associate(auth()->user());
+
+        if (SmartPromptsFeature::active() && ($content instanceof Prompt)) {
+            $message->prompt()->associate($content);
+        }
 
         $aiService = $thread->assistant->model->getService();
 
