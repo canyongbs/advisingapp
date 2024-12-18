@@ -5,7 +5,7 @@
   "version": "1.0",
   "license": "proprietary",
   "require": {
-    "filament/filament": "^3.0",
+    "filament/filament": "^3.2",
     "spatie/laravel-permission": "^6.0"
   },
   "autoload": {
