@@ -34,22 +34,19 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
-
-use function Tests\asSuperAdmin;
-use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
-
-use Illuminate\Validation\Rules\Enum;
-use AdvisingApp\Prospect\Models\Prospect;
-
-use function Pest\Laravel\assertDatabaseHas;
-use function PHPUnit\Framework\assertEquals;
-
-use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource;
 use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages\EditProspectStatus;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Tests\ProspectStatus\RequestFactories\EditProspectStatusRequestFactory;
+use App\Models\User;
+use Illuminate\Validation\Rules\Enum;
+
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Livewire\livewire;
+use function PHPUnit\Framework\assertEquals;
+use function Tests\asSuperAdmin;
 
 test('A successful action on the EditProspectStatus page', function () {
     $prospectStatus = ProspectStatus::factory()->create();

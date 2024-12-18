@@ -34,14 +34,13 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Models\AiMessage;
-use Illuminate\Support\Facades\Event;
-use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Events\AiMessageTrashed;
+use AdvisingApp\Ai\Listeners\AiMessageCascadeDeleteAiMessageFiles;
+use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Models\AiMessageFile;
+use Illuminate\Support\Facades\Event;
 
 use function Pest\Laravel\assertDatabaseCount;
-
-use AdvisingApp\Ai\Listeners\AiMessageCascadeDeleteAiMessageFiles;
 
 it('soft deletes related AiMessageFiles when an AiMessage is deleted', function () {
     $aiMessage = AiMessage::factory()

@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Queue;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\IntegrationTwilio\Jobs\CheckSmsOutboundDeliverableStatus;
 use AdvisingApp\IntegrationTwilio\Jobs\CheckStatusOfOutboundDeliverablesWithoutATerminalStatus;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
+use Illuminate\Support\Facades\Queue;
 
 it('will only check the status of outbound deliverables with non terminal external statuses', function () {
     Queue::fake([CheckSmsOutboundDeliverableStatus::class]);

@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources;
 
-use Filament\Resources\Resource;
-use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
 use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages\EditInteraction;
 use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages\ListInteractions;
-use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
+use AdvisingApp\Interaction\Models\Interaction;
+use Filament\Resources\Resource;
 
 class InteractionResource extends Resource
 {

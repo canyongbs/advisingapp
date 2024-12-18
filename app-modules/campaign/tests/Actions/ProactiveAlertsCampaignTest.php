@@ -34,15 +34,15 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Alert\Models\Alert;
-use AdvisingApp\Segment\Models\Segment;
-use AdvisingApp\Alert\Models\AlertStatus;
-use AdvisingApp\Campaign\Models\Campaign;
-use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Alert\Enums\AlertSeverity;
-use AdvisingApp\Segment\Enums\SegmentType;
-use AdvisingApp\Campaign\Models\CampaignAction;
+use AdvisingApp\Alert\Models\Alert;
+use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\Campaign\Enums\CampaignActionType;
+use AdvisingApp\Campaign\Models\Campaign;
+use AdvisingApp\Campaign\Models\CampaignAction;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Segment\Enums\SegmentType;
+use AdvisingApp\Segment\Models\Segment;
 
 it('will create the appropriate records for educatables in the segment', function () {
     // Given we have no proactive alerts

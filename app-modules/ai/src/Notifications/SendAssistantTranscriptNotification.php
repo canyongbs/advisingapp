@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\Ai\Notifications;
 
-use App\Models\User;
-use AdvisingApp\Ai\Models\AiThread;
-use App\Models\NotificationSetting;
 use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
+use App\Models\NotificationSetting;
+use App\Models\User;
 
 class SendAssistantTranscriptNotification extends BaseNotification implements EmailNotification
 {

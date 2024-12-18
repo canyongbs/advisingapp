@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Ai\Tests\Feature\Filament\Resources\AiAssistantResource\RequestFactories;
 
+use AdvisingApp\Ai\Enums\AiApplication;
 use AdvisingApp\Ai\Enums\AiModel;
 use Illuminate\Http\UploadedFile;
-use AdvisingApp\Ai\Enums\AiApplication;
 use Worksome\RequestFactories\RequestFactory;
 
 class CreateAiAssistantRequestFactory extends RequestFactory

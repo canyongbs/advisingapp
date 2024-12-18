@@ -60,7 +60,7 @@ $rules = [
         'spacing' => 'one',
     ],
     'ordered_imports' => [
-        'sort_algorithm' => 'length',
+        'sort_algorithm' => 'alpha',
     ],
     'single_quote' => true,
     'lowercase_cast' => true,

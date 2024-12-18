@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\Alert\Notifications;
 
-use Illuminate\Support\HtmlString;
 use AdvisingApp\Alert\Models\Alert;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Notification\Notifications\DatabaseNotification;
-use Filament\Notifications\Notification as FilamentNotification;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\Notification\Notifications\Concerns\DatabaseChannelTrait;
+use AdvisingApp\Notification\Notifications\DatabaseNotification;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\StudentDataModel\Models\Student;
+use Filament\Notifications\Notification as FilamentNotification;
+use Illuminate\Support\HtmlString;
 
 class AlertCreatedNotification extends BaseNotification implements DatabaseNotification
 {

@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Survey\Database\Factories;
 
-use AdvisingApp\Survey\Models\Survey;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Survey\Models\SurveySubmission;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Survey\Models\Survey;
+use AdvisingApp\Survey\Models\SurveySubmission;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Relations\Relation;
 

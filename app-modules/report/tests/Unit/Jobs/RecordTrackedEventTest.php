@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Carbon;
-use AdvisingApp\Report\Models\TrackedEvent;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
+use AdvisingApp\Report\Models\TrackedEvent;
 use AdvisingApp\Report\Models\TrackedEventCount;
+use Illuminate\Support\Carbon;
 
 it('creates the proper TrackedEvent record', function () {
     expect(TrackedEvent::count())

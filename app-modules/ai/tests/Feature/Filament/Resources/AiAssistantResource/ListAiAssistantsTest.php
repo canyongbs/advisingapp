@@ -34,19 +34,15 @@
 </COPYRIGHT>
 */
 
-use function Pest\Laravel\get;
-
+use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Pages\ListAiAssistants;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
-
-use AdvisingApp\Ai\Models\AiAssistant;
-
 use function Pest\Laravel\assertDatabaseCount;
-
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Pages\ListAiAssistants;
+use function Pest\Laravel\get;
+use function Pest\Livewire\livewire;
 
 /** @var array<LicenseType> $licenses */
 $licenses = [

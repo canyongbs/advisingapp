@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\MeetingCenter\Http\Controllers;
 
+use AdvisingApp\MeetingCenter\Enums\CalendarProvider;
+use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource\Pages\ListCalendarEvents;
+use AdvisingApp\MeetingCenter\Managers\GoogleCalendarManager;
+use AdvisingApp\MeetingCenter\Models\Calendar;
 use App\Models\User;
 use Google\Service\Oauth2;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Http\RedirectResponse;
-use AdvisingApp\MeetingCenter\Models\Calendar;
-use AdvisingApp\MeetingCenter\Enums\CalendarProvider;
-use AdvisingApp\MeetingCenter\Managers\GoogleCalendarManager;
-use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource\Pages\ListCalendarEvents;
 
 class GoogleCalendarController extends CalendarController
 {

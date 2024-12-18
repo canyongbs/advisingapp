@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\MultifactorAuthentication\Providers;
 
+use AdvisingApp\MultifactorAuthentication\MultifactorAuthenticationPlugin;
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
-use AdvisingApp\MultifactorAuthentication\MultifactorAuthenticationPlugin;
 
 class MultifactorAuthenticationServiceProvider extends ServiceProvider
 {

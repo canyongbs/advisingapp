@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Schemas;
 
-use Filament\Infolists\Infolist;
 use App\Infolists\Components\Subsection;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 
 class ProspectProfileInfolist
 {

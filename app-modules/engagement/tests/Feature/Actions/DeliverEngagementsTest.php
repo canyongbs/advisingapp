@@ -34,14 +34,14 @@
 </COPYRIGHT>
 */
 
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Queue;
-use Illuminate\Support\Facades\Notification;
-use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Actions\DeliverEngagements;
-use AdvisingApp\Engagement\Models\EngagementDeliverable;
-use AdvisingApp\Engagement\Actions\EngagementSmsChannelDelivery;
 use AdvisingApp\Engagement\Actions\EngagementEmailChannelDelivery;
+use AdvisingApp\Engagement\Actions\EngagementSmsChannelDelivery;
+use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Engagement\Models\EngagementDeliverable;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Queue;
 
 it('will dispatch a job to send all engagements that should be delivered via email', function () {
     Queue::fake(EngagementEmailChannelDelivery::class);

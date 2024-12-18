@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Webhook\Filament\Resources;
 
-use Filament\Resources\Resource;
-use AdvisingApp\Webhook\Models\InboundWebhook;
-use AdvisingApp\Webhook\Filament\Resources\InboundWebhookResource\Pages\ViewInboundWebhook;
 use AdvisingApp\Webhook\Filament\Resources\InboundWebhookResource\Pages\ListInboundWebhooks;
+use AdvisingApp\Webhook\Filament\Resources\InboundWebhookResource\Pages\ViewInboundWebhook;
+use AdvisingApp\Webhook\Models\InboundWebhook;
+use Filament\Resources\Resource;
 
 class InboundWebhookResource extends Resource
 {

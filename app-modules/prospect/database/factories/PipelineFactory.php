@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Prospect\Database\Factories;
 
-use App\Models\User;
 use AdvisingApp\Prospect\Models\Pipeline;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

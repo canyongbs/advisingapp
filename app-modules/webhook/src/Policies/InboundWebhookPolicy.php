@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Webhook\Policies;
 
+use AdvisingApp\Webhook\Models\InboundWebhook;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
-use AdvisingApp\Webhook\Models\InboundWebhook;
 
 class InboundWebhookPolicy
 {

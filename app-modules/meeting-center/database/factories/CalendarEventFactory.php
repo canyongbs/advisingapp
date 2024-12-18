@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\MeetingCenter\Database\Factories;
 
-use Illuminate\Support\Carbon;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Carbon;
 
 /**
  * @extends Factory<CalendarEvent>

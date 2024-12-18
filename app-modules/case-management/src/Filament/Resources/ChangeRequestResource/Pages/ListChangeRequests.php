@@ -36,19 +36,19 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\ChangeRequestResource\Pages;
 
-use Filament\Tables\Table;
+use AdvisingApp\CaseManagement\Filament\Resources\ChangeRequestResource;
+use AdvisingApp\CaseManagement\Models\ChangeRequest;
+use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\CreateAction;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ViewColumn;
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-use AdvisingApp\CaseManagement\Models\ChangeRequest;
-use AdvisingApp\CaseManagement\Filament\Resources\ChangeRequestResource;
+use Filament\Tables\Table;
 
 class ListChangeRequests extends ListRecords
 {

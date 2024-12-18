@@ -36,14 +36,14 @@
 
 namespace App\Http\Controllers\Tenants;
 
-use App\Models\Tenant;
-use Illuminate\Http\JsonResponse;
-use App\Jobs\UpdateTenantLicenseData;
-use App\Http\Requests\Tenants\SyncTenantRequest;
-use App\DataTransferObjects\LicenseManagement\LicenseData;
 use App\DataTransferObjects\LicenseManagement\LicenseAddonsData;
+use App\DataTransferObjects\LicenseManagement\LicenseData;
 use App\DataTransferObjects\LicenseManagement\LicenseLimitsData;
 use App\DataTransferObjects\LicenseManagement\LicenseSubscriptionData;
+use App\Http\Requests\Tenants\SyncTenantRequest;
+use App\Jobs\UpdateTenantLicenseData;
+use App\Models\Tenant;
+use Illuminate\Http\JsonResponse;
 
 class SyncTenantController
 {

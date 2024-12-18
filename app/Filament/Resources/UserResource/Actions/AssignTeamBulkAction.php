@@ -36,13 +36,13 @@
 
 namespace App\Filament\Resources\UserResource\Actions;
 
-use Exception;
-use App\Models\User;
 use AdvisingApp\Team\Models\Team;
-use Filament\Support\Enums\MaxWidth;
+use App\Models\User;
+use Exception;
 use Filament\Forms\Components\Select;
-use Filament\Tables\Actions\BulkAction;
 use Filament\Notifications\Notification;
+use Filament\Support\Enums\MaxWidth;
+use Filament\Tables\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Collection;
 
 class AssignTeamBulkAction extends BulkAction

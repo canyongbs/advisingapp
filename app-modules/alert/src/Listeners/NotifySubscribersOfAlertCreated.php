@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Alert\Listeners;
 
-use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Alert\Events\AlertCreated;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\Alert\Notifications\AlertCreatedNotification;
+use AdvisingApp\Notification\Models\Subscription;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
 class NotifySubscribersOfAlertCreated implements ShouldQueue
 {

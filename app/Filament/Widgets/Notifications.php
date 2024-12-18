@@ -37,14 +37,14 @@
 namespace App\Filament\Widgets;
 
 use Carbon\CarbonInterface;
-use Livewire\Attributes\On;
-use Filament\Widgets\Widget;
-use Livewire\WithPagination;
 use Filament\Notifications\Notification;
-use Illuminate\Database\Eloquent\Builder;
+use Filament\Widgets\Widget;
 use Illuminate\Contracts\Pagination\Paginator;
-use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Notifications\DatabaseNotification;
+use Livewire\Attributes\On;
+use Livewire\WithPagination;
 
 class Notifications extends Widget
 {

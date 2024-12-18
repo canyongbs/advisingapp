@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource\Pages;
 
-use Filament\Forms\Form;
-use Filament\Actions\ViewAction;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource;
+use App\Filament\Forms\Components\IconSelect;
 use Filament\Actions\DeleteAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
-use App\Filament\Forms\Components\IconSelect;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource;
 
 class EditResourceHubCategory extends EditRecord
 {

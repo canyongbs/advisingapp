@@ -34,13 +34,12 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Interaction\Filament\Resources\InteractionRelationResource;
+use AdvisingApp\Interaction\Models\InteractionRelation;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
-
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Interaction\Models\InteractionRelation;
-use AdvisingApp\Interaction\Filament\Resources\InteractionRelationResource;
 
 test('EditInteractionRelation is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();

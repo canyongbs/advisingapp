@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Team\Policies;
 
-use App\Models\Authenticatable;
 use AdvisingApp\Team\Models\Team;
+use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
 class TeamPolicy

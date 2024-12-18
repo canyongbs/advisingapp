@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Report\Models;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use App\Models\Authenticatable;
 use AdvisingApp\Report\Enums\ReportModel;
-use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Report\Observers\ReportObserver;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\Authenticatable;
+use App\Models\BaseModel;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @mixin IdeHelperReport

@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Consent\Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use AdvisingApp\Consent\Models\ConsentAgreement;
 use AdvisingApp\Consent\Enums\ConsentAgreementType;
+use AdvisingApp\Consent\Models\ConsentAgreement;
+use Illuminate\Database\Seeder;
 
 class ConsentAgreementSeeder extends Seeder
 {

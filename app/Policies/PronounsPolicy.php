@@ -36,8 +36,8 @@
 
 namespace App\Policies;
 
-use App\Models\Pronouns;
 use App\Models\Authenticatable;
+use App\Models\Pronouns;
 use Illuminate\Auth\Access\Response;
 
 class PronounsPolicy

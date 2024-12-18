@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Survey\Filament\Blocks;
 
-use AdvisingApp\Form\Filament\Blocks\FormFieldBlock;
-use AdvisingApp\Form\Filament\Blocks\EmailFormFieldBlock;
-use AdvisingApp\Form\Filament\Blocks\NumberFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
+use AdvisingApp\Form\Filament\Blocks\EmailFormFieldBlock;
+use AdvisingApp\Form\Filament\Blocks\FormFieldBlock;
+use AdvisingApp\Form\Filament\Blocks\NumberFormFieldBlock;
 
 class SurveyFieldBlockRegistry
 {

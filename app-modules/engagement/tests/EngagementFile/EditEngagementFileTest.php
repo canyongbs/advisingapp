@@ -34,14 +34,13 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource;
+use AdvisingApp\Engagement\Models\EngagementFile;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
-
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Engagement\Models\EngagementFile;
-use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource;
 
 // TODO: Add tests for the EditEngagementFile
 //test('A successful action on the EditEngagementFile page', function () {});

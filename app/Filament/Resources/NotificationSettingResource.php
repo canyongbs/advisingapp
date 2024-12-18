@@ -36,12 +36,12 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Resources\Resource;
-use App\Models\NotificationSetting;
 use App\Filament\Clusters\Communication;
+use App\Filament\Resources\NotificationSettingResource\Pages\CreateNotificationSetting;
 use App\Filament\Resources\NotificationSettingResource\Pages\EditNotificationSetting;
 use App\Filament\Resources\NotificationSettingResource\Pages\ListNotificationSettings;
-use App\Filament\Resources\NotificationSettingResource\Pages\CreateNotificationSetting;
+use App\Models\NotificationSetting;
+use Filament\Resources\Resource;
 
 class NotificationSettingResource extends Resource
 {

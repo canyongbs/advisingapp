@@ -36,13 +36,13 @@
 
 namespace App\Filament\Widgets;
 
-use Filament\Tables\Table;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource;
+use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
+use App\Filament\Tables\Columns\IdColumn;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use App\Filament\Tables\Columns\IdColumn;
+use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
-use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource;
 
 class RecentResourceHubArticlesList extends BaseWidget
 {

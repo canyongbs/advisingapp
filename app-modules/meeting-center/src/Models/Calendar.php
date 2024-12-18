@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\MeetingCenter\Models;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use AdvisingApp\MeetingCenter\Enums\CalendarProvider;
+use App\Models\BaseModel;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @mixin IdeHelperCalendar

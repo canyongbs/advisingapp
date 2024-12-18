@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Ai\Database\Factories;
 
-use App\Models\User;
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Models\PromptUse;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

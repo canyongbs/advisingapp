@@ -36,20 +36,20 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources;
 
-use Filament\Resources\Resource;
-use Illuminate\Database\Eloquent\Model;
-use AdvisingApp\Prospect\Models\Prospect;
-use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Resources\Concerns\HasGlobalSearchResultScoring;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\EditProspect;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspect;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ListProspects;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\CreateProspect;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectTasks;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\EditProspect;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ListProspects;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectAlerts;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectCareTeam;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspectActivityFeed;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectSubscriptions;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectTasks;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspect;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspectActivityFeed;
+use AdvisingApp\Prospect\Models\Prospect;
+use App\Filament\Resources\Concerns\HasGlobalSearchResultScoring;
+use Filament\Resources\Resource;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class ProspectResource extends Resource
 {

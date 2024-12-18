@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Actions;
 
-use Throwable;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
 use App\Models\Tenant;
 use App\Services\Olympus;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
+use Throwable;
 
 class SyncStudentSisAction
 {

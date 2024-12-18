@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\ResourceHub\Filament\Resources;
 
-use Filament\Resources\Resource;
-use App\Filament\Clusters\ResourceHub;
-use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource\Pages\EditResourceHubCategory;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource\Pages\ViewResourceHubCategory;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource\Pages\CreateResourceHubCategory;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource\Pages\EditResourceHubCategory;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource\Pages\ListResourceHubCategories;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource\Pages\ViewResourceHubCategory;
+use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
+use App\Filament\Clusters\ResourceHub;
+use Filament\Resources\Resource;
 
 class ResourceHubCategoryResource extends Resource
 {

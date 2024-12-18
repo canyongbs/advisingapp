@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\MeetingCenter\Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use AdvisingApp\MeetingCenter\Models\Event;
+use Illuminate\Database\Seeder;
 
 class EventSeeder extends Seeder
 {

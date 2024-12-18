@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use Filament\Tables\Table;
-use Livewire\Attributes\On;
-use Filament\Widgets\TableWidget;
-use Filament\Tables\Columns\TextColumn;
 use AdvisingApp\Prospect\Models\Prospect;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Filament\Widgets\TableWidget;
+use Livewire\Attributes\On;
 
 class ProspectReportTableChart extends TableWidget
 {

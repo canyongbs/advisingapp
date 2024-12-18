@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\CareTeam\Providers;
 
-use Filament\Panel;
-use App\Concerns\ImplementsGraphQL;
-use Illuminate\Support\ServiceProvider;
 use AdvisingApp\CareTeam\CareTeamPlugin;
 use AdvisingApp\CareTeam\Models\CareTeam;
+use App\Concerns\ImplementsGraphQL;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\ServiceProvider;
 
 class CareTeamServiceProvider extends ServiceProvider
 {

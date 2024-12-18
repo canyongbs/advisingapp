@@ -36,22 +36,22 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Pages;
 
-use Throwable;
-use Filament\Forms\Form;
-use Filament\Actions\Action;
+use AdvisingApp\Ai\Actions\ReInitializeAiServiceAssistant;
+use AdvisingApp\Ai\Actions\ResetAiServiceIdsForAssistant;
 use AdvisingApp\Ai\Enums\AiModel;
-use App\Settings\LicenseSettings;
-use Illuminate\Support\Facades\DB;
-use Filament\Support\Enums\MaxWidth;
+use AdvisingApp\Ai\Filament\Resources\AiAssistantResource;
+use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Concerns\HandlesFileUploads;
+use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Forms\AiAssistantForm;
 use AdvisingApp\Ai\Models\AiAssistant;
-use Illuminate\Database\Eloquent\Model;
+use App\Settings\LicenseSettings;
+use Filament\Actions\Action;
+use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\Ai\Actions\ResetAiServiceIdsForAssistant;
-use AdvisingApp\Ai\Actions\ReInitializeAiServiceAssistant;
-use AdvisingApp\Ai\Filament\Resources\AiAssistantResource;
-use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Forms\AiAssistantForm;
-use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Concerns\HandlesFileUploads;
+use Filament\Support\Enums\MaxWidth;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class EditAiAssistant extends EditRecord
 {

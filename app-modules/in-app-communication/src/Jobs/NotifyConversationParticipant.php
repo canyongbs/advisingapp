@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\InAppCommunication\Jobs;
 
-use App\Models\User;
-use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use AdvisingApp\InAppCommunication\Events\ConversationMessageSent;
+use AdvisingApp\InAppCommunication\Actions\CheckConversationMessageContentForMention;
 use AdvisingApp\InAppCommunication\Actions\ConvertMessageJsonToText;
 use AdvisingApp\InAppCommunication\Enums\ConversationNotificationPreference;
-use AdvisingApp\InAppCommunication\Actions\CheckConversationMessageContentForMention;
+use AdvisingApp\InAppCommunication\Events\ConversationMessageSent;
+use App\Models\User;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 class NotifyConversationParticipant implements ShouldQueue
 {

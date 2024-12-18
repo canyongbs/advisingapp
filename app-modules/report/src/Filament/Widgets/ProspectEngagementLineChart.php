@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
+use AdvisingApp\Engagement\Models\EngagementDeliverable;
+use AdvisingApp\Prospect\Models\Prospect;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Engagement\Models\EngagementDeliverable;
 
 class ProspectEngagementLineChart extends LineChartReportWidget
 {

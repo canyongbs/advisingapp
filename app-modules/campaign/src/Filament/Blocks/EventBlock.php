@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
-use Carbon\CarbonImmutable;
-use Filament\Forms\Components\Select;
-use AdvisingApp\MeetingCenter\Models\Event;
-use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
+use AdvisingApp\MeetingCenter\Models\Event;
+use Carbon\CarbonImmutable;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
 
 class EventBlock extends CampaignActionBlock
 {

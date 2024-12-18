@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Pages;
 
-use Throwable;
+use AdvisingApp\Ai\Filament\Resources\AiAssistantResource;
+use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Concerns\HandlesFileUploads;
+use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Forms\AiAssistantForm;
 use Filament\Forms\Form;
-use Illuminate\Database\Eloquent\Model;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
-use AdvisingApp\Ai\Filament\Resources\AiAssistantResource;
-use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Forms\AiAssistantForm;
-use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Concerns\HandlesFileUploads;
+use Illuminate\Database\Eloquent\Model;
+use Throwable;
 
 class CreateAiAssistant extends CreateRecord
 {

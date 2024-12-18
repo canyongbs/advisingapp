@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Report\Filament\Pages;
 
-use App\Filament\Clusters\ReportLibrary;
-use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
-use AdvisingApp\Report\Filament\Widgets\ProspectReportStats;
-use AdvisingApp\Report\Filament\Widgets\ProspectReportLineChart;
-use AdvisingApp\Report\Filament\Widgets\ProspectReportTableChart;
 use AdvisingApp\Report\Abstract\ProspectReport as AbstractProspectReport;
+use AdvisingApp\Report\Filament\Widgets\ProspectReportLineChart;
+use AdvisingApp\Report\Filament\Widgets\ProspectReportStats;
+use AdvisingApp\Report\Filament\Widgets\ProspectReportTableChart;
+use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
+use App\Filament\Clusters\ReportLibrary;
 
 class ProspectReport extends AbstractProspectReport
 {

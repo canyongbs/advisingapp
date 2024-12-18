@@ -34,14 +34,13 @@
 </COPYRIGHT>
 */
 
-use OpenAI\Resources\Files;
-
-use function Tests\asSuperAdmin;
-
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Models\AiMessageFile;
-use OpenAI\Responses\Files\DeleteResponse;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4oService;
+use OpenAI\Resources\Files;
+use OpenAI\Responses\Files\DeleteResponse;
+
+use function Tests\asSuperAdmin;
 
 it('can delete a file', function () {
     asSuperAdmin();

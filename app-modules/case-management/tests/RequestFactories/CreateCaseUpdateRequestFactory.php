@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\CaseManagement\Tests\RequestFactories;
 
-use Worksome\RequestFactories\RequestFactory;
-use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Enums\CaseUpdateDirection;
+use AdvisingApp\CaseManagement\Models\CaseModel;
+use Worksome\RequestFactories\RequestFactory;
 
 class CreateCaseUpdateRequestFactory extends RequestFactory
 {

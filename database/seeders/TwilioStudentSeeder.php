@@ -36,8 +36,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Database\Seeder;
 
 class TwilioStudentSeeder extends Seeder
 {

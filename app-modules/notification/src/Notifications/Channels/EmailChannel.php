@@ -36,23 +36,23 @@
 
 namespace AdvisingApp\Notification\Notifications\Channels;
 
-use Exception;
-use App\Models\User;
-use App\Models\Tenant;
-use App\Settings\LicenseSettings;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Notifications\Notification;
-use Illuminate\Notifications\AnonymousNotifiable;
-use Illuminate\Notifications\Channels\MailChannel;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\EmailNotification;
+use AdvisingApp\Notification\DataTransferObjects\EmailChannelResultData;
+use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
 use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
-use AdvisingApp\Notification\DataTransferObjects\EmailChannelResultData;
-use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\EmailNotification;
+use App\Models\Tenant;
+use App\Models\User;
+use App\Settings\LicenseSettings;
+use Exception;
+use Illuminate\Notifications\AnonymousNotifiable;
+use Illuminate\Notifications\Channels\MailChannel;
+use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\DB;
 
 class EmailChannel extends MailChannel
 {

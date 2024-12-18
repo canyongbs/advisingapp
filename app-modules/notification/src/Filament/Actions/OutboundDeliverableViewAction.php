@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\Notification\Filament\Actions;
 
-use App\Models\User;
-use Filament\Actions\ViewAction;
-use Illuminate\Support\HtmlString;
-use App\Filament\Resources\UserResource;
-use AdvisingApp\Prospect\Models\Prospect;
-use Filament\Infolists\Components\TextEntry;
-use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\StudentDataModel\Models\Student;
+use App\Filament\Resources\UserResource;
+use App\Models\User;
+use Filament\Actions\ViewAction;
+use Filament\Infolists\Components\TextEntry;
+use Illuminate\Support\HtmlString;
 
 class OutboundDeliverableViewAction extends ViewAction
 {

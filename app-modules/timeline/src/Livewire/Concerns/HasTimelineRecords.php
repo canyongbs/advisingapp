@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Timeline\Livewire\Concerns;
 
+use AdvisingApp\Timeline\Actions\SyncTimelineData;
+use App\Actions\GetRecordFromMorphAndKey;
 use Filament\Actions\ViewAction;
 use Illuminate\Database\Eloquent\Model;
-use App\Actions\GetRecordFromMorphAndKey;
-use AdvisingApp\Timeline\Actions\SyncTimelineData;
 
 trait HasTimelineRecords
 {

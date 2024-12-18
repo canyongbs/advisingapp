@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Authorization\Filament\Resources\PermissionResource\Pages;
 
-use Filament\Resources\Pages\ViewRecord;
 use AdvisingApp\Authorization\Filament\Resources\PermissionResource;
+use Filament\Resources\Pages\ViewRecord;
 
 class ViewPermission extends ViewRecord
 {

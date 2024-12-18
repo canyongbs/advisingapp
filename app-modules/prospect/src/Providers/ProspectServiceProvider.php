@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\Prospect\Providers;
 
-use Filament\Panel;
-use App\Concerns\ImplementsGraphQL;
-use Illuminate\Support\ServiceProvider;
-use AdvisingApp\Prospect\ProspectPlugin;
+use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
+use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
+use AdvisingApp\Prospect\ProspectPlugin;
+use App\Concerns\ImplementsGraphQL;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
-use AdvisingApp\Prospect\Enums\SystemProspectClassification;
+use Illuminate\Support\ServiceProvider;
 
 class ProspectServiceProvider extends ServiceProvider
 {

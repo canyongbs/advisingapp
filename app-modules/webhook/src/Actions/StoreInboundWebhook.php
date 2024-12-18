@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Webhook\Actions;
 
-use AdvisingApp\Webhook\Models\InboundWebhook;
 use AdvisingApp\Webhook\Enums\InboundWebhookSource;
+use AdvisingApp\Webhook\Models\InboundWebhook;
 
 class StoreInboundWebhook
 {

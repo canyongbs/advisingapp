@@ -36,27 +36,27 @@
 
 namespace AdvisingApp\Ai\Providers;
 
-use Filament\Panel;
 use AdvisingApp\Ai\AiPlugin;
-use AdvisingApp\Ai\Models\Prompt;
-use AdvisingApp\Ai\Models\AiThread;
-use App\Concerns\ImplementsGraphQL;
-use AdvisingApp\Ai\Models\AiMessage;
-use AdvisingApp\Ai\Models\PromptType;
-use Illuminate\Support\Facades\Event;
-use AdvisingApp\Ai\Models\AiAssistant;
-use Illuminate\Support\ServiceProvider;
-use AdvisingApp\Ai\Models\AiMessageFile;
-use AdvisingApp\Ai\Models\AiThreadFolder;
-use AdvisingApp\Ai\Events\AiThreadTrashed;
-use AdvisingApp\Ai\Models\AiAssistantFile;
 use AdvisingApp\Ai\Events\AiMessageCreated;
+use AdvisingApp\Ai\Events\AiMessageFileForceDeleting;
 use AdvisingApp\Ai\Events\AiMessageTrashed;
 use AdvisingApp\Ai\Events\AiThreadForceDeleting;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Ai\Events\AiMessageFileForceDeleting;
+use AdvisingApp\Ai\Events\AiThreadTrashed;
 use AdvisingApp\Ai\Events\AssistantFilesFinishedUploading;
 use AdvisingApp\Ai\Listeners\HandleAssistantFilesFinishedUploading;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\AiAssistantFile;
+use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Models\AiMessageFile;
+use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Models\AiThreadFolder;
+use AdvisingApp\Ai\Models\Prompt;
+use AdvisingApp\Ai\Models\PromptType;
+use App\Concerns\ImplementsGraphQL;
+use Filament\Panel;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\ServiceProvider;
 
 class AiServiceProvider extends ServiceProvider
 {

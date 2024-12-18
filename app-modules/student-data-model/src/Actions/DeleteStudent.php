@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\StudentDataModel\Actions;
 
-use Illuminate\Support\Facades\DB;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Support\Facades\DB;
 
 class DeleteStudent
 {

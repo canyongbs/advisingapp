@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Engagement\Actions;
 
+use AdvisingApp\Engagement\Notifications\EngagementEmailNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Notifications\Events\NotificationFailed;
-use AdvisingApp\Engagement\Notifications\EngagementEmailNotification;
 
 class HandleEngagementEmailNotificationFailed implements ShouldQueue
 {

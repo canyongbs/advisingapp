@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Segment\Console\Commands;
 
-use Illuminate\Console\Command;
-use AdvisingApp\Segment\Models\Segment;
-use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
+use AdvisingApp\Segment\Models\Segment;
+use Illuminate\Console\Command;
+use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 
 class TranslateSegment extends Command
 {

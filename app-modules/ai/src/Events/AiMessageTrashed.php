@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Ai\Events;
 
-use AdvisingApp\Ai\Models\AiMessage;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Foundation\Events\Dispatchable;
 use AdvisingApp\Ai\Listeners\AiMessageCascadeDeleteAiMessageFiles;
+use AdvisingApp\Ai\Models\AiMessage;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
 
 class AiMessageTrashed
 {

@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Interaction\Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use AdvisingApp\Interaction\Models\InteractionDriver;
+use Illuminate\Database\Seeder;
 
 class InteractionDriverSeeder extends Seeder
 {

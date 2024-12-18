@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Division\Filament\Resources;
 
-use Filament\Resources\Resource;
-use AdvisingApp\Division\Models\Division;
-use AdvisingApp\Division\Filament\Resources\DivisionResource\Pages\EditDivision;
-use AdvisingApp\Division\Filament\Resources\DivisionResource\Pages\ViewDivision;
-use AdvisingApp\Division\Filament\Resources\DivisionResource\Pages\ListDivisions;
 use AdvisingApp\Division\Filament\Resources\DivisionResource\Pages\CreateDivision;
+use AdvisingApp\Division\Filament\Resources\DivisionResource\Pages\EditDivision;
+use AdvisingApp\Division\Filament\Resources\DivisionResource\Pages\ListDivisions;
+use AdvisingApp\Division\Filament\Resources\DivisionResource\Pages\ViewDivision;
 use AdvisingApp\Division\Filament\Resources\DivisionResource\RelationManagers\TeamsRelationManager;
+use AdvisingApp\Division\Models\Division;
+use Filament\Resources\Resource;
 
 class DivisionResource extends Resource
 {

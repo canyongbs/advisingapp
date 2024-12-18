@@ -36,23 +36,23 @@
 
 namespace App\Console\Commands;
 
-use Sqids\Sqids;
-use App\Models\Tenant;
-use Illuminate\Support\Str;
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Artisan;
-use App\Multitenancy\DataTransferObjects\TenantConfig;
+use App\DataTransferObjects\LicenseManagement\LicenseAddonsData;
 use App\DataTransferObjects\LicenseManagement\LicenseData;
+use App\DataTransferObjects\LicenseManagement\LicenseLimitsData;
+use App\DataTransferObjects\LicenseManagement\LicenseSubscriptionData;
+use App\Models\Tenant;
+use App\Multitenancy\Actions\CreateTenant as CreateTenantAction;
+use App\Multitenancy\DataTransferObjects\TenantConfig;
+use App\Multitenancy\DataTransferObjects\TenantDatabaseConfig;
 use App\Multitenancy\DataTransferObjects\TenantMailConfig;
 use App\Multitenancy\DataTransferObjects\TenantMailersConfig;
-use App\Multitenancy\DataTransferObjects\TenantDatabaseConfig;
-use App\DataTransferObjects\LicenseManagement\LicenseAddonsData;
-use App\DataTransferObjects\LicenseManagement\LicenseLimitsData;
-use App\Multitenancy\Actions\CreateTenant as CreateTenantAction;
-use App\Multitenancy\DataTransferObjects\TenantSmtpMailerConfig;
 use App\Multitenancy\DataTransferObjects\TenantS3FilesystemConfig;
-use App\DataTransferObjects\LicenseManagement\LicenseSubscriptionData;
+use App\Multitenancy\DataTransferObjects\TenantSmtpMailerConfig;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Sqids\Sqids;
 
 class CreateTenant extends Command
 {

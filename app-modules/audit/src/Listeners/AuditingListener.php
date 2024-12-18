@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Audit\Listeners;
 
-use OwenIt\Auditing\Events\Auditing;
-use Illuminate\Database\Eloquent\Model;
 use AdvisingApp\Audit\Settings\AuditSettings;
+use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Events\Auditing;
 
 class AuditingListener
 {

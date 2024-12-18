@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\Consent\Models;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Consent\Enums\ConsentAgreementType;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use AdvisingApp\Consent\Observers\ConsentAgreementObserver;
+use App\Models\BaseModel;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use AdvisingApp\Consent\Observers\ConsentAgreementObserver;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @mixin IdeHelperConsentAgreement

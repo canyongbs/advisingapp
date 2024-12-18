@@ -36,18 +36,18 @@
 
 namespace AdvisingApp\ResourceHub\Jobs;
 
-use Exception;
-use Illuminate\Support\Str;
-use Illuminate\Bus\Queueable;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Exceptions\ResourceHubExternalMediaFileAccessException;
 use AdvisingApp\ResourceHub\Exceptions\ResourceHubExternalMediaValidationException;
+use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
+use Exception;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ResourceHubArticleDownloadExternalMedia implements ShouldQueue
 {

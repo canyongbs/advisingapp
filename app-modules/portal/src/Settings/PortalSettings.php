@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Portal\Settings;
 
-use App\Settings\SettingsWithMedia;
 use AdvisingApp\Portal\Enums\GdprBannerButtonLabel;
 use AdvisingApp\Portal\Settings\SettingsProperties\PortalSettingsProperty;
+use App\Settings\SettingsWithMedia;
 
 class PortalSettings extends SettingsWithMedia
 {

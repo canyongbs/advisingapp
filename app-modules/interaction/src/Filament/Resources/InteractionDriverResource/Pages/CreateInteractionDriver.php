@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource\Pages;
 
-use Filament\Resources\Pages\CreateRecord;
 use AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource;
+use Filament\Resources\Pages\CreateRecord;
 
 class CreateInteractionDriver extends CreateRecord
 {

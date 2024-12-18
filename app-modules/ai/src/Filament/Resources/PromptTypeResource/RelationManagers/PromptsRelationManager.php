@@ -36,18 +36,18 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\PromptTypeResource\RelationManagers;
 
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Filament\Infolists\Infolist;
+use AdvisingApp\Ai\Filament\Resources\PromptResource;
+use AdvisingApp\Ai\Filament\Resources\PromptResource\Pages\EditPrompt;
+use AdvisingApp\Ai\Filament\Resources\PromptResource\Pages\ListPrompts;
+use AdvisingApp\Ai\Filament\Resources\PromptResource\Pages\ViewPrompt;
 use AdvisingApp\Ai\Models\Prompt;
+use Filament\Forms\Form;
+use Filament\Infolists\Infolist;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
-use Filament\Tables\Actions\CreateAction;
-use AdvisingApp\Ai\Filament\Resources\PromptResource;
-use Filament\Resources\RelationManagers\RelationManager;
-use AdvisingApp\Ai\Filament\Resources\PromptResource\Pages\EditPrompt;
-use AdvisingApp\Ai\Filament\Resources\PromptResource\Pages\ViewPrompt;
-use AdvisingApp\Ai\Filament\Resources\PromptResource\Pages\ListPrompts;
+use Filament\Tables\Table;
 
 class PromptsRelationManager extends RelationManager
 {

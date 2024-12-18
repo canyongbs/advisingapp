@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\MeetingCenter\Database\Factories;
 
-use Filament\Support\Colors\Color;
 use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
-use Illuminate\Database\Eloquent\Factories\Factory;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
-use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
+use Filament\Support\Colors\Color;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<EventRegistrationForm>

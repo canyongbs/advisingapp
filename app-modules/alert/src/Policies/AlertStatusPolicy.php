@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Alert\Policies;
 
+use AdvisingApp\Alert\Models\AlertStatus;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
-use AdvisingApp\Alert\Models\AlertStatus;
 
 class AlertStatusPolicy
 {

@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
-use AdvisingApp\Task\Models\Task;
-use Illuminate\Support\Facades\Notification;
 use AdvisingApp\Authorization\Models\Permission;
+use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Task\Notifications\TaskAssignedToUserNotification;
+use App\Models\User;
+use Illuminate\Support\Facades\Notification;
 
 beforeEach(function () {
     Notification::fake();

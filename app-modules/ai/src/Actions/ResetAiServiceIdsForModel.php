@@ -37,8 +37,8 @@
 namespace AdvisingApp\Ai\Actions;
 
 use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\AiThread;
 
 class ResetAiServiceIdsForModel
 {

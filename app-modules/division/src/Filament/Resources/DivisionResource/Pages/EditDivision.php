@@ -36,18 +36,18 @@
 
 namespace AdvisingApp\Division\Filament\Resources\DivisionResource\Pages;
 
-use Filament\Forms\Form;
-use Filament\Actions\DeleteAction;
+use AdvisingApp\Division\Filament\Resources\DivisionResource;
+use AdvisingApp\Division\Models\Division;
 use App\Features\DivisionIsDefault;
 use App\Models\NotificationSetting;
+use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
-use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\Division\Models\Division;
-use AdvisingApp\Division\Filament\Resources\DivisionResource;
+use FilamentTiptapEditor\TiptapEditor;
 
 class EditDivision extends EditRecord
 {

@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Prospect\Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
+use AdvisingApp\Prospect\Models\ProspectStatus;
+use Illuminate\Database\Seeder;
 
 class ProspectStatusSeeder extends Seeder
 {

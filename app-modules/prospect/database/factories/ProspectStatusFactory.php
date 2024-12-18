@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Prospect\Database\Factories;
 
-use AdvisingApp\Prospect\Models\ProspectStatus;
-use Illuminate\Database\Eloquent\Factories\Factory;
 use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
+use AdvisingApp\Prospect\Models\ProspectStatus;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<ProspectStatus>

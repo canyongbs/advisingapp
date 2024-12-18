@@ -34,18 +34,15 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
-use App\Models\Tenant;
-
-use function Pest\Laravel\get;
-
 use App\Filament\Pages\AmazonS3;
-
-use function Tests\asSuperAdmin;
-use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
-
+use App\Models\Tenant;
+use App\Models\User;
 use App\Multitenancy\DataTransferObjects\TenantConfig;
+
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
+use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
 it('prevents access to the Amazon S3 Settings when you do not have the necessary permissions', function () {
     $user = User::factory()->create();

@@ -36,9 +36,9 @@
 
 namespace App\Enums;
 
+use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use App\Settings\IntegrationSettings;
 use Filament\Support\Contracts\HasLabel;
-use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 
 enum Integration: string implements HasLabel
 {

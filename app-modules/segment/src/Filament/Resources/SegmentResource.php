@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Segment\Filament\Resources;
 
-use Filament\Resources\Resource;
-use AdvisingApp\Segment\Models\Segment;
+use AdvisingApp\Segment\Filament\Resources\SegmentResource\Pages\CreateSegment;
 use AdvisingApp\Segment\Filament\Resources\SegmentResource\Pages\EditSegment;
 use AdvisingApp\Segment\Filament\Resources\SegmentResource\Pages\ListSegments;
-use AdvisingApp\Segment\Filament\Resources\SegmentResource\Pages\CreateSegment;
+use AdvisingApp\Segment\Models\Segment;
+use Filament\Resources\Resource;
 
 class SegmentResource extends Resource
 {

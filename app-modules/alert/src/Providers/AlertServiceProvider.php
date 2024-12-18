@@ -36,18 +36,18 @@
 
 namespace AdvisingApp\Alert\Providers;
 
-use Filament\Panel;
 use AdvisingApp\Alert\AlertPlugin;
-use AdvisingApp\Alert\Models\Alert;
-use App\Concerns\ImplementsGraphQL;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Alert\Enums\AlertSeverity;
+use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Alert\Events\AlertCreated;
 use AdvisingApp\Alert\Histories\AlertHistory;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Alert\Listeners\NotifySubscribersOfAlertCreated;
+use AdvisingApp\Alert\Models\Alert;
+use App\Concerns\ImplementsGraphQL;
+use Filament\Panel;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\ServiceProvider;
 
 class AlertServiceProvider extends ServiceProvider
 {

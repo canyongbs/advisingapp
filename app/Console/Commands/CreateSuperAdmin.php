@@ -36,13 +36,13 @@
 
 namespace App\Console\Commands;
 
-use App\Models\User;
+use AdvisingApp\Authorization\Models\Role;
 use App\Models\Tenant;
-use Illuminate\Support\Str;
+use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use AdvisingApp\Authorization\Models\Role;
+use Illuminate\Support\Str;
 
 class CreateSuperAdmin extends Command
 {

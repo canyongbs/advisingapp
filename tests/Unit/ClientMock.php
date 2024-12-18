@@ -36,9 +36,9 @@
 
 namespace Tests\Unit;
 
-use Twilio\Rest\Client;
 use AllowDynamicProperties;
 use Twilio\Http\Client as HttpClient;
+use Twilio\Rest\Client;
 
 #[AllowDynamicProperties]
 class ClientMock extends Client

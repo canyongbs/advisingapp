@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Task\Enums;
 
+use Bvtterfly\ModelStateMachine\Attributes\AllowTransitionTo;
+use Bvtterfly\ModelStateMachine\Attributes\InitialState;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
-use Bvtterfly\ModelStateMachine\Attributes\InitialState;
-use Bvtterfly\ModelStateMachine\Attributes\AllowTransitionTo;
 
 enum TaskStatus: string implements HasColor, HasLabel
 {

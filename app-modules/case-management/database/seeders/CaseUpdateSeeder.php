@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\CaseManagement\Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Models\CaseUpdate;
+use Illuminate\Database\Seeder;
 
 class CaseUpdateSeeder extends Seeder
 {

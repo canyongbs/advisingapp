@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\StudentDataModel\Models\Scopes;
 
-use Illuminate\Support\Facades\DB;
 use AdvisingApp\Prospect\Models\Prospect;
-use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 class EducatableSearch
 {

@@ -36,19 +36,19 @@
 
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
-use Closure;
+use AdvisingApp\Campaign\Settings\CampaignSettings;
+use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\CaseManagement\Models\CasePriority;
+use AdvisingApp\CaseManagement\Models\CaseStatus;
+use AdvisingApp\Division\Models\Division;
 use App\Models\User;
 use Carbon\CarbonImmutable;
+use Closure;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Illuminate\Database\Eloquent\Model;
-use AdvisingApp\Division\Models\Division;
-use Filament\Forms\Components\DateTimePicker;
-use AdvisingApp\CaseManagement\Models\CaseModel;
-use AdvisingApp\CaseManagement\Models\CaseStatus;
-use AdvisingApp\Campaign\Settings\CampaignSettings;
-use AdvisingApp\CaseManagement\Models\CasePriority;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class CaseBlock extends CampaignActionBlock
 {

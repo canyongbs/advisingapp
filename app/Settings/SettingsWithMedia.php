@@ -36,10 +36,10 @@
 
 namespace App\Settings;
 
-use Spatie\LaravelSettings\Settings;
 use App\Models\SettingsPropertyWithMedia;
-use Spatie\LaravelSettings\SettingsRepositories\SettingsRepository;
+use Spatie\LaravelSettings\Settings;
 use Spatie\LaravelSettings\SettingsRepositories\DatabaseSettingsRepository;
+use Spatie\LaravelSettings\SettingsRepositories\SettingsRepository;
 
 abstract class SettingsWithMedia extends Settings
 {

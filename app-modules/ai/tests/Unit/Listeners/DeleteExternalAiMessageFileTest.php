@@ -34,17 +34,16 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Ai\Enums\AiModel;
+use AdvisingApp\Ai\Events\AiMessageFileForceDeleting;
+use AdvisingApp\Ai\Listeners\DeleteExternalAiMessageFile;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Models\AiMessageFile;
+use AdvisingApp\Ai\Models\AiThread;
 use Mockery\MockInterface;
 
 use function Pest\Laravel\mock;
-
-use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\AiMessage;
-use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Models\AiMessageFile;
-use AdvisingApp\Ai\Events\AiMessageFileForceDeleting;
-use AdvisingApp\Ai\Listeners\DeleteExternalAiMessageFile;
 
 it('deletes a thread', function () {
     $aiMessageFile = AiMessageFile::factory()

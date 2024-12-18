@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Segment;
 
-use Filament\Panel;
 use Filament\Contracts\Plugin;
+use Filament\Panel;
 
 class SegmentPlugin implements Plugin
 {

@@ -34,28 +34,21 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\CreateCase;
+use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\CaseManagement\Tests\RequestFactories\CreateCaseRequestFactory;
+use AdvisingApp\Prospect\Models\Prospect;
 use App\Models\User;
-
-use function Tests\asSuperAdmin;
-
 use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
-
-use AdvisingApp\Prospect\Models\Prospect;
-
-use function PHPUnit\Framework\assertCount;
 use function Pest\Laravel\assertDatabaseHas;
-
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\CaseManagement\Models\CaseModel;
-
 use function Pest\Laravel\assertDatabaseMissing;
-
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
-use AdvisingApp\CaseManagement\Tests\RequestFactories\CreateCaseRequestFactory;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\CreateCase;
+use function Pest\Livewire\livewire;
+use function PHPUnit\Framework\assertCount;
+use function Tests\asSuperAdmin;
 
 test('A successful action on the CreateCase page', function () {
     asSuperAdmin()

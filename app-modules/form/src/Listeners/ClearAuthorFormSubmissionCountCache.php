@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Form\Listeners;
 
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use AdvisingApp\Form\Events\FormSubmissionCreated;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Cache;
 
 class ClearAuthorFormSubmissionCountCache implements ShouldQueue
 {

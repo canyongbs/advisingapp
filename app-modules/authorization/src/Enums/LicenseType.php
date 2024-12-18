@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Authorization\Enums;
 
+use AdvisingApp\Authorization\Models\License;
 use App\Models\Authenticatable;
 use App\Settings\LicenseSettings;
 use Filament\Support\Contracts\HasLabel;
-use AdvisingApp\Authorization\Models\License;
 
 enum LicenseType: string implements HasLabel
 {

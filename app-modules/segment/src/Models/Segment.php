@@ -36,20 +36,20 @@
 
 namespace AdvisingApp\Segment\Models;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use App\Models\Authenticatable;
-use Illuminate\Support\Collection;
 use AdvisingApp\Campaign\Models\Campaign;
-use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\Segment\Enums\SegmentType;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use AdvisingApp\Segment\Observers\SegmentObserver;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
+use AdvisingApp\Segment\Enums\SegmentModel;
+use AdvisingApp\Segment\Enums\SegmentType;
+use AdvisingApp\Segment\Observers\SegmentObserver;
+use App\Models\Authenticatable;
+use App\Models\BaseModel;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 
 /**
  * @mixin IdeHelperSegment

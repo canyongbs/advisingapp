@@ -36,9 +36,9 @@
 
 namespace App\Multitenancy\Tasks;
 
+use App\Multitenancy\DataTransferObjects\TenantConfig;
 use Spatie\Multitenancy\Models\Tenant;
 use Spatie\Multitenancy\Tasks\SwitchTenantTask;
-use App\Multitenancy\DataTransferObjects\TenantConfig;
 
 class SwitchAppName implements SwitchTenantTask
 {

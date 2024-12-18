@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources;
 
-use App\Models\Tag;
+use AdvisingApp\Prospect\Filament\Resources\ProspectTagResource\Pages\CreateProspectTag;
+use AdvisingApp\Prospect\Filament\Resources\ProspectTagResource\Pages\EditProspectTag;
+use AdvisingApp\Prospect\Filament\Resources\ProspectTagResource\Pages\ListProspectTags;
+use AdvisingApp\Prospect\Filament\Resources\ProspectTagResource\Pages\ViewProspectTag;
 use App\Enums\TagType;
+use App\Filament\Clusters\ConstituentManagement;
+use App\Models\Tag;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Clusters\ConstituentManagement;
-use AdvisingApp\Prospect\Filament\Resources\ProspectTagResource\Pages\EditProspectTag;
-use AdvisingApp\Prospect\Filament\Resources\ProspectTagResource\Pages\ViewProspectTag;
-use AdvisingApp\Prospect\Filament\Resources\ProspectTagResource\Pages\ListProspectTags;
-use AdvisingApp\Prospect\Filament\Resources\ProspectTagResource\Pages\CreateProspectTag;
 
 class ProspectTagResource extends Resource
 {

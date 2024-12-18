@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Prospect\Policies;
 
-use App\Models\Authenticatable;
-use Illuminate\Auth\Access\Response;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectStatus;
+use App\Models\Authenticatable;
+use Illuminate\Auth\Access\Response;
 
 class ProspectStatusPolicy
 {

@@ -37,10 +37,10 @@
 namespace App\Livewire;
 
 use App\Models\User;
-use Livewire\Component;
-use Livewire\Attributes\On;
-use Illuminate\Contracts\View\View;
 use App\Settings\CollegeBrandingSettings;
+use Illuminate\Contracts\View\View;
+use Livewire\Attributes\On;
+use Livewire\Component;
 
 class BrandingBar extends Component
 {

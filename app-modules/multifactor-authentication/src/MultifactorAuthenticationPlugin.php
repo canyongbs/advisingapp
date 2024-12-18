@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\MultifactorAuthentication;
 
-use Filament\Panel;
 use Filament\Contracts\Plugin;
+use Filament\Panel;
 
 class MultifactorAuthenticationPlugin implements Plugin
 {

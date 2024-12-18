@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Ai\Enums;
 
-use Filament\Support\Contracts\HasLabel;
-use AdvisingApp\Ai\Services\TestAiService;
 use AdvisingApp\Ai\Services\Contracts\AiService;
-use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4Service;
+use AdvisingApp\Ai\Services\TestAiService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt35Service;
-use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4oService;
-use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptTestService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4oMiniService;
+use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4oService;
+use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4Service;
+use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptTestService;
+use Filament\Support\Contracts\HasLabel;
 
 enum AiModel: string implements HasLabel
 {

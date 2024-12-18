@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Authorization\Observers;
 
-use Exception;
 use AdvisingApp\Authorization\Models\License;
+use Exception;
 
 class LicenseObserver
 {

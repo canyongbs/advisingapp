@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Authorization\Enums;
 
-use Exception;
-use Mockery\MockInterface;
-use SocialiteProviders\Manager\Config;
-use Laravel\Socialite\Facades\Socialite;
-use Laravel\Socialite\Contracts\Provider;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
 use AdvisingApp\MeetingCenter\Settings\AzureCalendarSettings;
+use Exception;
+use Laravel\Socialite\Contracts\Provider;
+use Laravel\Socialite\Facades\Socialite;
+use Mockery\MockInterface;
+use SocialiteProviders\Manager\Config;
 
 enum SocialiteProvider: string
 {

@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\Assistant\Filament\Pages;
 
-use App\Models\User;
-use Filament\Pages\Page;
 use AdvisingApp\Ai\Enums\AiApplication;
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanUploadFiles;
 use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageConsent;
 use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageFolders;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageThreads;
 use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManagePromptLibrary;
+use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageThreads;
+use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanUploadFiles;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Models\User;
+use Filament\Pages\Page;
 
 class PersonalAssistant extends Page
 {

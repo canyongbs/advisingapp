@@ -36,15 +36,15 @@
 
 namespace App\Filament\Resources\SystemUserResource\Pages;
 
+use App\Filament\Resources\SystemUserResource;
 use App\Models\SystemUser;
-use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use App\Filament\Resources\SystemUserResource;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
 class ListSystemUsers extends ListRecords
 {

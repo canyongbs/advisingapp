@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
+use AdvisingApp\Engagement\Models\EngagementDeliverable;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Engagement\Models\EngagementDeliverable;
 
 class StudentEngagementLineChart extends LineChartReportWidget
 {

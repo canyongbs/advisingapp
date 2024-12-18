@@ -36,36 +36,36 @@
 
 namespace App\Providers;
 
-use App\Models\Tenant;
-use Sentry\State\Scope;
+use AdvisingApp\Prospect\Models\Pipeline;
+use AdvisingApp\Prospect\Models\PipelineStage;
 use App\Models\SystemUser;
+use App\Models\Tenant;
+use App\Overrides\Filament\Actions\Imports\Jobs\ImportCsvOverride;
+use App\Overrides\Filament\Actions\Imports\Jobs\PrepareCsvExportOverride;
+use App\Overrides\Laravel\PermissionMigrationCreator;
+use App\Overrides\Laravel\StartSession as OverrideStartSession;
+use App\Overrides\LastDragon_ru\LaraASP\GraphQL\SearchBy\Definitions\SearchByDirective as GraphQLSearchByDirectiveOverride;
+use App\Overrides\LastDragon_ru\LaraASP\GraphQL\SearchBy\Types\Condition as GraphQLSearchByTypesConditionOverride;
+use Filament\Actions\Exports\Jobs\PrepareCsvExport;
+use Filament\Actions\Imports\Jobs\ImportCsv;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Session\SessionManager;
+use Illuminate\Support\Facades\Process;
+use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\ServiceProvider;
+use Laravel\Octane\Commands\ReloadCommand;
 use Laravel\Pennant\Feature;
+use LastDragon_ru\LaraASP\GraphQL\SearchBy\Definitions\SearchByDirective as GraphQLSearchByDirectiveAlias;
+use LastDragon_ru\LaraASP\GraphQL\SearchBy\Types\Condition as GraphQLSearchByTypesCondition;
+use OpenSearch\Migrations\Filesystem\MigrationStorage;
 use Rector\Caching\CacheFactory;
 
 use function Sentry\configureScope;
 
-use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Facades\Queue;
-use Illuminate\Session\SessionManager;
-use Illuminate\Support\Facades\Process;
-use Illuminate\Support\ServiceProvider;
-use AdvisingApp\Prospect\Models\Pipeline;
-use Laravel\Octane\Commands\ReloadCommand;
-use Filament\Actions\Imports\Jobs\ImportCsv;
-use AdvisingApp\Prospect\Models\PipelineStage;
-use Illuminate\Session\Middleware\StartSession;
-use Filament\Actions\Exports\Jobs\PrepareCsvExport;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use App\Overrides\Laravel\PermissionMigrationCreator;
-use OpenSearch\Migrations\Filesystem\MigrationStorage;
-use App\Overrides\Laravel\StartSession as OverrideStartSession;
-use App\Overrides\Filament\Actions\Imports\Jobs\ImportCsvOverride;
-use App\Overrides\Filament\Actions\Imports\Jobs\PrepareCsvExportOverride;
-use LastDragon_ru\LaraASP\GraphQL\SearchBy\Types\Condition as GraphQLSearchByTypesCondition;
-use LastDragon_ru\LaraASP\GraphQL\SearchBy\Definitions\SearchByDirective as GraphQLSearchByDirectiveAlias;
-use App\Overrides\LastDragon_ru\LaraASP\GraphQL\SearchBy\Types\Condition as GraphQLSearchByTypesConditionOverride;
-use App\Overrides\LastDragon_ru\LaraASP\GraphQL\SearchBy\Definitions\SearchByDirective as GraphQLSearchByDirectiveOverride;
+use Sentry\State\Scope;
 
 class AppServiceProvider extends ServiceProvider
 {

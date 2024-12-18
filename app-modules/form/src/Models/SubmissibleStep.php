@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Form\Models;
 
-use App\Models\BaseModel;
-use Illuminate\Database\Query\Builder;
 use App\Models\Attributes\NoPermissions;
-use Illuminate\Database\Eloquent\Collection;
+use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Query\Builder;
 
 /**
  * @property string $label

@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Engagement\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use AdvisingApp\Engagement\Models\EngagementFile;
 use AdvisingApp\Engagement\Http\Requests\EngagementFileDownloadRequest;
+use AdvisingApp\Engagement\Models\EngagementFile;
+use App\Http\Controllers\Controller;
 
 class EngagementFileDownloadController extends Controller
 {

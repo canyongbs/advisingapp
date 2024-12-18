@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\MeetingCenter\Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<EventRegistrationFormStep>

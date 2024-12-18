@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions;
 
+use AdvisingApp\Prospect\Enums\SystemProspectClassification;
+use AdvisingApp\Prospect\Models\ProspectStatus;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
-use AdvisingApp\Prospect\Models\ProspectStatus;
-use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 
 class DisassociateStudent extends Action
 {

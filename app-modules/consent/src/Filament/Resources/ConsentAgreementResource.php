@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Consent\Filament\Resources;
 
-use Filament\Resources\Resource;
+use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages\ListConsentAgreements;
 use AdvisingApp\Consent\Models\ConsentAgreement;
 use App\Filament\Clusters\ArtificialIntelligence;
-use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages\ListConsentAgreements;
+use Filament\Resources\Resource;
 
 class ConsentAgreementResource extends Resource
 {

@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Alert\Database\Factories;
 
+use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Alert\Models\AlertStatus;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 
 /**
  * @extends Factory<AlertStatus>

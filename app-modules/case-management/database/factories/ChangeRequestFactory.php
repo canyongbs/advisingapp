@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\CaseManagement\Database\Factories;
 
+use AdvisingApp\CaseManagement\Models\ChangeRequestStatus;
+use AdvisingApp\CaseManagement\Models\ChangeRequestType;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use AdvisingApp\CaseManagement\Models\ChangeRequestType;
-use AdvisingApp\CaseManagement\Models\ChangeRequestStatus;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\CaseManagement\Models\ChangeRequest>

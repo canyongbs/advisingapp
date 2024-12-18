@@ -34,17 +34,14 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;
+use AdvisingApp\CaseManagement\Models\CaseUpdate;
 use App\Models\User;
-
-use function Tests\asSuperAdmin;
-
 use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
-
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\CaseManagement\Models\CaseUpdate;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;
+use function Tests\asSuperAdmin;
 
 test('The correct details are displayed on the ViewCaseUpdate page', function () {
     $caseUpdate = CaseUpdate::factory()->create();

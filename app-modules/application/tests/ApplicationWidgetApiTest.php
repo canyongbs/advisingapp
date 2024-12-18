@@ -34,20 +34,18 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
+use AdvisingApp\Application\Models\Application;
+use AdvisingApp\Application\Models\ApplicationAuthentication;
+use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
+use AdvisingApp\Prospect\Models\Prospect;
+use App\Settings\LicenseSettings;
+use Illuminate\Support\Facades\URL;
+
 use function Pest\Laravel\get;
 use function Pest\Laravel\post;
 use function Pest\Laravel\seed;
-
-use App\Settings\LicenseSettings;
-use Illuminate\Support\Facades\URL;
-use AdvisingApp\Prospect\Models\Prospect;
-
 use function Pest\Laravel\withoutMiddleware;
-
-use AdvisingApp\Application\Models\Application;
-use AdvisingApp\Application\Models\ApplicationAuthentication;
-use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
-use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
 
 test('define is protected with proper feature access control', function () {
     withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);

@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Ai\Events;
 
+use AdvisingApp\Ai\Listeners\AiThreadCascadeDeleteAiMessages;
 use AdvisingApp\Ai\Models\AiThread;
 use Illuminate\Foundation\Events\Dispatchable;
-use AdvisingApp\Ai\Listeners\AiThreadCascadeDeleteAiMessages;
 
 class AiThreadTrashed
 {

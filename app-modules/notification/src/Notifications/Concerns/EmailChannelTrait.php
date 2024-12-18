@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Notification\Notifications\Concerns;
 
-use Symfony\Component\Mime\Email;
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use AdvisingApp\Notification\Notifications\Channels\EmailChannel;
 use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
+use AdvisingApp\Notification\Notifications\Channels\EmailChannel;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use Symfony\Component\Mime\Email;
 
 trait EmailChannelTrait
 {

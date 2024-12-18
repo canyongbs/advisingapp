@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Assistant\Providers;
 
+use AdvisingApp\Assistant\AssistantPlugin;
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
-use AdvisingApp\Assistant\AssistantPlugin;
 
 class AssistantServiceProvider extends ServiceProvider
 {

@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\Campaign\Providers;
 
-use Filament\Panel;
-use App\Models\Tenant;
-use App\Models\Scopes\SetupIsComplete;
-use Illuminate\Support\ServiceProvider;
+use AdvisingApp\Campaign\Actions\ExecuteCampaignActions;
 use AdvisingApp\Campaign\CampaignPlugin;
 use AdvisingApp\Campaign\Models\Campaign;
-use Illuminate\Console\Scheduling\Schedule;
 use AdvisingApp\Campaign\Models\CampaignAction;
+use App\Models\Scopes\SetupIsComplete;
+use App\Models\Tenant;
+use Filament\Panel;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Campaign\Actions\ExecuteCampaignActions;
+use Illuminate\Support\ServiceProvider;
 
 class CampaignServiceProvider extends ServiceProvider
 {

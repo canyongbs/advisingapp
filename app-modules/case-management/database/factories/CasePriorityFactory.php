@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\CaseManagement\Database\Factories;
 
-use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\CaseManagement\Models\CasePriority;
+use AdvisingApp\CaseManagement\Models\CaseType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

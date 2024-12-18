@@ -36,11 +36,11 @@
 
 namespace App\Providers;
 
-use ReflectionClass;
-use Illuminate\Support\Str;
-use Illuminate\Support\ServiceProvider;
 use App\Actions\Finders\ApplicationModels;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
+use ReflectionClass;
 
 class MorphServiceProvider extends ServiceProvider
 {
