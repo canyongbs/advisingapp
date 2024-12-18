@@ -566,8 +566,11 @@
                             <div class="group w-full bg-white dark:bg-gray-900">
                                 <div
                                     class="m-auto justify-center px-4 text-base md:gap-6"
-                                    x-bind:class="{ 'bg-primary-100 dark:bg-primary-900 py-2': message.prompt, 'py-4 md:py-6': !
-                                            message.prompt }"
+                                    x-bind:class="{
+                                        'bg-primary-100 dark:bg-primary-900 py-2': message.prompt,
+                                        'py-4 md:py-6': !
+                                            message.prompt
+                                    }"
                                 >
                                     <div
                                         class="mx-auto flex flex-1 gap-4 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl"
