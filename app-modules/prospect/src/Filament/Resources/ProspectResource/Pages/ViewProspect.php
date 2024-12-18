@@ -36,16 +36,10 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
-use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
-use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ConvertToStudent;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ProspectTagsAction;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\DisassociateStudent;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Schemas\ProspectProfileInfolist;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\Concerns\HasProspectHeader;
 
@@ -64,16 +58,5 @@ class ViewProspect extends ViewRecord
     public function profile(Infolist $infolist): Infolist
     {
         return ProspectProfileInfolist::configure($infolist);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            ProspectTagsAction::make()->visible(fn (): bool => auth()->user()?->can('prospect.tags.manage')),
-            ConvertToStudent::make()->visible(fn (Prospect $record) => ! $record->student()->exists()),
-            DisassociateStudent::make()->visible(fn (Prospect $record) => $record->student()->exists()),
-            EditAction::make(),
-            SubscribeHeaderAction::make(),
-        ];
     }
 }

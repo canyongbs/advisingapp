@@ -36,11 +36,17 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\Concerns;
 
+use Filament\Actions\EditAction;
 use App\Settings\DisplaySettings;
 use Illuminate\Contracts\View\View;
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspect;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ConvertToStudent;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ProspectTagsAction;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\DisassociateStudent;
 
 trait HasProspectHeader
 {
@@ -60,10 +66,10 @@ trait HasProspectHeader
                 ? null
                 : ProspectResource::getUrl('view', ['record' => $this->getRecord()]),
             'badges' => [
-                ...($prospect->firstgen ? ['First Gen'] : []),
-                ...($prospect->dual ? ['Dual'] : []),
-                ...($prospect->sap ? ['SAP'] : []),
-                ...(filled($prospect->dfw) ? ["DFW {$prospect->dfw->format('m/d/Y')}"] : []),
+                ...([]),
+                ...([]),
+                ...([]),
+                ...([]),
             ],
             'breadcrumbs' => $this->getBreadcrumbs(),
             'details' => [
@@ -83,5 +89,16 @@ trait HasProspectHeader
             'educatableName' => $prospectName,
             'timezone' => app(DisplaySettings::class)->getTimezone(),
         ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            ProspectTagsAction::make()->visible(fn (): bool => auth()->user()?->can('prospect.tags.manage')),
+            ConvertToStudent::make()->visible(fn (Prospect $record) => ! $record->student()->exists()),
+            DisassociateStudent::make()->visible(fn (Prospect $record) => $record->student()->exists()),
+            EditAction::make(),
+            SubscribeHeaderAction::make(),
+        ];
     }
 }

@@ -38,10 +38,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
-use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Actions\StudentTagsAction;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Actions\SyncStudentSisAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Schemas\StudentProfileInfolist;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concerns\HasStudentHeader;
 
@@ -58,14 +55,5 @@ class ViewStudent extends ViewRecord
     public function profile(Infolist $infolist): Infolist
     {
         return StudentProfileInfolist::configure($infolist);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            StudentTagsAction::make()->visible(fn (): bool => auth()->user()->can('student.tags.manage')),
-            SyncStudentSisAction::make(),
-            SubscribeHeaderAction::make(),
-        ];
     }
 }

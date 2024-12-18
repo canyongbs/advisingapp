@@ -38,9 +38,12 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\
 
 use App\Settings\DisplaySettings;
 use Illuminate\Contracts\View\View;
+use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Actions\StudentTagsAction;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Actions\SyncStudentSisAction;
 
 trait HasStudentHeader
 {
@@ -83,5 +86,14 @@ trait HasStudentHeader
             'educatableName' => $studentName,
             'timezone' => app(DisplaySettings::class)->getTimezone(),
         ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            StudentTagsAction::make()->visible(fn (): bool => auth()->user()->can('student.tags.manage')),
+            SyncStudentSisAction::make(),
+            SubscribeHeaderAction::make(),
+        ];
     }
 }
