@@ -39,6 +39,7 @@ namespace AdvisingApp\Ai\Rules;
 use Closure;
 use App\Models\User;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Translation\PotentiallyTranslatedString;
 
 class RestrictSuperAdmin implements ValidationRule
 {
@@ -52,7 +53,7 @@ class RestrictSuperAdmin implements ValidationRule
     /**
      * Run the validation rule.
      *
-     * @param  Closure(string): \Illuminate\Translation\PotentiallyTranslatedString  $fail
+     * @param  Closure(string): PotentiallyTranslatedString  $fail
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {

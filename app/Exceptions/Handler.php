@@ -37,6 +37,7 @@
 namespace App\Exceptions;
 
 use Throwable;
+use Psr\Log\LogLevel;
 use Sentry\Laravel\Integration;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
@@ -46,7 +47,7 @@ class Handler extends ExceptionHandler
     /**
      * A list of exception types with their corresponding custom log levels.
      *
-     * @var array<class-string<Throwable>, \Psr\Log\LogLevel::*>
+     * @var array<class-string<Throwable>, LogLevel::*>
      */
     protected $levels = [
     ];
