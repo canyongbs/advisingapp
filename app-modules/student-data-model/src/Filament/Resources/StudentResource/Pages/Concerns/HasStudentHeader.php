@@ -71,7 +71,7 @@ trait HasStudentHeader
             ],
             'breadcrumbs' => $this->getBreadcrumbs(),
             'details' => [
-                ['Student', 'heroicon-m-user'],
+                $name === 'student' ? ['Student', 'heroicon-m-user'] : ['Prospect','heroicon-m-magnifying-glass-circle'],
                 ...(filled($student->preferred) ? [["Goes by \"{$student->preferred}\"", 'heroicon-m-heart']] : []),
                 ...(filled($student->phone) ? [[$student->phone, 'heroicon-m-phone']] : []),
                 ...(filled($student->email) ? [[$student->email, 'heroicon-m-envelope']] : []),

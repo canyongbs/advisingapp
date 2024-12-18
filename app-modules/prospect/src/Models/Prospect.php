@@ -377,4 +377,21 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
             get: fn (?string $value, array $attributes) => $attributes[$this->displayNameKey()],
         );
     }
+
+    protected function fullAddress(): Attribute
+    {
+        return Attribute::make(
+            get: function (mixed $value, array $attributes) {
+                $addressLine = trim("{$attributes['address']} {$attributes['address_2']} {$attributes['address_3']}");
+
+                return trim(sprintf(
+                    '%s %s %s %s',
+                    ! empty($addressLine) ? $addressLine . ',' : '',
+                    ! empty($attributes['city']) ? $attributes['city'] . ',' : '',
+                    ! empty($attributes['state']) ? $attributes['state'] : '',
+                    ! empty($attributes['postal']) ? $attributes['postal'] : '',
+                ));
+            }
+        );
+    }
 }
