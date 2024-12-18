@@ -37,8 +37,10 @@
 namespace AdvisingApp\Ai\Filament\Resources\PromptResource\Pages;
 
 use Filament\Tables\Table;
+use App\Models\Authenticatable;
 use AdvisingApp\Ai\Models\Prompt;
 use Filament\Actions\CreateAction;
+use App\Features\SmartPromptsFeature;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -66,14 +68,13 @@ class ListPrompts extends ListRecords
                 TextColumn::make('description')
                     ->limit(50)
                     ->searchable(),
-                TextColumn::make('prompt')
-                    ->limit(50)
-                    ->searchable()
-                    ->toggleable()
-                    ->toggledHiddenByDefault(),
                 TextColumn::make('type.title')
                     ->sortable()
                     ->url(fn (Prompt $record) => PromptTypeResource::getUrl('view', ['record' => $record->type])),
+                TextColumn::make('is_smart')
+                    ->label('Kind')
+                    ->state(fn (Prompt $record): string => $record->is_smart ? 'Smart' : 'Custom')
+                    ->visible(SmartPromptsFeature::active()),
                 TextColumn::make('uses_count')
                     ->label('Uses')
                     ->counts('uses')
@@ -97,7 +98,8 @@ class ListPrompts extends ListRecords
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->visible(auth()->user()->hasRole(Authenticatable::SUPER_ADMIN_ROLE)),
                 ]),
             ]);
     }

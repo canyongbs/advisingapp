@@ -37,13 +37,16 @@
 namespace AdvisingApp\Ai\Filament\Resources\PromptResource\Pages;
 
 use Filament\Forms\Form;
+use App\Models\Authenticatable;
 use Filament\Actions\ViewAction;
 use Filament\Actions\DeleteAction;
+use App\Features\SmartPromptsFeature;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Forms\Components\ToggleButtons;
 use AdvisingApp\Ai\Filament\Resources\PromptResource;
 
 class EditPrompt extends EditRecord
@@ -74,6 +77,14 @@ class EditPrompt extends EditRecord
                             ->required()
                             ->string()
                             ->columnSpanFull(),
+                        ToggleButtons::make('is_smart')
+                            ->label('Kind')
+                            ->options([
+                                0 => 'Custom',
+                                1 => 'Smart',
+                            ])
+                            ->grouped()
+                            ->visible(SmartPromptsFeature::active() && auth()->user()->hasRole(Authenticatable::SUPER_ADMIN_ROLE)),
                     ]),
             ]);
     }

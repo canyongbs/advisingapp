@@ -42,6 +42,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Stringable;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
+use App\Features\SmartPromptsFeature;
 use AdvisingApp\Ai\Http\Requests\ShowThreadRequest;
 
 class ShowThreadController
@@ -51,7 +52,7 @@ class ShowThreadController
         return response()->json([
             'messages' => $thread->messages()
                 ->oldest('id')
-                ->with(['prompt'])
+                ->when(SmartPromptsFeature::active(), fn ($query) => $query->with(['prompt']))
                 ->get()
                 ->toBase()
                 ->map(function (AiMessage $message): array {

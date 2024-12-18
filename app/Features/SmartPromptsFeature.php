@@ -34,32 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Listeners;
+namespace App\Features;
 
-use AdvisingApp\Ai\Enums\AiFeature;
-use AdvisingApp\Ai\Events\AiMessageCreated;
-use AdvisingApp\Ai\Models\LegacyAiMessageLog;
+use App\Support\AbstractFeatureFlag;
 
-class CreateAiMessageLog
+class SmartPromptsFeature extends AbstractFeatureFlag
 {
-    public function handle(AiMessageCreated $event): void
+    public function resolve(mixed $scope): mixed
     {
-        $message = $event->aiMessage;
-
-        if ($message->prompt || ! $message->user || ! $message->request) {
-            return;
-        }
-
-        LegacyAiMessageLog::create([
-            'message' => $message->content,
-            'metadata' => [
-                'context' => $message->context,
-            ],
-            'request' => $message->request,
-            'sent_at' => now(),
-            'user_id' => $message->user_id,
-            'ai_assistant_name' => $message->thread?->assistant?->name,
-            'feature' => AiFeature::Conversations,
-        ]);
+        return false;
     }
 }

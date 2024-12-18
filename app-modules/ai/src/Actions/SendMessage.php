@@ -41,6 +41,7 @@ use Illuminate\Support\Arr;
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiMessage;
+use App\Features\SmartPromptsFeature;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
@@ -70,7 +71,7 @@ class SendMessage
         $message->thread()->associate($thread);
         $message->user()->associate(auth()->user());
 
-        if ($content instanceof Prompt) {
+        if (SmartPromptsFeature::active() && ($content instanceof Prompt)) {
             $message->prompt()->associate($content);
         }
 

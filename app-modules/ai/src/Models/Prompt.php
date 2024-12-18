@@ -58,6 +58,11 @@ class Prompt extends BaseModel
         'description',
         'prompt',
         'type_id',
+        'is_smart',
+    ];
+
+    protected $casts = [
+        'is_smart' => 'boolean',
     ];
 
     protected ?bool $isUpvoted = null;
