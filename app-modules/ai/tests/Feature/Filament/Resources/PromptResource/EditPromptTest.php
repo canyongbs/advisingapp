@@ -42,12 +42,10 @@ use Filament\Actions\DeleteAction;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Laravel\assertSoftDeleted;
 use function Pest\Laravel\assertDatabaseCount;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-
-use function Pest\Laravel\assertModelSoftDeleted;
-
 use AdvisingApp\Ai\Filament\Resources\PromptResource;
 use AdvisingApp\Ai\Filament\Resources\PromptResource\Pages\EditPrompt;
 
@@ -145,5 +143,5 @@ it('can delete a record', function () use ($licenses, $permissions) {
         ->assertActionEnabled(DeleteAction::class)
         ->callAction(DeleteAction::class);
 
-    assertModelSoftDeleted($record);
+    assertSoftDeleted($record);
 });
