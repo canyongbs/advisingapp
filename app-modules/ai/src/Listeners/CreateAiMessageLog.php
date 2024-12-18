@@ -46,12 +46,12 @@ class CreateAiMessageLog
     {
         $message = $event->aiMessage;
 
-        if ($message->prompt || ! $message->user || ! $message->request) {
+        if (! $message->user || ! $message->request) {
             return;
         }
 
         LegacyAiMessageLog::create([
-            'message' => $message->content,
+            'message' => $message->prompt ? "Starting smart prompt: {$message->prompt->title}" : $message->content,
             'metadata' => [
                 'context' => $message->context,
             ],

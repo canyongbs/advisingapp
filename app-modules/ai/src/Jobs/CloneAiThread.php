@@ -42,7 +42,6 @@ use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\DB;
 use AdvisingApp\Ai\Models\AiThread;
-use App\Features\SmartPromptsFeature;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -79,7 +78,7 @@ class CloneAiThread implements ShouldQueue
             $threadReplica->user()->associate($this->recipient);
             $threadReplica->save();
 
-            foreach ($this->thread->messages()->when(SmartPromptsFeature::active(), fn ($query) => $query->whereNull('prompt_id'))->get() as $message) {
+            foreach ($this->thread->messages as $message) {
                 $messageReplica = $message->replicate(['id', 'message_id']);
                 $messageReplica->thread()->associate($threadReplica);
                 $messageReplica->save();

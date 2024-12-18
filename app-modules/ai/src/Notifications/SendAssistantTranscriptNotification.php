@@ -40,7 +40,6 @@ use App\Models\User;
 use AdvisingApp\Ai\Models\AiThread;
 use App\Models\NotificationSetting;
 use AdvisingApp\Ai\Models\AiMessage;
-use App\Features\SmartPromptsFeature;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\EmailNotification;
@@ -72,8 +71,15 @@ class SendAssistantTranscriptNotification extends BaseNotification implements Em
                 ->line("Here is a copy of {$this->sender->name}'s chat with {$this->thread->assistant->name}:");
         }
 
-        $this->thread->messages()->when(SmartPromptsFeature::active(), fn ($query) => $query->whereNull('prompt_id'))->with('user')->get()
+        $this->thread->messages
             ->each(function (AiMessage $threadMessage) use ($senderIsNotifiable, $message) {
+                if ($threadMessage->prompt) {
+                    return $message->line(str("**Starting smart prompt:** {$threadMessage->prompt->title}")
+                        ->markdown()
+                        ->sanitizeHtml()
+                        ->toHtmlString());
+                }
+
                 if (! $threadMessage->user) {
                     return $message->line(str(nl2br($threadMessage->content))
                         ->prepend("**{$this->thread->assistant->name}:** ")
