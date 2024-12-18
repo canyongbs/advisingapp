@@ -38,10 +38,8 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\
 
 use App\Settings\DisplaySettings;
 use Illuminate\Contracts\View\View;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspect;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
 
 trait HasStudentHeader
