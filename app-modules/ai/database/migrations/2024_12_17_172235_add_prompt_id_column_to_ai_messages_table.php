@@ -49,7 +49,7 @@ return new class () extends Migration {
     public function down(): void
     {
         Schema::table('ai_messages', function (Blueprint $table) {
-            $table->dropColumn('prompt_id');
+            $table->dropConstrainedForeignId('prompt_id');
         });
     }
 };
