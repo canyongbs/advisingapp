@@ -65,12 +65,11 @@ class AiMessage extends BaseModel
         'request',
         'thread_id',
         'user_id',
-        'is_secret',
+        'prompt_id',
     ];
 
     protected $casts = [
         'request' => 'encrypted:array',
-        'is_secret' => 'boolean',
     ];
 
     protected $table = 'ai_messages';
@@ -88,6 +87,11 @@ class AiMessage extends BaseModel
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function prompt(): BelongsTo
+    {
+        return $this->belongsTo(Prompt::class)->withTrashed();
     }
 
     public function files(): HasMany

@@ -39,6 +39,7 @@ namespace AdvisingApp\Ai\Models;
 use App\Models\User;
 use App\Models\BaseModel;
 use AdvisingApp\Ai\Observers\PromptObserver;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\Assistant\Models\IdeHelperPrompt;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -50,6 +51,8 @@ use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 #[ObservedBy([PromptObserver::class])]
 class Prompt extends BaseModel
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'title',
         'description',

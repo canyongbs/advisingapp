@@ -50,22 +50,30 @@ class ShowThreadController
     {
         return response()->json([
             'messages' => $thread->messages()
-                ->where('is_secret', false)
                 ->oldest('id')
+                ->with(['prompt'])
                 ->get()
                 ->toBase()
-                ->map(fn (AiMessage $message): array => [
-                    ...$message->attributesToArray(),
-                    'content' => (string) str($message->content)
-                        ->when(
-                            $message->user,
-                            fn (Stringable $string): Stringable => $string
-                                ->pipe(nl2br(...))
-                                ->stripTags(allowedTags: ['br']),
-                            fn (Stringable $string): Stringable => $string->markdown(),
-                        )
-                        ->sanitizeHtml(),
-                ])
+                ->map(function (AiMessage $message): array {
+                    if ($message->prompt) {
+                        return [
+                            'prompt' => $message->prompt->title,
+                        ];
+                    }
+
+                    return [
+                        ...$message->attributesToArray(),
+                        'content' => (string) str($message->content)
+                            ->when(
+                                $message->user,
+                                fn (Stringable $string): Stringable => $string
+                                    ->pipe(nl2br(...))
+                                    ->stripTags(allowedTags: ['br']),
+                                fn (Stringable $string): Stringable => $string->markdown(),
+                            )
+                            ->sanitizeHtml(),
+                    ];
+                })
                 ->all(),
             'users' => $thread->users()
                 ->distinct()

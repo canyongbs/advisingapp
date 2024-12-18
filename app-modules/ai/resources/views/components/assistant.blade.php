@@ -564,9 +564,15 @@
                     >
                         <template x-for="(message, messageIndex) in messages">
                             <div class="group w-full bg-white dark:bg-gray-900">
-                                <div class="m-auto justify-center p-4 text-base md:gap-6 md:py-6">
+                                <div
+                                    class="m-auto justify-center px-4 text-base md:gap-6"
+                                    x-bind:class="{ 'bg-primary-100 dark:bg-primary-900 py-2': message.prompt, 'py-4 md:py-6': !
+                                            message.prompt }"
+                                >
                                     <div
-                                        class="mx-auto flex flex-1 gap-4 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl">
+                                        class="mx-auto flex flex-1 gap-4 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl"
+                                        x-show="! message.prompt"
+                                    >
                                         <div class="relative flex flex-shrink-0 flex-col items-end">
                                             <img
                                                 class="h-8 w-8 rounded-full object-cover object-center"
@@ -623,6 +629,14 @@
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+
+                                    <div x-show="message.prompt">
+                                        <span class="font-medium">
+                                            Starting smart prompt:
+                                        </span>
+
+                                        <span x-text="message.prompt"></span>
                                     </div>
                                 </div>
                             </div>

@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Ai\Http\Controllers;
 
-use Log;
 use Throwable;
 use AdvisingApp\Ai\Models\Prompt;
 use Illuminate\Http\JsonResponse;
@@ -65,20 +64,15 @@ class SendMessageController
                 ],
             );
         } catch (AiAssistantArchivedException $exception) {
-            Log::debug($exception::class);
-
             return response()->json([
                 'message' => $exception->getMessage(),
             ], 404);
         } catch (AiThreadLockedException $exception) {
-            Log::debug($exception::class);
-
             return response()->json([
                 'isThreadLocked' => true,
                 'message' => $exception->getMessage(),
             ], 503);
         } catch (Throwable $exception) {
-            Log::debug($exception::class);
             report($exception);
 
             return response()->json([

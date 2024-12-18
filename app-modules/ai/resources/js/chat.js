@@ -204,6 +204,12 @@ document.addEventListener('alpine:init', () => {
 
                 if (prompt) {
                     this.latestMessage = '';
+
+                    if (this.messages.slice(-1)[0]?.prompt !== prompt.title) {
+                        this.messages.push({
+                            prompt: prompt.title,
+                        });
+                    }
                 } else {
                     this.latestMessage = this.message;
 
@@ -225,7 +231,7 @@ document.addEventListener('alpine:init', () => {
                                 'X-CSRF-TOKEN': csrfToken,
                             },
                             body: JSON.stringify({
-                                ...(prompt ? { prompt_id: prompt } : { content: message }),
+                                ...(prompt ? { prompt_id: prompt.id } : { content: message }),
                                 files: this.$wire.files,
                             }),
                         }),

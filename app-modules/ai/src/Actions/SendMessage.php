@@ -67,9 +67,12 @@ class SendMessage
             ),
             'ip' => request()->ip(),
         ];
-        $message->is_secret = $content instanceof Prompt;
         $message->thread()->associate($thread);
         $message->user()->associate(auth()->user());
+
+        if ($content instanceof Prompt) {
+            $message->prompt()->associate($content);
+        }
 
         $aiService = $thread->assistant->model->getService();
 
