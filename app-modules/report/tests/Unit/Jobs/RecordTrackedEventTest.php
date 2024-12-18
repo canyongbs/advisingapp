@@ -39,6 +39,7 @@ use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use AdvisingApp\Report\Models\TrackedEvent;
 use AdvisingApp\Report\Models\TrackedEventCount;
 use Illuminate\Support\Carbon;
+use App\Models\User;
 
 it('creates the proper TrackedEvent record', function () {
     expect(TrackedEvent::count())
@@ -89,10 +90,10 @@ it('creates the proper TrackedEventCount record if one does not already exist', 
 
 it('updates the proper TrackedEventCount record if one already exists', function () {
     TrackedEventCount::truncate();
-
+    $user = User::factory()->create();
     /** @var TrackedEventCount $originalTrackedEventCount */
     $originalTrackedEventCount = TrackedEventCount::factory()->create();
-
+    dd($originalTrackedEventCount);
     expect(TrackedEventCount::count())
         ->toBe(1);
 
@@ -114,7 +115,7 @@ it('updates the proper TrackedEventCount record if one already exists', function
         ->type->toEqual($originalTrackedEventCount->type)
         ->count->toBe($originalTrackedEventCount->count + 1)
         ->last_occurred_at->toEqual($occurredAt);
-});
+})->only();
 
 it('does not update the TrackedEventCount record last_occurate_at date if the event was before the current set date', function () {
     TrackedEventCount::truncate();
