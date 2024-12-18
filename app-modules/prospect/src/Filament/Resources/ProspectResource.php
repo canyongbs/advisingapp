@@ -45,16 +45,10 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\EditProspect;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspect;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ListProspects;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\CreateProspect;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectFiles;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectTasks;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectAlerts;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectEvents;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectCareTeam;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ProspectCaseManagement;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectEngagement;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspectActivityFeed;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectInteractions;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ProspectEngagementTimeline;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectSubscriptions;
 
 class ProspectResource extends Resource
