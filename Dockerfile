@@ -15,12 +15,13 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
 
-ENV NVM_VERSION v0.39.7
-ENV NODE_VERSION 21.6.0
+ENV NVM_VERSION v0.40.1
+ENV NODE_VERSION 23.4.0
+ENV NPM_VERSION ^11.0.0
 ENV NVM_DIR /usr/local/nvm
 RUN mkdir "$NVM_DIR"
 
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_VERSION/install.sh | bash
 
 ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
@@ -29,7 +30,7 @@ RUN echo "source $NVM_DIR/nvm.sh \
     && nvm install $NODE_VERSION \
     && nvm alias default $NODE_VERSION \
     && nvm use default \
-    && nvm install-latest-npm" | bash
+    && npm install -g npm@$NPM_VERSION" | bash
 
 COPY ./docker/s6-overlay/scripts/ /etc/s6-overlay/scripts/
 COPY docker/s6-overlay/s6-rc.d/ /etc/s6-overlay/s6-rc.d/
