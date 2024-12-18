@@ -45,6 +45,9 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
+/**
+ * @mixin IdeHelperTag
+ */
 class Tag extends BaseModel implements Auditable
 {
     use HasFactory;

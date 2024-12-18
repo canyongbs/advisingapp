@@ -45,6 +45,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[ObservedBy([AlertStatusObserver::class])]
+/**
+ * @mixin IdeHelperAlertStatus
+ */
 class AlertStatus extends BaseModel
 {
     use HasFactory;
