@@ -51,7 +51,6 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspec
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectAlerts;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\DisassociateStudent;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectCareTeam;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ProspectEngagementTimeline;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectSubscriptions;
 
 // TODO: Write ViewProspectSource page test
@@ -249,6 +248,5 @@ test('can see prospect converted to student badge on', function (string $pages) 
         ManageProspectAlerts::class,
         ManageProspectSubscriptions::class,
         ManageProspectTasks::class,
-        ProspectEngagementTimeline::class,
         ManageProspectCareTeam::class,
     ]);
