@@ -37,7 +37,6 @@
 namespace AdvisingApp\Prospect\Filament\Resources;
 
 use Filament\Resources\Resource;
-use Filament\Resources\Pages\Page;
 use Illuminate\Database\Eloquent\Model;
 use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
@@ -46,18 +45,11 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\EditProspect;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspect;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ListProspects;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\CreateProspect;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectFiles;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectTasks;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectAlerts;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectEvents;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectCareTeam;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ProspectCaseManagement;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectEngagement;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectInteractions;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ProspectEngagementTimeline;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspectActivityFeed;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectSubscriptions;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectFormSubmissions;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectApplicationSubmissions;
 
 class ProspectResource extends Resource
 {
@@ -70,26 +62,6 @@ class ProspectResource extends Resource
     protected static ?string $navigationGroup = 'Recruitment CRM';
 
     protected static ?string $recordTitleAttribute = 'full_name';
-
-    public static function getRecordSubNavigation(Page $page): array
-    {
-        return $page->generateNavigationItems([
-            ViewProspect::class,
-            EditProspect::class,
-            ManageProspectEngagement::class,
-            ManageProspectFiles::class,
-            ManageProspectAlerts::class,
-            ManageProspectTasks::class,
-            ManageProspectSubscriptions::class,
-            ManageProspectInteractions::class,
-            ProspectEngagementTimeline::class,
-            ManageProspectCareTeam::class,
-            ManageProspectFormSubmissions::class,
-            ManageProspectApplicationSubmissions::class,
-            ProspectCaseManagement::class,
-            ManageProspectEvents::class,
-        ]);
-    }
 
     public static function modifyGlobalSearchQuery(Builder $query, string $search): void
     {
@@ -128,18 +100,11 @@ class ProspectResource extends Resource
             'create' => CreateProspect::route('/create'),
             'edit' => EditProspect::route('/{record}/edit'),
             'manage-alerts' => ManageProspectAlerts::route('/{record}/alerts'),
-            'manage-engagement' => ManageProspectEngagement::route('/{record}/engagement'),
-            'manage-files' => ManageProspectFiles::route('/{record}/files'),
-            'manage-form-submissions' => ManageProspectFormSubmissions::route('/{record}/form-submissions'),
-            'manage-application-submissions' => ManageProspectApplicationSubmissions::route('/{record}/application-submissions'),
-            'manage-interactions' => ManageProspectInteractions::route('/{record}/interactions'),
             'manage-subscriptions' => ManageProspectSubscriptions::route('/{record}/subscriptions'),
             'manage-tasks' => ManageProspectTasks::route('/{record}/tasks'),
             'view' => ViewProspect::route('/{record}'),
-            'timeline' => ProspectEngagementTimeline::route('/{record}/timeline'),
+            'activity-feed' => ViewProspectActivityFeed::route('/{record}/activity'),
             'care-team' => ManageProspectCareTeam::route('/{record}/care-team'),
-            'case-management' => ProspectCaseManagement::route('/{record}/case-management'),
-            'events' => ManageProspectEvents::route('/{record}/events'),
         ];
     }
 }

@@ -47,19 +47,11 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Database\Seeders\ProspectStatusSeeder;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspect;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ConvertToStudent;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectFiles;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectTasks;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectAlerts;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectEvents;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\DisassociateStudent;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectCareTeam;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ProspectCaseManagement;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectEngagement;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectInteractions;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ProspectEngagementTimeline;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectSubscriptions;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectFormSubmissions;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectApplicationSubmissions;
 
 // TODO: Write ViewProspectSource page test
 //test('The correct details are displayed on the ViewProspect page', function () {});
@@ -146,7 +138,7 @@ test('convert prospect to student', function () {
         ->create();
 
     livewire(ViewProspect::class, [
-        'record' => $prospect->getRouteKey(),
+        'record' => $prospect->getKey(),
     ])
         ->callAction(
             ConvertToStudent::class,
@@ -254,15 +246,7 @@ test('can see prospect converted to student badge on', function (string $pages) 
     ->with([
         ViewProspect::class,
         ManageProspectAlerts::class,
-        ManageProspectEngagement::class,
-        ManageProspectFiles::class,
-        ManageProspectFormSubmissions::class,
-        ManageProspectApplicationSubmissions::class,
-        ManageProspectInteractions::class,
         ManageProspectSubscriptions::class,
         ManageProspectTasks::class,
-        ProspectEngagementTimeline::class,
         ManageProspectCareTeam::class,
-        ProspectCaseManagement::class,
-        ManageProspectEvents::class,
     ]);

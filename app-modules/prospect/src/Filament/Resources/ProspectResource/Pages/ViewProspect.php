@@ -36,115 +36,27 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
-use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
-use AdvisingApp\Prospect\Models\Prospect;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\TextEntry;
 use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ConvertToStudent;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ProspectTagsAction;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\DisassociateStudent;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Schemas\ProspectProfileInfolist;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\Concerns\HasProspectHeader;
 
 class ViewProspect extends ViewRecord
 {
     use ProspectHolisticViewPage;
+    use HasProspectHeader;
 
     protected static string $resource = ProspectResource::class;
 
     // TODO: Automatically set from Filament
     protected static ?string $navigationLabel = 'View';
 
-    public function infolist(Infolist $infolist): Infolist
-    {
-        return $infolist
-            ->schema([
-                Section::make('Demographics')
-                    ->schema([
-                        TextEntry::make('first_name')
-                            ->label('First Name'),
-                        TextEntry::make('last_name')
-                            ->label('Last Name'),
-                        TextEntry::make(Prospect::displayNameKey())
-                            ->label('Full Name'),
-                        TextEntry::make('preferred')
-                            ->label('Preferred Name'),
-                        TextEntry::make('birthdate')
-                            ->label('Birthdate'),
-                        TextEntry::make('hsgrad')
-                            ->label('High School Grad'),
-                    ])
-                    ->columns(2),
-                Section::make('Contact Information')
-                    ->schema([
-                        TextEntry::make('email')
-                            ->label('Email'),
-                        TextEntry::make('email_2')
-                            ->label('Alternate Email'),
-                        TextEntry::make('mobile')
-                            ->label('Mobile'),
-                        TextEntry::make('phone')
-                            ->label('Phone'),
-                        TextEntry::make('address')
-                            ->label('Address'),
-                        TextEntry::make('address_2')
-                            ->label('Apartment/Unit Number'),
-                        TextEntry::make('address_3')
-                            ->label('Additional Address'),
-                        TextEntry::make('city')
-                            ->label('City'),
-                        TextEntry::make('state')
-                            ->label('State'),
-                        TextEntry::make('postal')
-                            ->label('Postal'),
-                    ])
-                    ->columns(2),
-                Section::make('Classification')
-                    ->schema([
-                        TextEntry::make('status.name')
-                            ->label('Status'),
-                        TextEntry::make('source.name')
-                            ->label('Source'),
-                        TextEntry::make('description')
-                            ->label('Description')
-                            ->columnSpanFull(),
-                        TextEntry::make('tags.name')
-                            ->label('Tags')
-                            ->badge()
-                            ->placeholder('-'),
-                    ])
-                    ->columns(2),
-                Section::make('Engagement Restrictions')
-                    ->schema([
-                        IconEntry::make('sms_opt_out')
-                            ->label('SMS Opt Out')
-                            ->boolean(),
-                        IconEntry::make('email_bounce')
-                            ->label('Email Bounce')
-                            ->boolean(),
-                    ])
-                    ->columns(2),
-                Section::make('Record Details')
-                    ->schema([
-                        TextEntry::make('createdBy.name')
-                            ->label('Created By'),
-                    ])
-                    ->columns(2),
-            ]);
-    }
+    protected static string $view = 'prospect::filament.resources.prospect-resource.view-prospect';
 
-    protected function getHeaderActions(): array
+    public function profile(Infolist $infolist): Infolist
     {
-        return [
-            ProspectTagsAction::make()->visible(fn (): bool => auth()->user()?->can('prospect.tags.manage')),
-            ConvertToStudent::make()->visible(fn (Prospect $record) => ! $record->student()->exists()),
-            DisassociateStudent::make()->visible(fn (Prospect $record) => $record->student()->exists()),
-            EditAction::make(),
-            SubscribeHeaderAction::make(),
-        ];
+        return ProspectProfileInfolist::configure($infolist);
     }
 }
