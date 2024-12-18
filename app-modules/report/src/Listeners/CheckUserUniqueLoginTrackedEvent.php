@@ -39,9 +39,9 @@ namespace AdvisingApp\Report\Listeners;
 use App\Models\User;
 use Illuminate\Auth\Events\Login;
 use AdvisingApp\Report\Enums\TrackedEventType;
-use AdvisingApp\Report\Jobs\RecordUserTrackedEvent;
+use AdvisingApp\Report\Jobs\RecordUserUniqueLoginTrackedEvent;
 
-class CheckUserTrackedEvent
+class CheckUserUniqueLoginTrackedEvent
 {
     /**
      * Handle the event.
@@ -51,7 +51,7 @@ class CheckUserTrackedEvent
         $user = $event->user;
 
         if ($user instanceof User) {
-            dispatch(new RecordUserTrackedEvent(
+            dispatch(new RecordUserUniqueLoginTrackedEvent(
                 type: TrackedEventType::UserLogin,
                 occurredAt: now(),
                 user: $user,

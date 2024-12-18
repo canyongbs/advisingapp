@@ -48,7 +48,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Models\TrackedEventCount;
 
-class RecordUserTrackedEvent implements ShouldQueue
+class RecordUserUniqueLoginTrackedEvent implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;

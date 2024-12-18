@@ -53,6 +53,7 @@ use AdvisingApp\Report\Listeners\CheckUserTrackedEvent;
 use Spatie\Multitenancy\Events\ForgotCurrentTenantEvent;
 use Spatie\Multitenancy\Events\MakingTenantCurrentEvent;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
+use AdvisingApp\Report\Listeners\CheckUserUniqueLoginTrackedEvent;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use OwenIt\Auditing\Events\Auditing;
 
@@ -78,7 +79,7 @@ class EventServiceProvider extends ServiceProvider
         ],
         Login::class => [
             SetSentryUser::class,
-            CheckUserTrackedEvent::class,
+            CheckUserUniqueLoginTrackedEvent::class,
         ],
         Authenticated::class => [
             SetSentryUser::class,
