@@ -68,7 +68,7 @@ class UsersStats extends StatsOverviewReportWidget
             )),
             Stat::make('Unique Logins', Number::abbreviate(
                 Cache::tags([$this->cacheTag])->remember('unique-logins-count', now()->addHours(24), function (): int {
-                    return User::whereRelation('logins', 'type', TrackedEventType::UserLogin)->get()->count();
+                    return User::whereRelation('logins', 'type', TrackedEventType::UserLogin)->count();
                 }),
                 maxPrecision: 2,
             )),
