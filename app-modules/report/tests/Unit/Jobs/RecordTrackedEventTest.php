@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
 use Illuminate\Support\Carbon;
 use AdvisingApp\Report\Models\TrackedEvent;
 use AdvisingApp\Report\Enums\TrackedEventType;
@@ -90,10 +89,10 @@ it('creates the proper TrackedEventCount record if one does not already exist', 
 
 it('updates the proper TrackedEventCount record if one already exists', function () {
     TrackedEventCount::truncate();
-    $user = User::factory()->create();
+
     /** @var TrackedEventCount $originalTrackedEventCount */
     $originalTrackedEventCount = TrackedEventCount::factory()->create();
-    dd($originalTrackedEventCount);
+
     expect(TrackedEventCount::count())
         ->toBe(1);
 
