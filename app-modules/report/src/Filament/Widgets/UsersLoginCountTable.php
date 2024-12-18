@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
+use App\Models\User;
 use Filament\Tables\Table;
 use Livewire\Attributes\On;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Widgets\TableWidget as BaseWidget;
-use App\Models\User;
-use Filament\Forms\Components\DatePicker;
-use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Filters\Filter;
+use Filament\Support\Enums\MaxWidth;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Widgets\TableWidget as BaseWidget;
 
 class UsersLoginCountTable extends BaseWidget
 {
@@ -91,7 +91,7 @@ class UsersLoginCountTable extends BaseWidget
                         return $record->first_login_at ? 'Yes' : 'No';
                     })
                     ->badge()
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'Yes' => 'success',
                         'No' => 'danger',
                     })
@@ -128,11 +128,11 @@ class UsersLoginCountTable extends BaseWidget
                         return $query
                             ->when(
                                 $data['first_logged_in_from'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('first_login_at', '>=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('first_login_at', '>=', $date),
                             )
                             ->when(
                                 $data['first_logged_in_until'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('first_login_at', '<=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('first_login_at', '<=', $date),
                             );
                     }),
                 Filter::make('last_logged_in_at')
@@ -144,11 +144,11 @@ class UsersLoginCountTable extends BaseWidget
                         return $query
                             ->when(
                                 $data['last_logged_in_from'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('last_logged_in_at', '>=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('last_logged_in_at', '>=', $date),
                             )
                             ->when(
                                 $data['last_logged_in_until'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('last_logged_in_at', '<=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('last_logged_in_at', '<=', $date),
                             );
                     }),
             ])
