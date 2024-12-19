@@ -38,6 +38,7 @@ namespace AdvisingApp\Authorization\Filament\Forms\Components;
 
 use AdvisingApp\Authorization\Models\PermissionGroup;
 use Closure;
+use Exception;
 use Filament\Forms\Components\Field;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -91,6 +92,7 @@ class PermissionsMatrix extends Field
                     ->all();
 
                 if ((! in_array("{$permissionGroupNameSlugHyphen}.view-any", $permissions)) && (! in_array("{$permissionGroupNameSlugUnderscore}.view-any", $permissions))) {
+                    report(new Exception('Permissions discovered which are not normalized: '.json_encode($permissions)));
                     return $carry;
                 }
 
@@ -108,6 +110,7 @@ class PermissionsMatrix extends Field
                     };
 
                     if (blank($operation)) {
+                        report(new Exception('Permission discovered which is not normalized: '.$permissionName));
                         continue;
                     }
 

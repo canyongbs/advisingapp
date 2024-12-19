@@ -122,7 +122,7 @@ class UserChat extends Page implements HasForms, HasActions
         }
 
         return Gate::check(Feature::RealtimeChat->getGateName())
-            && $user->can('in-app-communication.realtime-chat.access');
+            && $user->can('realtime_chat.view-any') && $user->can('realtime_chat.*.view');
     }
 
     public function mount(): void
