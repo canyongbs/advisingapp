@@ -56,8 +56,8 @@ $licenses = [
 ];
 
 $permissions = [
-    'ai_assistant.view-any',
-    'ai_assistant.*.update',
+    'assistant_custom.view-any',
+    'assistant_custom.*.update',
 ];
 
 it('cannot render without a license', function () use ($permissions) {
