@@ -37,8 +37,8 @@
 namespace AdvisingApp\Report\Models;
 
 use AdvisingApp\Report\Enums\TrackedEventType;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * @mixin IdeHelperTrackedEventCount

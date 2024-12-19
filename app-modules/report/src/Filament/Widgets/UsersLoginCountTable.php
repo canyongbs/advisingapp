@@ -37,15 +37,15 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use App\Models\User;
-use Filament\Tables\Table;
-use Livewire\Attributes\On;
-use Filament\Tables\Filters\Filter;
+use Filament\Forms\Components\DatePicker;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
-use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
+use Illuminate\Database\Eloquent\Builder;
+use Livewire\Attributes\On;
 
 class UsersLoginCountTable extends BaseWidget
 {

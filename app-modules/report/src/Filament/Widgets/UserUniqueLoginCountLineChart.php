@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use Carbon\Carbon;
-use App\Models\User;
-use Illuminate\Support\Facades\Cache;
 use AdvisingApp\Report\Enums\TrackedEventType;
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 
 class UserUniqueLoginCountLineChart extends LineChartReportWidget
 {
