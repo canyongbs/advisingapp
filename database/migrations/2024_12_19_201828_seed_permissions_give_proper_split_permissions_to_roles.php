@@ -64,7 +64,7 @@ return new class () extends Migration {
                         $roleHasAssistantViewAnyPermissions
                             ->map(fn (object $roleHasPermission): array => [
                                 'permission_id' => $assistantViewPermissionId,
-                                'role_id' => $roleHasPermission->id,
+                                'role_id' => $roleHasPermission->role_id,
                             ])
                             ->all(),
                     );
@@ -86,7 +86,7 @@ return new class () extends Migration {
                         $roleHasRealtimeChatViewAnyPermissions
                             ->map(fn (object $roleHasPermission): array => [
                                 'permission_id' => $realtimeChatViewPermissionId,
-                                'role_id' => $roleHasPermission->id,
+                                'role_id' => $roleHasPermission->role_id,
                             ])
                             ->all(),
                     );
