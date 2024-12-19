@@ -41,24 +41,24 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class RetryMessageRequest extends FormRequest
 {
-  /**
-   * Determine if the user is authorized to make this request.
-   */
-  public function authorize(): bool
-  {
-    return $this->thread->user()->is(auth()->user());
-  }
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return $this->thread->user()->is(auth()->user());
+    }
 
-  /**
-   * Get the validation rules that apply to the request.
-   *
-   * @return array<string, ValidationRule|array<mixed>|string>
-   */
-  public function rules(): array
-  {
-    return [
-      'content' => ['required', 'string', 'max:1000'],
-      'files' => ['array', 'max:1'],
-    ];
-  }
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
+    {
+        return [
+            'content' => ['required', 'string', 'max:1000'],
+            'files' => ['array', 'max:1'],
+        ];
+    }
 }
