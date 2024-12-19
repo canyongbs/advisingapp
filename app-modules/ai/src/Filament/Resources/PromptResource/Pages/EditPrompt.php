@@ -38,7 +38,6 @@ namespace AdvisingApp\Ai\Filament\Resources\PromptResource\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\PromptResource;
 use App\Features\SmartPromptsFeature;
-use App\Models\Authenticatable;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Section;
@@ -84,7 +83,7 @@ class EditPrompt extends EditRecord
                                 1 => 'Smart',
                             ])
                             ->grouped()
-                            ->visible(SmartPromptsFeature::active() && auth()->user()->hasRole(Authenticatable::SUPER_ADMIN_ROLE)),
+                            ->visible(SmartPromptsFeature::active() && auth()->user()->isSuperAdmin()),
                     ]),
             ]);
     }

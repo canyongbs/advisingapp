@@ -37,7 +37,6 @@
 namespace AdvisingApp\Theme\Filament\Pages;
 
 use AdvisingApp\Theme\Settings\ThemeSettings;
-use App\Models\Authenticatable;
 use App\Models\Tenant;
 use App\Models\User;
 use Filament\Forms\Components\Section;
@@ -69,7 +68,7 @@ class ManageBrandConfigurationSettings extends SettingsPage
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->hasRole(Authenticatable::SUPER_ADMIN_ROLE);
+        return $user->isSuperAdmin();
     }
 
     public function form(Form $form): Form

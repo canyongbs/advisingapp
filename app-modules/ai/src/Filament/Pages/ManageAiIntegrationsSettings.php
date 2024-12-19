@@ -41,7 +41,6 @@ use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Jobs\ReInitializeAiModel;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use App\Filament\Clusters\ProductIntegrations;
-use App\Models\Authenticatable;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Section;
@@ -70,7 +69,7 @@ class ManageAiIntegrationsSettings extends SettingsPage
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->hasRole(Authenticatable::SUPER_ADMIN_ROLE);
+        return $user->isSuperAdmin();
     }
 
     public function form(Form $form): Form

@@ -38,7 +38,6 @@ namespace AdvisingApp\IntegrationAwsSesEventHandling\Filament\Pages;
 
 use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
 use App\Filament\Clusters\ProductIntegrations;
-use App\Models\Authenticatable;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Multitenancy\DataTransferObjects\TenantConfig;
@@ -75,7 +74,7 @@ class ManageAmazonSesSettings extends SettingsPage
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->hasRole(Authenticatable::SUPER_ADMIN_ROLE);
+        return $user->isSuperAdmin();
     }
 
     public function form(Form $form): Form

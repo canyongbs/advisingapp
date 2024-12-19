@@ -37,7 +37,6 @@
 namespace App\Filament\Pages;
 
 use App\DataTransferObjects\LicenseManagement\LicenseData;
-use App\Models\Authenticatable;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Forms\Components\DatePicker;
@@ -63,7 +62,7 @@ class ManageLicenseSettings extends SettingsPage
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->hasRole(Authenticatable::SUPER_ADMIN_ROLE);
+        return $user->isSuperAdmin();
     }
 
     public function form(Form $form): Form
