@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Engagement\Models\Contracts;
 
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 
 interface HasDeliveryMethod
 {
-    public function getDeliveryMethod(): EngagementDeliveryMethod;
+    public function getDeliveryMethod(): NotificationChannel;
 }

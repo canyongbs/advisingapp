@@ -36,10 +36,9 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers;
 
-use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
 use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Pages\CreateEngagement;
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Fieldset;
@@ -90,8 +89,8 @@ class EngagementsRelationManager extends RelationManager
                             ->label('Channel'),
                         TextEntry::make('deliverable.delivery_status')
                             ->iconPosition(IconPosition::After)
-                            ->icon(fn (EngagementDeliveryStatus $state): string => $state->getIconClass())
-                            ->iconColor(fn (EngagementDeliveryStatus $state): string => $state->getColor())
+                            ->icon(fn (NotificationDeliveryStatus $state): string => $state->getIconClass())
+                            ->iconColor(fn (NotificationDeliveryStatus $state): string => $state->getColor())
                             ->label('Status')
                             ->formatStateUsing(fn (Engagement $engagement): string => $engagement->deliverable->delivery_status->getMessage()),
                         TextEntry::make('deliverable.delivered_at')
@@ -121,10 +120,7 @@ class EngagementsRelationManager extends RelationManager
             ->headerActions([
                 CreateAction::make()
                     ->label('New Email or Text')
-                    ->modalHeading('Create new email or text')
-                    ->after(function (Engagement $engagement, array $data) {
-                        $this->afterCreate($engagement, $data['delivery_method']);
-                    }),
+                    ->modalHeading('Create new email or text'),
             ])
             ->actions([
                 ViewAction::make(),
@@ -132,12 +128,5 @@ class EngagementsRelationManager extends RelationManager
             ->bulkActions([
             ])
             ->defaultSort('created_at', 'desc');
-    }
-
-    public function afterCreate(Engagement $engagement, string $deliveryMethod): void
-    {
-        $createEngagementDeliverable = resolve(CreateEngagementDeliverable::class);
-
-        $createEngagementDeliverable($engagement, $deliveryMethod);
     }
 }

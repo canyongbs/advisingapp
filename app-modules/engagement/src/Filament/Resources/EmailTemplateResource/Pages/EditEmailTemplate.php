@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource\Pages;
 
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Filament\Resources\Actions\DraftTemplateWithAiAction;
 use AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Textarea;
@@ -77,7 +77,7 @@ class EditEmailTemplate extends EditRecord
                     ->required(),
                 Actions::make([
                     DraftTemplateWithAiAction::make()
-                        ->deliveryMethod(EngagementDeliveryMethod::Email)
+                        ->deliveryMethod(NotificationChannel::Email)
                         ->mergeTags($mergeTags),
                 ]),
             ]);
