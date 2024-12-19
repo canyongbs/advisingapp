@@ -58,12 +58,12 @@ class ProductHealth extends HealthCheckResults
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Reporting';
+        return 'Global Administration';
     }
 
     public static function getNavigationSort(): ?int
     {
-        return 30;
+        return 80;
     }
 
     public static function getNavigationBadge(): ?string
@@ -87,6 +87,6 @@ class ProductHealth extends HealthCheckResults
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->can('authorization.view_product_health_dashboard');
+        return $user->isSuperAdmin();
     }
 }

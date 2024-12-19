@@ -83,7 +83,7 @@ class PromptPolicy implements PerformsChecksBeforeAuthorization
     public function update(Authenticatable $authenticatable, Prompt $prompt): Response
     {
         if ($prompt->is_smart) {
-            return auth()->user()->hasRole(Authenticatable::SUPER_ADMIN_ROLE)
+            return auth()->user()->isSuperAdmin()
                 ? Response::allow()
                 : Response::deny('You do not have permission to update this smart prompt.');
         }
@@ -97,7 +97,7 @@ class PromptPolicy implements PerformsChecksBeforeAuthorization
     public function delete(Authenticatable $authenticatable, Prompt $prompt): Response
     {
         if ($prompt->is_smart) {
-            return auth()->user()->hasRole(Authenticatable::SUPER_ADMIN_ROLE)
+            return auth()->user()->isSuperAdmin()
                 ? Response::allow()
                 : Response::deny('You do not have permission to delete this smart prompt.');
         }

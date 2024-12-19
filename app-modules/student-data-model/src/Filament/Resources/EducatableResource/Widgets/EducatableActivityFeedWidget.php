@@ -41,7 +41,9 @@ use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Histories\TaskHistory;
 use AdvisingApp\Timeline\Livewire\Concerns\CanLoadTimelineRecords;
 use AdvisingApp\Timeline\Livewire\Concerns\HasTimelineRecords;
@@ -125,8 +127,26 @@ class EducatableActivityFeedWidget extends Widget implements HasActions, HasForm
     }
     // @endtodo
 
-    public static function canView(): bool
+    public static function canViewForRecord(Educatable&Model $educatable): bool
     {
-        return auth()->user()->can('timeline.access');
+        if ($educatable instanceof Prospect) {
+            return auth()->user()->can([
+                'prospect.view-any',
+                'prospect.*.view',
+                'engagement.view-any',
+                'engagement.*.view',
+            ]);
+        }
+
+        if ($educatable instanceof Student) {
+            return auth()->user()->can([
+                'student.view-any',
+                'student.*.view',
+                'engagement.view-any',
+                'engagement.*.view',
+            ]);
+        }
+
+        return false;
     }
 }

@@ -44,7 +44,7 @@ class InboundWebhookPolicy
 {
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if (! $authenticatable->hasRole(Authenticatable::SUPER_ADMIN_ROLE)) {
+        if (! $authenticatable->isSuperAdmin()) {
             return Response::deny('You do not have permission to view inbound webhooks.');
         }
 
@@ -53,7 +53,7 @@ class InboundWebhookPolicy
 
     public function view(Authenticatable $authenticatable, InboundWebhook $inboundWebhook): Response
     {
-        if (! $authenticatable->hasRole(Authenticatable::SUPER_ADMIN_ROLE)) {
+        if (! $authenticatable->isSuperAdmin()) {
             return Response::deny('You do not have permission to view this inbound webhook.');
         }
 

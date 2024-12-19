@@ -37,7 +37,6 @@
 namespace AdvisingApp\MultifactorAuthentication\Filament\Pages;
 
 use AdvisingApp\MultifactorAuthentication\Settings\MultifactorSettings;
-use App\Models\Authenticatable;
 use App\Models\User;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
@@ -58,7 +57,7 @@ class ManageMultifactorSettings extends SettingsPage
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->hasRole(Authenticatable::SUPER_ADMIN_ROLE);
+        return $user->isSuperAdmin();
     }
 
     public function form(Form $form): Form
