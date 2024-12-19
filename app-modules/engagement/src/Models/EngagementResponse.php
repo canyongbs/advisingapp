@@ -37,9 +37,9 @@
 namespace AdvisingApp\Engagement\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
 use AdvisingApp\Engagement\Observers\EngagementResponseObserver;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
@@ -109,9 +109,8 @@ class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeli
         $query->where('sender_type', resolve(Prospect::class)->getMorphClass());
     }
 
-    public function getDeliveryMethod(): EngagementDeliveryMethod
+    public function getDeliveryMethod(): NotificationChannel
     {
-        //Only sms for now
-        return EngagementDeliveryMethod::Sms;
+        return NotificationChannel::Sms;
     }
 }

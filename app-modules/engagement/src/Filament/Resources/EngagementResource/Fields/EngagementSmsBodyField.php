@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Engagement\Filament\Resources\EngagementResource\Fields;
 
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\SmsTemplate;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Field;
@@ -121,10 +121,10 @@ class EngagementSmsBodyField
                     $component->state($template->content);
                 }))
             ->when($context === 'create', function (Field $field) {
-                $field->hidden(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Email->value);
+                $field->hidden(fn (Get $get): bool => $get('delivery_method') === NotificationChannel::Email->value);
             })
             ->when($context === 'edit', function (Field $field) {
-                $field->visible(fn (Engagement $record): bool => $record->deliverable->channel === EngagementDeliveryMethod::Sms);
+                $field->visible(fn (Engagement $record): bool => $record->deliverable->channel === NotificationChannel::Sms);
             })
             ->helperText('You can insert student information by typing {{ and choosing a tag to insert.')
             ->columnSpanFull();

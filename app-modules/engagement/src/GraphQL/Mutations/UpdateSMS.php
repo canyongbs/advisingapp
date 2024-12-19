@@ -38,8 +38,8 @@ namespace AdvisingApp\Engagement\GraphQL\Mutations;
 
 use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
 use AdvisingApp\Engagement\Actions\GenerateTipTapBodyJson;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use App\Enums\Integration;
 use App\Exceptions\IntegrationException;
 use Nuwave\Lighthouse\Execution\ResolveInfo;
@@ -72,7 +72,7 @@ class UpdateSMS
 
         $engagement->deliverable->delete();
 
-        app(CreateEngagementDeliverable::class)(engagement: $engagement, deliveryMethod: EngagementDeliveryMethod::Sms->value);
+        app(CreateEngagementDeliverable::class)(engagement: $engagement, deliveryMethod: NotificationChannel::Sms->value);
 
         return $engagement->refresh();
     }

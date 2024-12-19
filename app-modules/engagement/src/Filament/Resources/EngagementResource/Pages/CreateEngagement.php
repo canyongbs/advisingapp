@@ -37,10 +37,10 @@
 namespace AdvisingApp\Engagement\Filament\Resources\EngagementResource\Pages;
 
 use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Filament\Resources\EngagementResource;
 use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Fields\EngagementSmsBodyField;
 use AdvisingApp\Engagement\Models\EmailTemplate;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Forms\Components\EducatableSelect;
@@ -72,9 +72,9 @@ class CreateEngagement extends CreateRecord
             ->schema([
                 Select::make('delivery_method')
                     ->label('What would you like to send?')
-                    ->options(EngagementDeliveryMethod::getOptions())
-                    ->default(EngagementDeliveryMethod::Email->value)
-                    ->disableOptionWhen(fn (string $value): bool => EngagementDeliveryMethod::tryFrom($value)?->getCaseDisabled())
+                    ->options(NotificationChannel::getEngagementOptions())
+                    ->default(NotificationChannel::Email->value)
+                    ->disableOptionWhen(fn (string $value): bool => NotificationChannel::tryFrom($value)?->getCaseDisabled())
                     ->selectablePlaceholder(false)
                     ->live(),
                 Fieldset::make('Content')
@@ -83,7 +83,7 @@ class CreateEngagement extends CreateRecord
                             ->autofocus()
                             ->required()
                             ->placeholder(__('Subject'))
-                            ->hidden(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
+                            ->hidden(fn (Get $get): bool => $get('delivery_method') === NotificationChannel::Sms->value)
                             ->columnSpanFull(),
                         TiptapEditor::make('body')
                             ->disk('s3-public')
@@ -149,7 +149,7 @@ class CreateEngagement extends CreateRecord
                                         $component->generateImageUrls($template->content),
                                     );
                                 }))
-                            ->hidden(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
+                            ->hidden(fn (Get $get): bool => $get('delivery_method') === NotificationChannel::Sms->value)
                             ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
                             ->columnSpanFull(),
                         EngagementSmsBodyField::make(context: 'create', form: $form),

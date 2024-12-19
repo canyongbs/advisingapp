@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource\Pages;
 
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Filament\Resources\Actions\DraftTemplateWithAiAction;
 use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -78,7 +78,7 @@ class CreateSmsTemplate extends CreateRecord
                     ->required(),
                 Actions::make([
                     DraftTemplateWithAiAction::make()
-                        ->deliveryMethod(EngagementDeliveryMethod::Sms)
+                        ->deliveryMethod(NotificationChannel::Sms)
                         ->mergeTags($mergeTags),
                 ]),
             ]);

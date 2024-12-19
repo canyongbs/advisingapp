@@ -38,11 +38,11 @@ use AdvisingApp\Engagement\Actions\CreateEngagementBatch;
 use AdvisingApp\Engagement\Actions\EngagementEmailChannelDelivery;
 use AdvisingApp\Engagement\Actions\EngagementSmsChannelDelivery;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementBatchCreationData;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Engagement\Notifications\EngagementBatchFinishedNotification;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Illuminate\Bus\PendingBatch;
@@ -59,7 +59,7 @@ it('will create a new engagement batch', function () {
         'records' => Student::factory()->count(1)->create(),
         'subject' => 'Test Subject',
         'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Test Body']]]]],
-        'deliveryMethod' => EngagementDeliveryMethod::Email->value,
+        'deliveryMethod' => NotificationChannel::Email->value,
     ]));
 
     expect(EngagementBatch::count())->toBe(1);
@@ -76,7 +76,7 @@ it('will create an engagement for every record provided', function () {
         'records' => $students,
         'subject' => 'Test Subject',
         'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Test Body']]]]],
-        'deliveryMethod' => EngagementDeliveryMethod::Email->value,
+        'deliveryMethod' => NotificationChannel::Email->value,
     ]));
 
     expect(Engagement::count())->toBe(3);
@@ -93,7 +93,7 @@ it('will associate the engagement with the batch', function () {
         'records' => Student::factory()->count(4)->create(),
         'subject' => 'Test Subject',
         'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Test Body']]]]],
-        'deliveryMethod' => EngagementDeliveryMethod::Email->value,
+        'deliveryMethod' => NotificationChannel::Email->value,
     ]));
 
     expect(EngagementBatch::first()->engagements()->count())->toBe(4);
@@ -108,7 +108,7 @@ it('will create deliverables for the created engagements', function () {
         'records' => Student::factory()->count(1)->create(),
         'subject' => 'Test Subject',
         'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Test Body']]]]],
-        'deliveryMethod' => EngagementDeliveryMethod::Email->value,
+        'deliveryMethod' => NotificationChannel::Email->value,
     ]));
 
     expect(EngagementDeliverable::count())->toBe(1)
@@ -124,7 +124,7 @@ it('will dispatch a batch of jobs for each engagement that needs to be delivered
         'records' => Student::factory()->count(5)->create(),
         'subject' => 'Test Subject',
         'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Test Body']]]]],
-        'deliveryMethod' => EngagementDeliveryMethod::Email->value,
+        'deliveryMethod' => NotificationChannel::Email->value,
     ]));
 
     Bus::assertBatched(function (PendingBatch $batch) {
@@ -148,7 +148,7 @@ it('will dispatch a notification to the user who initiated the batch engagement 
         'records' => Student::factory()->count(1)->create(),
         'subject' => 'Test Subject',
         'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Test Body']]]]],
-        'deliveryMethod' => EngagementDeliveryMethod::Email->value,
+        'deliveryMethod' => NotificationChannel::Email->value,
     ]));
 
     Notification::assertSentTo($user, EngagementBatchFinishedNotification::class);

@@ -34,48 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\GraphQL\Mutations;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
-use AdvisingApp\Engagement\Actions\GenerateTipTapBodyJson;
-use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use App\Enums\Integration;
-use App\Exceptions\IntegrationException;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Nuwave\Lighthouse\Execution\ResolveInfo;
-use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
-
-class SendSMS
-{
-    public function __invoke(mixed $root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): Engagement
+return new class () extends Migration {
+    public function up(): void
     {
-        if (Integration::Twilio->isOff()) {
-            throw IntegrationException::make(Integration::Twilio);
-        }
-
-        /** @var Student|Prospect $morph */
-        $morph = Relation::getMorphedModel($args['recipient_type']);
-
-        $mergeTags = collect(Engagement::getMergeTags($morph))
-            ->map(fn (string $tag): string => "{{ {$tag} }}")
-            ->toArray();
-
-        $body = str($args['body'])
-            ->markdown([
-                'html_input' => 'strip',
-                'allow_unsafe_links' => false,
-            ])
-            ->toString();
-
-        $args['body'] = app(GenerateTipTapBodyJson::class)(body: $body, mergeTags: $mergeTags);
-
-        $engagement = Engagement::create($args);
-
-        app(CreateEngagementDeliverable::class)(engagement: $engagement, deliveryMethod: NotificationChannel::Sms->value);
-
-        return $engagement->refresh();
+        Schema::table('engagements', function (Blueprint $table) {
+            $table->dropColumn('scheduled');
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('engagements', function (Blueprint $table) {
+            $table->boolean('scheduled')->default(true);
+        });
+    }
+};

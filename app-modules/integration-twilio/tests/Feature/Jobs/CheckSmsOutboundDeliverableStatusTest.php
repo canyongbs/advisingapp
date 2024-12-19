@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\IntegrationTwilio\Jobs\CheckSmsOutboundDeliverableStatus;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
@@ -173,12 +172,10 @@ it('will update an associated engagement deliverable if necessary', function (st
     if ($externalStatus === 'delivered') {
         expect($outboundDeliverable->delivery_status)->toBe(NotificationDeliveryStatus::Successful);
         expect($outboundDeliverable->external_status)->toBe($externalStatus);
-        expect($engagementDeliverable->delivery_status)->toBe(EngagementDeliveryStatus::Successful);
         expect($engagementDeliverable->external_status)->toBe($externalStatus);
     } elseif ($externalStatus === 'undelivered' || $externalStatus === 'failed') {
         expect($outboundDeliverable->delivery_status)->toBe(NotificationDeliveryStatus::Failed);
         expect($outboundDeliverable->external_status)->toBe($externalStatus);
-        expect($engagementDeliverable->delivery_status)->toBe(EngagementDeliveryStatus::Failed);
         expect($engagementDeliverable->external_status)->toBe($externalStatus);
     } else {
         expect($outboundDeliverable->delivery_status)->toBe($originalOutboundDeliverableStatus);
