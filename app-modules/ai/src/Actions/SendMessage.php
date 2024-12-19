@@ -43,7 +43,6 @@ use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
-use App\Features\SmartPromptsFeature;
 use Closure;
 use Illuminate\Support\Arr;
 
@@ -71,7 +70,7 @@ class SendMessage
         $message->thread()->associate($thread);
         $message->user()->associate(auth()->user());
 
-        if (SmartPromptsFeature::active() && ($content instanceof Prompt)) {
+        if ($content instanceof Prompt) {
             $message->prompt()->associate($content);
         }
 

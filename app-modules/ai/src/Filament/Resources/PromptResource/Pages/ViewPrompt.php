@@ -39,7 +39,6 @@ namespace AdvisingApp\Ai\Filament\Resources\PromptResource\Pages;
 use AdvisingApp\Ai\Filament\Resources\PromptResource;
 use AdvisingApp\Ai\Filament\Resources\PromptTypeResource;
 use AdvisingApp\Ai\Models\Prompt;
-use App\Features\SmartPromptsFeature;
 use App\Models\Authenticatable;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
@@ -71,8 +70,7 @@ class ViewPrompt extends ViewRecord
                             ->visible(fn (Prompt $record): bool => ! $record->is_smart || auth()->user()->hasRole(Authenticatable::SUPER_ADMIN_ROLE)),
                         TextEntry::make('is_smart')
                             ->label('Kind')
-                            ->state(fn (Prompt $record): string => $record->is_smart ? 'Smart' : 'Custom')
-                            ->visible(SmartPromptsFeature::active()),
+                            ->state(fn (Prompt $record): string => $record->is_smart ? 'Smart' : 'Custom'),
                     ]),
             ]);
     }

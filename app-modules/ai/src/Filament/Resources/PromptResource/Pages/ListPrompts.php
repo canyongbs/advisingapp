@@ -39,7 +39,6 @@ namespace AdvisingApp\Ai\Filament\Resources\PromptResource\Pages;
 use AdvisingApp\Ai\Filament\Resources\PromptResource;
 use AdvisingApp\Ai\Filament\Resources\PromptTypeResource;
 use AdvisingApp\Ai\Models\Prompt;
-use App\Features\SmartPromptsFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Authenticatable;
 use Filament\Actions\CreateAction;
@@ -73,8 +72,7 @@ class ListPrompts extends ListRecords
                     ->url(fn (Prompt $record) => PromptTypeResource::getUrl('view', ['record' => $record->type])),
                 TextColumn::make('is_smart')
                     ->label('Kind')
-                    ->state(fn (Prompt $record): string => $record->is_smart ? 'Smart' : 'Custom')
-                    ->visible(SmartPromptsFeature::active()),
+                    ->state(fn (Prompt $record): string => $record->is_smart ? 'Smart' : 'Custom'),
                 TextColumn::make('uses_count')
                     ->label('Uses')
                     ->counts('uses')
