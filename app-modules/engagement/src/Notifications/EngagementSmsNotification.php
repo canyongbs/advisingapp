@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Engagement\Notifications;
 
-use AdvisingApp\Engagement\Models\EngagementDeliverable;
+use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\Concerns\SmsChannelTrait;
@@ -51,7 +51,7 @@ class EngagementSmsNotification extends BaseNotification implements SmsNotificat
     use SmsChannelTrait;
 
     public function __construct(
-        public EngagementDeliverable $deliverable
+        public Engagement $engagement,
     ) {}
 
     public function uniqueId(): string

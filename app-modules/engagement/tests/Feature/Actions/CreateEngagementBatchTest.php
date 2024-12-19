@@ -47,10 +47,8 @@ use App\Models\User;
 use Illuminate\Bus\PendingBatch;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Queue;
 
 it('will create a new engagement batch', function () {
-    Queue::fake([EngagementEmailChannelDelivery::class, EngagementSmsChannelDelivery::class]);
     Notification::fake();
 
     CreateEngagementBatch::dispatch(EngagementBatchCreationData::from([
@@ -65,7 +63,6 @@ it('will create a new engagement batch', function () {
 });
 
 it('will create an engagement for every record provided', function () {
-    Queue::fake([EngagementEmailChannelDelivery::class, EngagementSmsChannelDelivery::class]);
     Notification::fake();
 
     $students = Student::factory()->count(3)->create();
@@ -84,7 +81,6 @@ it('will create an engagement for every record provided', function () {
 });
 
 it('will associate the engagement with the batch', function () {
-    Queue::fake([EngagementEmailChannelDelivery::class, EngagementSmsChannelDelivery::class]);
     Notification::fake();
 
     CreateEngagementBatch::dispatch(EngagementBatchCreationData::from([

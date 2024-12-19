@@ -60,7 +60,7 @@ class DeliverEngagements implements ShouldQueue
             ->isNotPartOfABatch()
             ->cursor()
             ->each(function (Engagement $engagement) {
-                $engagement->deliverable->driver()->deliver();
+                $engagement->driver()->deliver();
             });
     }
 
