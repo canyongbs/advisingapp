@@ -36,6 +36,7 @@
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Task\Filament\Resources\TaskResource;
+use AdvisingApp\Task\Filament\Resources\TaskResource\Pages\EditTask;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Task\Tests\RequestFactories\EditTaskRequestFactory;
 use App\Models\User;
@@ -53,7 +54,9 @@ use function Pest\Livewire\livewire;
 test('EditTask is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    $task = Task::factory()->create();
+    $task = Task::factory()->state([
+        'created_by' => $user->getKey(),
+    ])->create();
 
     actingAs($user)
         ->get(
@@ -62,13 +65,12 @@ test('EditTask is gated with proper access control', function () {
             ])
         )->assertForbidden();
 
-    livewire(TaskResource\Pages\EditTask::class, [
+    livewire(EditTask::class, [
         'record' => $task->getRouteKey(),
     ])
         ->assertForbidden();
 
     $user->givePermissionTo('task.view-any');
-    $user->givePermissionTo("task.{$task->getKey()}.update");
 
     actingAs($user)
         ->get(
@@ -80,7 +82,7 @@ test('EditTask is gated with proper access control', function () {
     // TODO: Finish these tests to ensure changes are allowed
     $request = collect(EditTaskRequestFactory::new()->create());
 
-    livewire(TaskResource\Pages\EditTask::class, [
+    livewire(EditTask::class, [
         'record' => $task->getRouteKey(),
     ])
         ->fillForm($request->toArray())
