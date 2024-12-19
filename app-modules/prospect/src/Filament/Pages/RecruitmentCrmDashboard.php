@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Prospect\Filament\Pages;
 
-use App\Models\User;
-use AdvisingApp\Prospect\Models\Prospect;
-use App\Filament\Widgets\ProspectGrowthChart;
-use Filament\Pages\Dashboard as BaseDashboard;
-use Symfony\Component\HttpFoundation\Response;
 use AdvisingApp\Prospect\Filament\Widgets\ProspectStats;
 use AdvisingApp\Prospect\Filament\Widgets\ProspectTasks;
+use AdvisingApp\Prospect\Models\Prospect;
+use App\Filament\Widgets\ProspectGrowthChart;
+use App\Models\User;
+use Filament\Pages\Dashboard as BaseDashboard;
+use Symfony\Component\HttpFoundation\Response;
 
 class RecruitmentCrmDashboard extends BaseDashboard
 {

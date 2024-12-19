@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\CaseManagement\Observers;
 
-use Illuminate\Support\Facades\Notification;
+use AdvisingApp\CaseManagement\Enums\SystemChangeRequestClassification;
 use AdvisingApp\CaseManagement\Models\ChangeRequest;
 use AdvisingApp\CaseManagement\Models\ChangeRequestStatus;
 use AdvisingApp\CaseManagement\Models\Scopes\ClassifiedAs;
-use AdvisingApp\CaseManagement\Enums\SystemChangeRequestClassification;
 use AdvisingApp\CaseManagement\Notifications\ChangeRequestAwaitingApprovalNotification;
+use Illuminate\Support\Facades\Notification;
 
 class ChangeRequestObserver
 {

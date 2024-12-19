@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources;
 
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\CreateCaseType;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\EditCaseType;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\ListCaseTypes;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\ViewCaseType;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\RelationManagers\CasePrioritiesRelationManager;
+use AdvisingApp\CaseManagement\Models\CaseType;
+use App\Filament\Clusters\CaseManagementAdministration;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\CaseManagement\Models\CaseType;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Clusters\CaseManagementAdministration;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\EditCaseType;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\ViewCaseType;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\ListCaseTypes;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\CreateCaseType;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\RelationManagers\CasePrioritiesRelationManager;
 
 class CaseTypeResource extends Resource
 {

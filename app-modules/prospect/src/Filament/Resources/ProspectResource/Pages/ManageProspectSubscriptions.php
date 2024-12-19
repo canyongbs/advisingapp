@@ -36,22 +36,22 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
-use App\Models\User;
-use Filament\Tables\Table;
-use App\Models\Scopes\HasLicense;
-use Filament\Forms\Components\Select;
-use Filament\Tables\Columns\TextColumn;
-use App\Filament\Resources\UserResource;
-use AdvisingApp\Prospect\Models\Prospect;
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Tables\Actions\AttachAction;
-use Filament\Tables\Actions\DetachAction;
-use Illuminate\Database\Eloquent\Builder;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DetachBulkAction;
-use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Models\Prospect;
+use App\Filament\Resources\UserResource;
+use App\Filament\Tables\Columns\IdColumn;
+use App\Models\Scopes\HasLicense;
+use App\Models\User;
+use Filament\Forms\Components\Select;
+use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Tables\Actions\AttachAction;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DetachAction;
+use Filament\Tables\Actions\DetachBulkAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class ManageProspectSubscriptions extends ManageRelatedRecords
 {

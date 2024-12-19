@@ -34,16 +34,13 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
-
-use function Tests\asSuperAdmin;
-
 use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
-
-use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Authorization\Enums\LicenseType;
+use function Tests\asSuperAdmin;
 
 test('viewAny', function () {
     $user = User::factory()->create();

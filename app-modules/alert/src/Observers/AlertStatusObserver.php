@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Alert\Observers;
 
-use Illuminate\Support\Facades\DB;
 use AdvisingApp\Alert\Models\AlertStatus;
+use Illuminate\Support\Facades\DB;
 
 class AlertStatusObserver
 {

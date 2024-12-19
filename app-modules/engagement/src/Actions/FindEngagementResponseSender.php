@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Engagement\Actions;
 
-use Illuminate\Support\Facades\Log;
+use AdvisingApp\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
+use Illuminate\Support\Facades\Log;
 
 class FindEngagementResponseSender implements EngagementResponseSenderFinder
 {

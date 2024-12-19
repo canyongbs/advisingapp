@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Form\Policies;
 
-use App\Enums\Feature;
-use App\Models\Authenticatable;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Form\Models\Form;
-use Illuminate\Auth\Access\Response;
 use App\Concerns\PerformsFeatureChecks;
 use App\Concerns\PerformsLicenseChecks;
-use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Enums\Feature;
+use App\Models\Authenticatable;
 use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
+use Illuminate\Auth\Access\Response;
 
 class FormPolicy implements PerformsChecksBeforeAuthorization
 {

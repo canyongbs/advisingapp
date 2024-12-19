@@ -34,13 +34,12 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualityResource;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
-
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualityResource;
 
 // TODO: Write ListResourceHubQuality tests
 //test('The correct details are displayed on the ListResourceHubQuality page', function () {});

@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource\Pages;
 
-use Filament\Forms\Form;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource;
+use App\Filament\Forms\Components\IconSelect;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
-use App\Filament\Forms\Components\IconSelect;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource;
 
 class CreateResourceHubCategory extends CreateRecord
 {

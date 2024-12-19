@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Providers;
 
+use AdvisingApp\IntegrationOpenAi\IntegrationOpenAiPlugin;
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
-use AdvisingApp\IntegrationOpenAi\IntegrationOpenAiPlugin;
 
 class IntegrationOpenAiServiceProvider extends ServiceProvider
 {

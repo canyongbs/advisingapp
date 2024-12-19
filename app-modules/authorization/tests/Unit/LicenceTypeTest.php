@@ -34,13 +34,12 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\Authenticatable;
+use App\Models\User;
 use App\Settings\LicenseSettings;
 
 use function PHPUnit\Framework\assertEquals;
-
-use AdvisingApp\Authorization\Enums\LicenseType;
 
 test('Users are counted in the available seats', function (LicenseType $licenseType) {
     $licenseSettings = app(LicenseSettings::class);

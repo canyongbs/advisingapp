@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources;
 
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\TextInput;
-use App\Filament\Clusters\InteractionManagement;
-use AdvisingApp\Interaction\Models\InteractionInitiative;
+use AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource\Pages\CreateInteractionInitiative;
 use AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource\Pages\EditInteractionInitiative;
 use AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource\Pages\ListInteractionInitiatives;
-use AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource\Pages\CreateInteractionInitiative;
+use AdvisingApp\Interaction\Models\InteractionInitiative;
+use App\Filament\Clusters\InteractionManagement;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
 
 class InteractionInitiativeResource extends Resource
 {

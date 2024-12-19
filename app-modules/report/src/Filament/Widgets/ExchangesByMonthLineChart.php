@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
+use AdvisingApp\Report\Enums\TrackedEventType;
+use AdvisingApp\Report\Models\TrackedEvent;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
-use AdvisingApp\Report\Models\TrackedEvent;
-use AdvisingApp\Report\Enums\TrackedEventType;
 
 class ExchangesByMonthLineChart extends LineChartReportWidget
 {

@@ -36,32 +36,32 @@
 
 namespace AdvisingApp\Alert\Models;
 
-use Exception;
-use App\Models\User;
-use App\Models\BaseModel;
-use Illuminate\Support\Collection;
-use OwenIt\Auditing\Contracts\Auditable;
-use AdvisingApp\Prospect\Models\Prospect;
-use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\Alert\Histories\AlertHistory;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\Alert\Observers\AlertObserver;
-use AdvisingApp\Campaign\Models\CampaignAction;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use AdvisingApp\Timeline\Models\Contracts\HasHistory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use AdvisingApp\Notification\Models\Contracts\Subscribable;
-use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
-use AdvisingApp\Timeline\Models\Concerns\InteractsWithHistory;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
-use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
+use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
+use AdvisingApp\Notification\Models\Contracts\Subscribable;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Timeline\Models\Concerns\InteractsWithHistory;
+use AdvisingApp\Timeline\Models\Contracts\HasHistory;
+use App\Models\BaseModel;
+use App\Models\User;
+use Exception;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @property-read Student|Prospect $concern

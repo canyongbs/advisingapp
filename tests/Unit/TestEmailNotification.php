@@ -37,9 +37,9 @@
 namespace Tests\Unit;
 
 use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 
 class TestEmailNotification extends BaseNotification implements EmailNotification
 {

@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Webhook;
 
-use Filament\Panel;
 use Filament\Contracts\Plugin;
+use Filament\Panel;
 
 class WebhookPlugin implements Plugin
 {

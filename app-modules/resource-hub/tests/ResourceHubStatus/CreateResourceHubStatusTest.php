@@ -34,19 +34,18 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource\Pages\CreateResourceHubStatus;
+use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
+use AdvisingApp\ResourceHub\Tests\ResourceHubStatus\RequestFactories\CreateResourceHubStatusRequestFactory;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
-use function Pest\Laravel\assertDatabaseHas;
-
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource\Pages\CreateResourceHubStatus;
-use AdvisingApp\ResourceHub\Tests\ResourceHubStatus\RequestFactories\CreateResourceHubStatusRequestFactory;
 
 // TODO: Write CreateResourceHubStatus tests
 //test('A successful action on the CreateResourceHubStatus page', function () {});

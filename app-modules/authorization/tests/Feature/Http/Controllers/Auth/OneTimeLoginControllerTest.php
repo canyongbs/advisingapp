@@ -35,13 +35,11 @@
 */
 
 use App\Models\User;
-
-use function Pest\Laravel\get;
-
 use Illuminate\Support\Facades\URL;
 
-use function Pest\Laravel\assertGuest;
 use function Pest\Laravel\assertAuthenticatedAs;
+use function Pest\Laravel\assertGuest;
+use function Pest\Laravel\get;
 
 it('signs the user in through a signed URL', function () {
     $user = User::factory()->create([

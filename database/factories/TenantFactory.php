@@ -37,14 +37,14 @@
 namespace Database\Factories;
 
 use App\Models\Tenant;
-use Illuminate\Encryption\Encrypter;
-use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Multitenancy\DataTransferObjects\TenantConfig;
+use App\Multitenancy\DataTransferObjects\TenantDatabaseConfig;
 use App\Multitenancy\DataTransferObjects\TenantMailConfig;
 use App\Multitenancy\DataTransferObjects\TenantMailersConfig;
-use App\Multitenancy\DataTransferObjects\TenantDatabaseConfig;
-use App\Multitenancy\DataTransferObjects\TenantSmtpMailerConfig;
 use App\Multitenancy\DataTransferObjects\TenantS3FilesystemConfig;
+use App\Multitenancy\DataTransferObjects\TenantSmtpMailerConfig;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Encryption\Encrypter;
 
 class TenantFactory extends Factory
 {

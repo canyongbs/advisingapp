@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Timeline\Filament\Pages;
 
-use Filament\Resources\Pages\Page;
-use Filament\Resources\Pages\Concerns\InteractsWithRecord;
-use AdvisingApp\Timeline\Livewire\Concerns\HasTimelineRecords;
 use AdvisingApp\Timeline\Livewire\Concerns\CanLoadTimelineRecords;
+use AdvisingApp\Timeline\Livewire\Concerns\HasTimelineRecords;
+use Filament\Resources\Pages\Concerns\InteractsWithRecord;
+use Filament\Resources\Pages\Page;
 
 abstract class TimelinePage extends Page
 {

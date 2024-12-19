@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Engagement\Models;
 
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphPivot;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Engagement\Observers\EngagementFileEntitiesObserver;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
+use AdvisingApp\Notification\Models\Contracts\Subscribable;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphPivot;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * @mixin IdeHelperEngagementFileEntities

@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Pages\Concerns;
 
-use AdvisingApp\Task\Histories\TaskHistory;
 use AdvisingApp\Alert\Histories\AlertHistory;
 use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Engagement\Models\EngagementResponse;
-use Filament\Resources\Pages\Concerns\InteractsWithRecord;
-use AdvisingApp\Timeline\Livewire\Concerns\HasTimelineRecords;
+use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\Task\Histories\TaskHistory;
 use AdvisingApp\Timeline\Livewire\Concerns\CanLoadTimelineRecords;
+use AdvisingApp\Timeline\Livewire\Concerns\HasTimelineRecords;
+use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 
 trait HasEducatableActivityFeed
 {

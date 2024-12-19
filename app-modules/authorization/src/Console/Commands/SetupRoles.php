@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Authorization\Console\Commands;
 
+use AdvisingApp\Authorization\Models\Role;
 use App\Models\Authenticatable;
 use Illuminate\Console\Command;
-use AdvisingApp\Authorization\Models\Role;
 use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 
 class SetupRoles extends Command

@@ -34,13 +34,12 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
-
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource;
 
 // TODO: Write ListResourceHubStatuses tests
 //test('The correct details are displayed on the ListResourceHubStatuses page', function () {});

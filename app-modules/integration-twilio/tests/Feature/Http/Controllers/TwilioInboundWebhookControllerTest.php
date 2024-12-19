@@ -34,17 +34,15 @@
 </COPYRIGHT>
 */
 
-use function Pest\Laravel\post;
-
+use AdvisingApp\IntegrationTwilio\Actions\MessageReceived;
+use AdvisingApp\IntegrationTwilio\Actions\StatusCallback;
 use Illuminate\Support\Facades\Queue;
 
-use function Tests\loadFixtureFromModule;
 use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Laravel\withoutMiddleware;
 use function Pest\Laravel\assertDatabaseMissing;
-
-use AdvisingApp\IntegrationTwilio\Actions\StatusCallback;
-use AdvisingApp\IntegrationTwilio\Actions\MessageReceived;
+use function Pest\Laravel\post;
+use function Pest\Laravel\withoutMiddleware;
+use function Tests\loadFixtureFromModule;
 
 it('will create an inbound webhook with the correct source and event for a MessageReceived webhook', function () {
     Queue::fake([MessageReceived::class]);

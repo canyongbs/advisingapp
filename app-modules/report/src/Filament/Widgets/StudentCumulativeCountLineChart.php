@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
+use AdvisingApp\StudentDataModel\Models\Student;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
-use AdvisingApp\StudentDataModel\Models\Student;
 
 class StudentCumulativeCountLineChart extends LineChartReportWidget
 {

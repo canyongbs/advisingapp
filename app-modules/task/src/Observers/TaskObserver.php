@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Task\Observers;
 
-use Exception;
-use App\Models\User;
-use AdvisingApp\Task\Models\Task;
-use Illuminate\Support\Facades\DB;
 use AdvisingApp\Authorization\Models\Permission;
 use AdvisingApp\Authorization\Models\PermissionGroup;
 use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
+use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Task\Notifications\TaskAssignedToUserNotification;
+use App\Models\User;
+use Exception;
+use Illuminate\Support\Facades\DB;
 
 class TaskObserver
 {

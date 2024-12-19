@@ -34,15 +34,14 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
-use App\Models\Tenant;
-
-use function Pest\Laravel\get;
-use function Tests\asSuperAdmin;
-use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
-
 use AdvisingApp\IntegrationAwsSesEventHandling\Filament\Pages\ManageAmazonSesSettings;
+use App\Models\Tenant;
+use App\Models\User;
+
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
+use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
 it('prevents access to the Amazon SES Settings when you do not have the necessary permissions', function () {
     $user = User::factory()->create();

@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages;
 
+use AdvisingApp\Application\Filament\Resources\ApplicationResource;
+use AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages\Concerns\HasSharedFormConfiguration;
+use AdvisingApp\Application\Models\Application;
+use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Form as FilamentForm;
-use Filament\Resources\Pages\EditRecord;
 use Filament\Infolists\Components\TextEntry;
-use AdvisingApp\Application\Models\Application;
-use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
-use AdvisingApp\Application\Filament\Resources\ApplicationResource;
-use AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages\Concerns\HasSharedFormConfiguration;
+use Filament\Resources\Pages\EditRecord;
 
 class EditApplication extends EditRecord
 {

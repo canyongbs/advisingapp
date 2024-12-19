@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Notification\Database\Factories;
 
-use App\Models\User;
 use App\Models\Subscription;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

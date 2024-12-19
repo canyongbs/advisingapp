@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Portal\Http\Middleware;
 
+use AdvisingApp\Portal\Settings\PortalSettings;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use AdvisingApp\Portal\Settings\PortalSettings;
-use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 
 class AuthenticateIfRequiredByPortalDefinition
 {

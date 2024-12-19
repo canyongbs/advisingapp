@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Ai\Actions;
 
-use App\Models\Tenant;
-use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Enums\AiApplication;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Settings\AiSettings;
+use App\Models\Tenant;
 
 class CreateThread
 {

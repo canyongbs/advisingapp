@@ -36,11 +36,11 @@
 
 namespace Database\Factories;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use AdvisingApp\Authorization\Enums\LicenseType;
-use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>

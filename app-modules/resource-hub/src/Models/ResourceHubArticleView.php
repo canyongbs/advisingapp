@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\ResourceHub\Models;
 
-use App\Models\User;
 use App\Models\BaseModel;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**

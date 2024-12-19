@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Ai\Events\AiThreadForceDeleting;
+use AdvisingApp\Ai\Events\AiThreadTrashed;
+use AdvisingApp\Ai\Listeners\AiThreadCascadeDeleteAiMessages;
+use AdvisingApp\Ai\Listeners\DeleteExternalAiThread;
 use AdvisingApp\Ai\Models\AiThread;
 use Illuminate\Support\Facades\Event;
-use AdvisingApp\Ai\Events\AiThreadTrashed;
-use AdvisingApp\Ai\Events\AiThreadForceDeleting;
-use AdvisingApp\Ai\Listeners\DeleteExternalAiThread;
-use AdvisingApp\Ai\Listeners\AiThreadCascadeDeleteAiMessages;
 
 it('dispatches the AiThreadTrashed event when an AiThread is deleted', function () {
     $aiThread = AiThread::factory()->create();

@@ -37,9 +37,9 @@
 namespace App\Overrides\Laravel;
 
 use Illuminate\Contracts\Session\Session;
+use Illuminate\Session\Middleware\StartSession as BaseStartSession;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Session\Middleware\StartSession as BaseStartSession;
 
 class StartSession extends BaseStartSession
 {

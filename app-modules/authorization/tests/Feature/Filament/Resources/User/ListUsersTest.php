@@ -34,25 +34,22 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
-
-use function Tests\asSuperAdmin;
-
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\Team\Models\Team;
+use App\Filament\Resources\UserResource\Actions\AssignLicensesBulkAction;
+use App\Filament\Resources\UserResource\Pages\ListUsers;
+use App\Models\User;
+use Lab404\Impersonate\Services\ImpersonateManager;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
-
-use AdvisingApp\Authorization\Models\Role;
-
-use function PHPUnit\Framework\assertTrue;
 use function PHPUnit\Framework\assertFalse;
+use function PHPUnit\Framework\assertTrue;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use Lab404\Impersonate\Services\ImpersonateManager;
 use STS\FilamentImpersonate\Tables\Actions\Impersonate;
-use App\Filament\Resources\UserResource\Pages\ListUsers;
-use App\Filament\Resources\UserResource\Actions\AssignLicensesBulkAction;
+
+use function Tests\asSuperAdmin;
 
 it('renders impersonate button for non super admin users when user is super admin', function () {
     asSuperAdmin();

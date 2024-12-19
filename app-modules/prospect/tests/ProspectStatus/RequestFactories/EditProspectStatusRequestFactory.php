@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Prospect\Tests\ProspectStatus\RequestFactories;
 
-use Worksome\RequestFactories\RequestFactory;
 use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
+use Worksome\RequestFactories\RequestFactory;
 
 class EditProspectStatusRequestFactory extends RequestFactory
 {

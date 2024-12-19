@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Form\Models;
 
-use App\Models\BaseModel;
-use Spatie\MediaLibrary\HasMedia;
-use AdvisingApp\Prospect\Models\Prospect;
-use Spatie\MediaLibrary\InteractsWithMedia;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Engagement\Actions\GenerateEngagementBodyContent;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @mixin IdeHelperFormEmailAutoReply

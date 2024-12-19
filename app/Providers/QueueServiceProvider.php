@@ -36,8 +36,8 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
 use App\Overrides\LaravelSqsExtended\SqsDiskConnector;
+use Illuminate\Support\ServiceProvider;
 
 class QueueServiceProvider extends ServiceProvider
 {

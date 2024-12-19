@@ -36,8 +36,8 @@
 
 namespace App\Filament\Tables\Filters\OpenSearch;
 
-use OpenSearch\ScoutDriverPlus\Support\Query;
 use OpenSearch\ScoutDriverPlus\Builders\QueryBuilderInterface;
+use OpenSearch\ScoutDriverPlus\Support\Query;
 
 class SelectFilter extends \Filament\Tables\Filters\SelectFilter implements OpenSearchFilter
 {

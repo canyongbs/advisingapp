@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Routing\RouteRegistrar;
 use AdvisingApp\MeetingCenter\Enums\CalendarProvider;
+use Illuminate\Routing\RouteRegistrar;
 
 if (! function_exists('provider_routes')) {
     function provider_routes(CalendarProvider $provider, string $controller): RouteRegistrar

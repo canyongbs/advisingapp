@@ -36,17 +36,17 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources;
 
+use AdvisingApp\Interaction\Enums\InteractionStatusColorOptions;
+use AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource\Pages\CreateInteractionStatus;
+use AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource\Pages\EditInteractionStatus;
+use AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource\Pages\ListInteractionStatuses;
+use AdvisingApp\Interaction\Models\InteractionStatus;
+use App\Filament\Clusters\InteractionManagement;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\TextInput;
-use App\Filament\Clusters\InteractionManagement;
-use AdvisingApp\Interaction\Models\InteractionStatus;
-use AdvisingApp\Interaction\Enums\InteractionStatusColorOptions;
-use AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource\Pages\EditInteractionStatus;
-use AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource\Pages\CreateInteractionStatus;
-use AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource\Pages\ListInteractionStatuses;
 
 class InteractionStatusResource extends Resource
 {

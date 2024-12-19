@@ -34,26 +34,21 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\CreateCaseType;
+use AdvisingApp\CaseManagement\Models\CaseType;
+use AdvisingApp\CaseManagement\Tests\RequestFactories\CreateCaseTypeRequestFactory;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
-
-use function Tests\asSuperAdmin;
-
 use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Livewire\livewire;
-
-use AdvisingApp\Prospect\Models\Prospect;
-
 use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEmpty;
-use function Pest\Laravel\assertDatabaseHas;
-
-use AdvisingApp\CaseManagement\Models\CaseType;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
-use AdvisingApp\CaseManagement\Tests\RequestFactories\CreateCaseTypeRequestFactory;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\CreateCaseType;
+use function Tests\asSuperAdmin;
 
 test('A successful action on the CreateCaseType page', function () {
     asSuperAdmin()
@@ -126,7 +121,7 @@ test('CreateCaseType is gated with proper access control', function () {
 test('CreateCaseType is gated with proper feature access control', function () {
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->serviceManagement = false;
+    $settings->data->addons->caseManagement = false;
 
     $settings->save();
 
@@ -143,7 +138,7 @@ test('CreateCaseType is gated with proper feature access control', function () {
     livewire(CreateCaseType::class)
         ->assertForbidden();
 
-    $settings->data->addons->serviceManagement = true;
+    $settings->data->addons->caseManagement = true;
 
     $settings->save();
 

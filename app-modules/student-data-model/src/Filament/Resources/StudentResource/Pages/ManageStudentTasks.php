@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
-use Filament\Resources\Pages\ManageRelatedRecords;
+use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Pages\Concerns\CanManageEducatableTasks;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concerns\HasStudentHeader;
-use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Pages\Concerns\CanManageEducatableTasks;
+use Filament\Resources\Pages\ManageRelatedRecords;
 
 class ManageStudentTasks extends ManageRelatedRecords
 {

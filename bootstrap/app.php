@@ -1,9 +1,9 @@
 <?php
 
-use App\Http\Kernel;
 use App\Exceptions\Handler;
-use Illuminate\Foundation\Application;
+use App\Http\Kernel;
 use Illuminate\Contracts\Debug\ExceptionHandler;
+use Illuminate\Foundation\Application;
 
 /*
 <COPYRIGHT>

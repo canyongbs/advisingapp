@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-use function Tests\Helpers\Events\testEventIsBeingListenedTo;
-
 use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesBounceEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesBounceEvent;
+
+use function Tests\Helpers\Events\testEventIsBeingListenedTo;
 
 testEventIsBeingListenedTo(
     event: SesBounceEvent::class,

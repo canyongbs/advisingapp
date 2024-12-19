@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use Filament\Support\Colors\Color;
 use AdvisingApp\Ai\Models\AiThread;
+use Filament\Support\Colors\Color;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Cache;
 

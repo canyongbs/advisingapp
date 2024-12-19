@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Notification\Tests\Features;
 
-use App\Models\NotificationSetting;
 use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
+use App\Models\NotificationSetting;
 
 class TestEmailSettingFromNameNotification extends BaseNotification implements EmailNotification
 {

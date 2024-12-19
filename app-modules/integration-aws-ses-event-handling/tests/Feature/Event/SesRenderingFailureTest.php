@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-use function Tests\Helpers\Events\testEventIsBeingListenedTo;
-
 use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesRenderingFailureEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesRenderingFailureEvent;
+
+use function Tests\Helpers\Events\testEventIsBeingListenedTo;
 
 testEventIsBeingListenedTo(
     event: SesRenderingFailureEvent::class,

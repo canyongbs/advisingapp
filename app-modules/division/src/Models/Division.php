@@ -36,19 +36,19 @@
 
 namespace AdvisingApp\Division\Models;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use AdvisingApp\Team\Models\Team;
-use App\Models\NotificationSettingPivot;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use AdvisingApp\Division\Observers\DivisionObserver;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use AdvisingApp\Interaction\Models\Concerns\HasManyInteractions;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Division\Observers\DivisionObserver;
+use AdvisingApp\Interaction\Models\Concerns\HasManyInteractions;
+use AdvisingApp\Team\Models\Team;
+use App\Models\BaseModel;
+use App\Models\NotificationSettingPivot;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @mixin IdeHelperDivision

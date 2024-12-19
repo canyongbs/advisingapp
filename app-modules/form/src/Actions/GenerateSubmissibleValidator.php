@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Form\Actions;
 
-use Illuminate\Http\Request;
-use Illuminate\Validation\Validator;
 use AdvisingApp\Form\Models\Submissible;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator as ValidatorFacade;
+use Illuminate\Validation\Validator;
 
 class GenerateSubmissibleValidator
 {

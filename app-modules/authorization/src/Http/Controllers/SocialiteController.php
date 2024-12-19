@@ -36,19 +36,19 @@
 
 namespace AdvisingApp\Authorization\Http\Controllers;
 
-use Throwable;
-use App\Models\User;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
-use Filament\Facades\Filament;
+use AdvisingApp\Authorization\Enums\SocialiteProvider;
+use App\Exceptions\InvalidUserAvatarMimeType;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Http;
-use Symfony\Component\Mime\MimeTypes;
+use App\Models\User;
+use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Query\Expression;
-use App\Exceptions\InvalidUserAvatarMimeType;
-use AdvisingApp\Authorization\Enums\SocialiteProvider;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
+use Symfony\Component\Mime\MimeTypes;
+use Throwable;
 
 class SocialiteController extends Controller
 {

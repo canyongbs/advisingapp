@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentTagResource\Pages;
 
-use Filament\Forms\Form;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentTagResource;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentTagResource;
 
 class EditStudentTag extends EditRecord
 {

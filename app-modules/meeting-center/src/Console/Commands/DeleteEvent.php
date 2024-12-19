@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\MeetingCenter\Console\Commands;
 
-use Illuminate\Console\Command;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
+use Illuminate\Console\Command;
 use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 
 class DeleteEvent extends Command

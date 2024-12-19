@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
-use App\Enums\Feature;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Contracts\Support\Htmlable;
-use Filament\Resources\Pages\ManageRelatedRecords;
-use App\Filament\Concerns\FiltersManagersFromGroups;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\CasesRelationManager;
+use App\Enums\Feature;
+use App\Filament\Concerns\FiltersManagersFromGroups;
+use Filament\Resources\Pages\ManageRelatedRecords;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Gate;
 
 class StudentCaseManagement extends ManageRelatedRecords
 {
@@ -68,7 +68,7 @@ class StudentCaseManagement extends ManageRelatedRecords
 
     public static function canAccess(array $parameters = []): bool
     {
-        return parent::canAccess($parameters) && Gate::check(Feature::ServiceManagement->getGateName()) && count(static::managers($parameters['record'] ?? null));
+        return parent::canAccess($parameters) && Gate::check(Feature::CaseManagement->getGateName()) && count(static::managers($parameters['record'] ?? null));
     }
 
     public function getRelationManagers(): array

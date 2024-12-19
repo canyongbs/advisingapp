@@ -36,10 +36,10 @@
 
 namespace App\Casts;
 
-use Illuminate\Support\Str;
-use Illuminate\Encryption\Encrypter;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Encryption\Encrypter;
+use Illuminate\Support\Str;
 
 class LandlordEncrypted implements CastsAttributes
 {

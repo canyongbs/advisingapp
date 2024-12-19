@@ -36,8 +36,8 @@
 
 namespace App\Support;
 
-use Iterator;
 use Generator;
+use Iterator;
 
 class ChunkIterator
 {

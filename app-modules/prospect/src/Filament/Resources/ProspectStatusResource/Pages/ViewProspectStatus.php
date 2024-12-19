@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages;
 
+use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource;
+use AdvisingApp\Prospect\Models\ProspectStatus;
 use Filament\Actions\EditAction;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
+use Filament\Resources\Pages\ViewRecord;
+use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Contracts\View\View;
-use Filament\Resources\Pages\ViewRecord;
-use Filament\Infolists\Components\Section;
-use Filament\Support\Facades\FilamentView;
-use Filament\Infolists\Components\TextEntry;
-use AdvisingApp\Prospect\Models\ProspectStatus;
-use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource;
 
 class ViewProspectStatus extends ViewRecord
 {

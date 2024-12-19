@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\CaseManagement\Models;
 
-use DateTimeInterface;
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\CaseManagement\Enums\ColumnColorOptions;
 use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use App\Models\BaseModel;
+use DateTimeInterface;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @mixin IdeHelperCaseStatus

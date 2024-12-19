@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Consent;
 
-use Filament\Panel;
 use Filament\Contracts\Plugin;
+use Filament\Panel;
 
 class ConsentPlugin implements Plugin
 {

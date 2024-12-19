@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Campaign\Filament\Resources;
 
-use Filament\Resources\Resource;
-use AdvisingApp\Campaign\Models\Campaign;
-use AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages\EditCampaign;
-use AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages\ViewCampaign;
-use AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages\ListCampaigns;
 use AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages\CreateCampaign;
+use AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages\EditCampaign;
+use AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages\ListCampaigns;
+use AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages\ViewCampaign;
 use AdvisingApp\Campaign\Filament\Resources\CampaignResource\RelationManagers\CampaignActionsRelationManager;
+use AdvisingApp\Campaign\Models\Campaign;
+use Filament\Resources\Resource;
 
 class CampaignResource extends Resource
 {
@@ -50,7 +50,7 @@ class CampaignResource extends Resource
 
     protected static ?string $navigationGroup = 'Engagement Features';
 
-    protected static ?int $navigationSort = 30;
+    protected static ?int $navigationSort = 40;
 
     public static function getRelations(): array
     {

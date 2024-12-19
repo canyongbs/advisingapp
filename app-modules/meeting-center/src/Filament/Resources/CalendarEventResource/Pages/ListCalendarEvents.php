@@ -36,26 +36,26 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource\Pages;
 
-use App\Models\User;
-use Filament\Tables\Table;
-use Filament\Actions\Action;
-use Livewire\Attributes\Url;
-use Filament\Facades\Filament;
-use Filament\Actions\CreateAction;
-use Filament\Tables\Filters\Filter;
-use Filament\Forms\Components\Select;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\DeleteAction;
-use Illuminate\Database\Eloquent\Builder;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-use App\Filament\Tables\Columns\OpenSearch\TextColumn;
+use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource;
 use AdvisingApp\MeetingCenter\Managers\CalendarManager;
 use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
-use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource;
+use App\Filament\Tables\Columns\IdColumn;
+use App\Filament\Tables\Columns\OpenSearch\TextColumn;
+use App\Models\User;
+use Filament\Actions\Action;
+use Filament\Actions\CreateAction;
+use Filament\Facades\Filament;
+use Filament\Forms\Components\Select;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Livewire\Attributes\Url;
 
 class ListCalendarEvents extends ListRecords
 {

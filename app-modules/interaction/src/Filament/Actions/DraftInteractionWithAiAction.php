@@ -36,26 +36,26 @@
 
 namespace AdvisingApp\Interaction\Filament\Actions;
 
+use AdvisingApp\Ai\Actions\CompletePrompt;
+use AdvisingApp\Ai\Exceptions\MessageResponseException;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Interaction\Models\InteractionDriver;
+use AdvisingApp\Interaction\Models\InteractionInitiative;
+use AdvisingApp\Interaction\Models\InteractionOutcome;
+use AdvisingApp\Interaction\Models\InteractionType;
+use AdvisingApp\Prospect\Models\Prospect;
+use App\Settings\LicenseSettings;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use App\Settings\LicenseSettings;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Facades\Vite;
-use AdvisingApp\Ai\Models\AiAssistant;
-use Filament\Forms\Components\Textarea;
-use Filament\Notifications\Notification;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Ai\Actions\CompletePrompt;
-use Filament\Forms\Components\Actions\Action;
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Interaction\Models\InteractionType;
-use AdvisingApp\Interaction\Models\InteractionDriver;
-use AdvisingApp\Interaction\Models\InteractionOutcome;
-use AdvisingApp\Ai\Exceptions\MessageResponseException;
-use Filament\Resources\RelationManagers\RelationManager;
-use AdvisingApp\Interaction\Models\InteractionInitiative;
-use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
 
 class DraftInteractionWithAiAction extends Action
 {

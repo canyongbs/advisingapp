@@ -36,21 +36,21 @@
 
 namespace AdvisingApp\Engagement\Models;
 
-use DOMXPath;
-use Throwable;
-use DOMDocument;
-use App\Models\User;
+use AdvisingApp\Campaign\Models\CampaignAction;
+use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
+use AdvisingApp\Engagement\Actions\CreateEngagementBatch;
+use AdvisingApp\Engagement\DataTransferObjects\EngagementBatchCreationData;
+use AdvisingApp\Engagement\Models\Concerns\HasManyEngagements;
+use AdvisingApp\Engagement\Observers\EngagementBatchObserver;
 use App\Models\BaseModel;
+use App\Models\User;
+use DOMDocument;
+use DOMXPath;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use AdvisingApp\Campaign\Models\CampaignAction;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use AdvisingApp\Engagement\Actions\CreateEngagementBatch;
-use AdvisingApp\Engagement\Observers\EngagementBatchObserver;
-use AdvisingApp\Engagement\Models\Concerns\HasManyEngagements;
-use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
-use AdvisingApp\Engagement\DataTransferObjects\EngagementBatchCreationData;
+use Throwable;
 
 /**
  * @mixin IdeHelperEngagementBatch

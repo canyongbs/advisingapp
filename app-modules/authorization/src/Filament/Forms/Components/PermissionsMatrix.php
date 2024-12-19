@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Authorization\Filament\Forms\Components;
 
+use AdvisingApp\Authorization\Models\PermissionGroup;
 use Closure;
-use Illuminate\Support\Str;
 use Filament\Forms\Components\Field;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use AdvisingApp\Authorization\Models\PermissionGroup;
+use Illuminate\Support\Str;
 
 class PermissionsMatrix extends Field
 {
@@ -59,6 +59,7 @@ class PermissionsMatrix extends Field
 
         $this->saveRelationshipsUsing(function (Model $record, array $state) {
             $record->permissions()->sync($state);
+            $record->forgetCachedPermissions();
         });
 
         $this->dehydrated(false);
@@ -82,26 +83,27 @@ class PermissionsMatrix extends Field
             ->with(['permissions' => fn (HasMany $query) => $query->where('guard_name', $this->getGuard())])
             ->get()
             ->reduce(function (array $carry, PermissionGroup $permissionGroup): array {
-                $permissionGroupNameSlug = Str::slug($permissionGroup->name);
+                $permissionGroupNameSlugHyphen = Str::slug($permissionGroup->name);
+                $permissionGroupNameSlugUnderscore = Str::slug($permissionGroup->name, '_');
 
                 $permissions = $permissionGroup->permissions
                     ->pluck('name', 'id')
                     ->all();
 
-                if (! in_array("{$permissionGroupNameSlug}.view-any", $permissions)) {
+                if ((! in_array("{$permissionGroupNameSlugHyphen}.view-any", $permissions)) && (! in_array("{$permissionGroupNameSlugUnderscore}.view-any", $permissions))) {
                     return $carry;
                 }
 
                 foreach ($permissions as $permissionKey => $permissionName) {
                     $operation = match ($permissionName) {
-                        "{$permissionGroupNameSlug}.view-any" => 'view-any',
-                        "{$permissionGroupNameSlug}.*.view" => 'view',
-                        "{$permissionGroupNameSlug}.create" => 'create',
-                        "{$permissionGroupNameSlug}.*.update" => 'update',
-                        "{$permissionGroupNameSlug}.*.delete" => 'delete',
-                        "{$permissionGroupNameSlug}.import" => 'import',
-                        "{$permissionGroupNameSlug}.*.force-delete" => 'force-delete',
-                        "{$permissionGroupNameSlug}.*.restore" => 'restore',
+                        "{$permissionGroupNameSlugHyphen}.view-any", "{$permissionGroupNameSlugUnderscore}.view-any" => 'view-any',
+                        "{$permissionGroupNameSlugHyphen}.*.view", "{$permissionGroupNameSlugUnderscore}.*.view" => 'view',
+                        "{$permissionGroupNameSlugHyphen}.create", "{$permissionGroupNameSlugUnderscore}.create" => 'create',
+                        "{$permissionGroupNameSlugHyphen}.*.update", "{$permissionGroupNameSlugUnderscore}.*.update" => 'update',
+                        "{$permissionGroupNameSlugHyphen}.*.delete", "{$permissionGroupNameSlugUnderscore}.*.delete" => 'delete',
+                        "{$permissionGroupNameSlugHyphen}.import", "{$permissionGroupNameSlugHyphen}.import" => 'import',
+                        "{$permissionGroupNameSlugHyphen}.*.force-delete", "{$permissionGroupNameSlugUnderscore}.*.force-delete" => 'force-delete',
+                        "{$permissionGroupNameSlugHyphen}.*.restore", "{$permissionGroupNameSlugUnderscore}.*.restore" => 'restore',
                         default => null,
                     };
 

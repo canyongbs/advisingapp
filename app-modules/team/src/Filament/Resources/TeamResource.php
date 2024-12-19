@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Team\Filament\Resources;
 
-use Filament\Resources\Resource;
-use AdvisingApp\Team\Models\Team;
-use AdvisingApp\Team\Filament\Resources\TeamResource\Pages\EditTeam;
-use AdvisingApp\Team\Filament\Resources\TeamResource\Pages\ViewTeam;
-use AdvisingApp\Team\Filament\Resources\TeamResource\Pages\ListTeams;
 use AdvisingApp\Team\Filament\Resources\TeamResource\Pages\CreateTeam;
+use AdvisingApp\Team\Filament\Resources\TeamResource\Pages\EditTeam;
+use AdvisingApp\Team\Filament\Resources\TeamResource\Pages\ListTeams;
+use AdvisingApp\Team\Filament\Resources\TeamResource\Pages\ViewTeam;
 use AdvisingApp\Team\Filament\Resources\TeamResource\RelationManagers\UsersRelationManager;
+use AdvisingApp\Team\Models\Team;
+use Filament\Resources\Resource;
 
 class TeamResource extends Resource
 {

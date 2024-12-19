@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\InAppCommunication\Providers;
 
-use Filament\Panel;
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\InAppCommunication\InAppCommunicationPlugin;
 use AdvisingApp\InAppCommunication\Models\TwilioConversation;
+use Filament\Panel;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\ServiceProvider;
 
 class InAppCommunicationServiceProvider extends ServiceProvider
 {

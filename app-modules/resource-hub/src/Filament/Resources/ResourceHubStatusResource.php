@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\ResourceHub\Filament\Resources;
 
-use Filament\Resources\Resource;
-use App\Filament\Clusters\ResourceHub;
-use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource\Pages\EditResourceHubStatus;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource\Pages\ViewResourceHubStatus;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource\Pages\CreateResourceHubStatus;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource\Pages\EditResourceHubStatus;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource\Pages\ListResourceHubStatuses;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource\Pages\ViewResourceHubStatus;
+use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
+use App\Filament\Clusters\ResourceHub;
+use Filament\Resources\Resource;
 
 class ResourceHubStatusResource extends Resource
 {

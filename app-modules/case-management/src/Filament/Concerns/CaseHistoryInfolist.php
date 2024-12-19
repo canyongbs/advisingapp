@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Concerns;
 
-use Filament\Infolists\Components\TextEntry;
-use AdvisingApp\CaseManagement\Models\CaseHistory;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
+use AdvisingApp\CaseManagement\Models\CaseHistory;
+use Filament\Infolists\Components\TextEntry;
 
 // TODO Re-use this trait across other places where infolist is rendered
 trait CaseHistoryInfolist

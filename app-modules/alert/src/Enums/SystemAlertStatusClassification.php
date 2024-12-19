@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Alert\Enums;
 
-use Filament\Support\Contracts\HasLabel;
 use AdvisingApp\Alert\Models\AlertStatus;
+use Filament\Support\Contracts\HasLabel;
 
 enum SystemAlertStatusClassification: string implements HasLabel
 {

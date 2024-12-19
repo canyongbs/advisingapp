@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\MeetingCenter\Policies;
 
-use App\Enums\Feature;
-use App\Models\Authenticatable;
-use Illuminate\Auth\Access\Response;
-use Illuminate\Support\Facades\Gate;
-use App\Support\FeatureAccessResponse;
-use App\Concerns\PerformsFeatureChecks;
-use App\Concerns\PerformsLicenseChecks;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
+use App\Concerns\PerformsFeatureChecks;
+use App\Concerns\PerformsLicenseChecks;
+use App\Enums\Feature;
+use App\Models\Authenticatable;
 use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
+use App\Support\FeatureAccessResponse;
+use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Facades\Gate;
 
 class CalendarEventPolicy implements PerformsChecksBeforeAuthorization
 {

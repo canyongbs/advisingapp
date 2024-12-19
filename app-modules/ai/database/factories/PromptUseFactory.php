@@ -34,34 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
+namespace AdvisingApp\Ai\Database\Factories;
 
-use AdvisingApp\Task\Histories\TaskHistory;
-use AdvisingApp\Alert\Histories\AlertHistory;
-use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Interaction\Models\Interaction;
-use AdvisingApp\Engagement\Models\EngagementResponse;
-use AdvisingApp\Timeline\Filament\Pages\TimelinePage;
-use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Ai\Models\Prompt;
+use AdvisingApp\Ai\Models\PromptUse;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class ProspectEngagementTimeline extends TimelinePage
+/**
+ * @extends PromptUse
+ */
+class PromptUseFactory extends Factory
 {
-    use ProspectHolisticViewPage;
-
-    protected static string $resource = ProspectResource::class;
-
-    protected static ?string $navigationLabel = 'Timeline';
-
-    public string $emptyStateMessage = 'There are no engagements to show for this prospect.';
-
-    public string $noMoreRecordsMessage = "You have reached the end of this prospect's engagement timeline.";
-
-    public array $modelsToTimeline = [
-        Engagement::class,
-        EngagementResponse::class,
-        AlertHistory::class,
-        TaskHistory::class,
-        Interaction::class,
-    ];
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'prompt_id' => Prompt::factory(),
+            'user_id' => User::factory(),
+        ];
+    }
 }

@@ -34,21 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use Illuminate\Contracts\Support\Htmlable;
-use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Engagement\Filament\ManageRelatedRecords\ManageRelatedEngagementRecords;
-
-class ManageProspectEngagement extends ManageRelatedEngagementRecords
-{
-    use ProspectHolisticViewPage;
-
-    protected static string $resource = ProspectResource::class;
-
-    public function getTitle(): string | Htmlable
+return new class () extends SettingsMigration {
+    public function up(): void
     {
-        return 'Manage Prospect Email and Texts';
+        $this->migrator->rename('portal.resource_hub_portal_service_management', 'portal.resource_hub_portal_case_management');
     }
-}
+
+    public function down(): void
+    {
+        $this->migrator->rename('portal.resource_hub_portal_case_management', 'portal.resource_hub_portal_service_management');
+    }
+};

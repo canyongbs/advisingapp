@@ -37,11 +37,11 @@
 namespace AdvisingApp\ResourceHub\Database\Factories;
 
 use AdvisingApp\Division\Models\Division;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
-use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
+use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
+use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<ResourceHubArticle>

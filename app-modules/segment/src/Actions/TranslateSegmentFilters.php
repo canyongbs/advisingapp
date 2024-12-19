@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Segment\Actions;
 
-use function Livewire\trigger;
-
+use AdvisingApp\Segment\Filament\Resources\SegmentResource\Pages\GetSegmentQuery;
 use AdvisingApp\Segment\Models\Segment;
 use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\Segment\Filament\Resources\SegmentResource\Pages\GetSegmentQuery;
+
+use function Livewire\trigger;
 
 class TranslateSegmentFilters
 {

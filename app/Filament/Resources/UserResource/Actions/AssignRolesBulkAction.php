@@ -36,13 +36,13 @@
 
 namespace App\Filament\Resources\UserResource\Actions;
 
-use App\Models\User;
-use Filament\Support\Enums\MaxWidth;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Checkbox;
-use Filament\Tables\Actions\BulkAction;
-use Filament\Notifications\Notification;
 use AdvisingApp\Authorization\Models\Role;
+use App\Models\User;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Select;
+use Filament\Notifications\Notification;
+use Filament\Support\Enums\MaxWidth;
+use Filament\Tables\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Collection;
 
 class AssignRolesBulkAction extends BulkAction

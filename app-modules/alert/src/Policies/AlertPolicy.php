@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Alert\Policies;
 
-use App\Models\Authenticatable;
 use AdvisingApp\Alert\Models\Alert;
-use Illuminate\Auth\Access\Response;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\Authenticatable;
+use Illuminate\Auth\Access\Response;
 
 class AlertPolicy
 {

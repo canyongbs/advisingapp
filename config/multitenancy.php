@@ -35,25 +35,25 @@
 */
 
 use App\Models\Tenant;
-use Illuminate\Mail\SendQueuedMailable;
-use Illuminate\Queue\CallQueuedClosure;
-use App\Multitenancy\Tasks\SwitchAppUrl;
-use App\Multitenancy\Tasks\SwitchAppName;
-use Illuminate\Events\CallQueuedListener;
-use App\Multitenancy\Tasks\SwitchMailTask;
-use App\Multitenancy\Tasks\PrefixCacheTask;
-use Illuminate\Broadcasting\BroadcastEvent;
 use App\Multitenancy\Tasks\ClearBindingsTask;
-use App\Multitenancy\Tasks\SwitchSessionDriver;
+use App\Multitenancy\Tasks\PrefixCacheTask;
+use App\Multitenancy\Tasks\SwitchAppName;
+use App\Multitenancy\Tasks\SwitchAppUrl;
+use App\Multitenancy\Tasks\SwitchMailTask;
 use App\Multitenancy\Tasks\SwitchS3FilesystemTask;
-use Spatie\Multitenancy\Actions\MigrateTenantAction;
-use App\Multitenancy\Tasks\SwitchTenantDatabasesTask;
-use Illuminate\Notifications\SendQueuedNotifications;
 use App\Multitenancy\Tasks\SwitchS3PublicFilesystemTask;
-use Spatie\Multitenancy\Actions\MakeTenantCurrentAction;
-use Spatie\Multitenancy\TenantFinder\DomainTenantFinder;
+use App\Multitenancy\Tasks\SwitchSessionDriver;
+use App\Multitenancy\Tasks\SwitchTenantDatabasesTask;
+use Illuminate\Broadcasting\BroadcastEvent;
+use Illuminate\Events\CallQueuedListener;
+use Illuminate\Mail\SendQueuedMailable;
+use Illuminate\Notifications\SendQueuedNotifications;
+use Illuminate\Queue\CallQueuedClosure;
 use Spatie\Multitenancy\Actions\ForgetCurrentTenantAction;
 use Spatie\Multitenancy\Actions\MakeQueueTenantAwareAction;
+use Spatie\Multitenancy\Actions\MakeTenantCurrentAction;
+use Spatie\Multitenancy\Actions\MigrateTenantAction;
+use Spatie\Multitenancy\TenantFinder\DomainTenantFinder;
 
 return [
     /*

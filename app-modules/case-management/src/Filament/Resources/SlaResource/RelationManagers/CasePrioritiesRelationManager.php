@@ -36,19 +36,19 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\SlaResource\RelationManagers;
 
-use Filament\Forms\Get;
-use Filament\Tables\Table;
-use Illuminate\Support\Arr;
-use Filament\Forms\Components\Select;
-use Filament\Tables\Columns\TextColumn;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
+use AdvisingApp\CaseManagement\Models\CasePriority;
 use App\Filament\Tables\Columns\IdColumn;
-use Illuminate\Database\Eloquent\Builder;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Get;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Actions\AssociateAction;
 use Filament\Tables\Actions\DissociateAction;
 use Filament\Tables\Actions\DissociateBulkAction;
-use AdvisingApp\CaseManagement\Models\CasePriority;
-use Filament\Resources\RelationManagers\RelationManager;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
 
 class CasePrioritiesRelationManager extends RelationManager
 {

@@ -36,18 +36,18 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Tables;
 
-use Filament\Tables\Table;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
-use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Tables\Filters\QueryBuilder;
-use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
 use Filament\Tables\Filters\QueryBuilder\Constraints\BooleanConstraint;
 use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint;
 use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsRelatedToOperator;
+use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class ProspectsTable
 {

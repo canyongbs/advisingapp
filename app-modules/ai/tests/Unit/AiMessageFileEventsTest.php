@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\AiMessage;
-use Illuminate\Support\Facades\Event;
-use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Events\AiMessageFileForceDeleting;
 use AdvisingApp\Ai\Listeners\DeleteExternalAiMessageFile;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Models\AiMessageFile;
+use AdvisingApp\Ai\Models\AiThread;
+use Illuminate\Support\Facades\Event;
 
 it('dispatches the AiMessageFileForceDeleting event when an AiMessageFile is force deleting', function () {
     $aiMessageFile = AiMessageFile::factory()

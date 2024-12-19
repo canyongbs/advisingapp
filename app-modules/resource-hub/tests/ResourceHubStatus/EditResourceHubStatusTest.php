@@ -34,18 +34,17 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource\Pages\EditResourceHubStatus;
+use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
+use AdvisingApp\ResourceHub\Tests\ResourceHubStatus\RequestFactories\EditResourceHubStatusRequestFactory;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertEquals;
-
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource\Pages\EditResourceHubStatus;
-use AdvisingApp\ResourceHub\Tests\ResourceHubStatus\RequestFactories\EditResourceHubStatusRequestFactory;
 
 // TODO: Write EditResourceHubStatus tests
 //test('A successful action on the EditResourceHubStatus page', function () {});

@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Interaction\Models;
 
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Interaction\Models\Concerns\HasManyInteractions;
 use AdvisingApp\Interaction\Observers\InteractionOutcomeObserver;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @mixin IdeHelperInteractionOutcome

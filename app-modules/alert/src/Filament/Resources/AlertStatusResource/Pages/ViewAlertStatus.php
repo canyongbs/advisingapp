@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Alert\Filament\Resources\AlertStatusResource\Pages;
 
+use AdvisingApp\Alert\Filament\Resources\AlertStatusResource;
 use Filament\Actions\EditAction;
+use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\TextEntry;
-use AdvisingApp\Alert\Filament\Resources\AlertStatusResource;
 
 class ViewAlertStatus extends ViewRecord
 {

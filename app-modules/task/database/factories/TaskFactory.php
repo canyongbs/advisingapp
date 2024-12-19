@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Task\Database\Factories;
 
-use App\Models\User;
-use AdvisingApp\Task\Models\Task;
-use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Task\Enums\TaskStatus;
+use AdvisingApp\Task\Models\Task;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

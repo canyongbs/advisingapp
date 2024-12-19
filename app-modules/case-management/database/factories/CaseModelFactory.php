@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\CaseManagement\Database\Factories;
 
-use App\Models\User;
-use AdvisingApp\Division\Models\Division;
 use AdvisingApp\CaseManagement\Models\CaseModel;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\CaseManagement\Models\CasePriority;
+use AdvisingApp\CaseManagement\Models\CaseStatus;
+use AdvisingApp\Division\Models\Division;
+use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

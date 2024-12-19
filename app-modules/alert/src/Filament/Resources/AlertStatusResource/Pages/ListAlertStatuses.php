@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\Alert\Filament\Resources\AlertStatusResource\Pages;
 
-use Filament\Tables\Table;
+use AdvisingApp\Alert\Filament\Resources\AlertStatusResource;
+use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\CreateAction;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\DeleteAction;
-use AdvisingApp\Alert\Filament\Resources\AlertStatusResource;
+use Filament\Tables\Table;
 
 class ListAlertStatuses extends ListRecords
 {

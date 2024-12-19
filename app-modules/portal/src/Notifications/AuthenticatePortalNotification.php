@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Portal\Notifications;
 
-use AdvisingApp\Portal\Models\PortalAuthentication;
 use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Notification\Notifications\OnDemandNotification;
-use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
+use AdvisingApp\Portal\Models\PortalAuthentication;
 
 class AuthenticatePortalNotification extends BaseNotification implements EmailNotification, OnDemandNotification
 {

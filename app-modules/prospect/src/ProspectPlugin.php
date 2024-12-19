@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Prospect;
 
-use Filament\Panel;
 use Filament\Contracts\Plugin;
+use Filament\Panel;
 
 class ProspectPlugin implements Plugin
 {

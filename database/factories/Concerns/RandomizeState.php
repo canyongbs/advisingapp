@@ -36,11 +36,11 @@
 
 namespace Database\Factories\Concerns;
 
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Collection;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionNamedType;
-use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Factories\Factory;
 
 trait RandomizeState
 {

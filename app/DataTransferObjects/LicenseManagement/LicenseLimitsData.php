@@ -36,9 +36,9 @@
 
 namespace App\DataTransferObjects\LicenseManagement;
 
-use Spatie\LaravelData\Data;
 use Illuminate\Support\Carbon;
 use Spatie\LaravelData\Attributes\MapInputName;
+use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
 #[MapInputName(SnakeCaseMapper::class)]

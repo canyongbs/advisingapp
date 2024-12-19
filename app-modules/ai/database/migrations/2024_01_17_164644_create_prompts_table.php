@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Query\Builder;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 

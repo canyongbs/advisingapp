@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\IntegrationGoogleRecaptcha\Rules;
 
+use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 use Closure;
 use Exception;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Contracts\Validation\ValidationRule;
-use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
+use Illuminate\Support\Facades\Http;
 
 class RecaptchaTokenValid implements ValidationRule
 {

@@ -36,33 +36,33 @@
 
 namespace AdvisingApp\Ai\Filament\Pages\Assistant\Concerns;
 
-use App\Models\User;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
-use Filament\Forms\Form;
-use Filament\Actions\Action;
-use Livewire\Attributes\Locked;
-use AdvisingApp\Team\Models\Team;
-use Livewire\Attributes\Computed;
-use Filament\Actions\StaticAction;
-use Illuminate\Support\Collection;
+use AdvisingApp\Ai\Actions\CreateThread;
+use AdvisingApp\Ai\Enums\AiThreadShareTarget;
+use AdvisingApp\Ai\Jobs\PrepareAiThreadCloning;
+use AdvisingApp\Ai\Jobs\PrepareAiThreadEmailing;
+use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiThread;
-use Livewire\Attributes\Renderless;
+use AdvisingApp\Ai\Rules\RestrictSuperAdmin;
+use AdvisingApp\Ai\Services\Contracts\AiServiceLifecycleHooks;
+use AdvisingApp\Report\Enums\TrackedEventType;
+use AdvisingApp\Report\Jobs\RecordTrackedEvent;
+use AdvisingApp\Team\Models\Team;
+use App\Models\Scopes\WithoutSuperAdmin;
+use App\Models\User;
+use Filament\Actions\Action;
+use Filament\Actions\StaticAction;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
-use Filament\Support\Enums\Alignment;
-use AdvisingApp\Ai\Models\AiAssistant;
-use Filament\Support\Enums\ActionSize;
-use AdvisingApp\Ai\Actions\CreateThread;
-use App\Models\Scopes\WithoutSuperAdmin;
 use Filament\Forms\Components\TextInput;
-use AdvisingApp\Ai\Rules\RestrictSuperAdmin;
-use AdvisingApp\Ai\Enums\AiThreadShareTarget;
-use AdvisingApp\Report\Enums\TrackedEventType;
-use AdvisingApp\Ai\Jobs\PrepareAiThreadCloning;
-use AdvisingApp\Report\Jobs\RecordTrackedEvent;
-use AdvisingApp\Ai\Jobs\PrepareAiThreadEmailing;
-use AdvisingApp\Ai\Services\Contracts\AiServiceLifecycleHooks;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Filament\Support\Enums\ActionSize;
+use Filament\Support\Enums\Alignment;
+use Illuminate\Support\Collection;
+use Livewire\Attributes\Computed;
+use Livewire\Attributes\Locked;
+use Livewire\Attributes\Renderless;
 
 /**
  * @property-read array $customAssistants

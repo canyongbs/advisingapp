@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Portal\Http\Middleware;
 
+use AdvisingApp\Portal\Settings\PortalSettings;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use AdvisingApp\Portal\Settings\PortalSettings;
 
 class EnsureResourceHubPortalIsEnabled
 {

@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources;
 
+use AdvisingApp\CaseManagement\Filament\Resources\ChangeRequestTypeResource\Pages\CreateChangeRequestType;
+use AdvisingApp\CaseManagement\Filament\Resources\ChangeRequestTypeResource\Pages\EditChangeRequestType;
+use AdvisingApp\CaseManagement\Filament\Resources\ChangeRequestTypeResource\Pages\ListChangeRequestTypes;
+use AdvisingApp\CaseManagement\Filament\Resources\ChangeRequestTypeResource\Pages\ViewChangeRequestType;
+use AdvisingApp\CaseManagement\Models\ChangeRequestType;
+use App\Filament\Clusters\CaseManagementAdministration;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Clusters\CaseManagementAdministration;
-use AdvisingApp\CaseManagement\Models\ChangeRequestType;
-use AdvisingApp\CaseManagement\Filament\Resources\ChangeRequestTypeResource\Pages\EditChangeRequestType;
-use AdvisingApp\CaseManagement\Filament\Resources\ChangeRequestTypeResource\Pages\ViewChangeRequestType;
-use AdvisingApp\CaseManagement\Filament\Resources\ChangeRequestTypeResource\Pages\ListChangeRequestTypes;
-use AdvisingApp\CaseManagement\Filament\Resources\ChangeRequestTypeResource\Pages\CreateChangeRequestType;
 
 class ChangeRequestTypeResource extends Resource
 {

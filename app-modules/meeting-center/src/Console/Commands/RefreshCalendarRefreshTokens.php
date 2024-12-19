@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\MeetingCenter\Console\Commands;
 
-use Illuminate\Console\Command;
-use AdvisingApp\MeetingCenter\Models\Calendar;
-use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 use AdvisingApp\MeetingCenter\Jobs\RefreshCalendarRefreshToken;
+use AdvisingApp\MeetingCenter\Models\Calendar;
+use Illuminate\Console\Command;
+use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 
 class RefreshCalendarRefreshTokens extends Command
 {

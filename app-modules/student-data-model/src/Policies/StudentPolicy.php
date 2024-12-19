@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\StudentDataModel\Policies;
 
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
-use AdvisingApp\StudentDataModel\Models\Student;
 
 class StudentPolicy
 {

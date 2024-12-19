@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResource\Pages;
 
-use Filament\Forms\Form;
+use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
+use AdvisingApp\Application\Enums\ApplicationSubmissionStateColorOptions;
+use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResource;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
-use AdvisingApp\Application\Enums\ApplicationSubmissionStateColorOptions;
-use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
-use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResource;
 
 class CreateApplicationSubmissionState extends CreateRecord
 {

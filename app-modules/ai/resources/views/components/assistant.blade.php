@@ -481,6 +481,7 @@
                     userId: @js(auth()->user()->id),
                     threadId: @js($this->thread->id)
                 })"
+                x-on:send-prompt.window="await sendMessage($event.detail.prompt)"
                 wire:key="thread{{ $this->thread->id }}"
             >
                 <div class="flex items-center justify-between gap-3">
@@ -563,9 +564,18 @@
                     >
                         <template x-for="(message, messageIndex) in messages">
                             <div class="group w-full bg-white dark:bg-gray-900">
-                                <div class="m-auto justify-center p-4 text-base md:gap-6 md:py-6">
+                                <div
+                                    class="m-auto justify-center px-4 text-base md:gap-6"
+                                    x-bind:class="{
+                                        'bg-primary-100 dark:bg-primary-900 py-2': message.prompt,
+                                        'py-4 md:py-6': !
+                                            message.prompt
+                                    }"
+                                >
                                     <div
-                                        class="mx-auto flex flex-1 gap-4 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl">
+                                        class="mx-auto flex flex-1 gap-4 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl"
+                                        x-show="! message.prompt"
+                                    >
                                         <div class="relative flex flex-shrink-0 flex-col items-end">
                                             <img
                                                 class="h-8 w-8 rounded-full object-cover object-center"
@@ -623,13 +633,21 @@
                                             </div>
                                         </div>
                                     </div>
+
+                                    <div x-show="message.prompt">
+                                        <span class="font-medium">
+                                            Starting smart prompt:
+                                        </span>
+
+                                        <span x-text="message.prompt"></span>
+                                    </div>
                                 </div>
                             </div>
                         </template>
                     </div>
                 </div>
                 @if (!$this->thread->assistant->archived_at)
-                    <form x-on:submit.prevent="sendMessage">
+                    <form x-on:submit.prevent="sendMessage()">
                         <div
                             class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
                             @if ($this->thread->assistant->model->getService()->supportsMessageFileUploads())

@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Form;
 
-use Filament\Panel;
 use Filament\Contracts\Plugin;
+use Filament\Panel;
 
 class FormPlugin implements Plugin
 {

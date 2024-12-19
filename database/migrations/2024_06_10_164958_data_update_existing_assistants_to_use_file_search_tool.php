@@ -36,8 +36,8 @@
 
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Models\AiAssistant;
-use Illuminate\Database\Migrations\Migration;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4oService;
+use Illuminate\Database\Migrations\Migration;
 
 return new class () extends Migration {
     public function up(): void

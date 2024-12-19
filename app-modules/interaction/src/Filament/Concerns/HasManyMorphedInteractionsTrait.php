@@ -36,19 +36,19 @@
 
 namespace AdvisingApp\Interaction\Filament\Concerns;
 
-use Filament\Tables\Table;
+use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\Prospect\Models\Prospect;
+use App\Filament\Tables\Columns\IdColumn;
 use Carbon\CarbonInterface;
+use Filament\Infolists\Components\Fieldset;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use AdvisingApp\Prospect\Models\Prospect;
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Infolists\Components\Fieldset;
-use Filament\Infolists\Components\TextEntry;
-use AdvisingApp\Interaction\Models\Interaction;
+use Filament\Tables\Table;
 
 trait HasManyMorphedInteractionsTrait
 {

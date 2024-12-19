@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\ResourceHub;
 
-use Filament\Panel;
 use Filament\Contracts\Plugin;
+use Filament\Panel;
 
 class ResourceHubPlugin implements Plugin
 {

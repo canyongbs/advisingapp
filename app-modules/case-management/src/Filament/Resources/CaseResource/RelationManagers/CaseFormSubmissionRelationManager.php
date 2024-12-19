@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseResource\RelationManagers;
 
-use Filament\Tables\Table;
-use Filament\Tables\Actions\ViewAction;
-use Filament\Tables\Columns\TextColumn;
+use AdvisingApp\CaseManagement\Models\CaseFormSubmission;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\RelationManagers\RelationManager;
-use AdvisingApp\CaseManagement\Models\CaseFormSubmission;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
 class CaseFormSubmissionRelationManager extends RelationManager
 {

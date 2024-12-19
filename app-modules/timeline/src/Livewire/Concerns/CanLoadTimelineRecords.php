@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Timeline\Livewire\Concerns;
 
+use AdvisingApp\Timeline\Models\Timeline;
 use Illuminate\Pagination\Cursor;
 use Illuminate\Support\Collection;
-use AdvisingApp\Timeline\Models\Timeline;
 
 trait CanLoadTimelineRecords
 {

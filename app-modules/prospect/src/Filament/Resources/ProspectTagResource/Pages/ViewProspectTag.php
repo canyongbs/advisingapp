@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectTagResource\Pages;
 
+use AdvisingApp\Prospect\Filament\Resources\ProspectTagResource;
 use Filament\Actions\EditAction;
-use Filament\Infolists\Infolist;
-use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use AdvisingApp\Prospect\Filament\Resources\ProspectTagResource;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Pages\ViewRecord;
 
 class ViewProspectTag extends ViewRecord
 {

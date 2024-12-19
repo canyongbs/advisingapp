@@ -36,22 +36,22 @@
 
 namespace AdvisingApp\CaseManagement\Models;
 
-use DateTimeInterface;
-use App\Models\BaseModel;
-use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Model;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\Timeline\Timelines\CaseUpdateTimeline;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use AdvisingApp\CaseManagement\Enums\CaseUpdateDirection;
-use AdvisingApp\Notification\Models\Contracts\Subscribable;
-use AdvisingApp\CaseManagement\Observers\CaseUpdateObserver;
-use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\CaseManagement\Enums\CaseUpdateDirection;
+use AdvisingApp\CaseManagement\Observers\CaseUpdateObserver;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
+use AdvisingApp\Notification\Models\Contracts\Subscribable;
+use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
+use AdvisingApp\Timeline\Timelines\CaseUpdateTimeline;
+use App\Models\BaseModel;
+use DateTimeInterface;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @mixin IdeHelperCaseUpdate

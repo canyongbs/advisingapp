@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Ai\Listeners;
 
+use AdvisingApp\Ai\Events\AssistantFilesFinishedUploading;
 use Filament\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use AdvisingApp\Ai\Events\AssistantFilesFinishedUploading;
 
 class HandleAssistantFilesFinishedUploading implements ShouldQueue
 {

@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Route;
+use AdvisingApp\IntegrationAwsSesEventHandling\Http\Controllers\AwsSesInboundWebhookController;
 use AdvisingApp\Webhook\Http\Middleware\HandleAwsSnsRequest;
 use AdvisingApp\Webhook\Http\Middleware\VerifyAwsSnsRequest;
-use AdvisingApp\IntegrationAwsSesEventHandling\Http\Controllers\AwsSesInboundWebhookController;
+use Illuminate\Support\Facades\Route;
 
 Route::prefix('landlord/api')
     ->as('landlord.api.')

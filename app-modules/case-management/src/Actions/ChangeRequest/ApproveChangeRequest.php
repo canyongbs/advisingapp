@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\CaseManagement\Actions\ChangeRequest;
 
-use App\Models\User;
+use AdvisingApp\CaseManagement\Enums\SystemChangeRequestClassification;
 use AdvisingApp\CaseManagement\Models\ChangeRequest;
 use AdvisingApp\CaseManagement\Models\ChangeRequestStatus;
 use AdvisingApp\CaseManagement\Models\Scopes\ClassifiedAs;
-use AdvisingApp\CaseManagement\Enums\SystemChangeRequestClassification;
+use App\Models\User;
 
 class ApproveChangeRequest
 {

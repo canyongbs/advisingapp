@@ -34,17 +34,14 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;
+use AdvisingApp\CaseManagement\Models\CaseUpdate;
 use App\Models\User;
-
-use function Tests\asSuperAdmin;
-
 use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
-
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\CaseManagement\Models\CaseUpdate;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;
+use function Tests\asSuperAdmin;
 
 test('The correct details are displayed on the ViewCaseUpdate page', function () {
     $caseUpdate = CaseUpdate::factory()->create();
@@ -98,7 +95,7 @@ test('ViewCaseUpdate is gated with proper access control', function () {
 test('ViewCaseUpdate is gated with proper feature access control', function () {
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->serviceManagement = false;
+    $settings->data->addons->caseManagement = false;
 
     $settings->save();
 
@@ -116,7 +113,7 @@ test('ViewCaseUpdate is gated with proper feature access control', function () {
             ])
         )->assertForbidden();
 
-    $settings->data->addons->serviceManagement = true;
+    $settings->data->addons->caseManagement = true;
 
     $settings->save();
 

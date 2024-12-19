@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Application\Database\Factories;
 
-use Illuminate\Support\Facades\Hash;
-use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Application\Models\Application;
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Facades\Hash;
 
 /**
  * @extends Factory<Application>

@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\InAppCommunication;
 
-use Filament\Panel;
-use Filament\Contracts\Plugin;
-use Filament\View\PanelsRenderHook;
-use Illuminate\Support\Facades\Blade;
 use AdvisingApp\InAppCommunication\Filament\Pages\UserChat;
 use AdvisingApp\InAppCommunication\Livewire\ChatNotifications;
+use Filament\Contracts\Plugin;
+use Filament\Panel;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Support\Facades\Blade;
 
 class InAppCommunicationPlugin implements Plugin
 {

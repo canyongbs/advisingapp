@@ -34,14 +34,13 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
-
-use function Tests\asSuperAdmin;
-use function Pest\Laravel\actingAs;
-
+use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
-use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource;
+use App\Models\User;
+
+use function Pest\Laravel\actingAs;
+use function Tests\asSuperAdmin;
 
 test('The correct details are displayed on the ViewProspectSource page', function () {
     $prospectSource = ProspectSource::factory()->create();

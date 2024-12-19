@@ -36,36 +36,36 @@
 
 namespace App\Providers\Filament;
 
-use Filament\Panel;
-use App\Models\Tenant;
-use Filament\PanelProvider;
+use AdvisingApp\Authorization\Filament\Pages\Auth\Login;
+use AdvisingApp\Theme\Settings\ThemeSettings;
 use App\Filament\Pages\Dashboard;
-use Filament\Navigation\MenuItem;
+use App\Filament\Pages\EditProfile;
+use App\Filament\Pages\ProductHealth;
+use App\Models\Tenant;
+use App\Multitenancy\Http\Middleware\NeedsTenant;
 use Filament\Actions\ExportAction;
 use Filament\Actions\ImportAction;
-use App\Filament\Pages\EditProfile;
-use Filament\Tables\Columns\Column;
 use Filament\Forms\Components\Field;
-use App\Filament\Pages\ProductHealth;
-use FilamentTiptapEditor\TiptapEditor;
-use Filament\Infolists\Components\Entry;
-use Filament\Navigation\NavigationGroup;
 use Filament\Http\Middleware\Authenticate;
-use AdvisingApp\Theme\Settings\ThemeSettings;
-use Illuminate\Session\Middleware\StartSession;
-use Illuminate\Cookie\Middleware\EncryptCookies;
-use App\Multitenancy\Http\Middleware\NeedsTenant;
-use Illuminate\Routing\Middleware\SubstituteBindings;
-use Illuminate\Session\Middleware\AuthenticateSession;
-use Illuminate\View\Middleware\ShareErrorsFromSession;
-use AdvisingApp\Authorization\Filament\Pages\Auth\Login;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
-use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
+use Filament\Infolists\Components\Entry;
+use Filament\Navigation\MenuItem;
+use Filament\Navigation\NavigationGroup;
+use Filament\Panel;
+use Filament\PanelProvider;
+use Filament\Tables\Columns\Column;
+use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
-use Spatie\Multitenancy\Http\Middleware\EnsureValidTenantSession;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Session\Middleware\AuthenticateSession;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 use ShuvroRoy\FilamentSpatieLaravelHealth\FilamentSpatieLaravelHealthPlugin;
+use Spatie\Multitenancy\Http\Middleware\EnsureValidTenantSession;
 
 class AdminPanelProvider extends PanelProvider
 {

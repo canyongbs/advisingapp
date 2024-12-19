@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Campaign\Database\Factories;
 
-use Carbon\Carbon;
-use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Enums\CampaignActionType;
+use AdvisingApp\Campaign\Models\Campaign;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

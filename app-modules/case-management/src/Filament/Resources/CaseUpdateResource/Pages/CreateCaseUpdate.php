@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Pages;
 
-use Filament\Resources\Pages\CreateRecord;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;
+use Filament\Resources\Pages\CreateRecord;
 
 class CreateCaseUpdate extends CreateRecord
 {

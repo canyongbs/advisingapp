@@ -36,25 +36,25 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages;
 
-use Filament\Tables\Table;
+use AdvisingApp\CaseManagement\Enums\SlaComplianceStatus;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
+use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\CaseManagement\Models\CasePriority;
+use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSearch;
+use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSort;
+use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\CreateAction;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-use AdvisingApp\CaseManagement\Models\CaseModel;
-use AdvisingApp\CaseManagement\Models\CasePriority;
-use AdvisingApp\CaseManagement\Enums\SlaComplianceStatus;
-use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSort;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
-use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSearch;
 
 class ListCases extends ListRecords
 {

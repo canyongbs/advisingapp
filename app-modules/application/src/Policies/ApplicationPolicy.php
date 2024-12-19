@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Application\Policies;
 
-use App\Enums\Feature;
-use App\Models\Authenticatable;
-use Illuminate\Auth\Access\Response;
-use App\Concerns\PerformsFeatureChecks;
-use App\Concerns\PerformsLicenseChecks;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Concerns\PerformsFeatureChecks;
+use App\Concerns\PerformsLicenseChecks;
+use App\Enums\Feature;
+use App\Models\Authenticatable;
 use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
+use Illuminate\Auth\Access\Response;
 
 class ApplicationPolicy implements PerformsChecksBeforeAuthorization
 {

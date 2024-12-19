@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Engagement\Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
+use Illuminate\Database\Seeder;
 
 class EngagementSeeder extends Seeder
 {

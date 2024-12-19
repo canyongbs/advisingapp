@@ -36,13 +36,16 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\PromptResource\Pages;
 
-use Filament\Forms\Form;
-use Filament\Forms\Components\Select;
+use AdvisingApp\Ai\Filament\Resources\PromptResource;
+use App\Features\SmartPromptsFeature;
+use App\Models\Authenticatable;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
+use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
-use AdvisingApp\Ai\Filament\Resources\PromptResource;
 
 class CreatePrompt extends CreateRecord
 {
@@ -72,6 +75,15 @@ class CreatePrompt extends CreateRecord
                             ->required()
                             ->string()
                             ->columnSpanFull(),
+                        ToggleButtons::make('is_smart')
+                            ->label('Kind')
+                            ->options([
+                                0 => 'Custom',
+                                1 => 'Smart',
+                            ])
+                            ->default(false)
+                            ->grouped()
+                            ->visible(SmartPromptsFeature::active() && auth()->user()->hasRole(Authenticatable::SUPER_ADMIN_ROLE)),
                     ]),
             ]);
     }

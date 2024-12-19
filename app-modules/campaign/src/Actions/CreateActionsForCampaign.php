@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Campaign\Actions;
 
-use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\DataTransferObjects\CampaignActionsCreationData;
+use AdvisingApp\Campaign\Models\Campaign;
 
 class CreateActionsForCampaign
 {

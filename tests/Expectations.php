@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-use Pest\Arch\Expectations\Targeted;
-use Pest\Arch\Support\FileLineFinder;
 use Pest\Arch\Contracts\ArchExpectation;
+use Pest\Arch\Expectations\Targeted;
 use Pest\Arch\Objects\ObjectDescription;
+use Pest\Arch\Support\FileLineFinder;
 
 expect()->extend('toHaveDefaultsForAllProperties', function (): ArchExpectation {
     return Targeted::make(

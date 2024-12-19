@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Timeline\Timelines;
 
-use Filament\Actions\ViewAction;
-use AdvisingApp\Timeline\Models\CustomTimeline;
-use AdvisingApp\CaseManagement\Models\CaseUpdate;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Components\CaseUpdateViewAction;
+use AdvisingApp\CaseManagement\Models\CaseUpdate;
+use AdvisingApp\Timeline\Models\CustomTimeline;
+use Filament\Actions\ViewAction;
 
 // TODO Decide where these belong - might want to keep these in the context of the original module
 class CaseUpdateTimeline extends CustomTimeline

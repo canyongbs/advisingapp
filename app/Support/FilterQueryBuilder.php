@@ -36,8 +36,8 @@
 
 namespace App\Support;
 
-use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
 
 class FilterQueryBuilder
 {

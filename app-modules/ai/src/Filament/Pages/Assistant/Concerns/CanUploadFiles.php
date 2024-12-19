@@ -37,8 +37,8 @@
 namespace AdvisingApp\Ai\Filament\Pages\Assistant\Concerns;
 
 use Filament\Actions\Action;
-use Livewire\Attributes\Locked;
 use Filament\Forms\Components\FileUpload;
+use Livewire\Attributes\Locked;
 
 trait CanUploadFiles
 {

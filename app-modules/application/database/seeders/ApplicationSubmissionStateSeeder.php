@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Application\Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use AdvisingApp\Application\Models\ApplicationSubmissionState;
-use AdvisingApp\Application\Enums\ApplicationSubmissionStateColorOptions;
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
+use AdvisingApp\Application\Enums\ApplicationSubmissionStateColorOptions;
+use AdvisingApp\Application\Models\ApplicationSubmissionState;
+use Illuminate\Database\Seeder;
 
 class ApplicationSubmissionStateSeeder extends Seeder
 {

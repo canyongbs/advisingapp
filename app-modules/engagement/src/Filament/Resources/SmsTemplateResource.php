@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Engagement\Filament\Resources;
 
-use Filament\Resources\Resource;
-use App\Filament\Clusters\Communication;
-use AdvisingApp\Engagement\Models\SmsTemplate;
+use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource\Pages\CreateSmsTemplate;
 use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource\Pages\EditSmsTemplate;
 use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource\Pages\ListSmsTemplates;
-use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource\Pages\CreateSmsTemplate;
+use AdvisingApp\Engagement\Models\SmsTemplate;
+use App\Filament\Clusters\Communication;
+use Filament\Resources\Resource;
 
 class SmsTemplateResource extends Resource
 {

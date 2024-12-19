@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Route;
 use AdvisingApp\CaseManagement\Livewire\RenderCaseForm;
+use Illuminate\Support\Facades\Route;
 
 Route::middleware('web')
     ->prefix('case-forms')

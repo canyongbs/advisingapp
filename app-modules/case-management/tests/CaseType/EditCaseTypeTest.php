@@ -34,25 +34,20 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\EditCaseType;
+use AdvisingApp\CaseManagement\Models\CaseType;
+use AdvisingApp\CaseManagement\Tests\RequestFactories\EditCaseTypeRequestFactory;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
-
-use function Tests\asSuperAdmin;
-
 use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
-
-use AdvisingApp\Prospect\Models\Prospect;
-
 use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertEquals;
-
-use AdvisingApp\CaseManagement\Models\CaseType;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
-use AdvisingApp\CaseManagement\Tests\RequestFactories\EditCaseTypeRequestFactory;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\EditCaseType;
+use function Tests\asSuperAdmin;
 
 test('A successful action on the EditCaseType page', function () {
     $caseType = CaseType::factory()->create();
@@ -147,7 +142,7 @@ test('EditCaseType is gated with proper access control', function () {
 test('EditCaseType is gated with proper feature access control', function () {
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->serviceManagement = false;
+    $settings->data->addons->caseManagement = false;
 
     $settings->save();
 
@@ -170,7 +165,7 @@ test('EditCaseType is gated with proper feature access control', function () {
     ])
         ->assertForbidden();
 
-    $settings->data->addons->serviceManagement = true;
+    $settings->data->addons->caseManagement = true;
 
     $settings->save();
 

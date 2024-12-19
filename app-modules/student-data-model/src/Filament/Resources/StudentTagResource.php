@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources;
 
-use App\Models\Tag;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentTagResource\Pages\CreateStudentTag;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentTagResource\Pages\EditStudentTag;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentTagResource\Pages\ListStudentTags;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentTagResource\Pages\ViewStudentTag;
 use App\Enums\TagType;
+use App\Filament\Clusters\ConstituentManagement;
+use App\Models\Tag;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Clusters\ConstituentManagement;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentTagResource\Pages\EditStudentTag;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentTagResource\Pages\ViewStudentTag;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentTagResource\Pages\ListStudentTags;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentTagResource\Pages\CreateStudentTag;
 
 class StudentTagResource extends Resource
 {

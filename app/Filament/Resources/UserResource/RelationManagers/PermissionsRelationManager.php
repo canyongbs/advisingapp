@@ -36,13 +36,13 @@
 
 namespace App\Filament\Resources\UserResource\RelationManagers;
 
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
 use App\Filament\Tables\Columns\IdColumn;
-use Filament\Tables\Filters\SelectFilter;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
 
 class PermissionsRelationManager extends RelationManager
 {

@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Survey\Models;
 
-use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
  * @mixin IdeHelperSurveyFieldSubmission

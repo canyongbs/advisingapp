@@ -36,32 +36,32 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Pages\Concerns;
 
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use AdvisingApp\Task\Models\Task;
-use App\Models\Scopes\HasLicense;
-use Filament\Tables\Filters\Filter;
-use Filament\Forms\Components\Select;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
+use AdvisingApp\Task\Filament\Resources\TaskResource\Components\TaskViewAction;
+use AdvisingApp\Task\Models\Task;
+use App\Filament\Resources\UserResource;
+use App\Filament\Tables\Columns\IdColumn;
+use App\Models\Scopes\HasLicense;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\DissociateAction;
+use Filament\Tables\Actions\DissociateBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
-use Illuminate\Database\Eloquent\Model;
-use App\Filament\Resources\UserResource;
-use Filament\Forms\Components\TextInput;
-use AdvisingApp\Prospect\Models\Prospect;
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Tables\Actions\BulkActionGroup;
 use Illuminate\Database\Eloquent\Collection;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Tables\Actions\DissociateAction;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Filament\Tables\Actions\DissociateBulkAction;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\Task\Filament\Resources\TaskResource\Components\TaskViewAction;
+use Illuminate\Database\Eloquent\Model;
 
 trait CanManageEducatableTasks
 {

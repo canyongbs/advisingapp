@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Segment\Providers;
 
-use Filament\Panel;
-use AdvisingApp\Segment\SegmentPlugin;
 use AdvisingApp\Segment\Models\Segment;
-use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Segment\Models\SegmentSubject;
+use AdvisingApp\Segment\SegmentPlugin;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\ServiceProvider;
 
 class SegmentServiceProvider extends ServiceProvider
 {

@@ -34,24 +34,22 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Segment\Models\Segment;
+use AdvisingApp\Campaign\Enums\CampaignActionType;
 use AdvisingApp\Campaign\Models\Campaign;
+use AdvisingApp\Campaign\Models\CampaignAction;
+use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Segment\Enums\SegmentType;
-
-use function PHPUnit\Framework\assertTrue;
-
-use AdvisingApp\MeetingCenter\Models\Event;
+use AdvisingApp\Segment\Models\Segment;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Event as FakeEvent;
 
 use function PHPUnit\Framework\assertCount;
+use function PHPUnit\Framework\assertTrue;
 
-use Illuminate\Database\Eloquent\Collection;
-use AdvisingApp\Campaign\Models\CampaignAction;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Campaign\Enums\CampaignActionType;
-use Illuminate\Support\Facades\Event as FakeEvent;
 use Spatie\LaravelSettings\Events\LoadingSettings;
-use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 
 it('will create the event records for segment', function (Collection $educatables) {
     $segment = Segment::factory()->create([

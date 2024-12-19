@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers;
 
-use Filament\Tables\Table;
-use Filament\Infolists\Infolist;
-use Filament\Tables\Actions\ViewAction;
-use Filament\Tables\Columns\TextColumn;
-use Illuminate\Database\Eloquent\Model;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class EngagementResponsesRelationManager extends RelationManager
 {

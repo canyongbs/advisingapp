@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\MeetingCenter\Actions;
 
-use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Actions\GenerateFormKitSchema;
+use AdvisingApp\Form\Models\Submissible;
 
 class GenerateEventRegistrationFormKitSchema extends GenerateFormKitSchema
 {

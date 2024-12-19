@@ -37,8 +37,8 @@
 use App\Models\Tenant;
 
 use function PHPUnit\Framework\assertEquals;
-use function PHPUnit\Framework\assertNotSame;
 use function PHPUnit\Framework\assertNotEquals;
+use function PHPUnit\Framework\assertNotSame;
 use function PHPUnit\Framework\assertStringContainsString;
 use function PHPUnit\Framework\assertStringNotContainsString;
 

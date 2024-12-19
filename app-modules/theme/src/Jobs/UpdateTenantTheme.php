@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\Theme\Jobs;
 
+use AdvisingApp\Theme\DataTransferObjects\ThemeConfig;
+use AdvisingApp\Theme\Settings\ThemeSettings;
 use App\Models\Tenant;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use Spatie\Multitenancy\Jobs\NotTenantAware;
-use AdvisingApp\Theme\Settings\ThemeSettings;
-use AdvisingApp\Theme\DataTransferObjects\ThemeConfig;
 
 class UpdateTenantTheme implements ShouldQueue, NotTenantAware
 {

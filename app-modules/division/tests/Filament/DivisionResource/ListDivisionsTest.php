@@ -34,11 +34,10 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Division\Filament\Resources\DivisionResource;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
-
-use AdvisingApp\Division\Filament\Resources\DivisionResource;
 
 test('ListDivisions is gated with proper access control', function () {
     $user = User::factory()->create();

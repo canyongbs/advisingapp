@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Survey\Filament\Blocks;
 
-use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlock;
+use AdvisingApp\Form\Models\SubmissibleField;
 
 class LikertScaleSurveyBlock extends FormFieldBlock
 {

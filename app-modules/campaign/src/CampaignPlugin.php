@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Campaign;
 
-use Filament\Panel;
 use Filament\Contracts\Plugin;
+use Filament\Panel;
 
 class CampaignPlugin implements Plugin
 {

@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Report\Models;
 
-use App\Models\BaseModel;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use App\Models\BaseModel;
 
 /**
  * @mixin IdeHelperTrackedEvent

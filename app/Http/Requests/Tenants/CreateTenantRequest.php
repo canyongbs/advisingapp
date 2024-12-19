@@ -37,8 +37,8 @@
 namespace App\Http\Requests\Tenants;
 
 use App\Models\Tenant;
-use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CreateTenantRequest extends FormRequest
 {
@@ -63,7 +63,7 @@ class CreateTenantRequest extends FormRequest
             'addons.onlineForms' => ['required', 'boolean'],
             'addons.onlineSurveys' => ['required', 'boolean'],
             'addons.onlineAdmissions' => ['required', 'boolean'],
-            'addons.serviceManagement' => ['required', 'boolean'],
+            'addons.caseManagement' => ['required', 'boolean'],
             'addons.resourceHub' => ['required', 'boolean'],
             'addons.eventManagement' => ['required', 'boolean'],
             'addons.realtimeChat' => ['required', 'boolean'],

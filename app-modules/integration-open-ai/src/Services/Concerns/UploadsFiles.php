@@ -36,20 +36,20 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Services\Concerns;
 
-use CURLFile;
-use Throwable;
-use Illuminate\Support\Collection;
-use AdvisingApp\Ai\Models\AiThread;
-use Illuminate\Support\Facades\Http;
-use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Models\AiMessageFile;
-use AdvisingApp\Ai\Models\AiAssistantFile;
-use AdvisingApp\Ai\Models\Contracts\AiFile;
 use AdvisingApp\Ai\Exceptions\UploadedFileCouldNotBeProcessed;
-use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadException;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\AiAssistantFile;
+use AdvisingApp\Ai\Models\AiMessageFile;
+use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Models\Contracts\AiFile;
 use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Files\FilesDataTransferObject;
-use AdvisingApp\IntegrationOpenAi\DataTransferObjects\VectorStores\VectorStoresDataTransferObject;
 use AdvisingApp\IntegrationOpenAi\DataTransferObjects\VectorStoreFiles\VectorStoreFilesDataTransferObject;
+use AdvisingApp\IntegrationOpenAi\DataTransferObjects\VectorStores\VectorStoresDataTransferObject;
+use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadException;
+use CURLFile;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Http;
+use Throwable;
 
 trait UploadsFiles
 {

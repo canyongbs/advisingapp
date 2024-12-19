@@ -36,19 +36,19 @@
 
 namespace AdvisingApp\Ai\Jobs;
 
-use App\Models\User;
-use Illuminate\Bus\Batch;
-use Illuminate\Support\Str;
-use Illuminate\Bus\Queueable;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Ai\Enums\AiThreadShareTarget;
 use AdvisingApp\Ai\Models\AiThread;
-use Illuminate\Support\Facades\Bus;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
+use AdvisingApp\Team\Models\Team;
+use App\Models\User;
+use Filament\Notifications\Notification as FilamentNotification;
+use Illuminate\Bus\Batch;
+use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use AdvisingApp\Ai\Enums\AiThreadShareTarget;
-use Filament\Notifications\Notification as FilamentNotification;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Str;
 
 class PrepareAiThreadCloning implements ShouldQueue
 {

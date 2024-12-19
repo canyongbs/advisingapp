@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\MeetingCenter\Console\Commands;
 
+use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use App\Models\User;
 use Illuminate\Console\Command;
-use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 
 class CreateEvent extends Command

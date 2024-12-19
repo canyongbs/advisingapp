@@ -35,9 +35,9 @@
 */
 
 use AdvisingApp\MeetingCenter\Enums\CalendarProvider;
-use AdvisingApp\MeetingCenter\Livewire\RenderEventRegistrationForm;
 use AdvisingApp\MeetingCenter\Http\Controllers\GoogleCalendarController;
 use AdvisingApp\MeetingCenter\Http\Controllers\OutlookCalendarController;
+use AdvisingApp\MeetingCenter\Livewire\RenderEventRegistrationForm;
 
 Route::middleware(['web', 'auth'])
     ->name('calendar.')

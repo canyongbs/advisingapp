@@ -34,17 +34,17 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
-use AdvisingApp\Task\Models\Task;
-use AdvisingApp\Segment\Models\Segment;
+use AdvisingApp\Campaign\Enums\CampaignActionType;
 use AdvisingApp\Campaign\Models\Campaign;
+use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Segment\Enums\SegmentType;
-use Illuminate\Database\Eloquent\Collection;
-use AdvisingApp\Campaign\Models\CampaignAction;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Campaign\Enums\CampaignActionType;
+use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Task\Models\Task;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 
 it('will create the task records for educatables in the segment', function (Collection $educatables) {
     expect(Task::count())->toBe(0);

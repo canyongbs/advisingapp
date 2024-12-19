@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Form\Listeners;
 
-use AdvisingApp\Prospect\Models\Prospect;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\Form\Events\FormSubmissionCreated;
 use AdvisingApp\Form\Notifications\AuthorLinkedFormSubmissionCreatedNotification;
+use AdvisingApp\Notification\Models\Subscription;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
 class NotifySubscribersOfFormSubmission implements ShouldQueue
 {

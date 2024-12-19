@@ -36,36 +36,36 @@
 
 namespace AdvisingApp\Segment\Filament\Resources\SegmentResource\Pages;
 
-use Iterator;
-use Exception;
-use App\Models\User;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Segment\Enums\SegmentModel;
+use AdvisingApp\Segment\Enums\SegmentType;
+use AdvisingApp\Segment\Filament\Resources\SegmentResource;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\Import;
-use Filament\Forms\Get;
-use Filament\Tables\Table;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
+use App\Models\User;
 use App\Support\ChunkIterator;
-use Filament\Forms\Components\View;
-use Illuminate\Support\Facades\Bus;
+use Exception;
+use Filament\Actions\Imports\Jobs\ImportCsv;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Filament\Tables\Contracts\HasTable;
-use Illuminate\Support\Facades\Storage;
 use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
-use AdvisingApp\Prospect\Models\Prospect;
-use Filament\Forms\Components\FileUpload;
-use Illuminate\Filesystem\AwsS3V3Adapter;
-use AdvisingApp\Segment\Enums\SegmentType;
+use Filament\Forms\Components\View;
 use Filament\Forms\Components\Wizard\Step;
-use Filament\Resources\Pages\CreateRecord;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use Filament\Actions\Imports\Jobs\ImportCsv;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Filament\Tables\Concerns\InteractsWithTable;
-use AdvisingApp\Segment\Filament\Resources\SegmentResource;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Filament\Forms\Get;
 use Filament\Notifications\Actions\Action as NotificationAction;
+use Filament\Notifications\Notification;
+use Filament\Resources\Pages\CreateRecord;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Table;
+use Illuminate\Filesystem\AwsS3V3Adapter;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Iterator;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class CreateSegment extends CreateRecord implements HasTable
 {

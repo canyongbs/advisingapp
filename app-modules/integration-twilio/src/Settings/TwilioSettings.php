@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\IntegrationTwilio\Settings;
 
-use App\Settings\IntegrationSettings;
 use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioApiKey;
+use App\Settings\IntegrationSettings;
 
 class TwilioSettings extends IntegrationSettings
 {

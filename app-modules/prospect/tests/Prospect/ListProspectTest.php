@@ -34,18 +34,17 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
-
-use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
-
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Prospect\Models\ProspectSource;
-use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ListProspects;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\ProspectSource;
+use AdvisingApp\Prospect\Models\ProspectStatus;
+use App\Models\User;
+
+use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
 
 // TODO: Write ListProspects page test
 //test('The correct details are displayed on the ListProspects page', function () {});

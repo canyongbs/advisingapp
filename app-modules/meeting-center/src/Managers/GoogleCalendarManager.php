@@ -36,22 +36,22 @@
 
 namespace AdvisingApp\MeetingCenter\Managers;
 
+use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
+use AdvisingApp\MeetingCenter\Models\Calendar;
+use AdvisingApp\MeetingCenter\Models\CalendarEvent;
+use AdvisingApp\MeetingCenter\Notifications\CalendarRequiresReconnectNotification;
+use AdvisingApp\MeetingCenter\Settings\GoogleCalendarSettings;
 use DateTime;
+use DateTimeInterface;
 use Exception;
 use Google\Client;
-use DateTimeInterface;
-use Google\Service\Oauth2;
-use Illuminate\Support\Carbon;
+use Google\Service\Calendar as GoogleCalendar;
+use Google\Service\Calendar\CalendarListEntry;
 use Google\Service\Calendar\Event;
 use Google\Service\Calendar\EventAttendee;
 use Google\Service\Calendar\EventDateTime;
-use AdvisingApp\MeetingCenter\Models\Calendar;
-use Google\Service\Calendar as GoogleCalendar;
-use Google\Service\Calendar\CalendarListEntry;
-use AdvisingApp\MeetingCenter\Models\CalendarEvent;
-use AdvisingApp\MeetingCenter\Settings\GoogleCalendarSettings;
-use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
-use AdvisingApp\MeetingCenter\Notifications\CalendarRequiresReconnectNotification;
+use Google\Service\Oauth2;
+use Illuminate\Support\Carbon;
 
 class GoogleCalendarManager implements CalendarInterface
 {

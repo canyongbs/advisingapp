@@ -1,7 +1,7 @@
 <?php
 
-use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\Authorization\Models\Permission;
+use AdvisingApp\Authorization\Models\Role;
 
 /*
 <COPYRIGHT>

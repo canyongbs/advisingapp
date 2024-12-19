@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Middleware\CheckOlympusKey;
 use AdvisingApp\StudentDataModel\Http\Controllers\UpdateStudentInformationSystemSettingsController;
+use App\Http\Middleware\CheckOlympusKey;
+use Illuminate\Support\Facades\Route;
 
 Route::prefix('api')
     ->middleware([

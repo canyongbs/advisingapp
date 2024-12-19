@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Form\Database\Factories;
 
-use Illuminate\Support\Str;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormField;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -81,21 +80,6 @@ class FormFactory extends Factory
                     ])->all(),
                 ];
                 $form->save();
-            }
-
-            if ($form->submissions()->doesntExist()) {
-                for ($i = 0; $i < rand(1, 3); $i++) {
-                    $submission = $form->submissions()->create([
-                        'submitted_at' => now(),
-                    ]);
-
-                    foreach ($form->fields as $field) {
-                        $submission->fields()->attach(
-                            $field,
-                            ['id' => Str::orderedUuid(), 'response' => fake()->words(rand(1, 10), true)],
-                        );
-                    }
-                }
             }
         });
     }

@@ -36,19 +36,19 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\RelationManagers;
 
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Filament\Forms\Components\Select;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
+use AdvisingApp\CaseManagement\Filament\Resources\SlaResource;
+use AdvisingApp\CaseManagement\Models\CasePriority;
 use App\Filament\Tables\Columns\IdColumn;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
-use AdvisingApp\CaseManagement\Models\CasePriority;
-use Filament\Resources\RelationManagers\RelationManager;
-use AdvisingApp\CaseManagement\Filament\Resources\SlaResource;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
 class CasePrioritiesRelationManager extends RelationManager
 {

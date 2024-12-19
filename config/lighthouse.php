@@ -36,27 +36,27 @@
 
 declare(strict_types = 1);
 
-use GraphQL\Error\DebugFlag;
-use GraphQL\Validator\Rules\QueryDepth;
-use GraphQL\Validator\Rules\QueryComplexity;
-use GraphQL\Validator\Rules\DisableIntrospection;
-use Nuwave\Lighthouse\Http\Middleware\AcceptJson;
 use App\GraphQL\Execution\IntegrationErrorHandler;
-use Nuwave\Lighthouse\Validation\ValidateDirective;
-use Nuwave\Lighthouse\Execution\ReportingErrorHandler;
-use Nuwave\Lighthouse\Schema\Directives\TrimDirective;
-use Nuwave\Lighthouse\Execution\ValidationErrorHandler;
-use Nuwave\Lighthouse\Subscriptions\SubscriptionRouter;
-use Nuwave\Lighthouse\Schema\Directives\SpreadDirective;
-use Nuwave\Lighthouse\Execution\AuthorizationErrorHandler;
-use Nuwave\Lighthouse\Schema\Directives\DropArgsDirective;
-use Nuwave\Lighthouse\Schema\Directives\SanitizeDirective;
-use Nuwave\Lighthouse\Tracing\ApolloTracing\ApolloTracing;
-use Nuwave\Lighthouse\Execution\AuthenticationErrorHandler;
-use Nuwave\Lighthouse\Schema\Directives\RenameArgsDirective;
-use Nuwave\Lighthouse\Schema\Directives\TransformArgsDirective;
+use GraphQL\Error\DebugFlag;
+use GraphQL\Validator\Rules\DisableIntrospection;
+use GraphQL\Validator\Rules\QueryComplexity;
+use GraphQL\Validator\Rules\QueryDepth;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
+use Nuwave\Lighthouse\Execution\AuthenticationErrorHandler;
+use Nuwave\Lighthouse\Execution\AuthorizationErrorHandler;
+use Nuwave\Lighthouse\Execution\ReportingErrorHandler;
+use Nuwave\Lighthouse\Execution\ValidationErrorHandler;
+use Nuwave\Lighthouse\Http\Middleware\AcceptJson;
 use Nuwave\Lighthouse\Schema\Directives\ConvertEmptyStringsToNullDirective;
+use Nuwave\Lighthouse\Schema\Directives\DropArgsDirective;
+use Nuwave\Lighthouse\Schema\Directives\RenameArgsDirective;
+use Nuwave\Lighthouse\Schema\Directives\SanitizeDirective;
+use Nuwave\Lighthouse\Schema\Directives\SpreadDirective;
+use Nuwave\Lighthouse\Schema\Directives\TransformArgsDirective;
+use Nuwave\Lighthouse\Schema\Directives\TrimDirective;
+use Nuwave\Lighthouse\Subscriptions\SubscriptionRouter;
+use Nuwave\Lighthouse\Tracing\ApolloTracing\ApolloTracing;
+use Nuwave\Lighthouse\Validation\ValidateDirective;
 
 return [
     /*

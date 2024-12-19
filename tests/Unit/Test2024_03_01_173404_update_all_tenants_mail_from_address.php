@@ -35,10 +35,9 @@
 */
 
 use App\Models\Tenant;
+use Database\Factories\TenantFactory;
 
 use function Pest\Laravel\artisan;
-
-use Database\Factories\TenantFactory;
 
 it('changes tenant mail from address if it is hello@example.com', function () {
     $tenant = Tenant::factory()

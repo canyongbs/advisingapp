@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages;
 
-use Filament\Forms\Get;
-use Filament\Forms\Form;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
 use Filament\Forms\Components\Group;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Pages\CreateRecord;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
 
 class CreateCaseType extends CreateRecord
 {

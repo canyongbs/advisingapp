@@ -36,9 +36,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\JsonResponse;
-use App\Http\Requests\SetAzureSsoSettingRequest;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
+use App\Http\Requests\SetAzureSsoSettingRequest;
+use Illuminate\Http\JsonResponse;
 
 class UpdateAzureSsoSettingsController extends Controller
 {

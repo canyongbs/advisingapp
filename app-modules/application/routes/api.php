@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Route;
 use AdvisingApp\Application\Http\Controllers\ApplicationWidgetController;
-use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
 use AdvisingApp\Application\Http\Middleware\EnsureOnlineAdmissionsFeatureIsActive;
+use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
+use Illuminate\Support\Facades\Route;
 
 Route::prefix('api')
     ->middleware([

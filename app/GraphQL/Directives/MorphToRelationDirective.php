@@ -38,24 +38,27 @@ declare(strict_types = 1);
 
 namespace App\GraphQL\Directives;
 
-use function is_a;
-use function reset;
 use function array_merge;
 
 use GraphQL\Language\DirectiveLocation;
-use LastDragon_ru\LaraASP\Eloquent\ModelHelper;
-use LastDragon_ru\LaraASP\GraphQL\Builder\Property;
-use Nuwave\Lighthouse\Execution\Arguments\Argument;
-use Nuwave\Lighthouse\Execution\Arguments\ArgumentSet;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+
+use function is_a;
+
+use LastDragon_ru\LaraASP\Eloquent\ModelHelper;
 use LastDragon_ru\LaraASP\GraphQL\Builder\Contracts\Handler;
-use LastDragon_ru\LaraASP\GraphQL\Builder\Contracts\TypeSource;
 use LastDragon_ru\LaraASP\GraphQL\Builder\Contracts\TypeProvider;
+use LastDragon_ru\LaraASP\GraphQL\Builder\Contracts\TypeSource;
+use LastDragon_ru\LaraASP\GraphQL\Builder\Exceptions\OperatorUnsupportedBuilder;
+use LastDragon_ru\LaraASP\GraphQL\Builder\Property;
+use LastDragon_ru\LaraASP\GraphQL\SearchBy\Definitions\SearchByOperatorPropertyDirective;
+use LastDragon_ru\LaraASP\GraphQL\SearchBy\Exceptions\OperatorInvalidArgumentValue;
 use LastDragon_ru\LaraASP\GraphQL\SearchBy\Operators\BaseOperator;
 use LastDragon_ru\LaraASP\GraphQL\SearchBy\Operators\Complex\RelationType;
-use LastDragon_ru\LaraASP\GraphQL\Builder\Exceptions\OperatorUnsupportedBuilder;
-use LastDragon_ru\LaraASP\GraphQL\SearchBy\Exceptions\OperatorInvalidArgumentValue;
-use LastDragon_ru\LaraASP\GraphQL\SearchBy\Definitions\SearchByOperatorPropertyDirective;
+use Nuwave\Lighthouse\Execution\Arguments\Argument;
+use Nuwave\Lighthouse\Execution\Arguments\ArgumentSet;
+
+use function reset;
 
 class MorphToRelationDirective extends BaseOperator
 {

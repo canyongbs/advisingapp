@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualityResource\Pages;
 
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualityResource;
 use Filament\Actions\EditAction;
-use Filament\Infolists\Infolist;
-use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualityResource;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Pages\ViewRecord;
 
 class ViewResourceHubQuality extends ViewRecord
 {

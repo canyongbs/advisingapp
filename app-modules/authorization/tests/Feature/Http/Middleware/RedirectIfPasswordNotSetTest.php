@@ -36,11 +36,10 @@
 
 use App\Models\User;
 use Filament\Facades\Filament;
-
-use function Pest\Laravel\get;
-use function Pest\Laravel\actingAs;
-
 use Illuminate\Support\Facades\Hash;
+
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
 
 it('redirects if password not set', function () {
     $user = User::factory()->create([

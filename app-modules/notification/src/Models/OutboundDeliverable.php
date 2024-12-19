@@ -36,23 +36,23 @@
 
 namespace AdvisingApp\Notification\Models;
 
-use Carbon\Carbon;
-use App\Models\BaseModel;
-use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use AdvisingApp\Notification\Drivers\SmsDriver;
-use AdvisingApp\Timeline\Models\CustomTimeline;
 use AdvisingApp\CaseManagement\Models\CaseModel;
-use AdvisingApp\Notification\Drivers\EmailDriver;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use AdvisingApp\Notification\Enums\NotificationChannel;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
-use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
-use AdvisingApp\Timeline\Timelines\OutboundDeliverableTimeline;
-use AdvisingApp\Notification\Observers\OutboundDeliverableObserver;
 use AdvisingApp\Notification\Drivers\Contracts\OutboundDeliverableDriver;
+use AdvisingApp\Notification\Drivers\EmailDriver;
+use AdvisingApp\Notification\Drivers\SmsDriver;
+use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
+use AdvisingApp\Notification\Observers\OutboundDeliverableObserver;
+use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
+use AdvisingApp\Timeline\Models\CustomTimeline;
+use AdvisingApp\Timeline\Timelines\OutboundDeliverableTimeline;
+use App\Models\BaseModel;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 
 /**
  * @mixin IdeHelperOutboundDeliverable

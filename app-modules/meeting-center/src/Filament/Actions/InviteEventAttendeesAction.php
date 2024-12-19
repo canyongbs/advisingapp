@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Actions;
 
+use AdvisingApp\MeetingCenter\Jobs\CreateEventAttendees;
+use AdvisingApp\MeetingCenter\Models\Event;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TagsInput;
 use Filament\Notifications\Notification;
-use AdvisingApp\MeetingCenter\Models\Event;
-use AdvisingApp\MeetingCenter\Jobs\CreateEventAttendees;
 
 class InviteEventAttendeesAction extends Action
 {

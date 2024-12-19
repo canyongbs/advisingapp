@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Consent\Providers;
 
-use Filament\Panel;
-use App\Concerns\ImplementsGraphQL;
 use AdvisingApp\Consent\ConsentPlugin;
-use Illuminate\Support\ServiceProvider;
-use AdvisingApp\Consent\Models\ConsentAgreement;
 use AdvisingApp\Consent\Enums\ConsentAgreementType;
+use AdvisingApp\Consent\Models\ConsentAgreement;
 use AdvisingApp\Consent\Models\UserConsentAgreement;
+use App\Concerns\ImplementsGraphQL;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\ServiceProvider;
 
 class ConsentServiceProvider extends ServiceProvider
 {

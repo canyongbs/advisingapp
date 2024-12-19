@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-use Mockery\MockInterface;
-use AdvisingApp\CaseManagement\Models\CaseModel;
-use AdvisingApp\CaseManagement\Exceptions\CaseNumberUpdateAttemptException;
-use AdvisingApp\CaseManagement\Exceptions\CaseNumberExceededReRollsException;
 use AdvisingApp\CaseManagement\Cases\CaseNumber\Contracts\CaseNumberGenerator;
+use AdvisingApp\CaseManagement\Exceptions\CaseNumberExceededReRollsException;
+use AdvisingApp\CaseManagement\Exceptions\CaseNumberUpdateAttemptException;
+use AdvisingApp\CaseManagement\Models\CaseModel;
+use Mockery\MockInterface;
 
 test('An Exception is thrown if it is attempted to change the case_number', function () {
     $case = CaseModel::factory()->create();

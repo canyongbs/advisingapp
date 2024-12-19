@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Report\Filament\Resources;
 
-use Filament\Resources\Resource;
-use AdvisingApp\Report\Models\Report;
+use AdvisingApp\Report\Filament\Resources\ReportResource\Pages\CreateReport;
 use AdvisingApp\Report\Filament\Resources\ReportResource\Pages\EditReport;
 use AdvisingApp\Report\Filament\Resources\ReportResource\Pages\ListReports;
-use AdvisingApp\Report\Filament\Resources\ReportResource\Pages\CreateReport;
+use AdvisingApp\Report\Models\Report;
+use Filament\Resources\Resource;
 
 class ReportResource extends Resource
 {

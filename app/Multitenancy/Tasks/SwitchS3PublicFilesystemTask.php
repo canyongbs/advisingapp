@@ -36,10 +36,10 @@
 
 namespace App\Multitenancy\Tasks;
 
-use Spatie\Multitenancy\Models\Tenant;
-use Illuminate\Support\Facades\Storage;
-use Spatie\Multitenancy\Tasks\SwitchTenantTask;
 use App\Multitenancy\DataTransferObjects\TenantConfig;
+use Illuminate\Support\Facades\Storage;
+use Spatie\Multitenancy\Models\Tenant;
+use Spatie\Multitenancy\Tasks\SwitchTenantTask;
 
 class SwitchS3PublicFilesystemTask implements SwitchTenantTask
 {

@@ -37,10 +37,10 @@
 namespace AdvisingApp\ResourceHub\Tests\ResourceHubArticle\RequestFactories;
 
 use AdvisingApp\Division\Models\Division;
-use Worksome\RequestFactories\RequestFactory;
-use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
-use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
+use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
+use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
+use Worksome\RequestFactories\RequestFactory;
 
 class CreateResourceHubArticleRequestFactory extends RequestFactory
 {

@@ -36,21 +36,21 @@
 
 namespace AdvisingApp\CaseManagement\Models;
 
-use Exception;
-use App\Models\BaseModel;
-use Illuminate\Support\Str;
-use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Model;
+use AdvisingApp\CaseManagement\Observers\CaseHistoryObserver;
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Prospect\Models\Prospect;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\Timeline\Timelines\CaseHistoryTimeline;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
-use AdvisingApp\CaseManagement\Observers\CaseHistoryObserver;
+use AdvisingApp\Timeline\Timelines\CaseHistoryTimeline;
+use App\Models\BaseModel;
+use Exception;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 /**
  * @mixin IdeHelperCaseHistory

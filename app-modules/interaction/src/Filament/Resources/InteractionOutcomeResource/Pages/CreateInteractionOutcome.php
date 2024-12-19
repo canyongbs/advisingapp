@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionOutcomeResource\Pages;
 
-use Filament\Resources\Pages\CreateRecord;
 use AdvisingApp\Interaction\Filament\Resources\InteractionOutcomeResource;
+use Filament\Resources\Pages\CreateRecord;
 
 class CreateInteractionOutcome extends CreateRecord
 {

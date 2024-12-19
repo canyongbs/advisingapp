@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\CaseManagement\Observers;
 
-use AdvisingApp\CaseManagement\Models\CaseFormSubmission;
 use AdvisingApp\CaseManagement\Actions\Case\CreateCaseFromSubmission;
+use AdvisingApp\CaseManagement\Models\CaseFormSubmission;
 
 class CaseFormSubmissionObserver
 {

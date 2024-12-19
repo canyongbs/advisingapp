@@ -34,32 +34,29 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
+use AdvisingApp\Alert\Models\AlertStatus;
+use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableActivityFeedWidget;
+use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableAlertsWidget;
+use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableCareTeamWidget;
+use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableSubscriptionsWidget;
+use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableTasksWidget;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ApplicationSubmissionsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementFilesRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EnrollmentsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EventsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\FormSubmissionsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\InteractionsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ProgramsRelationManager;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
-
-use function Tests\asSuperAdmin;
-
 use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
-
-use AdvisingApp\Alert\Models\AlertStatus;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
-use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableTasksWidget;
-use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableAlertsWidget;
-use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableCareTeamWidget;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EventsRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableActivityFeedWidget;
-use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableSubscriptionsWidget;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ProgramsRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementsRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EnrollmentsRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\InteractionsRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementFilesRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\FormSubmissionsRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ApplicationSubmissionsRelationManager;
+use function Tests\asSuperAdmin;
 
 it('requires proper access', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();

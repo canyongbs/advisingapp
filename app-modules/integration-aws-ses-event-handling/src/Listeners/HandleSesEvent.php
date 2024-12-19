@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\IntegrationAwsSesEventHandling\Listeners;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesEvent;
 use AdvisingApp\Notification\Actions\UpdateOutboundDeliverableEmailStatus;
 use AdvisingApp\Notification\Events\CouldNotFindOutboundDeliverableFromExternalReference;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
 abstract class HandleSesEvent implements ShouldQueue
 {

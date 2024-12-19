@@ -34,21 +34,18 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource\Pages\ListCaseStatuses;
+use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\CaseManagement\Models\CaseStatus;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
-
-use function Tests\asSuperAdmin;
-
 use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
-
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\CaseManagement\Models\CaseModel;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\CaseManagement\Models\CaseStatus;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource\Pages\ListCaseStatuses;
+use function Tests\asSuperAdmin;
 
 test('The correct details are displayed on the ListCaseStatuses page', function () {
     $caseStatuses = CaseStatus::factory()
@@ -116,7 +113,7 @@ test('ListCaseStatuses is gated with proper access control', function () {
 test('ListCaseStatuses is gated with proper feature access control', function () {
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->serviceManagement = false;
+    $settings->data->addons->caseManagement = false;
 
     $settings->save();
 
@@ -129,7 +126,7 @@ test('ListCaseStatuses is gated with proper feature access control', function ()
             CaseStatusResource::getUrl()
         )->assertForbidden();
 
-    $settings->data->addons->serviceManagement = true;
+    $settings->data->addons->caseManagement = true;
 
     $settings->save();
 

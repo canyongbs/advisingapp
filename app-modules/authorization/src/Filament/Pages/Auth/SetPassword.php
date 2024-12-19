@@ -36,24 +36,24 @@
 
 namespace AdvisingApp\Authorization\Filament\Pages\Auth;
 
-use Filament\Panel;
+use AdvisingApp\Authorization\Http\Middleware\RedirectIfPasswordNotSet;
 use App\Models\User;
-use Filament\Forms\Form;
+use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
+use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Filament\Actions\Action;
-use Filament\Facades\Filament;
-use Filament\Pages\SimplePage;
 use Filament\Actions\ActionGroup;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Route;
-use Filament\Pages\Concerns\HasRoutes;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 use Filament\Notifications\Notification;
-use Illuminate\Validation\Rules\Password;
-use DanHarrin\LivewireRateLimiting\WithRateLimiting;
+use Filament\Pages\Concerns\HasRoutes;
 use Filament\Pages\Concerns\InteractsWithFormActions;
-use AdvisingApp\Authorization\Http\Middleware\RedirectIfPasswordNotSet;
-use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
+use Filament\Pages\SimplePage;
+use Filament\Panel;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Validation\Rules\Password;
 
 /**
  * @property-read Form $form

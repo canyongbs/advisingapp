@@ -36,10 +36,10 @@
 
 namespace App\Filament\Widgets;
 
-use Illuminate\Support\Number;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Support\Number;
 
 class TotalStudents extends StatsOverviewWidget
 {

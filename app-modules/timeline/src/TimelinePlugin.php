@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Timeline;
 
-use Filament\Panel;
 use Filament\Contracts\Plugin;
+use Filament\Panel;
 
 class TimelinePlugin implements Plugin
 {

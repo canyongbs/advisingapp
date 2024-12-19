@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseFormResource\Pages;
 
-use Filament\Forms\Form;
-use Filament\Resources\Pages\CreateRecord;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseFormResource;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseFormResource\Pages\Concerns\HasSharedFormConfiguration;
+use Filament\Forms\Form;
+use Filament\Resources\Pages\CreateRecord;
 
 class CreateCaseForm extends CreateRecord
 {

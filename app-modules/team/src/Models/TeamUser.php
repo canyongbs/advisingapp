@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Team\Models;
 
-use App\Models\User;
 use AdvisingApp\Team\Observers\TeamUserObserver;
-use Illuminate\Database\Eloquent\Relations\Pivot;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
  * @mixin IdeHelperTeamUser

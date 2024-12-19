@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages;
 
-use Filament\Actions\EditAction;
-use Filament\Infolists\Infolist;
-use Filament\Infolists\Components\Group;
-use Filament\Resources\Pages\ViewRecord;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\TextEntry;
-use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseFormResource;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
+use AdvisingApp\CaseManagement\Models\CaseType;
+use Filament\Actions\EditAction;
+use Filament\Infolists\Components\Group;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Pages\ViewRecord;
 
 class ViewCaseType extends ViewRecord
 {

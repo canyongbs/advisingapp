@@ -36,8 +36,8 @@
 
 namespace Database\Migrations\Concerns;
 
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 trait CanModifyPermissions
 {

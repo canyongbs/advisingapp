@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\BasicNeeds\Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsCategory;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\BasicNeeds\Models\BasicNeedsProgram>

@@ -34,12 +34,11 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
-
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource;
 
 test('CreateInteractionType is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();

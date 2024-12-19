@@ -36,22 +36,22 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseResource\RelationManagers;
 
-use App\Models\User;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
+use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
+use AdvisingApp\CaseManagement\Models\CaseAssignment;
+use AdvisingApp\CaseManagement\Models\CaseModel;
+use App\Filament\Resources\UserResource;
+use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Scopes\HasLicense;
-use Filament\Tables\Actions\Action;
+use App\Models\User;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use App\Filament\Resources\UserResource;
-use Filament\Forms\Components\TextInput;
-use App\Filament\Tables\Columns\IdColumn;
+use Filament\Tables\Table;
 use Illuminate\Database\Query\Expression;
-use AdvisingApp\CaseManagement\Models\CaseModel;
-use AdvisingApp\CaseManagement\Models\CaseAssignment;
-use Filament\Resources\RelationManagers\RelationManager;
-use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
 
 class AssignedToRelationManager extends RelationManager
 {

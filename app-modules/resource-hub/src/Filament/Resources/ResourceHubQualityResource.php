@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\ResourceHub\Filament\Resources;
 
-use Filament\Resources\Resource;
-use App\Filament\Clusters\ResourceHub;
-use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualityResource\Pages\EditResourceHubQuality;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualityResource\Pages\ViewResourceHubQuality;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualityResource\Pages\CreateResourceHubQuality;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualityResource\Pages\EditResourceHubQuality;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualityResource\Pages\ListResourceHubQualities;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualityResource\Pages\ViewResourceHubQuality;
+use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
+use App\Filament\Clusters\ResourceHub;
+use Filament\Resources\Resource;
 
 class ResourceHubQualityResource extends Resource
 {

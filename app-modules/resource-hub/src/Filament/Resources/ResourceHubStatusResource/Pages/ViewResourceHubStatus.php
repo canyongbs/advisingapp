@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource\Pages;
 
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource;
 use Filament\Actions\EditAction;
-use Filament\Infolists\Infolist;
-use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Pages\ViewRecord;
 
 class ViewResourceHubStatus extends ViewRecord
 {

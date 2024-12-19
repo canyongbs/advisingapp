@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\StudentDataModel;
 
-use Filament\Panel;
 use Filament\Contracts\Plugin;
+use Filament\Panel;
 
 class StudentDataModelPlugin implements Plugin
 {

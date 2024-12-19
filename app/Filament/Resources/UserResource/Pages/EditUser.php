@@ -36,24 +36,24 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
-use Carbon\Carbon;
-use App\Models\User;
-use Filament\Forms\Form;
-use Filament\Actions\Action;
-use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Section;
-use App\Filament\Resources\UserResource;
-use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
-use Filament\Resources\Pages\EditRecord;
-use App\Rules\EmailNotInUseOrSoftDeleted;
-use App\Filament\Forms\Components\Licenses;
 use AdvisingApp\Authorization\Models\License;
-use App\Notifications\SetPasswordNotification;
-use STS\FilamentImpersonate\Pages\Actions\Impersonate;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
+use App\Filament\Forms\Components\Licenses;
+use App\Filament\Resources\UserResource;
+use App\Models\User;
+use App\Notifications\SetPasswordNotification;
+use App\Rules\EmailNotInUseOrSoftDeleted;
+use Carbon\Carbon;
+use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Form;
+use Filament\Notifications\Notification;
+use Filament\Resources\Pages\EditRecord;
+use STS\FilamentImpersonate\Pages\Actions\Impersonate;
 
 class EditUser extends EditRecord
 {

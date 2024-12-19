@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource\Pages;
 
+use AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource;
 
 class EditInteractionStatus extends EditRecord
 {

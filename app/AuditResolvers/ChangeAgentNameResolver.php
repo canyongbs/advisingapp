@@ -36,8 +36,8 @@
 
 namespace App\AuditResolvers;
 
-use OwenIt\Auditing\Contracts\Resolver;
 use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Contracts\Resolver;
 
 class ChangeAgentNameResolver implements Resolver
 {

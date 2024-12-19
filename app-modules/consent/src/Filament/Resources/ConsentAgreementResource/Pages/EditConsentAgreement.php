@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages;
 
+use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Contracts\Support\Htmlable;
-use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource;
 
 class EditConsentAgreement extends EditRecord
 {

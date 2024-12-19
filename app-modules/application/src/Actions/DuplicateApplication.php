@@ -37,8 +37,8 @@
 namespace AdvisingApp\Application\Actions;
 
 use AdvisingApp\Application\Models\Application;
-use AdvisingApp\Application\Models\ApplicationStep;
 use AdvisingApp\Application\Models\ApplicationField;
+use AdvisingApp\Application\Models\ApplicationStep;
 
 class DuplicateApplication
 {

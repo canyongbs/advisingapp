@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Division\Filament\Resources\DivisionResource\RelationManagers;
 
-use Filament\Tables\Table;
-use Filament\Tables\Columns\TextColumn;
 use App\Filament\Tables\Columns\IdColumn;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Actions\AssociateAction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DissociateAction;
 use Filament\Tables\Actions\DissociateBulkAction;
-use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
 class TeamsRelationManager extends RelationManager
 {

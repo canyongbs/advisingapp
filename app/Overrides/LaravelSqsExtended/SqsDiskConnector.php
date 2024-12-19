@@ -39,9 +39,9 @@ declare(strict_types = 1);
 namespace App\Overrides\LaravelSqsExtended;
 
 use Aws\Sqs\SqsClient;
-use Illuminate\Support\Arr;
-use Illuminate\Contracts\Queue\Queue;
 use DefectiveCode\LaravelSqsExtended\SqsDiskConnector as BaseSqsDiskConnector;
+use Illuminate\Contracts\Queue\Queue;
+use Illuminate\Support\Arr;
 
 class SqsDiskConnector extends BaseSqsDiskConnector
 {

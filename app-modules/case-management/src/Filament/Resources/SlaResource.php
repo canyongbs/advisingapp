@@ -36,17 +36,17 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources;
 
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
+use AdvisingApp\CaseManagement\Filament\Resources\SlaResource\Pages\CreateSla;
+use AdvisingApp\CaseManagement\Filament\Resources\SlaResource\Pages\EditSla;
+use AdvisingApp\CaseManagement\Filament\Resources\SlaResource\Pages\ListSlas;
+use AdvisingApp\CaseManagement\Filament\Resources\SlaResource\RelationManagers\CasePrioritiesRelationManager;
 use AdvisingApp\CaseManagement\Models\Sla;
 use App\Filament\Clusters\CaseManagementAdministration;
 use App\Filament\Forms\Components\SecondsDurationInput;
-use AdvisingApp\CaseManagement\Filament\Resources\SlaResource\Pages\EditSla;
-use AdvisingApp\CaseManagement\Filament\Resources\SlaResource\Pages\ListSlas;
-use AdvisingApp\CaseManagement\Filament\Resources\SlaResource\Pages\CreateSla;
-use AdvisingApp\CaseManagement\Filament\Resources\SlaResource\RelationManagers\CasePrioritiesRelationManager;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
 
 class SlaResource extends Resource
 {

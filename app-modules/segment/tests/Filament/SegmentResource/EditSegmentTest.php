@@ -34,13 +34,12 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Segment\Filament\Resources\SegmentResource;
+use AdvisingApp\Segment\Models\Segment;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
-
-use AdvisingApp\Segment\Models\Segment;
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Segment\Filament\Resources\SegmentResource;
 
 test('EditSegment is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();

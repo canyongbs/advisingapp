@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Segment\Database\Factories;
 
-use App\Models\User;
-use AdvisingApp\Segment\Enums\SegmentType;
 use AdvisingApp\Segment\Enums\SegmentModel;
+use AdvisingApp\Segment\Enums\SegmentType;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\BasicNeeds\Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsCategory;
+use Illuminate\Database\Seeder;
 
 class BasicNeedsCategorySeeder extends Seeder
 {

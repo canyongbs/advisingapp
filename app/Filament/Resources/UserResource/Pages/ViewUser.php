@@ -36,21 +36,21 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
-use Carbon\Carbon;
+use AdvisingApp\Authorization\Models\License;
+use App\Filament\Forms\Components\Licenses;
+use App\Filament\Resources\UserResource;
 use App\Models\User;
-use Filament\Forms\Form;
+use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
-use Filament\View\PanelsRenderHook;
-use Illuminate\Contracts\View\View;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
-use App\Filament\Resources\UserResource;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Form;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Facades\FilamentView;
-use App\Filament\Forms\Components\Licenses;
-use AdvisingApp\Authorization\Models\License;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Contracts\View\View;
 use STS\FilamentImpersonate\Pages\Actions\Impersonate;
 
 class ViewUser extends ViewRecord

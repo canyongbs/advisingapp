@@ -36,19 +36,19 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\PromptTypeResource\Pages;
 
-use Filament\Tables\Table;
-use Filament\Actions\CreateAction;
+use AdvisingApp\Ai\Filament\Resources\PromptTypeResource;
 use AdvisingApp\Ai\Models\PromptType;
+use App\Filament\Tables\Columns\IdColumn;
+use Filament\Actions\CreateAction;
+use Filament\Notifications\Notification;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Notifications\Notification;
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-use AdvisingApp\Ai\Filament\Resources\PromptTypeResource;
+use Filament\Tables\Table;
 
 class ListPromptTypes extends ListRecords
 {

@@ -36,21 +36,21 @@
 
 namespace AdvisingApp\Theme\Filament\Pages;
 
-use Throwable;
-use App\Models\User;
+use AdvisingApp\Theme\Settings\ThemeSettings;
+use App\Models\Authenticatable;
 use App\Models\Tenant;
+use App\Models\User;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Filament\Forms\Form;
-use App\Models\Authenticatable;
+use Filament\Notifications\Notification;
 use Filament\Pages\SettingsPage;
 use Illuminate\Support\Facades\DB;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
-use AdvisingApp\Theme\Settings\ThemeSettings;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Throwable;
 
 class ManageBrandConfigurationSettings extends SettingsPage
 {

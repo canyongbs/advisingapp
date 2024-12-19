@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Notification\DataTransferObjects;
 
-use Spatie\LaravelData\Data;
 use AdvisingApp\IntegrationAwsSesEventHandling\DataTransferObjects\SesEventData;
+use Spatie\LaravelData\Data;
 
 class UpdateEmailDeliveryStatusData extends Data
 {

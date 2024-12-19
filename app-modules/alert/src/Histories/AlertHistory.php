@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\Alert\Histories;
 
-use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Model;
-use AdvisingApp\Timeline\Models\History;
-use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\Alert\Enums\AlertSeverity;
-use AdvisingApp\Alert\Observers\AlertHistoryObserver;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use AdvisingApp\Timeline\Timelines\AlertHistoryTimeline;
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
+use AdvisingApp\Alert\Models\AlertStatus;
+use AdvisingApp\Alert\Observers\AlertHistoryObserver;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
+use AdvisingApp\Timeline\Models\History;
+use AdvisingApp\Timeline\Timelines\AlertHistoryTimeline;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 #[ObservedBy([AlertHistoryObserver::class])]
 class AlertHistory extends History implements ProvidesATimeline

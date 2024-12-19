@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\IntegrationAwsSesEventHandling\DataTransferObjects;
 
-use Spatie\LaravelData\Data;
-use Spatie\LaravelData\Optional;
-use Spatie\LaravelData\DataCollection;
 use Spatie\LaravelData\Attributes\DataCollectionOf;
+use Spatie\LaravelData\Data;
+use Spatie\LaravelData\DataCollection;
+use Spatie\LaravelData\Optional;
 
 class SesTopicPreferencesData extends Data
 {

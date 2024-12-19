@@ -34,14 +34,13 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource;
+use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
-
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource;
 
 // TODO: Write ViewResourceHubCategory tests
 //test('The correct details are displayed on the ViewResourceHubCategory page', function () {});

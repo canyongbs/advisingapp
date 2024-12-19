@@ -37,9 +37,9 @@
 namespace App\Filament\Forms\Components;
 
 use BladeUI\Icons\Factory;
-use Illuminate\Support\Facades\File;
 use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\File;
 
 class IconSelect extends Select
 {

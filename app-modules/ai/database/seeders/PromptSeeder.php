@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Ai\Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use AdvisingApp\Ai\Models\Prompt;
+use Illuminate\Database\Seeder;
 
 class PromptSeeder extends Seeder
 {

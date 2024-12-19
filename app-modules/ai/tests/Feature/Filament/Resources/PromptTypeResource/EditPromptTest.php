@@ -34,22 +34,18 @@
 </COPYRIGHT>
 */
 
-use function Pest\Laravel\get;
-
+use AdvisingApp\Ai\Filament\Resources\PromptTypeResource;
+use AdvisingApp\Ai\Filament\Resources\PromptTypeResource\Pages\EditPromptType;
+use AdvisingApp\Ai\Models\PromptType;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use Filament\Actions\DeleteAction;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
-
-use AdvisingApp\Ai\Models\PromptType;
-
-use function Pest\Laravel\assertDatabaseHas;
-use function PHPUnit\Framework\assertNotNull;
 use function Pest\Laravel\assertDatabaseCount;
-
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Ai\Filament\Resources\PromptTypeResource;
-use AdvisingApp\Ai\Filament\Resources\PromptTypeResource\Pages\EditPromptType;
+use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Laravel\get;
+use function Pest\Livewire\livewire;
+use function PHPUnit\Framework\assertNotNull;
 
 /** @var array<LicenseType> $licenses */
 $licenses = [

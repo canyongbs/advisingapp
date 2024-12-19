@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Report\Filament\Pages;
 
-use App\Filament\Clusters\ReportLibrary;
 use AdvisingApp\Report\Abstract\AiReport;
 use AdvisingApp\Report\Filament\Widgets\AiStats;
-use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
-use AdvisingApp\Report\Filament\Widgets\PromptsCreatedLineChart;
 use AdvisingApp\Report\Filament\Widgets\ExchangesByMonthLineChart;
-use AdvisingApp\Report\Filament\Widgets\SpecialActionsDoughnutChart;
 use AdvisingApp\Report\Filament\Widgets\PromptsByCategoryDoughnutChart;
+use AdvisingApp\Report\Filament\Widgets\PromptsCreatedLineChart;
+use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
+use AdvisingApp\Report\Filament\Widgets\SpecialActionsDoughnutChart;
+use App\Filament\Clusters\ReportLibrary;
 
 class ArtificialIntelligence extends AiReport
 {

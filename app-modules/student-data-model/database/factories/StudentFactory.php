@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\StudentDataModel\Database\Factories;
 
+use AdvisingApp\StudentDataModel\Models\Student;
 use Carbon\Carbon;
 use Faker\Provider\en_US\Address;
-use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

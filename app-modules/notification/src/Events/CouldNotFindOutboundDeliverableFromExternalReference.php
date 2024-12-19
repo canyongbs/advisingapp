@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Notification\Events;
 
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Broadcasting\InteractsWithSockets;
 use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
 
 class CouldNotFindOutboundDeliverableFromExternalReference
 {

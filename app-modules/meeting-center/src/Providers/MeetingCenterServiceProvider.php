@@ -36,25 +36,25 @@
 
 namespace AdvisingApp\MeetingCenter\Providers;
 
-use Filament\Panel;
-use App\Models\Tenant;
-use Livewire\Livewire;
-use App\Models\Scopes\SetupIsComplete;
-use Illuminate\Support\ServiceProvider;
-use AdvisingApp\MeetingCenter\Models\Event;
-use Illuminate\Console\Scheduling\Schedule;
-use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Jobs\SyncCalendars;
-use AdvisingApp\MeetingCenter\MeetingCenterPlugin;
-use AdvisingApp\MeetingCenter\Models\CalendarEvent;
-use AdvisingApp\MeetingCenter\Models\EventAttendee;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
-use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
-use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
-use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
 use AdvisingApp\MeetingCenter\Livewire\EventAttendeeSubmissionsManager;
+use AdvisingApp\MeetingCenter\MeetingCenterPlugin;
+use AdvisingApp\MeetingCenter\Models\Calendar;
+use AdvisingApp\MeetingCenter\Models\CalendarEvent;
+use AdvisingApp\MeetingCenter\Models\Event;
+use AdvisingApp\MeetingCenter\Models\EventAttendee;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormAuthentication;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
+use App\Models\Scopes\SetupIsComplete;
+use App\Models\Tenant;
+use Filament\Panel;
+use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\ServiceProvider;
+use Livewire\Livewire;
 
 class MeetingCenterServiceProvider extends ServiceProvider
 {

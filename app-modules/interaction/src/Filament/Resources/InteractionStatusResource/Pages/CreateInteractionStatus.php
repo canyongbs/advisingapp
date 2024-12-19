@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource\Pages;
 
-use Filament\Resources\Pages\CreateRecord;
 use AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource;
+use Filament\Resources\Pages\CreateRecord;
 
 class CreateInteractionStatus extends CreateRecord
 {

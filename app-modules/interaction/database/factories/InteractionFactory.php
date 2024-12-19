@@ -36,19 +36,19 @@
 
 namespace AdvisingApp\Interaction\Database\Factories;
 
-use App\Models\User;
-use AdvisingApp\Division\Models\Division;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\CaseManagement\Models\CaseModel;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Interaction\Models\InteractionType;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\Division\Models\Division;
+use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\InteractionDriver;
-use AdvisingApp\Interaction\Models\InteractionStatus;
+use AdvisingApp\Interaction\Models\InteractionInitiative;
 use AdvisingApp\Interaction\Models\InteractionOutcome;
 use AdvisingApp\Interaction\Models\InteractionRelation;
-use AdvisingApp\Interaction\Models\InteractionInitiative;
+use AdvisingApp\Interaction\Models\InteractionStatus;
+use AdvisingApp\Interaction\Models\InteractionType;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<Interaction>

@@ -36,20 +36,20 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Pages\Concerns;
 
-use App\Models\User;
-use Filament\Tables\Table;
-use App\Models\Scopes\HasLicense;
-use Filament\Forms\Components\Select;
-use Filament\Tables\Columns\TextColumn;
+use AdvisingApp\Notification\Models\Subscription;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Resources\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
+use App\Models\Scopes\HasLicense;
+use App\Models\User;
+use Filament\Forms\Components\Select;
 use Filament\Tables\Actions\AttachAction;
-use Filament\Tables\Actions\DetachAction;
-use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DetachAction;
 use Filament\Tables\Actions\DetachBulkAction;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Notification\Models\Subscription;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 trait CanManageEducatableSubscriptions
 {

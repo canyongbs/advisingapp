@@ -36,14 +36,14 @@
 
 namespace App\Multitenancy\Tasks;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Bus\BatchRepository;
-use Spatie\Multitenancy\Models\Tenant;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Bus\DatabaseBatchRepository;
-use Spatie\Multitenancy\Tasks\SwitchTenantTask;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Spatie\Multitenancy\Concerns\UsesMultitenancyConfig;
 use Spatie\Multitenancy\Exceptions\InvalidConfiguration;
+use Spatie\Multitenancy\Models\Tenant;
+use Spatie\Multitenancy\Tasks\SwitchTenantTask;
 
 class SwitchTenantDatabasesTask implements SwitchTenantTask
 {

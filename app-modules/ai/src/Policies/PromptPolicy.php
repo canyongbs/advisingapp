@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Ai\Policies;
 
-use App\Models\Authenticatable;
 use AdvisingApp\Ai\Models\Prompt;
-use Illuminate\Auth\Access\Response;
-use App\Concerns\PerformsLicenseChecks;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Concerns\PerformsLicenseChecks;
+use App\Models\Authenticatable;
 use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
+use Illuminate\Auth\Access\Response;
 
 class PromptPolicy implements PerformsChecksBeforeAuthorization
 {
@@ -82,6 +82,12 @@ class PromptPolicy implements PerformsChecksBeforeAuthorization
 
     public function update(Authenticatable $authenticatable, Prompt $prompt): Response
     {
+        if ($prompt->is_smart) {
+            return auth()->user()->hasRole(Authenticatable::SUPER_ADMIN_ROLE)
+                ? Response::allow()
+                : Response::deny('You do not have permission to update this smart prompt.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["prompt.{$prompt->getKey()}.update"],
             denyResponse: 'You do not have permission to update this prompt.'
@@ -90,6 +96,12 @@ class PromptPolicy implements PerformsChecksBeforeAuthorization
 
     public function delete(Authenticatable $authenticatable, Prompt $prompt): Response
     {
+        if ($prompt->is_smart) {
+            return auth()->user()->hasRole(Authenticatable::SUPER_ADMIN_ROLE)
+                ? Response::allow()
+                : Response::deny('You do not have permission to delete this smart prompt.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["prompt.{$prompt->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this prompt.'

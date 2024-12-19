@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Task\Filament\Resources\TaskResource\Pages;
 
+use AdvisingApp\Task\Filament\Concerns\TaskEditForm;
+use AdvisingApp\Task\Filament\Resources\TaskResource;
 use Filament\Actions;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\Task\Filament\Concerns\TaskEditForm;
-use AdvisingApp\Task\Filament\Resources\TaskResource;
 
 class EditTask extends EditRecord
 {

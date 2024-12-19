@@ -36,12 +36,12 @@
 
 namespace App\Concerns;
 
-use Illuminate\Support\Facades\Event;
 use GraphQL\Type\Definition\PhpEnumType;
-use Nuwave\Lighthouse\Schema\TypeRegistry;
+use Illuminate\Support\Facades\Event;
 use Nuwave\Lighthouse\Events\BuildSchemaString;
-use Nuwave\Lighthouse\Schema\Source\SchemaStitcher;
 use Nuwave\Lighthouse\Exceptions\DefinitionException;
+use Nuwave\Lighthouse\Schema\Source\SchemaStitcher;
+use Nuwave\Lighthouse\Schema\TypeRegistry;
 
 trait ImplementsGraphQL
 {

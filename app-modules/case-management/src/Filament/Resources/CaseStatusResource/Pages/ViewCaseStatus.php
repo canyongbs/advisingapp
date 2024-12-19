@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource\Pages;
 
+use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource;
+use AdvisingApp\CaseManagement\Models\CaseStatus;
 use Filament\Actions\EditAction;
-use Filament\Infolists\Infolist;
-use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use AdvisingApp\CaseManagement\Models\CaseStatus;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Pages\ViewRecord;
 
 class ViewCaseStatus extends ViewRecord
 {

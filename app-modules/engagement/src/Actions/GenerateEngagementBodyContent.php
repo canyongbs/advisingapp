@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Engagement\Actions;
 
-use Illuminate\Support\HtmlString;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\HtmlString;
 
 class GenerateEngagementBodyContent
 {

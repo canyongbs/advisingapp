@@ -34,11 +34,10 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Ai\Models\AiThread;
 use App\Models\Tenant;
 
 use function Pest\Laravel\artisan;
-
-use AdvisingApp\Ai\Models\AiThread;
 
 it('selects and soft deletes the proper records', function () {
     $notSavedAndOlderThanThreeDays = AiThread::factory()->create(['saved_at' => null, 'created_at' => now()->subDays(4)]);

@@ -36,23 +36,23 @@
 
 namespace AdvisingApp\Engagement\Filament\Resources\Actions;
 
+use AdvisingApp\Ai\Actions\CompletePrompt;
+use AdvisingApp\Ai\Exceptions\MessageResponseException;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
+use App\Settings\LicenseSettings;
 use Closure;
 use Exception;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Illuminate\Support\Str;
-use App\Settings\LicenseSettings;
+use Filament\Notifications\Notification;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Facades\Vite;
-use AdvisingApp\Ai\Models\AiAssistant;
-use Filament\Forms\Components\Textarea;
-use Filament\Notifications\Notification;
-use AdvisingApp\Ai\Actions\CompletePrompt;
-use Filament\Forms\Components\Actions\Action;
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Ai\Exceptions\MessageResponseException;
-use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
+use Illuminate\Support\Str;
 
 class DraftTemplateWithAiAction extends Action
 {

@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Timeline\Actions;
 
-use Carbon\Carbon;
-use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Model;
 use AdvisingApp\Timeline\Exceptions\ModelMustHaveATimeline;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 class AggregatesTimelineRecordsForModel
 {

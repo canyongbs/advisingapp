@@ -36,9 +36,9 @@
 
 namespace App\Listeners;
 
-use Sentry\State\Scope;
-
 use function Sentry\configureScope;
+
+use Sentry\State\Scope;
 
 class ClearSentryUser
 {

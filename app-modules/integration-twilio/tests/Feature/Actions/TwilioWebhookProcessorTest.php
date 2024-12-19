@@ -34,15 +34,13 @@
 </COPYRIGHT>
 */
 
-use function Pest\Laravel\post;
-
+use AdvisingApp\IntegrationTwilio\Actions\MessageReceived;
+use AdvisingApp\IntegrationTwilio\Actions\StatusCallback;
 use Illuminate\Support\Facades\Queue;
 
-use function Tests\loadFixtureFromModule;
+use function Pest\Laravel\post;
 use function Pest\Laravel\withoutMiddleware;
-
-use AdvisingApp\IntegrationTwilio\Actions\StatusCallback;
-use AdvisingApp\IntegrationTwilio\Actions\MessageReceived;
+use function Tests\loadFixtureFromModule;
 
 it('will dispatch the correct job to handle the incoming webhook', function (string $event, string $payloadPath, string $expectedJob, array $unexpectedJobs = []) {
     withoutMiddleware();

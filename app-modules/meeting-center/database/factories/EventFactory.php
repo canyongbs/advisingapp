@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\MeetingCenter\Database\Factories;
 
-use Illuminate\Support\Carbon;
 use AdvisingApp\MeetingCenter\Models\Event;
-use Illuminate\Database\Eloquent\Factories\Factory;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Carbon;
 
 /**
  * @extends Factory<Event>

@@ -36,8 +36,8 @@
 
 namespace App\Policies;
 
-use App\Models\SystemUser;
 use App\Models\Authenticatable;
+use App\Models\SystemUser;
 use Illuminate\Auth\Access\Response;
 
 class SystemUserPolicy

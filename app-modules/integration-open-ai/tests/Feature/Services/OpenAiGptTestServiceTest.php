@@ -34,39 +34,38 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Str;
-use OpenAI\Resources\Threads;
-use OpenAI\Testing\ClientFake;
-
-use function Tests\asSuperAdmin;
-
-use OpenAI\Resources\Assistants;
-use AdvisingApp\Ai\Enums\AiModel;
-use OpenAI\Resources\ThreadsRuns;
-use OpenAI\Resources\VectorStores;
-use AdvisingApp\Ai\Models\AiThread;
-use Illuminate\Http\Client\Request;
-use AdvisingApp\Ai\Models\AiMessage;
-use Illuminate\Support\Facades\Http;
-use OpenAI\Responses\StreamResponse;
-use Illuminate\Support\Facades\Queue;
-use OpenAI\Resources\ThreadsMessages;
-use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Enums\AiApplication;
+use AdvisingApp\Ai\Enums\AiModel;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Settings\AiSettings;
-use OpenAI\Responses\Threads\ThreadResponse;
-use GuzzleHttp\Stream\Stream as GuzzleStream;
+use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use GuzzleHttp\Psr7\Response as GuzzleResponse;
+use GuzzleHttp\Stream\Stream as GuzzleStream;
+use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Str;
+use OpenAI\Resources\Assistants;
+use OpenAI\Resources\Threads;
+use OpenAI\Resources\ThreadsMessages;
+use OpenAI\Resources\ThreadsRuns;
+use OpenAI\Resources\VectorStores;
 use OpenAI\Responses\Assistants\AssistantResponse;
-use OpenAI\Responses\Threads\ThreadDeleteResponse;
-use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
-use OpenAI\Responses\Threads\Runs\ThreadRunListResponse;
-use OpenAI\Responses\Threads\Messages\ThreadMessageResponse;
-use OpenAI\Responses\VectorStores\VectorStoreDeleteResponse;
-use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService;
+use OpenAI\Responses\StreamResponse;
 use OpenAI\Responses\Threads\Messages\ThreadMessageListResponse;
+use OpenAI\Responses\Threads\Messages\ThreadMessageResponse;
+use OpenAI\Responses\Threads\Runs\ThreadRunListResponse;
+use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
+use OpenAI\Responses\Threads\ThreadDeleteResponse;
+use OpenAI\Responses\Threads\ThreadResponse;
+use OpenAI\Responses\VectorStores\VectorStoreDeleteResponse;
+use OpenAI\Testing\ClientFake;
+
+use function Tests\asSuperAdmin;
 
 it('can create an assistant', function () {
     asSuperAdmin();

@@ -36,21 +36,21 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages;
 
-use Filament\Tables\Table;
-use Filament\Actions\CreateAction;
-use Illuminate\Support\Collection;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
-use Filament\Tables\Columns\TextColumn;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\QueryException;
-use Filament\Notifications\Notification;
+use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource;
+use AdvisingApp\Prospect\Models\ProspectStatus;
 use App\Filament\Tables\Columns\IdColumn;
+use Filament\Actions\CreateAction;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use AdvisingApp\Prospect\Models\ProspectStatus;
-use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Collection;
 
 class ListProspectStatuses extends ListRecords
 {

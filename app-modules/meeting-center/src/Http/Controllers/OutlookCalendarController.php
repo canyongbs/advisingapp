@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\MeetingCenter\Http\Controllers;
 
+use AdvisingApp\Authorization\Enums\SocialiteProvider;
+use AdvisingApp\MeetingCenter\Enums\CalendarProvider;
+use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource\Pages\ListCalendarEvents;
+use AdvisingApp\MeetingCenter\Models\Calendar;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Two\User;
-use Illuminate\Http\RedirectResponse;
 use SocialiteProviders\Azure\Provider;
-use AdvisingApp\MeetingCenter\Models\Calendar;
-use AdvisingApp\MeetingCenter\Enums\CalendarProvider;
-use AdvisingApp\Authorization\Enums\SocialiteProvider;
-use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource\Pages\ListCalendarEvents;
 
 class OutlookCalendarController extends CalendarController
 {

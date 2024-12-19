@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Campaign\Actions;
 
+use AdvisingApp\Campaign\Models\CampaignAction;
 use App\Models\Tenant;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use AdvisingApp\Campaign\Models\CampaignAction;
 
 class ExecuteCampaignAction implements ShouldQueue, ShouldBeUnique
 {

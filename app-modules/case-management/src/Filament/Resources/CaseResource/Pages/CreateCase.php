@@ -36,23 +36,23 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages;
 
-use Filament\Forms\Get;
-use Filament\Forms\Set;
-use Filament\Forms\Form;
-use Illuminate\Support\Collection;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
+use AdvisingApp\CaseManagement\Models\CasePriority;
+use AdvisingApp\CaseManagement\Models\CaseStatus;
+use AdvisingApp\CaseManagement\Models\CaseType;
+use AdvisingApp\Division\Models\Division;
+use App\Filament\Forms\Components\EducatableSelect;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use AdvisingApp\Division\Models\Division;
-use Illuminate\Database\Eloquent\Builder;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Resources\Pages\CreateRecord;
-use AdvisingApp\CaseManagement\Models\CaseType;
-use AdvisingApp\CaseManagement\Models\CaseStatus;
 use Filament\Resources\Pages\ManageRelatedRecords;
-use AdvisingApp\CaseManagement\Models\CasePriority;
-use App\Filament\Forms\Components\EducatableSelect;
 use Filament\Resources\RelationManagers\RelationManager;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 class CreateCase extends CreateRecord
 {

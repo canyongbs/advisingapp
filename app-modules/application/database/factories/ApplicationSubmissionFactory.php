@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Application\Database\Factories;
 
-use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Application\Models\Application;
+use AdvisingApp\Application\Models\ApplicationSubmission;
+use AdvisingApp\Application\Models\ApplicationSubmissionState;
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Application\Models\ApplicationSubmission;
-use AdvisingApp\Application\Models\ApplicationSubmissionState;
 
 /**
  * @extends Factory<ApplicationSubmission>

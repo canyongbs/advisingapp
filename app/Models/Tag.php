@@ -36,15 +36,18 @@
 
 namespace App\Models;
 
-use App\Enums\TagType;
-use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Prospect\Models\Prospect;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Enums\TagType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
+/**
+ * @mixin IdeHelperTag
+ */
 class Tag extends BaseModel implements Auditable
 {
     use HasFactory;

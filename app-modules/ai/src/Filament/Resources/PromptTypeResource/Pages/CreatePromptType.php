@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\PromptTypeResource\Pages;
 
-use Filament\Forms\Form;
+use AdvisingApp\Ai\Filament\Resources\PromptTypeResource;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
-use AdvisingApp\Ai\Filament\Resources\PromptTypeResource;
 
 class CreatePromptType extends CreateRecord
 {

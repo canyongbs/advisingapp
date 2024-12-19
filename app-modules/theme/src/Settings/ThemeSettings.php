@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Theme\Settings;
 
-use App\Settings\SettingsWithMedia;
 use AdvisingApp\Theme\Settings\SettingsProperties\ThemeSettingsProperty;
+use App\Settings\SettingsWithMedia;
 
 class ThemeSettings extends SettingsWithMedia
 {

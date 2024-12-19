@@ -36,21 +36,21 @@
 
 namespace App\Jobs;
 
-use App\Models\User;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Authorization\Models\Role;
+use App\Models\Authenticatable;
 use App\Models\Tenant;
-use Illuminate\Support\Arr;
+use App\Models\User;
+use App\Multitenancy\DataTransferObjects\TenantUser;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
-use App\Models\Authenticatable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use AdvisingApp\Authorization\Models\Role;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Spatie\Multitenancy\Jobs\NotTenantAware;
-use AdvisingApp\Authorization\Enums\LicenseType;
-use App\Multitenancy\DataTransferObjects\TenantUser;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Arr;
+use Spatie\Multitenancy\Jobs\NotTenantAware;
 
 class CreateTenantUser implements ShouldQueue, NotTenantAware
 {

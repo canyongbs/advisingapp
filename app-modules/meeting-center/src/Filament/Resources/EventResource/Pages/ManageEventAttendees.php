@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages;
 
-use Filament\Tables\Table;
-use Filament\Tables\Columns\TextColumn;
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Resources\Pages\ManageRelatedRecords;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
 use AdvisingApp\MeetingCenter\Filament\Actions\InviteEventAttendeesAction;
 use AdvisingApp\MeetingCenter\Filament\Actions\Table\ViewEventAttendeeAction;
+use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
+use App\Filament\Tables\Columns\IdColumn;
+use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
 class ManageEventAttendees extends ManageRelatedRecords
 {

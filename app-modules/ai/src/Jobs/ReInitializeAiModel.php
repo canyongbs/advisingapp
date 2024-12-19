@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\Ai\Jobs;
 
+use AdvisingApp\Ai\Actions\ReInitializeAiServiceAssistant;
+use AdvisingApp\Ai\Models\AiAssistant;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
-use AdvisingApp\Ai\Models\AiAssistant;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Spatie\Multitenancy\Jobs\TenantAware;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use AdvisingApp\Ai\Actions\ReInitializeAiServiceAssistant;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Spatie\Multitenancy\Jobs\TenantAware;
 
 class ReInitializeAiModel implements ShouldQueue, TenantAware
 {

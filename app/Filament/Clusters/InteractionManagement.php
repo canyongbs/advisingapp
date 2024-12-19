@@ -36,13 +36,13 @@
 
 namespace App\Filament\Clusters;
 
-use Filament\Clusters\Cluster;
-use AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource;
 use AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource;
-use AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource;
 use AdvisingApp\Interaction\Filament\Resources\InteractionOutcomeResource;
 use AdvisingApp\Interaction\Filament\Resources\InteractionRelationResource;
-use AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource;
+use Filament\Clusters\Cluster;
 
 class InteractionManagement extends Cluster
 {

@@ -36,9 +36,9 @@
 
 namespace App\Concerns;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
-use AdvisingApp\Authorization\Enums\LicenseType;
 
 trait PerformsLicenseChecks
 {

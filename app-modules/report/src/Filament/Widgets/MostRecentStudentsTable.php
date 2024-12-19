@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use Filament\Tables\Table;
-use Livewire\Attributes\On;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Widgets\TableWidget as BaseWidget;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Filament\Widgets\TableWidget as BaseWidget;
+use Livewire\Attributes\On;
 
 class MostRecentStudentsTable extends BaseWidget
 {

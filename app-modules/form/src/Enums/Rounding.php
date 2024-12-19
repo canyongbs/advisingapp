@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Form\Enums;
 
-use Illuminate\Support\Str;
 use Filament\Support\Contracts\HasLabel;
+use Illuminate\Support\Str;
 
 enum Rounding: string implements HasLabel
 {

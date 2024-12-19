@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
-use Filament\Resources\Pages\Page;
+use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Pages\Concerns\HasEducatableActivityFeed;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concerns\HasStudentHeader;
-use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Pages\Concerns\HasEducatableActivityFeed;
+use Filament\Resources\Pages\Page;
 
 class ViewStudentActivityFeed extends Page
 {

@@ -36,38 +36,38 @@
 
 namespace AdvisingApp\Engagement\Models;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use Spatie\MediaLibrary\HasMedia;
-use Illuminate\Support\Collection;
-use Illuminate\Support\HtmlString;
-use Illuminate\Database\Eloquent\Model;
-use League\HTMLToMarkdown\HtmlConverter;
-use OwenIt\Auditing\Contracts\Auditable;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Timeline\Models\Timeline;
-use Illuminate\Database\Eloquent\Builder;
-use Spatie\MediaLibrary\InteractsWithMedia;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\Timeline\Timelines\EngagementTimeline;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use AdvisingApp\Engagement\Observers\EngagementObserver;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Engagement\Actions\GenerateEngagementBodyContent;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
-use AdvisingApp\Notification\Models\Contracts\Subscribable;
-use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
-use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
-use AdvisingApp\Engagement\Actions\GenerateEngagementBodyContent;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
-use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
+use AdvisingApp\Engagement\Observers\EngagementObserver;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
+use AdvisingApp\Notification\Models\Contracts\Subscribable;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
+use AdvisingApp\Timeline\Models\Timeline;
+use AdvisingApp\Timeline\Timelines\EngagementTimeline;
+use App\Models\BaseModel;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
+use Illuminate\Support\HtmlString;
+use League\HTMLToMarkdown\HtmlConverter;
+use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @property-read Educatable $recipient

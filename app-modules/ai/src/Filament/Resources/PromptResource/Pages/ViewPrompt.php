@@ -36,15 +36,17 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\PromptResource\Pages;
 
-use Filament\Actions\Action;
-use Filament\Actions\EditAction;
-use Filament\Infolists\Infolist;
-use AdvisingApp\Ai\Models\Prompt;
-use Filament\Resources\Pages\ViewRecord;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\TextEntry;
 use AdvisingApp\Ai\Filament\Resources\PromptResource;
 use AdvisingApp\Ai\Filament\Resources\PromptTypeResource;
+use AdvisingApp\Ai\Models\Prompt;
+use App\Features\SmartPromptsFeature;
+use App\Models\Authenticatable;
+use Filament\Actions\Action;
+use Filament\Actions\EditAction;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Pages\ViewRecord;
 
 class ViewPrompt extends ViewRecord
 {
@@ -65,7 +67,12 @@ class ViewPrompt extends ViewRecord
                         TextEntry::make('description')
                             ->columnSpanFull(),
                         TextEntry::make('prompt')
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->visible(fn (Prompt $record): bool => ! $record->is_smart || auth()->user()->hasRole(Authenticatable::SUPER_ADMIN_ROLE)),
+                        TextEntry::make('is_smart')
+                            ->label('Kind')
+                            ->state(fn (Prompt $record): string => $record->is_smart ? 'Smart' : 'Custom')
+                            ->visible(SmartPromptsFeature::active()),
                     ]),
             ]);
     }

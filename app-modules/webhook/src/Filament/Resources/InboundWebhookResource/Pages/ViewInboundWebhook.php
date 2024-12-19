@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Webhook\Filament\Resources\InboundWebhookResource\Pages;
 
-use Filament\Infolists\Infolist;
-use Filament\Resources\Pages\ViewRecord;
+use AdvisingApp\Webhook\Filament\Resources\InboundWebhookResource;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use AdvisingApp\Webhook\Filament\Resources\InboundWebhookResource;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Pages\ViewRecord;
 
 class ViewInboundWebhook extends ViewRecord
 {

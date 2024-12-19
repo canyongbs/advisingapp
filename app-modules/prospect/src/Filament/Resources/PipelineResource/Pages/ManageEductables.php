@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\PipelineResource\Pages;
 
+use AdvisingApp\Prospect\Filament\Resources\PipelineResource;
+use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Filament\Tables\Contracts\HasTable;
-use Filament\Forms\Components\TextInput;
-use Filament\Tables\Concerns\InteractsWithTable;
-use Filament\Resources\Pages\ManageRelatedRecords;
-use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
-use AdvisingApp\Prospect\Filament\Resources\PipelineResource;
 
 class ManageEductables extends ManageRelatedRecords implements HasTable
 {

@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources;
 
-use Filament\Resources\Resource;
-use AdvisingApp\MeetingCenter\Models\CalendarEvent;
-use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource\Pages\EditCalendarEvent;
-use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource\Pages\ViewCalendarEvent;
-use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource\Pages\ListCalendarEvents;
 use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource\Pages\CreateCalendarEvent;
+use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource\Pages\EditCalendarEvent;
+use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource\Pages\ListCalendarEvents;
+use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource\Pages\ViewCalendarEvent;
+use AdvisingApp\MeetingCenter\Models\CalendarEvent;
+use Filament\Resources\Resource;
 
 class CalendarEventResource extends Resource
 {

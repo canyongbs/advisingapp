@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages;
 
-use Filament\Forms\Get;
-use Filament\Forms\Form;
+use AdvisingApp\Authorization\Filament\Forms\Components\PermissionsMatrix;
+use AdvisingApp\Authorization\Filament\Resources\RoleResource;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Pages\ViewRecord;
-use AdvisingApp\Authorization\Filament\Resources\RoleResource;
-use AdvisingApp\Authorization\Filament\Forms\Components\PermissionsMatrix;
 
 class ViewRole extends ViewRecord
 {

@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Portal\Models;
 
-use App\Models\BaseModel;
-use Illuminate\Support\Carbon;
 use AdvisingApp\Portal\Enums\PortalType;
 use App\Models\Attributes\NoPermissions;
+use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Carbon;
 
 /**
  * @property Carbon|null $created_at

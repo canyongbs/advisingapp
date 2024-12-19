@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\Ai\Notifications;
 
-use App\Models\User;
-use AdvisingApp\Ai\Models\AiThread;
-use App\Models\NotificationSetting;
 use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
+use App\Models\NotificationSetting;
+use App\Models\User;
 
 class SendAssistantTranscriptNotification extends BaseNotification implements EmailNotification
 {
@@ -71,8 +71,15 @@ class SendAssistantTranscriptNotification extends BaseNotification implements Em
                 ->line("Here is a copy of {$this->sender->name}'s chat with {$this->thread->assistant->name}:");
         }
 
-        $this->thread->messages()->with('user')->get()
+        $this->thread->messages
             ->each(function (AiMessage $threadMessage) use ($senderIsNotifiable, $message) {
+                if ($threadMessage->prompt) {
+                    return $message->line(str("**Starting smart prompt:** {$threadMessage->prompt->title}")
+                        ->markdown()
+                        ->sanitizeHtml()
+                        ->toHtmlString());
+                }
+
                 if (! $threadMessage->user) {
                     return $message->line(str(nl2br($threadMessage->content))
                         ->prepend("**{$this->thread->assistant->name}:** ")

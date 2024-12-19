@@ -1,9 +1,9 @@
 <?php
 
-use App\Models\User;
-use App\Models\SystemUser;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\SystemUser;
+use App\Models\User;
 
 /*
 <COPYRIGHT>

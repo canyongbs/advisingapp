@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-use Mockery\MockInterface;
 use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Events\AiThreadForceDeleting;
 use AdvisingApp\Ai\Listeners\DeleteExternalAiThread;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Threads\ThreadsDataTransferObject;
+use Mockery\MockInterface;
 
 it('deletes vector stores for a thread', function () {
     $aiThread = AiThread::factory()

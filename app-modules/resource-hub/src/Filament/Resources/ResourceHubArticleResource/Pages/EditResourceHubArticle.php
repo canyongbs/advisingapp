@@ -36,20 +36,20 @@
 
 namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages;
 
-use Filament\Forms\Form;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\ResourceHub\Filament\Actions\DraftResourceHubArticleWithAiAction;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource;
+use Filament\Actions\Action as BaseAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Section;
-use FilamentTiptapEditor\TiptapEditor;
-use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Actions\Action as BaseAction;
-use Filament\Forms\Components\Actions\Action;
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource;
-use AdvisingApp\ResourceHub\Filament\Actions\DraftResourceHubArticleWithAiAction;
+use FilamentTiptapEditor\TiptapEditor;
+use Illuminate\Database\Eloquent\Model;
 
 class EditResourceHubArticle extends EditRecord
 {

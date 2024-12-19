@@ -37,8 +37,8 @@
 namespace AdvisingApp\MeetingCenter\Actions;
 
 use AdvisingApp\MeetingCenter\Models\Event;
-use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
 
 class DuplicateEvent
 {

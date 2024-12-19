@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\CaseManagement\Database\Seeders;
 
+use AdvisingApp\CaseManagement\Models\CaseAssignment;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use AdvisingApp\CaseManagement\Models\CaseModel;
-use AdvisingApp\CaseManagement\Models\CaseAssignment;
 
 class CaseSeeder extends Seeder
 {

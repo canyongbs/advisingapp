@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
-use Filament\Tables\Table;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables\Table;
 
 class EnrollmentsRelationManager extends RelationManager
 {

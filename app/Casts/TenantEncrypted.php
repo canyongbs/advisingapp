@@ -37,12 +37,12 @@
 namespace App\Casts;
 
 use App\Models\Tenant;
-use Illuminate\Support\Str;
-use Illuminate\Encryption\Encrypter;
-use Illuminate\Database\Eloquent\Model;
 use App\Multitenancy\Exceptions\TenantAppKeyIsNull;
-use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use App\Multitenancy\Exceptions\UnableToResolveTenantForEncryptionKey;
+use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Encryption\Encrypter;
+use Illuminate\Support\Str;
 
 class TenantEncrypted implements CastsAttributes
 {

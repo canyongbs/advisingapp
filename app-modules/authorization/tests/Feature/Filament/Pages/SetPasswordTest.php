@@ -34,15 +34,14 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Filament\Pages\Auth\SetPassword;
 use App\Models\User;
 use Illuminate\Support\Str;
 
-use function Pest\Laravel\get;
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 use function Pest\Laravel\assertGuest;
-
-use AdvisingApp\Authorization\Filament\Pages\Auth\SetPassword;
+use function Pest\Laravel\get;
+use function Pest\Livewire\livewire;
 
 it('sets the user\'s password', function () {
     $user = User::factory()->create([

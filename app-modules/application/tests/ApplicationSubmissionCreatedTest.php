@@ -34,17 +34,16 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
+use AdvisingApp\Application\Events\ApplicationSubmissionCreated;
+use AdvisingApp\Application\Listeners\NotifySubscribersOfApplicationSubmission;
+use AdvisingApp\Application\Models\ApplicationSubmission;
+use AdvisingApp\Application\Notifications\AuthorLinkedApplicationSubmissionCreatedNotification;
 use App\Models\User;
-
-use function Pest\Laravel\seed;
-
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
-use AdvisingApp\Application\Models\ApplicationSubmission;
-use AdvisingApp\Application\Events\ApplicationSubmissionCreated;
-use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
-use AdvisingApp\Application\Listeners\NotifySubscribersOfApplicationSubmission;
-use AdvisingApp\Application\Notifications\AuthorLinkedApplicationSubmissionCreatedNotification;
+
+use function Pest\Laravel\seed;
 
 it('dispatches ApplicationSubmissionCreated Event when a ApplicationSubmission is created', function () {
     seed(ApplicationSubmissionStateSeeder::class);

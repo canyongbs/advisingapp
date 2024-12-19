@@ -36,8 +36,8 @@
 
 namespace App\Exceptions;
 
-use Exception;
 use App\Enums\Integration;
+use Exception;
 use GraphQL\Error\ClientAware;
 
 class IntegrationException extends Exception implements ClientAware

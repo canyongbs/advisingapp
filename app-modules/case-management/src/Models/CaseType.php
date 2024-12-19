@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\CaseManagement\Models;
 
-use DateTimeInterface;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @mixin IdeHelperCaseType

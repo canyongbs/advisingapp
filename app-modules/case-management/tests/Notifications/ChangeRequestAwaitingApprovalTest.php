@@ -1,10 +1,10 @@
 <?php
 
-use App\Models\User;
-use Illuminate\Support\Facades\Notification;
 use AdvisingApp\CaseManagement\Models\ChangeRequest;
 use AdvisingApp\CaseManagement\Models\ChangeRequestType;
 use AdvisingApp\CaseManagement\Notifications\ChangeRequestAwaitingApprovalNotification;
+use App\Models\User;
+use Illuminate\Support\Facades\Notification;
 
 /*
 <COPYRIGHT>

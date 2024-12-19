@@ -34,20 +34,19 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
+use AdvisingApp\Ai\Actions\CreateThread;
+use AdvisingApp\Ai\Enums\AiApplication;
+use AdvisingApp\Ai\Enums\AiModel;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Services\TestAiService;
+use AdvisingApp\Ai\Settings\AiSettings;
 use App\Models\Tenant;
+use App\Models\User;
 use Mockery\MockInterface;
 
 use function Tests\asSuperAdmin;
-
-use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\AiMessage;
-use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Enums\AiApplication;
-use AdvisingApp\Ai\Settings\AiSettings;
-use AdvisingApp\Ai\Actions\CreateThread;
-use AdvisingApp\Ai\Services\TestAiService;
 
 it('creates a new thread', function () {
     asSuperAdmin();

@@ -36,28 +36,28 @@
 
 namespace AdvisingApp\Ai\Filament\Pages;
 
-use Throwable;
-use App\Models\User;
-use Filament\Forms\Get;
-use Filament\Forms\Form;
-use Filament\Actions\Action;
-use Filament\Pages\SettingsPage;
-use AdvisingApp\Ai\Enums\AiModel;
-use Livewire\Attributes\Computed;
-use Filament\Support\Enums\MaxWidth;
-use AdvisingApp\Ai\Enums\AiMaxTokens;
-use Filament\Forms\Components\Select;
-use AdvisingApp\Ai\Models\AiAssistant;
-use Filament\Forms\Components\Section;
+use AdvisingApp\Ai\Actions\ReInitializeAiServiceAssistant;
+use AdvisingApp\Ai\Actions\ResetAiServiceIdsForAssistant;
 use AdvisingApp\Ai\Enums\AiApplication;
+use AdvisingApp\Ai\Enums\AiMaxTokens;
+use AdvisingApp\Ai\Enums\AiModel;
+use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiSettings;
-use Filament\Forms\Components\Textarea;
-use Filament\Notifications\Notification;
-use App\Filament\Forms\Components\Slider;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Filament\Clusters\ArtificialIntelligence;
-use AdvisingApp\Ai\Actions\ResetAiServiceIdsForAssistant;
-use AdvisingApp\Ai\Actions\ReInitializeAiServiceAssistant;
+use App\Filament\Forms\Components\Slider;
+use App\Models\User;
+use Filament\Actions\Action;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Notifications\Notification;
+use Filament\Pages\SettingsPage;
+use Filament\Support\Enums\MaxWidth;
+use Livewire\Attributes\Computed;
+use Throwable;
 
 /**
  * @property-read ?AiAssistant $defaultAssistant

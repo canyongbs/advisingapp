@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Portal\Http\Controllers\ResourceHub;
 
-use Illuminate\Http\JsonResponse;
-use App\Http\Controllers\Controller;
-use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use AdvisingApp\Portal\DataTransferObjects\ResourceHubCategoryData;
+use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 
 class ResourceHubPortalCategoryController extends Controller
 {

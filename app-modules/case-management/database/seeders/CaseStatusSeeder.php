@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\CaseManagement\Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\CaseManagement\Enums\ColumnColorOptions;
 use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
+use AdvisingApp\CaseManagement\Models\CaseStatus;
+use Illuminate\Database\Seeder;
 
 class CaseStatusSeeder extends Seeder
 {

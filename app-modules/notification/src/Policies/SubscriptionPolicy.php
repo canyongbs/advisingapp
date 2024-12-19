@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Notification\Policies;
 
+use AdvisingApp\Notification\Models\Subscription;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
-use AdvisingApp\Notification\Models\Subscription;
 
 class SubscriptionPolicy
 {

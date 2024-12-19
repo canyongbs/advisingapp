@@ -36,18 +36,18 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource\Pages;
 
-use Filament\Tables\Table;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource;
+use AdvisingApp\CaseManagement\Models\CaseStatus;
+use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\CreateAction;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\TrashedFilter;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-use AdvisingApp\CaseManagement\Models\CaseStatus;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource;
+use Filament\Tables\Table;
 
 class ListCaseStatuses extends ListRecords
 {

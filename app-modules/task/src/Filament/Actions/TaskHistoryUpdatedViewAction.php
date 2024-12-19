@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Task\Filament\Actions;
 
-use Filament\Actions\ViewAction;
-use Filament\Infolists\Components\Section;
 use AdvisingApp\Task\Histories\TaskHistory;
+use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\KeyValueEntry;
+use Filament\Infolists\Components\Section;
 
 class TaskHistoryUpdatedViewAction extends ViewAction
 {

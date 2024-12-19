@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Portal\Settings;
 
-use App\Settings\SettingsWithMedia;
 use AdvisingApp\Portal\Enums\GdprBannerButtonLabel;
 use AdvisingApp\Portal\Settings\SettingsProperties\PortalSettingsProperty;
+use App\Settings\SettingsWithMedia;
 
 class PortalSettings extends SettingsWithMedia
 {
@@ -81,7 +81,7 @@ class PortalSettings extends SettingsWithMedia
      */
     public bool $resource_hub_portal_enabled = false;
 
-    public bool $resource_hub_portal_service_management = false;
+    public bool $resource_hub_portal_case_management = false;
 
     public bool $resource_hub_portal_requires_authentication = false;
 

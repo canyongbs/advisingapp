@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\Ai\Filament\Pages;
 
-use App\Models\User;
-use Filament\Forms\Form;
-use Filament\Pages\SettingsPage;
 use AdvisingApp\Ai\Enums\AiModel;
-use Filament\Forms\Components\Select;
 use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Filament\Clusters\ArtificialIntelligence;
-use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
+use App\Models\User;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Form;
+use Filament\Pages\SettingsPage;
 
 /**
  * @property-read ?AiAssistant $defaultAssistant

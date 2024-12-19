@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\CaseManagement\Tests\RequestFactories;
 
-use Worksome\RequestFactories\RequestFactory;
 use AdvisingApp\CaseManagement\Enums\ColumnColorOptions;
 use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
+use Worksome\RequestFactories\RequestFactory;
 
 class CreateCaseStatusRequestFactory extends RequestFactory
 {

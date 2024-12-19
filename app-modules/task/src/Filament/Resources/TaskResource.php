@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Task\Filament\Resources;
 
-use Filament\Resources\Resource;
-use AdvisingApp\Task\Models\Task;
+use AdvisingApp\Task\Filament\Resources\TaskResource\Pages\CreateTask;
 use AdvisingApp\Task\Filament\Resources\TaskResource\Pages\EditTask;
 use AdvisingApp\Task\Filament\Resources\TaskResource\Pages\ListTasks;
-use AdvisingApp\Task\Filament\Resources\TaskResource\Pages\CreateTask;
+use AdvisingApp\Task\Models\Task;
+use Filament\Resources\Resource;
 
 class TaskResource extends Resource
 {
@@ -48,7 +48,7 @@ class TaskResource extends Resource
 
     protected static ?string $navigationGroup = 'Engagement Features';
 
-    protected static ?int $navigationSort = 40;
+    protected static ?int $navigationSort = 50;
 
     public static function getPages(): array
     {

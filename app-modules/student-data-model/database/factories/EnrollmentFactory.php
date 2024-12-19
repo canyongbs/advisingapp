@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\StudentDataModel\Database\Factories;
 
-use DateTime;
-use Carbon\Carbon;
-use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
+use AdvisingApp\StudentDataModel\Models\Student;
+use Carbon\Carbon;
+use DateTime;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

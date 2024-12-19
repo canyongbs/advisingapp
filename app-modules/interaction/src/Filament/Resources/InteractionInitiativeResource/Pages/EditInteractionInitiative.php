@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource\Pages;
 
+use AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource;
 
 class EditInteractionInitiative extends EditRecord
 {

@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Actions;
 
+use AdvisingApp\MeetingCenter\Jobs\CreateEventAttendees;
+use AdvisingApp\MeetingCenter\Models\Event;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use App\Models\User;
-use Livewire\Component;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
-use AdvisingApp\MeetingCenter\Models\Event;
-use AdvisingApp\MeetingCenter\Jobs\CreateEventAttendees;
-use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use Livewire\Component;
 
 class InviteEventAttendeeAction extends Action
 {

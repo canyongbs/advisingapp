@@ -36,17 +36,17 @@
 
 namespace AdvisingApp\Division\Filament\Resources\DivisionResource\Pages;
 
-use Filament\Actions\EditAction;
-use Filament\Infolists\Infolist;
-use Filament\Infolists\Components\Grid;
-use App\Filament\Resources\UserResource;
-use Filament\Resources\Pages\ViewRecord;
-use AdvisingApp\Division\Models\Division;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\TextEntry;
-use App\Filament\Resources\NotificationSettingResource;
 use AdvisingApp\Division\Filament\Resources\DivisionResource;
+use AdvisingApp\Division\Models\Division;
+use App\Filament\Resources\NotificationSettingResource;
+use App\Filament\Resources\UserResource;
+use Filament\Actions\EditAction;
+use Filament\Infolists\Components\Grid;
+use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Pages\ViewRecord;
 
 class ViewDivision extends ViewRecord
 {

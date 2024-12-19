@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualityResource\Pages;
 
-use Filament\Forms\Form;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\CreateRecord;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualityResource;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Resources\Pages\CreateRecord;
 
 class CreateResourceHubQuality extends CreateRecord
 {

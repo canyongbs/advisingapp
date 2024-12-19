@@ -37,16 +37,16 @@
 namespace App\Jobs;
 
 use App\Models\Tenant;
+use App\Multitenancy\Events\NewTenantSetupComplete;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Spatie\Multitenancy\Jobs\NotTenantAware;
-use App\Multitenancy\Events\NewTenantSetupComplete;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Event;
+use Spatie\Multitenancy\Jobs\NotTenantAware;
 
 class DispatchTenantSetupCompleteEvent implements ShouldQueue, NotTenantAware
 {

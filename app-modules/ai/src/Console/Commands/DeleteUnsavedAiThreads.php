@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Ai\Console\Commands;
 
-use Illuminate\Console\Command;
 use AdvisingApp\Ai\Models\AiThread;
+use Illuminate\Console\Command;
 use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 
 class DeleteUnsavedAiThreads extends Command

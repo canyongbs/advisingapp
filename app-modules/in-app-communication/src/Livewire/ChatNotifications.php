@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\InAppCommunication\Livewire;
 
-use Livewire\Component;
-use Livewire\Attributes\Lazy;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Livewire\Attributes\Lazy;
+use Livewire\Component;
 
 #[Lazy]
 class ChatNotifications extends Component

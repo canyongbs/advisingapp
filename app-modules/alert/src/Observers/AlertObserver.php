@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Alert\Observers;
 
-use App\Models\User;
-use AdvisingApp\Alert\Models\Alert;
-use Illuminate\Support\Facades\Cache;
-use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Alert\Events\AlertCreated;
-use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\Notification\Actions\SubscriptionCreate;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 
 class AlertObserver
 {

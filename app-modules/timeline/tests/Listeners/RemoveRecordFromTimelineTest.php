@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Cache;
-use AdvisingApp\Timeline\Models\Timeline;
 use AdvisingApp\Engagement\Models\EngagementResponse;
-use AdvisingApp\Timeline\Listeners\AddRecordToTimeline;
 use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
 use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
+use AdvisingApp\Timeline\Listeners\AddRecordToTimeline;
 use AdvisingApp\Timeline\Listeners\RemoveRecordFromTimeline;
+use AdvisingApp\Timeline\Models\Timeline;
+use Illuminate\Support\Facades\Cache;
 
 it('busts the timeline cache for the associated educatable', function () {
     // Given we have a timelineable record, like an EngagementResponse

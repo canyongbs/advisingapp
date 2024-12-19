@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Campaign\Filament\Pages;
 
+use AdvisingApp\Campaign\Settings\CampaignSettings;
+use App\Settings\DisplaySettings;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
-use App\Settings\DisplaySettings;
-use AdvisingApp\Campaign\Settings\CampaignSettings;
 use Tapp\FilamentTimezoneField\Forms\Components\TimezoneSelect;
 
 class ManageCampaignSettings extends SettingsPage

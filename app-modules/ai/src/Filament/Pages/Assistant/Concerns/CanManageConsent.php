@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Ai\Filament\Pages\Assistant\Concerns;
 
+use AdvisingApp\Ai\Models\AiThreadFolder;
+use AdvisingApp\Consent\Enums\ConsentAgreementType;
+use AdvisingApp\Consent\Models\ConsentAgreement;
 use App\Filament\Pages\Dashboard;
 use Livewire\Attributes\Computed;
-use AdvisingApp\Ai\Models\AiThreadFolder;
-use AdvisingApp\Consent\Models\ConsentAgreement;
-use AdvisingApp\Consent\Enums\ConsentAgreementType;
 
 /**
  * @property-read ConsentAgreement $consentAgreement

@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-use Spatie\Health\Notifications\Notifiable;
 use App\Models\HealthCheckResultHistoryItem;
 use Spatie\Health\Notifications\CheckFailedNotification;
+use Spatie\Health\Notifications\Notifiable;
 use Spatie\Health\ResultStores\EloquentHealthResultStore;
 
 return [

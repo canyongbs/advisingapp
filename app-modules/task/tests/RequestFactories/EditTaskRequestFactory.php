@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Task\Tests\RequestFactories;
 
-use App\Models\User;
-use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Task\Enums\TaskStatus;
+use App\Models\User;
 use Worksome\RequestFactories\RequestFactory;
 
 class EditTaskRequestFactory extends RequestFactory

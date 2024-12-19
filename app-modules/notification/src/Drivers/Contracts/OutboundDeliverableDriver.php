@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Notification\Drivers\Contracts;
 
-use AdvisingApp\Notification\DataTransferObjects\UpdateSmsDeliveryStatusData;
 use AdvisingApp\Notification\DataTransferObjects\UpdateEmailDeliveryStatusData;
+use AdvisingApp\Notification\DataTransferObjects\UpdateSmsDeliveryStatusData;
 
 interface OutboundDeliverableDriver
 {

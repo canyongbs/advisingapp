@@ -36,20 +36,20 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
-use App\Enums\Feature;
-use Filament\Tables\Table;
-use Illuminate\Support\Facades\Gate;
-use Filament\Tables\Columns\TextColumn;
-use Illuminate\Database\Eloquent\Model;
-use App\Filament\Tables\Columns\IdColumn;
-use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
-use Filament\Resources\RelationManagers\RelationManager;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\MeetingCenter\Filament\Actions\InviteEventAttendeeAction;
 use AdvisingApp\MeetingCenter\Filament\Actions\Table\ViewEventAttendeeAction;
+use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
+use AdvisingApp\MeetingCenter\Models\EventAttendee;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use App\Enums\Feature;
+use App\Filament\Tables\Columns\IdColumn;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Gate;
 
 class EventsRelationManager extends RelationManager
 {

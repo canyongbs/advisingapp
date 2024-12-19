@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Ai\Models;
 
-use App\Models\BaseModel;
-use Spatie\MediaLibrary\HasMedia;
 use AdvisingApp\Ai\Models\Contracts\AiFile;
-use Spatie\MediaLibrary\InteractsWithMedia;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\Ai\Observers\AiAssistantFileObserver;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @mixin IdeHelperAiAssistantFile

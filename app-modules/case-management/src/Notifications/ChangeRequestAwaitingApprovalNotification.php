@@ -36,18 +36,18 @@
 
 namespace AdvisingApp\CaseManagement\Notifications;
 
-use App\Models\User;
-use App\Models\NotificationSetting;
-use Filament\Notifications\Notification;
-use Filament\Notifications\Actions\Action;
+use AdvisingApp\CaseManagement\Filament\Resources\ChangeRequestResource;
 use AdvisingApp\CaseManagement\Models\ChangeRequest;
 use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\EmailNotification;
-use AdvisingApp\Notification\Notifications\DatabaseNotification;
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
-use AdvisingApp\CaseManagement\Filament\Resources\ChangeRequestResource;
 use AdvisingApp\Notification\Notifications\Concerns\DatabaseChannelTrait;
+use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
+use AdvisingApp\Notification\Notifications\DatabaseNotification;
+use AdvisingApp\Notification\Notifications\EmailNotification;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use App\Models\NotificationSetting;
+use App\Models\User;
+use Filament\Notifications\Actions\Action;
+use Filament\Notifications\Notification;
 
 class ChangeRequestAwaitingApprovalNotification extends BaseNotification implements EmailNotification, DatabaseNotification
 {

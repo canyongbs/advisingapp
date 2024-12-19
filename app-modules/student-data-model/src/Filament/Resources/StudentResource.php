@@ -36,18 +36,18 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources;
 
-use Filament\Resources\Resource;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\StudentDataModel\Models\Student;
-use App\Filament\Resources\Concerns\HasGlobalSearchResultScoring;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ListStudents;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentTasks;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentAlerts;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentCareTeam;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudentActivityFeed;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentSubscriptions;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentTasks;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudentActivityFeed;
+use AdvisingApp\StudentDataModel\Models\Student;
+use App\Filament\Resources\Concerns\HasGlobalSearchResultScoring;
+use Filament\Resources\Resource;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class StudentResource extends Resource
 {

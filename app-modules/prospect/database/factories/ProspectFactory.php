@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Prospect\Database\Factories;
 
-use App\Models\User;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

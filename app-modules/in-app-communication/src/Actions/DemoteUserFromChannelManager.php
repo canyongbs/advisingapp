@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\InAppCommunication\Actions;
 
-use Exception;
-use App\Models\User;
-use Twilio\Rest\Client;
 use AdvisingApp\InAppCommunication\Enums\ConversationType;
 use AdvisingApp\InAppCommunication\Models\TwilioConversation;
+use App\Models\User;
+use Exception;
+use Twilio\Rest\Client;
 
 class DemoteUserFromChannelManager
 {

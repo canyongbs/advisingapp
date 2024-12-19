@@ -36,21 +36,21 @@
 
 namespace AdvisingApp\CaseManagement\Models;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Model;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
-use AdvisingApp\Timeline\Timelines\CaseAssignmentTimeline;
+use AdvisingApp\CaseManagement\Observers\CaseAssignmentObserver;
+use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
-use AdvisingApp\CaseManagement\Observers\CaseAssignmentObserver;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
+use AdvisingApp\Timeline\Timelines\CaseAssignmentTimeline;
+use App\Models\BaseModel;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @mixin IdeHelperCaseAssignment

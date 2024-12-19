@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource\Pages;
 
-use Filament\Tables\Table;
+use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource;
 use Filament\Actions\CreateAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
 class ListSmsTemplates extends ListRecords
 {

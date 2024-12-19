@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\CaseManagement\Database\Factories;
 
+use AdvisingApp\CaseManagement\Enums\CaseUpdateDirection;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Models\CaseUpdate;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use AdvisingApp\CaseManagement\Enums\CaseUpdateDirection;
 
 /**
  * @extends Factory<CaseUpdate>

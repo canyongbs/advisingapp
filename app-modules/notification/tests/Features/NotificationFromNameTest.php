@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
-use App\Models\NotificationSetting;
-use Illuminate\Support\Facades\Notification;
 use AdvisingApp\Notification\Tests\Features\TestEmailSettingFromNameNotification;
+use App\Models\NotificationSetting;
+use App\Models\User;
+use Illuminate\Support\Facades\Notification;
 
 it('sets the mail from name based on settings fromName if set', function () {
     Notification::fake();

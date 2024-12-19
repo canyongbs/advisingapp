@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Form\Http\Middleware;
 
+use AdvisingApp\Form\Models\Submissible;
 use Closure;
 use Illuminate\Http\Request;
-use AdvisingApp\Form\Models\Submissible;
 use Symfony\Component\HttpFoundation\Response;
 
 class EnsureSubmissibleIsEmbeddableAndAuthorized

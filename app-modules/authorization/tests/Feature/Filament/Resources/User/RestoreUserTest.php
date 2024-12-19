@@ -34,21 +34,18 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
-
-use function Tests\asSuperAdmin;
-use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
-
-use Filament\Tables\Filters\BaseFilter;
-use Filament\Tables\Actions\RestoreAction;
-use Filament\Tables\Filters\TrashedFilter;
-
-use function PHPUnit\Framework\assertNotInstanceOf;
-
+use App\Filament\Resources\UserResource\Pages\CreateUser;
 use App\Filament\Resources\UserResource\Pages\EditUser;
 use App\Filament\Resources\UserResource\Pages\ListUsers;
-use App\Filament\Resources\UserResource\Pages\CreateUser;
+use App\Models\User;
+use Filament\Tables\Actions\RestoreAction;
+use Filament\Tables\Filters\BaseFilter;
+use Filament\Tables\Filters\TrashedFilter;
+
+use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
+use function PHPUnit\Framework\assertNotInstanceOf;
+use function Tests\asSuperAdmin;
 
 it('show trashed filter only if user has user restore permission', function () {
     $user = User::factory()->create();

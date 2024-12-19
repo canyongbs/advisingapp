@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Schemas;
 
-use Filament\Infolists\Infolist;
 use App\Infolists\Components\Subsection;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 
 class StudentProfileInfolist
 {

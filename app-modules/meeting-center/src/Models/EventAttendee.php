@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\MeetingCenter\Models;
 
-use App\Models\BaseModel;
-use Illuminate\Notifications\Notifiable;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Notifications\Notifiable;
 
 /**
  * @mixin IdeHelperEventAttendee

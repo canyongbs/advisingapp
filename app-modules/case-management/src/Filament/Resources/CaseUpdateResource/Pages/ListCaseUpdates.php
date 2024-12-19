@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Pages;
 
+use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;
 
 class ListCaseUpdates extends ListRecords
 {

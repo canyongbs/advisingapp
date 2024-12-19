@@ -37,9 +37,9 @@
 namespace AdvisingApp\Interaction\Rules;
 
 use Closure;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Validation\DataAwareRule;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 class InteractableIdExistsRule implements DataAwareRule, ValidationRule

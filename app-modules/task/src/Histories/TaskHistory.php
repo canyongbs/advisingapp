@@ -36,18 +36,18 @@
 
 namespace AdvisingApp\Task\Histories;
 
-use App\Models\User;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
-use AdvisingApp\Task\Enums\TaskStatus;
-use Illuminate\Database\Eloquent\Model;
-use AdvisingApp\Timeline\Models\History;
-use App\Filament\Resources\UserResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Timeline\Timelines\TaskHistoryTimeline;
+use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
+use AdvisingApp\Timeline\Models\History;
+use AdvisingApp\Timeline\Timelines\TaskHistoryTimeline;
+use App\Filament\Resources\UserResource;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 
 class TaskHistory extends History implements ProvidesATimeline
 {

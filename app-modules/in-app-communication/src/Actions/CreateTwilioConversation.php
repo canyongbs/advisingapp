@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\InAppCommunication\Actions;
 
-use Exception;
-use Throwable;
-use App\Models\User;
-use Twilio\Rest\Client;
-use Twilio\Exceptions\TwilioException;
-use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\InAppCommunication\Enums\ConversationType;
 use AdvisingApp\InAppCommunication\Models\TwilioConversation;
+use App\Models\User;
+use Exception;
+use Illuminate\Database\Eloquent\Builder;
+use Throwable;
+use Twilio\Exceptions\TwilioException;
+use Twilio\Rest\Client;
 
 class CreateTwilioConversation
 {

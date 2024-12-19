@@ -37,9 +37,9 @@
 declare(strict_types = 1);
 
 use LastDragon_ru\LaraASP\GraphQL\Builder\Contracts\Operator;
+use LastDragon_ru\LaraASP\GraphQL\SearchBy\Definitions\SearchByDirective;
 use LastDragon_ru\LaraASP\GraphQL\SortBy\Definitions\SortByDirective;
 use LastDragon_ru\LaraASP\GraphQL\Stream\Definitions\StreamDirective;
-use LastDragon_ru\LaraASP\GraphQL\SearchBy\Definitions\SearchByDirective;
 
 /**
  * -----------------------------------------------------------------------------

@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\BasicNeeds\Providers;
 
-use Filament\Panel;
-use Illuminate\Support\ServiceProvider;
 use AdvisingApp\BasicNeeds\BasicNeedsPlugin;
-use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsCategory;
+use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
+use Filament\Panel;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\ServiceProvider;
 
 class BasicNeedsServiceProvider extends ServiceProvider
 {

@@ -34,13 +34,12 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource;
+use AdvisingApp\Interaction\Models\InteractionStatus;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
-
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Interaction\Models\InteractionStatus;
-use AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource;
 
 test('EditInteractionStatus is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();

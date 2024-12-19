@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Application\Database\Factories;
 
-use Illuminate\Support\Str;
 use AdvisingApp\Application\Models\Application;
-use Illuminate\Database\Eloquent\Factories\Factory;
 use AdvisingApp\Application\Models\ApplicationField;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends Factory<Application>

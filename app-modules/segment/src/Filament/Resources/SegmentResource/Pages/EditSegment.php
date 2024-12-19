@@ -36,22 +36,22 @@
 
 namespace AdvisingApp\Segment\Filament\Resources\SegmentResource\Pages;
 
-use Filament\Forms\Form;
-use Filament\Tables\Table;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Segment\Enums\SegmentModel;
+use AdvisingApp\Segment\Enums\SegmentType;
+use AdvisingApp\Segment\Filament\Resources\SegmentResource;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Filament\Tables\Contracts\HasTable;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\Prospect\Models\Prospect;
-use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\Segment\Enums\SegmentType;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Tables\Concerns\InteractsWithTable;
-use AdvisingApp\Segment\Filament\Resources\SegmentResource;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class EditSegment extends EditRecord implements HasTable
 {

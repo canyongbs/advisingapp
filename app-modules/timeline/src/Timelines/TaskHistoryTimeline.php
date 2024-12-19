@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Timeline\Timelines;
 
-use Filament\Actions\ViewAction;
-use AdvisingApp\Task\Histories\TaskHistory;
-use AdvisingApp\Timeline\Models\CustomTimeline;
 use AdvisingApp\Task\Filament\Actions\TaskHistoryCreatedViewAction;
 use AdvisingApp\Task\Filament\Actions\TaskHistoryUpdatedViewAction;
+use AdvisingApp\Task\Histories\TaskHistory;
+use AdvisingApp\Timeline\Models\CustomTimeline;
+use Filament\Actions\ViewAction;
 
 class TaskHistoryTimeline extends CustomTimeline
 {

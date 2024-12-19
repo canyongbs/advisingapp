@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\CaseManagement\Cases\CaseNumber;
 
-use Sqids\Sqids;
 use AdvisingApp\CaseManagement\Cases\CaseNumber\Contracts\CaseNumberGenerator;
+use Sqids\Sqids;
 
 class SqidPlusSixCaseNumberGenerator implements CaseNumberGenerator
 {

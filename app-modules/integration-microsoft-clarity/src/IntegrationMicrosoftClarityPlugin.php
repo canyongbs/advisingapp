@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\IntegrationMicrosoftClarity;
 
-use Filament\Panel;
-use Filament\Contracts\Plugin;
-use Illuminate\Support\Facades\Blade;
-use Filament\Support\Facades\FilamentView;
 use AdvisingApp\IntegrationMicrosoftClarity\Settings\MicrosoftClaritySettings;
+use Filament\Contracts\Plugin;
+use Filament\Panel;
+use Filament\Support\Facades\FilamentView;
+use Illuminate\Support\Facades\Blade;
 
 class IntegrationMicrosoftClarityPlugin implements Plugin
 {

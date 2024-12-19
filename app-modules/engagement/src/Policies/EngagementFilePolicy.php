@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Engagement\Policies;
 
+use AdvisingApp\Engagement\Models\EngagementFile;
+use AdvisingApp\Prospect\Models\Prospect;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Engagement\Models\EngagementFile;
 
 class EngagementFilePolicy
 {

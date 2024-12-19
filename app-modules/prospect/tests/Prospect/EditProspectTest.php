@@ -34,21 +34,20 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
-
-use function Pest\Laravel\seed;
-use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
-
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Prospect\Models\ProspectStatus;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Database\Seeders\ProspectStatusSeeder;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\EditProspect;
-use AdvisingApp\Prospect\Tests\Prospect\RequestFactories\EditProspectRequestFactory;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ConvertToStudent;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\DisassociateStudent;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\EditProspect;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\ProspectStatus;
+use AdvisingApp\Prospect\Tests\Prospect\RequestFactories\EditProspectRequestFactory;
+use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\User;
+
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\seed;
+use function Pest\Livewire\livewire;
 
 // TODO: Write EditProspect page tests
 //test('A successful action on the EditProspect page', function () {});

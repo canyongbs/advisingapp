@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Ai\Models;
 
-use App\Models\User;
-use App\Models\BaseModel;
 use AdvisingApp\Ai\Enums\AiFeature;
+use App\Models\BaseModel;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**

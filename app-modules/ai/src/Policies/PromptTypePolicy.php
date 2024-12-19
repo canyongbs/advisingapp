@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Ai\Policies;
 
-use App\Models\Authenticatable;
-use Illuminate\Auth\Access\Response;
 use AdvisingApp\Ai\Models\PromptType;
-use App\Concerns\PerformsLicenseChecks;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Concerns\PerformsLicenseChecks;
+use App\Models\Authenticatable;
 use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
+use Illuminate\Auth\Access\Response;
 
 class PromptTypePolicy implements PerformsChecksBeforeAuthorization
 {
@@ -82,6 +82,10 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
 
     public function update(Authenticatable $authenticatable, PromptType $promptType): Response
     {
+        if ($promptType->prompts()->where('is_smart', true)->exists()) {
+            return Response::deny('The prompt type cannot be updated because it has a smart prompt.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$promptType->getKey()}.update"],
             denyResponse: 'You do not have permission to update this prompt type.'

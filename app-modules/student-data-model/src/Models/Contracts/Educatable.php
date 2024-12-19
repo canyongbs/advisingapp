@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\StudentDataModel\Models\Contracts;
 
-use Illuminate\Database\Eloquent\Collection;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 
 /**
  * @property-read Collection $careTeam

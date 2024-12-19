@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\MeetingCenter\Jobs;
 
+use AdvisingApp\MeetingCenter\Managers\CalendarManager;
+use AdvisingApp\MeetingCenter\Models\Calendar;
 use App\Models\Tenant;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use AdvisingApp\MeetingCenter\Models\Calendar;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use AdvisingApp\MeetingCenter\Managers\CalendarManager;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 class SyncCalendar implements ShouldQueue, ShouldBeUnique
 {

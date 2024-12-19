@@ -36,13 +36,13 @@
 
 namespace App\Notifications;
 
-use App\Models\User;
-use App\Models\NotificationSetting;
-use Illuminate\Support\Facades\URL;
 use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
+use App\Models\NotificationSetting;
+use App\Models\User;
+use Illuminate\Support\Facades\URL;
 
 class SetPasswordNotification extends BaseNotification implements EmailNotification
 {

@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Theme\Providers;
 
-use Filament\Panel;
-use AdvisingApp\Theme\ThemePlugin;
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Theme\Settings\SettingsProperties\ThemeSettingsProperty;
+use AdvisingApp\Theme\ThemePlugin;
+use Filament\Panel;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\ServiceProvider;
 
 class ThemeServiceProvider extends ServiceProvider
 {

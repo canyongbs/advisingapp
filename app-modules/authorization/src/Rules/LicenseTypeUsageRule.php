@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Authorization\Rules;
 
-use Closure;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 
 class LicenseTypeUsageRule implements ValidationRule

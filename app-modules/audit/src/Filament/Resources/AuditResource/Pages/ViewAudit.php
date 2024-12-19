@@ -36,13 +36,14 @@
 
 namespace AdvisingApp\Audit\Filament\Resources\AuditResource\Pages;
 
-use Carbon\Carbon;
-use Filament\Infolists\Infolist;
+use AdvisingApp\Audit\Filament\Resources\AuditResource;
 use AdvisingApp\Audit\Models\Audit;
-use Filament\Resources\Pages\ViewRecord;
+use Carbon\Carbon;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use AdvisingApp\Audit\Filament\Resources\AuditResource;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Pages\ViewRecord;
+use Illuminate\Support\Str;
 
 class ViewAudit extends ViewRecord
 {
@@ -57,7 +58,8 @@ class ViewAudit extends ViewRecord
                 Section::make()
                     ->schema([
                         TextEntry::make('auditable_type')
-                            ->label('Auditable'),
+                            ->label('Auditable')
+                            ->formatStateUsing(fn ($state) => Str::of($state)->headline()),
                         TextEntry::make('change_agent_name')
                             ->label('Change Agent (User)')
                             ->placeholder('System'),

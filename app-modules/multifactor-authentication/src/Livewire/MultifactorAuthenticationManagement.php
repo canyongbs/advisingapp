@@ -36,19 +36,19 @@
 
 namespace AdvisingApp\MultifactorAuthentication\Livewire;
 
-use App\Models\User;
-use Livewire\Component;
-use Filament\Actions\Action;
-use Filament\Facades\Filament;
-use Illuminate\Support\Collection;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
-use Filament\Actions\Contracts\HasActions;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Actions\Concerns\InteractsWithActions;
-use AdvisingApp\MultifactorAuthentication\Services\MultifactorService;
 use AdvisingApp\MultifactorAuthentication\Filament\Actions\PasswordButtonAction;
+use AdvisingApp\MultifactorAuthentication\Services\MultifactorService;
+use App\Models\User;
+use Filament\Actions\Action;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
+use Filament\Facades\Filament;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Notifications\Notification;
+use Illuminate\Support\Collection;
+use Livewire\Component;
 
 /**
  * @property-read Collection $recoveryCodes

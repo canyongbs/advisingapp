@@ -36,8 +36,8 @@
 
 namespace App\DataTransferObjects\LicenseManagement;
 
-use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Attributes\MapInputName;
+use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
 #[MapInputName(SnakeCaseMapper::class)]
@@ -47,7 +47,7 @@ class LicenseAddonsData extends Data
         public bool $onlineForms,
         public bool $onlineSurveys,
         public bool $onlineAdmissions,
-        public bool $serviceManagement,
+        public bool $caseManagement,
         public bool $resourceHub,
         public bool $eventManagement,
         public bool $realtimeChat,

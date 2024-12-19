@@ -36,18 +36,18 @@
 
 namespace AdvisingApp\ResourceHub\Models;
 
-use DateTimeInterface;
-use App\Models\BaseModel;
-use Spatie\MediaLibrary\HasMedia;
-use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Division\Models\Division;
-use Spatie\MediaLibrary\InteractsWithMedia;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\BaseModel;
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @mixin IdeHelperResourceHubArticle

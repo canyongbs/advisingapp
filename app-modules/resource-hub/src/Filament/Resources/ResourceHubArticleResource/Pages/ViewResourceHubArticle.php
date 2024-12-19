@@ -36,18 +36,18 @@
 
 namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages;
 
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource;
+use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use Filament\Actions\Action;
-use Filament\Actions\EditAction;
-use Filament\Infolists\Infolist;
 use Filament\Actions\DeleteAction;
-use Filament\Resources\Pages\ViewRecord;
+use Filament\Actions\EditAction;
 use Filament\Infolists\Components\Section;
-use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Facades\RateLimiter;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
-use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Pages\ViewRecord;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\RateLimiter;
 
 class ViewResourceHubArticle extends ViewRecord
 {

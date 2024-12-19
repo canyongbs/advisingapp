@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets;
 
-use Filament\Widgets\Widget;
-use Livewire\Attributes\Locked;
-use AdvisingApp\Task\Models\Task;
-use AdvisingApp\Task\Enums\TaskStatus;
-use Illuminate\Database\Eloquent\Model;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\Task\Enums\TaskStatus;
+use AdvisingApp\Task\Models\Task;
+use Filament\Widgets\Widget;
+use Illuminate\Database\Eloquent\Model;
+use Livewire\Attributes\Locked;
 
 class EducatableTasksWidget extends Widget
 {

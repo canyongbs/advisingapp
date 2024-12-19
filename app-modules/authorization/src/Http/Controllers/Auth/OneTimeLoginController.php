@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Authorization\Http\Controllers\Auth;
 
+use App\Http\Controllers\Controller;
 use App\Models\User;
 use Filament\Facades\Filament;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 
 class OneTimeLoginController extends Controller

@@ -34,34 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
+namespace App\Features;
 
-use Filament\Forms\Form;
-use Filament\Resources\Pages\ManageRelatedRecords;
-use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Interaction\Filament\Concerns\HasManyMorphedInteractionsTrait;
-use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
+use App\Support\AbstractFeatureFlag;
 
-class ManageProspectInteractions extends ManageRelatedRecords
+class SmartPromptsFeature extends AbstractFeatureFlag
 {
-    use ProspectHolisticViewPage;
-    use HasManyMorphedInteractionsTrait;
-
-    protected static string $resource = ProspectResource::class;
-
-    protected static string $relationship = 'interactions';
-
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $breadcrumb = 'Interactions';
-
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $navigationLabel = 'Interactions';
-
-    protected static ?string $navigationIcon = 'heroicon-o-arrow-path-rounded-square';
-
-    public function form(Form $form): Form
+    public function resolve(mixed $scope): mixed
     {
-        return (resolve(CreateInteraction::class))->form($form);
+        return false;
     }
 }

@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Authorization\Policies;
 
+use AdvisingApp\Authorization\Models\Permission;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
-use AdvisingApp\Authorization\Models\Permission;
 
 class PermissionPolicy
 {

@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\Team\Filament\Resources\TeamResource\Pages;
 
-use Filament\Forms\Form;
-use Filament\Actions\DeleteAction;
+use AdvisingApp\Division\Models\Division;
+use AdvisingApp\Team\Filament\Resources\TeamResource;
 use App\Features\DivisionIsDefault;
+use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\Division\Models\Division;
 use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\Team\Filament\Resources\TeamResource;
 
 class EditTeam extends EditRecord
 {

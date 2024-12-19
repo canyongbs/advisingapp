@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\MeetingCenter\Managers;
 
+use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
 use Exception;
 use Illuminate\Support\Manager;
-use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
 
 class CalendarManager extends Manager
 {

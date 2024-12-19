@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Alert\Filament\Actions;
 
+use AdvisingApp\Alert\Histories\AlertHistory;
 use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use AdvisingApp\Alert\Histories\AlertHistory;
 
 class AlertHistoryCreatedViewAction extends ViewAction
 {

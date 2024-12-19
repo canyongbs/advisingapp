@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Pages;
 
+use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
+use App\Filament\Clusters\ConstituentManagement;
 use App\Models\User;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
-use Filament\Forms\Components\Toggle;
-use App\Filament\Clusters\ConstituentManagement;
-use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 
 class ManageStudentConfiguration extends SettingsPage
 {

@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\InAppCommunication\Models;
 
-use App\Models\User;
-use Illuminate\Support\Str;
-use Filament\Notifications\Notification;
-use Filament\Notifications\Actions\Action;
-use Illuminate\Database\Eloquent\Relations\Pivot;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\InAppCommunication\Filament\Pages\UserChat;
 use AdvisingApp\InAppCommunication\Enums\ConversationNotificationPreference;
+use AdvisingApp\InAppCommunication\Filament\Pages\UserChat;
+use App\Models\User;
+use Filament\Notifications\Actions\Action;
+use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Support\Str;
 
 /**
  * @mixin IdeHelperTwilioConversationUser

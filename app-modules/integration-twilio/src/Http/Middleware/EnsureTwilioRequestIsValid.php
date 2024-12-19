@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\IntegrationTwilio\Http\Middleware;
 
+use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use Closure;
 use Twilio\Security\RequestValidator;
-use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 
 class EnsureTwilioRequestIsValid
 {

@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Prospect\Filament\Pages;
 
-use App\Models\User;
-use Filament\Forms\Form;
-use App\Features\PipelineFlag;
-use Filament\Pages\SettingsPage;
-use Filament\Forms\Components\Toggle;
-use App\Filament\Clusters\ConstituentManagement;
-use AdvisingApp\Prospect\Settings\ProspectPipelineSettings;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Settings\ProspectPipelineSettings;
+use App\Features\PipelineFlag;
+use App\Filament\Clusters\ConstituentManagement;
+use App\Models\User;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Form;
+use Filament\Pages\SettingsPage;
 
 class ManageProspectPipelineSettings extends SettingsPage
 {

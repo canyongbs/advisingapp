@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Notification\DataTransferObjects;
 
-use Spatie\LaravelData\Data;
 use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
+use Spatie\LaravelData\Data;
 
 class UpdateSmsDeliveryStatusData extends Data
 {

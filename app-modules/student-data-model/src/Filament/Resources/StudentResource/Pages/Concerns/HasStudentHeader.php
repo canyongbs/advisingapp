@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concerns;
 
-use App\Settings\DisplaySettings;
-use Illuminate\Contracts\View\View;
 use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Actions\StudentTagsAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Actions\SyncStudentSisAction;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
+use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
+use App\Settings\DisplaySettings;
+use Illuminate\Contracts\View\View;
 
 trait HasStudentHeader
 {

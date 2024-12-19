@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Segment\Filament\Resources;
 
-use Filament\Resources\Resource;
 use AdvisingApp\Segment\Models\Segment;
+use Filament\Resources\Resource;
 
 class SegmentResourceForProcesses extends Resource
 {

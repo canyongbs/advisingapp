@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Portal\Providers;
 
-use Filament\Panel;
 use AdvisingApp\Portal\PortalPlugin;
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Portal\Settings\SettingsProperties\PortalSettingsProperty;
+use Filament\Panel;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\ServiceProvider;
 
 class PortalServiceProvider extends ServiceProvider
 {

@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Engagement\Actions;
 
-use AdvisingApp\Engagement\Models\EngagementResponse;
-use AdvisingApp\Engagement\DataTransferObjects\EngagementResponseData;
 use AdvisingApp\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
+use AdvisingApp\Engagement\DataTransferObjects\EngagementResponseData;
+use AdvisingApp\Engagement\Models\EngagementResponse;
 
 class CreateEngagementResponse
 {

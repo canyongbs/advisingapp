@@ -36,20 +36,20 @@
 
 namespace App\Console;
 
-use Throwable;
-use App\Models\Tenant;
+use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Audit\Models\Audit;
-use Illuminate\Support\Facades\Log;
-use AdvisingApp\Ai\Models\AiMessage;
-use App\Models\Scopes\SetupIsComplete;
-use AdvisingApp\Ai\Models\AiMessageFile;
-use Illuminate\Console\Scheduling\Schedule;
-use AdvisingApp\Form\Models\FormAuthentication;
 use AdvisingApp\Engagement\Models\EngagementFile;
-use Filament\Actions\Imports\Models\FailedImportRow;
-use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use AdvisingApp\Form\Models\FormAuthentication;
 use AdvisingApp\MeetingCenter\Console\Commands\RefreshCalendarRefreshTokens;
+use App\Models\Scopes\SetupIsComplete;
+use App\Models\Tenant;
+use Filament\Actions\Imports\Models\FailedImportRow;
+use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class Kernel extends ConsoleKernel
 {

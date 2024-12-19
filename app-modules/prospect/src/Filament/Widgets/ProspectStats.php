@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Prospect\Filament\Widgets;
 
-use App\Models\User;
-use Illuminate\Support\Number;
-use Illuminate\Support\Facades\Cache;
-use AdvisingApp\Prospect\Models\Prospect;
-use Filament\Widgets\StatsOverviewWidget;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use Filament\Widgets\StatsOverviewWidget\Stat;
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Segment\Enums\SegmentModel;
+use App\Models\User;
+use Filament\Widgets\StatsOverviewWidget;
+use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Number;
 
 class ProspectStats extends StatsOverviewWidget
 {

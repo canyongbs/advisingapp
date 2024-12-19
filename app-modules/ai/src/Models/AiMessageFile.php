@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\Ai\Models;
 
-use App\Models\BaseModel;
-use Spatie\MediaLibrary\HasMedia;
-use Illuminate\Database\Eloquent\Prunable;
-use AdvisingApp\Ai\Models\Contracts\AiFile;
-use Spatie\MediaLibrary\InteractsWithMedia;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Contracts\Database\Eloquent\Builder;
 use AdvisingApp\Ai\Events\AiMessageFileForceDeleting;
+use AdvisingApp\Ai\Models\Contracts\AiFile;
+use App\Models\BaseModel;
+use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @mixin IdeHelperAiMessageFile

@@ -34,18 +34,18 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
+use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
+use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
 use App\Models\Authenticatable;
+use App\Models\User;
 use App\Settings\LicenseSettings;
-use Illuminate\Support\Facades\Event;
-use Tests\Unit\TestEmailNotification;
 use Illuminate\Mail\Events\MessageSent;
+use Illuminate\Support\Facades\Event;
 
 use function Pest\Laravel\assertDatabaseCount;
 
-use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
-use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
+use Tests\Unit\TestEmailNotification;
 
 it('An email is allowed to be sent if there is available quota and its quota usage is tracked', function () {
     Event::fake(MessageSent::class);

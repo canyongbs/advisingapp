@@ -34,13 +34,12 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Application\Filament\Resources\ApplicationResource;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
-
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Application\Filament\Resources\ApplicationResource;
 
 // TODO: Write ListApplications tests
 //test('The correct details are displayed on the ListApplications page', function () {});

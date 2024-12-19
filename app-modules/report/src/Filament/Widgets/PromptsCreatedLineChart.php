@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use Carbon\Carbon;
 use AdvisingApp\Ai\Models\Prompt;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 
 class PromptsCreatedLineChart extends LineChartReportWidget

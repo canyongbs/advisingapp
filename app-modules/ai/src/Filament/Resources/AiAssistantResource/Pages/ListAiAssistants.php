@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Pages;
 
-use Filament\Tables\Table;
+use AdvisingApp\Ai\Filament\Resources\AiAssistantResource;
 use Filament\Actions\CreateAction;
-use Filament\Tables\Filters\Filter;
+use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Resources\Pages\ListRecords;
-use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\Ai\Filament\Resources\AiAssistantResource;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class ListAiAssistants extends ListRecords
 {

@@ -36,19 +36,19 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages;
 
-use Filament\Forms\Get;
-use Filament\Forms\Form;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
+use AdvisingApp\CaseManagement\Models\CaseType;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
+use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\RestoreAction;
 use Filament\Forms\Components\Group;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
-use Filament\Actions\ForceDeleteAction;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\CaseManagement\Models\CaseType;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
 
 class EditCaseType extends EditRecord
 {

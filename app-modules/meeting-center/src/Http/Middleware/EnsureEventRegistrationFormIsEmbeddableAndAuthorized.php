@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\MeetingCenter\Http\Middleware;
 
+use AdvisingApp\MeetingCenter\Models\Event;
 use Closure;
 use Illuminate\Http\Request;
-use AdvisingApp\MeetingCenter\Models\Event;
 use Symfony\Component\HttpFoundation\Response;
 
 class EnsureEventRegistrationFormIsEmbeddableAndAuthorized

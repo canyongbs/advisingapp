@@ -169,3 +169,34 @@
 .fi-section.fi-scrollable > .fi-section-content-ctn > .fi-section-content {
     @apply max-h-56 overflow-y-auto;
 }
+
+.fi-fo-slider-input {
+    @apply bg-white dark:bg-white/5 shadow-sm ring-1 ring-gray-950/10 dark:ring-white/20;
+    -webkit-appearance: none;
+    height: 5px;
+    border-radius: 50px;
+    background-image: linear-gradient(theme('colors.gray.200'), theme('colors.gray.200'));
+    background-size: 50% 100%;
+    background-repeat: no-repeat;
+}
+
+.dark .fi-fo-slider-input {
+    background-image: linear-gradient(theme('colors.gray.700'), theme('colors.gray.700'));
+}
+
+.fi-fo-slider-input::-webkit-slider-thumb {
+    @apply !bg-primary-500;
+    -webkit-appearance: none;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+}
+
+.fi-fo-slider-input::-moz-range-thumb {
+    @apply !bg-primary-500;
+    -webkit-appearance: none;
+    width: 15px;
+    height: 15px;
+    border: none;
+    border-radius: 50%;
+}

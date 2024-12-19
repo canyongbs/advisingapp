@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Alert\Database\Factories;
 
+use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Relations\Relation;

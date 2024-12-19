@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Ai\Policies;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Concerns\PerformsLicenseChecks;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
-use App\Concerns\PerformsLicenseChecks;
-use AdvisingApp\Authorization\Enums\LicenseType;
 
 class LegacyAiMessageLogPolicy
 {

@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\Notification\Actions;
 
+use AdvisingApp\IntegrationAwsSesEventHandling\DataTransferObjects\SesEventData;
+use AdvisingApp\Notification\DataTransferObjects\UpdateEmailDeliveryStatusData;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\DataTransferObjects\UpdateEmailDeliveryStatusData;
-use AdvisingApp\IntegrationAwsSesEventHandling\DataTransferObjects\SesEventData;
+use Illuminate\Queue\SerializesModels;
 
 class UpdateOutboundDeliverableEmailStatus implements ShouldQueue
 {

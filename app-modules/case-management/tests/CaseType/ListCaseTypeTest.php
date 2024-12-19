@@ -34,21 +34,18 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\ListCaseTypes;
+use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\CaseManagement\Models\CaseType;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
-
-use function Tests\asSuperAdmin;
-
 use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
-
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\CaseManagement\Models\CaseType;
-use AdvisingApp\CaseManagement\Models\CaseModel;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\ListCaseTypes;
+use function Tests\asSuperAdmin;
 
 test('The correct details are displayed on the ListCaseType page', function () {
     $caseTypes = CaseType::factory()
@@ -106,7 +103,7 @@ test('ListCaseTypes is gated with proper access control', function () {
 test('ListCaseTypes is gated with proper feature access control', function () {
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->serviceManagement = false;
+    $settings->data->addons->caseManagement = false;
 
     $settings->save();
 
@@ -119,7 +116,7 @@ test('ListCaseTypes is gated with proper feature access control', function () {
             CaseTypeResource::getUrl()
         )->assertForbidden();
 
-    $settings->data->addons->serviceManagement = true;
+    $settings->data->addons->caseManagement = true;
 
     $settings->save();
 

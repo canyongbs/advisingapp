@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\CaseManagement\Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use AdvisingApp\CaseManagement\Enums\SystemChangeRequestClassification;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\CaseManagement\Models\ChangeRequestStatus>

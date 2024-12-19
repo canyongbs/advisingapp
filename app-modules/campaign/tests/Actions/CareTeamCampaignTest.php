@@ -34,17 +34,17 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
-use AdvisingApp\Segment\Models\Segment;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Campaign\Enums\CampaignActionType;
 use AdvisingApp\Campaign\Models\Campaign;
+use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Segment\Enums\SegmentType;
-use Illuminate\Database\Eloquent\Collection;
-use AdvisingApp\Campaign\Models\CampaignAction;
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Campaign\Enums\CampaignActionType;
+use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 
 it('will create the appropriate records for educatables in the segment', function (array $priorCareTeam, Collection $educatables, bool $removePrior) {
     $segment = Segment::factory()->create([

@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\ResourceHub\Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<ResourceHubCategory>

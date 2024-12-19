@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\StudentDataModel\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use AdvisingApp\StudentDataModel\Enums\SisSystem;
-use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
 use AdvisingApp\StudentDataModel\Http\Requests\UpdateStudentInformationSystemSettingsRequest;
+use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 
 class UpdateStudentInformationSystemSettingsController extends Controller
 {

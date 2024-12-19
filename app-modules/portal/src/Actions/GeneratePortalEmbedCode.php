@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Portal\Actions;
 
+use AdvisingApp\Portal\Enums\PortalType;
 use Exception;
 use Illuminate\Support\Facades\URL;
-use AdvisingApp\Portal\Enums\PortalType;
 
 class GeneratePortalEmbedCode
 {

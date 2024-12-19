@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Timeline\Models;
 
-use AdvisingApp\Timeline\Models\Contracts\Timelineable;
 use AdvisingApp\Timeline\Models\Contracts\RendersCustomTimelineView;
+use AdvisingApp\Timeline\Models\Contracts\Timelineable;
 
 abstract class CustomTimeline implements Timelineable, RendersCustomTimelineView {}

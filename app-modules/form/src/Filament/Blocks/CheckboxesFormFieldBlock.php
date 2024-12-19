@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Form\Filament\Blocks;
 
-use Filament\Forms\Components\KeyValue;
 use AdvisingApp\Form\Models\SubmissibleField;
+use Filament\Forms\Components\KeyValue;
 
 class CheckboxesFormFieldBlock extends FormFieldBlock
 {

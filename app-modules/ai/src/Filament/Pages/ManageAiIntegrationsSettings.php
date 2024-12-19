@@ -36,20 +36,20 @@
 
 namespace AdvisingApp\Ai\Filament\Pages;
 
-use App\Models\User;
-use Filament\Forms\Form;
-use Filament\Actions\Action;
-use App\Models\Authenticatable;
-use Filament\Pages\SettingsPage;
+use AdvisingApp\Ai\Actions\ResetAiServiceIdsForModel;
 use AdvisingApp\Ai\Enums\AiModel;
-use Illuminate\Support\Facades\DB;
-use Filament\Support\Enums\MaxWidth;
+use AdvisingApp\Ai\Jobs\ReInitializeAiModel;
+use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use App\Filament\Clusters\ProductIntegrations;
+use App\Models\Authenticatable;
+use App\Models\User;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
-use AdvisingApp\Ai\Jobs\ReInitializeAiModel;
-use App\Filament\Clusters\ProductIntegrations;
-use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
-use AdvisingApp\Ai\Actions\ResetAiServiceIdsForModel;
+use Filament\Forms\Form;
+use Filament\Pages\SettingsPage;
+use Filament\Support\Enums\MaxWidth;
+use Illuminate\Support\Facades\DB;
 
 class ManageAiIntegrationsSettings extends SettingsPage
 {

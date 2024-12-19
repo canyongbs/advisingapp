@@ -37,8 +37,8 @@
 namespace App\GraphQL\Scalars;
 
 use GraphQL\Language\AST\Node;
-use Illuminate\Support\Carbon;
 use GraphQL\Type\Definition\ScalarType;
+use Illuminate\Support\Carbon;
 
 class Year extends ScalarType
 {

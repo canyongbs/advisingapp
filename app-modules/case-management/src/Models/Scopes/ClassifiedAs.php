@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\CaseManagement\Models\Scopes;
 
-use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\CaseManagement\Enums\SystemChangeRequestClassification;
+use Illuminate\Database\Eloquent\Builder;
 
 class ClassifiedAs
 {

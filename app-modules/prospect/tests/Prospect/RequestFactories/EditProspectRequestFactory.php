@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Prospect\Tests\Prospect\RequestFactories;
 
-use App\Models\User;
-use Worksome\RequestFactories\RequestFactory;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
+use App\Models\User;
+use Worksome\RequestFactories\RequestFactory;
 
 class EditProspectRequestFactory extends RequestFactory
 {

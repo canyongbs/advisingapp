@@ -36,17 +36,17 @@
 
 namespace AdvisingApp\Segment\Actions;
 
+use AdvisingApp\Segment\Enums\SegmentModel;
+use AdvisingApp\Segment\Enums\SegmentType;
+use AdvisingApp\Segment\Models\Segment;
 use Exception;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
+use Filament\Tables\Actions\BulkAction;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use AdvisingApp\Segment\Models\Segment;
-use Filament\Forms\Components\Textarea;
-use Filament\Tables\Actions\BulkAction;
-use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
-use AdvisingApp\Segment\Enums\SegmentType;
-use AdvisingApp\Segment\Enums\SegmentModel;
 
 class BulkSegmentAction
 {

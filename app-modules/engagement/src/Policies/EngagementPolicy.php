@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Engagement\Policies;
 
+use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\StudentDataModel\Models\Student;
 
 class EngagementPolicy
 {

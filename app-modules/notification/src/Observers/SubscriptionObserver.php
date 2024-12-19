@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Notification\Observers;
 
-use App\Models\User;
-use Illuminate\Support\Facades\Cache;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\Notification\Events\SubscriptionCreated;
 use AdvisingApp\Notification\Events\SubscriptionDeleted;
+use AdvisingApp\Notification\Models\Subscription;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 
 class SubscriptionObserver
 {

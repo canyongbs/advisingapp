@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use Illuminate\Contracts\View\View;
 use AdvisingApp\Ai\Models\PromptType;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Cache;
 
 class PromptsByCategoryDoughnutChart extends ChartReportWidget
 {

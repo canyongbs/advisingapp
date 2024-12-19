@@ -36,33 +36,33 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Services;
 
-use Closure;
-use Generator;
-use Throwable;
-use OpenAI\Testing\ClientFake;
-use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\AiMessage;
-use Illuminate\Support\Facades\Http;
-use OpenAI\Contracts\ClientContract;
-use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Settings\AiSettings;
-use AdvisingApp\Ai\Models\AiMessageFile;
-use OpenAI\Responses\Threads\ThreadResponse;
-use AdvisingApp\Report\Enums\TrackedEventType;
-use AdvisingApp\Report\Jobs\RecordTrackedEvent;
-use AdvisingApp\Ai\Services\Contracts\AiService;
-use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
-use AdvisingApp\Ai\Exceptions\MessageResponseException;
-use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
-use AdvisingApp\Ai\Exceptions\MessageResponseTimeoutException;
 use AdvisingApp\Ai\Exceptions\AiStreamEndedUnexpectedlyException;
-use AdvisingApp\IntegrationOpenAi\Services\Concerns\UploadsFiles;
-use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeEnabled;
-use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeDisabled;
-use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Threads\ThreadsDataTransferObject;
+use AdvisingApp\Ai\Exceptions\MessageResponseException;
+use AdvisingApp\Ai\Exceptions\MessageResponseTimeoutException;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Models\AiMessageFile;
+use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
+use AdvisingApp\Ai\Services\Contracts\AiService;
+use AdvisingApp\Ai\Settings\AiSettings;
 use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Assistants\AssistantsDataTransferObject;
 use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Assistants\FileSearchDataTransferObject;
 use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Assistants\ToolResourcesDataTransferObject;
+use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Threads\ThreadsDataTransferObject;
+use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeDisabled;
+use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeEnabled;
+use AdvisingApp\IntegrationOpenAi\Services\Concerns\UploadsFiles;
+use AdvisingApp\Report\Enums\TrackedEventType;
+use AdvisingApp\Report\Jobs\RecordTrackedEvent;
+use Closure;
+use Generator;
+use Illuminate\Support\Facades\Http;
+use OpenAI\Contracts\ClientContract;
+use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
+use OpenAI\Responses\Threads\ThreadResponse;
+use OpenAI\Testing\ClientFake;
+use Throwable;
 
 abstract class BaseOpenAiService implements AiService
 {

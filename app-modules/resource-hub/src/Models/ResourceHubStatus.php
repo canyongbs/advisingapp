@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\ResourceHub\Models;
 
-use DateTimeInterface;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @mixin IdeHelperResourceHubStatus

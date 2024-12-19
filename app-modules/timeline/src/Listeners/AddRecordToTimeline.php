@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Timeline\Listeners;
 
-use AdvisingApp\Timeline\Models\Timeline;
 use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
+use AdvisingApp\Timeline\Models\Timeline;
 
 class AddRecordToTimeline
 {

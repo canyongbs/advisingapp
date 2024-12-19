@@ -35,8 +35,8 @@
 */
 
 use App\Models\User;
-use Illuminate\Support\Arr;
 use Filament\Facades\Filament;
+use Illuminate\Support\Arr;
 
 use function Pest\Laravel\actingAs;
 use function PHPUnit\Framework\assertCount;

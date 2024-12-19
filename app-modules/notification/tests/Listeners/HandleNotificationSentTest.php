@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Event;
-use Illuminate\Notifications\Events\NotificationSent;
 use AdvisingApp\Notification\Listeners\HandleNotificationSent;
+use Illuminate\Notifications\Events\NotificationSent;
+use Illuminate\Support\Facades\Event;
 
 it('is listening to notification sent events', function () {
     Event::fake();

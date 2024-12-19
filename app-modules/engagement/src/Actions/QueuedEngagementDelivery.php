@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\Engagement\Actions;
 
+use AdvisingApp\Engagement\Actions\Contracts\EngagementChannel;
+use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use App\Models\Tenant;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use AdvisingApp\Engagement\Models\EngagementDeliverable;
-use AdvisingApp\Engagement\Actions\Contracts\EngagementChannel;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 abstract class QueuedEngagementDelivery implements EngagementChannel, ShouldQueue, ShouldBeUnique
 {

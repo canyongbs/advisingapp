@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource\Pages;
 
-use Filament\Actions\EditAction;
-use Filament\Infolists\Infolist;
+use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource;
 use Filament\Actions\DeleteAction;
-use Filament\Resources\Pages\ViewRecord;
+use Filament\Actions\EditAction;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Pages\ViewRecord;
 
 class ViewCalendarEvent extends ViewRecord
 {

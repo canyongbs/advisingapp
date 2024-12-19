@@ -43,8 +43,11 @@
                     'step' => $getStep(),
                     $applyStateBindingModifiers('wire:model') => $getStatePath(),
                     'type' => 'range',
+                    'x-on:input' => ($updateBackgroundSize =
+                        '$el.style.backgroundSize = (($el.value - $el.min) / ($el.max - $el.min)) * 100 + \'% 100%\''),
+                    'x-init' => "{$updateBackgroundSize}; setInterval(() => { {$updateBackgroundSize} }, 100)",
                 ],
                 escape: false,
-            ) }}
+            )->class(['fi-fo-slider-input']) }}
     />
 </x-dynamic-component>

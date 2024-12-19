@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages;
 
+use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource;
 use Filament\Actions;
-use Filament\Infolists\Infolist;
-use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Pages\ViewRecord;
 
 class ViewProspectSource extends ViewRecord
 {

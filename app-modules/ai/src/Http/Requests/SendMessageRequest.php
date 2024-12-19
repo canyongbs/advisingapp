@@ -36,8 +36,10 @@
 
 namespace AdvisingApp\Ai\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use AdvisingApp\Ai\Models\Prompt;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class SendMessageRequest extends FormRequest
 {
@@ -57,8 +59,9 @@ class SendMessageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'content' => ['required', 'string', 'max:25000'],
+            'content' => ['required_without:prompt_id', 'string', 'max:25000'],
             'files' => ['array', 'max:1'],
+            'prompt_id' => ['nullable', 'uuid', Rule::exists(Prompt::class, 'id')],
         ];
     }
 }

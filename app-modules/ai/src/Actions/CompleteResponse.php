@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Ai\Actions;
 
-use Closure;
-use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\AiMessage;
-use AdvisingApp\Report\Enums\TrackedEventType;
-use AdvisingApp\Report\Jobs\RecordTrackedEvent;
-use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
 use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
 use AdvisingApp\Ai\Exceptions\AiResponseToCompleteDoesNotExistException;
+use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
+use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Report\Enums\TrackedEventType;
+use AdvisingApp\Report\Jobs\RecordTrackedEvent;
+use Closure;
 
 class CompleteResponse
 {

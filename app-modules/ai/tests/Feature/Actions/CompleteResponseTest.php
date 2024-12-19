@@ -34,20 +34,20 @@
 </COPYRIGHT>
 */
 
-use function Tests\asSuperAdmin;
-
-use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\AiMessage;
-use Illuminate\Support\Facades\Queue;
-use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Enums\AiApplication;
 use AdvisingApp\Ai\Actions\CompleteResponse;
-use AdvisingApp\Report\Enums\TrackedEventType;
-use AdvisingApp\Report\Jobs\RecordTrackedEvent;
-use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
+use AdvisingApp\Ai\Enums\AiApplication;
+use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
 use AdvisingApp\Ai\Exceptions\AiResponseToCompleteDoesNotExistException;
+use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Report\Enums\TrackedEventType;
+use AdvisingApp\Report\Jobs\RecordTrackedEvent;
+use Illuminate\Support\Facades\Queue;
+
+use function Tests\asSuperAdmin;
 
 it('completes the last response', function () {
     Queue::fake();

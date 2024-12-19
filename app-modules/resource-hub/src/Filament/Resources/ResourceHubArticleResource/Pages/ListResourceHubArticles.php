@@ -36,30 +36,30 @@
 
 namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages;
 
-use Filament\Tables\Table;
-use Filament\Actions\CreateAction;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Textarea;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Columns\TextColumn;
-use Illuminate\Database\Eloquent\Model;
-use Filament\Forms\Components\TextInput;
 use AdvisingApp\Division\Models\Division;
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Filters\SelectFilter;
-use Illuminate\Database\Eloquent\Builder;
-use Filament\Tables\Filters\TernaryFilter;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\ReplicateAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
-use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
-use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
-use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource;
+use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
+use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
+use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
+use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
+use App\Filament\Tables\Columns\IdColumn;
+use Filament\Actions\CreateAction;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ReplicateAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class ListResourceHubArticles extends ListRecords
 {

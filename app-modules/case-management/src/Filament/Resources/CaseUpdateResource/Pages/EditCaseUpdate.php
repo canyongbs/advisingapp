@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Pages;
 
+use AdvisingApp\CaseManagement\Filament\Concerns\CaseUpdateBreadcrumbs;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;
-use AdvisingApp\CaseManagement\Filament\Concerns\CaseUpdateBreadcrumbs;
 
 class EditCaseUpdate extends EditRecord
 {

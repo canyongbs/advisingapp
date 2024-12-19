@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Prospect\Concerns;
 
+use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Contracts\View\View;
-use Filament\Support\Facades\FilamentView;
 
 trait ProspectHolisticViewPage
 {

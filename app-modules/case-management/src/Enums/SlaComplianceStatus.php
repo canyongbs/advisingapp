@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\CaseManagement\Enums;
 
-use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasColor;
+use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
 
 enum SlaComplianceStatus implements HasColor, HasIcon, HasLabel

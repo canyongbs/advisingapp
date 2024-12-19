@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\InAppCommunication\Actions;
 
-use App\Models\User;
-use Twilio\Rest\Client;
 use AdvisingApp\InAppCommunication\Models\TwilioConversation;
 use AdvisingApp\InAppCommunication\Models\TwilioConversationUser;
+use App\Models\User;
+use Twilio\Rest\Client;
 
 class TogglePinConversation
 {

@@ -34,14 +34,14 @@
 </COPYRIGHT>
 */
 
-use Spatie\LaravelData\Data;
-use App\Models\SettingsProperty;
-use App\Models\LandlordSettingsProperty;
 use App\DataTransferObjects\Casts\DataCast;
-use Spatie\LaravelSettings\SettingsCasts\DateTimeZoneCast;
+use App\Models\LandlordSettingsProperty;
+use App\Models\SettingsProperty;
+use Spatie\LaravelData\Data;
 use Spatie\LaravelSettings\SettingsCasts\DateTimeInterfaceCast;
-use Spatie\LaravelSettings\SettingsRepositories\RedisSettingsRepository;
+use Spatie\LaravelSettings\SettingsCasts\DateTimeZoneCast;
 use Spatie\LaravelSettings\SettingsRepositories\DatabaseSettingsRepository;
+use Spatie\LaravelSettings\SettingsRepositories\RedisSettingsRepository;
 
 return [
     /*

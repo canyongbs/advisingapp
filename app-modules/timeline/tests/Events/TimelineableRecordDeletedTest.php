@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Event;
 use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
 use AdvisingApp\Timeline\Listeners\RemoveRecordFromTimeline;
+use Illuminate\Support\Facades\Event;
 
 it('has a listener prepared to handle it', function () {
     Event::fake();

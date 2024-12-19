@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Engagement\Filament\Resources;
 
-use Filament\Resources\Resource;
-use App\Filament\Clusters\Communication;
-use AdvisingApp\Engagement\Models\EmailTemplate;
+use AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource\Pages\CreateEmailTemplate;
 use AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource\Pages\EditEmailTemplate;
 use AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource\Pages\ListEmailTemplates;
-use AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource\Pages\CreateEmailTemplate;
+use AdvisingApp\Engagement\Models\EmailTemplate;
+use App\Filament\Clusters\Communication;
+use Filament\Resources\Resource;
 
 class EmailTemplateResource extends Resource
 {

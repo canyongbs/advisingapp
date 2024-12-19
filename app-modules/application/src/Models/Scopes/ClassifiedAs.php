@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Application\Models\Scopes;
 
-use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
+use Illuminate\Database\Eloquent\Builder;
 
 class ClassifiedAs
 {

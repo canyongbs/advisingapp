@@ -35,8 +35,8 @@
 */
 
 use FilamentTiptapEditor\Actions\LinkAction;
-use FilamentTiptapEditor\Enums\TiptapOutput;
 use FilamentTiptapEditor\Actions\MediaAction;
+use FilamentTiptapEditor\Enums\TiptapOutput;
 
 return [
     'direction' => 'ltr',

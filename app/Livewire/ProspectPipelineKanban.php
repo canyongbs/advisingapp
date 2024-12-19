@@ -36,21 +36,21 @@
 
 namespace App\Livewire;
 
+use AdvisingApp\Audit\Overrides\MorphToMany;
+use AdvisingApp\Prospect\Models\EducatablePipelineStage;
+use AdvisingApp\Prospect\Models\Pipeline;
+use AdvisingApp\Prospect\Models\PipelineStage;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
 use Exception;
-use Livewire\Component;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
-use Filament\Forms\Contracts\HasForms;
-use AdvisingApp\Prospect\Models\Pipeline;
-use AdvisingApp\Prospect\Models\Prospect;
-use Illuminate\Database\Eloquent\Builder;
-use Filament\Actions\Contracts\HasActions;
-use AdvisingApp\Audit\Overrides\MorphToMany;
-use AdvisingApp\Prospect\Models\PipelineStage;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Actions\Concerns\InteractsWithActions;
-use AdvisingApp\Prospect\Models\EducatablePipelineStage;
-use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
+use Livewire\Component;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class ProspectPipelineKanban extends Component implements HasForms, HasActions

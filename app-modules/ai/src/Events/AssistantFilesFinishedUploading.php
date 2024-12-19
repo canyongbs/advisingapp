@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Ai\Events;
 
-use App\Models\User;
 use AdvisingApp\Ai\Enums\AiModel;
-use Illuminate\Support\Collection;
 use AdvisingApp\Ai\Models\AiAssistant;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Foundation\Events\Dispatchable;
+use App\Models\User;
 use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Collection;
 
 class AssistantFilesFinishedUploading
 {

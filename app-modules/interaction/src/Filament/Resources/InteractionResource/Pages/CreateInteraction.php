@@ -36,35 +36,35 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages;
 
-use Filament\Forms\Get;
-use Filament\Forms\Set;
-use Filament\Forms\Form;
-use Illuminate\Support\Carbon;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use AdvisingApp\Division\Models\Division;
-use AdvisingApp\Prospect\Models\Prospect;
-use Illuminate\Database\Eloquent\Builder;
-use Filament\Resources\Pages\CreateRecord;
-use Filament\Forms\Components\MorphToSelect;
-use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\CaseManagement\Models\CaseModel;
-use AdvisingApp\StudentDataModel\Models\Student;
-use App\Models\Scopes\ExcludeConvertedProspects;
-use Filament\Resources\Pages\ManageRelatedRecords;
-use AdvisingApp\Interaction\Models\InteractionType;
+use AdvisingApp\Division\Models\Division;
+use AdvisingApp\Interaction\Filament\Actions\DraftInteractionWithAiAction;
+use AdvisingApp\Interaction\Filament\Resources\InteractionResource;
 use AdvisingApp\Interaction\Models\InteractionDriver;
-use AdvisingApp\Interaction\Models\InteractionStatus;
+use AdvisingApp\Interaction\Models\InteractionInitiative;
 use AdvisingApp\Interaction\Models\InteractionOutcome;
 use AdvisingApp\Interaction\Models\InteractionRelation;
+use AdvisingApp\Interaction\Models\InteractionStatus;
+use AdvisingApp\Interaction\Models\InteractionType;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\Scopes\ExcludeConvertedProspects;
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\MorphToSelect;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Filament\Resources\Pages\CreateRecord;
+use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Resources\RelationManagers\RelationManager;
-use AdvisingApp\Interaction\Models\InteractionInitiative;
-use AdvisingApp\Interaction\Filament\Resources\InteractionResource;
-use AdvisingApp\Interaction\Filament\Actions\DraftInteractionWithAiAction;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Carbon;
 
 class CreateInteraction extends CreateRecord
 {

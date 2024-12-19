@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Application\Models;
 
+use AdvisingApp\Form\Models\SubmissibleAuthentication;
 use App\Models\Attributes\NoPermissions;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\Form\Models\SubmissibleAuthentication;
 
 #[NoPermissions]
 /**

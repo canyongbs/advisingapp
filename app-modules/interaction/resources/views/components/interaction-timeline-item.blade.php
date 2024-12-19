@@ -34,14 +34,16 @@
 @use('App\Filament\Resources\UserResource')
 <div>
     <div class="flex flex-row justify-between">
-        <h3 class="mb-1 flex items-center text-lg font-semibold text-gray-500 dark:text-gray-100">
-            <a
-                class="font-medium underline"
-                href="{{ UserResource::getUrl('view', ['record' => $record->user]) }}"
-            >
-                {{ $record->user->name }}
-            </a>
-        </h3>
+        @if ($record->user)
+            <h3 class="mb-1 flex items-center text-lg font-semibold text-gray-500 dark:text-gray-100">
+                <a
+                    class="font-medium underline"
+                    href="{{ UserResource::getUrl('view', ['record' => $record->user]) }}"
+                >
+                    {{ $record->user->name }}
+                </a>
+            </h3>
+        @endif
 
         <div>
             {{ $viewRecordIcon }}

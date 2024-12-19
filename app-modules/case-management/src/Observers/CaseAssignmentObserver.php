@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\CaseManagement\Observers;
 
-use App\Models\User;
-use AdvisingApp\CaseManagement\Models\CaseAssignment;
 use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
+use AdvisingApp\CaseManagement\Models\CaseAssignment;
+use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
 use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
-use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
+use App\Models\User;
 
 class CaseAssignmentObserver
 {

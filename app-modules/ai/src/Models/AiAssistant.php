@@ -36,21 +36,21 @@
 
 namespace AdvisingApp\Ai\Models;
 
-use App\Models\BaseModel;
-use AdvisingApp\Ai\Enums\AiModel;
-use Spatie\MediaLibrary\HasMedia;
 use AdvisingApp\Ai\Enums\AiApplication;
-use OwenIt\Auditing\Contracts\Auditable;
-use Spatie\MediaLibrary\InteractsWithMedia;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\MediaLibrary\MediaCollections\File;
-use OwenIt\Auditing\Auditable as AuditableTrait;
-use AdvisingApp\Ai\Observers\AiAssistantObserver;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
+use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Exceptions\DefaultAssistantLockedPropertyException;
+use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
+use AdvisingApp\Ai\Observers\AiAssistantObserver;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Auditable as AuditableTrait;
+use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\File;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
  * @mixin IdeHelperAiAssistant

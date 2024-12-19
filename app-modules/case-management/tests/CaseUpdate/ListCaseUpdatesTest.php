@@ -34,22 +34,19 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Pages\ListCaseUpdates;
+use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\CaseManagement\Models\CaseUpdate;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
-use Illuminate\Support\Str;
-
-use function Tests\asSuperAdmin;
-
 use App\Settings\LicenseSettings;
+use Illuminate\Support\Str;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
-
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\CaseManagement\Models\CaseModel;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\CaseManagement\Models\CaseUpdate;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Pages\ListCaseUpdates;
+use function Tests\asSuperAdmin;
 
 test('The correct details are displayed on the ListCaseUpdates page', function () {
     $caseUpdates = CaseUpdate::factory()
@@ -135,7 +132,7 @@ test('ListCaseUpdates is gated with proper access control', function () {
 test('ListCaseUpdates is gated with proper feature access control', function () {
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->serviceManagement = false;
+    $settings->data->addons->caseManagement = false;
 
     $settings->save();
 
@@ -148,7 +145,7 @@ test('ListCaseUpdates is gated with proper feature access control', function () 
             CaseUpdateResource::getUrl()
         )->assertForbidden();
 
-    $settings->data->addons->serviceManagement = true;
+    $settings->data->addons->caseManagement = true;
 
     $settings->save();
 

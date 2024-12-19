@@ -34,33 +34,30 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
-use Livewire\Livewire;
-use Illuminate\Support\Str;
-use App\Models\Authenticatable;
-
-use function Tests\asSuperAdmin;
-
-use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Models\Prompt;
-use AdvisingApp\Team\Models\Team;
-use App\Filament\Pages\Dashboard;
-use AdvisingApp\Ai\Models\AiThread;
-use Illuminate\Support\Facades\Bus;
-use AdvisingApp\Ai\Models\AiMessage;
-use AdvisingApp\Ai\Models\PromptUse;
-use Filament\Forms\Components\Select;
-use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Enums\AiApplication;
-use AdvisingApp\Ai\Models\PromptUpvote;
-use AdvisingApp\Ai\Models\AiThreadFolder;
+use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiThreadShareTarget;
 use AdvisingApp\Ai\Jobs\PrepareAiThreadCloning;
 use AdvisingApp\Ai\Jobs\PrepareAiThreadEmailing;
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Consent\Models\ConsentAgreement;
-use AdvisingApp\Consent\Enums\ConsentAgreementType;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Models\AiThreadFolder;
+use AdvisingApp\Ai\Models\Prompt;
+use AdvisingApp\Ai\Models\PromptUpvote;
+use AdvisingApp\Ai\Models\PromptUse;
 use AdvisingApp\Assistant\Filament\Pages\PersonalAssistant;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Consent\Enums\ConsentAgreementType;
+use AdvisingApp\Consent\Models\ConsentAgreement;
+use AdvisingApp\Team\Models\Team;
+use App\Filament\Pages\Dashboard;
+use App\Models\Authenticatable;
+use App\Models\User;
+use Filament\Forms\Components\Select;
+use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Str;
+use Livewire\Livewire;
 
 use function Pest\Laravel\{actingAs,
     assertDatabaseHas,
@@ -68,6 +65,7 @@ use function Pest\Laravel\{actingAs,
     assertNotSoftDeleted,
     assertSoftDeleted
 };
+use function Tests\asSuperAdmin;
 
 $setUp = function (
     bool $hasUserConsented = true,
@@ -849,6 +847,7 @@ it('can insert a prompt from the library', function () use ($setUp) {
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('insertFromPromptLibrary', [
+            'isSmart' => 0,
             'promptId' => $prompt->getKey(),
         ])
         ->assertHasNoActionErrors()
@@ -865,6 +864,7 @@ it('can not insert a missing prompt from the library', function () use ($setUp) 
 
     Livewire::test(PersonalAssistant::class)
         ->callAction('insertFromPromptLibrary', [
+            'isSmart' => 0,
             'promptId' => null,
         ])
         ->assertHasActionErrors(['promptId' => 'required']);
@@ -883,6 +883,7 @@ it('can upvote a prompt from the library while inserting it', function () use ($
     Livewire::test(PersonalAssistant::class)
         ->mountAction('insertFromPromptLibrary')
         ->setActionData([
+            'isSmart' => 0,
             'promptId' => $prompt->getKey(),
         ])
         ->callFormComponentAction('promptId', 'upvote', formName: 'mountedActionForm');
@@ -907,6 +908,7 @@ it('can remove upvote from a prompt from the library while inserting it', functi
     Livewire::test(PersonalAssistant::class)
         ->mountAction('insertFromPromptLibrary')
         ->setActionData([
+            'isSmart' => 0,
             'promptId' => $prompt->getKey(),
         ])
         ->callFormComponentAction('promptId', 'upvote', formName: 'mountedActionForm');

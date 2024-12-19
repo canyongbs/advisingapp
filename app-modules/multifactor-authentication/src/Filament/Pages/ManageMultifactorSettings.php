@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\MultifactorAuthentication\Filament\Pages;
 
-use App\Models\User;
-use Filament\Forms\Form;
-use App\Models\Authenticatable;
-use Filament\Pages\SettingsPage;
-use Filament\Forms\Components\Toggle;
 use AdvisingApp\MultifactorAuthentication\Settings\MultifactorSettings;
+use App\Models\Authenticatable;
+use App\Models\User;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Form;
+use Filament\Pages\SettingsPage;
 
 class ManageMultifactorSettings extends SettingsPage
 {

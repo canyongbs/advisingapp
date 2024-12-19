@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Segment\Policies;
 
-use App\Models\Authenticatable;
-use Illuminate\Auth\Access\Response;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Segment\Models\Segment;
 use App\Concerns\PerformsLicenseChecks;
-use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Models\Authenticatable;
 use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
+use Illuminate\Auth\Access\Response;
 
 class SegmentPolicy implements PerformsChecksBeforeAuthorization
 {
@@ -102,6 +102,10 @@ class SegmentPolicy implements PerformsChecksBeforeAuthorization
             return Response::deny('You do not have permission to delete this segment.');
         }
 
+        if ($segment->campaigns()->exists()) {
+            return Response::deny('This population segment is associated with a campaign. Please remove the campaign before attempting to remove the segment.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["segment.{$segment->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this segment.'
@@ -124,6 +128,10 @@ class SegmentPolicy implements PerformsChecksBeforeAuthorization
     {
         if (! $authenticatable->hasLicense($segment->model?->class()::getLicenseType())) {
             return Response::deny('You do not have permission to permanently delete this segment.');
+        }
+
+        if ($segment->campaigns()->exists()) {
+            return Response::deny('This population segment is associated with a campaign. Please remove the campaign before attempting to remove the segment.');
         }
 
         return $authenticatable->canOrElse(

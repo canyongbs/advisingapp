@@ -36,19 +36,19 @@
 
 namespace AdvisingApp\MeetingCenter\Livewire;
 
-use Livewire\Component;
-use Filament\Tables\Table;
+use AdvisingApp\MeetingCenter\Models\EventAttendee;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
+use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Tables\Actions\ViewAction;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Contracts\HasTable;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
-use AdvisingApp\MeetingCenter\Models\EventAttendee;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
+use Livewire\Component;
 
 class EventAttendeeSubmissionsManager extends Component implements HasForms, HasTable
 {

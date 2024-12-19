@@ -36,19 +36,19 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseResource\RelationManagers;
 
-use Filament\Tables;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Textarea;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\TextColumn;
-use App\Filament\Tables\Columns\IdColumn;
-use AdvisingApp\CaseManagement\Models\CaseUpdate;
-use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\CaseManagement\Enums\CaseUpdateDirection;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;
+use AdvisingApp\CaseManagement\Models\CaseUpdate;
+use App\Filament\Tables\Columns\IdColumn;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Form;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
 class CaseUpdatesRelationManager extends RelationManager
 {

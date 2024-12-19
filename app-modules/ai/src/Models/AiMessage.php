@@ -36,17 +36,17 @@
 
 namespace AdvisingApp\Ai\Models;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Prunable;
 use AdvisingApp\Ai\Events\AiMessageCreated;
 use AdvisingApp\Ai\Events\AiMessageTrashed;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
+use App\Models\BaseModel;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Concerns\AsPivot;
-use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @mixin IdeHelperAiMessage
@@ -65,6 +65,7 @@ class AiMessage extends BaseModel
         'request',
         'thread_id',
         'user_id',
+        'prompt_id',
     ];
 
     protected $casts = [
@@ -86,6 +87,11 @@ class AiMessage extends BaseModel
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function prompt(): BelongsTo
+    {
+        return $this->belongsTo(Prompt::class)->withTrashed();
     }
 
     public function files(): HasMany

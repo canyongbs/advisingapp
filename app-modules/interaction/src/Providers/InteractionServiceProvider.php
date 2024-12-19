@@ -36,19 +36,19 @@
 
 namespace AdvisingApp\Interaction\Providers;
 
-use Filament\Panel;
-use App\Concerns\ImplementsGraphQL;
-use Illuminate\Support\ServiceProvider;
+use AdvisingApp\Interaction\Enums\InteractionStatusColorOptions;
 use AdvisingApp\Interaction\InteractionPlugin;
 use AdvisingApp\Interaction\Models\Interaction;
-use AdvisingApp\Interaction\Models\InteractionType;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Interaction\Models\InteractionDriver;
-use AdvisingApp\Interaction\Models\InteractionStatus;
+use AdvisingApp\Interaction\Models\InteractionInitiative;
 use AdvisingApp\Interaction\Models\InteractionOutcome;
 use AdvisingApp\Interaction\Models\InteractionRelation;
-use AdvisingApp\Interaction\Models\InteractionInitiative;
-use AdvisingApp\Interaction\Enums\InteractionStatusColorOptions;
+use AdvisingApp\Interaction\Models\InteractionStatus;
+use AdvisingApp\Interaction\Models\InteractionType;
+use App\Concerns\ImplementsGraphQL;
+use Filament\Panel;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\ServiceProvider;
 
 class InteractionServiceProvider extends ServiceProvider
 {

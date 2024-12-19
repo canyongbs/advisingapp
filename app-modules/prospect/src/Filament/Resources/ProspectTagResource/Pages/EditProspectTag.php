@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectTagResource\Pages;
 
-use Filament\Forms\Form;
+use AdvisingApp\Prospect\Filament\Resources\ProspectTagResource;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\Prospect\Filament\Resources\ProspectTagResource;
 
 class EditProspectTag extends EditRecord
 {

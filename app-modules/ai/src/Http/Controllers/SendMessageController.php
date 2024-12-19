@@ -36,14 +36,15 @@
 
 namespace AdvisingApp\Ai\Http\Controllers;
 
-use Throwable;
-use Illuminate\Http\JsonResponse;
-use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Actions\SendMessage;
-use AdvisingApp\Ai\Http\Requests\SendMessageRequest;
-use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
+use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
+use AdvisingApp\Ai\Http\Requests\SendMessageRequest;
+use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Models\Prompt;
+use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Throwable;
 
 class SendMessageController
 {
@@ -53,7 +54,7 @@ class SendMessageController
             return response()->stream(
                 app(SendMessage::class)(
                     $thread,
-                    $request->validated('content'),
+                    $request->validated('prompt_id') ? Prompt::find($request->validated('prompt_id')) : $request->validated('content'),
                     $request->validated('files'),
                 ),
                 headers: [

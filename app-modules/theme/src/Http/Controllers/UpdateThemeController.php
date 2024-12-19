@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Theme\Http\Controllers;
 
+use AdvisingApp\Theme\DataTransferObjects\ThemeConfig;
+use AdvisingApp\Theme\Http\Requests\UpdateThemeRequest;
+use AdvisingApp\Theme\Jobs\UpdateTenantTheme;
+use App\Http\Controllers\Controller;
 use App\Models\Tenant;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Bus;
-use App\Http\Controllers\Controller;
-use AdvisingApp\Theme\Jobs\UpdateTenantTheme;
-use AdvisingApp\Theme\DataTransferObjects\ThemeConfig;
-use AdvisingApp\Theme\Http\Requests\UpdateThemeRequest;
 
 class UpdateThemeController extends Controller
 {

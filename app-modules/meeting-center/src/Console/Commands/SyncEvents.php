@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\MeetingCenter\Console\Commands;
 
+use AdvisingApp\MeetingCenter\Managers\CalendarManager;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Spatie\Multitenancy\Commands\Concerns\TenantAware;
-use AdvisingApp\MeetingCenter\Managers\CalendarManager;
 
 class SyncEvents extends Command
 {

@@ -36,11 +36,11 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Support\Composer;
-use Illuminate\Filesystem\Filesystem;
 use App\Overrides\Laravel\PermissionMigrationCreator;
-use InterNACHI\Modular\Console\Commands\Make\Modularize;
 use Illuminate\Database\Console\Migrations\MigrateMakeCommand;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Composer;
+use InterNACHI\Modular\Console\Commands\Make\Modularize;
 
 class CreatePermissionMigration extends MigrateMakeCommand
 {

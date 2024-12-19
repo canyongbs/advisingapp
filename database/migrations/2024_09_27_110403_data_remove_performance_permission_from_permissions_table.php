@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Arr;
-use Illuminate\Database\Migrations\Migration;
 use Database\Migrations\Concerns\CanModifyPermissions;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Arr;
 
 return new class () extends Migration {
     use CanModifyPermissions;
