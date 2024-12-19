@@ -102,9 +102,9 @@ it('does not render impersonate button for super admin users even if user has pe
 
     $user = User::factory()
         ->create()
-        ->givePermissionTo('user.view-any', 'user.*.view', 'authorization.impersonate');
+        ->givePermissionTo('user.view-any', 'user.*.view');
 
-    actingAs($user);
+    asSuperAdmin($user);
 
     $component = livewire(ListUsers::class);
 
@@ -133,8 +133,8 @@ it('allows super admin user to impersonate', function () {
 
 it('allows user with permission to impersonate', function () {
     $first = User::factory()->create();
-    $first->givePermissionTo('user.view-any', 'user.*.view', 'authorization.impersonate');
-    actingAs($first);
+    $first->givePermissionTo('user.view-any', 'user.*.view');
+    asSuperAdmin($first);
 
     $second = User::factory()->create();
 
@@ -151,8 +151,7 @@ it('allows user with permission to impersonate', function () {
 
 it('allows a user to leave impersonate', function () {
     $first = User::factory()->create();
-    $first->givePermissionTo('authorization.impersonate');
-    actingAs($first);
+    asSuperAdmin($first);
 
     $second = User::factory()->create();
 
