@@ -37,7 +37,6 @@
 namespace App\Models;
 
 use AdvisingApp\Ai\Models\AiAssistantUpvote;
-use AdvisingApp\Ai\Models\AiAssistantUpvote;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiThreadFolder;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
@@ -47,31 +46,24 @@ use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
 use AdvisingApp\CaseManagement\Models\CaseAssignment;
-use AdvisingApp\CaseManagement\Models\CaseAssignment;
-use AdvisingApp\CaseManagement\Models\ChangeRequest;
 use AdvisingApp\CaseManagement\Models\ChangeRequest;
 use AdvisingApp\CaseManagement\Models\ChangeRequestResponse;
 use AdvisingApp\CaseManagement\Models\ChangeRequestType;
-use AdvisingApp\Consent\Models\Concerns\CanConsent;
 use AdvisingApp\Consent\Models\Concerns\CanConsent;
 use AdvisingApp\Engagement\Models\Concerns\HasManyEngagementBatches;
 use AdvisingApp\Engagement\Models\Concerns\HasManyEngagements;
 use AdvisingApp\InAppCommunication\Models\TwilioConversation;
 use AdvisingApp\InAppCommunication\Models\TwilioConversationUser;
 use AdvisingApp\MeetingCenter\Models\Calendar;
-use AdvisingApp\MeetingCenter\Models\Calendar;
-use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MultifactorAuthentication\Traits\MultifactorAuthenticatable;
 use AdvisingApp\Notification\Models\Concerns\NotifiableViaSms;
 use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Notification\Models\Subscription;
-use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Models\TrackedEvent;
 use AdvisingApp\Report\Models\TrackedEventCount;
 use AdvisingApp\Segment\Models\Segment;
-use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Team\Models\Team;
@@ -81,28 +73,23 @@ use App\Filament\Resources\UserResource;
 use App\Support\HasAdvancedFilter;
 use DateTimeInterface;
 use Filament\Models\Contracts\FilamentUser;
-use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Panel;
 use Illuminate\Contracts\Translation\HasLocalePreference;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Arr;
 use Lab404\Impersonate\Models\Impersonate;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
@@ -354,7 +341,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
 
     public function scopeAdmins()
     {
-        return $this->whereHas('roles', fn ($q) => $q->where('title', 'Admin'));
+        return $this->whereHas('roles', fn($q) => $q->where('title', 'Admin'));
     }
 
     public function pronouns(): BelongsTo
