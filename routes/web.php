@@ -41,6 +41,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/profiles/{user:public_profile_slug}', ViewPublicUserProfileController::class)
     ->name('users.profile.view.public');
 
-Route::middleware(['auth', 'can:product_admin.*.view', 'can:product_admin.view-any'])
+Route::middleware(['auth', 'can:product_admin.view-any', 'can:product_admin.*.view'])
     ->get('/api-docs', fn () => File::get(storage_path('app/api-docs/index.html')))
     ->name('api-docs');
