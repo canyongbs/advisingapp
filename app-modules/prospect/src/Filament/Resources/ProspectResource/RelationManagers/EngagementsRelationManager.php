@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers;
 
-use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
 use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Pages\CreateEngagement;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
@@ -121,10 +120,7 @@ class EngagementsRelationManager extends RelationManager
             ->headerActions([
                 CreateAction::make()
                     ->label('New Email or Text')
-                    ->modalHeading('Create new email or text')
-                    ->after(function (Engagement $engagement, array $data) {
-                        $this->afterCreate($engagement, $data['delivery_method']);
-                    }),
+                    ->modalHeading('Create new email or text'),
             ])
             ->actions([
                 ViewAction::make(),
@@ -132,12 +128,5 @@ class EngagementsRelationManager extends RelationManager
             ->bulkActions([
             ])
             ->defaultSort('created_at', 'desc');
-    }
-
-    public function afterCreate(Engagement $engagement, string $deliveryMethod): void
-    {
-        $createEngagementDeliverable = resolve(CreateEngagementDeliverable::class);
-
-        $createEngagementDeliverable($engagement, $deliveryMethod);
     }
 }
