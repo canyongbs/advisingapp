@@ -34,54 +34,49 @@
 </COPYRIGHT>
 */
 
-namespace App\Exceptions;
+namespace AdvisingApp\Report\Filament\Pages;
 
-use Illuminate\Auth\AuthenticationException;
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Sentry\Laravel\Integration;
-use Throwable;
+use AdvisingApp\Report\Abstract\UserReport;
+use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
+use AdvisingApp\Report\Filament\Widgets\UsersLoginCountTable;
+use AdvisingApp\Report\Filament\Widgets\UsersStats;
+use AdvisingApp\Report\Filament\Widgets\UserUniqueLoginCountLineChart;
+use App\Filament\Clusters\ReportLibrary;
 
-class Handler extends ExceptionHandler
+class Users extends UserReport
 {
-    /**
-     * A list of exception types with their corresponding custom log levels.
-     *
-     * @var array<class-string<Throwable>, LogLevel::*>
-     */
-    protected $levels = [];
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    /**
-     * A list of the exception types that are not reported.
-     *
-     * @var array<int, class-string<Throwable>>
-     */
-    protected $dontReport = [];
+    protected static ?string $cluster = ReportLibrary::class;
 
-    /**
-     * A list of the inputs that are never flashed to the session on validation exceptions.
-     *
-     * @var array<int, string>
-     */
-    protected $dontFlash = [
-        'current_password',
-        'password',
-        'password_confirmation',
-    ];
+    protected static ?string $navigationGroup = 'Users';
 
-    /**
-     * Register the exception handling callbacks for the application.
-     */
-    public function register(): void
+    protected static ?string $navigationLabel = 'Overview';
+
+    protected static ?string $title = 'Users (Overview)';
+
+    protected static string $routePath = 'Users';
+
+    protected static ?int $navigationSort = 50;
+
+    protected $cacheTag = 'report-users';
+
+    public function getWidgets(): array
     {
-        $this->reportable(function (Throwable $e) {
-            Integration::captureUnhandledException($e);
-        });
+        return [
+            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
+            UsersStats::make(['cacheTag' => $this->cacheTag]),
+            UserUniqueLoginCountLineChart::make(['cacheTag' => $this->cacheTag]),
+            UsersLoginCountTable::make(['cacheTag' => $this->cacheTag]),
+        ];
     }
 
-    protected function unauthenticated($request, AuthenticationException $exception)
+    public function getColumns(): int | string | array
     {
-        return $this->shouldReturnJson($request, $exception)
-          ? response()->json(['message' => $exception->getMessage()], 401)
-          : redirect()->guest($exception->redirectTo() ?? url('/'));
+        return [
+            'sm' => 2,
+            'md' => 4,
+            'lg' => 4,
+        ];
     }
 }

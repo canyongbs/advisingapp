@@ -34,54 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace App\Exceptions;
+namespace AdvisingApp\Report\Abstract;
 
-use Illuminate\Auth\AuthenticationException;
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Sentry\Laravel\Integration;
-use Throwable;
+use Filament\Pages\Dashboard;
 
-class Handler extends ExceptionHandler
+abstract class UserReport extends Dashboard
 {
-    /**
-     * A list of exception types with their corresponding custom log levels.
-     *
-     * @var array<class-string<Throwable>, LogLevel::*>
-     */
-    protected $levels = [];
-
-    /**
-     * A list of the exception types that are not reported.
-     *
-     * @var array<int, class-string<Throwable>>
-     */
-    protected $dontReport = [];
-
-    /**
-     * A list of the inputs that are never flashed to the session on validation exceptions.
-     *
-     * @var array<int, string>
-     */
-    protected $dontFlash = [
-        'current_password',
-        'password',
-        'password_confirmation',
-    ];
-
-    /**
-     * Register the exception handling callbacks for the application.
-     */
-    public function register(): void
+    public static function canAccess(): bool
     {
-        $this->reportable(function (Throwable $e) {
-            Integration::captureUnhandledException($e);
-        });
-    }
+        /** @var User $user */
+        $user = auth()->user();
 
-    protected function unauthenticated($request, AuthenticationException $exception)
-    {
-        return $this->shouldReturnJson($request, $exception)
-          ? response()->json(['message' => $exception->getMessage()], 401)
-          : redirect()->guest($exception->redirectTo() ?? url('/'));
+        return $user->can('report-library.view-any');
     }
 }
