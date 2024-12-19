@@ -50,18 +50,25 @@ class ManageCampaignSettings extends SettingsPage
 
     protected static ?int $navigationSort = 140;
 
-    protected static bool $shouldRegisterNavigation = false;
+    protected static bool $shouldRegisterNavigation = true;
 
     protected static string $settings = CampaignSettings::class;
 
     protected static ?string $title = 'Campaign Settings';
 
-    public function mount(): void
-    {
-        $this->authorize('campaign.view_campaign_settings');
+    // public function mount(): void
+    // {
+    //     $this->authorize('product_admin.view-any','product_admin.*.update');
 
-        parent::mount();
-    }
+    //     parent::mount();
+    // }
+
+    // public static function canAccess(): bool
+    // {
+    //   /** @var User $user */
+    //   $user = auth()->user();
+    //   return parent::canAccess() && $user->can(['product_admin.*.view','product_admin.view-any','product_admin.*.update']);
+    // }
 
     public function form(Form $form): Form
     {

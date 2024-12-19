@@ -133,7 +133,7 @@ class MessageCenter extends Page
             return false;
         }
 
-        return $user->can('engagement.view_message_center');
+        return $user->can(['engagement.*.view-any', 'engagement.*.view']);
     }
 
     public function mount(): void
