@@ -104,7 +104,7 @@ it('does not render impersonate button for super admin users even if user has pe
         ->create()
         ->givePermissionTo('user.view-any', 'user.*.view');
 
-    asSuperAdmin($user);
+    actingAs($user);
 
     $component = livewire(ListUsers::class);
 
