@@ -128,14 +128,13 @@ class EducatableActivityFeedWidget extends Widget implements HasActions, HasForm
 
     public static function canViewForRecord($record): bool
     {
-        if($record instanceof Student)
-        {   
+        if ($record instanceof Student) {
             return auth()->user()->can(
                 [
                     'student.view-any',
                     'student.*.view',
                     'engagement.view-any',
-                    'engagement.*.view'
+                    'engagement.*.view',
                 ]
             );
         }
@@ -144,7 +143,7 @@ class EducatableActivityFeedWidget extends Widget implements HasActions, HasForm
             'prospect.view-any',
             'prospect.*.view',
             'engagement.view-any',
-            'engagement.*.view'
+            'engagement.*.view',
         ]);
     }
 }

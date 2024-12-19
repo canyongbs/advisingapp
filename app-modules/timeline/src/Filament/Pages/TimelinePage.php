@@ -64,7 +64,7 @@ abstract class TimelinePage extends Page
 
     public static function canAccess(array $parameters = []): bool
     {
-        if (auth()->user()->cannot(['engagement.view-any','engagement.*.view'])) {
+        if (auth()->user()->cannot(['engagement.view-any', 'engagement.*.view'])) {
             return false;
         }
 
@@ -78,13 +78,11 @@ abstract class TimelinePage extends Page
             return false;
         }
 
-        if($record->respondent instanceof Student && auth()->user()->cannot(['student.view-any','student.*.view']))
-        {
+        if ($record->respondent instanceof Student && auth()->user()->cannot(['student.view-any', 'student.*.view'])) {
             return false;
         }
 
-        if($record->respondent instanceof Prospect && auth()->user()->cannot(['prospect.view-any','prospect.*.view']))
-        {
+        if ($record->respondent instanceof Prospect && auth()->user()->cannot(['prospect.view-any', 'prospect.*.view'])) {
             return false;
         }
 
