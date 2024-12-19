@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\IntegrationTwilio\Jobs;
 
-use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -66,18 +65,6 @@ class CheckSmsOutboundDeliverableStatus implements ShouldQueue
             $this->deliverable->update([
                 'external_status' => $messageInstance->status,
             ]);
-
-            if ($this->deliverable->related && $this->deliverable->related instanceof EngagementDeliverable) {
-                $this->deliverable->related->update([
-                    'external_status' => $messageInstance->status,
-                ]);
-
-                match ($messageInstance->status) {
-                    'delivered' => $this->deliverable->related->markDeliverySuccessful(Carbon::parse($messageInstance->dateSent)),
-                    'undelivered', 'failed' => $this->deliverable->related->markDeliveryFailed($messageInstance->errorMessage ?? 'Message could not successfully be delivered.'),
-                    default => null,
-                };
-            }
 
             match ($messageInstance->status) {
                 'delivered' => $this->deliverable->markDeliverySuccessful(Carbon::parse($messageInstance->dateSent)),

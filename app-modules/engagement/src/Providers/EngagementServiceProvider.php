@@ -41,7 +41,6 @@ use AdvisingApp\Engagement\EngagementPlugin;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementBatch;
-use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Engagement\Models\SmsTemplate;
@@ -69,7 +68,6 @@ class EngagementServiceProvider extends ServiceProvider
         Relation::morphMap([
             'email_template' => EmailTemplate::class,
             'engagement_batch' => EngagementBatch::class,
-            'engagement_deliverable' => EngagementDeliverable::class,
             'engagement_file' => EngagementFile::class,
             'engagement_response' => EngagementResponse::class,
             'engagement' => Engagement::class,

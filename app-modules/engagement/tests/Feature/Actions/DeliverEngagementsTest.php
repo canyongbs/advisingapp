@@ -38,7 +38,6 @@ use AdvisingApp\Engagement\Actions\DeliverEngagements;
 use AdvisingApp\Engagement\Actions\EngagementEmailChannelDelivery;
 use AdvisingApp\Engagement\Actions\EngagementSmsChannelDelivery;
 use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Queue;
@@ -49,13 +48,11 @@ it('will dispatch a job to send all engagements that should be delivered via ema
     // Given that we have an engagement that should be delivered
     $engagement = Engagement::factory()
         ->deliverNow()
-        ->has(EngagementDeliverable::factory()->email()->count(1), 'deliverable')
         ->create();
 
     // And an engagement that shouldn't be sent until some point in the future
     $futureEngagement = Engagement::factory()
         ->deliverLater()
-        ->has(EngagementDeliverable::factory()->email()->count(1), 'deliverable')
         ->create();
 
     // When we dispatch our job to deliver engagements
@@ -77,13 +74,11 @@ it('will dispatch a job to send all engagements that should be delivered via sms
     // Given that we have an engagement that should be delivered
     $engagement = Engagement::factory()
         ->deliverNow()
-        ->has(EngagementDeliverable::factory()->sms()->count(1), 'deliverable')
         ->create();
 
     // And an engagement that shouldn't be sent until some point in the future
     $futureEngagement = Engagement::factory()
         ->deliverLater()
-        ->has(EngagementDeliverable::factory()->sms()->count(1), 'deliverable')
         ->create();
 
     // When we dispatch our job to deliver engagements
@@ -106,7 +101,6 @@ it('will not dispatch a job to send an engagement that has already been delivere
     // Given that we have an engagement
     $engagement = Engagement::factory()
         ->deliverNow()
-        ->has(EngagementDeliverable::factory()->email()->count(1), 'deliverable')
         ->create();
 
     // And it has already been delivered
@@ -132,7 +126,6 @@ it('will not dispatch a job to send an engagement that is part of a batch', func
     Engagement::factory()
         ->ofBatch()
         ->deliverNow()
-        ->has(EngagementDeliverable::factory()->email()->count(1), 'deliverable')
         ->create();
 
     // When our job runs to pick up engagements

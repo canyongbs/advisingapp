@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Notification\Notifications\Channels;
 
-use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
 use AdvisingApp\Notification\DataTransferObjects\SmsChannelResultData;
@@ -69,12 +68,6 @@ class SmsChannel
 
             if (! $this->canSendWithinQuotaLimits($notification, $notifiable)) {
                 $deliverable->update(['delivery_status' => NotificationDeliveryStatus::RateLimited]);
-
-                // Do anything else we need to notify sending party that notification was not sent
-
-                if ($deliverable->related instanceof EngagementDeliverable) {
-                    $deliverable->related->update(['delivery_status' => NotificationDeliveryStatus::RateLimited]);
-                }
 
                 DB::commit();
 
