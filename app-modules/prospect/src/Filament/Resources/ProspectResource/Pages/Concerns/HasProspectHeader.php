@@ -94,7 +94,7 @@ trait HasProspectHeader
     protected function getHeaderActions(): array
     {
         return [
-            ProspectTagsAction::make()->visible(fn (): bool => auth()->user()?->can('prospect.tags.manage')),
+            ProspectTagsAction::make()->visible(fn (): bool => auth()->user()?->can('prospect.*.update')),
             ConvertToStudent::make()->visible(fn (Prospect $record) => ! $record->student()->exists()),
             DisassociateStudent::make()->visible(fn (Prospect $record) => $record->student()->exists()),
             EditAction::make(),
