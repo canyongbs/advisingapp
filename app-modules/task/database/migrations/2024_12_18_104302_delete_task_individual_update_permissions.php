@@ -34,60 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Task\Observers;
-
-use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
-use AdvisingApp\Task\Models\Task;
-use AdvisingApp\Task\Notifications\TaskAssignedToUserNotification;
-use Exception;
+use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 
-class TaskObserver
-{
-    public function saving(Task $task): void
+return new class () extends Migration {
+    public function up(): void
     {
-        DB::beginTransaction();
+        DB::table('permissions')
+            ->select('id')
+            ->whereRaw("name ~ '^task\\.[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\\.update$'")
+            ->orderBy('id')
+            ->chunkById(100, function ($rows) {
+                $ids = $rows->pluck('id')->toArray();
+                DB::table('permissions')->whereIn('id', $ids)->delete();
+            });
     }
-
-    public function creating(Task $task): void
-    {
-        $user = auth()->user();
-
-        if ($user) {
-            if (! $task->createdBy) {
-                $task->createdBy()->associate($user);
-            }
-
-            if (! $task->assignedTo) {
-                $task->assignedTo()->associate($user);
-            }
-        }
-    }
-
-    public function created(Task $task): void
-    {
-        try {
-            TriggeredAutoSubscription::dispatchIf(! empty($task->createdBy), $task->createdBy, $task);
-        } catch (Exception $e) {
-            DB::rollBack();
-
-            throw $e;
-        }
-    }
-
-    public function saved(Task $task): void
-    {
-        DB::commit();
-
-        if (! empty($task->assignedTo) && ($task->wasChanged('assigned_to') || ($task->wasRecentlyCreated))) {
-            $task->assignedTo->notify(new TaskAssignedToUserNotification($task));
-
-            TriggeredAutoSubscription::dispatch($task->assignedTo, $task);
-        }
-    }
-
-    public function deleted(Task $task): void
-    {
-        // Remove permissions from creator and assigned User
-    }
-}
+};
