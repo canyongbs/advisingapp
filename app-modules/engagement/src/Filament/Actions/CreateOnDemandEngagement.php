@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Engagement\Filament\Actions;
 
-use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use Closure;
@@ -45,20 +44,18 @@ class CreateOnDemandEngagement
 {
     public function __invoke(Educatable $educatable, array $data, ?Closure $afterCreation = null): Engagement
     {
+        /** @var Engagement $engagement */
         $engagement = $educatable->engagements()->create([
             'subject' => $data['subject'] ?? null,
             'body' => $data['body'] ?? null,
+            'channel' => $data['delivery_method'],
         ]);
 
         if ($afterCreation) {
             $afterCreation($engagement);
         }
 
-        $createEngagementDeliverable = resolve(CreateEngagementDeliverable::class);
-
-        $createEngagementDeliverable($engagement, $data['delivery_method']);
-
-        $engagement->deliverable->driver()->deliver();
+        $engagement->driver()->deliver();
 
         return $engagement;
     }

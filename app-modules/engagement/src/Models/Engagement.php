@@ -38,6 +38,9 @@ namespace AdvisingApp\Engagement\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Engagement\Actions\GenerateEngagementBodyContent;
+use AdvisingApp\Engagement\Drivers\Contracts\EngagementDeliverableDriver;
+use AdvisingApp\Engagement\Drivers\EngagementEmailDriver;
+use AdvisingApp\Engagement\Drivers\EngagementSmsDriver;
 use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
 use AdvisingApp\Engagement\Observers\EngagementObserver;
 use AdvisingApp\Notification\Enums\NotificationChannel;
@@ -225,6 +228,14 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
                 'student preferred name',
             ],
             default => [],
+        };
+    }
+
+    public function driver(): EngagementDeliverableDriver
+    {
+        return match ($this->channel) {
+            NotificationChannel::Email => new EngagementEmailDriver($this),
+            NotificationChannel::Sms => new EngagementSmsDriver($this),
         };
     }
 
