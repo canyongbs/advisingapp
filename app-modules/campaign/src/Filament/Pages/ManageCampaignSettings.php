@@ -37,6 +37,7 @@
 namespace AdvisingApp\Campaign\Filament\Pages;
 
 use AdvisingApp\Campaign\Settings\CampaignSettings;
+use App\Models\User;
 use App\Settings\DisplaySettings;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
@@ -56,11 +57,12 @@ class ManageCampaignSettings extends SettingsPage
 
     protected static ?string $title = 'Campaign Settings';
 
-    public function mount(): void
+    public static function canAccess(): bool
     {
-        $this->authorize(['product_admin.view-any', 'product_admin.*.update']);
+        /** @var User $user */
+        $user = auth()->user();
 
-        parent::mount();
+        return $user->can(['product_admin.view-any', 'product_admin.*.view', 'product_admin.*.update']);
     }
 
     public function form(Form $form): Form

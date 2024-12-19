@@ -39,6 +39,7 @@ use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\Team\Models\Team;
 use App\Filament\Resources\UserResource\Actions\AssignLicensesBulkAction;
 use App\Filament\Resources\UserResource\Pages\ListUsers;
+use App\Models\Authenticatable;
 use App\Models\User;
 use Lab404\Impersonate\Services\ImpersonateManager;
 
@@ -96,13 +97,14 @@ it('does not render impersonate button for super admin users at all', function (
         ->assertTableActionHidden(Impersonate::class, $superAdmin);
 });
 
-it('does not render impersonate button for super admin users even if user has permission', function () {
+it('does not render impersonate button for super admin users even if user is also a Super Admin', function () {
     $superAdmin = User::factory()->create();
     asSuperAdmin($superAdmin);
 
     $user = User::factory()
-        ->create()
-        ->givePermissionTo('user.view-any', 'user.*.view');
+        ->create();
+
+    $user->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
 
     actingAs($user);
 
@@ -110,7 +112,7 @@ it('does not render impersonate button for super admin users even if user has pe
 
     $component
         ->assertSuccessful()
-        ->assertCountTableRecords(1)
+        ->assertCountTableRecords(2)
         ->assertTableActionHidden(Impersonate::class, $superAdmin);
 });
 
@@ -129,24 +131,6 @@ it('allows super admin user to impersonate', function () {
 
     expect($user->isImpersonated())->toBeTrue()
         ->and(auth()->id())->toBe($user->id);
-});
-
-it('allows user with permission to impersonate', function () {
-    $first = User::factory()->create();
-    $first->givePermissionTo('user.view-any', 'user.*.view');
-    asSuperAdmin($first);
-
-    $second = User::factory()->create();
-
-    $component = livewire(ListUsers::class);
-
-    $component
-        ->assertSuccessful()
-        ->assertCountTableRecords(2)
-        ->callTableAction(Impersonate::class, $second);
-
-    expect($second->isImpersonated())->toBeTrue()
-        ->and(auth()->id())->toBe($second->id);
 });
 
 it('allows a user to leave impersonate', function () {
