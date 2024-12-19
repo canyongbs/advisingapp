@@ -82,7 +82,7 @@ class RecordTrackedEvent implements ShouldQueue
                             'created_at' => now(),
                         ],
                     ],
-                    ['type', 'related_to_id', 'related_to_type'],
+                    ['related_to_type', 'related_to_id', 'type'],
                     [
                         'count' => DB::raw('tracked_event_counts.count + 1'),
                         'last_occurred_at' => DB::raw("GREATEST(tracked_event_counts.last_occurred_at, '{$this->occurredAt}')"),

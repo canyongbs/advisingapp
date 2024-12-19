@@ -114,7 +114,7 @@ it('updates the proper TrackedEventCount record if one already exists', function
         ->type->toEqual($originalTrackedEventCount->type)
         ->count->toBe($originalTrackedEventCount->count + 1)
         ->last_occurred_at->toEqual($occurredAt);
-})->only();
+});
 
 it('does not update the TrackedEventCount record last_occurate_at date if the event was before the current set date', function () {
     TrackedEventCount::truncate();
