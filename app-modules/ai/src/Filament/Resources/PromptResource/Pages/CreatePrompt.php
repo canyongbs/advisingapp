@@ -37,7 +37,6 @@
 namespace AdvisingApp\Ai\Filament\Resources\PromptResource\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\PromptResource;
-use App\Features\SmartPromptsFeature;
 use App\Models\Authenticatable;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -83,7 +82,7 @@ class CreatePrompt extends CreateRecord
                             ])
                             ->default(false)
                             ->grouped()
-                            ->visible(SmartPromptsFeature::active() && auth()->user()->hasRole(Authenticatable::SUPER_ADMIN_ROLE)),
+                            ->visible(auth()->user()->hasRole(Authenticatable::SUPER_ADMIN_ROLE)),
                     ]),
             ]);
     }
