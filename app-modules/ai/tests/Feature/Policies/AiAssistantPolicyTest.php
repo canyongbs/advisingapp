@@ -61,7 +61,7 @@ test('viewAny', function () {
 
     expect($user->can('viewAny', AiAssistant::class))->toBeFalse();
 
-    $user->givePermissionTo('ai_assistant.view-any');
+    $user->givePermissionTo('assistant_custom.view-any');
     $user->refresh();
 
     expect($user->can('viewAny', AiAssistant::class))->toBeTrue();
@@ -80,7 +80,7 @@ test('view', function () {
 
     expect($user->can('view', $aiAssistant))->toBeFalse();
 
-    $user->givePermissionTo('ai_assistant.*.view');
+    $user->givePermissionTo('assistant_custom.*.view');
     $user->refresh();
 
     expect($user->can('view', $aiAssistant))->toBeTrue();
@@ -103,7 +103,7 @@ test('create', function () {
 
     expect($user->can('create', AiAssistant::class))->toBeFalse();
 
-    $user->givePermissionTo('ai_assistant.create');
+    $user->givePermissionTo('assistant_custom.create');
     $user->refresh();
 
     expect($user->can('create', AiAssistant::class))->toBeFalse();
@@ -128,7 +128,7 @@ test('update', function () {
 
     expect($user->can('update', $aiAssistant))->toBeFalse();
 
-    $user->givePermissionTo('ai_assistant.*.update');
+    $user->givePermissionTo('assistant_custom.*.update');
     $user->refresh();
 
     expect($user->can('update', $aiAssistant))->toBeTrue();

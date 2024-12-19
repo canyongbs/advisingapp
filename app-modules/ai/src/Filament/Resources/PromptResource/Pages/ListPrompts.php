@@ -41,7 +41,6 @@ use AdvisingApp\Ai\Filament\Resources\PromptTypeResource;
 use AdvisingApp\Ai\Models\Prompt;
 use App\Features\SmartPromptsFeature;
 use App\Filament\Tables\Columns\IdColumn;
-use App\Models\Authenticatable;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
@@ -99,7 +98,7 @@ class ListPrompts extends ListRecords
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
-                        ->visible(auth()->user()->hasRole(Authenticatable::SUPER_ADMIN_ROLE)),
+                        ->visible(auth()->user()->isSuperAdmin()),
                 ]),
             ]);
     }

@@ -55,7 +55,7 @@
             <div class="grid gap-8">
                 {{ $this->profile }}
 
-                @if (EducatableActivityFeedWidget::canView())
+                @if (EducatableActivityFeedWidget::canViewForRecord($this->getRecord()))
                     @livewire(EducatableActivityFeedWidget::class, [
                         'educatable' => $this->getRecord(),
                         'lazy' => 'on-load',

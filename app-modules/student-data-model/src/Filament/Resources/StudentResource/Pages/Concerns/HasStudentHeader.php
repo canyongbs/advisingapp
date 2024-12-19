@@ -91,7 +91,7 @@ trait HasStudentHeader
     protected function getHeaderActions(): array
     {
         return [
-            StudentTagsAction::make()->visible(fn (): bool => auth()->user()->can('student.tags.manage')),
+            StudentTagsAction::make()->visible(fn (): bool => auth()->user()->can('student.*.update')),
             SyncStudentSisAction::make(),
             SubscribeHeaderAction::make(),
         ];

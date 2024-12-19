@@ -75,7 +75,8 @@ $setUp = function (
     ]);
 
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
-    $user->givePermissionTo('assistant.access');
+    $user->givePermissionTo('assistant.view-any');
+    $user->givePermissionTo('assistant.*.view');
 
     actingAs($user);
 
@@ -121,7 +122,8 @@ it('is properly gated with access control', function () {
     Livewire::test(PersonalAssistant::class)
         ->assertStatus(403);
 
-    $user->givePermissionTo('assistant.access');
+    $user->givePermissionTo('assistant.view-any');
+    $user->givePermissionTo('assistant.*.view');
 
     Livewire::test(PersonalAssistant::class)
         ->assertStatus(200);
