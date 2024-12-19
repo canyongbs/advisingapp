@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Engagement\Filament\Resources\EngagementResource\Pages;
 
-use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
 use AdvisingApp\Engagement\Filament\Resources\EngagementResource;
 use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Fields\EngagementSmsBodyField;
 use AdvisingApp\Engagement\Models\EmailTemplate;
@@ -70,7 +69,7 @@ class CreateEngagement extends CreateRecord
     {
         return $form
             ->schema([
-                Select::make('delivery_method')
+                Select::make('channel')
                     ->label('What would you like to send?')
                     ->options(NotificationChannel::getEngagementOptions())
                     ->default(NotificationChannel::Email->value)
@@ -83,7 +82,7 @@ class CreateEngagement extends CreateRecord
                             ->autofocus()
                             ->required()
                             ->placeholder(__('Subject'))
-                            ->hidden(fn (Get $get): bool => $get('delivery_method') === NotificationChannel::Sms->value)
+                            ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
                             ->columnSpanFull(),
                         TiptapEditor::make('body')
                             ->disk('s3-public')
@@ -149,7 +148,7 @@ class CreateEngagement extends CreateRecord
                                         $component->generateImageUrls($template->content),
                                     );
                                 }))
-                            ->hidden(fn (Get $get): bool => $get('delivery_method') === NotificationChannel::Sms->value)
+                            ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
                             ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
                             ->columnSpanFull(),
                         EngagementSmsBodyField::make(context: 'create', form: $form),
@@ -190,12 +189,5 @@ class CreateEngagement extends CreateRecord
 
             $this->halt();
         }
-    }
-
-    public function afterCreate(): void
-    {
-        $createEngagementDeliverable = resolve(CreateEngagementDeliverable::class);
-
-        $createEngagementDeliverable($this->record, $this->data['delivery_method']);
     }
 }

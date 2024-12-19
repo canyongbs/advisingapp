@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Engagement\Filament\ManageRelatedRecords;
 
-use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
 use AdvisingApp\Engagement\Filament\ManageRelatedRecords\ManageRelatedEngagementRecords\Actions\DraftWithAiAction;
 use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Fields\EngagementSmsBodyField;
 use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
@@ -142,7 +141,7 @@ class ManageRelatedEngagementRecords extends ManageRelatedRecords
     public function form(Form $form): Form
     {
         return $form->schema([
-            Select::make('delivery_method')
+            Select::make('channel')
                 ->label('What would you like to send?')
                 ->options(NotificationChannel::getEngagementOptions())
                 ->default(NotificationChannel::Email->value)
@@ -155,7 +154,7 @@ class ManageRelatedEngagementRecords extends ManageRelatedRecords
                         ->autofocus()
                         ->required()
                         ->placeholder(__('Subject'))
-                        ->hidden(fn (Get $get): bool => $get('delivery_method') === NotificationChannel::Sms->value)
+                        ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
                         ->columnSpanFull(),
                     TiptapEditor::make('body')
                         ->disk('s3-public')
@@ -221,7 +220,7 @@ class ManageRelatedEngagementRecords extends ManageRelatedRecords
                                     $component->generateImageUrls($template->content),
                                 );
                             }))
-                        ->hidden(fn (Get $get): bool => $get('delivery_method') === NotificationChannel::Sms->value)
+                        ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
                         ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
                         ->columnSpanFull(),
                     EngagementSmsBodyField::make(context: 'create', form: $form),
@@ -284,7 +283,7 @@ class ManageRelatedEngagementRecords extends ManageRelatedRecords
                     })
                     ->createAnother(false)
                     ->action(function (array $data, Form $form) {
-                        if ($data['delivery_method'] == NotificationChannel::Sms->value && ! $this->getOwnerRecord()->canRecieveSms()) {
+                        if ($data['channel'] == NotificationChannel::Sms->value && ! $this->getOwnerRecord()->canRecieveSms()) {
                             Notification::make()
                                 ->title('Prospect does not have mobile number.')
                                 ->danger()
@@ -297,10 +296,6 @@ class ManageRelatedEngagementRecords extends ManageRelatedRecords
                         $engagement->save();
 
                         $form->model($engagement)->saveRelationships();
-
-                        $createEngagementDeliverable = resolve(CreateEngagementDeliverable::class);
-
-                        $createEngagementDeliverable($engagement, $data['delivery_method']);
                     }),
             ])
             ->actions([

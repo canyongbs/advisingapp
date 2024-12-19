@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Engagement\GraphQL\Mutations;
 
-use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
 use AdvisingApp\Engagement\Actions\GenerateTipTapBodyJson;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
@@ -72,9 +71,10 @@ class SendSMS
 
         $args['body'] = app(GenerateTipTapBodyJson::class)(body: $body, mergeTags: $mergeTags);
 
-        $engagement = Engagement::create($args);
-
-        app(CreateEngagementDeliverable::class)(engagement: $engagement, deliveryMethod: NotificationChannel::Sms->value);
+        $engagement = Engagement::create([
+            ...$args,
+            'channel' => NotificationChannel::Sms->value,
+        ]);
 
         return $engagement->refresh();
     }
