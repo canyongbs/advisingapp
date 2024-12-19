@@ -36,17 +36,17 @@
 
 namespace AdvisingApp\Report\Jobs;
 
-use Throwable;
-use Carbon\Carbon;
-use App\Models\User;
-use Illuminate\Bus\Queueable;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Models\TrackedEventCount;
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class RecordUserUniqueLoginTrackedEvent implements ShouldQueue
 {

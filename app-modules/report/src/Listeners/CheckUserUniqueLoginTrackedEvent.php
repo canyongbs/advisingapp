@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Report\Listeners;
 
-use App\Models\User;
-use Illuminate\Auth\Events\Login;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordUserUniqueLoginTrackedEvent;
+use App\Models\User;
+use Illuminate\Auth\Events\Login;
 
 class CheckUserUniqueLoginTrackedEvent
 {

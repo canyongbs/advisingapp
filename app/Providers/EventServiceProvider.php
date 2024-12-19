@@ -37,6 +37,7 @@
 namespace App\Providers;
 
 use AdvisingApp\Audit\Listeners\AuditingListener;
+use AdvisingApp\Report\Listeners\CheckUserUniqueLoginTrackedEvent;
 use App\Listeners\ClearSentryUser;
 use App\Listeners\LoadSettingsDefaults;
 use App\Listeners\SetSentryUser;
@@ -53,7 +54,6 @@ use AdvisingApp\Report\Listeners\CheckUserTrackedEvent;
 use Spatie\Multitenancy\Events\ForgotCurrentTenantEvent;
 use Spatie\Multitenancy\Events\MakingTenantCurrentEvent;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
-use AdvisingApp\Report\Listeners\CheckUserUniqueLoginTrackedEvent;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use OwenIt\Auditing\Events\Auditing;
 

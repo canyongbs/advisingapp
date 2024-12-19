@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use Carbon\Carbon;
-use App\Models\User;
-use Illuminate\Support\Number;
-use Illuminate\Support\Facades\Cache;
 use AdvisingApp\Report\Enums\TrackedEventType;
+use App\Models\User;
+use Carbon\Carbon;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Number;
 
 class UsersStats extends StatsOverviewReportWidget
 {

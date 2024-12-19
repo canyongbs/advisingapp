@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Report\Filament\Pages;
 
-use App\Filament\Clusters\ReportLibrary;
 use AdvisingApp\Report\Abstract\UserReport;
-use AdvisingApp\Report\Filament\Widgets\UsersStats;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use AdvisingApp\Report\Filament\Widgets\UsersLoginCountTable;
+use AdvisingApp\Report\Filament\Widgets\UsersStats;
 use AdvisingApp\Report\Filament\Widgets\UserUniqueLoginCountLineChart;
+use App\Filament\Clusters\ReportLibrary;
 
 class Users extends UserReport
 {
