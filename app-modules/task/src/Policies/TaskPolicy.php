@@ -99,10 +99,11 @@ class TaskPolicy implements PerformsChecksBeforeAuthorization
             return Response::deny('You do not have permission to update this task.');
         }
 
-        return $authenticatable->canOrElse(
-            abilities: ["task.{$task->getKey()}.update"],
-            denyResponse: 'You do not have permission to update this task.'
-        );
+        if ($authenticatable->getKey() !== $task?->assigned_to && $authenticatable->getKey() !== $task?->created_by) {
+            return Response::deny('You do not have permission to update this task.');
+        }
+
+        return Response::allow();
     }
 
     public function delete(Authenticatable $authenticatable, Task $task): Response

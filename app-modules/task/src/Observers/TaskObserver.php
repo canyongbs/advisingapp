@@ -36,12 +36,9 @@
 
 namespace AdvisingApp\Task\Observers;
 
-use AdvisingApp\Authorization\Models\Permission;
-use AdvisingApp\Authorization\Models\PermissionGroup;
 use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Task\Notifications\TaskAssignedToUserNotification;
-use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\DB;
 
@@ -65,46 +62,12 @@ class TaskObserver
                 $task->assignedTo()->associate($user);
             }
         }
-
-        Permission::create([
-            'name' => "task.{$task->getKey()}.update",
-            'guard_name' => 'web',
-            'group_id' => PermissionGroup::query()
-                ->where('name', 'Task')
-                ->value('id'),
-        ]);
     }
 
     public function created(Task $task): void
     {
         try {
-            // Add permissions to creator
-            $task->createdBy?->givePermissionTo("task.{$task->getKey()}.update");
-
-            // Add permissions to assigned User unless they are the creator
-            if ($task->assigned_to !== $task->created_by) {
-                $task->assignedTo?->givePermissionTo("task.{$task->getKey()}.update");
-            }
-
             TriggeredAutoSubscription::dispatchIf(! empty($task->createdBy), $task->createdBy, $task);
-        } catch (Exception $e) {
-            DB::rollBack();
-
-            throw $e;
-        }
-    }
-
-    public function updated(Task $task): void
-    {
-        try {
-            if ($task->isDirty('assigned_to') && $task->assigned_to !== $task->created_by) {
-                if ($task->getOriginal('assigned_to') !== $task->created_by) {
-                    User::find($task->getOriginal('assigned_to'))?->revokePermissionTo("task.{$task->getKey()}.update");
-                }
-
-                // Add permissions to newly assigned User
-                $task->assignedTo?->givePermissionTo("task.{$task->getKey()}.update");
-            }
         } catch (Exception $e) {
             DB::rollBack();
 
