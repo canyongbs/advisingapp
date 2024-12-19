@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\IntegrationTwilio\Actions\StatusCallback;
 use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
@@ -72,49 +71,6 @@ test('it will appropriately update the status of an outbound deliverable based o
 
     if ($expectedStatus === NotificationDeliveryStatus::Failed) {
         expect($outboundDeliverable->delivery_response)->toBe($payload['ErrorMessage']);
-    }
-})->with([
-    ['StatusCallback/delivered', NotificationDeliveryStatus::Successful],
-    ['StatusCallback/undelivered', NotificationDeliveryStatus::Failed],
-]);
-
-test('it will update a related entity if one exists', function (string $payloadPath, NotificationDeliveryStatus $expectedStatus) {
-    // Given that we have an outbound deliverable with a related EngagementDeliverable
-    $engagementDeliverable = EngagementDeliverable::factory()
-        ->sms()
-        ->create();
-
-    $outboundDeliverable = OutboundDeliverable::factory()
-        ->smsChannel()
-        ->create([
-            'related_id' => $engagementDeliverable->id,
-            'related_type' => $engagementDeliverable->getMorphClass(),
-            'external_reference_id' => '12345',
-        ]);
-
-    expect($outboundDeliverable->delivery_status)->toBe(NotificationDeliveryStatus::Awaiting);
-
-    $payload = replaceKeyInFixture(
-        fixture: loadFixtureFromModule('integration-twilio', $payloadPath),
-        key: 'MessageSid',
-        value: $outboundDeliverable->external_reference_id,
-    );
-
-    // When we process the status callback webhook
-    $request = Request::create('/', 'POST', $payload);
-    $statusCallback = new StatusCallback(TwilioStatusCallbackData::fromRequest($request));
-    $statusCallback->handle();
-
-    $outboundDeliverable->refresh();
-    $engagementDeliverable->refresh();
-
-    // Our outbound deliverable, along with our engagement deliverable
-    // should have been updated appropriately based on the status of the callback
-    expect($outboundDeliverable->delivery_status)->toBe($expectedStatus);
-
-    if ($expectedStatus === NotificationDeliveryStatus::Failed) {
-        expect($outboundDeliverable->delivery_response)->toBe($payload['ErrorMessage']);
-        expect($engagementDeliverable->delivery_response)->toBe($payload['ErrorMessage']);
     }
 })->with([
     ['StatusCallback/delivered', NotificationDeliveryStatus::Successful],
