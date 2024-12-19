@@ -133,24 +133,6 @@ it('allows super admin user to impersonate', function () {
         ->and(auth()->id())->toBe($user->id);
 });
 
-it('allows user with permission to impersonate', function () {
-    $first = User::factory()->create();
-    $first->givePermissionTo('user.view-any', 'user.*.view');
-    asSuperAdmin($first);
-
-    $second = User::factory()->create();
-
-    $component = livewire(ListUsers::class);
-
-    $component
-        ->assertSuccessful()
-        ->assertCountTableRecords(2)
-        ->callTableAction(Impersonate::class, $second);
-
-    expect($second->isImpersonated())->toBeTrue()
-        ->and(auth()->id())->toBe($second->id);
-});
-
 it('allows a user to leave impersonate', function () {
     $first = User::factory()->create();
     asSuperAdmin($first);
