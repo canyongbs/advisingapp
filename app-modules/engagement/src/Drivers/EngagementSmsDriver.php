@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Engagement\Drivers;
 
-use AdvisingApp\Engagement\Actions\EngagementSmsChannelDelivery;
-use AdvisingApp\Engagement\Actions\QueuedEngagementDelivery;
 use AdvisingApp\Engagement\Drivers\Contracts\EngagementDeliverableDriver;
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Engagement\Notifications\EngagementSmsNotification;
 use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
 use AdvisingApp\Notification\DataTransferObjects\UpdateEmailDeliveryStatusData;
 use AdvisingApp\Notification\DataTransferObjects\UpdateSmsDeliveryStatusData;
+use AdvisingApp\Notification\Notifications\BaseNotification;
 
 class EngagementSmsDriver implements EngagementDeliverableDriver
 {
@@ -55,26 +55,26 @@ class EngagementSmsDriver implements EngagementDeliverableDriver
         // TODO: Fix
 
         /** @var TwilioStatusCallbackData $updateData */
-        $updateData = $data->data;
+        // $updateData = $data->data;
 
-        $this->deliverable->update([
-            'external_status' => $updateData->messageStatus ?? null,
-        ]);
+        // $this->deliverable->update([
+        //     'external_status' => $updateData->messageStatus ?? null,
+        // ]);
 
-        match ($this->deliverable->external_status) {
-            'delivered' => $this->deliverable->markDeliverySuccessful(),
-            'undelivered', 'failed' => $this->deliverable->markDeliveryFailed($updateData->errorMessage ?? null),
-            default => null,
-        };
+        // match ($this->deliverable->external_status) {
+        //     'delivered' => $this->deliverable->markDeliverySuccessful(),
+        //     'undelivered', 'failed' => $this->deliverable->markDeliveryFailed($updateData->errorMessage ?? null),
+        //     default => null,
+        // };
     }
 
-    public function jobForDelivery(): QueuedEngagementDelivery
+    public function jobForDelivery(): BaseNotification
     {
-        return new EngagementSmsChannelDelivery($this->engagement);
+        return new EngagementSmsNotification($this->engagement);
     }
 
     public function deliver(): void
     {
-        EngagementSmsChannelDelivery::dispatch($this->engagement);
+        $this->engagement->recipient->notify(new EngagementSmsNotification($this->engagement));
     }
 }

@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Engagement\Drivers;
 
-use AdvisingApp\Engagement\Actions\EngagementEmailChannelDelivery;
-use AdvisingApp\Engagement\Actions\QueuedEngagementDelivery;
 use AdvisingApp\Engagement\Drivers\Contracts\EngagementDeliverableDriver;
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Engagement\Notifications\EngagementEmailNotification;
 use AdvisingApp\Notification\DataTransferObjects\UpdateEmailDeliveryStatusData;
 use AdvisingApp\Notification\DataTransferObjects\UpdateSmsDeliveryStatusData;
+use AdvisingApp\Notification\Notifications\BaseNotification;
 
 class EngagementEmailDriver implements EngagementDeliverableDriver
 {
@@ -67,13 +67,13 @@ class EngagementEmailDriver implements EngagementDeliverableDriver
         // };
     }
 
-    public function jobForDelivery(): QueuedEngagementDelivery
+    public function jobForDelivery(): BaseNotification
     {
-        return new EngagementEmailChannelDelivery($this->engagement);
+        return new EngagementEmailNotification($this->engagement);
     }
 
     public function deliver(): void
     {
-        EngagementEmailChannelDelivery::dispatch($this->engagement);
+        $this->engagement->recipient->notify(new EngagementEmailNotification($this->engagement));
     }
 }
