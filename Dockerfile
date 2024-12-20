@@ -1,4 +1,4 @@
-FROM ghcr.io/roadrunner-server/roadrunner:2024.3.0 AS roadrunner
+FROM ghcr.io/roadrunner-server/roadrunner:2024.3.1 AS roadrunner
 FROM serversideup/php:8.2-fpm-nginx-v2.2.1 AS base
 
 LABEL authors="CanyonGBS"
