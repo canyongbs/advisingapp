@@ -36,49 +36,43 @@
 
 namespace AdvisingApp\Engagement\Notifications;
 
-use AdvisingApp\Engagement\Models\EngagementDeliverable;
+use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use App\Models\Tenant;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Throwable;
 
-class EngagementEmailNotification extends BaseNotification implements EmailNotification, ShouldBeUnique
+class EngagementEmailNotification extends BaseNotification implements EmailNotification
 {
     use EmailChannelTrait;
 
     public function __construct(
-        public EngagementDeliverable $deliverable
+        public Engagement $engagement
     ) {}
-
-    public function uniqueId(): string
-    {
-        return Tenant::current()->id . ':' . $this->deliverable->id;
-    }
 
     public function toEmail(object $notifiable): MailMessage
     {
         return MailMessage::make()
-            ->subject($this->deliverable->engagement->subject)
-            ->greeting("Hello {$this->deliverable->engagement->recipient->display_name}!")
-            ->content($this->deliverable->engagement->getBody());
+            ->subject($this->engagement->subject)
+            ->greeting("Hello {$this->engagement->recipient->display_name}!")
+            ->content($this->engagement->getBody());
     }
 
     public function failed(?Throwable $exception): void
     {
-        $this->deliverable->markDeliveryFailed($exception->getMessage());
+        // TODO: Make sure the OutboundDeliverable is marked as failed
+        // $this->deliverable->markDeliveryFailed($exception->getMessage());
 
-        if (is_null($this->deliverable->engagement->engagement_batch_id)) {
-            $this->deliverable->engagement->user->notify(new EngagementFailedNotification($this->deliverable->engagement));
+        if (is_null($this->engagement->engagement_batch_id)) {
+            $this->engagement->user->notify(new EngagementFailedNotification($this->engagement));
         }
     }
 
     protected function beforeSendHook(object $notifiable, OutboundDeliverable $deliverable, string $channel): void
     {
-        $deliverable->related()->associate($this->deliverable);
+        // $deliverable->related()->associate($this->deliverable);
     }
 
     protected function afterSendHook(object $notifiable, OutboundDeliverable $deliverable): void
@@ -94,6 +88,6 @@ class EngagementEmailNotification extends BaseNotification implements EmailNotif
             return ! is_null($value);
         });
 
-        $this->deliverable->update($updateData);
+        // $this->deliverable->update($updateData);
     }
 }

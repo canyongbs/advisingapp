@@ -38,12 +38,15 @@ namespace AdvisingApp\Engagement\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Engagement\Actions\GenerateEngagementBodyContent;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
+use AdvisingApp\Engagement\Drivers\Contracts\EngagementDeliverableDriver;
+use AdvisingApp\Engagement\Drivers\EngagementEmailDriver;
+use AdvisingApp\Engagement\Drivers\EngagementSmsDriver;
 use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
 use AdvisingApp\Engagement\Observers\EngagementObserver;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
@@ -59,6 +62,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -89,14 +93,14 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         'body',
         'recipient_id',
         'recipient_type',
-        'scheduled',
         'deliver_at',
+        'channel',
     ];
 
     protected $casts = [
         'body' => 'array',
         'deliver_at' => 'datetime',
-        'scheduled' => 'boolean',
+        'channel' => NotificationChannel::class,
     ];
 
     // TODO Consider changing this relationship if we ever needed to timeline something else where records might be shared across entities
@@ -125,14 +129,19 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         return $this->user();
     }
 
-    public function engagementDeliverable(): HasOne
+    public function outboundDeliverables(): MorphMany
     {
-        return $this->hasOne(EngagementDeliverable::class);
+        return $this->morphMany(OutboundDeliverable::class, 'related');
+    }
+
+    public function latestOutboundDeliverable(): MorphOne
+    {
+        return $this->morphOne(OutboundDeliverable::class, 'related')->latestOfMany();
     }
 
     public function deliverable(): HasOne
     {
-        return $this->engagementDeliverable();
+        return $this->hasOne(EngagementDeliverable::class);
     }
 
     public function recipient(): MorphTo
@@ -154,32 +163,6 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         return $this->engagementBatch();
     }
 
-    public function scopeIsScheduled(Builder $query): void
-    {
-        $query->where('scheduled', true);
-    }
-
-    public function scopeIsAwaitingDelivery(Builder $query): void
-    {
-        $query->whereHas('engagementDeliverable', function (Builder $query) {
-            $query->where('delivery_status', EngagementDeliveryStatus::Awaiting);
-        });
-    }
-
-    public function scopeHasBeenDelivered(Builder $query): void
-    {
-        $query->whereDoesntHave('engagementDeliverable', function (Builder $query) {
-            $query->whereNull('delivered_at');
-        });
-    }
-
-    public function scopeHasNotBeenDelivered(Builder $query): void
-    {
-        $query->whereDoesntHave('engagementDeliverable', function (Builder $query) {
-            $query->whereNotNull('delivered_at');
-        });
-    }
-
     public function scopeIsNotPartOfABatch(Builder $query): void
     {
         $query->whereNull('engagement_batch_id');
@@ -197,7 +180,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
 
     public function hasBeenDelivered(): bool
     {
-        return $this->deliverable->hasBeenDelivered();
+        return $this->latestOutboundDeliverable->hasBeenDelivered();
     }
 
     public function getSubscribable(): ?Subscribable
@@ -248,9 +231,17 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         };
     }
 
-    public function getDeliveryMethod(): EngagementDeliveryMethod
+    public function driver(): EngagementDeliverableDriver
     {
-        return $this->deliverable->channel;
+        return match ($this->channel) {
+            NotificationChannel::Email => new EngagementEmailDriver($this),
+            NotificationChannel::Sms => new EngagementSmsDriver($this),
+        };
+    }
+
+    public function getDeliveryMethod(): NotificationChannel
+    {
+        return $this->channel;
     }
 
     protected static function booted(): void

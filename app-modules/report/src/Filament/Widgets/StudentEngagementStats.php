@@ -36,7 +36,8 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use AdvisingApp\Engagement\Models\EngagementDeliverable;
+use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -62,20 +63,18 @@ class StudentEngagementStats extends StatsOverviewReportWidget
             )),
             Stat::make('Total Emails Sent', Number::abbreviate(
                 Cache::tags([$this->cacheTag])->remember('total-emails-count', now()->addHours(24), function (): int {
-                    return EngagementDeliverable::whereHas('engagement', function ($q) {
-                        return $q->whereHasMorph('recipient', Student::class);
-                    })
-                        ->where('channel', 'email')
+                    return Engagement::query()
+                        ->whereHasMorph('recipient', Student::class)
+                        ->where('channel', NotificationChannel::Email)
                         ->count();
                 }),
                 maxPrecision: 2,
             )),
             Stat::make('Total Texts Sent', Number::abbreviate(
                 Cache::tags([$this->cacheTag])->remember('total-texts-count', now()->addHours(24), function (): int {
-                    return EngagementDeliverable::whereHas('engagement', function ($q) {
-                        return $q->whereHasMorph('recipient', Student::class);
-                    })
-                        ->where('channel', 'sms')
+                    return Engagement::query()
+                        ->whereHasMorph('recipient', Student::class)
+                        ->where('channel', NotificationChannel::Sms)
                         ->count();
                 }),
                 maxPrecision: 2,
