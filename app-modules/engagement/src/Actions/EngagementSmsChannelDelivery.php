@@ -46,23 +46,24 @@ class EngagementSmsChannelDelivery extends QueuedEngagementDelivery
 {
     public function deliver(): void
     {
-        $recipient = $this->deliverable->engagement->recipient;
+        $recipient = $this->engagement->recipient;
 
-        if (! $recipient->canRecieveSms()) {
-            $this->deliverable->update([
-                'delivery_status' => NotificationDeliveryStatus::DispatchFailed,
-                'last_delivery_attempt' => now(),
-                'delivery_response' => 'System determined recipient cannot receive SMS messages.',
-            ]);
+        // TODO: Ensure this logic is moved down to the Channel once we have the OutboundDeliverable
+        // if (! $recipient->canRecieveSms()) {
+        //     $this->deliverable->update([
+        //         'delivery_status' => NotificationDeliveryStatus::DispatchFailed,
+        //         'last_delivery_attempt' => now(),
+        //         'delivery_response' => 'System determined recipient cannot receive SMS messages.',
+        //     ]);
 
-            return;
-        }
+        //     return;
+        // }
 
-        $recipient->notifyNow(new EngagementSmsNotification($this->deliverable));
+        $recipient->notifyNow(new EngagementSmsNotification($this->engagement));
 
         if (TwilioDemoAutoReplyModeFeature::active() && app(TwilioSettings::class)->is_demo_auto_reply_mode_enabled) {
             app(CreateEngagementResponse::class)(EngagementResponseData::from([
-                'from' => $this->deliverable->engagement->recipient->routeNotificationForSms(),
+                'from' => $this->engagement->recipient->routeNotificationForSms(),
                 'body' => 'Just got your message, thanks for sending over these details.',
             ]));
         }

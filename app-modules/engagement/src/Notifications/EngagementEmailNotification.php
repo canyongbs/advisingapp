@@ -42,22 +42,15 @@ use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use App\Models\Tenant;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Throwable;
 
-class EngagementEmailNotification extends BaseNotification implements EmailNotification, ShouldBeUnique
+class EngagementEmailNotification extends BaseNotification implements EmailNotification
 {
     use EmailChannelTrait;
 
     public function __construct(
         public Engagement $engagement
     ) {}
-
-    public function uniqueId(): string
-    {
-        return Tenant::current()->id . ':' . $this->engagement->id;
-    }
 
     public function toEmail(object $notifiable): MailMessage
     {
