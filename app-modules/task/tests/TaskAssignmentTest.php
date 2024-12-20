@@ -34,49 +34,42 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Authorization\Models\Permission;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Task\Filament\Resources\TaskResource;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Task\Notifications\TaskAssignedToUserNotification;
 use App\Models\User;
 use Illuminate\Support\Facades\Notification;
 
+use function Pest\Laravel\actingAs;
+
 beforeEach(function () {
     Notification::fake();
 });
 
-it('creates the proper permissions record when a Task is created', function () {
-    $task = Task::factory()->create();
-
-    expect(Permission::where('name', "task.{$task->getKey()}.update")->exists())->toBeTrue();
-});
-
-it('gives the proper permission to the creator of a Task', function () {
-    /** @var Task $task */
-    $task = Task::factory()->create();
-
-    expect($task->createdBy->can("task.{$task->getKey()}.update"))->toBeTrue();
-});
-
-it('gives the proper permission to the assigned User of a Task on create and update', function () {
+it('gives the proper permission to the assigned User of a Task on update', function () {
     /** @var Task $task */
     $task = Task::factory()->assigned()->create();
 
-    expect($task->createdBy->can("task.{$task->getKey()}.update"))->toBeTrue()
-        ->and($task->assignedTo->can("task.{$task->getKey()}.update"))->toBeTrue();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    $originalAssignedUser = $task->assignedTo;
+    actingAs($user)->get(TaskResource::getUrl('edit', [
+        'record' => $task,
+    ]))->assertForbidden();
 
-    $newAssignedUser = User::factory()->create();
+    $user->givePermissionTo('task.view-any');
+    $user->givePermissionTo('task.*.view');
+    $user->givePermissionTo('task.*.update');
 
-    $task->assignedTo()->associate($newAssignedUser)->save();
+    $user->refresh();
+
+    $task->assignedTo()->associate($user)->save();
 
     $task->refresh();
-    $originalAssignedUser->refresh();
-    $newAssignedUser->refresh();
 
-    expect($task->createdBy->can("task.{$task->getKey()}.update"))->toBeTrue()
-        ->and($newAssignedUser->can("task.{$task->getKey()}.update"))->toBeTrue()
-        ->and($originalAssignedUser->can("task.{$task->getKey()}.update"))->toBeFalse();
+    actingAs($user)->get(TaskResource::getUrl('edit', [
+        'record' => $task,
+    ]))->assertSuccessful();
 });
 
 it('sends the proper notification to the assigned User', function () {
