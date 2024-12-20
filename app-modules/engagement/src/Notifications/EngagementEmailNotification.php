@@ -56,29 +56,30 @@ class EngagementEmailNotification extends BaseNotification implements EmailNotif
 
     public function uniqueId(): string
     {
-        return Tenant::current()->id . ':' . $this->deliverable->id;
+        return Tenant::current()->id . ':' . $this->engagement->id;
     }
 
     public function toEmail(object $notifiable): MailMessage
     {
         return MailMessage::make()
-            ->subject($this->deliverable->engagement->subject)
-            ->greeting("Hello {$this->deliverable->engagement->recipient->display_name}!")
-            ->content($this->deliverable->engagement->getBody());
+            ->subject($this->engagement->subject)
+            ->greeting("Hello {$this->engagement->recipient->display_name}!")
+            ->content($this->engagement->getBody());
     }
 
     public function failed(?Throwable $exception): void
     {
-        $this->deliverable->markDeliveryFailed($exception->getMessage());
+        // TODO: Make sure the OutboundDeliverable is marked as failed
+        // $this->deliverable->markDeliveryFailed($exception->getMessage());
 
-        if (is_null($this->deliverable->engagement->engagement_batch_id)) {
-            $this->deliverable->engagement->user->notify(new EngagementFailedNotification($this->deliverable->engagement));
+        if (is_null($this->engagement->engagement_batch_id)) {
+            $this->engagement->user->notify(new EngagementFailedNotification($this->engagement));
         }
     }
 
     protected function beforeSendHook(object $notifiable, OutboundDeliverable $deliverable, string $channel): void
     {
-        $deliverable->related()->associate($this->deliverable);
+        // $deliverable->related()->associate($this->deliverable);
     }
 
     protected function afterSendHook(object $notifiable, OutboundDeliverable $deliverable): void
@@ -94,6 +95,6 @@ class EngagementEmailNotification extends BaseNotification implements EmailNotif
             return ! is_null($value);
         });
 
-        $this->deliverable->update($updateData);
+        // $this->deliverable->update($updateData);
     }
 }
