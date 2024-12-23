@@ -40,7 +40,6 @@ use AdvisingApp\Engagement\Actions\EngagementSmsChannelDelivery;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementBatchCreationData;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementBatch;
-use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Engagement\Notifications\EngagementBatchFinishedNotification;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -97,22 +96,6 @@ it('will associate the engagement with the batch', function () {
     ]));
 
     expect(EngagementBatch::first()->engagements()->count())->toBe(4);
-});
-
-it('will create deliverables for the created engagements', function () {
-    Queue::fake([EngagementEmailChannelDelivery::class, EngagementSmsChannelDelivery::class]);
-    Notification::fake();
-
-    CreateEngagementBatch::dispatch(EngagementBatchCreationData::from([
-        'user' => User::factory()->create(),
-        'records' => Student::factory()->count(1)->create(),
-        'subject' => 'Test Subject',
-        'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Test Body']]]]],
-        'deliveryMethod' => NotificationChannel::Email->value,
-    ]));
-
-    expect(EngagementDeliverable::count())->toBe(1)
-        ->and(Engagement::first()->deliverable()->count())->toBe(1);
 });
 
 it('will dispatch a batch of jobs for each engagement that needs to be delivered', function () {

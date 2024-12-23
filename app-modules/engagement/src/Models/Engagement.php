@@ -61,7 +61,6 @@ use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -137,11 +136,6 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     public function latestOutboundDeliverable(): MorphOne
     {
         return $this->morphOne(OutboundDeliverable::class, 'related')->latestOfMany();
-    }
-
-    public function deliverable(): HasOne
-    {
-        return $this->hasOne(EngagementDeliverable::class);
     }
 
     public function recipient(): MorphTo

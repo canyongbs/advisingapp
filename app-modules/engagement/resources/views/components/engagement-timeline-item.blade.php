@@ -47,33 +47,24 @@
             </a>
             <span class="ml-2 flex space-x-2">
                 @php
-                    $deliverable = $record->deliverable;
+                    $deliverable = $record->latestOutboundDeliverable;
                 @endphp
 
-                @if ($deliverable->channel === NotificationChannel::Email)
-                    <div class="relative">
-                        <x-filament::icon
-                            class="h-5 w-5 text-gray-400 dark:text-gray-100"
-                            icon="heroicon-o-envelope"
-                        />
-                        <x-filament::icon
-                            class="{{ $deliverable->delivery_status->getTextColorClass() }} absolute bottom-0 right-0 h-2 w-2"
-                            icon="{{ $deliverable->delivery_status->getIconClass() }}"
-                        />
-                    </div>
-                @endif
-                @if ($deliverable->channel === NotificationChannel::Sms)
-                    <div class="relative">
-                        <x-filament::icon
-                            class="h-5 w-5 text-gray-400 dark:text-gray-100"
-                            icon="heroicon-o-chat-bubble-left"
-                        />
-                        <x-filament::icon
-                            class="{{ $deliverable->delivery_status->getTextColorClass() }} absolute bottom-0 right-0 h-2 w-2"
-                            icon="{{ $deliverable->delivery_status->getIconClass() }}"
-                        />
-                    </div>
-                @endif
+                <div class="relative">
+                    <x-filament::icon
+                        class="h-5 w-5 text-gray-400 dark:text-gray-100"
+                        icon="{{ 
+                            match ($record->channel) {
+                                NotificationChannel::Email => 'heroicon-o-mail',
+                                NotificationChannel::Sms => 'heroicon-o-chat-bubble-left',
+                            }
+                        }}"
+                    />
+                    <x-filament::icon
+                        class="{{ $deliverable?->delivery_status->getTextColorClass() ?? 'text-yellow-500' }} absolute bottom-0 right-0 h-2 w-2"
+                        icon="{{ $deliverable?->delivery_status->getIconClass() ?? 'heroicon-s-clock' }}"
+                    />
+                </div>
             </span>
         </h3>
 
