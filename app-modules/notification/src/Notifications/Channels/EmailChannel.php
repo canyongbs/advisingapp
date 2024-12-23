@@ -51,55 +51,67 @@ use App\Settings\LicenseSettings;
 use Exception;
 use Illuminate\Notifications\Channels\MailChannel;
 use Illuminate\Notifications\Notification;
+use Throwable;
 
 class EmailChannel extends MailChannel implements NotificationChannelInterface
 {
     public function send($notifiable, Notification $notification): void
     {
-        if (! $notification instanceof EmailNotification || ! $notification instanceof BaseNotification) {
-            // TODO: This should probably throw a custom exception
-            return;
-        }
-
-        /** @var BaseNotification&EmailNotification $notification */
         $deliverable = resolve(MakeOutboundDeliverable::class)->handle($notification, $notifiable, NotificationChannel::Email);
 
+        /** @var BaseNotification $notification */
         $notification->beforeSend($notifiable, $deliverable, NotificationChannel::Email);
 
         $deliverable->save();
 
-        $notification->metadata['outbound_deliverable_id'] = $deliverable->id;
+        try {
+            if (! $notification instanceof EmailNotification || ! $notification instanceof BaseNotification) {
+                // TODO: This should probably throw a custom exception
+                throw new Exception('Invalid notification type.');
+            }
 
-        if (Tenant::checkCurrent()) {
-            $notification->metadata['tenant_id'] = Tenant::current()->getKey();
-        }
+            $notification->metadata['outbound_deliverable_id'] = $deliverable->id;
 
-        if (! $this->canSendWithinQuotaLimits($notification, $notifiable)) {
+            if (Tenant::checkCurrent()) {
+                $notification->metadata['tenant_id'] = Tenant::current()->getKey();
+            }
+
+            throw_if(! $this->canSendWithinQuotaLimits($notification, $notifiable), new NotificationQuotaExceeded());
+
+            $result = $this->handle($notifiable, $notification);
+
+            try {
+                if ($result->success) {
+                    $demoMode = Tenant::current()?->config->mail->isDemoModeEnabled ?? false;
+
+                    $deliverable->update([
+                        'delivery_status' => ! $demoMode
+                            ? NotificationDeliveryStatus::Dispatched
+                            : NotificationDeliveryStatus::Successful,
+                        'quota_usage' => ! $demoMode
+                            ? self::determineQuotaUsage($result->recipients)
+                            : 0,
+                    ]);
+                } else {
+                    $deliverable->update([
+                        'delivery_status' => NotificationDeliveryStatus::DispatchFailed,
+                    ]);
+                }
+
+                // Consider dispatching this as a seperate job so that it can be encapsulated to be retried if it fails, but also avoid changing the status of the deliverable if it fails
+                $notification->afterSend($notifiable, $deliverable, $result);
+            } catch (Throwable $e) {
+                report($e);
+            }
+        } catch (NotificationQuotaExceeded $e) {
             $deliverable->update(['delivery_status' => NotificationDeliveryStatus::RateLimited]);
-
-            throw new NotificationQuotaExceeded();
-        }
-
-        $result = $this->handle($notifiable, $notification);
-
-        $demoMode = false;
-
-        if (Tenant::current()?->config->mail->isDemoModeEnabled ?? false) {
-            $demoMode = true;
-        }
-
-        if ($result->success) {
-            $deliverable->update([
-                'delivery_status' => ! $demoMode ? NotificationDeliveryStatus::Dispatched : NotificationDeliveryStatus::Successful,
-                'quota_usage' => ! $demoMode ? self::determineQuotaUsage($result->recipients) : 0,
-            ]);
-        } else {
+        } catch (Throwable $e) {
             $deliverable->update([
                 'delivery_status' => NotificationDeliveryStatus::DispatchFailed,
             ]);
-        }
 
-        $notification->afterSend($notifiable, $deliverable, $result);
+            throw $e;
+        }
     }
 
     public function handle(object $notifiable, BaseNotification $notification): EmailChannelResultData
@@ -116,26 +128,6 @@ class EmailChannel extends MailChannel implements NotificationChannelInterface
         }
 
         return $result;
-    }
-
-    public static function afterSending(object $notifiable, OutboundDeliverable $deliverable, EmailChannelResultData $result): void
-    {
-        $demoMode = false;
-
-        if (Tenant::current()?->config->mail->isDemoModeEnabled ?? false) {
-            $demoMode = true;
-        }
-
-        if ($result->success) {
-            $deliverable->update([
-                'delivery_status' => ! $demoMode ? NotificationDeliveryStatus::Dispatched : NotificationDeliveryStatus::Successful,
-                'quota_usage' => ! $demoMode ? self::determineQuotaUsage($result->recipients) : 0,
-            ]);
-        } else {
-            $deliverable->update([
-                'delivery_status' => NotificationDeliveryStatus::DispatchFailed,
-            ]);
-        }
     }
 
     public static function determineQuotaUsage(array $recipients): int

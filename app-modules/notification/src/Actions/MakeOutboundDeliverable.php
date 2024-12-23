@@ -37,6 +37,7 @@
 namespace AdvisingApp\Notification\Actions;
 
 use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\DatabaseNotification;
@@ -68,6 +69,7 @@ class MakeOutboundDeliverable
             'content' => $content,
             'recipient_id' => ! $notifiable instanceof AnonymousNotifiable ? $notifiable->getKey() : $recipientId,
             'recipient_type' => ! $notifiable instanceof AnonymousNotifiable ? $notifiable->getMorphClass() : $recipientType,
+            'delivery_status' => NotificationDeliveryStatus::Awaiting,
         ]);
     }
 }

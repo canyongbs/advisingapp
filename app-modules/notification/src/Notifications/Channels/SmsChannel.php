@@ -49,9 +49,11 @@ use AdvisingApp\Notification\Notifications\SmsNotification;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Exception;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Str;
 use Talkroute\MessageSegmentCalculator\SegmentCalculator;
+use Throwable;
 use Twilio\Exceptions\TwilioException;
 use Twilio\Rest\Api\V2010;
 use Twilio\Rest\Api\V2010\Account\MessageInstance;
@@ -62,51 +64,60 @@ class SmsChannel implements NotificationChannelInterface
 {
     public function send(object $notifiable, Notification $notification): void
     {
-        if (! $notification instanceof SmsNotification || ! $notification instanceof BaseNotification) {
-            // TODO: This should probably throw a custom exception
-            return;
-        }
-
-        /** @var BaseNotification&SmsNotification $notification */
         $deliverable = resolve(MakeOutboundDeliverable::class)->handle($notification, $notifiable, NotificationChannel::Sms);
 
+        /** @var BaseNotification $notification */
         $notification->beforeSend($notifiable, $deliverable, NotificationChannel::Sms);
 
         $deliverable->save();
 
-        $notification->metadata['outbound_deliverable_id'] = $deliverable->id;
+        try {
+            if (! $notification instanceof SmsNotification || ! $notification instanceof BaseNotification) {
+                // TODO: This should probably throw a custom exception
+                throw new Exception('Invalid notification type.');
+            }
 
-        if (Tenant::checkCurrent()) {
-            $notification->metadata['tenant_id'] = Tenant::current()->getKey();
-        }
+            $notification->metadata['outbound_deliverable_id'] = $deliverable->id;
 
-        if (! $this->canSendWithinQuotaLimits($notification, $notifiable)) {
+            if (Tenant::checkCurrent()) {
+                $notification->metadata['tenant_id'] = Tenant::current()->getKey();
+            }
+
+            throw_if(! $this->canSendWithinQuotaLimits($notification, $notifiable), new NotificationQuotaExceeded());
+
+            $smsData = $this->handle($notifiable, $notification);
+
+            try {
+                if ($smsData->success) {
+                    $demoMode = app(TwilioSettings::class)->is_demo_mode_enabled ?? false;
+
+                    $deliverable->update([
+                        'external_reference_id' => $smsData->message->sid,
+                        'external_status' => $smsData->message->status,
+                        'delivery_status' => ! $demoMode ? NotificationDeliveryStatus::Dispatched : NotificationDeliveryStatus::Successful,
+                        'quota_usage' => ! $demoMode ? self::determineQuotaUsage($smsData) : 0,
+                    ]);
+                } else {
+                    $deliverable->update([
+                        'delivery_status' => NotificationDeliveryStatus::DispatchFailed,
+                        'delivery_response' => $smsData->error,
+                    ]);
+                }
+
+                // Consider dispatching this as a seperate job so that it can be encapsulated to be retried if it fails, but also avoid changing the status of the deliverable if it fails
+                $notification->afterSend($notifiable, $deliverable, $smsData);
+            } catch (Throwable $e) {
+                report($e);
+            }
+        } catch (NotificationQuotaExceeded $e) {
             $deliverable->update(['delivery_status' => NotificationDeliveryStatus::RateLimited]);
-
-            throw new NotificationQuotaExceeded();
-        }
-
-        $smsData = $this->handle($notifiable, $notification);
-
-        $twilioSettings = app(TwilioSettings::class);
-
-        $demoMode = $twilioSettings->is_demo_mode_enabled ?? false;
-
-        if ($smsData->success) {
-            $deliverable->update([
-                'external_reference_id' => $smsData->message->sid,
-                'external_status' => $smsData->message->status,
-                'delivery_status' => ! $demoMode ? NotificationDeliveryStatus::Dispatched : NotificationDeliveryStatus::Successful,
-                'quota_usage' => ! $demoMode ? self::determineQuotaUsage($smsData) : 0,
-            ]);
-        } else {
+        } catch (Throwable $e) {
             $deliverable->update([
                 'delivery_status' => NotificationDeliveryStatus::DispatchFailed,
-                'delivery_response' => $smsData->error,
             ]);
-        }
 
-        $notification->afterSend($notifiable, $deliverable, $smsData);
+            throw $e;
+        }
     }
 
     public function handle(object $notifiable, BaseNotification&SmsNotification $notification): SmsChannelResultData
