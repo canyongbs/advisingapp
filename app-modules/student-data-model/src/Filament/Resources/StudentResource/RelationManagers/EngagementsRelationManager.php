@@ -113,7 +113,7 @@ class EngagementsRelationManager extends RelationManager
                         IconEntry::make('latestOutboundDeliverable.delivery_status')
                             ->getStateUsing(fn (Timeline $record): NotificationDeliveryStatus => $record->timelineable->latestOutboundDeliverable->delivery_status)
                             ->icon(fn (NotificationDeliveryStatus $state): string => $state?->getIconClass() ?? 'heroicon-s-clock')
-                            ->iconColor(fn (NotificationDeliveryStatus $state): string => $state?->getColor() ?? 'text-yellow-500')
+                            ->color(fn (NotificationDeliveryStatus $state): string => $state?->getColor() ?? 'text-yellow-500')
                             ->label('Status'),
                         TextEntry::make('latestOutboundDeliverable.delivered_at')
                             ->getStateUsing(fn (Timeline $record): string => $record->timelineable->latestOutboundDeliverable->delivered_at)

@@ -121,7 +121,7 @@ class EngagementSmsBodyField
                     $component->state($template->content);
                 }))
             ->when($context === 'create', function (Field $field) {
-                $field->hidden(fn (Get $get): bool => $get('delivery_method') === NotificationChannel::Email->value);
+                $field->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Email->value);
             })
             ->when($context === 'edit', function (Field $field) {
                 $field->visible(fn (Engagement $record): bool => $record->channel === NotificationChannel::Sms);
