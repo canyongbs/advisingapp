@@ -36,13 +36,12 @@
 
 namespace AdvisingApp\Engagement\Drivers;
 
+use AdvisingApp\Engagement\Actions\EngagementSmsChannelDelivery;
 use AdvisingApp\Engagement\Drivers\Contracts\EngagementDeliverableDriver;
 use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Engagement\Notifications\EngagementSmsNotification;
 use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
 use AdvisingApp\Notification\DataTransferObjects\UpdateEmailDeliveryStatusData;
 use AdvisingApp\Notification\DataTransferObjects\UpdateSmsDeliveryStatusData;
-use AdvisingApp\Notification\Notifications\BaseNotification;
 
 class EngagementSmsDriver implements EngagementDeliverableDriver
 {
@@ -68,13 +67,13 @@ class EngagementSmsDriver implements EngagementDeliverableDriver
         // };
     }
 
-    public function jobForDelivery(): BaseNotification
+    public function jobForDelivery(): EngagementSmsChannelDelivery
     {
-        return new EngagementSmsNotification($this->engagement);
+        return new EngagementSmsChannelDelivery($this->engagement);
     }
 
     public function deliver(): void
     {
-        $this->engagement->recipient->notify(new EngagementSmsNotification($this->engagement));
+        dispatch($this->jobForDelivery());
     }
 }

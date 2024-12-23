@@ -40,15 +40,25 @@ use AdvisingApp\Notification\DataTransferObjects\DatabaseChannelResultData;
 use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\Channels\Concerns\ChannelBeforeAndAfter;
+use AdvisingApp\Notification\Notifications\Channels\Contracts\NotificationChannelInterface;
+use AdvisingApp\Notification\Notifications\DatabaseNotification;
 use Illuminate\Notifications\Channels\DatabaseChannel as BaseDatabaseChannel;
 use Illuminate\Notifications\Notification;
 
-class DatabaseChannel extends BaseDatabaseChannel
+class DatabaseChannel extends BaseDatabaseChannel implements NotificationChannelInterface
 {
+    use ChannelBeforeAndAfter;
+
     public function send($notifiable, Notification $notification): void
     {
-        /** @var BaseNotification $notification */
-        $deliverable = $notification->beforeSend($notifiable, DatabaseChannel::class);
+        if (! $notification instanceof DatabaseNotification || ! $notification instanceof BaseNotification) {
+            // TODO: This should probably throw a custom exception
+            return;
+        }
+
+        /** @var BaseNotification&DatabaseNotification $notification */
+        $deliverable = $this->beforeSend($notifiable, $notification, $this);
 
         if ($deliverable === false) {
             // Do anything else we need to notify sending party that notification was not sent

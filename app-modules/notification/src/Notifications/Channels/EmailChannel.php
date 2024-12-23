@@ -40,52 +40,41 @@ use AdvisingApp\Notification\DataTransferObjects\EmailChannelResultData;
 use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
-use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\Channels\Concerns\ChannelBeforeAndAfter;
+use AdvisingApp\Notification\Notifications\Channels\Contracts\NotificationChannelInterface;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Exception;
-use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Channels\MailChannel;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\Facades\DB;
 
-class EmailChannel extends MailChannel
+class EmailChannel extends MailChannel implements NotificationChannelInterface
 {
+    use ChannelBeforeAndAfter;
+
     public function send($notifiable, Notification $notification): void
     {
-        /** @var AnonymousNotifiable|NotifiableInterface $notifiable */
-        try {
-            DB::beginTransaction();
-
-            if (! $notification instanceof EmailNotification) {
-                return;
-            }
-
-            /** @var BaseNotification $notification */
-            $deliverable = $notification->beforeSend($notifiable, EmailChannel::class);
-
-            if (! $this->canSendWithinQuotaLimits($notification, $notifiable)) {
-                $deliverable->update(['delivery_status' => NotificationDeliveryStatus::RateLimited]);
-
-                DB::commit();
-
-                throw new NotificationQuotaExceeded();
-            }
-
-            $result = $this->handle($notifiable, $notification);
-
-            $notification->afterSend($notifiable, $deliverable, $result);
-
-            DB::commit();
-        } catch (Exception $e) {
-            DB::rollBack();
-
-            throw $e;
+        if (! $notification instanceof EmailNotification || ! $notification instanceof BaseNotification) {
+            // TODO: This should probably throw a custom exception
+            return;
         }
+
+        /** @var BaseNotification&EmailNotification $notification */
+        $deliverable = $this->beforeSend($notifiable, $notification, $this);
+
+        if (! $this->canSendWithinQuotaLimits($notification, $notifiable)) {
+            $deliverable->update(['delivery_status' => NotificationDeliveryStatus::RateLimited]);
+
+            throw new NotificationQuotaExceeded();
+        }
+
+        $result = $this->handle($notifiable, $notification);
+
+        $notification->afterSend($notifiable, $deliverable, $result);
     }
 
     public function handle(object $notifiable, BaseNotification $notification): NotificationResultData

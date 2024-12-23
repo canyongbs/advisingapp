@@ -34,39 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Actions;
+namespace AdvisingApp\Notification\Notifications\Channels\Contracts;
 
-use AdvisingApp\Engagement\Models\Engagement;
-use App\Models\Tenant;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\Middleware\WithoutOverlapping;
-use Illuminate\Queue\SerializesModels;
+use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
+use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\Notification\Notifications\BaseNotification;
+use Illuminate\Notifications\AnonymousNotifiable;
+use Illuminate\Notifications\Notification;
 
-class DeliverEngagements implements ShouldQueue
+interface NotificationChannelInterface
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
+    public function send(object $notifiable, Notification $notification): void;
 
-    public function handle(): void
-    {
-        // TODO: Ensure this logic is correct and covers all scenarios
-        Engagement::query()
-            ->where('deliver_at', '<=', now())
-            ->whereDoesntHave('outboundDeliverables')
-            ->isNotPartOfABatch()
-            ->cursor()
-            ->each(function (Engagement $engagement) {
-                $engagement->driver()->deliver();
-            });
-    }
+    public function beforeSend(AnonymousNotifiable|NotifiableInterface $notifiable, BaseNotification $notification, NotificationChannelInterface $channel): OutboundDeliverable;
 
-    public function middleware(): array
-    {
-        return [(new WithoutOverlapping(Tenant::current()->id))->dontRelease()->expireAfter(180)];
-    }
+    public function afterSend(AnonymousNotifiable|NotifiableInterface $notifiable, OutboundDeliverable $deliverable, NotificationResultData $result): void;
 }

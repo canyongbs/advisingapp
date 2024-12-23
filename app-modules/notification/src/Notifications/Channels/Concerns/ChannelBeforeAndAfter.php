@@ -34,39 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Actions;
+namespace AdvisingApp\Notification\Notifications\Channels\Concerns;
 
-use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Notification\Actions\MakeOutboundDeliverable;
+use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
+use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\Channels\Contracts\NotificationChannelInterface;
 use App\Models\Tenant;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\Middleware\WithoutOverlapping;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Notifications\AnonymousNotifiable;
 
-class DeliverEngagements implements ShouldQueue
+trait ChannelBeforeAndAfter
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
-    public function handle(): void
+    public function beforeSend(AnonymousNotifiable|NotifiableInterface $notifiable, BaseNotification $notification, NotificationChannelInterface $channel): OutboundDeliverable
     {
-        // TODO: Ensure this logic is correct and covers all scenarios
-        Engagement::query()
-            ->where('deliver_at', '<=', now())
-            ->whereDoesntHave('outboundDeliverables')
-            ->isNotPartOfABatch()
-            ->cursor()
-            ->each(function (Engagement $engagement) {
-                $engagement->driver()->deliver();
-            });
+        $deliverable = resolve(MakeOutboundDeliverable::class)->handle($this, $notifiable, $channel);
+
+        $notification->beforeSend($notifiable, $deliverable, $channel);
+
+        $deliverable->save();
+
+        $notification->metadata['outbound_deliverable_id'] = $deliverable->id;
+
+        if (Tenant::checkCurrent()) {
+            $notification->metadata['tenant_id'] = Tenant::current()->getKey();
+        }
+
+        return $deliverable;
     }
 
-    public function middleware(): array
+    public function afterSend(AnonymousNotifiable|NotifiableInterface $notifiable, OutboundDeliverable $deliverable, NotificationResultData $result): void
     {
-        return [(new WithoutOverlapping(Tenant::current()->id))->dontRelease()->expireAfter(180)];
+        // After sending the notification
     }
 }

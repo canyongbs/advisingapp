@@ -37,11 +37,14 @@
 namespace AdvisingApp\Engagement\Notifications;
 
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\Channels\Contracts\NotificationChannelInterface;
 use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\AnonymousNotifiable;
 use Throwable;
 
 class EngagementEmailNotification extends BaseNotification implements EmailNotification
@@ -70,9 +73,9 @@ class EngagementEmailNotification extends BaseNotification implements EmailNotif
         }
     }
 
-    protected function beforeSendHook(object $notifiable, OutboundDeliverable $deliverable, string $channel): void
+    public function beforeSend(AnonymousNotifiable|NotifiableInterface $notifiable, OutboundDeliverable $deliverable, NotificationChannelInterface $channel): void
     {
-        // $deliverable->related()->associate($this->deliverable);
+        $deliverable->related()->associate($this->engagement);
     }
 
     protected function afterSendHook(object $notifiable, OutboundDeliverable $deliverable): void

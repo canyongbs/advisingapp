@@ -36,20 +36,21 @@
 
 namespace AdvisingApp\Notification\Notifications;
 
-use AdvisingApp\Notification\Actions\MakeOutboundDeliverable;
 use AdvisingApp\Notification\DataTransferObjects\DatabaseChannelResultData;
 use AdvisingApp\Notification\DataTransferObjects\EmailChannelResultData;
 use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
 use AdvisingApp\Notification\DataTransferObjects\SmsChannelResultData;
+use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\Notification\Notifications\Channels\Contracts\NotificationChannelInterface;
 use AdvisingApp\Notification\Notifications\Channels\DatabaseChannel;
 use AdvisingApp\Notification\Notifications\Channels\EmailChannel;
 use AdvisingApp\Notification\Notifications\Channels\SmsChannel;
 use AdvisingApp\Notification\Notifications\Concerns\ChannelTrait;
-use App\Models\Tenant;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Str;
 
@@ -57,7 +58,7 @@ abstract class BaseNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    protected array $metadata = [];
+    public array $metadata = [];
 
     public $tries = 3;
 
@@ -94,25 +95,6 @@ abstract class BaseNotification extends Notification implements ShouldQueue
         ];
     }
 
-    public function beforeSend(object $notifiable, string $channel): OutboundDeliverable|false
-    {
-        $deliverable = resolve(MakeOutboundDeliverable::class)->handle($this, $notifiable, $channel);
-
-        $this->beforeSendHook($notifiable, $deliverable, $channel);
-
-        $deliverable->save();
-
-        $this->metadata = [
-            'outbound_deliverable_id' => $deliverable->id,
-        ];
-
-        if (Tenant::checkCurrent()) {
-            $this->metadata['tenant_id'] = Tenant::current()->getKey();
-        }
-
-        return $deliverable;
-    }
-
     public function afterSend(object $notifiable, OutboundDeliverable $deliverable, NotificationResultData $result): void
     {
         match (true) {
@@ -125,12 +107,13 @@ abstract class BaseNotification extends Notification implements ShouldQueue
         $this->afterSendHook($notifiable, $deliverable);
     }
 
+    // TODO: Can probably remove this method now that metadata is public
     public function getMetadata(): array
     {
         return $this->metadata;
     }
 
-    protected function beforeSendHook(object $notifiable, OutboundDeliverable $deliverable, string $channel): void {}
+    public function beforeSend(AnonymousNotifiable|NotifiableInterface $notifiable, OutboundDeliverable $deliverable, NotificationChannelInterface $channel): void {}
 
     protected function afterSendHook(object $notifiable, OutboundDeliverable $deliverable): void {}
 }

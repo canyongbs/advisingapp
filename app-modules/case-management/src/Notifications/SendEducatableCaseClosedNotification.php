@@ -37,8 +37,10 @@
 namespace AdvisingApp\CaseManagement\Notifications;
 
 use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\Channels\Contracts\NotificationChannelInterface;
 use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
@@ -46,6 +48,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\NotificationSetting;
+use Illuminate\Notifications\AnonymousNotifiable;
 
 class SendEducatableCaseClosedNotification extends BaseNotification implements EmailNotification
 {
@@ -74,7 +77,7 @@ class SendEducatableCaseClosedNotification extends BaseNotification implements E
             ->line("Your request {$this->case->case_number} for case is now {$status->name}.");
     }
 
-    protected function beforeSendHook(object $notifiable, OutboundDeliverable $deliverable, string $channel): void
+    public function beforeSend(AnonymousNotifiable|NotifiableInterface $notifiable, OutboundDeliverable $deliverable, NotificationChannelInterface $channel): void
     {
         $deliverable->related()->associate($this->case);
     }

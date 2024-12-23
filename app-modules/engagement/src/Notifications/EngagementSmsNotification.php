@@ -37,16 +37,17 @@
 namespace AdvisingApp\Engagement\Notifications;
 
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\Channels\Contracts\NotificationChannel;
 use AdvisingApp\Notification\Notifications\Concerns\SmsChannelTrait;
 use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
 use AdvisingApp\Notification\Notifications\SmsNotification;
-use App\Models\Tenant;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Notifications\AnonymousNotifiable;
 use Throwable;
 
-class EngagementSmsNotification extends BaseNotification implements SmsNotification, ShouldBeUnique
+class EngagementSmsNotification extends BaseNotification implements SmsNotification
 {
     use SmsChannelTrait;
 
@@ -54,40 +55,24 @@ class EngagementSmsNotification extends BaseNotification implements SmsNotificat
         public Engagement $engagement,
     ) {}
 
-    public function uniqueId(): string
-    {
-        return Tenant::current()->id . ':' . $this->deliverable->id;
-    }
-
     public function toSms(object $notifiable): TwilioMessage
     {
         return TwilioMessage::make($notifiable)
-            ->content($this->deliverable->engagement->getBodyMarkdown());
+            ->content($this->engagement->getBodyMarkdown());
     }
 
     public function failed(?Throwable $exception): void
     {
-        $this->deliverable->markDeliveryFailed($exception->getMessage());
+        // TODO: Ensure the OutboundDeliverable is marked as failed
+        // $this->deliverable->markDeliveryFailed($exception->getMessage());
 
-        if (is_null($this->deliverable->engagement->engagement_batch_id)) {
-            $this->deliverable->engagement->user?->notify(new EngagementFailedNotification($this->deliverable->engagement));
+        if (is_null($this->engagement->engagement_batch_id)) {
+            $this->engagement->user?->notify(new EngagementFailedNotification($this->engagement));
         }
     }
 
-    protected function beforeSendHook(object $notifiable, OutboundDeliverable $deliverable, string $channel): void
+    public function beforeSend(AnonymousNotifiable|NotifiableInterface $notifiable, OutboundDeliverable $deliverable, NotificationChannel $channel): void
     {
-        $deliverable->related()->associate($this->deliverable);
-    }
-
-    protected function afterSendHook(object $notifiable, OutboundDeliverable $deliverable): void
-    {
-        $this->deliverable->update([
-            'external_reference_id' => $deliverable->external_reference_id,
-            'external_status' => $deliverable->external_status,
-            'delivery_status' => $deliverable->delivery_status,
-            'delivered_at' => $deliverable->delivered_at,
-            'last_delivery_attempt' => $deliverable->last_delivery_attempt,
-            'delivery_response' => $deliverable->delivery_response,
-        ]);
+        $deliverable->related()->associate($this->engagement);
     }
 }
