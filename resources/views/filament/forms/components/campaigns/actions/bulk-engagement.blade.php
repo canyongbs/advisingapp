@@ -33,14 +33,14 @@
 --}}
 @php
     use AdvisingApp\Campaign\Settings\CampaignSettings;
-    use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
+    use AdvisingApp\Notification\Enums\NotificationChannel;
     use AdvisingApp\Engagement\Models\EngagementBatch;
     use Carbon\Carbon;
 @endphp
 
 <x-filament::fieldset>
     <x-slot name="label">
-        @if ($action['delivery_method'] === EngagementDeliveryMethod::Email->value)
+        @if ($action['delivery_method'] === NotificationChannel::Email->value)
             Email
         @else
             Text Message

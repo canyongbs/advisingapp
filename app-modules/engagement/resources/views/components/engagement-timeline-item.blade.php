@@ -33,8 +33,7 @@
 --}}
 @php
     use App\Filament\Resources\UserResource;
-    use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
-    use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
+    use AdvisingApp\Notification\Enums\NotificationChannel;
 @endphp
 
 <div>
@@ -51,7 +50,7 @@
                     $deliverable = $record->deliverable;
                 @endphp
 
-                @if ($deliverable->channel === EngagementDeliveryMethod::Email)
+                @if ($deliverable->channel === NotificationChannel::Email)
                     <div class="relative">
                         <x-filament::icon
                             class="h-5 w-5 text-gray-400 dark:text-gray-100"
@@ -63,7 +62,7 @@
                         />
                     </div>
                 @endif
-                @if ($deliverable->channel === EngagementDeliveryMethod::Sms)
+                @if ($deliverable->channel === NotificationChannel::Sms)
                     <div class="relative">
                         <x-filament::icon
                             class="h-5 w-5 text-gray-400 dark:text-gray-100"

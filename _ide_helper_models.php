@@ -1,39 +1,5 @@
 <?php
 
-/*
-<COPYRIGHT>
-
-    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
-
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
-    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
-
-    Notice:
-
-    - You may not provide the software to third parties as a hosted or managed
-      service, where the service provides users with access to any substantial set of
-      the features or functionality of the software.
-    - You may not move, change, disable, or circumvent the license key functionality
-      in the software, and you may not remove or obscure any functionality in the
-      software that is protected by the license key.
-    - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
-      to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
-      vigorously.
-    - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
-    - Use of this software implies agreement to the license terms and conditions as stated
-      in the Elastic License 2.0.
-
-    For more information or inquiries please visit our website at
-    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
-
-</COPYRIGHT>
-*/
-
 // @formatter:off
 // phpcs:ignoreFile
 /**
@@ -2660,24 +2626,22 @@ namespace AdvisingApp\Engagement\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property string|null $channel
+ * @property \AdvisingApp\Notification\Enums\NotificationChannel|null $channel
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \AdvisingApp\Engagement\Models\EngagementBatch|null $batch
  * @property-read \App\Models\User|null $createdBy
  * @property-read \AdvisingApp\Engagement\Models\EngagementDeliverable|null $deliverable
  * @property-read \AdvisingApp\Engagement\Models\EngagementBatch|null $engagementBatch
- * @property-read \AdvisingApp\Engagement\Models\EngagementDeliverable|null $engagementDeliverable
+ * @property-read \AdvisingApp\Notification\Models\OutboundDeliverable|null $latestOutboundDeliverable
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Notification\Models\OutboundDeliverable> $outboundDeliverables
+ * @property-read int|null $outbound_deliverables_count
  * @property-read \AdvisingApp\Timeline\Models\Timeline|null $timelineRecord
  * @property-read \App\Models\User|null $user
  * @method static \AdvisingApp\Engagement\Database\Factories\EngagementFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|Engagement hasBeenDelivered()
- * @method static \Illuminate\Database\Eloquent\Builder|Engagement hasNotBeenDelivered()
- * @method static \Illuminate\Database\Eloquent\Builder|Engagement isAwaitingDelivery()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement isNotPartOfABatch()
- * @method static \Illuminate\Database\Eloquent\Builder|Engagement isScheduled()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement licensedToEducatable(string $relationship)
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement newQuery()
@@ -2740,18 +2704,16 @@ namespace AdvisingApp\Engagement\Models{
  *
  * @property string $id
  * @property string $engagement_id
- * @property \AdvisingApp\Engagement\Enums\EngagementDeliveryMethod $channel
+ * @property \AdvisingApp\Notification\Enums\NotificationChannel $channel
  * @property string|null $external_reference_id
  * @property string|null $external_status
- * @property \AdvisingApp\Engagement\Enums\EngagementDeliveryStatus $delivery_status
+ * @property \AdvisingApp\Notification\Enums\NotificationDeliveryStatus $delivery_status
  * @property \Illuminate\Support\Carbon|null $delivered_at
  * @property \Illuminate\Support\Carbon|null $last_delivery_attempt
  * @property string|null $delivery_response
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
  * @property-read \AdvisingApp\Engagement\Models\Engagement $engagement
  * @method static \AdvisingApp\Engagement\Database\Factories\EngagementDeliverableFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable newModelQuery()

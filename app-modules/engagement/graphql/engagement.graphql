@@ -17,8 +17,6 @@ type Engagement @model(class: "AdvisingApp\\Engagement\\Models\\Engagement") {
 
     created_by: User @belongsTo(relation: "createdBy")
 
-    deliverable: EngagementDeliverable @hasOne
-
     audits: [Audit!] @hasMany
 
     audits_count: Int @count(relation: "audits")
