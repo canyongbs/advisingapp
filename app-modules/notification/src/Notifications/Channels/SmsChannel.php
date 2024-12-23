@@ -49,7 +49,6 @@ use AdvisingApp\Notification\Notifications\SmsNotification;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Settings\LicenseSettings;
-use Exception;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Str;
 use Talkroute\MessageSegmentCalculator\SegmentCalculator;

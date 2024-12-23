@@ -38,6 +38,7 @@ namespace AdvisingApp\Notification\Notifications\Channels;
 
 use AdvisingApp\Notification\Actions\MakeOutboundDeliverable;
 use AdvisingApp\Notification\DataTransferObjects\DatabaseChannelResultData;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\Channels\Contracts\NotificationChannelInterface;
 use AdvisingApp\Notification\Notifications\DatabaseNotification;
@@ -55,7 +56,7 @@ class DatabaseChannel extends BaseDatabaseChannel implements NotificationChannel
         }
 
         /** @var BaseNotification&DatabaseNotification $notification */
-        $deliverable = resolve(MakeOutboundDeliverable::class)->handle($notification, $notifiable, $this);
+        $deliverable = resolve(MakeOutboundDeliverable::class)->handle($notification, $notifiable, NotificationChannel::Database);
 
         $notification->beforeSend($notifiable, $deliverable, $this);
 

@@ -39,10 +39,6 @@ namespace AdvisingApp\Notification\Actions;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\Channels\Contracts\NotificationChannelInterface;
-use AdvisingApp\Notification\Notifications\Channels\DatabaseChannel;
-use AdvisingApp\Notification\Notifications\Channels\EmailChannel;
-use AdvisingApp\Notification\Notifications\Channels\SmsChannel;
 use AdvisingApp\Notification\Notifications\DatabaseNotification;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\OnDemandNotification;
@@ -51,19 +47,12 @@ use Illuminate\Notifications\AnonymousNotifiable;
 
 class MakeOutboundDeliverable
 {
-    public function handle(BaseNotification $notification, object $notifiable, NotificationChannelInterface $channel): OutboundDeliverable
+    public function handle(BaseNotification $notification, object $notifiable, NotificationChannel $channel): OutboundDeliverable
     {
-        // TODO: Look into channel and content here to see if we can refactor
-        $channel = match ($channel::class) {
-            SmsChannel::class => NotificationChannel::Sms,
-            EmailChannel::class => NotificationChannel::Email,
-            DatabaseChannel::class => NotificationChannel::Database,
-        };
-
         $content = match (true) {
-            $channel instanceof SmsChannel && $notification instanceof SmsNotification => $notification->toSms($notifiable)->toArray(),
-            $channel instanceof EmailChannel && $notification instanceof EmailNotification => $notification->toMail($notifiable)->toArray(),
-            $channel instanceof DatabaseChannel && $notification instanceof DatabaseNotification => $notification->toDatabase($notifiable),
+            $channel === NotificationChannel::Sms && $notification instanceof SmsNotification => $notification->toSms($notifiable)->toArray(),
+            $channel === NotificationChannel::Email && $notification instanceof EmailNotification => $notification->toMail($notifiable)->toArray(),
+            $channel === NotificationChannel::Database && $notification instanceof DatabaseNotification => $notification->toDatabase($notifiable),
         };
 
         $recipientId = null;
