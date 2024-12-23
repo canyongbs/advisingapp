@@ -36,13 +36,12 @@
 
 namespace AdvisingApp\Notification\Notifications\Channels;
 
+use AdvisingApp\Notification\Actions\MakeOutboundDeliverable;
 use AdvisingApp\Notification\DataTransferObjects\EmailChannelResultData;
-use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\Channels\Concerns\ChannelBeforeAndAfter;
 use AdvisingApp\Notification\Notifications\Channels\Contracts\NotificationChannelInterface;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use App\Models\Tenant;
@@ -54,8 +53,6 @@ use Illuminate\Notifications\Notification;
 
 class EmailChannel extends MailChannel implements NotificationChannelInterface
 {
-    use ChannelBeforeAndAfter;
-
     public function send($notifiable, Notification $notification): void
     {
         if (! $notification instanceof EmailNotification || ! $notification instanceof BaseNotification) {
@@ -64,7 +61,17 @@ class EmailChannel extends MailChannel implements NotificationChannelInterface
         }
 
         /** @var BaseNotification&EmailNotification $notification */
-        $deliverable = $this->beforeSend($notifiable, $notification, $this);
+        $deliverable = resolve(MakeOutboundDeliverable::class)->handle($notification, $notifiable, $this);
+
+        $notification->beforeSend($notifiable, $deliverable, $this);
+
+        $deliverable->save();
+
+        $notification->metadata['outbound_deliverable_id'] = $deliverable->id;
+
+        if (Tenant::checkCurrent()) {
+            $notification->metadata['tenant_id'] = Tenant::current()->getKey();
+        }
 
         if (! $this->canSendWithinQuotaLimits($notification, $notifiable)) {
             $deliverable->update(['delivery_status' => NotificationDeliveryStatus::RateLimited]);
@@ -74,10 +81,27 @@ class EmailChannel extends MailChannel implements NotificationChannelInterface
 
         $result = $this->handle($notifiable, $notification);
 
+        $demoMode = false;
+
+        if (Tenant::current()?->config->mail->isDemoModeEnabled ?? false) {
+            $demoMode = true;
+        }
+
+        if ($result->success) {
+            $deliverable->update([
+                'delivery_status' => ! $demoMode ? NotificationDeliveryStatus::Dispatched : NotificationDeliveryStatus::Successful,
+                'quota_usage' => ! $demoMode ? self::determineQuotaUsage($result->recipients) : 0,
+            ]);
+        } else {
+            $deliverable->update([
+                'delivery_status' => NotificationDeliveryStatus::DispatchFailed,
+            ]);
+        }
+
         $notification->afterSend($notifiable, $deliverable, $result);
     }
 
-    public function handle(object $notifiable, BaseNotification $notification): NotificationResultData
+    public function handle(object $notifiable, BaseNotification $notification): EmailChannelResultData
     {
         $result = new EmailChannelResultData(
             success: false,

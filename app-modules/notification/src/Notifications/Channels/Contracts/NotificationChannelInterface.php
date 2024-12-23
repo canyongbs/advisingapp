@@ -36,18 +36,9 @@
 
 namespace AdvisingApp\Notification\Notifications\Channels\Contracts;
 
-use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
-use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\Notifications\BaseNotification;
-use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Notification;
 
 interface NotificationChannelInterface
 {
     public function send(object $notifiable, Notification $notification): void;
-
-    public function beforeSend(AnonymousNotifiable|NotifiableInterface $notifiable, BaseNotification $notification, NotificationChannelInterface $channel): OutboundDeliverable;
-
-    public function afterSend(AnonymousNotifiable|NotifiableInterface $notifiable, OutboundDeliverable $deliverable, NotificationResultData $result): void;
 }

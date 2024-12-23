@@ -36,10 +36,7 @@
 
 namespace AdvisingApp\Notification\Notifications;
 
-use AdvisingApp\Notification\DataTransferObjects\DatabaseChannelResultData;
-use AdvisingApp\Notification\DataTransferObjects\EmailChannelResultData;
 use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
-use AdvisingApp\Notification\DataTransferObjects\SmsChannelResultData;
 use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\Channels\Contracts\NotificationChannelInterface;
@@ -47,7 +44,6 @@ use AdvisingApp\Notification\Notifications\Channels\DatabaseChannel;
 use AdvisingApp\Notification\Notifications\Channels\EmailChannel;
 use AdvisingApp\Notification\Notifications\Channels\SmsChannel;
 use AdvisingApp\Notification\Notifications\Concerns\ChannelTrait;
-use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\AnonymousNotifiable;
@@ -95,18 +91,6 @@ abstract class BaseNotification extends Notification implements ShouldQueue
         ];
     }
 
-    public function afterSend(object $notifiable, OutboundDeliverable $deliverable, NotificationResultData $result): void
-    {
-        match (true) {
-            $result instanceof SmsChannelResultData => SmsChannel::afterSending($notifiable, $deliverable, $result),
-            $result instanceof EmailChannelResultData => EmailChannel::afterSending($notifiable, $deliverable, $result),
-            $result instanceof DatabaseChannelResultData => DatabaseChannel::afterSending($notifiable, $deliverable, $result),
-            default => throw new Exception('Invalid notification result data.'),
-        };
-
-        $this->afterSendHook($notifiable, $deliverable);
-    }
-
     // TODO: Can probably remove this method now that metadata is public
     public function getMetadata(): array
     {
@@ -115,5 +99,5 @@ abstract class BaseNotification extends Notification implements ShouldQueue
 
     public function beforeSend(AnonymousNotifiable|NotifiableInterface $notifiable, OutboundDeliverable $deliverable, NotificationChannelInterface $channel): void {}
 
-    protected function afterSendHook(object $notifiable, OutboundDeliverable $deliverable): void {}
+    public function afterSend(AnonymousNotifiable|NotifiableInterface $notifiable, OutboundDeliverable $deliverable, NotificationResultData $result): void {}
 }

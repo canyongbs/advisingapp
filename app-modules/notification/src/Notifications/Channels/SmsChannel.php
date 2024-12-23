@@ -37,16 +37,16 @@
 namespace AdvisingApp\Notification\Notifications\Channels;
 
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
-use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
+use AdvisingApp\Notification\Actions\MakeOutboundDeliverable;
 use AdvisingApp\Notification\DataTransferObjects\SmsChannelResultData;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\Channels\Concerns\ChannelBeforeAndAfter;
 use AdvisingApp\Notification\Notifications\Channels\Contracts\NotificationChannelInterface;
 use AdvisingApp\Notification\Notifications\SmsNotification;
+use App\Models\Tenant;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Exception;
@@ -61,8 +61,6 @@ use Twilio\Rest\MessagingBase;
 
 class SmsChannel implements NotificationChannelInterface
 {
-    use ChannelBeforeAndAfter;
-
     public function send(object $notifiable, Notification $notification): void
     {
         if (! $notification instanceof SmsNotification || ! $notification instanceof BaseNotification) {
@@ -71,7 +69,17 @@ class SmsChannel implements NotificationChannelInterface
         }
 
         /** @var BaseNotification&SmsNotification $notification */
-        $deliverable = $this->beforeSend($notifiable, $notification, $this);
+        $deliverable = resolve(MakeOutboundDeliverable::class)->handle($notification, $notifiable, $this);
+
+        $notification->beforeSend($notifiable, $deliverable, $this);
+
+        $deliverable->save();
+
+        $notification->metadata['outbound_deliverable_id'] = $deliverable->id;
+
+        if (Tenant::checkCurrent()) {
+            $notification->metadata['tenant_id'] = Tenant::current()->getKey();
+        }
 
         if (! $this->canSendWithinQuotaLimits($notification, $notifiable)) {
             $deliverable->update(['delivery_status' => NotificationDeliveryStatus::RateLimited]);
@@ -81,10 +89,28 @@ class SmsChannel implements NotificationChannelInterface
 
         $smsData = $this->handle($notifiable, $notification);
 
+        $twilioSettings = app(TwilioSettings::class);
+
+        $demoMode = $twilioSettings->is_demo_mode_enabled ?? false;
+
+        if ($smsData->success) {
+            $deliverable->update([
+                'external_reference_id' => $smsData->message->sid,
+                'external_status' => $smsData->message->status,
+                'delivery_status' => ! $demoMode ? NotificationDeliveryStatus::Dispatched : NotificationDeliveryStatus::Successful,
+                'quota_usage' => ! $demoMode ? self::determineQuotaUsage($smsData) : 0,
+            ]);
+        } else {
+            $deliverable->update([
+                'delivery_status' => NotificationDeliveryStatus::DispatchFailed,
+                'delivery_response' => $smsData->error,
+            ]);
+        }
+
         $notification->afterSend($notifiable, $deliverable, $smsData);
     }
 
-    public function handle(object $notifiable, BaseNotification&SmsNotification $notification): NotificationResultData
+    public function handle(object $notifiable, BaseNotification&SmsNotification $notification): SmsChannelResultData
     {
         $twilioMessage = $notification->toSms($notifiable);
 
@@ -136,27 +162,6 @@ class SmsChannel implements NotificationChannelInterface
         }
 
         return $result;
-    }
-
-    public static function afterSending(object $notifiable, OutboundDeliverable $deliverable, SmsChannelResultData $result): void
-    {
-        $twilioSettings = app(TwilioSettings::class);
-
-        $demoMode = $twilioSettings->is_demo_mode_enabled ?? false;
-
-        if ($result->success) {
-            $deliverable->update([
-                'external_reference_id' => $result->message->sid,
-                'external_status' => $result->message->status,
-                'delivery_status' => ! $demoMode ? NotificationDeliveryStatus::Dispatched : NotificationDeliveryStatus::Successful,
-                'quota_usage' => ! $demoMode ? self::determineQuotaUsage($result) : 0,
-            ]);
-        } else {
-            $deliverable->update([
-                'delivery_status' => NotificationDeliveryStatus::DispatchFailed,
-                'delivery_response' => $result->error,
-            ]);
-        }
     }
 
     public static function determineQuotaUsage(SmsChannelResultData $result): int

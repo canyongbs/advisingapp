@@ -36,20 +36,17 @@
 
 namespace AdvisingApp\Notification\Notifications\Channels;
 
+use AdvisingApp\Notification\Actions\MakeOutboundDeliverable;
 use AdvisingApp\Notification\DataTransferObjects\DatabaseChannelResultData;
-use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\Channels\Concerns\ChannelBeforeAndAfter;
 use AdvisingApp\Notification\Notifications\Channels\Contracts\NotificationChannelInterface;
 use AdvisingApp\Notification\Notifications\DatabaseNotification;
+use App\Models\Tenant;
 use Illuminate\Notifications\Channels\DatabaseChannel as BaseDatabaseChannel;
 use Illuminate\Notifications\Notification;
 
 class DatabaseChannel extends BaseDatabaseChannel implements NotificationChannelInterface
 {
-    use ChannelBeforeAndAfter;
-
     public function send($notifiable, Notification $notification): void
     {
         if (! $notification instanceof DatabaseNotification || ! $notification instanceof BaseNotification) {
@@ -58,7 +55,17 @@ class DatabaseChannel extends BaseDatabaseChannel implements NotificationChannel
         }
 
         /** @var BaseNotification&DatabaseNotification $notification */
-        $deliverable = $this->beforeSend($notifiable, $notification, $this);
+        $deliverable = resolve(MakeOutboundDeliverable::class)->handle($notification, $notifiable, $this);
+
+        $notification->beforeSend($notifiable, $deliverable, $this);
+
+        $deliverable->save();
+
+        $notification->metadata['outbound_deliverable_id'] = $deliverable->id;
+
+        if (Tenant::checkCurrent()) {
+            $notification->metadata['tenant_id'] = Tenant::current()->getKey();
+        }
 
         if ($deliverable === false) {
             // Do anything else we need to notify sending party that notification was not sent
@@ -67,24 +74,21 @@ class DatabaseChannel extends BaseDatabaseChannel implements NotificationChannel
 
         $result = $this->handle($notifiable, $notification);
 
+        if ($result->success) {
+            $deliverable->markDeliverySuccessful();
+        } else {
+            $deliverable->markDeliveryFailed('Failed to send notification');
+        }
+
         $notification->afterSend($notifiable, $deliverable, $result);
     }
 
-    public function handle(object $notifiable, BaseNotification $notification): NotificationResultData
+    public function handle(object $notifiable, BaseNotification $notification): DatabaseChannelResultData
     {
         parent::send($notifiable, $notification);
 
         return new DatabaseChannelResultData(
             success: true,
         );
-    }
-
-    public static function afterSending(object $notifiable, OutboundDeliverable $deliverable, DatabaseChannelResultData $result): void
-    {
-        if ($result->success) {
-            $deliverable->markDeliverySuccessful();
-        } else {
-            $deliverable->markDeliveryFailed('Failed to send notification');
-        }
     }
 }
