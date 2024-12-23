@@ -38,7 +38,6 @@ namespace AdvisingApp\MeetingCenter\Filament\Pages;
 
 use AdvisingApp\MeetingCenter\Settings\AzureCalendarSettings;
 use App\Filament\Clusters\ProductIntegrations;
-use App\Models\Authenticatable;
 use App\Models\User;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
@@ -66,7 +65,7 @@ class ManageAzureCalendarSettings extends SettingsPage
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->hasRole(Authenticatable::SUPER_ADMIN_ROLE);
+        return $user->isSuperAdmin();
     }
 
     public function form(Form $form): Form

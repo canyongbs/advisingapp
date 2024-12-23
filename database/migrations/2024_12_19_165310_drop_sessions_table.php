@@ -34,59 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use App\Models\User;
-use Illuminate\Contracts\Support\Htmlable;
-use ShuvroRoy\FilamentSpatieLaravelHealth\Pages\HealthCheckResults;
-use Spatie\Health\Enums\Status;
-use Spatie\Health\ResultStores\ResultStore;
-
-class ProductHealth extends HealthCheckResults
-{
-    protected static ?string $navigationIcon = null;
-
-    public static function getNavigationLabel(): string
+return new class () extends Migration {
+    public function up(): void
     {
-        return 'Product Health';
+        Schema::dropIfExists('sessions');
     }
 
-    public function getHeading(): string | Htmlable
+    public function down(): void
     {
-        return 'Product Health';
+        Schema::create('sessions', function (Blueprint $table) {
+            $table->string('id')->primary();
+            $table->foreignUuid('user_id')->nullable()->index();
+            $table->string('ip_address', 45)->nullable();
+            $table->text('user_agent')->nullable();
+            $table->longText('payload');
+            $table->integer('last_activity')->index();
+        });
     }
-
-    public static function getNavigationGroup(): ?string
-    {
-        return 'Global Administration';
-    }
-
-    public static function getNavigationSort(): ?int
-    {
-        return 80;
-    }
-
-    public static function getNavigationBadge(): ?string
-    {
-        $count = app(ResultStore::class)
-            ->latestResults()
-            ?->storedCheckResults
-            ->filter(fn ($check) => ! in_array($check->status, [Status::ok()->value, Status::skipped()->value]))
-            ->count();
-
-        return $count > 0 ? $count : null;
-    }
-
-    public static function getNavigationBadgeColor(): string | array | null
-    {
-        return 'danger';
-    }
-
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->isSuperAdmin();
-    }
-}
+};

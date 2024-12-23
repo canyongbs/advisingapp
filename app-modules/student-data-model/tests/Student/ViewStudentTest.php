@@ -96,7 +96,8 @@ it('renders the EducatableActivityFeedWidget based on proper access', function (
         ->assertOk()
         ->assertDontSeeLivewire($widget);
 
-    $user->givePermissionTo('timeline.access');
+    $user->givePermissionTo('engagement.view-any');
+    $user->givePermissionTo('engagement.*.view');
 
     livewire(ViewStudent::class, [
         'record' => $student->getKey(),

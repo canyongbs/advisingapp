@@ -106,23 +106,6 @@ it('allows super admin user to impersonate', function () {
     expect(auth()->id())->toBe($user->id);
 });
 
-it('allows user with permission to impersonate', function () {
-    $first = User::factory()->create();
-    $first->givePermissionTo('user.view-any', 'user.*.view', 'authorization.impersonate');
-    actingAs($first);
-
-    $second = User::factory()->create();
-
-    livewire(ViewUser::class, [
-        'record' => $second->getRouteKey(),
-    ])
-        ->assertSuccessful()
-        ->callAction(Impersonate::class);
-
-    expect($second->isImpersonated())->toBeTrue();
-    expect(auth()->id())->toBe($second->id);
-});
-
 it('does not display the mfa_status for an external User', function () {
     $user = User::factory()->external()->create();
 

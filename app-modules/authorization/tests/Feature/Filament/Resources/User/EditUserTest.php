@@ -118,8 +118,8 @@ it('allows super admin user to impersonate', function () {
 
 it('allows user with permission to impersonate', function () {
     $first = User::factory()->create();
-    $first->givePermissionTo('user.view-any', 'user.*.view', 'user.*.update', 'authorization.impersonate');
-    actingAs($first);
+    $first->givePermissionTo('user.view-any', 'user.*.view', 'user.*.update');
+    asSuperAdmin($first);
 
     $second = User::factory()->create();
 

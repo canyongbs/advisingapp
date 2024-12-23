@@ -71,6 +71,6 @@ class PersonalAssistant extends Page
             return false;
         }
 
-        return $user->can('assistant.access');
+        return $user->can(['assistant.view-any', 'assistant.*.view']);
     }
 }

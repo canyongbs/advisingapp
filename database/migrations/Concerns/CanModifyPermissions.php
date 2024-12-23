@@ -103,4 +103,35 @@ trait CanModifyPermissions
             ->whereNull('permissions.id')
             ->delete();
     }
+
+    /**
+     * @param array<string, string> $names
+     */
+    public function renamePermissions(array $names, string $guardName): void
+    {
+        collect($names)
+            ->each(function (string $newName, string $oldName) use ($guardName) {
+                DB::table('permissions')
+                    ->where('guard_name', $guardName)
+                    ->where('name', $oldName)
+                    ->update([
+                        'name' => $newName,
+                    ]);
+            });
+    }
+
+    /**
+     * @param array<string, string> $groups
+     */
+    public function renamePermissionGroups(array $groups): void
+    {
+        collect($groups)
+            ->each(function (string $newName, string $oldName) {
+                DB::table('permission_groups')
+                    ->where('name', $oldName)
+                    ->update([
+                        'name' => $newName,
+                    ]);
+            });
+    }
 }

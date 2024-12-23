@@ -205,6 +205,9 @@ test('can see prospect converted to student badge on', function (string $pages) 
     $user->givePermissionTo('prospect.*.view');
     $user->givePermissionTo('prospect.*.update');
 
+    $user->givePermissionTo('engagement.view-any');
+    $user->givePermissionTo('engagement.*.view');
+
     $user->givePermissionTo('student.view-any');
 
     $user->givePermissionTo('alert.view-any');
@@ -228,8 +231,6 @@ test('can see prospect converted to student badge on', function (string $pages) 
     $user->givePermissionTo('event_attendee.view-any');
 
     $user->givePermissionTo('product_admin.view-any');
-
-    $user->givePermissionTo('timeline.access');
 
     actingAs($user);
 

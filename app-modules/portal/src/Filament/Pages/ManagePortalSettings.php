@@ -43,7 +43,6 @@ use AdvisingApp\Portal\Enums\PortalType;
 use AdvisingApp\Portal\Settings\PortalSettings;
 use App\Enums\Feature;
 use App\Filament\Forms\Components\ColorSelect;
-use App\Models\Authenticatable;
 use App\Models\User;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
@@ -77,7 +76,7 @@ class ManagePortalSettings extends SettingsPage
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->hasRole(Authenticatable::SUPER_ADMIN_ROLE);
+        return $user->isSuperAdmin();
     }
 
     public function form(Form $form): Form
