@@ -39,7 +39,6 @@ use AdvisingApp\Engagement\Actions\EngagementEmailChannelDelivery;
 use AdvisingApp\Engagement\Actions\EngagementSmsChannelDelivery;
 use AdvisingApp\Engagement\Models\Engagement;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Queue;
 
 it('will dispatch a job to send all engagements that should be delivered via email', function () {
@@ -48,11 +47,13 @@ it('will dispatch a job to send all engagements that should be delivered via ema
     // Given that we have an engagement that should be delivered
     $engagement = Engagement::factory()
         ->deliverNow()
+        ->email()
         ->create();
 
     // And an engagement that shouldn't be sent until some point in the future
     $futureEngagement = Engagement::factory()
         ->deliverLater()
+        ->email()
         ->create();
 
     // When we dispatch our job to deliver engagements
@@ -60,11 +61,11 @@ it('will dispatch a job to send all engagements that should be delivered via ema
 
     // A job to "send" the engagement should be dispatched for only the first engagement
     Queue::assertPushed(EngagementEmailChannelDelivery::class, function ($job) use ($engagement) {
-        return $job->deliverable->is($engagement->deliverable);
+        return $job->engagement->is($engagement);
     });
 
     Queue::assertNotPushed(EngagementEmailChannelDelivery::class, function ($job) use ($futureEngagement) {
-        return $job->deliverable->is($futureEngagement->deliverable);
+        return $job->engagement->is($futureEngagement);
     });
 });
 
@@ -74,11 +75,13 @@ it('will dispatch a job to send all engagements that should be delivered via sms
     // Given that we have an engagement that should be delivered
     $engagement = Engagement::factory()
         ->deliverNow()
+        ->sms()
         ->create();
 
     // And an engagement that shouldn't be sent until some point in the future
     $futureEngagement = Engagement::factory()
         ->deliverLater()
+        ->sms()
         ->create();
 
     // When we dispatch our job to deliver engagements
@@ -86,28 +89,31 @@ it('will dispatch a job to send all engagements that should be delivered via sms
 
     // A job to "send" the engagement should be dispatched for only the first engagement
     Queue::assertPushed(EngagementSmsChannelDelivery::class, function ($job) use ($engagement) {
-        return $job->deliverable->is($engagement->deliverable);
+        return $job->engagement->is($engagement);
     });
 
     Queue::assertNotPushed(EngagementSmsChannelDelivery::class, function ($job) use ($futureEngagement) {
-        return $job->deliverable->is($futureEngagement->deliverable);
+        return $job->engagement->is($futureEngagement);
     });
 });
 
-it('will not dispatch a job to send an engagement that has already been delivered', function () {
+it('will not dispatch a job to send an engagement that already has a related OutboundDeliverable', function () {
     Queue::fake(EngagementEmailChannelDelivery::class);
-    Notification::fake();
 
     // Given that we have an engagement
     $engagement = Engagement::factory()
         ->deliverNow()
+        ->email()
         ->create();
 
     // And it has already been delivered
     DeliverEngagements::dispatchSync();
-    $engagement->deliverable->markDeliverySuccessful();
 
-    Queue::assertPushed(EngagementEmailChannelDelivery::class, 1);
+    Queue::assertPushed(EngagementEmailChannelDelivery::class, function ($job) use ($engagement) {
+        return $job->engagement->is($engagement);
+    });
+
+    Queue::fake(EngagementEmailChannelDelivery::class);
 
     Carbon::setTestNow(now()->addMinute());
 
@@ -115,22 +121,24 @@ it('will not dispatch a job to send an engagement that has already been delivere
     DeliverEngagements::dispatchSync();
 
     // A job to "send" the engagement should not be dispatched again
-    Queue::assertPushed(EngagementEmailChannelDelivery::class, 1);
+    Queue::assertNotPushed(EngagementEmailChannelDelivery::class, function ($job) use ($engagement) {
+        return $job->engagement->is($engagement);
+    });
 });
 
 it('will not dispatch a job to send an engagement that is part of a batch', function () {
     Queue::fake(EngagementEmailChannelDelivery::class);
-    Notification::fake();
 
     // Given that we have an engagement
     Engagement::factory()
         ->ofBatch()
         ->deliverNow()
+        ->email()
         ->create();
 
     // When our job runs to pick up engagements
     DeliverEngagements::dispatchSync();
 
     // This engagement should not be picked up and delivered
-    Queue::assertPushed(EngagementEmailChannelDelivery::class, 0);
+    Queue::assertNotPushed(EngagementEmailChannelDelivery::class);
 });

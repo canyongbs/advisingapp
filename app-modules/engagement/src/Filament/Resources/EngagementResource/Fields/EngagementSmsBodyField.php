@@ -124,7 +124,7 @@ class EngagementSmsBodyField
                 $field->hidden(fn (Get $get): bool => $get('delivery_method') === NotificationChannel::Email->value);
             })
             ->when($context === 'edit', function (Field $field) {
-                $field->visible(fn (Engagement $record): bool => $record->deliverable->channel === NotificationChannel::Sms);
+                $field->visible(fn (Engagement $record): bool => $record->channel === NotificationChannel::Sms);
             })
             ->helperText('You can insert student information by typing {{ and choosing a tag to insert.')
             ->columnSpanFull();

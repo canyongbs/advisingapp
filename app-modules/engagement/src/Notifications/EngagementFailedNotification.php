@@ -70,7 +70,7 @@ class EngagementFailedNotification extends BaseNotification implements EmailNoti
 
     public function toDatabase(object $notifiable): array
     {
-        $engagementType = match ($this->engagement->deliverable->channel) {
+        $engagementType = match ($this->engagement->channel) {
             NotificationChannel::Email => 'Email',
             NotificationChannel::Sms => 'SMS',
             default => ''

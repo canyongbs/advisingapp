@@ -46,8 +46,6 @@ class DeleteEngagement
     {
         $engagement = Engagement::findOrFail($args['id']);
 
-        $engagement->deliverable->delete();
-
         $engagement->delete();
 
         return $engagement->refresh();

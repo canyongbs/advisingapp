@@ -37,10 +37,10 @@
 namespace AdvisingApp\Engagement\Notifications;
 
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\Channels\Contracts\NotificationChannel;
 use AdvisingApp\Notification\Notifications\Concerns\SmsChannelTrait;
 use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
 use AdvisingApp\Notification\Notifications\SmsNotification;
@@ -63,9 +63,6 @@ class EngagementSmsNotification extends BaseNotification implements SmsNotificat
 
     public function failed(?Throwable $exception): void
     {
-        // TODO: Ensure the OutboundDeliverable is marked as failed
-        // $this->deliverable->markDeliveryFailed($exception->getMessage());
-
         if (is_null($this->engagement->engagement_batch_id)) {
             $this->engagement->user?->notify(new EngagementFailedNotification($this->engagement));
         }
