@@ -39,33 +39,12 @@ namespace AdvisingApp\Engagement\Drivers;
 use AdvisingApp\Engagement\Actions\EngagementSmsChannelDelivery;
 use AdvisingApp\Engagement\Drivers\Contracts\EngagementDeliverableDriver;
 use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
-use AdvisingApp\Notification\DataTransferObjects\UpdateEmailDeliveryStatusData;
-use AdvisingApp\Notification\DataTransferObjects\UpdateSmsDeliveryStatusData;
 
 class EngagementSmsDriver implements EngagementDeliverableDriver
 {
     public function __construct(
         protected Engagement $engagement
     ) {}
-
-    public function updateDeliveryStatus(UpdateEmailDeliveryStatusData|UpdateSmsDeliveryStatusData $data): void
-    {
-        // TODO: Fix
-
-        /** @var TwilioStatusCallbackData $updateData */
-        // $updateData = $data->data;
-
-        // $this->deliverable->update([
-        //     'external_status' => $updateData->messageStatus ?? null,
-        // ]);
-
-        // match ($this->deliverable->external_status) {
-        //     'delivered' => $this->deliverable->markDeliverySuccessful(),
-        //     'undelivered', 'failed' => $this->deliverable->markDeliveryFailed($updateData->errorMessage ?? null),
-        //     default => null,
-        // };
-    }
 
     public function jobForDelivery(): EngagementSmsChannelDelivery
     {

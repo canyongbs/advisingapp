@@ -98,11 +98,11 @@ class EngagementsRelationManager extends RelationManager
                             ->getStateUsing(fn (Timeline $record): HtmlString => $record->timelineable->getBody())
                             ->columnSpanFull(),
                     ]),
-                InfolistFieldset::make('deliverable')
+                InfolistFieldset::make('delivery')
                     ->label('Delivery Information')
                     ->columnSpanFull()
                     ->schema([
-                        TextEntry::make('deliverable.channel')
+                        TextEntry::make('channel')
                             ->label('Channel')
                             ->getStateUsing(function (Timeline $record): string {
                                 /** @var HasDeliveryMethod $timelineable */
@@ -110,19 +110,19 @@ class EngagementsRelationManager extends RelationManager
 
                                 return $timelineable->getDeliveryMethod()->getLabel();
                             }),
-                        IconEntry::make('deliverable.delivery_status')
-                            ->getStateUsing(fn (Timeline $record): NotificationDeliveryStatus => $record->timelineable->deliverable->delivery_status)
-                            ->icon(fn (NotificationDeliveryStatus $state): string => $state->getIconClass())
-                            ->color(fn (NotificationDeliveryStatus $state): string => $state->getColor())
+                        IconEntry::make('latestOutboundDeliverable.delivery_status')
+                            ->getStateUsing(fn (Timeline $record): NotificationDeliveryStatus => $record->timelineable->latestOutboundDeliverable->delivery_status)
+                            ->icon(fn (NotificationDeliveryStatus $state): string => $state?->getIconClass() ?? 'heroicon-s-clock')
+                            ->iconColor(fn (NotificationDeliveryStatus $state): string => $state?->getColor() ?? 'text-yellow-500')
                             ->label('Status'),
-                        TextEntry::make('deliverable.delivered_at')
-                            ->getStateUsing(fn (Timeline $record): string => $record->timelineable->deliverable->delivered_at)
+                        TextEntry::make('latestOutboundDeliverable.delivered_at')
+                            ->getStateUsing(fn (Timeline $record): string => $record->timelineable->latestOutboundDeliverable->delivered_at)
                             ->label('Delivered At')
-                            ->hidden(fn (Timeline $record): bool => is_null($record->timelineable->deliverable->delivered_at)),
-                        TextEntry::make('deliverable.delivery_response')
-                            ->getStateUsing(fn (Timeline $record): string => $record->timelineable->deliverable->delivery_response)
+                            ->hidden(fn (Timeline $record): bool => is_null($record->timelineable->latestOutboundDeliverable->delivered_at)),
+                        TextEntry::make('latestOutboundDeliverable.delivery_response')
+                            ->getStateUsing(fn (Timeline $record): string => $record->timelineable->latestOutboundDeliverable->delivery_response)
                             ->label('Error Details')
-                            ->hidden(fn (Timeline $record): bool => is_null($record->timelineable->deliverable->delivery_response)),
+                            ->hidden(fn (Timeline $record): bool => is_null($record->timelineable->latestOutboundDeliverable->delivery_response)),
                     ])
                     ->columns(),
             ],
@@ -332,7 +332,7 @@ class EngagementsRelationManager extends RelationManager
                                         'timelineable',
                                         [Engagement::class],
                                         fn (Builder $query, string $type) => match ($type) {
-                                            Engagement::class => $query->whereRelation('deliverable', 'channel', $data['value']),
+                                            Engagement::class => $query->where('channel', $data['value']),
                                         }
                                     )
                             )
@@ -342,7 +342,7 @@ class EngagementsRelationManager extends RelationManager
                                     'timelineable',
                                     [Engagement::class, EngagementResponse::class],
                                     fn (Builder $query, string $type) => match ($type) {
-                                        Engagement::class => $query->whereRelation('deliverable', 'channel', $data['value']),
+                                        Engagement::class => $query->where('channel', $data['value']),
                                         EngagementResponse::class => $query,
                                     }
                                 )

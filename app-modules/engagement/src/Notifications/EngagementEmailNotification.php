@@ -65,9 +65,6 @@ class EngagementEmailNotification extends BaseNotification implements EmailNotif
 
     public function failed(?Throwable $exception): void
     {
-        // TODO: Make sure the OutboundDeliverable is marked as failed
-        // $this->deliverable->markDeliveryFailed($exception->getMessage());
-
         if (is_null($this->engagement->engagement_batch_id)) {
             $this->engagement->user->notify(new EngagementFailedNotification($this->engagement));
         }

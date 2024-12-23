@@ -81,24 +81,24 @@ class EngagementsRelationManager extends RelationManager
                             ->getStateUsing(fn (Engagement $engagement): HtmlString => $engagement->getBody())
                             ->columnSpanFull(),
                     ]),
-                Fieldset::make('deliverable')
+                Fieldset::make('delivery')
                     ->label('Delivery Information')
                     ->columnSpanFull()
                     ->schema([
-                        TextEntry::make('deliverable.channel')
+                        TextEntry::make('channel')
                             ->label('Channel'),
-                        TextEntry::make('deliverable.delivery_status')
+                        TextEntry::make('latestOutboundDeliverable.delivery_status')
                             ->iconPosition(IconPosition::After)
-                            ->icon(fn (NotificationDeliveryStatus $state): string => $state->getIconClass())
-                            ->iconColor(fn (NotificationDeliveryStatus $state): string => $state->getColor())
+                            ->icon(fn (NotificationDeliveryStatus $state): string => $state?->getIconClass() ?? 'heroicon-s-clock')
+                            ->iconColor(fn (NotificationDeliveryStatus $state): string => $state?->getColor() ?? 'text-yellow-500')
                             ->label('Status')
-                            ->formatStateUsing(fn (Engagement $engagement): string => $engagement->deliverable->delivery_status->getMessage()),
-                        TextEntry::make('deliverable.delivered_at')
+                            ->formatStateUsing(fn (Engagement $engagement): string => $engagement->latestOutboundDeliverable->delivery_status->getMessage()),
+                        TextEntry::make('latestOutboundDeliverable.delivered_at')
                             ->label('Delivered At')
-                            ->hidden(fn (Engagement $engagement): bool => is_null($engagement->deliverable->delivered_at)),
-                        TextEntry::make('deliverable.delivery_response')
+                            ->hidden(fn (Engagement $engagement): bool => is_null($engagement->latestOutboundDeliverable->delivered_at)),
+                        TextEntry::make('latestOutboundDeliverable.delivery_response')
                             ->label('Error Details')
-                            ->hidden(fn (Engagement $engagement): bool => is_null($engagement->deliverable->delivery_response)),
+                            ->hidden(fn (Engagement $engagement): bool => is_null($engagement->latestOutboundDeliverable->delivery_response)),
                     ])
                     ->columns(2),
             ]);
@@ -112,7 +112,7 @@ class EngagementsRelationManager extends RelationManager
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('subject'),
-                TextColumn::make('deliverable.channel')
+                TextColumn::make('channel')
                     ->label('Delivery Channel'),
                 TextColumn::make('created_at')
                     ->dateTime(),
