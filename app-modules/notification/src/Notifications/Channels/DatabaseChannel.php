@@ -58,7 +58,7 @@ class DatabaseChannel extends BaseDatabaseChannel implements NotificationChannel
         /** @var BaseNotification&DatabaseNotification $notification */
         $deliverable = resolve(MakeOutboundDeliverable::class)->handle($notification, $notifiable, NotificationChannel::Database);
 
-        $notification->beforeSend($notifiable, $deliverable, $this);
+        $notification->beforeSend($notifiable, $deliverable, NotificationChannel::Database);
 
         $deliverable->save();
 
