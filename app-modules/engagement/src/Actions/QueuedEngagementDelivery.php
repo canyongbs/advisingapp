@@ -55,6 +55,8 @@ abstract class QueuedEngagementDelivery implements EngagementChannel, ShouldQueu
     use Queueable;
     use SerializesModels;
 
+    public $tries = 3;
+
     public function __construct(
         public Engagement $engagement
     ) {}
