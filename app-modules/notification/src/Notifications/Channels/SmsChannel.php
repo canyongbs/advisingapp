@@ -68,9 +68,9 @@ class SmsChannel implements NotificationChannelInterface
         }
 
         /** @var BaseNotification&SmsNotification $notification */
-        $deliverable = resolve(MakeOutboundDeliverable::class)->handle($notification, $notifiable, $this);
+        $deliverable = resolve(MakeOutboundDeliverable::class)->handle($notification, $notifiable, NotificationChannel::Sms);
 
-        $notification->beforeSend($notifiable, $deliverable, $this);
+        $notification->beforeSend($notifiable, $deliverable, NotificationChannel::Sms);
 
         $deliverable->save();
 

@@ -38,6 +38,7 @@ namespace AdvisingApp\Notification\Notifications\Channels;
 
 use AdvisingApp\Notification\Actions\MakeOutboundDeliverable;
 use AdvisingApp\Notification\DataTransferObjects\EmailChannelResultData;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
@@ -61,9 +62,9 @@ class EmailChannel extends MailChannel implements NotificationChannelInterface
         }
 
         /** @var BaseNotification&EmailNotification $notification */
-        $deliverable = resolve(MakeOutboundDeliverable::class)->handle($notification, $notifiable, $this);
+        $deliverable = resolve(MakeOutboundDeliverable::class)->handle($notification, $notifiable, NotificationChannel::Email);
 
-        $notification->beforeSend($notifiable, $deliverable, $this);
+        $notification->beforeSend($notifiable, $deliverable, NotificationChannel::Email);
 
         $deliverable->save();
 
