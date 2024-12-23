@@ -38,6 +38,8 @@ namespace AdvisingApp\Ai\Notifications;
 
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
+use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
@@ -45,6 +47,7 @@ use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use App\Models\NotificationSetting;
 use App\Models\User;
+use Illuminate\Notifications\AnonymousNotifiable;
 
 class SendAssistantTranscriptNotification extends BaseNotification implements EmailNotification
 {
@@ -106,10 +109,11 @@ class SendAssistantTranscriptNotification extends BaseNotification implements Em
         return $message;
     }
 
-    protected function afterSendHook(object $notifiable, OutboundDeliverable $deliverable): void
+    public function afterSend(AnonymousNotifiable|NotifiableInterface $notifiable, OutboundDeliverable $deliverable, NotificationResultData $result): void
     {
-        $this->thread->emailed_count = $this->thread->emailed_count + 1;
-        $this->thread->save();
+        if ($result->success) {
+            $this->thread->increment('emailed_count');
+        }
     }
 
     private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
