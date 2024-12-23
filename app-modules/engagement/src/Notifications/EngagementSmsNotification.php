@@ -38,6 +38,7 @@ namespace AdvisingApp\Engagement\Notifications;
 
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
@@ -71,5 +72,17 @@ class EngagementSmsNotification extends BaseNotification implements SmsNotificat
     public function beforeSend(AnonymousNotifiable|NotifiableInterface $notifiable, OutboundDeliverable $deliverable, NotificationChannel $channel): void
     {
         $deliverable->related()->associate($this->engagement);
+
+        if (! $this->engagement->recipient->canRecieveSms()) {
+            $deliverable->fill([
+                'delivery_status' => NotificationDeliveryStatus::DispatchFailed,
+                'last_delivery_attempt' => now(),
+                'delivery_response' => 'System determined recipient cannot receive SMS messages.',
+            ]);
+
+            $deliverable->save();
+
+            $this->failed(null);
+        }
     }
 }

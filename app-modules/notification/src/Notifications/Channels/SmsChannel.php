@@ -77,6 +77,19 @@ class SmsChannel implements NotificationChannelInterface
                 throw new Exception('Invalid notification type.');
             }
 
+            // TODO: Look into moving this up to the NotifiableInterface and type hinting that instead
+            if (method_exists($notifiable, 'canRecieveSms')) {
+                if (! $notifiable->canRecieveSms()) {
+                    $deliverable->update([
+                        'delivery_status' => NotificationDeliveryStatus::DispatchFailed,
+                        'last_delivery_attempt' => now(),
+                        'delivery_response' => 'System determined recipient cannot receive SMS messages.',
+                    ]);
+
+                    return;
+                }
+            }
+
             $notification->metadata['outbound_deliverable_id'] = $deliverable->id;
 
             if (Tenant::checkCurrent()) {

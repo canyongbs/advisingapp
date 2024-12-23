@@ -40,16 +40,12 @@ use AdvisingApp\Notification\Events\SubscriptionCreated;
 use AdvisingApp\Notification\Events\SubscriptionDeleted;
 use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 use AdvisingApp\Notification\Listeners\CreateAutoSubscription;
-use AdvisingApp\Notification\Listeners\HandleNotificationFailed;
-use AdvisingApp\Notification\Listeners\HandleNotificationSent;
 use AdvisingApp\Notification\Listeners\NotifyUserOfSubscriptionCreated;
 use AdvisingApp\Notification\Listeners\NotifyUserOfSubscriptionDeleted;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Models\Subscription;
 use App\Concerns\ImplementsGraphQL;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Notifications\Events\NotificationFailed;
-use Illuminate\Notifications\Events\NotificationSent;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
@@ -72,16 +68,6 @@ class NotificationServiceProvider extends ServiceProvider
 
     protected function registerEvents(): void
     {
-        Event::listen(
-            NotificationSent::class,
-            HandleNotificationSent::class
-        );
-
-        Event::listen(
-            NotificationFailed::class,
-            HandleNotificationFailed::class
-        );
-
         // TODO Listen to the MessageSent event in order to update email statuses
         // as best as we can without the SES information...
 
