@@ -53,6 +53,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
+use Illuminate\Support\HtmlString;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
@@ -88,6 +89,11 @@ class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeli
     public static function getTimelineData(Model $forModel): Collection
     {
         return $forModel->orderedEngagementResponses()->get();
+    }
+
+    public function getBody(): HtmlString
+    {
+        return str($this->content)->sanitizeHtml()->toHtmlString();
     }
 
     public function sender(): MorphTo

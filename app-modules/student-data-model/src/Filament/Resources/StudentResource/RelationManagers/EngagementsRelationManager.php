@@ -112,8 +112,8 @@ class EngagementsRelationManager extends RelationManager
                             }),
                         IconEntry::make('latestOutboundDeliverable.delivery_status')
                             ->getStateUsing(fn (Timeline $record): ?NotificationDeliveryStatus => $record->timelineable->latestOutboundDeliverable?->delivery_status)
-                            ->icon(fn (NotificationDeliveryStatus $state): string => $state->getIconClass())
-                            ->color(fn (NotificationDeliveryStatus $state): string => $state->getColor())
+                            ->icon(fn (NotificationDeliveryStatus $state): string => $state->getIconClass() ?? 'heroicon-s-clock')
+                            ->color(fn (NotificationDeliveryStatus $state): string => $state->getColor() ?? 'text-yellow-500')
                             ->label('Status')
                             ->default(NotificationDeliveryStatus::Awaiting),
                         TextEntry::make('latestOutboundDeliverable.delivered_at')
@@ -128,8 +128,11 @@ class EngagementsRelationManager extends RelationManager
                     ->columns(),
             ],
             EngagementResponse::class => [
-                TextEntry::make('content'),
+                TextEntry::make('body')
+                    ->getStateUsing(fn (Timeline $record): HtmlString => $record->timelineable->getBody())
+                    ->columnSpanFull(),
                 TextEntry::make('sent_at')
+                    ->getStateUsing(fn (Timeline $record): string => $record->timelineable->sent_at)
                     ->dateTime('Y-m-d H:i:s'),
             ],
         });
