@@ -111,10 +111,11 @@ class EngagementsRelationManager extends RelationManager
                                 return $timelineable->getDeliveryMethod()->getLabel();
                             }),
                         IconEntry::make('latestOutboundDeliverable.delivery_status')
-                            ->getStateUsing(fn (Timeline $record): NotificationDeliveryStatus => $record->timelineable->latestOutboundDeliverable->delivery_status)
-                            ->icon(fn (NotificationDeliveryStatus $state): string => $state?->getIconClass() ?? 'heroicon-s-clock')
-                            ->color(fn (NotificationDeliveryStatus $state): string => $state?->getColor() ?? 'text-yellow-500')
-                            ->label('Status'),
+                            ->getStateUsing(fn (Timeline $record): ?NotificationDeliveryStatus => $record->timelineable->latestOutboundDeliverable?->delivery_status)
+                            ->icon(fn (NotificationDeliveryStatus $state): string => $state->getIconClass())
+                            ->color(fn (NotificationDeliveryStatus $state): string => $state->getColor())
+                            ->label('Status')
+                            ->default(NotificationDeliveryStatus::Awaiting),
                         TextEntry::make('latestOutboundDeliverable.delivered_at')
                             ->getStateUsing(fn (Timeline $record): string => $record->timelineable->latestOutboundDeliverable->delivered_at)
                             ->label('Delivered At')

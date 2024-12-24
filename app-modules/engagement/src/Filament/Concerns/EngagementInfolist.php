@@ -64,18 +64,19 @@ trait EngagementInfolist
                 ->label('Delivery Information')
                 ->columnSpanFull()
                 ->schema([
-                    TextEntry::make('latestOutboundDeliverable.channel')
+                    TextEntry::make('channel')
                         ->label('Channel'),
                     IconEntry::make('latestOutboundDeliverable.delivery_status')
                         ->icon(fn (NotificationDeliveryStatus $state): string => $state->getIconClass())
                         ->color(fn (NotificationDeliveryStatus $state): string => $state->getColor())
-                        ->label('Status'),
+                        ->label('Status')
+                        ->default(NotificationDeliveryStatus::Awaiting),
                     TextEntry::make('latestOutboundDeliverable.delivered_at')
                         ->label('Delivered At')
-                        ->hidden(fn (Engagement $engagement): bool => is_null($engagement->latestOutboundDeliverable->delivered_at)),
+                        ->hidden(fn (Engagement $engagement): bool => is_null($engagement->latestOutboundDeliverable?->delivered_at)),
                     TextEntry::make('latestOutboundDeliverable.delivery_response')
                         ->label('Error Details')
-                        ->hidden(fn (Engagement $engagement): bool => is_null($engagement->latestOutboundDeliverable->delivery_response)),
+                        ->hidden(fn (Engagement $engagement): bool => is_null($engagement->latestOutboundDeliverable?->delivery_response)),
                 ])
                 ->columns(2),
         ];

@@ -89,16 +89,16 @@ class EngagementsRelationManager extends RelationManager
                             ->label('Channel'),
                         TextEntry::make('latestOutboundDeliverable.delivery_status')
                             ->iconPosition(IconPosition::After)
-                            ->icon(fn (NotificationDeliveryStatus $state): string => $state?->getIconClass() ?? 'heroicon-s-clock')
-                            ->iconColor(fn (NotificationDeliveryStatus $state): string => $state?->getColor() ?? 'text-yellow-500')
+                            ->icon(fn (?NotificationDeliveryStatus $state): string => $state?->getIconClass() ?? 'heroicon-s-clock')
+                            ->iconColor(fn (?NotificationDeliveryStatus $state): string => $state?->getColor() ?? 'text-yellow-500')
                             ->label('Status')
-                            ->formatStateUsing(fn (Engagement $engagement): string => $engagement->latestOutboundDeliverable->delivery_status->getMessage()),
+                            ->formatStateUsing(fn (Engagement $engagement): ?string => $engagement->latestOutboundDeliverable?->delivery_status->getMessage()),
                         TextEntry::make('latestOutboundDeliverable.delivered_at')
                             ->label('Delivered At')
-                            ->hidden(fn (Engagement $engagement): bool => is_null($engagement->latestOutboundDeliverable->delivered_at)),
+                            ->hidden(fn (Engagement $engagement): bool => is_null($engagement->latestOutboundDeliverable?->delivered_at)),
                         TextEntry::make('latestOutboundDeliverable.delivery_response')
                             ->label('Error Details')
-                            ->hidden(fn (Engagement $engagement): bool => is_null($engagement->latestOutboundDeliverable->delivery_response)),
+                            ->hidden(fn (Engagement $engagement): bool => is_null($engagement->latestOutboundDeliverable?->delivery_response)),
                     ])
                     ->columns(2),
             ]);
