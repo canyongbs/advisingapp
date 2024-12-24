@@ -52,61 +52,61 @@ use Filament\Pages\SettingsPage;
  */
 class ManageAiIntegratedAssistantSettings extends SettingsPage
 {
-  protected static string $settings = AiIntegratedAssistantSettings::class;
+    protected static string $settings = AiIntegratedAssistantSettings::class;
 
-  protected static ?string $title = 'Integrated Assistant';
+    protected static ?string $title = 'Integrated Assistant';
 
-  protected static ?string $cluster = GlobalArtificialIntelligence::class;
+    protected static ?string $cluster = GlobalArtificialIntelligence::class;
 
-  protected static ?string $navigationIcon = 'heroicon-o-cube-transparent';
+    protected static ?string $navigationIcon = 'heroicon-o-cube-transparent';
 
-  protected static ?int $navigationSort = 40;
+    protected static ?int $navigationSort = 40;
 
-  public static function canAccess(): bool
-  {
-    /** @var User $user */
-    $user = auth()->user();
+    public static function canAccess(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
 
-    if (! $user->hasLicense(LicenseType::ConversationalAi)) {
-      return false;
+        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
+            return false;
+        }
+
+        return $user->can(['saas_global_admin.view-any']);
     }
 
-    return $user->can(['saas_global_admin.view-any']);
-  }
-
-  public function form(Form $form): Form
-  {
-    return $form
-      ->schema([
-        Select::make('default_model')
-          ->options(collect(AiModel::getDefaultModels())
-            ->mapWithKeys(fn(AiModel $model): array => [$model->value => $model->getLabel()])
-            ->all())
-          ->searchable()
-          ->helperText('Used for general purposes like generating content when an assistant is not being used.')
-          ->required(),
-      ])
-      ->disabled(! auth()->user()->can('product_admin.*.update'));
-  }
-
-  public function save(): void
-  {
-    if (! auth()->user()->can('product_admin.*.update')) {
-      return;
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Select::make('default_model')
+                    ->options(collect(AiModel::getDefaultModels())
+                        ->mapWithKeys(fn (AiModel $model): array => [$model->value => $model->getLabel()])
+                        ->all())
+                    ->searchable()
+                    ->helperText('Used for general purposes like generating content when an assistant is not being used.')
+                    ->required(),
+            ])
+            ->disabled(! auth()->user()->can('product_admin.*.update'));
     }
 
-    parent::save();
-  }
+    public function save(): void
+    {
+        if (! auth()->user()->can('product_admin.*.update')) {
+            return;
+        }
 
-  /**
-   * @return array<Action | ActionGroup>
-   */
-  public function getFormActions(): array
-  {
-    if (! auth()->user()->can('product_admin.*.update')) {
-      return [];
+        parent::save();
     }
 
-    return parent::getFormActions();
-  }
+    /**
+     * @return array<Action | ActionGroup>
+     */
+    public function getFormActions(): array
+    {
+        if (! auth()->user()->can('product_admin.*.update')) {
+            return [];
+        }
+
+        return parent::getFormActions();
+    }
 }
