@@ -86,12 +86,12 @@ class ManageAiIntegratedAssistantSettings extends SettingsPage
                     ->helperText('Used for general purposes like generating content when an assistant is not being used.')
                     ->required(),
             ])
-            ->disabled(! auth()->user()->can('product_admin.*.update'));
+            ->disabled(! auth()->user()->can('saas_global_admin.*.update'));
     }
 
     public function save(): void
     {
-        if (! auth()->user()->can('product_admin.*.update')) {
+        if (! auth()->user()->can('saas_global_admin.*.update')) {
             return;
         }
 
@@ -103,7 +103,7 @@ class ManageAiIntegratedAssistantSettings extends SettingsPage
      */
     public function getFormActions(): array
     {
-        if (! auth()->user()->can('product_admin.*.update')) {
+        if (! auth()->user()->can('saas_global_admin.*.update')) {
             return [];
         }
 

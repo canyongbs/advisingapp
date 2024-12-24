@@ -145,7 +145,7 @@ class ManageAiSettings extends SettingsPage
                     ->searchable()
                     ->required(),
             ])
-            ->disabled(! auth()->user()->can('product_admin.*.update'));
+            ->disabled(! auth()->user()->can('saas_global_admin.*.update'));
     }
 
     public function getSaveFormAction(): Action
@@ -199,7 +199,7 @@ class ManageAiSettings extends SettingsPage
 
     public function save(): void
     {
-        if (! auth()->user()->can('product_admin.*.update')) {
+        if (! auth()->user()->can('saas_global_admin.*.update')) {
             return;
         }
 
@@ -211,7 +211,7 @@ class ManageAiSettings extends SettingsPage
      */
     public function getFormActions(): array
     {
-        if (! auth()->user()->can('product_admin.*.update')) {
+        if (! auth()->user()->can('saas_global_admin.*.update')) {
             return [];
         }
 
