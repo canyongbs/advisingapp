@@ -44,7 +44,7 @@ use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiSettings;
 use AdvisingApp\Authorization\Enums\LicenseType;
-use App\Filament\Clusters\ArtificialIntelligence;
+use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Filament\Forms\Components\Slider;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -69,7 +69,7 @@ class ManageAiSettings extends SettingsPage
 
     protected static ?string $title = 'Institutional Assistant';
 
-    protected static ?string $cluster = ArtificialIntelligence::class;
+    protected static ?string $cluster = GlobalArtificialIntelligence::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
 
@@ -84,7 +84,7 @@ class ManageAiSettings extends SettingsPage
             return false;
         }
 
-        return $user->can(['product_admin.view-any']);
+        return $user->can(['saas_global_admin.view-any']);
     }
 
     #[Computed]
@@ -107,13 +107,13 @@ class ManageAiSettings extends SettingsPage
                     ->model($this->defaultAssistant)
                     ->schema([
                         Select::make('model')
-                            ->options(fn (Get $get): array => collect(AiApplication::parse($get('application'))->getModels())
-                                ->mapWithKeys(fn (AiModel $model): array => [$model->value => $model->getLabel()])
+                            ->options(fn(Get $get): array => collect(AiApplication::parse($get('application'))->getModels())
+                                ->mapWithKeys(fn(AiModel $model): array => [$model->value => $model->getLabel()])
                                 ->all())
                             ->searchable()
                             ->required()
                             ->columnSpanFull()
-                            ->visible(fn (Get $get): bool => filled($get('application'))),
+                            ->visible(fn(Get $get): bool => filled($get('application'))),
                         Textarea::make('description')
                             ->columnSpanFull()
                             ->required(),
@@ -124,7 +124,7 @@ class ManageAiSettings extends SettingsPage
                                     ->helperText('Instructions are used to provide context to the AI Assistant on how to respond to user queries.')
                                     ->required()
                                     ->rows(8)
-                                    ->maxLength(fn (?AiAssistant $record): int => ($record?->model ?? AiModel::OpenAiGpt35)->getService()->getMaxAssistantInstructionsLength()),
+                                    ->maxLength(fn(?AiAssistant $record): int => ($record?->model ?? AiModel::OpenAiGpt35)->getService()->getMaxAssistantInstructionsLength()),
                             ]),
                     ]),
                 Select::make('max_tokens')
@@ -140,7 +140,7 @@ class ManageAiSettings extends SettingsPage
                     ->maxValue(1),
                 Select::make('default_model')
                     ->options(collect(AiModel::getDefaultModels())
-                        ->mapWithKeys(fn (AiModel $model): array => [$model->value => $model->getLabel()])
+                        ->mapWithKeys(fn(AiModel $model): array => [$model->value => $model->getLabel()])
                         ->all())
                     ->searchable()
                     ->required(),
@@ -172,7 +172,7 @@ class ManageAiSettings extends SettingsPage
                 Action::make('justSave')
                     ->label('Just save the settings')
                     ->color('gray')
-                    ->action(fn () => $this->save())
+                    ->action(fn() => $this->save())
                     ->cancelParentActions(),
             ])
             ->action(function (ResetAiServiceIdsForAssistant $resetAiServiceIds, ReInitializeAiServiceAssistant $reInitializeAiServiceAssistant) {
