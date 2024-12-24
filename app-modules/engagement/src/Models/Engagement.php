@@ -162,6 +162,20 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         $query->whereNull('engagement_batch_id');
     }
 
+    public function scopeHasBeenDelivered(Builder $query): void
+    {
+        $query->whereDoesntHave('outboundDeliverables', function (Builder $query) {
+            $query->whereNull('delivered_at');
+        });
+    }
+
+    public function scopeHasNotBeenDelivered(Builder $query): void
+    {
+        $query->whereDoesntHave('outboundDeliverables', function (Builder $query) {
+            $query->whereNotNull('delivered_at');
+        });
+    }
+
     public function scopeSentToStudent(Builder $query): void
     {
         $query->where('recipient_type', resolve(Student::class)->getMorphClass());
@@ -174,7 +188,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
 
     public function hasBeenDelivered(): bool
     {
-        return $this->latestOutboundDeliverable->hasBeenDelivered();
+        return $this->latestOutboundDeliverable?->hasBeenDelivered() ?? false;
     }
 
     public function getSubscribable(): ?Subscribable
