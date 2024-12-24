@@ -51,7 +51,7 @@ test('it will appropriately update the status of an outbound deliverable based o
             'external_reference_id' => '12345',
         ]);
 
-    expect($outboundDeliverable->delivery_status)->toBe(NotificationDeliveryStatus::Awaiting);
+    expect($outboundDeliverable->delivery_status)->toBe(NotificationDeliveryStatus::Processing);
 
     $payload = replaceKeyInFixture(
         fixture: loadFixtureFromModule('integration-twilio', $payloadPath),

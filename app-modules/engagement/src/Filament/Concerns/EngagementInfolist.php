@@ -70,7 +70,7 @@ trait EngagementInfolist
                         ->icon(fn (NotificationDeliveryStatus $state): string => $state->getIconClass())
                         ->color(fn (NotificationDeliveryStatus $state): string => $state->getColor())
                         ->label('Status')
-                        ->default(NotificationDeliveryStatus::Awaiting),
+                        ->default(NotificationDeliveryStatus::Processing),
                     TextEntry::make('latestOutboundDeliverable.delivered_at')
                         ->label('Delivered At')
                         ->hidden(fn (Engagement $engagement): bool => is_null($engagement->latestOutboundDeliverable?->delivered_at)),

@@ -41,7 +41,7 @@ use Filament\Support\Contracts\HasLabel;
 enum NotificationDeliveryStatus: string implements HasLabel
 {
     // Internal
-    case Awaiting = 'awaiting';
+    case Processing = 'processing';
     case Dispatched = 'dispatched';
     case DispatchFailed = 'failed_dispatch';
     case RateLimited = 'rate_limited';
@@ -58,7 +58,7 @@ enum NotificationDeliveryStatus: string implements HasLabel
     public function getTextColorClass(): string
     {
         return match ($this) {
-            NotificationDeliveryStatus::Awaiting,
+            NotificationDeliveryStatus::Processing,
             NotificationDeliveryStatus::Dispatched => 'text-yellow-500',
 
             NotificationDeliveryStatus::Successful => 'text-green-500',
@@ -72,7 +72,7 @@ enum NotificationDeliveryStatus: string implements HasLabel
     public function getColor(): string
     {
         return match ($this) {
-            NotificationDeliveryStatus::Awaiting,
+            NotificationDeliveryStatus::Processing,
             NotificationDeliveryStatus::Dispatched => 'info',
 
             NotificationDeliveryStatus::Successful => 'success',
@@ -86,7 +86,7 @@ enum NotificationDeliveryStatus: string implements HasLabel
     public function getIconClass(): string
     {
         return match ($this) {
-            NotificationDeliveryStatus::Awaiting,
+            NotificationDeliveryStatus::Processing,
             NotificationDeliveryStatus::Dispatched => 'heroicon-s-clock',
 
             NotificationDeliveryStatus::Successful => 'heroicon-s-check-circle',
@@ -101,7 +101,7 @@ enum NotificationDeliveryStatus: string implements HasLabel
     {
         return match ($this) {
             NotificationDeliveryStatus::Successful => 'Successfully delivered',
-            NotificationDeliveryStatus::Awaiting, NotificationDeliveryStatus::Dispatched => 'Awaiting delivery',
+            NotificationDeliveryStatus::Processing, NotificationDeliveryStatus::Dispatched => 'Awaiting delivery',
             NotificationDeliveryStatus::Failed, NotificationDeliveryStatus::DispatchFailed => 'Failed to send',
             NotificationDeliveryStatus::RateLimited => 'Failed to send due to rate limits',
         };

@@ -69,7 +69,7 @@ class MakeOutboundDeliverable
             'content' => $content,
             'recipient_id' => ! $notifiable instanceof AnonymousNotifiable ? $notifiable->getKey() : $recipientId,
             'recipient_type' => ! $notifiable instanceof AnonymousNotifiable ? $notifiable->getMorphClass() : $recipientType,
-            'delivery_status' => NotificationDeliveryStatus::Awaiting,
+            'delivery_status' => NotificationDeliveryStatus::Processing,
         ]);
     }
 }

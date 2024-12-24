@@ -63,7 +63,7 @@ it('correctly handles the incoming SES event', function (string $event, Notifica
     $snsData['Message'] = json_encode($messageContent);
 
     expect($deliverable->hasBeenDelivered())->toBe(false);
-    expect($deliverable->delivery_status)->toBe(NotificationDeliveryStatus::Awaiting);
+    expect($deliverable->delivery_status)->toBe(NotificationDeliveryStatus::Processing);
     expect($deliverable->last_delivery_attempt)->toBeNull();
 
     $response = withHeaders(

@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -50,7 +49,7 @@ return new class () extends Migration {
             $table->string('external_reference_id')->nullable()->unique();
             $table->string('external_status')->nullable();
             $table->json('content')->nullable();
-            $table->string('delivery_status')->default(NotificationDeliveryStatus::Awaiting);
+            $table->string('delivery_status')->default('awaiting');
             $table->longText('delivery_response')->nullable();
             $table->integer('quota_usage')->default(0);
 
