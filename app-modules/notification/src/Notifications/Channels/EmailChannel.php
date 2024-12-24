@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Notification\Notifications\Channels;
 
+use AdvisingApp\Engagement\Exceptions\InvalidNotificationTypeInChannel;
 use AdvisingApp\Notification\Actions\MakeOutboundDeliverable;
 use AdvisingApp\Notification\DataTransferObjects\EmailChannelResultData;
 use AdvisingApp\Notification\Enums\NotificationChannel;
@@ -65,10 +66,7 @@ class EmailChannel extends MailChannel implements NotificationChannelInterface
         $deliverable->save();
 
         try {
-            if (! $notification instanceof EmailNotification || ! $notification instanceof BaseNotification) {
-                // TODO: This should probably throw a custom exception
-                throw new Exception('Invalid notification type.');
-            }
+            throw_if(! $notification instanceof EmailNotification || ! $notification instanceof BaseNotification, new InvalidNotificationTypeInChannel());
 
             $notification->metadata['outbound_deliverable_id'] = $deliverable->id;
 

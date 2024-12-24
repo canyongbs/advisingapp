@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Notification\Notifications\Channels;
 
+use AdvisingApp\Engagement\Exceptions\InvalidNotificationTypeInChannel;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\Notification\Actions\MakeOutboundDeliverable;
 use AdvisingApp\Notification\DataTransferObjects\SmsChannelResultData;
@@ -49,7 +50,6 @@ use AdvisingApp\Notification\Notifications\SmsNotification;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Settings\LicenseSettings;
-use Exception;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Str;
 use Talkroute\MessageSegmentCalculator\SegmentCalculator;
@@ -72,10 +72,7 @@ class SmsChannel implements NotificationChannelInterface
         $deliverable->save();
 
         try {
-            if (! $notification instanceof SmsNotification || ! $notification instanceof BaseNotification) {
-                // TODO: This should probably throw a custom exception
-                throw new Exception('Invalid notification type.');
-            }
+            throw_if(! $notification instanceof SmsNotification || ! $notification instanceof BaseNotification, new InvalidNotificationTypeInChannel());
 
             // Look into moving this up to the NotifiableInterface and type hinting that instead
             if (method_exists($notifiable, 'canRecieveSms') && ! $notifiable->canRecieveSms()) {

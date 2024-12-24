@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Notification\Notifications\Channels;
 
+use AdvisingApp\Engagement\Exceptions\InvalidNotificationTypeInChannel;
 use AdvisingApp\Notification\Actions\MakeOutboundDeliverable;
 use AdvisingApp\Notification\DataTransferObjects\DatabaseChannelResultData;
 use AdvisingApp\Notification\Enums\NotificationChannel;
@@ -44,7 +45,6 @@ use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\Channels\Contracts\NotificationChannelInterface;
 use AdvisingApp\Notification\Notifications\DatabaseNotification;
 use App\Models\Tenant;
-use Exception;
 use Illuminate\Notifications\Channels\DatabaseChannel as BaseDatabaseChannel;
 use Illuminate\Notifications\Notification;
 use Throwable;
@@ -61,10 +61,7 @@ class DatabaseChannel extends BaseDatabaseChannel implements NotificationChannel
         $deliverable->save();
 
         try {
-            if (! $notification instanceof DatabaseNotification || ! $notification instanceof BaseNotification) {
-                // TODO: This should probably throw a custom exception
-                throw new Exception('Invalid notification type.');
-            }
+            throw_if(! $notification instanceof DatabaseNotification || ! $notification instanceof BaseNotification, new InvalidNotificationTypeInChannel());
 
             $notification->metadata['outbound_deliverable_id'] = $deliverable->id;
 
