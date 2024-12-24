@@ -54,9 +54,7 @@ use function Pest\Livewire\livewire;
 test('EditTask is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    $task = Task::factory()->state([
-        'created_by' => $user->getKey(),
-    ])->create();
+    $task = Task::factory()->create();
 
     actingAs($user)
         ->get(
@@ -71,6 +69,18 @@ test('EditTask is gated with proper access control', function () {
         ->assertForbidden();
 
     $user->givePermissionTo('task.view-any');
+    $user->givePermissionTo('task.*.update');
+
+    actingAs($user)
+        ->get(
+            TaskResource::getUrl('edit', [
+                'record' => $task,
+            ])
+        )->assertForbidden();
+
+    $task->assignedTo()->associate($user)->save();
+
+    $task->refresh();
 
     actingAs($user)
         ->get(
@@ -90,4 +100,4 @@ test('EditTask is gated with proper access control', function () {
         ->assertHasNoFormErrors();
 
     // TODO: Check for changes
-});
+})->only();

@@ -34,42 +34,13 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Task\Filament\Resources\TaskResource;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Task\Notifications\TaskAssignedToUserNotification;
 use App\Models\User;
 use Illuminate\Support\Facades\Notification;
 
-use function Pest\Laravel\actingAs;
-
 beforeEach(function () {
     Notification::fake();
-});
-
-it('gives the proper permission to the assigned User of a Task on update', function () {
-    /** @var Task $task */
-    $task = Task::factory()->assigned()->create();
-
-    $user = User::factory()->licensed(LicenseType::cases())->create();
-
-    actingAs($user)->get(TaskResource::getUrl('edit', [
-        'record' => $task,
-    ]))->assertForbidden();
-
-    $user->givePermissionTo('task.view-any');
-    $user->givePermissionTo('task.*.view');
-    $user->givePermissionTo('task.*.update');
-
-    $user->refresh();
-
-    $task->assignedTo()->associate($user)->save();
-
-    $task->refresh();
-
-    actingAs($user)->get(TaskResource::getUrl('edit', [
-        'record' => $task,
-    ]))->assertSuccessful();
 });
 
 it('sends the proper notification to the assigned User', function () {
