@@ -118,11 +118,11 @@ class EngagementsRelationManager extends RelationManager
                         TextEntry::make('latestOutboundDeliverable.delivered_at')
                             ->getStateUsing(fn (Timeline $record): string => $record->timelineable->latestOutboundDeliverable->delivered_at)
                             ->label('Delivered At')
-                            ->hidden(fn (Timeline $record): bool => is_null($record->timelineable->latestOutboundDeliverable->delivered_at)),
+                            ->hidden(fn (Timeline $record): bool => is_null($record->timelineable->latestOutboundDeliverable?->delivered_at)),
                         TextEntry::make('latestOutboundDeliverable.delivery_response')
                             ->getStateUsing(fn (Timeline $record): string => $record->timelineable->latestOutboundDeliverable->delivery_response)
                             ->label('Error Details')
-                            ->hidden(fn (Timeline $record): bool => is_null($record->timelineable->latestOutboundDeliverable->delivery_response)),
+                            ->hidden(fn (Timeline $record): bool => is_null($record->timelineable->latestOutboundDeliverable?->delivery_response)),
                     ])
                     ->columns(),
             ],
