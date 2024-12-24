@@ -69,7 +69,7 @@ class CreateEngagementBatch implements ShouldQueue
             'user_id' => $this->data->user->id,
         ]);
 
-        $deliveryMethod = $this->data->deliveryMethod;
+        $channel = $this->data->channel;
 
         [$body] = tiptap_converter()->saveImages(
             $this->data->body,
@@ -86,7 +86,7 @@ class CreateEngagementBatch implements ShouldQueue
                 'recipient_type' => $record->getMorphClass(),
                 'body' => $body,
                 'subject' => $this->data->subject,
-                'channel' => $this->data->deliveryMethod,
+                'channel' => $this->data->channel,
             ]);
         });
 
@@ -94,12 +94,12 @@ class CreateEngagementBatch implements ShouldQueue
             return $engagement->driver()->jobForDelivery();
         });
 
-        $engagementBatch->user->notify(new EngagementBatchStartedNotification($engagementBatch, $deliverableJobs->count(), $deliveryMethod));
+        $engagementBatch->user->notify(new EngagementBatchStartedNotification($engagementBatch, $deliverableJobs->count(), $channel));
 
         Bus::batch($deliverableJobs)
             ->name("Process Bulk Engagement {$engagementBatch->id}")
-            ->finally(function (Batch $batchQueue) use ($engagementBatch, $deliveryMethod) {
-                $engagementBatch->user->notify(new EngagementBatchFinishedNotification($engagementBatch, $batchQueue->totalJobs, $batchQueue->failedJobs, $deliveryMethod));
+            ->finally(function (Batch $batchQueue) use ($engagementBatch, $channel) {
+                $engagementBatch->user->notify(new EngagementBatchFinishedNotification($engagementBatch, $batchQueue->totalJobs, $batchQueue->failedJobs, $channel));
             })
             ->allowFailures()
             ->dispatch();

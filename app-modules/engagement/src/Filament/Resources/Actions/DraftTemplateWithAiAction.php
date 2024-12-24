@@ -58,7 +58,7 @@ class DraftTemplateWithAiAction extends Action
 {
     protected array | Closure $mergeTags = [];
 
-    protected NotificationChannel | Closure $deliveryMethod;
+    protected NotificationChannel | Closure $channel;
 
     protected function setUp(): void
     {
@@ -185,15 +185,15 @@ class DraftTemplateWithAiAction extends Action
         return $this->evaluate($this->mergeTags);
     }
 
-    public function deliveryMethod(NotificationChannel | Closure $method): static
+    public function channel(NotificationChannel | Closure $method): static
     {
-        $this->deliveryMethod = $method;
+        $this->channel = $method;
 
         return $this;
     }
 
     public function getDeliveryMethod(): NotificationChannel
     {
-        return $this->evaluate($this->deliveryMethod ?? throw new Exception('The [deliveryMethod()] must be set when using [' . static::class . '].'));
+        return $this->evaluate($this->channel ?? throw new Exception('The [channel()] must be set when using [' . static::class . '].'));
     }
 }

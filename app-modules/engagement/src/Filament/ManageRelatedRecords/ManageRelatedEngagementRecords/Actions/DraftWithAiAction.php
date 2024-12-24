@@ -95,7 +95,7 @@ class DraftWithAiAction extends Action
                     HTML)
                     ->join(', ', ' and ');
 
-                if ($get('delivery_method') === NotificationChannel::Sms->value) {
+                if ($get('channel') === NotificationChannel::Sms->value) {
                     try {
                         $content = app(CompletePrompt::class)->execute(
                             aiModel: $model,

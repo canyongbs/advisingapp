@@ -77,7 +77,7 @@ class CreateEmailTemplate extends CreateRecord
                     ->required(),
                 Actions::make([
                     DraftTemplateWithAiAction::make()
-                        ->deliveryMethod(NotificationChannel::Email)
+                        ->channel(NotificationChannel::Email)
                         ->mergeTags($mergeTags),
                 ]),
             ]);

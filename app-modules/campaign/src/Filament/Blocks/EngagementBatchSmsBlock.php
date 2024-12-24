@@ -59,12 +59,12 @@ class EngagementBatchSmsBlock extends CampaignActionBlock
     public function generateFields(string $fieldPrefix = ''): array
     {
         return [
-            Hidden::make($fieldPrefix . 'delivery_method')
+            Hidden::make($fieldPrefix . 'channel')
                 ->default(NotificationChannel::Sms->value),
             EngagementSmsBodyField::make(context: 'create', fieldPrefix: $fieldPrefix),
             Actions::make([
                 DraftCampaignEngagementBlockWithAi::make()
-                    ->deliveryMethod(NotificationChannel::Sms)
+                    ->channel(NotificationChannel::Sms)
                     ->mergeTags([
                         'student first name',
                         'student last name',

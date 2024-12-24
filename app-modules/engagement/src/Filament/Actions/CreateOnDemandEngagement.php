@@ -48,7 +48,7 @@ class CreateOnDemandEngagement
         $engagement = $educatable->engagements()->create([
             'subject' => $data['subject'] ?? null,
             'body' => $data['body'] ?? null,
-            'channel' => $data['delivery_method'],
+            'channel' => $data['channel'],
         ]);
 
         if ($afterCreation) {

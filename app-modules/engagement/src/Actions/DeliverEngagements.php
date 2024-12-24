@@ -54,7 +54,6 @@ class DeliverEngagements implements ShouldQueue
 
     public function handle(): void
     {
-        // TODO: Ensure this logic is correct and covers all scenarios
         Engagement::query()
             ->where('deliver_at', '<=', now())
             ->whereDoesntHave('outboundDeliverables')

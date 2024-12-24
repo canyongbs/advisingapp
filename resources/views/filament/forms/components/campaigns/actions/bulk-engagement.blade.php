@@ -40,7 +40,7 @@
 
 <x-filament::fieldset>
     <x-slot name="label">
-        @if ($action['delivery_method'] === NotificationChannel::Email->value)
+        @if ($action['channel'] === NotificationChannel::Email->value)
             Email
         @else
             Text Message
@@ -52,7 +52,7 @@
             <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Delivery Method</dt>
             <dd class="flex flex-row space-x-2 text-sm font-semibold">
                 <x-filament::badge>
-                    {{ $action['delivery_method'] }}
+                    {{ $action['channel'] }}
                 </x-filament::badge>
             </dd>
         </div>

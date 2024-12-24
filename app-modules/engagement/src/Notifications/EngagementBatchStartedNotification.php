@@ -57,9 +57,9 @@ class EngagementBatchStartedNotification extends BaseNotification implements Dat
     public function __construct(
         public EngagementBatch $engagementBatch,
         public int $jobsToProcess,
-        public string $deliveryMethod,
+        public string $channel,
     ) {
-        $this->title = $this->deliveryMethod === 'email'
+        $this->title = $this->channel === 'email'
                   ? 'Bulk email request is being processed and will be sent shortly.'
                   : 'Bulk text request is being processed and will be sent shortly.';
     }

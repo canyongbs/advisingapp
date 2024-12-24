@@ -76,7 +76,7 @@ class EditSmsTemplate extends EditRecord
                     ->required(),
                 Actions::make([
                     DraftTemplateWithAiAction::make()
-                        ->deliveryMethod(NotificationChannel::Sms)
+                        ->channel(NotificationChannel::Sms)
                         ->mergeTags($mergeTags),
                 ]),
             ]);

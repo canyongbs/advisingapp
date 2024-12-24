@@ -70,7 +70,7 @@ class BulkEngagementAction
                 Step::make('Choose your delivery method')
                     ->description('Select email or sms.')
                     ->schema([
-                        Select::make('delivery_method')
+                        Select::make('channel')
                             ->label('How would you like to send this engagement?')
                             ->options(NotificationChannel::getEngagementOptions())
                             ->default(NotificationChannel::Email->value)
@@ -85,7 +85,7 @@ class BulkEngagementAction
                             ->autofocus()
                             ->required()
                             ->placeholder(__('Subject'))
-                            ->hidden(fn (Get $get): bool => $get('delivery_method') === NotificationChannel::Sms->value)
+                            ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
                             ->columnSpanFull(),
                         TiptapEditor::make('body')
                             ->disk('s3-public')
@@ -151,7 +151,7 @@ class BulkEngagementAction
                                         $component->generateImageUrls($template->content),
                                     );
                                 }))
-                            ->hidden(fn (Get $get): bool => $get('delivery_method') === NotificationChannel::Sms->value)
+                            ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
                             ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
                             ->columnSpanFull(),
                         EngagementSmsBodyField::make(context: 'create'),
@@ -167,7 +167,7 @@ class BulkEngagementAction
                     'records' => $records->filter(function ($record) {
                         return $record->canRecieveSms();
                     }),
-                    'deliveryMethod' => $data['delivery_method'],
+                    'channel' => $data['channel'],
                     'subject' => $data['subject'] ?? null,
                     'body' => $data['body'] ?? null,
                     'temporaryBodyImages' => array_map(

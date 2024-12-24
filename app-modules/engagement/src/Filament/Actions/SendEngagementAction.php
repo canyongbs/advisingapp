@@ -70,7 +70,7 @@ class SendEngagementAction extends Action
             ->modalDescription(fn () => "Send an engagement to {$this->getEducatable()->display_name}.")
             ->model(Engagement::class)
             ->form([
-                Select::make('delivery_method')
+                Select::make('channel')
                     ->label('What would you like to send?')
                     ->options(NotificationChannel::getEngagementOptions())
                     ->default(NotificationChannel::Email->value)
@@ -83,7 +83,7 @@ class SendEngagementAction extends Action
                             ->autofocus()
                             ->required()
                             ->placeholder(__('Subject'))
-                            ->hidden(fn (Get $get): bool => $get('delivery_method') === NotificationChannel::Sms->value)
+                            ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
                             ->columnSpanFull(),
                         TiptapEditor::make('body')
                             ->disk('s3-public')
@@ -148,7 +148,7 @@ class SendEngagementAction extends Action
                                         $component->generateImageUrls($template->content),
                                     );
                                 }))
-                            ->hidden(fn (Get $get): bool => $get('delivery_method') === NotificationChannel::Sms->value)
+                            ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
                             ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
                             ->columnSpanFull(),
                         EngagementSmsBodyField::make(context: 'create'),
@@ -159,7 +159,7 @@ class SendEngagementAction extends Action
                     ]),
             ])
             ->action(function (array $data, Form $form) {
-                if ($data['delivery_method'] == NotificationChannel::Sms->value && ! $this->getEducatable()->canRecieveSms()) {
+                if ($data['channel'] == NotificationChannel::Sms->value && ! $this->getEducatable()->canRecieveSms()) {
                     Notification::make()
                         ->title(ucfirst($this->getEducatable()->getLabel()) . ' does not have mobile number.')
                         ->danger()

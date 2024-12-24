@@ -78,7 +78,7 @@ class EngagementBatch extends BaseModel implements ExecutableFromACampaignAction
                 'records' => $action->campaign->segment->retrieveRecords()->filter(function ($record) {
                     return $record->canRecieveSms();
                 }),
-                'deliveryMethod' => $action->data['delivery_method'],
+                'channel' => $action->data['channel'],
                 'subject' => $action->data['subject'] ?? null,
                 'body' => $action->data['body'] ?? null,
             ]));

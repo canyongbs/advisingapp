@@ -68,7 +68,7 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
     public function generateFields(string $fieldPrefix = ''): array
     {
         return [
-            Hidden::make($fieldPrefix . 'delivery_method')
+            Hidden::make($fieldPrefix . 'channel')
                 ->default(NotificationChannel::Email->value),
             TextInput::make($fieldPrefix . 'subject')
                 ->columnSpanFull()
@@ -142,7 +142,7 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
                 ->columnSpanFull(),
             Actions::make([
                 DraftCampaignEngagementBlockWithAi::make()
-                    ->deliveryMethod(NotificationChannel::Email)
+                    ->channel(NotificationChannel::Email)
                     ->fieldPrefix($fieldPrefix)
                     ->mergeTags($mergeTags),
             ]),
