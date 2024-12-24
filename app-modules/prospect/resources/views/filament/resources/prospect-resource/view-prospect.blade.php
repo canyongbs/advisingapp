@@ -46,6 +46,7 @@
     use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\FormSubmissionsRelationManager;
     use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\InteractionsRelationManager;
     use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ProgramsRelationManager;
+    use AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers\CasesRelationManager;
 @endphp
 
 <x-filament-panels::page>
@@ -69,6 +70,7 @@
                 :managers="[
                     'messages' => EngagementsRelationManager::class,
                     'interactions' => InteractionsRelationManager::class,
+                    'cases' => CasesRelationManager::class,
                     'files' => EngagementFilesRelationManager::class,
                 ]"
             />

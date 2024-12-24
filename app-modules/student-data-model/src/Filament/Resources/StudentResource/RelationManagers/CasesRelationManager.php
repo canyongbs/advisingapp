@@ -38,6 +38,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Relati
 
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\CreateCase;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\ViewCase;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Models\CasePriority;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Forms\Form;
@@ -102,9 +103,11 @@ class CasesRelationManager extends RelationManager
             ])
             ->actions([
                 ViewAction::make(),
-                EditAction::make(),
-            ])
-            ->bulkActions([
+                EditAction::make()
+                    ->mutateRecordDataUsing(function ($data, CaseModel $record) {
+                        $data['type_id'] = $record?->priority?->type->getKey();
+                        return $data;
+                    }),
             ])
             ->defaultSort('created_at', 'desc');
     }
