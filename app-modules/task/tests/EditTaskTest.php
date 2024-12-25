@@ -100,4 +100,137 @@ test('EditTask is gated with proper access control', function () {
         ->assertHasNoFormErrors();
 
     // TODO: Check for changes
-})->only();
+});
+
+test('A user without proper permissions and that is not associated to the Task cannot access', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+
+    $task = Task::factory()->create();
+
+    actingAs($user)
+        ->get(
+            TaskResource::getUrl('edit', [
+                'record' => $task,
+            ])
+        )->assertForbidden();
+
+    livewire(EditTask::class, [
+        'record' => $task->getRouteKey(),
+    ])
+        ->assertForbidden();
+});
+
+test('A User with proper permissions and that is not associated to the Task cannot access', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+
+    $task = Task::factory()->create();
+
+    $user->givePermissionTo('task.view-any');
+    $user->givePermissionTo('task.*.update');
+
+    actingAs($user)
+        ->get(
+            TaskResource::getUrl('edit', [
+                'record' => $task,
+            ])
+        )->assertForbidden();
+
+    livewire(EditTask::class, [
+        'record' => $task->getRouteKey(),
+    ])
+        ->assertForbidden();
+});
+
+test('A User without proper permissions that is the assigned user cannot access', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+
+    $task = Task::factory()->create();
+
+    $task->assignedTo()->associate($user)->save();
+
+    $task->refresh();
+
+    actingAs($user)
+        ->get(
+            TaskResource::getUrl('edit', [
+                'record' => $task,
+            ])
+        )->assertForbidden();
+
+    livewire(EditTask::class, [
+        'record' => $task->getRouteKey(),
+    ])
+        ->assertForbidden();
+});
+
+test('A User without proper permissions that is the created by user cannot access', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+
+    $task = Task::factory()->create();
+
+    $task->createdBy()->associate($user)->save();
+
+    $task->refresh();
+
+    actingAs($user)
+        ->get(
+            TaskResource::getUrl('edit', [
+                'record' => $task,
+            ])
+        )->assertForbidden();
+
+    livewire(EditTask::class, [
+        'record' => $task->getRouteKey(),
+    ])
+        ->assertForbidden();
+});
+
+test('A User with proper permissions that is the assigned user can access', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+
+    $task = Task::factory()->create();
+
+    $user->givePermissionTo('task.view-any');
+    $user->givePermissionTo('task.*.update');
+
+    $task->assignedTo()->associate($user)->save();
+
+    $task->refresh();
+
+    actingAs($user)
+        ->get(
+            TaskResource::getUrl('edit', [
+                'record' => $task,
+            ])
+        )->assertSuccessful();
+
+    livewire(EditTask::class, [
+        'record' => $task->getRouteKey(),
+    ])
+        ->assertSuccessful();
+});
+
+test('A User with proper permissions that is the created by user can access.', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+
+    $task = Task::factory()->create();
+
+    $user->givePermissionTo('task.view-any');
+    $user->givePermissionTo('task.*.update');
+
+    $task->createdBy()->associate($user)->save();
+
+    $task->refresh();
+
+    actingAs($user)
+        ->get(
+            TaskResource::getUrl('edit', [
+                'record' => $task,
+            ])
+        )->assertSuccessful();
+
+    livewire(EditTask::class, [
+        'record' => $task->getRouteKey(),
+    ])
+        ->assertSuccessful();
+});
