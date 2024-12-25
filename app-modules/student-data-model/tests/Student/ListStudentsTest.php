@@ -36,29 +36,32 @@
 
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ListStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Models\User;
 
-use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
 it('can filter students by first generation', function () {
     Student::truncate();
 
-    $user = User::factory()->licensed(Student::getLicenseType())->create();
+    asSuperAdmin();
 
-    $user->givePermissionTo('student.view-any');
-    $user->givePermissionTo('student.*.view');
+    $studentsWithFirstGen = Student::factory()
+        ->state([
+            'firstgen' => true,
+        ])->count(5)->create();
 
-    actingAs($user);
-
-    $students = Student::factory()->count(5)->create();
+    $studentsWithoutFirstGen = Student::factory()
+        ->state([
+            'firstgen' => false,
+        ])->count(5)->create();
 
     livewire(ListStudents::class)
-        ->assertCanSeeTableRecords($students)
+        ->set('tableRecordsPerPage', 10)
+        ->assertCanSeeTableRecords($studentsWithFirstGen->merge($studentsWithoutFirstGen))
         ->filterTable('firstgen', true)
-        ->assertCanSeeTableRecords($students->where('firstgen', true))
-        ->assertCanNotSeeTableRecords($students->where('firstgen', false))
+        ->assertCanSeeTableRecords($studentsWithFirstGen)
+        ->assertCanNotSeeTableRecords($studentsWithoutFirstGen)
         ->filterTable('firstgen', false)
-        ->assertCanSeeTableRecords($students->where('firstgen', false))
-        ->assertCanNotSeeTableRecords($students->where('firstgen', true));
+        ->assertCanSeeTableRecords($studentsWithoutFirstGen)
+        ->assertCanNotSeeTableRecords($studentsWithFirstGen);
 });
