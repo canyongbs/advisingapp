@@ -39,7 +39,6 @@ namespace AdvisingApp\Ai\Http\Controllers;
 use AdvisingApp\Ai\Http\Requests\ShowThreadRequest;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
-use App\Features\SmartPromptsFeature;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Illuminate\Http\JsonResponse;
@@ -52,7 +51,7 @@ class ShowThreadController
         return response()->json([
             'messages' => $thread->messages()
                 ->oldest('id')
-                ->when(SmartPromptsFeature::active(), fn ($query) => $query->with(['prompt']))
+                ->when(fn ($query) => $query->with(['prompt']))
                 ->get()
                 ->toBase()
                 ->map(function (AiMessage $message): array {

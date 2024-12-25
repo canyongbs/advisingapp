@@ -38,7 +38,6 @@ namespace AdvisingApp\Ai\Filament\Pages\Assistant\Concerns;
 
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Models\PromptType;
-use App\Features\SmartPromptsFeature;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Actions\Action as FormComponentAction;
@@ -85,11 +84,11 @@ trait CanManagePromptLibrary
                     ->hint('Optional')
                     ->options(fn (Get $get): array => PromptType::query()
                         ->when(
-                            SmartPromptsFeature::active() && $get('isSmart'),
+                            $get('isSmart'),
                             fn (Builder $query) => $query->whereRelation('prompts', 'is_smart', true),
                         )
                         ->when(
-                            SmartPromptsFeature::active() && ! $get('isSmart'),
+                            ! $get('isSmart'),
                             fn (Builder $query) => $query->whereRelation('prompts', 'is_smart', false),
                         )
                         ->orderBy('title')
@@ -129,11 +128,11 @@ trait CanManagePromptLibrary
                             Prompt::query()
                                 ->limit(50)
                                 ->when(
-                                    SmartPromptsFeature::active() && $get('isSmart'),
+                                    $get('isSmart'),
                                     fn (Builder $query) => $query->where('is_smart', true),
                                 )
                                 ->when(
-                                    SmartPromptsFeature::active() && ! $get('isSmart'),
+                                    ! $get('isSmart'),
                                     fn (Builder $query) => $query->where('is_smart', false),
                                 )
                                 ->when(
@@ -170,11 +169,11 @@ trait CanManagePromptLibrary
                                 ->orWhere(new Expression('lower(description)'), 'like', $search)
                                 ->orWhere(new Expression('lower(prompt)'), 'like', $search))
                             ->when(
-                                SmartPromptsFeature::active() && $get('isSmart'),
+                                $get('isSmart'),
                                 fn (Builder $query) => $query->where('is_smart', true),
                             )
                             ->when(
-                                SmartPromptsFeature::active() && ! $get('isSmart'),
+                                ! $get('isSmart'),
                                 fn (Builder $query) => $query->where('is_smart', false),
                             )
                             ->when(
