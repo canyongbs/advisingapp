@@ -155,6 +155,7 @@ class ListStudents extends ListRecords implements HasBulkEngagementAction
                             });
                         }
                     ),
+                TernaryFilter::make('firstgen'),
             ])
             ->actions([
                 ViewAction::make()
