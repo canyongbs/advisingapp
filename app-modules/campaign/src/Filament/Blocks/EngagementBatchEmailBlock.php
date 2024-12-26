@@ -38,8 +38,8 @@ namespace AdvisingApp\Campaign\Filament\Blocks;
 
 use AdvisingApp\Campaign\Filament\Blocks\Actions\DraftCampaignEngagementBlockWithAi;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Models\EmailTemplate;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use Carbon\CarbonImmutable;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
@@ -68,8 +68,8 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
     public function generateFields(string $fieldPrefix = ''): array
     {
         return [
-            Hidden::make($fieldPrefix . 'delivery_method')
-                ->default(EngagementDeliveryMethod::Email->value),
+            Hidden::make($fieldPrefix . 'channel')
+                ->default(NotificationChannel::Email->value),
             TextInput::make($fieldPrefix . 'subject')
                 ->columnSpanFull()
                 ->placeholder(__('Subject'))
@@ -142,7 +142,7 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
                 ->columnSpanFull(),
             Actions::make([
                 DraftCampaignEngagementBlockWithAi::make()
-                    ->deliveryMethod(EngagementDeliveryMethod::Email)
+                    ->channel(NotificationChannel::Email)
                     ->fieldPrefix($fieldPrefix)
                     ->mergeTags($mergeTags),
             ]),

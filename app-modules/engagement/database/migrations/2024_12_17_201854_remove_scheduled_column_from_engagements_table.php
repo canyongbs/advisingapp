@@ -34,15 +34,22 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Notification\Listeners\HandleNotificationSent;
-use Illuminate\Notifications\Events\NotificationSent;
-use Illuminate\Support\Facades\Event;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-it('is listening to notification sent events', function () {
-    Event::fake();
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::table('engagements', function (Blueprint $table) {
+            $table->dropColumn('scheduled');
+        });
+    }
 
-    Event::assertListening(
-        NotificationSent::class,
-        HandleNotificationSent::class
-    );
-});
+    public function down(): void
+    {
+        Schema::table('engagements', function (Blueprint $table) {
+            $table->boolean('scheduled')->default(true);
+        });
+    }
+};

@@ -52,7 +52,7 @@ class OutboundDeliverableFactory extends Factory
         return [
             'channel' => NotificationChannel::Email,
             'notification_class' => TestEmailNotification::class,
-            'delivery_status' => NotificationDeliveryStatus::Awaiting,
+            'delivery_status' => NotificationDeliveryStatus::Processing,
             'quota_usage' => 0,
         ];
     }

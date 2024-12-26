@@ -65,12 +65,6 @@ class UpdateOutboundDeliverableSmsStatus implements ShouldQueue
         ]);
 
         $this->deliverable->driver()->updateDeliveryStatus($data);
-
-        if ($this->deliverable->related) {
-            if (method_exists($this->deliverable->related, 'driver')) {
-                $this->deliverable->related->driver()->updateDeliveryStatus($data);
-            }
-        }
     }
 
     public function middleware(): array

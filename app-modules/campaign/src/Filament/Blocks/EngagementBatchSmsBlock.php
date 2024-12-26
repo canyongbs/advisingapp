@@ -38,8 +38,8 @@ namespace AdvisingApp\Campaign\Filament\Blocks;
 
 use AdvisingApp\Campaign\Filament\Blocks\Actions\DraftCampaignEngagementBlockWithAi;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Fields\EngagementSmsBodyField;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use Carbon\CarbonImmutable;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\DateTimePicker;
@@ -59,12 +59,12 @@ class EngagementBatchSmsBlock extends CampaignActionBlock
     public function generateFields(string $fieldPrefix = ''): array
     {
         return [
-            Hidden::make($fieldPrefix . 'delivery_method')
-                ->default(EngagementDeliveryMethod::Sms->value),
+            Hidden::make($fieldPrefix . 'channel')
+                ->default(NotificationChannel::Sms->value),
             EngagementSmsBodyField::make(context: 'create', fieldPrefix: $fieldPrefix),
             Actions::make([
                 DraftCampaignEngagementBlockWithAi::make()
-                    ->deliveryMethod(EngagementDeliveryMethod::Sms)
+                    ->channel(NotificationChannel::Sms)
                     ->mergeTags([
                         'student first name',
                         'student last name',

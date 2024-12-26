@@ -34,46 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Database\Seeders;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
-use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Engagement\Models\EngagementDeliverable;
-use Illuminate\Database\Seeder;
-
-class EngagementSeeder extends Seeder
-{
-    public function run(): void
+return new class () extends Migration {
+    public function up(): void
     {
-        // For Student - deliver now
-        Engagement::factory()
-            ->count(10)
-            ->has(EngagementDeliverable::factory()->deliverySuccessful()->count(1), 'engagementDeliverable')
-            ->forStudent()
-            ->deliverNow()
-            ->create();
-
-        // For Student - deliver later
-        Engagement::factory()
-            ->count(7)
-            ->has(EngagementDeliverable::factory()->count(1), 'engagementDeliverable')
-            ->forStudent()
-            ->deliverLater()
-            ->create();
-
-        // For Prospect - deliver now
-        Engagement::factory()
-            ->count(10)
-            ->has(EngagementDeliverable::factory()->deliverySuccessful()->count(1), 'engagementDeliverable')
-            ->forProspect()
-            ->deliverNow()
-            ->create();
-
-        // For Prospect - deliver later
-        Engagement::factory()
-            ->count(7)
-            ->has(EngagementDeliverable::factory()->count(1), 'engagementDeliverable')
-            ->forProspect()
-            ->deliverLater()
-            ->create();
+        DB::table('outbound_deliverables')
+            ->where('related_type', 'engagement_deliverable')
+            ->delete();
     }
-}
+
+    public function down(): void
+    {
+        // No down migration needed
+    }
+};

@@ -37,11 +37,9 @@
 namespace AdvisingApp\Notification\Actions;
 
 use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\Channels\DatabaseChannel;
-use AdvisingApp\Notification\Notifications\Channels\EmailChannel;
-use AdvisingApp\Notification\Notifications\Channels\SmsChannel;
 use AdvisingApp\Notification\Notifications\DatabaseNotification;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\OnDemandNotification;
@@ -50,18 +48,12 @@ use Illuminate\Notifications\AnonymousNotifiable;
 
 class MakeOutboundDeliverable
 {
-    public function handle(BaseNotification $notification, object $notifiable, string $channel): OutboundDeliverable
+    public function handle(BaseNotification $notification, object $notifiable, NotificationChannel $channel): OutboundDeliverable
     {
-        $channel = match ($channel) {
-            SmsChannel::class => NotificationChannel::Sms,
-            EmailChannel::class => NotificationChannel::Email,
-            DatabaseChannel::class => NotificationChannel::Database,
-        };
-
         $content = match (true) {
-            $channel == NotificationChannel::Sms && $notification instanceof SmsNotification => $notification->toSms($notifiable)->toArray(),
-            $channel == NotificationChannel::Email && $notification instanceof EmailNotification => $notification->toMail($notifiable)->toArray(),
-            $channel == NotificationChannel::Database && $notification instanceof DatabaseNotification => $notification->toDatabase($notifiable),
+            $channel === NotificationChannel::Sms && $notification instanceof SmsNotification => $notification->toSms($notifiable)->toArray(),
+            $channel === NotificationChannel::Email && $notification instanceof EmailNotification => $notification->toMail($notifiable)->toArray(),
+            $channel === NotificationChannel::Database && $notification instanceof DatabaseNotification => $notification->toDatabase($notifiable),
         };
 
         $recipientId = null;
@@ -77,6 +69,7 @@ class MakeOutboundDeliverable
             'content' => $content,
             'recipient_id' => ! $notifiable instanceof AnonymousNotifiable ? $notifiable->getKey() : $recipientId,
             'recipient_type' => ! $notifiable instanceof AnonymousNotifiable ? $notifiable->getMorphClass() : $recipientType,
+            'delivery_status' => NotificationDeliveryStatus::Processing,
         ]);
     }
 }

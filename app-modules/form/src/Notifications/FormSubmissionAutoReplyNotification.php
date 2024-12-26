@@ -44,21 +44,14 @@ use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Models\Tenant;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 
-class FormSubmissionAutoReplyNotification extends BaseNotification implements EmailNotification, ShouldBeUnique
+class FormSubmissionAutoReplyNotification extends BaseNotification implements EmailNotification
 {
     use EmailChannelTrait;
 
     public function __construct(
         public FormSubmission $submission
     ) {}
-
-    public function uniqueId(): string
-    {
-        return Tenant::current()->getKey() . ':' . $this->submission->getKey();
-    }
 
     public function toEmail(object $notifiable): MailMessage
     {

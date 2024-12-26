@@ -34,34 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Actions;
+use Database\Migrations\Concerns\CanModifyPermissions;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\Engagement\Notifications\EngagementEmailNotification;
-use AdvisingApp\Engagement\Notifications\EngagementEmailSentNotification;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Notifications\Events\NotificationSent;
+return new class () extends Migration {
+    use CanModifyPermissions;
 
-class HandleEngagementEmailNotificationSent implements ShouldQueue
-{
-    use Dispatchable;
+    private array $permissions = [
+        'engagement_deliverable.*.delete' => 'Engagement Deliverable',
+        'engagement_deliverable.*.force-delete' => 'Engagement Deliverable',
+        'engagement_deliverable.*.restore' => 'Engagement Deliverable',
+        'engagement_deliverable.*.update' => 'Engagement Deliverable',
+        'engagement_deliverable.*.view' => 'Engagement Deliverable',
+        'engagement_deliverable.create' => 'Engagement Deliverable',
+        'engagement_deliverable.view-any' => 'Engagement Deliverable',
+    ];
 
-    public function __construct(
-        public NotificationSent $event
-    ) {}
+    private array $guards = [
+        'web',
+        'api',
+    ];
 
-    public function handle(): void
+    public function up(): void
     {
-        /** @var EngagementEmailNotification $notification */
-        $notification = $this->event->notification;
-
-        /** @var EngagementDeliverable $deliverable */
-        $deliverable = $notification->deliverable;
-
-        $deliverable->markDeliverySuccessful();
-
-        if (is_null($deliverable->engagement->engagement_batch_id)) {
-            $deliverable->engagement->user?->notify(new EngagementEmailSentNotification($deliverable->engagement));
-        }
+        collect($this->guards)
+            ->each(function (string $guard) {
+                $this->deletePermissions(array_keys($this->permissions), $guard);
+            });
     }
-}
+
+    public function down(): void
+    {
+        collect($this->guards)
+            ->each(function (string $guard) {
+                $this->createPermissions($this->permissions, $guard);
+            });
+    }
+};

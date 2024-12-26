@@ -36,10 +36,9 @@
 
 namespace AdvisingApp\Engagement\GraphQL\Mutations;
 
-use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
 use AdvisingApp\Engagement\Actions\GenerateTipTapBodyJson;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -67,9 +66,10 @@ class SendEmail
 
         $args['body'] = app(GenerateTipTapBodyJson::class)(body: $body, mergeTags: $mergeTags);
 
-        $engagement = Engagement::create($args);
-
-        app(CreateEngagementDeliverable::class)(engagement: $engagement, deliveryMethod: EngagementDeliveryMethod::Email->value);
+        $engagement = Engagement::create([
+            ...$args,
+            'channel' => NotificationChannel::Email->value,
+        ]);
 
         return $engagement->refresh();
     }

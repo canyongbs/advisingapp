@@ -37,42 +37,22 @@
 namespace AdvisingApp\Engagement\Drivers;
 
 use AdvisingApp\Engagement\Actions\EngagementSmsChannelDelivery;
-use AdvisingApp\Engagement\Actions\QueuedEngagementDelivery;
 use AdvisingApp\Engagement\Drivers\Contracts\EngagementDeliverableDriver;
-use AdvisingApp\Engagement\Models\EngagementDeliverable;
-use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
-use AdvisingApp\Notification\DataTransferObjects\UpdateEmailDeliveryStatusData;
-use AdvisingApp\Notification\DataTransferObjects\UpdateSmsDeliveryStatusData;
+use AdvisingApp\Engagement\Models\Engagement;
 
 class EngagementSmsDriver implements EngagementDeliverableDriver
 {
     public function __construct(
-        protected EngagementDeliverable $deliverable
+        protected Engagement $engagement
     ) {}
 
-    public function updateDeliveryStatus(UpdateEmailDeliveryStatusData|UpdateSmsDeliveryStatusData $data): void
+    public function jobForDelivery(): EngagementSmsChannelDelivery
     {
-        /** @var TwilioStatusCallbackData $updateData */
-        $updateData = $data->data;
-
-        $this->deliverable->update([
-            'external_status' => $updateData->messageStatus ?? null,
-        ]);
-
-        match ($this->deliverable->external_status) {
-            'delivered' => $this->deliverable->markDeliverySuccessful(),
-            'undelivered', 'failed' => $this->deliverable->markDeliveryFailed($updateData->errorMessage ?? null),
-            default => null,
-        };
-    }
-
-    public function jobForDelivery(): QueuedEngagementDelivery
-    {
-        return new EngagementSmsChannelDelivery($this->deliverable);
+        return new EngagementSmsChannelDelivery($this->engagement);
     }
 
     public function deliver(): void
     {
-        EngagementSmsChannelDelivery::dispatch($this->deliverable);
+        dispatch($this->jobForDelivery());
     }
 }

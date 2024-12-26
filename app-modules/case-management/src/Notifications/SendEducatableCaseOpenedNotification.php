@@ -37,6 +37,8 @@
 namespace AdvisingApp\CaseManagement\Notifications;
 
 use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
@@ -46,6 +48,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\NotificationSetting;
+use Illuminate\Notifications\AnonymousNotifiable;
 
 class SendEducatableCaseOpenedNotification extends BaseNotification implements EmailNotification
 {
@@ -77,7 +80,7 @@ class SendEducatableCaseOpenedNotification extends BaseNotification implements E
             ->lines(str(nl2br($this->case->close_details))->explode('<br />'));
     }
 
-    protected function beforeSendHook(object $notifiable, OutboundDeliverable $deliverable, string $channel): void
+    public function beforeSend(AnonymousNotifiable|NotifiableInterface $notifiable, OutboundDeliverable $deliverable, NotificationChannel $channel): void
     {
         $deliverable->related()->associate($this->case);
     }

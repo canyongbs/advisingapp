@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Engagement\Filament\Concerns;
 
-use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
@@ -60,22 +60,23 @@ trait EngagementInfolist
                         ->getStateUsing(fn (Engagement $engagement): HtmlString => $engagement->getBody())
                         ->columnSpanFull(),
                 ]),
-            Fieldset::make('deliverable')
+            Fieldset::make('latestOutboundDeliverable')
                 ->label('Delivery Information')
                 ->columnSpanFull()
                 ->schema([
-                    TextEntry::make('deliverable.channel')
+                    TextEntry::make('channel')
                         ->label('Channel'),
-                    IconEntry::make('deliverable.delivery_status')
-                        ->icon(fn (EngagementDeliveryStatus $state): string => $state->getIconClass())
-                        ->color(fn (EngagementDeliveryStatus $state): string => $state->getColor())
-                        ->label('Status'),
-                    TextEntry::make('deliverable.delivered_at')
+                    IconEntry::make('latestOutboundDeliverable.delivery_status')
+                        ->icon(fn (NotificationDeliveryStatus $state): string => $state->getIconClass())
+                        ->color(fn (NotificationDeliveryStatus $state): string => $state->getColor())
+                        ->label('Status')
+                        ->default(NotificationDeliveryStatus::Processing),
+                    TextEntry::make('latestOutboundDeliverable.delivered_at')
                         ->label('Delivered At')
-                        ->hidden(fn (Engagement $engagement): bool => is_null($engagement->deliverable->delivered_at)),
-                    TextEntry::make('deliverable.delivery_response')
+                        ->hidden(fn (Engagement $engagement): bool => is_null($engagement->latestOutboundDeliverable?->delivered_at)),
+                    TextEntry::make('latestOutboundDeliverable.delivery_response')
                         ->label('Error Details')
-                        ->hidden(fn (Engagement $engagement): bool => is_null($engagement->deliverable->delivery_response)),
+                        ->hidden(fn (Engagement $engagement): bool => is_null($engagement->latestOutboundDeliverable?->delivery_response)),
                 ])
                 ->columns(2),
         ];

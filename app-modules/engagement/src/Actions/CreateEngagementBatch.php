@@ -39,7 +39,6 @@ namespace AdvisingApp\Engagement\Actions;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementBatchCreationData;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementBatch;
-use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Engagement\Notifications\EngagementBatchFinishedNotification;
 use AdvisingApp\Engagement\Notifications\EngagementBatchStartedNotification;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -65,11 +64,12 @@ class CreateEngagementBatch implements ShouldQueue
 
     public function handle(): void
     {
+        /** @var EngagementBatch $engagementBatch */
         $engagementBatch = EngagementBatch::create([
             'user_id' => $this->data->user->id,
         ]);
 
-        $deliveryMethod = $this->data->deliveryMethod;
+        $channel = $this->data->channel;
 
         [$body] = tiptap_converter()->saveImages(
             $this->data->body,
@@ -79,36 +79,27 @@ class CreateEngagementBatch implements ShouldQueue
             newImages: $this->data->temporaryBodyImages,
         );
 
-        $this->data->records->each(function (Student|Prospect $record) use ($body, $engagementBatch) {
-            /** @var Engagement $engagement */
-            $engagement = $engagementBatch->engagements()->create([
+        $engagements = $this->data->records->map(function (Student|Prospect $record) use ($body, $engagementBatch) {
+            return $engagementBatch->engagements()->create([
                 'user_id' => $engagementBatch->user_id,
                 'recipient_id' => $record->identifier(),
                 'recipient_type' => $record->getMorphClass(),
                 'body' => $body,
                 'subject' => $this->data->subject,
-                'scheduled' => false,
+                'channel' => $this->data->channel,
             ]);
-
-            $createEngagementDeliverable = resolve(CreateEngagementDeliverable::class);
-
-            $createEngagementDeliverable($engagement, $this->data->deliveryMethod);
         });
 
-        $deliverables = $engagementBatch->engagements->map(function (Engagement $engagement) {
-            return $engagement->deliverable;
+        $deliverableJobs = $engagements->flatten()->map(function (Engagement $engagement) {
+            return $engagement->driver()->jobForDelivery();
         });
 
-        $deliverableJobs = $deliverables->flatten()->map(function (EngagementDeliverable $deliverable) {
-            return $deliverable->driver()->jobForDelivery();
-        });
-
-        $engagementBatch->user->notify(new EngagementBatchStartedNotification($engagementBatch, $deliverableJobs->count(), $deliveryMethod));
+        $engagementBatch->user->notify(new EngagementBatchStartedNotification($engagementBatch, $deliverableJobs->count(), $channel));
 
         Bus::batch($deliverableJobs)
             ->name("Process Bulk Engagement {$engagementBatch->id}")
-            ->finally(function (Batch $batchQueue) use ($engagementBatch, $deliveryMethod) {
-                $engagementBatch->user->notify(new EngagementBatchFinishedNotification($engagementBatch, $batchQueue->totalJobs, $batchQueue->failedJobs, $deliveryMethod));
+            ->finally(function (Batch $batchQueue) use ($engagementBatch, $channel) {
+                $engagementBatch->user->notify(new EngagementBatchFinishedNotification($engagementBatch, $batchQueue->totalJobs, $batchQueue->failedJobs, $channel));
             })
             ->allowFailures()
             ->dispatch();

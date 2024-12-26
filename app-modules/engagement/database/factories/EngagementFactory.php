@@ -38,6 +38,7 @@ namespace AdvisingApp\Engagement\Database\Factories;
 
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementBatch;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
@@ -72,7 +73,7 @@ class EngagementFactory extends Factory
             'subject' => fake()->sentence,
             'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->paragraph]]]]],
             'deliver_at' => fake()->dateTimeBetween('-1 year', '-1 day'),
-            'scheduled' => true,
+            'channel' => fake()->randomElement(NotificationChannel::cases()),
         ];
     }
 
@@ -113,10 +114,17 @@ class EngagementFactory extends Factory
         ]);
     }
 
-    public function onDemand(): self
+    public function email(): self
     {
         return $this->state([
-            'scheduled' => false,
+            'channel' => NotificationChannel::Email,
+        ]);
+    }
+
+    public function sms(): self
+    {
+        return $this->state([
+            'channel' => NotificationChannel::Sms,
         ]);
     }
 }

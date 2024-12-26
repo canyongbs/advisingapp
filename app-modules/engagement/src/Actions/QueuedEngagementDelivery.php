@@ -37,7 +37,7 @@
 namespace AdvisingApp\Engagement\Actions;
 
 use AdvisingApp\Engagement\Actions\Contracts\EngagementChannel;
-use AdvisingApp\Engagement\Models\EngagementDeliverable;
+use AdvisingApp\Engagement\Models\Engagement;
 use App\Models\Tenant;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
@@ -55,13 +55,15 @@ abstract class QueuedEngagementDelivery implements EngagementChannel, ShouldQueu
     use Queueable;
     use SerializesModels;
 
+    public $tries = 3;
+
     public function __construct(
-        public EngagementDeliverable $deliverable
+        public Engagement $engagement
     ) {}
 
     public function uniqueId(): string
     {
-        return Tenant::current()->getKey() . ':' . $this->deliverable->getKey();
+        return Tenant::current()->getKey() . ':' . $this->engagement->getKey();
     }
 
     public function handle(): void

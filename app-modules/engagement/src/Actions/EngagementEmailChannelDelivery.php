@@ -43,9 +43,8 @@ class EngagementEmailChannelDelivery extends QueuedEngagementDelivery
     public function deliver(): void
     {
         $this
-            ->deliverable
             ->engagement
             ->recipient
-            ->notifyNow(new EngagementEmailNotification($this->deliverable));
+            ->notifyNow(new EngagementEmailNotification($this->engagement));
     }
 }

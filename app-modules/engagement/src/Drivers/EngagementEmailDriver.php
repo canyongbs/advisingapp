@@ -37,41 +37,22 @@
 namespace AdvisingApp\Engagement\Drivers;
 
 use AdvisingApp\Engagement\Actions\EngagementEmailChannelDelivery;
-use AdvisingApp\Engagement\Actions\QueuedEngagementDelivery;
 use AdvisingApp\Engagement\Drivers\Contracts\EngagementDeliverableDriver;
-use AdvisingApp\Engagement\Models\EngagementDeliverable;
-use AdvisingApp\Notification\DataTransferObjects\UpdateEmailDeliveryStatusData;
-use AdvisingApp\Notification\DataTransferObjects\UpdateSmsDeliveryStatusData;
+use AdvisingApp\Engagement\Models\Engagement;
 
 class EngagementEmailDriver implements EngagementDeliverableDriver
 {
     public function __construct(
-        protected EngagementDeliverable $deliverable
+        protected Engagement $engagement
     ) {}
 
-    public function updateDeliveryStatus(UpdateEmailDeliveryStatusData|UpdateSmsDeliveryStatusData $data): void
+    public function jobForDelivery(): EngagementEmailChannelDelivery
     {
-        /** @var SesEventData $updateData */
-        $updateData = $data->data;
-
-        $this->deliverable->update([
-            'external_status' => $updateData->eventType,
-        ]);
-
-        match ($this->deliverable->external_status) {
-            'Delivery' => $this->deliverable->markDeliverySuccessful(),
-            'Bounce', 'DeliveryDelay', 'Reject', 'RenderingFailure' => $this->deliverable->markDeliveryFailed($updateData->errorMessageFromType() ?? null),
-            default => null,
-        };
-    }
-
-    public function jobForDelivery(): QueuedEngagementDelivery
-    {
-        return new EngagementEmailChannelDelivery($this->deliverable);
+        return new EngagementEmailChannelDelivery($this->engagement);
     }
 
     public function deliver(): void
     {
-        EngagementEmailChannelDelivery::dispatch($this->deliverable);
+        dispatch($this->jobForDelivery());
     }
 }

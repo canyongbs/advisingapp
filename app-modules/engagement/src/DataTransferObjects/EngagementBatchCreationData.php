@@ -45,7 +45,7 @@ class EngagementBatchCreationData extends Data
     public function __construct(
         public User $user,
         public Collection $records,
-        public string $deliveryMethod,
+        public string $channel,
         public ?string $subject = null,
         public ?array $body = null,
         public array $temporaryBodyImages = [],

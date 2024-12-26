@@ -41,7 +41,7 @@ use Filament\Support\Contracts\HasLabel;
 enum NotificationDeliveryStatus: string implements HasLabel
 {
     // Internal
-    case Awaiting = 'awaiting';
+    case Processing = 'processing';
     case Dispatched = 'dispatched';
     case DispatchFailed = 'failed_dispatch';
     case RateLimited = 'rate_limited';
@@ -53,5 +53,57 @@ enum NotificationDeliveryStatus: string implements HasLabel
     public function getLabel(): ?string
     {
         return $this->name;
+    }
+
+    public function getTextColorClass(): string
+    {
+        return match ($this) {
+            NotificationDeliveryStatus::Processing,
+            NotificationDeliveryStatus::Dispatched => 'text-yellow-500',
+
+            NotificationDeliveryStatus::Successful => 'text-green-500',
+
+            NotificationDeliveryStatus::Failed,
+            NotificationDeliveryStatus::RateLimited,
+            NotificationDeliveryStatus::DispatchFailed => 'text-red-500',
+        };
+    }
+
+    public function getColor(): string
+    {
+        return match ($this) {
+            NotificationDeliveryStatus::Processing,
+            NotificationDeliveryStatus::Dispatched => 'info',
+
+            NotificationDeliveryStatus::Successful => 'success',
+
+            NotificationDeliveryStatus::Failed,
+            NotificationDeliveryStatus::RateLimited,
+            NotificationDeliveryStatus::DispatchFailed => 'danger',
+        };
+    }
+
+    public function getIconClass(): string
+    {
+        return match ($this) {
+            NotificationDeliveryStatus::Processing,
+            NotificationDeliveryStatus::Dispatched => 'heroicon-s-clock',
+
+            NotificationDeliveryStatus::Successful => 'heroicon-s-check-circle',
+
+            NotificationDeliveryStatus::Failed,
+            NotificationDeliveryStatus::RateLimited,
+            NotificationDeliveryStatus::DispatchFailed => 'heroicon-s-exclamation-circle',
+        };
+    }
+
+    public function getMessage(): string
+    {
+        return match ($this) {
+            NotificationDeliveryStatus::Successful => 'Successfully delivered',
+            NotificationDeliveryStatus::Processing, NotificationDeliveryStatus::Dispatched => 'Awaiting delivery',
+            NotificationDeliveryStatus::Failed, NotificationDeliveryStatus::DispatchFailed => 'Failed to send',
+            NotificationDeliveryStatus::RateLimited => 'Failed to send due to rate limits',
+        };
     }
 }

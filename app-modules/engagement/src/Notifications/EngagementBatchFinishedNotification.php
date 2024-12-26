@@ -58,9 +58,9 @@ class EngagementBatchFinishedNotification extends BaseNotification implements Da
         public EngagementBatch $engagementBatch,
         public int $processedJobs,
         public int $failedJobs,
-        public string $deliveryMethod,
+        public string $channel,
     ) {
-        $this->title = $this->deliveryMethod === 'email'
+        $this->title = $this->channel === 'email'
                     ? 'Bulk email request has been processed and emails have been sent successfully.'
                     : 'Bulk text message request has been processed and text messages have been sent successfully.';
     }

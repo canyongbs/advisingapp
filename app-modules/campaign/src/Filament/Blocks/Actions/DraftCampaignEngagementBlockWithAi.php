@@ -41,7 +41,7 @@ use AdvisingApp\Ai\Exceptions\MessageResponseException;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use App\Settings\LicenseSettings;
 use Closure;
 use Exception;
@@ -58,7 +58,7 @@ class DraftCampaignEngagementBlockWithAi extends Action
 {
     protected array | Closure $mergeTags = [];
 
-    protected EngagementDeliveryMethod | Closure $deliveryMethod;
+    protected NotificationChannel | Closure $channel;
 
     protected string | Closure $fieldPrefix = '';
 
@@ -96,7 +96,7 @@ class DraftCampaignEngagementBlockWithAi extends Action
                     HTML)
                     ->join(', ', ' and ');
 
-                if ($get('delivery_method') === EngagementDeliveryMethod::Sms->value) {
+                if ($get('channel') === NotificationChannel::Sms->value) {
                     try {
                         $content = app(CompletePrompt::class)->execute(
                             aiModel: $model,
@@ -194,16 +194,16 @@ class DraftCampaignEngagementBlockWithAi extends Action
         return $this->evaluate($this->mergeTags);
     }
 
-    public function deliveryMethod(EngagementDeliveryMethod | Closure $method): static
+    public function channel(NotificationChannel | Closure $method): static
     {
-        $this->deliveryMethod = $method;
+        $this->channel = $method;
 
         return $this;
     }
 
-    public function getDeliveryMethod(): EngagementDeliveryMethod
+    public function getDeliveryMethod(): NotificationChannel
     {
-        return $this->evaluate($this->deliveryMethod ?? throw new Exception('The [deliveryMethod()] must be set when using [' . static::class . '].'));
+        return $this->evaluate($this->channel ?? throw new Exception('The [channel()] must be set when using [' . static::class . '].'));
     }
 
     public function fieldPrefix(string | Closure $prefix): static

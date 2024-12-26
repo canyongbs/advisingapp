@@ -34,16 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Actions;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\Engagement\Models\Engagement;
-
-class CreateEngagementDeliverable
-{
-    public function __invoke(Engagement $engagement, string $deliveryMethod): void
+return new class () extends Migration {
+    public function up(): void
     {
-        $engagement->deliverable()->create([
-            'channel' => $deliveryMethod,
-        ]);
+        Schema::table('engagements', function (Blueprint $table) {
+            $table->string('channel');
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('engagements', function (Blueprint $table) {
+            $table->dropColumn('channel');
+        });
+    }
+};

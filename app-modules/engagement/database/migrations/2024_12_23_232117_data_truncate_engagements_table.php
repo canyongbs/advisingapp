@@ -34,51 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Database\Seeders;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
-use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Engagement\Models\EngagementDeliverable;
-use AdvisingApp\Engagement\Models\EngagementResponse;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Database\Seeder;
-
-class DemoEducatableEngagementSeeder extends Seeder
-{
-    public function run(): void
+return new class () extends Migration {
+    public function up(): void
     {
-        $sampleStudentForDemo = Student::factory()->create([
-            'first' => 'Demo',
-            'last' => 'Student',
-            'email' => 'demo@student.com',
-        ]);
-
-        EngagementResponse::factory()
-            ->count(5)
-            ->for($sampleStudentForDemo, 'sender')
-            ->create();
-
-        Engagement::factory()
-            ->count(7)
-            ->has(EngagementDeliverable::factory()->deliverySuccessful()->count(1), 'engagementDeliverable')
-            ->for($sampleStudentForDemo, 'recipient')
-            ->create();
-
-        $sampleProspectForDemo = Prospect::factory()->create([
-            'first_name' => 'Demo',
-            'last_name' => 'Prospect',
-            'email' => 'demo@prospect.com',
-        ]);
-
-        EngagementResponse::factory()
-            ->count(5)
-            ->for($sampleProspectForDemo, 'sender')
-            ->create();
-
-        Engagement::factory()
-            ->count(7)
-            ->has(EngagementDeliverable::factory()->deliverySuccessful()->count(1), 'engagementDeliverable')
-            ->for($sampleProspectForDemo, 'recipient')
-            ->create();
+        DB::table('engagements')->truncate();
     }
-}
+
+    public function down(): void
+    {
+        // No down migration needed
+    }
+};

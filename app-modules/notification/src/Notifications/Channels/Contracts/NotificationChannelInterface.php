@@ -34,32 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace App\Notifications;
+namespace AdvisingApp\Notification\Notifications\Channels\Contracts;
 
-use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
-use AdvisingApp\Notification\Notifications\EmailNotification;
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use App\Models\NotificationSetting;
-use App\Models\User;
+use Illuminate\Notifications\Notification;
 
-class DemoNotification extends BaseNotification implements EmailNotification
+interface NotificationChannelInterface
 {
-    use EmailChannelTrait;
-
-    public function __construct(protected User $sender) {}
-
-    public function toEmail(object $notifiable): MailMessage
-    {
-        return MailMessage::make()
-            ->settings($this->resolveNotificationSetting($notifiable))
-            ->line('The introduction to the notification.')
-            ->action('Notification Action', url('/'))
-            ->line('Thank you for using our application!');
-    }
-
-    private function resolveNotificationSetting(object $notifiable): ?NotificationSetting
-    {
-        return $this->sender->teams()->first()?->division?->notificationSetting?->setting;
-    }
+    public function send(object $notifiable, Notification $notification): void;
 }

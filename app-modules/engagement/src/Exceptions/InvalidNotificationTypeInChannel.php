@@ -34,39 +34,8 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Actions;
+namespace AdvisingApp\Engagement\Exceptions;
 
-use AdvisingApp\Engagement\Models\EngagementDeliverable;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\Middleware\WithoutOverlapping;
-use Illuminate\Queue\SerializesModels;
+use Exception;
 
-class UpdateEngagementDeliverableStatus implements ShouldQueue
-{
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
-    public function __construct(
-        public EngagementDeliverable $deliverable,
-        public array $data
-    ) {}
-
-    public function handle(): void
-    {
-        $this->deliverable->driver()->updateDeliveryStatus($this->data);
-    }
-
-    public function middleware(): array
-    {
-        return [
-            (new WithoutOverlapping($this->deliverable->id))
-                ->releaseAfter(30)
-                ->expireAfter(300),
-        ];
-    }
-}
+class InvalidNotificationTypeInChannel extends Exception {}

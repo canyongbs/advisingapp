@@ -36,64 +36,42 @@
 
 namespace AdvisingApp\Engagement\Notifications;
 
-use AdvisingApp\Engagement\Models\EngagementDeliverable;
+use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use App\Models\Tenant;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Notifications\AnonymousNotifiable;
 use Throwable;
 
-class EngagementEmailNotification extends BaseNotification implements EmailNotification, ShouldBeUnique
+class EngagementEmailNotification extends BaseNotification implements EmailNotification
 {
     use EmailChannelTrait;
 
     public function __construct(
-        public EngagementDeliverable $deliverable
+        public Engagement $engagement
     ) {}
-
-    public function uniqueId(): string
-    {
-        return Tenant::current()->id . ':' . $this->deliverable->id;
-    }
 
     public function toEmail(object $notifiable): MailMessage
     {
         return MailMessage::make()
-            ->subject($this->deliverable->engagement->subject)
-            ->greeting("Hello {$this->deliverable->engagement->recipient->display_name}!")
-            ->content($this->deliverable->engagement->getBody());
+            ->subject($this->engagement->subject)
+            ->greeting("Hello {$this->engagement->recipient->display_name}!")
+            ->content($this->engagement->getBody());
     }
 
     public function failed(?Throwable $exception): void
     {
-        $this->deliverable->markDeliveryFailed($exception->getMessage());
-
-        if (is_null($this->deliverable->engagement->engagement_batch_id)) {
-            $this->deliverable->engagement->user->notify(new EngagementFailedNotification($this->deliverable->engagement));
+        if (is_null($this->engagement->engagement_batch_id)) {
+            $this->engagement->user->notify(new EngagementFailedNotification($this->engagement));
         }
     }
 
-    protected function beforeSendHook(object $notifiable, OutboundDeliverable $deliverable, string $channel): void
+    public function beforeSend(AnonymousNotifiable|NotifiableInterface $notifiable, OutboundDeliverable $deliverable, NotificationChannel $channel): void
     {
-        $deliverable->related()->associate($this->deliverable);
-    }
-
-    protected function afterSendHook(object $notifiable, OutboundDeliverable $deliverable): void
-    {
-        $updateData = array_filter([
-            'external_reference_id' => $deliverable->external_reference_id,
-            'external_status' => $deliverable->external_status,
-            'delivery_status' => $deliverable->delivery_status,
-            'delivered_at' => $deliverable->delivered_at,
-            'last_delivery_attempt' => $deliverable->last_delivery_attempt,
-            'delivery_response' => $deliverable->delivery_response,
-        ], function ($value) {
-            return ! is_null($value);
-        });
-
-        $this->deliverable->update($updateData);
+        $deliverable->related()->associate($this->engagement);
     }
 }

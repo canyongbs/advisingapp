@@ -36,66 +36,83 @@
 
 namespace AdvisingApp\Notification\Notifications\Channels;
 
-use AdvisingApp\Engagement\Models\EngagementDeliverable;
+use AdvisingApp\Engagement\Exceptions\InvalidNotificationTypeInChannel;
+use AdvisingApp\Notification\Actions\MakeOutboundDeliverable;
 use AdvisingApp\Notification\DataTransferObjects\EmailChannelResultData;
-use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
-use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\Channels\Contracts\NotificationChannelInterface;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Exception;
-use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Channels\MailChannel;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\Facades\DB;
+use Throwable;
 
-class EmailChannel extends MailChannel
+class EmailChannel extends MailChannel implements NotificationChannelInterface
 {
     public function send($notifiable, Notification $notification): void
     {
-        /** @var AnonymousNotifiable|NotifiableInterface $notifiable */
+        $deliverable = resolve(MakeOutboundDeliverable::class)->handle($notification, $notifiable, NotificationChannel::Email);
+
+        /** @var BaseNotification $notification */
+        $notification->beforeSend($notifiable, $deliverable, NotificationChannel::Email);
+
+        $deliverable->save();
+
         try {
-            DB::beginTransaction();
+            throw_if(! $notification instanceof EmailNotification || ! $notification instanceof BaseNotification, new InvalidNotificationTypeInChannel());
 
-            if (! $notification instanceof EmailNotification) {
-                return;
+            $notification->metadata['outbound_deliverable_id'] = $deliverable->id;
+
+            if (Tenant::checkCurrent()) {
+                $notification->metadata['tenant_id'] = Tenant::current()->getKey();
             }
 
-            /** @var BaseNotification $notification */
-            $deliverable = $notification->beforeSend($notifiable, EmailChannel::class);
-
-            if (! $this->canSendWithinQuotaLimits($notification, $notifiable)) {
-                $deliverable->update(['delivery_status' => NotificationDeliveryStatus::RateLimited]);
-
-                // Do anything else we need to notify sending party that notification was not sent
-
-                if ($deliverable->related instanceof EngagementDeliverable) {
-                    $deliverable->related->update(['delivery_status' => NotificationDeliveryStatus::RateLimited]);
-                }
-
-                DB::commit();
-
-                throw new NotificationQuotaExceeded();
-            }
+            throw_if(! $this->canSendWithinQuotaLimits($notification, $notifiable), new NotificationQuotaExceeded());
 
             $result = $this->handle($notifiable, $notification);
 
-            $notification->afterSend($notifiable, $deliverable, $result);
+            try {
+                if ($result->success) {
+                    $demoMode = Tenant::current()?->config->mail->isDemoModeEnabled ?? false;
 
-            DB::commit();
-        } catch (Exception $e) {
-            DB::rollBack();
+                    $deliverable->update([
+                        'delivery_status' => ! $demoMode
+                            ? NotificationDeliveryStatus::Dispatched
+                            : NotificationDeliveryStatus::Successful,
+                        'quota_usage' => ! $demoMode
+                            ? self::determineQuotaUsage($result->recipients)
+                            : 0,
+                    ]);
+                } else {
+                    $deliverable->update([
+                        'delivery_status' => NotificationDeliveryStatus::DispatchFailed,
+                    ]);
+                }
+
+                // Consider dispatching this as a seperate job so that it can be encapsulated to be retried if it fails, but also avoid changing the status of the deliverable if it fails
+                $notification->afterSend($notifiable, $deliverable, $result);
+            } catch (Throwable $e) {
+                report($e);
+            }
+        } catch (NotificationQuotaExceeded $e) {
+            $deliverable->update(['delivery_status' => NotificationDeliveryStatus::RateLimited]);
+        } catch (Throwable $e) {
+            $deliverable->update([
+                'delivery_status' => NotificationDeliveryStatus::DispatchFailed,
+            ]);
 
             throw $e;
         }
     }
 
-    public function handle(object $notifiable, BaseNotification $notification): NotificationResultData
+    public function handle(object $notifiable, BaseNotification $notification): EmailChannelResultData
     {
         $result = new EmailChannelResultData(
             success: false,
@@ -109,26 +126,6 @@ class EmailChannel extends MailChannel
         }
 
         return $result;
-    }
-
-    public static function afterSending(object $notifiable, OutboundDeliverable $deliverable, EmailChannelResultData $result): void
-    {
-        $demoMode = false;
-
-        if (Tenant::current()?->config->mail->isDemoModeEnabled ?? false) {
-            $demoMode = true;
-        }
-
-        if ($result->success) {
-            $deliverable->update([
-                'delivery_status' => ! $demoMode ? NotificationDeliveryStatus::Dispatched : NotificationDeliveryStatus::Successful,
-                'quota_usage' => ! $demoMode ? self::determineQuotaUsage($result->recipients) : 0,
-            ]);
-        } else {
-            $deliverable->update([
-                'delivery_status' => NotificationDeliveryStatus::DispatchFailed,
-            ]);
-        }
     }
 
     public static function determineQuotaUsage(array $recipients): int

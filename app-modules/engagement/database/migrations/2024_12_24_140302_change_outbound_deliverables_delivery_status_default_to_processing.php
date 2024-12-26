@@ -34,20 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Listeners;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\Engagement\Actions\HandleEngagementEmailNotificationFailed;
-use AdvisingApp\Engagement\Notifications\EngagementEmailNotification;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Events\NotificationSent;
-
-class HandleNotificationFailed implements ShouldQueue
-{
-    public function handle(NotificationSent $event): void
+return new class () extends Migration {
+    public function up(): void
     {
-        match ($event->notification) {
-            EngagementEmailNotification::class => HandleEngagementEmailNotificationFailed::dispatch($event),
-            default => null,
-        };
+        Schema::table('outbound_deliverables', function (Blueprint $table) {
+            $table->string('delivery_status')->default('processing')->change();
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('processing', function (Blueprint $table) {
+            $table->string('delivery_status')->default('awaiting')->change();
+        });
+    }
+};

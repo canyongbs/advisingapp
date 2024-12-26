@@ -40,5 +40,7 @@ use Spatie\LaravelData\Data;
 
 class NotificationResultData extends Data
 {
-    public function __construct() {}
+    public function __construct(
+        public bool $success,
+    ) {}
 }

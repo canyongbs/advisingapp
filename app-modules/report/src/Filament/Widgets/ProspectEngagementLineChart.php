@@ -36,7 +36,8 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use AdvisingApp\Engagement\Models\EngagementDeliverable;
+use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
@@ -66,12 +67,10 @@ class ProspectEngagementLineChart extends LineChartReportWidget
     protected function getData(): array
     {
         $runningTotalPerMonth = Cache::tags([$this->cacheTag])->remember('prospect_engagements_line_chart', now()->addHours(24), function (): array {
-            $totalEmailEnagagementsPerMonth = EngagementDeliverable::query()
-                ->whereHas('engagement', function ($q) {
-                    return $q->whereHasMorph('recipient', Prospect::class);
-                })
+            $totalEmailEnagagementsPerMonth = Engagement::query()
+                ->whereHasMorph('recipient', Prospect::class)
                 ->toBase()
-                ->where('channel', 'email')
+                ->where('channel', NotificationChannel::Email)
                 ->selectRaw('date_trunc(\'month\', created_at) as month')
                 ->selectRaw('count(*) as total')
                 ->where('created_at', '>', now()->subYear())
@@ -79,12 +78,10 @@ class ProspectEngagementLineChart extends LineChartReportWidget
                 ->orderBy('month')
                 ->pluck('total', 'month');
 
-            $totalTextEnagagementsPerMonth = EngagementDeliverable::query()
-                ->whereHas('engagement', function ($q) {
-                    return $q->whereHasMorph('recipient', Prospect::class);
-                })
+            $totalTextEnagagementsPerMonth = Engagement::query()
+                ->whereHasMorph('recipient', Prospect::class)
                 ->toBase()
-                ->where('channel', 'sms')
+                ->where('channel', NotificationChannel::Sms)
                 ->selectRaw('date_trunc(\'month\', created_at) as month')
                 ->selectRaw('count(*) as total')
                 ->where('created_at', '>', now()->subYear())
