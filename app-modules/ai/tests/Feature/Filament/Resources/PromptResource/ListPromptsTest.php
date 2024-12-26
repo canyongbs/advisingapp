@@ -102,8 +102,9 @@ it('can list records', function () use ($licenses, $permissions) {
         ->assertCanSeeTableRecords($records);
 });
 
-it('Filter prompts based on Smart', function () use ($permissions) {
+it('Filter prompts based on Smart', function () use ($licenses, $permissions) {
     actingAs(user(
+        licenses: $licenses,
         permissions: $permissions
     ));
 
