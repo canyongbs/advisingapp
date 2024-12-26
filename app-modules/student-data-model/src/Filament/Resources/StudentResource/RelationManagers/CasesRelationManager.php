@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\CreateCase;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\ViewCase;
 use AdvisingApp\CaseManagement\Models\CaseModel;
@@ -102,10 +103,12 @@ class CasesRelationManager extends RelationManager
                     ->modalHeading('Create new case'),
             ])
             ->actions([
-                ViewAction::make(),
+                ViewAction::make()
+                    ->url(fn (CaseModel $record) => CaseResource::getUrl('view', ['record' => $record])),
                 EditAction::make()
                     ->mutateRecordDataUsing(function ($data, CaseModel $record) {
                         $data['type_id'] = $record?->priority?->type->getKey();
+
                         return $data;
                     }),
             ])

@@ -112,12 +112,4 @@ class CreateCase extends CreateRecord
                     ->hiddenOn([RelationManager::class, ManageRelatedRecords::class]),
             ]);
     }
-
-    protected function mutateFormDataBeforeCreate(array $data): array
-    {
-        dd($this->getRecord());
-        $data['type_id'] = $this->getRecord();
-    
-        return $data;
-    }
 }

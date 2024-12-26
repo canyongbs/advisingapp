@@ -44,6 +44,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Carbon\CarbonInterval;
+use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\Section;
@@ -163,6 +164,15 @@ class ViewCase extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('back')
+                ->label('Back')
+                ->url(function(CaseModel $record) {
+                    if($record->respondent->getMorphClass() == (new Student())->getMorphClass()){
+                        return StudentResource::getUrl('view', ['record' => $record->respondent->sisid]);
+                    }elseif($record->respondent->getMorphClass() == (new Prospect())->getMorphClass()){
+                        return ProspectResource::getUrl('view', ['record' => $record->respondent->getKey()]);
+                    }
+                }),
             EditAction::make(),
         ];
     }
