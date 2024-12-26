@@ -101,3 +101,18 @@ it('can list records', function () use ($licenses, $permissions) {
         ->assertCountTableRecords($records->count())
         ->assertCanSeeTableRecords($records);
 });
+
+it('Filter prompts based on Smart', function () use ($permissions) {
+    actingAs(user(
+        permissions: $permissions
+    ));
+
+    $records = Prompt::factory()->count(10)->create();
+
+    livewire(ListPrompts::class)
+        ->assertCanSeeTableRecords($records)
+        ->filterTable('is_smart', true)
+        ->assertCanSeeTableRecords($records->where('is_smart', true))
+        ->filterTable('is_smart', false)
+        ->assertCanSeeTableRecords($records->where('is_smart', false));
+})->only();

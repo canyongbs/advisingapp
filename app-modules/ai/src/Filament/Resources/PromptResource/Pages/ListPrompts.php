@@ -49,6 +49,7 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -89,6 +90,12 @@ class ListPrompts extends ListRecords
                     ->color(fn (Prompt $record): string => $record->my_upvotes_count ? 'success' : 'gray')
                     ->tooltip(fn (Prompt $record): string => $record->my_upvotes_count ? 'Click to remove upvote' : 'Click to upvote')
                     ->formatStateUsing(fn (Prompt $record, int $state): string => ($record->my_upvotes_count ? 'Upvoted ' : 'Upvote ') . "({$state})"),
+            ])
+            ->filters([
+                TernaryFilter::make('is_smart')
+                    ->label('Kind')
+                    ->trueLabel('Smart')
+                    ->falseLabel('Custom'),
             ])
             ->actions([
                 ViewAction::make(),
