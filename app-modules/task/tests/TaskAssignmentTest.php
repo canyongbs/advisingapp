@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Authorization\Models\Permission;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Task\Notifications\TaskAssignedToUserNotification;
 use App\Models\User;
@@ -42,41 +41,6 @@ use Illuminate\Support\Facades\Notification;
 
 beforeEach(function () {
     Notification::fake();
-});
-
-it('creates the proper permissions record when a Task is created', function () {
-    $task = Task::factory()->create();
-
-    expect(Permission::where('name', "task.{$task->getKey()}.update")->exists())->toBeTrue();
-});
-
-it('gives the proper permission to the creator of a Task', function () {
-    /** @var Task $task */
-    $task = Task::factory()->create();
-
-    expect($task->createdBy->can("task.{$task->getKey()}.update"))->toBeTrue();
-});
-
-it('gives the proper permission to the assigned User of a Task on create and update', function () {
-    /** @var Task $task */
-    $task = Task::factory()->assigned()->create();
-
-    expect($task->createdBy->can("task.{$task->getKey()}.update"))->toBeTrue()
-        ->and($task->assignedTo->can("task.{$task->getKey()}.update"))->toBeTrue();
-
-    $originalAssignedUser = $task->assignedTo;
-
-    $newAssignedUser = User::factory()->create();
-
-    $task->assignedTo()->associate($newAssignedUser)->save();
-
-    $task->refresh();
-    $originalAssignedUser->refresh();
-    $newAssignedUser->refresh();
-
-    expect($task->createdBy->can("task.{$task->getKey()}.update"))->toBeTrue()
-        ->and($newAssignedUser->can("task.{$task->getKey()}.update"))->toBeTrue()
-        ->and($originalAssignedUser->can("task.{$task->getKey()}.update"))->toBeFalse();
 });
 
 it('sends the proper notification to the assigned User', function () {
