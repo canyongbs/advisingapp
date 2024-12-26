@@ -113,6 +113,8 @@ it('Filter prompts based on Smart', function () use ($permissions) {
         ->assertCanSeeTableRecords($records)
         ->filterTable('is_smart', true)
         ->assertCanSeeTableRecords($records->where('is_smart', true))
+        ->assertCanNotSeeTableRecords($records->where('is_smart', false))
         ->filterTable('is_smart', false)
-        ->assertCanSeeTableRecords($records->where('is_smart', false));
-})->only();
+        ->assertCanSeeTableRecords($records->where('is_smart', false))
+        ->assertCanNotSeeTableRecords($records->where('is_smart', true));
+});
