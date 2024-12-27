@@ -112,6 +112,8 @@ it('Filter prompts based on Smart', function () use ($licenses, $permissions) {
     $recordsCustom = Prompt::factory()->count(10)->create(['is_smart' => false]);
 
     livewire(ListPrompts::class)
+        ->set('tableRecordsPerPage', 20)
+        ->assertSuccessful()
         ->filterTable('is_smart', true)
         ->assertCanSeeTableRecords($recordsSmart)
         ->assertCanNotSeeTableRecords($recordsCustom)
