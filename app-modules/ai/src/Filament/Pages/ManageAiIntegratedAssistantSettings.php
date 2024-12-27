@@ -52,61 +52,61 @@ use Filament\Pages\SettingsPage;
  */
 class ManageAiIntegratedAssistantSettings extends SettingsPage
 {
-    protected static string $settings = AiIntegratedAssistantSettings::class;
+  protected static string $settings = AiIntegratedAssistantSettings::class;
 
-    protected static ?string $title = 'Integrated Assistant';
+  protected static ?string $title = 'Integrated Assistant';
 
-    protected static ?string $cluster = GlobalArtificialIntelligence::class;
+  protected static ?string $cluster = GlobalArtificialIntelligence::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-cube-transparent';
+  protected static ?string $navigationIcon = 'heroicon-o-cube-transparent';
 
-    protected static ?int $navigationSort = 20;
+  protected static ?int $navigationSort = 20;
 
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
+  public static function canAccess(): bool
+  {
+    /** @var User $user */
+    $user = auth()->user();
 
-        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
-            return false;
-        }
-
-        return $user->isSuperAdmin();
+    if (! $user->hasLicense(LicenseType::ConversationalAi)) {
+      return false;
     }
 
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                Select::make('default_model')
-                    ->options(collect(AiModel::getDefaultModels())
-                        ->mapWithKeys(fn (AiModel $model): array => [$model->value => $model->getLabel()])
-                        ->all())
-                    ->searchable()
-                    ->helperText('Used for general purposes like generating content when an assistant is not being used.')
-                    ->required(),
-            ])
-            ->disabled(! auth()->user()->isSuperAdmin());
+    return $user->isSuperAdmin();
+  }
+
+  public function form(Form $form): Form
+  {
+    return $form
+      ->schema([
+        Select::make('default_model')
+          ->options(collect(AiModel::getDefaultModels())
+            ->mapWithKeys(fn(AiModel $model): array => [$model->value => $model->getLabel()])
+            ->all())
+          ->searchable()
+          ->helperText('Used for general purposes like generating content when an assistant is not being used.')
+          ->required(),
+      ])
+      ->disabled(! auth()->user()->isSuperAdmin());
+  }
+
+  public function save(): void
+  {
+    if (! auth()->user()->isSuperAdmin()) {
+      return;
     }
 
-    public function save(): void
-    {
-        if (! auth()->user()->cisSuperAdminan()) {
-            return;
-        }
+    parent::save();
+  }
 
-        parent::save();
+  /**
+   * @return array<Action | ActionGroup>
+   */
+  public function getFormActions(): array
+  {
+    if (! auth()->user()->isSuperAdmin()) {
+      return [];
     }
 
-    /**
-     * @return array<Action | ActionGroup>
-     */
-    public function getFormActions(): array
-    {
-        if (! auth()->user()->isSuperAdmin()) {
-            return [];
-        }
-
-        return parent::getFormActions();
-    }
+    return parent::getFormActions();
+  }
 }
