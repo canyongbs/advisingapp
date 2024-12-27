@@ -34,23 +34,44 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Abstract;
+namespace AdvisingApp\Report\Filament\Pages;
 
-use App\Features\UserTrackedEventsFeature;
-use App\Filament\Clusters\ReportLibrary;
-use Filament\Pages\Dashboard;
+use AdvisingApp\Report\Abstract\UserReport;
+use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
+use AdvisingApp\Report\Filament\Widgets\UsersLoginCountTable;
+use AdvisingApp\Report\Filament\Widgets\UsersStats;
+use AdvisingApp\Report\Filament\Widgets\UserUniqueLoginCountLineChart;
 
-abstract class UserReport extends Dashboard
+class UserLoginActivity extends UserReport
 {
-  protected static ?string $cluster = ReportLibrary::class;
+  protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-  protected static ?string $navigationGroup = 'Users';
+  protected static ?string $navigationLabel = 'Overview';
 
-  public static function canAccess(): bool
+  protected static ?string $title = 'Login Activity';
+
+  protected static string $routePath = 'Users';
+
+  protected static ?int $navigationSort = 10;
+
+  protected $cacheTag = 'report-users';
+
+  public function getWidgets(): array
   {
-    /** @var User $user */
-    $user = auth()->user();
+    return [
+      RefreshWidget::make(['cacheTag' => $this->cacheTag]),
+      UsersStats::make(['cacheTag' => $this->cacheTag]),
+      UserUniqueLoginCountLineChart::make(['cacheTag' => $this->cacheTag]),
+      UsersLoginCountTable::make(['cacheTag' => $this->cacheTag]),
+    ];
+  }
 
-    return UserTrackedEventsFeature::active() && $user->can('report-library.view-any');
+  public function getColumns(): int | string | array
+  {
+    return [
+      'sm' => 2,
+      'md' => 4,
+      'lg' => 4,
+    ];
   }
 }
