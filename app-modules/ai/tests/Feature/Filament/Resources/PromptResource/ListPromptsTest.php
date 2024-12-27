@@ -118,4 +118,4 @@ it('Filter prompts based on Smart', function () use ($licenses, $permissions) {
         ->filterTable('is_smart', false)
         ->assertCanSeeTableRecords($recordsCustom)
         ->assertCanNotSeeTableRecords($recordsSmart);
-})->only();
+});
