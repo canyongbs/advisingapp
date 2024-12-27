@@ -38,6 +38,7 @@ namespace AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages;
 
 use AdvisingApp\CaseManagement\Enums\SlaComplianceStatus;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\Concerns\HasCaseHeader;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -55,8 +56,10 @@ use Filament\Resources\Pages\ViewRecord;
 
 class ViewCase extends ViewRecord
 {
-    protected static string $resource = CaseResource::class;
+    use HasCaseHeader;
 
+    protected static string $resource = CaseResource::class;
+    
     public function infolist(Infolist $infolist): Infolist
     {
         $formatSecondsAsInterval = fn (?int $state): ?string => $state ? CarbonInterval::seconds($state)->cascade()->forHumans(short: true) : null;
@@ -164,15 +167,6 @@ class ViewCase extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('back')
-                ->label('Back')
-                ->url(function(CaseModel $record) {
-                    if($record->respondent->getMorphClass() == (new Student())->getMorphClass()){
-                        return StudentResource::getUrl('view', ['record' => $record->respondent->sisid]);
-                    }elseif($record->respondent->getMorphClass() == (new Prospect())->getMorphClass()){
-                        return ProspectResource::getUrl('view', ['record' => $record->respondent->getKey()]);
-                    }
-                }),
             EditAction::make(),
         ];
     }
