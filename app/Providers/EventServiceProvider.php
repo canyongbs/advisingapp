@@ -37,7 +37,7 @@
 namespace App\Providers;
 
 use AdvisingApp\Audit\Listeners\AuditingListener;
-use AdvisingApp\Report\Listeners\CheckUserUniqueLoginTrackedEvent;
+use AdvisingApp\Report\Listeners\ProcessUserUniqueLoginTrackedEvent;
 use App\Listeners\ClearSentryUser;
 use App\Listeners\LoadSettingsDefaults;
 use App\Listeners\SetSentryUser;
@@ -79,7 +79,7 @@ class EventServiceProvider extends ServiceProvider
         ],
         Login::class => [
             SetSentryUser::class,
-            CheckUserUniqueLoginTrackedEvent::class,
+            ProcessUserUniqueLoginTrackedEvent::class,
         ],
         Authenticated::class => [
             SetSentryUser::class,

@@ -59,7 +59,6 @@ class RecordUserUniqueLoginTrackedEvent implements ShouldQueue
      * Create a new job instance.
      */
     public function __construct(
-        public TrackedEventType $type,
         public Carbon $occurredAt,
         public User $user,
     ) {}
@@ -75,7 +74,7 @@ class RecordUserUniqueLoginTrackedEvent implements ShouldQueue
             $this->user
                 ->logins()
                 ->create([
-                    'type' => $this->type,
+                    'type' => TrackedEventType::UserLogin,
                     'occurred_at' => $this->occurredAt,
                 ]);
 
@@ -84,7 +83,7 @@ class RecordUserUniqueLoginTrackedEvent implements ShouldQueue
                     [
                         [
                             'id' => (new TrackedEventCount())->newUniqueId(),
-                            'type' => $this->type,
+                            'type' => TrackedEventType::UserLogin,
                             'count' => 1,
                             'last_occurred_at' => $this->occurredAt,
                             'updated_at' => now(),
@@ -103,7 +102,7 @@ class RecordUserUniqueLoginTrackedEvent implements ShouldQueue
 
             $this->user->update([
                 'first_login_at' => $this->user->first_login_at ?? now(),
-                'last_logged_in_at' => now(),
+                'last_logged_in_at' => $this->occurredAt,
             ]);
 
             DB::commit();

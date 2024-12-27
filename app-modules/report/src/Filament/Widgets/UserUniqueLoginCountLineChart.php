@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use AdvisingApp\Report\Enums\TrackedEventType;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
@@ -73,7 +72,7 @@ class UserUniqueLoginCountLineChart extends LineChartReportWidget
             $totalCreatedPerMonth = User::query()
                 ->selectRaw('date_trunc(\'month\', created_at) as month')
                 ->selectRaw('count(*) as total')
-                ->whereRelation('logins', 'type', TrackedEventType::UserLogin)
+                ->with('logins')
                 ->groupBy('month')
                 ->orderBy('month')
                 ->pluck('total', 'month');

@@ -58,6 +58,7 @@ use AdvisingApp\Notification\Models\Concerns\NotifiableViaSms;
 use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
@@ -323,7 +324,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
 
     public function scopeAdmins()
     {
-        return $this->whereHas('roles', fn ($q) => $q->where('title', 'Admin'));
+        return $this->whereHas('roles', fn($q) => $q->where('title', 'Admin'));
     }
 
     public function pronouns(): BelongsTo
@@ -376,12 +377,14 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
 
     public function logins(): MorphMany
     {
-        return $this->morphMany(TrackedEvent::class, 'related_to');
+        return $this->morphMany(TrackedEvent::class, 'related_to')
+            ->where('type', TrackedEventType::UserLogin);
     }
 
     public function loginsCount(): MorphMany
     {
-        return $this->morphMany(TrackedEventCount::class, 'related_to');
+        return $this->morphMany(TrackedEventCount::class, 'related_to')
+            ->where('type', TrackedEventType::UserLogin);
     }
 
     public function canAccessPanel(Panel $panel): bool
