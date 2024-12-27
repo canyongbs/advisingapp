@@ -48,65 +48,65 @@ use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
 it('renders successfully', function () {
-  asSuperAdmin();
+    asSuperAdmin();
 
-  Livewire::test(ManageAiSettings::class)
-    ->assertStatus(200);
+    Livewire::test(ManageAiSettings::class)
+        ->assertStatus(200);
 });
 
 it('does not load if you do not have any permissions to access', function () {
-  $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
-  actingAs($user);
+    actingAs($user);
 
-  Livewire::test(ManageAiSettings::class)
-    ->assertStatus(403);
+    Livewire::test(ManageAiSettings::class)
+        ->assertStatus(403);
 });
 
 it('cannot access the page if assistant is default', function () {
-  $aiSettings = app(LicenseSettings::class);
+    $aiSettings = app(LicenseSettings::class);
 
-  $aiSettings->data->addons->customAiAssistants = true;
+    $aiSettings->data->addons->customAiAssistants = true;
 
-  $aiSettings->save();
+    $aiSettings->save();
 
-  $aiAssistant = AiAssistant::factory([
-    'assistant_id' => fake()->uuid(),
-    'application' => AiApplication::PersonalAssistant,
-    'model' => AiModel::OpenAiGpt4o,
-    'is_default' => true,
-    'description' => fake()->paragraph(),
-    'instructions' => 'No Instructions.',
-  ])->create();
+    $aiAssistant = AiAssistant::factory([
+        'assistant_id' => fake()->uuid(),
+        'application' => AiApplication::PersonalAssistant,
+        'model' => AiModel::OpenAiGpt4o,
+        'is_default' => true,
+        'description' => fake()->paragraph(),
+        'instructions' => 'No Instructions.',
+    ])->create();
 
-  asSuperAdmin()
-    ->get(
-      AiAssistantResource::getUrl('edit', [
-        'record' => $aiAssistant,
-      ]),
-    )->assertForbidden();
+    asSuperAdmin()
+        ->get(
+            AiAssistantResource::getUrl('edit', [
+                'record' => $aiAssistant,
+            ]),
+        )->assertForbidden();
 });
 
 it('can access the page if assistant is not default', function () {
-  $aiSettings = app(LicenseSettings::class);
+    $aiSettings = app(LicenseSettings::class);
 
-  $aiSettings->data->addons->customAiAssistants = true;
+    $aiSettings->data->addons->customAiAssistants = true;
 
-  $aiSettings->save();
+    $aiSettings->save();
 
-  $aiAssistant = AiAssistant::factory([
-    'assistant_id' => fake()->uuid(),
-    'application' => AiApplication::PersonalAssistant,
-    'model' => AiModel::OpenAiGpt4o,
-    'is_default' => false,
-    'description' => fake()->paragraph(),
-    'instructions' => 'No Instructions.',
-  ])->create();
+    $aiAssistant = AiAssistant::factory([
+        'assistant_id' => fake()->uuid(),
+        'application' => AiApplication::PersonalAssistant,
+        'model' => AiModel::OpenAiGpt4o,
+        'is_default' => false,
+        'description' => fake()->paragraph(),
+        'instructions' => 'No Instructions.',
+    ])->create();
 
-  asSuperAdmin()
-    ->get(
-      AiAssistantResource::getUrl('edit', [
-        'record' => $aiAssistant,
-      ]),
-    )->assertSuccessful();
+    asSuperAdmin()
+        ->get(
+            AiAssistantResource::getUrl('edit', [
+                'record' => $aiAssistant,
+            ]),
+        )->assertSuccessful();
 });
