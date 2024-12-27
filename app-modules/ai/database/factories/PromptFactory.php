@@ -55,7 +55,6 @@ class PromptFactory extends Factory
             'description' => fake()->optional()->sentences(asText: true),
             'prompt' => fake()->sentences(asText: true),
             'type_id' => PromptType::query()->inRandomOrder()->first() ?? PromptType::factory()->create(),
-            'is_smart' => fake()->boolean(),
         ];
     }
 }
