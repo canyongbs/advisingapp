@@ -34,34 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Settings;
+namespace AdvisingApp\Authorization\Enums;
 
-use AdvisingApp\Authorization\Enums\AzureMatchingProperty;
-use Spatie\LaravelSettings\Settings;
+use Filament\Support\Contracts\HasLabel;
+use Illuminate\Support\Str;
 
-class AzureSsoSettings extends Settings
+enum AzureMatchingProperty: string implements HasLabel
 {
-    public bool $is_enabled = false;
+    case UserPrincipalName = 'user_principal_name';
 
-    public ?string $client_id = null;
+    case Mail = 'mail';
 
-    public ?string $client_secret = null;
-
-    public ?string $tenant_id = null;
-
-    public AzureMatchingProperty $matching_property = AzureMatchingProperty::UserPrincipalName;
-
-    public static function group(): string
+    public function getLabel(): ?string
     {
-        return 'azure_sso';
-    }
-
-    public static function encrypted(): array
-    {
-        return [
-            'client_id',
-            'client_secret',
-            'tenant_id',
-        ];
+        return Str::headline($this->name);
     }
 }
