@@ -48,6 +48,16 @@ return new class () extends Migration {
         'role.create' => 'Role',
     ];
 
+    private array $permissionsToDelete = [
+        'role_group.view-any',
+        'role_group.create',
+        'role_group.*.view',
+        'role_group.*.update',
+        'role_group.*.delete',
+        'role_group.*.restore',
+        'role_group.*.force-delete',
+    ];
+
     private array $guards = [
         'web',
         'api',
@@ -64,6 +74,9 @@ return new class () extends Migration {
 
                 $this->createPermissions($permissions, $guard);
             });
+
+        collect($this->guards)
+            ->each(fn (string $guard) => $this->deletePermissions($this->permissionsToDelete, $guard));
     }
 
     public function down(): void
