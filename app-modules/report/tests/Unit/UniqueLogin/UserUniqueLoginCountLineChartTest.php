@@ -40,18 +40,18 @@ use App\Models\User;
 
 use function Pest\Livewire\livewire;
 
-it('can UserUniqueLoginCountLineChart widget logic', function () {
-    test()->travelTo(now()->setDate(2024, 12, 10));
+it('checks users with tracked_event_type unique-login count in line chart', function () {
+  test()->travelTo(now()->setDate(2024, 12, 10));
 
-    User::factory()->count(5)->hasLogins(['type' => TrackedEventType::UserLogin])->create([
-        'created_at' => now()->subMonths(1),
-    ]);
-    User::factory()->count(3)->hasLogins(['type' => TrackedEventType::UserLogin])->create([
-        'created_at' => now()->subMonths(6),
-    ]);
+  User::factory()->count(5)->hasLogins(['type' => TrackedEventType::UserLogin])->create([
+    'created_at' => now()->subMonths(1),
+  ]);
+  User::factory()->count(3)->hasLogins(['type' => TrackedEventType::UserLogin])->create([
+    'created_at' => now()->subMonths(6),
+  ]);
 
-    $widgetInstance = livewire(UserUniqueLoginCountLineChart::class, ['cacheTag' => 'report-users'])->instance();
-    $invadedWidget = invade($widgetInstance);
+  $widgetInstance = livewire(UserUniqueLoginCountLineChart::class, ['cacheTag' => 'report-users'])->instance();
+  $invadedWidget = invade($widgetInstance);
 
-    expect($invadedWidget->getData())->toMatchSnapshot();
+  expect($invadedWidget->getData())->toMatchSnapshot();
 });
