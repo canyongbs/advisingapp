@@ -48,7 +48,7 @@ class SegmentResource extends Resource
 
     protected static ?string $navigationGroup = 'Engagement Features';
 
-    protected static ?int $navigationSort = 30;
+    protected static ?int $navigationSort = 40;
 
     protected static ?string $navigationLabel = 'Population Segments';
 
