@@ -76,6 +76,10 @@ class RolePolicy
 
     public function delete(Authenticatable $authenticatable, Role $role): Response
     {
+        if ($role->users()->exists()) {
+            return Response::deny('You cannot delete a role that has users assigned to it.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["role.{$role->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this role.'
