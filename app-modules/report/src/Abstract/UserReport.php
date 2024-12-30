@@ -42,15 +42,15 @@ use Filament\Pages\Dashboard;
 
 abstract class UserReport extends Dashboard
 {
-  protected static ?string $cluster = ReportLibrary::class;
+    protected static ?string $cluster = ReportLibrary::class;
 
-  protected static ?string $navigationGroup = 'Users';
+    protected static ?string $navigationGroup = 'Users';
 
-  public static function canAccess(): bool
-  {
-    /** @var User $user */
-    $user = auth()->user();
+    public static function canAccess(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
 
-    return UserTrackedEventsFeature::active() && $user->can('report-library.view-any');
-  }
+        return UserTrackedEventsFeature::active() && $user->can('report-library.view-any');
+    }
 }
