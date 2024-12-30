@@ -36,11 +36,11 @@
 
 namespace App\Exceptions;
 
-use Throwable;
-use Psr\Log\LogLevel;
-use Sentry\Laravel\Integration;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Psr\Log\LogLevel;
+use Sentry\Laravel\Integration;
+use Throwable;
 
 class Handler extends ExceptionHandler
 {

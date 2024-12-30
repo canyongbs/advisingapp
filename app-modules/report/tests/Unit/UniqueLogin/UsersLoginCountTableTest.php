@@ -40,67 +40,67 @@ use App\Models\User;
 use function Pest\Livewire\livewire;
 
 it('can filter users based they have ever logged in or not', function () {
-  $loggedUsers = User::factory()->count(3)->create([
-    'first_login_at' => now()->subDays(1)
-  ]);
+    $loggedUsers = User::factory()->count(3)->create([
+        'first_login_at' => now()->subDays(1),
+    ]);
 
-  $notLoggedUsers = User::factory()->count(3)->create([
-    'first_login_at' => null
-  ]);
+    $notLoggedUsers = User::factory()->count(3)->create([
+        'first_login_at' => null,
+    ]);
 
-  livewire(UsersLoginCountTable::class, ['cacheTag' => 'report-users'])
-    ->filterTable('has_logged_in', 'logged_in')
-    ->assertCanSeeTableRecords($loggedUsers)
-    ->assertCanNotSeeTableRecords($notLoggedUsers)
-    ->filterTable('has_logged_in', 'never_logged_in')
-    ->assertCanSeeTableRecords($notLoggedUsers)
-    ->assertCanNotSeeTableRecords($loggedUsers);
+    livewire(UsersLoginCountTable::class, ['cacheTag' => 'report-users'])
+        ->filterTable('has_logged_in', 'logged_in')
+        ->assertCanSeeTableRecords($loggedUsers)
+        ->assertCanNotSeeTableRecords($notLoggedUsers)
+        ->filterTable('has_logged_in', 'never_logged_in')
+        ->assertCanSeeTableRecords($notLoggedUsers)
+        ->assertCanNotSeeTableRecords($loggedUsers);
 });
 
 it('can filter users to get users who first logged in between selected dates', function () {
-  $lastDayUsers = User::factory(2)->create([
-    'first_login_at' => now()->subDays(1)
-  ]);
+    $lastDayUsers = User::factory(2)->create([
+        'first_login_at' => now()->subDays(1),
+    ]);
 
-  $recentUsers = User::factory(2)->create([
-    'first_login_at' => now()->subMonth(2)
-  ]);
+    $recentUsers = User::factory(2)->create([
+        'first_login_at' => now()->subMonth(2),
+    ]);
 
-  livewire(UsersLoginCountTable::class, ['cacheTag' => 'report-users'])
-    ->filterTable('first_login_at', [
-      'first_logged_in_from' => now()->subDays(1)->toDateString(),
-      'first_logged_in_until' => now()->toDateString(),
-    ])
-    ->assertCanSeeTableRecords($lastDayUsers)
-    ->assertCanNotSeeTableRecords($recentUsers)
-    ->filterTable('first_login_at', [
-      'first_logged_in_from' => now()->subMonth(2)->toDateString(),
-      'first_logged_in_until' => now()->subMonth(1)->toDateString(),
-    ])
-    ->assertCanSeeTableRecords($recentUsers)
-    ->assertCanNotSeeTableRecords($lastDayUsers);
+    livewire(UsersLoginCountTable::class, ['cacheTag' => 'report-users'])
+        ->filterTable('first_login_at', [
+            'first_logged_in_from' => now()->subDays(1)->toDateString(),
+            'first_logged_in_until' => now()->toDateString(),
+        ])
+        ->assertCanSeeTableRecords($lastDayUsers)
+        ->assertCanNotSeeTableRecords($recentUsers)
+        ->filterTable('first_login_at', [
+            'first_logged_in_from' => now()->subMonth(2)->toDateString(),
+            'first_logged_in_until' => now()->subMonth(1)->toDateString(),
+        ])
+        ->assertCanSeeTableRecords($recentUsers)
+        ->assertCanNotSeeTableRecords($lastDayUsers);
 });
 
 it('can filter users to get users who last logged in between selected dates', function () {
-  $lastDayUsers = User::factory(2)->create([
-    'last_logged_in_at' => now()->subDays(1)
-  ]);
+    $lastDayUsers = User::factory(2)->create([
+        'last_logged_in_at' => now()->subDays(1),
+    ]);
 
-  $recentUsers = User::factory(2)->create([
-    'last_logged_in_at' => now()->subMonth(2)
-  ]);
+    $recentUsers = User::factory(2)->create([
+        'last_logged_in_at' => now()->subMonth(2),
+    ]);
 
-  livewire(UsersLoginCountTable::class, ['cacheTag' => 'report-users'])
-    ->filterTable('last_logged_in_at', [
-      'last_logged_in_from' => now()->subDays(1)->toDateString(),
-      'last_logged_in_until' => now()->toDateString(),
-    ])
-    ->assertCanSeeTableRecords($lastDayUsers)
-    ->assertCanNotSeeTableRecords($recentUsers)
-    ->filterTable('last_logged_in_at', [
-      'last_logged_in_from' => now()->subMonth(2)->toDateString(),
-      'last_logged_in_until' => now()->subMonth(1)->toDateString(),
-    ])
-    ->assertCanSeeTableRecords($recentUsers)
-    ->assertCanNotSeeTableRecords($lastDayUsers);
+    livewire(UsersLoginCountTable::class, ['cacheTag' => 'report-users'])
+        ->filterTable('last_logged_in_at', [
+            'last_logged_in_from' => now()->subDays(1)->toDateString(),
+            'last_logged_in_until' => now()->toDateString(),
+        ])
+        ->assertCanSeeTableRecords($lastDayUsers)
+        ->assertCanNotSeeTableRecords($recentUsers)
+        ->filterTable('last_logged_in_at', [
+            'last_logged_in_from' => now()->subMonth(2)->toDateString(),
+            'last_logged_in_until' => now()->subMonth(1)->toDateString(),
+        ])
+        ->assertCanSeeTableRecords($recentUsers)
+        ->assertCanNotSeeTableRecords($lastDayUsers);
 });

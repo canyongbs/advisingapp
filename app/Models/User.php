@@ -59,39 +59,39 @@ use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Enums\TrackedEventType;
+use AdvisingApp\Report\Models\TrackedEvent;
+use AdvisingApp\Report\Models\TrackedEventCount;
 use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Team\Models\Team;
 use AdvisingApp\Team\Models\TeamUser;
+use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
 use App\Filament\Resources\UserResource;
+use App\Support\HasAdvancedFilter;
+use DateTimeInterface;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasAvatar;
+use Filament\Panel;
+use Illuminate\Contracts\Translation\HasLocalePreference;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Arr;
 use Lab404\Impersonate\Models\Impersonate;
-use AdvisingApp\Report\Models\TrackedEvent;
-use Filament\Models\Contracts\FilamentUser;
-use AdvisingApp\Report\Models\TrackedEventCount;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Contracts\Translation\HasLocalePreference;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
-use App\Support\HasAdvancedFilter;
-use DateTimeInterface;
-use Filament\Models\Contracts\HasAvatar;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Support\Arr;
-use Spatie\MediaLibrary\HasMedia;
 
 /**
  * @mixin IdeHelperUser
@@ -324,7 +324,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
 
     public function scopeAdmins()
     {
-        return $this->whereHas('roles', fn($q) => $q->where('title', 'Admin'));
+        return $this->whereHas('roles', fn ($q) => $q->where('title', 'Admin'));
     }
 
     public function pronouns(): BelongsTo
