@@ -37,7 +37,6 @@
 namespace AdvisingApp\Authorization\Enums;
 
 use Filament\Support\Contracts\HasLabel;
-use Illuminate\Support\Str;
 
 enum AzureMatchingProperty: string implements HasLabel
 {
@@ -47,6 +46,6 @@ enum AzureMatchingProperty: string implements HasLabel
 
     public function getLabel(): ?string
     {
-        return Str::headline($this->name);
+        return $this->name;
     }
 }
