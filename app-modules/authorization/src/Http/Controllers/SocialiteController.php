@@ -80,7 +80,7 @@ class SocialiteController extends Controller
 
         /** @var User $user */
         $user = User::query()
-            ->where(new Expression('lower(email)'), strtolower($socialiteUser->getEmail()))
+            ->where(new Expression('lower(email)'), strtolower($provider->getEmailFromUser($socialiteUser)))
             ->first();
 
         if (! $user?->is_external) {

@@ -34,34 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Settings;
+use Spatie\LaravelSettings\Migrations\SettingsBlueprint;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use AdvisingApp\Authorization\Enums\AzureMatchingProperty;
-use Spatie\LaravelSettings\Settings;
-
-class AzureSsoSettings extends Settings
-{
-    public bool $is_enabled = false;
-
-    public ?string $client_id = null;
-
-    public ?string $client_secret = null;
-
-    public ?string $tenant_id = null;
-
-    public AzureMatchingProperty $matching_property = AzureMatchingProperty::UserPrincipalName;
-
-    public static function group(): string
+return new class () extends SettingsMigration {
+    public function up(): void
     {
-        return 'azure_sso';
+        $this->migrator->inGroup('azure_sso', function (SettingsBlueprint $blueprint): void {
+            $blueprint->add('matching_property', 'user_principal_name');
+        });
     }
-
-    public static function encrypted(): array
-    {
-        return [
-            'client_id',
-            'client_secret',
-            'tenant_id',
-        ];
-    }
-}
+};

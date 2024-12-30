@@ -34,34 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Settings;
+namespace App\Features;
 
-use AdvisingApp\Authorization\Enums\AzureMatchingProperty;
-use Spatie\LaravelSettings\Settings;
+use App\Support\AbstractFeatureFlag;
 
-class AzureSsoSettings extends Settings
+class AzureMatchingPropertyFeature extends AbstractFeatureFlag
 {
-    public bool $is_enabled = false;
-
-    public ?string $client_id = null;
-
-    public ?string $client_secret = null;
-
-    public ?string $tenant_id = null;
-
-    public AzureMatchingProperty $matching_property = AzureMatchingProperty::UserPrincipalName;
-
-    public static function group(): string
+    public function resolve(mixed $scope): mixed
     {
-        return 'azure_sso';
-    }
-
-    public static function encrypted(): array
-    {
-        return [
-            'client_id',
-            'client_secret',
-            'tenant_id',
-        ];
+        return false;
     }
 }

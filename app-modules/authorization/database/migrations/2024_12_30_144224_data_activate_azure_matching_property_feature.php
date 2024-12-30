@@ -34,34 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Settings;
+use App\Features\AzureMatchingPropertyFeature;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\Authorization\Enums\AzureMatchingProperty;
-use Spatie\LaravelSettings\Settings;
-
-class AzureSsoSettings extends Settings
-{
-    public bool $is_enabled = false;
-
-    public ?string $client_id = null;
-
-    public ?string $client_secret = null;
-
-    public ?string $tenant_id = null;
-
-    public AzureMatchingProperty $matching_property = AzureMatchingProperty::UserPrincipalName;
-
-    public static function group(): string
+return new class () extends Migration {
+    public function up(): void
     {
-        return 'azure_sso';
+        AzureMatchingPropertyFeature::activate();
     }
 
-    public static function encrypted(): array
+    public function down(): void
     {
-        return [
-            'client_id',
-            'client_secret',
-            'tenant_id',
-        ];
+        AzureMatchingPropertyFeature::deactivate();
     }
-}
+};
