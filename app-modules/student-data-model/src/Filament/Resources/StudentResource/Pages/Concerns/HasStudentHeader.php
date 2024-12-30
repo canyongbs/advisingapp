@@ -74,7 +74,7 @@ trait HasStudentHeader
                 ...(filled($student->preferred) ? [["Goes by \"{$student->preferred}\"", 'heroicon-m-heart']] : []),
                 ...(filled($student->phone) ? [[$student->phone, 'heroicon-m-phone']] : []),
                 ...(filled($student->email) ? [[$student->email, 'heroicon-m-envelope']] : []),
-                ...(filled($student->hsgrad) ? [[$student->hsgrad, 'heroicon-m-building-library']] : []),
+                ...(filled($student->sisid) ? [[$student->sisid, 'heroicon-m-identification']] : []),
             ],
             'hasSisSystem' => $sisSettings->is_enabled && $sisSettings->sis_system,
             'educatable' => $student,
