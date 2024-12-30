@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -34,29 +34,47 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Filament\Widgets;
+use AdvisingApp\Report\Filament\Widgets\UsersStats;
+use AdvisingApp\Report\Jobs\RecordUserUniqueLoginTrackedEvent;
+use App\Models\User;
 
-use Filament\Widgets\StatsOverviewWidget;
-use Livewire\Attributes\Locked;
-use Livewire\Attributes\On;
+it('Check total users', function () {
+  $userCount = rand(1, 10);
+  $usersStats = new UsersStats();
+  User::factory()->count($userCount)->create();
+  $stats = $usersStats->getStats();
+  $totalUsersStat = $stats[0];
+  expect($totalUsersStat->getValue())->toEqual($userCount);
+});
 
-abstract class StatsOverviewReportWidget extends StatsOverviewWidget
-{
-    #[Locked]
-    public string $cacheTag = 'default';
+it('Check new users who were created within one month', function () {
+  $userCount = rand(1, 10);
+  $usersStats = new UsersStats();
 
-    protected static ?string $pollingInterval = null;
+  User::factory()->count(3)->create([
+    'created_at' => now()->subMonths(2)
+  ]);
+  User::factory()->count($userCount)->create([
+    'created_at' => now()->subDays(rand(1, 30))
+  ]);
 
-    protected static bool $isLazy = false;
+  $stats = $usersStats->getStats();
+  $newUsersStat = $stats[1];
+  expect($newUsersStat->getValue())->toEqual($userCount);
+});
 
-    public function mount(string $cacheTag)
-    {
-        $this->cacheTag = $cacheTag;
-    }
+it('Check total users with unique login event type', function () {
+  $userCount = rand(1, 10);
+  $usersStats = new UsersStats();
 
-    #[On('refresh-widgets')]
-    public function refreshWidget()
-    {
-        $this->dispatch('$refresh');
-    }
-}
+  User::factory()->count($userCount)->create()->each(function ($user) {
+    dispatch(new RecordUserUniqueLoginTrackedEvent(
+      occurredAt: now(),
+      user: $user,
+    ));
+  });
+
+  $stats = $usersStats->getStats();
+  $totalUsersWithUniqueLoginStat = $stats[2];
+  expect($totalUsersWithUniqueLoginStat->getValue())->toEqual($userCount);
+});
