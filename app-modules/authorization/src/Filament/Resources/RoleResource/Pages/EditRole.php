@@ -39,6 +39,7 @@ namespace AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages;
 use AdvisingApp\Authorization\Filament\Forms\Components\PermissionsMatrix;
 use AdvisingApp\Authorization\Filament\Resources\RoleResource;
 use AdvisingApp\Authorization\Models\Role;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -91,6 +92,7 @@ class EditRole extends EditRecord
     {
         return [
             ViewAction::make(),
+            DeleteAction::make(),
         ];
     }
 }
