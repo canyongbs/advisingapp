@@ -1,39 +1,5 @@
 <?php
 
-/*
-<COPYRIGHT>
-
-    Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
-
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
-    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
-
-    Notice:
-
-    - You may not provide the software to third parties as a hosted or managed
-      service, where the service provides users with access to any substantial set of
-      the features or functionality of the software.
-    - You may not move, change, disable, or circumvent the license key functionality
-      in the software, and you may not remove or obscure any functionality in the
-      software that is protected by the license key.
-    - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
-      to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
-      vigorously.
-    - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
-    - Use of this software implies agreement to the license terms and conditions as stated
-      in the Elastic License 2.0.
-
-    For more information or inquiries please visit our website at
-    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
-
-</COPYRIGHT>
-*/
-
 // @formatter:off
 // phpcs:ignoreFile
 /**
@@ -542,12 +508,6 @@ namespace App\Models{
  * @property-read int|null $care_teams_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseAssignment> $caseAssignments
  * @property-read int|null $case_assignments_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\ChangeRequestResponse> $changeRequestResponses
- * @property-read int|null $change_request_responses_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\ChangeRequestType> $changeRequestTypes
- * @property-read int|null $change_request_types_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\ChangeRequest> $changeRequests
- * @property-read int|null $change_requests_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Consent\Models\ConsentAgreement> $consentAgreements
  * @property-read int|null $consent_agreements_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\InAppCommunication\Models\TwilioConversation> $conversations
@@ -2297,161 +2257,6 @@ namespace AdvisingApp\CaseManagement\Models{
 
 namespace AdvisingApp\CaseManagement\Models{
 /**
- * AdvisingApp\CaseManagement\Models\ChangeRequest
- *
- * @property string $id
- * @property string|null $created_by
- * @property string $change_request_type_id
- * @property string $change_request_status_id
- * @property string $title
- * @property string $description
- * @property string $reason
- * @property string $backout_strategy
- * @property int $impact
- * @property int $likelihood
- * @property int $risk_score
- * @property \Illuminate\Support\Carbon $start_time
- * @property \Illuminate\Support\Carbon $end_time
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\ChangeRequestResponse> $approvals
- * @property-read int|null $approvals_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\ChangeRequestResponse> $responses
- * @property-read int|null $responses_count
- * @property-read \AdvisingApp\CaseManagement\Models\ChangeRequestStatus $status
- * @property-read \AdvisingApp\CaseManagement\Models\ChangeRequestType $type
- * @property-read \App\Models\User|null $user
- * @method static \AdvisingApp\CaseManagement\Database\Factories\ChangeRequestFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest query()
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereBackoutStrategy($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereChangeRequestStatusId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereChangeRequestTypeId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereCreatedBy($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereEndTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereImpact($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereLikelihood($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereReason($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereRiskScore($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereStartTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereTitle($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequest whereUpdatedAt($value)
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperChangeRequest {}
-}
-
-namespace AdvisingApp\CaseManagement\Models{
-/**
- * AdvisingApp\CaseManagement\Models\ChangeRequestResponse
- *
- * @property string $id
- * @property string $change_request_id
- * @property string $user_id
- * @property bool $approved
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \AdvisingApp\CaseManagement\Models\ChangeRequest $changeRequest
- * @property-read \App\Models\User $user
- * @method static \AdvisingApp\CaseManagement\Database\Factories\ChangeRequestResponseFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse query()
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse whereApproved($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse whereChangeRequestId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse whereUserId($value)
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperChangeRequestResponse {}
-}
-
-namespace AdvisingApp\CaseManagement\Models{
-/**
- * AdvisingApp\CaseManagement\Models\ChangeRequestStatus
- *
- * @property string $id
- * @property string $name
- * @property \AdvisingApp\CaseManagement\Enums\SystemChangeRequestClassification $classification
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\ChangeRequest> $changeRequests
- * @property-read int|null $change_requests_count
- * @method static \AdvisingApp\CaseManagement\Database\Factories\ChangeRequestStatusFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus query()
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus whereClassification($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestStatus withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperChangeRequestStatus {}
-}
-
-namespace AdvisingApp\CaseManagement\Models{
-/**
- * AdvisingApp\CaseManagement\Models\ChangeRequestType
- *
- * @property string $id
- * @property string $name
- * @property int $number_of_required_approvals
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\ChangeRequest> $changeRequests
- * @property-read int|null $change_requests_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $userApprovers
- * @property-read int|null $user_approvers_count
- * @method static \AdvisingApp\CaseManagement\Database\Factories\ChangeRequestTypeFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType query()
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType whereNumberOfRequiredApprovals($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperChangeRequestType {}
-}
-
-namespace AdvisingApp\CaseManagement\Models{
-/**
  * AdvisingApp\CaseManagement\Models\Sla
  *
  * @property string $id
@@ -2665,7 +2470,6 @@ namespace AdvisingApp\Engagement\Models{
  * @property-read int|null $audits_count
  * @property-read \AdvisingApp\Engagement\Models\EngagementBatch|null $batch
  * @property-read \App\Models\User|null $createdBy
- * @property-read \AdvisingApp\Engagement\Models\EngagementDeliverable|null $deliverable
  * @property-read \AdvisingApp\Engagement\Models\EngagementBatch|null $engagementBatch
  * @property-read \AdvisingApp\Notification\Models\OutboundDeliverable|null $latestOutboundDeliverable
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
@@ -2675,6 +2479,8 @@ namespace AdvisingApp\Engagement\Models{
  * @property-read \AdvisingApp\Timeline\Models\Timeline|null $timelineRecord
  * @property-read \App\Models\User|null $user
  * @method static \AdvisingApp\Engagement\Database\Factories\EngagementFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Engagement hasBeenDelivered()
+ * @method static \Illuminate\Database\Eloquent\Builder|Engagement hasNotBeenDelivered()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement isNotPartOfABatch()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement licensedToEducatable(string $relationship)
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement newModelQuery()
@@ -2730,48 +2536,6 @@ namespace AdvisingApp\Engagement\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperEngagementBatch {}
-}
-
-namespace AdvisingApp\Engagement\Models{
-/**
- * AdvisingApp\Engagement\Models\EngagementDeliverable
- *
- * @property string $id
- * @property string $engagement_id
- * @property \AdvisingApp\Notification\Enums\NotificationChannel $channel
- * @property string|null $external_reference_id
- * @property string|null $external_status
- * @property \AdvisingApp\Notification\Enums\NotificationDeliveryStatus $delivery_status
- * @property \Illuminate\Support\Carbon|null $delivered_at
- * @property \Illuminate\Support\Carbon|null $last_delivery_attempt
- * @property string|null $delivery_response
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \AdvisingApp\Engagement\Models\Engagement $engagement
- * @method static \AdvisingApp\Engagement\Database\Factories\EngagementDeliverableFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable query()
- * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereChannel($value)
- * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereDeliveredAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereDeliveryResponse($value)
- * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereDeliveryStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereEngagementId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereExternalReferenceId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereExternalStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereLastDeliveryAttempt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperEngagementDeliverable {}
 }
 
 namespace AdvisingApp\Engagement\Models{
