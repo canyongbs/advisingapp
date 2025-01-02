@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Authorization\Settings;
 
+use AdvisingApp\Authorization\Enums\AzureMatchingProperty;
 use Spatie\LaravelSettings\Settings;
 
 class AzureSsoSettings extends Settings
@@ -47,6 +48,8 @@ class AzureSsoSettings extends Settings
     public ?string $client_secret = null;
 
     public ?string $tenant_id = null;
+
+    public AzureMatchingProperty $matching_property = AzureMatchingProperty::UserPrincipalName;
 
     public static function group(): string
     {

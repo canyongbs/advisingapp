@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -34,19 +34,17 @@
 </COPYRIGHT>
 */
 
+use App\Features\AzureMatchingPropertyFeature;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
 
 return new class () extends Migration {
     public function up(): void
     {
-        DB::table('permissions')
-            ->select('id')
-            ->whereRaw("name ~ '^task\\.[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\\.update$'")
-            ->orderBy('id')
-            ->chunkById(100, function ($rows) {
-                $ids = $rows->pluck('id')->toArray();
-                DB::table('permissions')->whereIn('id', $ids)->delete();
-            });
+        AzureMatchingPropertyFeature::activate();
+    }
+
+    public function down(): void
+    {
+        AzureMatchingPropertyFeature::deactivate();
     }
 };

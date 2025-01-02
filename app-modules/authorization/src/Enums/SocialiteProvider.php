@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -36,13 +36,16 @@
 
 namespace AdvisingApp\Authorization\Enums;
 
+use AdvisingApp\Authorization\Exceptions\InvalidAzureMatchingProperty;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
 use AdvisingApp\MeetingCenter\Settings\AzureCalendarSettings;
+use App\Features\AzureMatchingPropertyFeature;
 use Exception;
 use Laravel\Socialite\Contracts\Provider;
 use Laravel\Socialite\Facades\Socialite;
 use Mockery\MockInterface;
+use SocialiteProviders\Azure\User;
 use SocialiteProviders\Manager\Config;
 
 enum SocialiteProvider: string
@@ -90,6 +93,27 @@ enum SocialiteProvider: string
                 $googleSsoSettings->client_secret,
                 route('socialite.callback', ['provider' => 'google'])
             ),
+            default => throw new Exception('Invalid socialite provider'),
+        };
+    }
+
+    public function getEmailFromUser(mixed $user): string
+    {
+        return match ($this->value) {
+            'azure', 'azure_calendar' => (function () use ($user) {
+                if (! AzureMatchingPropertyFeature::active()) {
+                    return $user->getEmail();
+                }
+
+                /** @var User $user */
+
+                return match (app(AzureSsoSettings::class)->matching_property) {
+                    AzureMatchingProperty::UserPrincipalName => $user->getPrincipalName(),
+                    AzureMatchingProperty::Mail => $user->getMail(),
+                    default => throw new InvalidAzureMatchingProperty(app(AzureSsoSettings::class)->matching_property),
+                };
+            })(),
+            'google' => $user->getEmail(),
             default => throw new Exception('Invalid socialite provider'),
         };
     }

@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -80,7 +80,7 @@ class SocialiteController extends Controller
 
         /** @var User $user */
         $user = User::query()
-            ->where(new Expression('lower(email)'), strtolower($socialiteUser->getEmail()))
+            ->where(new Expression('lower(email)'), strtolower($provider->getEmailFromUser($socialiteUser)))
             ->first();
 
         if (! $user?->is_external) {
