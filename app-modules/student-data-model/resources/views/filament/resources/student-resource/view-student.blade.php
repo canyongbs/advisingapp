@@ -47,6 +47,7 @@
     use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\FormSubmissionsRelationManager;
     use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\InteractionsRelationManager;
     use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ProgramsRelationManager;
+    use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\CasesRelationManager;
 @endphp
 
 <x-filament-panels::page>
@@ -72,6 +73,7 @@
                     'enrollments' => EnrollmentsRelationManager::class,
                     'messages' => EngagementsRelationManager::class,
                     'interactions' => InteractionsRelationManager::class,
+                    'cases' => CasesRelationManager::class,
                     'files' => EngagementFilesRelationManager::class,
                 ]"
             />

@@ -36,8 +36,10 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers;
 
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\CreateCase;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\ViewCase;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Models\CasePriority;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Forms\Form;
@@ -101,10 +103,14 @@ class CasesRelationManager extends RelationManager
                     ->modalHeading('Create new case'),
             ])
             ->actions([
-                ViewAction::make(),
-                EditAction::make(),
-            ])
-            ->bulkActions([
+                ViewAction::make()
+                    ->url(fn (CaseModel $record) => CaseResource::getUrl('view', ['record' => $record, 'referrer' => 'prospectProfile'])),
+                EditAction::make()
+                    ->mutateRecordDataUsing(function ($data, CaseModel $record) {
+                        $data['type_id'] = $record?->priority?->type->getKey();
+
+                        return $data;
+                    }),
             ])
             ->defaultSort('created_at', 'desc');
     }
