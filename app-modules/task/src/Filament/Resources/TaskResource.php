@@ -48,7 +48,7 @@ class TaskResource extends Resource
 
     protected static ?string $navigationGroup = 'Engagement Features';
 
-    protected static ?int $navigationSort = 50;
+    protected static ?int $navigationSort = 60;
 
     public static function getPages(): array
     {
