@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -76,6 +76,10 @@ class RolePolicy
 
     public function delete(Authenticatable $authenticatable, Role $role): Response
     {
+        if ($role->users()->exists()) {
+            return Response::deny('You cannot delete a role that has users assigned to it.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["role.{$role->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this role.'

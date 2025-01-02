@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -36,10 +36,13 @@
 
 namespace AdvisingApp\Authorization\Filament\Pages;
 
+use AdvisingApp\Authorization\Enums\AzureMatchingProperty;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
+use App\Features\AzureMatchingPropertyFeature;
 use App\Filament\Clusters\ProductIntegrations;
 use App\Models\User;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
@@ -95,6 +98,12 @@ class ManageAzureSsoSettings extends SettingsPage
                             ->required(fn (Get $get) => $get('is_enabled'))
                             ->password()
                             ->revealable(),
+                        Select::make('matching_property')
+                            ->label('Matching Property')
+                            ->options(AzureMatchingProperty::class)
+                            ->enum(AzureMatchingProperty::class)
+                            ->required(fn (Get $get) => $get('is_enabled'))
+                            ->visible(AzureMatchingPropertyFeature::active()),
                     ])->visible(fn (Get $get) => $get('is_enabled')),
             ]);
     }

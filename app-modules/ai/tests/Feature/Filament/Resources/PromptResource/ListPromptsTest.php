@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -100,4 +100,24 @@ it('can list records', function () use ($licenses, $permissions) {
         ->assertSuccessful()
         ->assertCountTableRecords($records->count())
         ->assertCanSeeTableRecords($records);
+});
+
+it('Filter prompts based on Smart', function () use ($licenses, $permissions) {
+    actingAs(user(
+        licenses: $licenses,
+        permissions: $permissions
+    ));
+
+    $recordsSmart = Prompt::factory()->count(10)->create(['is_smart' => true]);
+    $recordsCustom = Prompt::factory()->count(10)->create(['is_smart' => false]);
+
+    livewire(ListPrompts::class)
+        ->set('tableRecordsPerPage', 20)
+        ->assertSuccessful()
+        ->filterTable('is_smart', true)
+        ->assertCanSeeTableRecords($recordsSmart)
+        ->assertCanNotSeeTableRecords($recordsCustom)
+        ->filterTable('is_smart', false)
+        ->assertCanSeeTableRecords($recordsCustom)
+        ->assertCanNotSeeTableRecords($recordsSmart);
 });
