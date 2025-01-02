@@ -51,10 +51,6 @@ use AdvisingApp\CaseManagement\Models\CasePriority;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\CaseManagement\Models\CaseUpdate;
-use AdvisingApp\CaseManagement\Models\ChangeRequest;
-use AdvisingApp\CaseManagement\Models\ChangeRequestResponse;
-use AdvisingApp\CaseManagement\Models\ChangeRequestStatus;
-use AdvisingApp\CaseManagement\Models\ChangeRequestType;
 use AdvisingApp\CaseManagement\Models\Sla;
 use App\Concerns\ImplementsGraphQL;
 use Filament\Panel;
@@ -75,10 +71,6 @@ class CaseManagementServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Relation::morphMap([
-            'change_request_response' => ChangeRequestResponse::class,
-            'change_request_status' => ChangeRequestStatus::class,
-            'change_request_type' => ChangeRequestType::class,
-            'change_request' => ChangeRequest::class,
             'case_assignment' => CaseAssignment::class,
             'case_form_authentication' => CaseFormAuthentication::class,
             'case_form_field' => CaseFormField::class,
