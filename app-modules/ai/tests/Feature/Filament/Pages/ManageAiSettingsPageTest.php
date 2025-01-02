@@ -63,17 +63,6 @@ it('does not load if you do not have any permissions to access', function () {
         ->assertStatus(403);
 });
 
-it('loads if you have the correct access to ai settings', function () {
-    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
-
-    $user->givePermissionTo(['product_admin.view-any']);
-
-    actingAs($user);
-
-    Livewire::test(ManageAiSettings::class)
-        ->assertStatus(200);
-});
-
 it('cannot access the page if assistant is default', function () {
     $aiSettings = app(LicenseSettings::class);
 

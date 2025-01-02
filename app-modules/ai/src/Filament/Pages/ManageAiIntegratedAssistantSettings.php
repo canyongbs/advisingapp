@@ -40,7 +40,7 @@ use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
 use AdvisingApp\Authorization\Enums\LicenseType;
-use App\Filament\Clusters\ArtificialIntelligence;
+use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
@@ -56,11 +56,11 @@ class ManageAiIntegratedAssistantSettings extends SettingsPage
 
     protected static ?string $title = 'Integrated Assistant';
 
-    protected static ?string $cluster = ArtificialIntelligence::class;
+    protected static ?string $cluster = GlobalArtificialIntelligence::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-cube-transparent';
 
-    protected static ?int $navigationSort = 40;
+    protected static ?int $navigationSort = 20;
 
     public static function canAccess(): bool
     {
@@ -71,7 +71,7 @@ class ManageAiIntegratedAssistantSettings extends SettingsPage
             return false;
         }
 
-        return $user->can(['product_admin.view-any']);
+        return $user->isSuperAdmin();
     }
 
     public function form(Form $form): Form
@@ -86,12 +86,12 @@ class ManageAiIntegratedAssistantSettings extends SettingsPage
                     ->helperText('Used for general purposes like generating content when an assistant is not being used.')
                     ->required(),
             ])
-            ->disabled(! auth()->user()->can('product_admin.*.update'));
+            ->disabled(! auth()->user()->isSuperAdmin());
     }
 
     public function save(): void
     {
-        if (! auth()->user()->can('product_admin.*.update')) {
+        if (! auth()->user()->isSuperAdmin()) {
             return;
         }
 
@@ -103,7 +103,7 @@ class ManageAiIntegratedAssistantSettings extends SettingsPage
      */
     public function getFormActions(): array
     {
-        if (! auth()->user()->can('product_admin.*.update')) {
+        if (! auth()->user()->isSuperAdmin()) {
             return [];
         }
 

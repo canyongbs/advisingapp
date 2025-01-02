@@ -44,7 +44,7 @@ use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiSettings;
 use AdvisingApp\Authorization\Enums\LicenseType;
-use App\Filament\Clusters\ArtificialIntelligence;
+use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Filament\Forms\Components\Slider;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -69,11 +69,11 @@ class ManageAiSettings extends SettingsPage
 
     protected static ?string $title = 'Institutional Assistant';
 
-    protected static ?string $cluster = ArtificialIntelligence::class;
+    protected static ?string $cluster = GlobalArtificialIntelligence::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
 
-    protected static ?int $navigationSort = 30;
+    protected static ?int $navigationSort = 10;
 
     public static function canAccess(): bool
     {
@@ -84,7 +84,7 @@ class ManageAiSettings extends SettingsPage
             return false;
         }
 
-        return $user->can(['product_admin.view-any']);
+        return $user->isSuperAdmin();
     }
 
     #[Computed]
@@ -145,7 +145,7 @@ class ManageAiSettings extends SettingsPage
                     ->searchable()
                     ->required(),
             ])
-            ->disabled(! auth()->user()->can('product_admin.*.update'));
+            ->disabled(! auth()->user()->isSuperAdmin());
     }
 
     public function getSaveFormAction(): Action
@@ -199,7 +199,7 @@ class ManageAiSettings extends SettingsPage
 
     public function save(): void
     {
-        if (! auth()->user()->can('product_admin.*.update')) {
+        if (! auth()->user()->isSuperAdmin()) {
             return;
         }
 
@@ -211,7 +211,7 @@ class ManageAiSettings extends SettingsPage
      */
     public function getFormActions(): array
     {
-        if (! auth()->user()->can('product_admin.*.update')) {
+        if (! auth()->user()->isSuperAdmin()) {
             return [];
         }
 
