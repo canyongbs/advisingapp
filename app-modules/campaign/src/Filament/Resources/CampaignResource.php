@@ -50,7 +50,7 @@ class CampaignResource extends Resource
 
     protected static ?string $navigationGroup = 'Engagement Features';
 
-    protected static ?int $navigationSort = 60;
+    protected static ?int $navigationSort = 50;
 
     public static function getRelations(): array
     {
