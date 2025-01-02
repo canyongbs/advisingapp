@@ -104,7 +104,7 @@ class CasesRelationManager extends RelationManager
             ])
             ->actions([
                 ViewAction::make()
-                    ->url(fn (CaseModel $record) => CaseResource::getUrl('view', ['record' => $record])),
+                    ->url(fn (CaseModel $record) => CaseResource::getUrl('view', ['record' => $record, 'referrer' => 'studentProfile'])),
                 EditAction::make()
                     ->mutateRecordDataUsing(function ($data, CaseModel $record) {
                         $data['type_id'] = $record?->priority?->type->getKey();

@@ -14,12 +14,12 @@ trait HasCaseHeader
 {
     public function getHeader(): ?View
     {
-        $from = app('router')->getRoutes()->match(app('request')->create(url()->previous()))->getName();
+        $referrer = request()->query('referrer');
         
-        if ($from === 'filament.admin.resources.students.view' && $this->record->respondent instanceof Student) {
+        if ($referrer === 'studentProfile' && $this->record->respondent instanceof Student) {
             $backButtonLabel = 'Back to student';
             $backButtonUrl = StudentResource::getUrl('view', ['record' => $this->record->respondent->getKey()]);
-        } elseif ($from === 'filament.admin.resources.prospects.view' && $this->record->respondent instanceof Prospect) {
+        } elseif ($referrer === 'prospectProfile' && $this->record->respondent instanceof Prospect) {
             $backButtonLabel = 'Back to prospect';
             $backButtonUrl = ProspectResource::getUrl('view', ['record' => $this->record->respondent->getKey()]);
         }
