@@ -41,8 +41,6 @@ use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\Authorization\Console\Commands\SetupRoles;
 use AdvisingApp\CaseManagement\Database\Seeders\CaseStatusSeeder;
 use AdvisingApp\CaseManagement\Database\Seeders\CaseTypeSeeder;
-use AdvisingApp\CaseManagement\Database\Seeders\ChangeRequestStatusSeeder;
-use AdvisingApp\CaseManagement\Database\Seeders\ChangeRequestTypeSeeder;
 use AdvisingApp\Consent\Database\Seeders\ConsentAgreementSeeder;
 use AdvisingApp\Division\Database\Seeders\DivisionSeeder;
 use AdvisingApp\Interaction\Database\Seeders\InteractionSeeder;
@@ -82,10 +80,6 @@ class NewTenantSeeder extends Seeder
             ConsentAgreementSeeder::class,
             PronounsSeeder::class,
             ApplicationSubmissionStateSeeder::class,
-
-            // Change Request
-            ChangeRequestTypeSeeder::class,
-            ChangeRequestStatusSeeder::class,
             AlertStatusSeeder::class,
         ]);
     }

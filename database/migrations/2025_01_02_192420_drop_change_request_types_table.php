@@ -34,40 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Actions\ChangeRequest;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\CaseManagement\Enums\SystemChangeRequestClassification;
-use AdvisingApp\CaseManagement\Models\ChangeRequest;
-use AdvisingApp\CaseManagement\Models\ChangeRequestStatus;
-use AdvisingApp\CaseManagement\Models\Scopes\ClassifiedAs;
-use App\Models\User;
-
-class ApproveChangeRequest
-{
-    public function __construct(
-        public ChangeRequest $changeRequest,
-        public User $user,
-    ) {}
-
-    public function handle(): void
+return new class () extends Migration {
+    public function up(): void
     {
-        if ($this->changeRequest->isApproved() || $this->changeRequest->hasApproval()) {
-            return;
-        }
-
-        if ($this->changeRequest->canBeApprovedBy($this->user)) {
-            $this->changeRequest->responses()->create([
-                'user_id' => $this->user->id,
-                'approved' => true,
-            ]);
-        }
-
-        if ($this->changeRequest->hasApproval()) {
-            $this->changeRequest->getStateMachine(SystemChangeRequestClassification::class, 'status.classification')
-                ->transitionTo(
-                    relatedModel: ChangeRequestStatus::tap(new ClassifiedAs(SystemChangeRequestClassification::Approved))->first(),
-                    newState: SystemChangeRequestClassification::Approved
-                );
-        }
+        Schema::dropIfExists('change_request_types');
     }
-}
+
+    public function down(): void
+    {
+        Schema::create('change_request_types', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('name');
+            $table->integer('number_of_required_approvals');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+    }
+};

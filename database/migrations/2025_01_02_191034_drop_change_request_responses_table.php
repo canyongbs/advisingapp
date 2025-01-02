@@ -1,11 +1,5 @@
 <?php
 
-use AdvisingApp\CaseManagement\Models\ChangeRequest;
-use AdvisingApp\CaseManagement\Models\ChangeRequestType;
-use AdvisingApp\CaseManagement\Notifications\ChangeRequestAwaitingApprovalNotification;
-use App\Models\User;
-use Illuminate\Support\Facades\Notification;
-
 /*
 <COPYRIGHT>
 
@@ -40,19 +34,25 @@ use Illuminate\Support\Facades\Notification;
 </COPYRIGHT>
 */
 
-test('ChangeRequestAwaitingApprovalNotification notification is sent to each change request approver based on the change request type', function () {
-    Notification::fake();
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-    // Given that we have a change request type with user approvers
-    $changeRequestType = ChangeRequestType::factory()->create();
-    $userApprovers = User::factory()->count(3)->create();
-    $changeRequestType->userApprovers()->attach($userApprovers);
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::dropIfExists('change_request_responses');
+    }
 
-    // And a change request is created with that type
-    ChangeRequest::factory()->create([
-        'change_request_type_id' => $changeRequestType->id,
-    ]);
-
-    // Notifications will be sent to each approver
-    Notification::assertSentTo($userApprovers, ChangeRequestAwaitingApprovalNotification::class);
-});
+    public function down(): void
+    {
+        Schema::create('change_request_responses', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->foreignUuid('change_request_id')->constrained('change_requests')->cascadeOnDelete();
+            $table->foreignUuid('user_id')->constrained('users');
+            $table->boolean('approved');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+    }
+};

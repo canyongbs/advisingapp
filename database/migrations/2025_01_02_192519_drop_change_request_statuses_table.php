@@ -34,12 +34,24 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\CaseManagement\Filament\Resources\ChangeRequestStatusResource;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use function Tests\Helpers\testResourceRequiresPermissionForAccess;
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::dropIfExists('change_request_statuses');
+    }
 
-testResourceRequiresPermissionForAccess(
-    resource: ChangeRequestStatusResource::class,
-    permissions: 'product_admin.view-any',
-    method: 'index'
-);
+    public function down(): void
+    {
+        Schema::create('change_request_statuses', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('name');
+            $table->string('classification');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+    }
+};

@@ -46,8 +46,6 @@ use AdvisingApp\CaseManagement\Database\Seeders\CaseSeeder;
 use AdvisingApp\CaseManagement\Database\Seeders\CaseStatusSeeder;
 use AdvisingApp\CaseManagement\Database\Seeders\CaseTypeSeeder;
 use AdvisingApp\CaseManagement\Database\Seeders\CaseUpdateSeeder;
-use AdvisingApp\CaseManagement\Database\Seeders\ChangeRequestStatusSeeder;
-use AdvisingApp\CaseManagement\Database\Seeders\ChangeRequestTypeSeeder;
 use AdvisingApp\Consent\Database\Seeders\ConsentAgreementSeeder;
 use AdvisingApp\Division\Database\Seeders\DivisionSeeder;
 use AdvisingApp\Form\Database\Seeders\FormSeeder;
@@ -112,11 +110,6 @@ class DatabaseSeeder extends Seeder
             TwilioStudentSeeder::class,
             ApplicationSubmissionStateSeeder::class,
             EventSeeder::class,
-
-            // Change Request
-            ChangeRequestTypeSeeder::class,
-            ChangeRequestStatusSeeder::class,
-
             PromptTypeSeeder::class,
             PromptSeeder::class,
         ]);

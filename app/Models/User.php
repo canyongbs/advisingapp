@@ -46,9 +46,6 @@ use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
 use AdvisingApp\CaseManagement\Models\CaseAssignment;
-use AdvisingApp\CaseManagement\Models\ChangeRequest;
-use AdvisingApp\CaseManagement\Models\ChangeRequestResponse;
-use AdvisingApp\CaseManagement\Models\ChangeRequestType;
 use AdvisingApp\Consent\Models\Concerns\CanConsent;
 use AdvisingApp\Engagement\Models\Concerns\HasManyEngagementBatches;
 use AdvisingApp\Engagement\Models\Concerns\HasManyEngagements;
@@ -310,21 +307,6 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function cases(): HasManyDeep
     {
         return $this->hasManyDeepFromRelations($this->caseAssignments(), (new CaseAssignment())->case());
-    }
-
-    public function changeRequests(): HasMany
-    {
-        return $this->hasMany(ChangeRequest::class, 'created_by');
-    }
-
-    public function changeRequestResponses(): HasMany
-    {
-        return $this->hasMany(ChangeRequestResponse::class);
-    }
-
-    public function changeRequestTypes(): BelongsToMany
-    {
-        return $this->belongsToMany(ChangeRequestType::class);
     }
 
     public function getIsAdminAttribute()

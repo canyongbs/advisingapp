@@ -34,36 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Models;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Audit\Overrides\BelongsToMany;
-use App\Models\BaseModel;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
-
-/**
- * @mixin IdeHelperChangeRequestType
- */
-class ChangeRequestType extends BaseModel implements Auditable
-{
-    use SoftDeletes;
-    use AuditableTrait;
-
-    protected $fillable = [
-        'name',
-        'number_of_required_approvals',
-    ];
-
-    public function userApprovers(): BelongsToMany
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->belongsToMany(User::class);
+        Schema::dropIfExists('change_request_type_user');
     }
-
-    public function changeRequests(): HasMany
-    {
-        return $this->hasMany(ChangeRequest::class);
-    }
-}
+};

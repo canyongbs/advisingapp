@@ -34,35 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Observers;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\CaseManagement\Enums\SystemChangeRequestClassification;
-use AdvisingApp\CaseManagement\Models\ChangeRequest;
-use AdvisingApp\CaseManagement\Models\ChangeRequestStatus;
-use AdvisingApp\CaseManagement\Models\Scopes\ClassifiedAs;
-use AdvisingApp\CaseManagement\Notifications\ChangeRequestAwaitingApprovalNotification;
-use Illuminate\Support\Facades\Notification;
-
-class ChangeRequestObserver
-{
-    public function creating(ChangeRequest $changeRequest): void
+return new class () extends Migration {
+    public function up(): void
     {
-        if (is_null($changeRequest->created_by) && ! is_null(auth()->user())) {
-            $changeRequest->created_by = auth()->user()->id;
-        }
-
-        if (is_null($changeRequest->change_request_status_id)) {
-            $changeRequest->change_request_status_id = ChangeRequestStatus::tap(new ClassifiedAs(SystemChangeRequestClassification::New))->first()->id;
-        }
+        Schema::dropIfExists('change_requests');
     }
 
-    public function created(ChangeRequest $changeRequest): void
+    public function down(): void
     {
-        Notification::send($changeRequest->type->userApprovers, new ChangeRequestAwaitingApprovalNotification($changeRequest));
+        Schema::create('change_requests', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->foreignUuid('created_by')->nullable()->constrained('users');
+            $table->foreignUuid('change_request_type_id')->constrained('change_request_types');
+            $table->foreignUuid('change_request_status_id')->constrained('change_request_statuses');
+            $table->string('title');
+            $table->text('description');
+            $table->longText('reason');
+            $table->longText('backout_strategy');
+            $table->integer('impact');
+            $table->integer('likelihood');
+            $table->integer('risk_score');
+            $table->timestamp('start_time');
+            $table->timestamp('end_time');
+            $table->timestamps();
+            $table->softDeletes();
+        });
     }
-
-    public function saving(ChangeRequest $changeRequest): void
-    {
-        $changeRequest->risk_score = $changeRequest->impact * $changeRequest->likelihood;
-    }
-}
+};
