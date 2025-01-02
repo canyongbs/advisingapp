@@ -45,7 +45,6 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Carbon\CarbonInterval;
-use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\Section;
@@ -59,7 +58,7 @@ class ViewCase extends ViewRecord
     use HasCaseHeader;
 
     protected static string $resource = CaseResource::class;
-    
+
     public function infolist(Infolist $infolist): Infolist
     {
         $formatSecondsAsInterval = fn (?int $state): ?string => $state ? CarbonInterval::seconds($state)->cascade()->forHumans(short: true) : null;

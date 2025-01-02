@@ -35,7 +35,7 @@
     <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div class="flex flex-col">
             <x-filament::breadcrumbs
-                class="hidden sm:block mb-2"
+                class="mb-2 hidden sm:block"
                 :breadcrumbs="$breadcrumbs"
             />
 
