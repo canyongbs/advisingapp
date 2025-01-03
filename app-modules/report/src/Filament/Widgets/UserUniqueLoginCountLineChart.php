@@ -38,7 +38,6 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Models\TrackedEvent;
-use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 
