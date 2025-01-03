@@ -164,7 +164,7 @@ class ProgramsRelationManager extends RelationManager
             ])
             ->actions([
                 ViewAction::make(),
-                EditAction::make()
+                EditAction::make(),
             ]);
     }
 
