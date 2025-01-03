@@ -40,7 +40,6 @@ use AdvisingApp\Authorization\Exceptions\InvalidAzureMatchingProperty;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
 use AdvisingApp\MeetingCenter\Settings\AzureCalendarSettings;
-use App\Features\AzureMatchingPropertyFeature;
 use Exception;
 use Laravel\Socialite\Contracts\Provider;
 use Laravel\Socialite\Facades\Socialite;
@@ -101,10 +100,6 @@ enum SocialiteProvider: string
     {
         return match ($this->value) {
             'azure', 'azure_calendar' => (function () use ($user) {
-                if (! AzureMatchingPropertyFeature::active()) {
-                    return $user->getEmail();
-                }
-
                 /** @var User $user */
 
                 return match (app(AzureSsoSettings::class)->matching_property) {
