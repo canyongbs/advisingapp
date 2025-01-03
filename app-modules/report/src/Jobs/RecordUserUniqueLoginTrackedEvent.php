@@ -101,7 +101,7 @@ class RecordUserUniqueLoginTrackedEvent implements ShouldQueue
                 );
 
             $this->user->update([
-                'first_login_at' => $this->user->first_login_at ?? now(),
+                'first_login_at' => $this->user->first_login_at ?? $this->occurredAt,
                 'last_logged_in_at' => $this->occurredAt,
             ]);
 
