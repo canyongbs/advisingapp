@@ -38,9 +38,11 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Relati
 
 use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
+use Filament\Actions\CreateAction;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -162,6 +164,14 @@ class ProgramsRelationManager extends RelationManager
             ])
             ->actions([
                 ViewAction::make(),
+                EditAction::make()
             ]);
+    }
+
+    public function headerActions(): array
+    {
+        return [
+            CreateAction::make(),
+        ];
     }
 }
