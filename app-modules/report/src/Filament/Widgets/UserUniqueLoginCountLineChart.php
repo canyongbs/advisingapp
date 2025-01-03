@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
+use AdvisingApp\Report\Enums\TrackedEventType;
+use AdvisingApp\Report\Models\TrackedEvent;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
@@ -69,10 +71,10 @@ class UserUniqueLoginCountLineChart extends LineChartReportWidget
     protected function getData(): array
     {
         $runningTotalPerMonth = Cache::tags([$this->cacheTag])->remember('user-unique-login-count-line-chart', now()->addHours(24), function (): array {
-            $totalCreatedPerMonth = User::query()
-                ->selectRaw('date_trunc(\'month\', created_at) as month')
+            $totalCreatedPerMonth = TrackedEvent::query()
+                ->selectRaw('date_trunc(\'month\', last_occurred_at) as month')
                 ->selectRaw('count(*) as total')
-                ->with('logins')
+                ->where('type', TrackedEventType::UserLogin)
                 ->groupBy('month')
                 ->orderBy('month')
                 ->pluck('total', 'month');
