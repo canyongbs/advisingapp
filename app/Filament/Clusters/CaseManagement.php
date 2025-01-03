@@ -40,7 +40,7 @@ use Filament\Clusters\Cluster;
 
 class CaseManagement extends Cluster
 {
-    protected static ?string $navigationGroup = 'Premium Features';
+    protected static ?string $navigationGroup = 'Engagement Features';
 
     protected static ?int $navigationSort = 30;
 }
