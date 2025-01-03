@@ -42,21 +42,21 @@ use Livewire\Attributes\On;
 
 abstract class StatsOverviewReportWidget extends StatsOverviewWidget
 {
-  #[Locked]
-  public string $cacheTag;
+    #[Locked]
+    public string $cacheTag;
 
-  protected static ?string $pollingInterval = null;
+    protected static ?string $pollingInterval = null;
 
-  protected static bool $isLazy = false;
+    protected static bool $isLazy = false;
 
-  public function mount(string $cacheTag)
-  {
-    $this->cacheTag = $cacheTag;
-  }
+    public function mount(string $cacheTag)
+    {
+        $this->cacheTag = $cacheTag;
+    }
 
-  #[On('refresh-widgets')]
-  public function refreshWidget()
-  {
-    $this->dispatch('$refresh');
-  }
+    #[On('refresh-widgets')]
+    public function refreshWidget()
+    {
+        $this->dispatch('$refresh');
+    }
 }
