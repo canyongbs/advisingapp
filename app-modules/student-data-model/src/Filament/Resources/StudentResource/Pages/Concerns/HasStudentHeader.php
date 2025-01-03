@@ -37,12 +37,14 @@
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concerns;
 
 use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
+use AdvisingApp\StudentDataModel\Actions\DeleteStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Actions\StudentTagsAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Actions\SyncStudentSisAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
 use App\Settings\DisplaySettings;
+use Filament\Actions\DeleteAction;
 use Illuminate\Contracts\View\View;
 
 trait HasStudentHeader
@@ -94,6 +96,11 @@ trait HasStudentHeader
             StudentTagsAction::make()->visible(fn (): bool => auth()->user()->can('student.*.update')),
             SyncStudentSisAction::make(),
             SubscribeHeaderAction::make(),
+            DeleteAction::make()
+                ->modalDescription('Are you sure you wish to delete the student? By deleting a student record, you will remove any related enrollment and program data, along with any related interactions, notes, etc. This action cannot be reversed.')
+                ->using(function ($record) {
+                    app(DeleteStudent::class)->execute($record);
+                }),
         ];
     }
 }
