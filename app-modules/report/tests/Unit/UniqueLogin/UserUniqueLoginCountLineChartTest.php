@@ -34,55 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace App\Exceptions;
+use AdvisingApp\Report\Enums\TrackedEventType;
+use AdvisingApp\Report\Filament\Widgets\UserUniqueLoginCountLineChart;
+use App\Models\User;
 
-use Illuminate\Auth\AuthenticationException;
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Psr\Log\LogLevel;
-use Sentry\Laravel\Integration;
-use Throwable;
+use function Pest\Livewire\livewire;
 
-class Handler extends ExceptionHandler
-{
-    /**
-     * A list of exception types with their corresponding custom log levels.
-     *
-     * @var array<class-string<Throwable>, LogLevel::*>
-     */
-    protected $levels = [];
+it('checks users with tracked_event_type unique-login count in line chart', function () {
+    test()->travelTo(now()->setDate(2024, 12, 10));
 
-    /**
-     * A list of the exception types that are not reported.
-     *
-     * @var array<int, class-string<Throwable>>
-     */
-    protected $dontReport = [];
+    User::factory()->count(5)->hasLogins(['type' => TrackedEventType::UserLogin])->create([
+        'created_at' => now()->subMonths(1),
+    ]);
+    User::factory()->count(3)->hasLogins(['type' => TrackedEventType::UserLogin])->create([
+        'created_at' => now()->subMonths(6),
+    ]);
 
-    /**
-     * A list of the inputs that are never flashed to the session on validation exceptions.
-     *
-     * @var array<int, string>
-     */
-    protected $dontFlash = [
-        'current_password',
-        'password',
-        'password_confirmation',
-    ];
+    $widgetInstance = livewire(UserUniqueLoginCountLineChart::class, ['cacheTag' => 'report-users'])->instance();
+    $invadedWidget = invade($widgetInstance);
 
-    /**
-     * Register the exception handling callbacks for the application.
-     */
-    public function register(): void
-    {
-        $this->reportable(function (Throwable $e) {
-            Integration::captureUnhandledException($e);
-        });
-    }
-
-    protected function unauthenticated($request, AuthenticationException $exception)
-    {
-        return $this->shouldReturnJson($request, $exception)
-          ? response()->json(['message' => $exception->getMessage()], 401)
-          : redirect()->guest($exception->redirectTo() ?? url('/'));
-    }
-}
+    expect($invadedWidget->getData())->toMatchSnapshot();
+});

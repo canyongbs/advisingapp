@@ -58,6 +58,9 @@ use AdvisingApp\Notification\Models\Concerns\NotifiableViaSms;
 use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Report\Enums\TrackedEventType;
+use AdvisingApp\Report\Models\TrackedEvent;
+use AdvisingApp\Report\Models\TrackedEventCount;
 use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
@@ -77,6 +80,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
@@ -135,6 +139,8 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'are_working_hours_visible_on_profile' => 'boolean',
         'working_hours' => 'array',
         'last_chat_ping_at' => 'immutable_datetime',
+        'first_login_at' => 'datetime',
+        'last_logged_in_at' => 'datetime',
     ];
 
     protected $fillable = [
@@ -170,6 +176,8 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'job_title',
         'last_chat_ping_at',
         'is_branding_bar_dismissed',
+        'first_login_at',
+        'last_logged_in_at',
     ];
 
     public $orderable = [
@@ -365,6 +373,18 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function calendar(): HasOne
     {
         return $this->hasOne(Calendar::class);
+    }
+
+    public function logins(): MorphMany
+    {
+        return $this->morphMany(TrackedEvent::class, 'related_to')
+            ->where('type', TrackedEventType::UserLogin);
+    }
+
+    public function loginsCount(): MorphMany
+    {
+        return $this->morphMany(TrackedEventCount::class, 'related_to')
+            ->where('type', TrackedEventType::UserLogin);
     }
 
     public function canAccessPanel(Panel $panel): bool

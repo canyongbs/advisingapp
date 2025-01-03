@@ -38,7 +38,6 @@ namespace AdvisingApp\Ai\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Request;
 
 class RetryMessageRequest extends FormRequest
 {
