@@ -39,52 +39,51 @@ use AdvisingApp\Report\Jobs\RecordUserUniqueLoginTrackedEvent;
 use App\Models\User;
 
 it('Check total users', function () {
-    $userCount = rand(1, 10);
-    $usersStats = new UsersStats();
-    $usersStats->cacheTag = 'users_stats';
+  $userCount = rand(1, 10);
+  $usersStats = new UsersStats();
+  $usersStats->cacheTag = 'users_stats';
 
-    User::factory()->count($userCount)->create();
-    $stats = $usersStats->getStats();
-    $totalUsersStat = $stats[0];
-    expect($totalUsersStat->getValue())->toEqual($userCount);
+  User::factory()->count($userCount)->create();
+  $stats = $usersStats->getStats();
+  $totalUsersStat = $stats[0];
+  expect($totalUsersStat->getValue())->toEqual($userCount);
 });
 
 it('Check new users who were created within one month', function () {
-    $userCount = rand(1, 10);
-    $usersStats = new UsersStats();
-    $usersStats->cacheTag = 'users_stats';
+  $usersStats = new UsersStats();
+  $usersStats->cacheTag = 'users_stats';
 
-    User::factory()->count(3)->create([
-        'created_at' => now()->subMonths(2),
-    ]);
-    User::factory()->count($userCount)->create([
-        'created_at' => now()->subDays(3),
-    ]);
+  User::factory()->count(3)->create([
+    'created_at' => now()->subMonths(2),
+  ]);
+  User::factory()->count(3)->create([
+    'created_at' => now()->subDays(rand(1, 30)),
+  ]);
 
-    $stats = $usersStats->getStats();
-    $newUsersStat = $stats[1];
-    expect($newUsersStat->getValue())->toEqual($userCount);
+  $stats = $usersStats->getStats();
+  $newUsersStat = $stats[1];
+  expect($newUsersStat->getValue())->toEqual(3);
 });
 
 it('Check total users with unique login event type', function () {
-    $userCount = rand(1, 10);
-    $usersStats = new UsersStats();
-    $usersStats->cacheTag = 'users_stats';
-    $logins = 0;
+  $userCount = rand(1, 10);
+  $usersStats = new UsersStats();
+  $usersStats->cacheTag = 'users_stats';
+  $logins = 0;
 
-    User::factory()->count($userCount)->create()->each(function ($user) use (&$logins) {
-        $randomLogins = rand(1, 10);
+  User::factory()->count($userCount)->create()->each(function ($user) use (&$logins) {
+    $randomLogins = rand(1, 10);
 
-        for ($i = 0; $i < $randomLogins; $i++) {
-            dispatch(new RecordUserUniqueLoginTrackedEvent(
-                occurredAt: now(),
-                user: $user,
-            ));
-            $logins++;
-        }
-    });
+    for ($i = 0; $i < $randomLogins; $i++) {
+      dispatch(new RecordUserUniqueLoginTrackedEvent(
+        occurredAt: now(),
+        user: $user,
+      ));
+      $logins++;
+    }
+  });
 
-    $stats = $usersStats->getStats();
-    $totalUsersWithUniqueLoginStat = $stats[2];
-    expect($totalUsersWithUniqueLoginStat->getValue())->toEqual($logins);
+  $stats = $usersStats->getStats();
+  $totalUsersWithUniqueLoginStat = $stats[2];
+  expect($totalUsersWithUniqueLoginStat->getValue())->toEqual($logins);
 });
