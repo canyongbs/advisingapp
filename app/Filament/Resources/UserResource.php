@@ -51,7 +51,7 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationGroup = 'People Administration';
+    protected static ?string $navigationGroup = 'User Management';
 
     protected static ?int $navigationSort = 10;
 

@@ -48,7 +48,7 @@ class TeamResource extends Resource
 {
     protected static ?string $model = Team::class;
 
-    protected static ?string $navigationGroup = 'People Administration';
+    protected static ?string $navigationGroup = 'User Management';
 
     protected static ?int $navigationSort = 20;
 
