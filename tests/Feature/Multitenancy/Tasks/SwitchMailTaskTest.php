@@ -71,9 +71,13 @@ it('switches the mail configs', function () {
         'mail.mailers.smtp.local_domain',
     ]);
 
+    preg_match('/^(.+)\.[^.]+\.[^.]+$/', $tenant->domain, $matches);
+
+    $subDomainBasedEmail = $matches[1] . '@' . config('mail.from.root_domain');
+
     assertEquals($after, [
         'mail.default' => $tenant->config->mail->mailer,
-        'mail.from.address' => $tenant->config->mail->fromAddress,
+        'mail.from.address' => $subDomainBasedEmail,
         'mail.from.name' => $tenant->config->mail->fromName,
         'mail.mailers.smtp.host' => $tenant->config->mail->mailers->smtp->host,
         'mail.mailers.smtp.port' => $tenant->config->mail->mailers->smtp->port,

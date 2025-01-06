@@ -44,8 +44,6 @@ class TenantMailConfig extends Data
         public TenantMailersConfig $mailers,
         public bool $isDemoModeEnabled = false,
         public string $mailer = 'smtp',
-        // $fromAddress is now no longer actively used. Instead the from email is comprised of the tenants subdomain and a root domain.
-        public string $fromAddress = 'no-reply@advising.app',
         public string $fromName = 'Advising App™',
     ) {}
 }
