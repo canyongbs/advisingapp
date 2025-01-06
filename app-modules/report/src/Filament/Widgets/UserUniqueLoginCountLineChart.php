@@ -71,9 +71,9 @@ class UserUniqueLoginCountLineChart extends LineChartReportWidget
     {
         $runningTotalPerMonth = Cache::tags([$this->cacheTag])->remember('user-unique-login-count-line-chart', now()->addHours(24), function (): array {
             $totalCreatedPerMonth = TrackedEvent::query()
+                ->where('type', TrackedEventType::UserLogin)
                 ->selectRaw('date_trunc(\'month\', occurred_at) as month')
                 ->selectRaw('count(*) as total')
-                ->where('type', TrackedEventType::UserLogin)
                 ->groupBy('month')
                 ->orderBy('month')
                 ->pluck('total', 'month');
