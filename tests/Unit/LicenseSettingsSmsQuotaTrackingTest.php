@@ -71,7 +71,10 @@ it('An sms is allowed to be sent if there is available quota and its quota usage
 
     $mockMessageList->shouldReceive('create')->andReturn(
         new MessageInstance(
-            new V2010(new MessagingBase(new Client())),
+            new V2010(new MessagingBase(new Client(
+                username: $settings->account_sid,
+                password: $settings->auth_token,
+            ))),
             [
                 'sid' => 'abc123',
                 'status' => 'queued',
@@ -124,7 +127,10 @@ it('An sms is prevented from being sent if there is no available quota', functio
 
     $mockMessageList->shouldReceive('create')->andReturn(
         new MessageInstance(
-            new V2010(new MessagingBase(new Client())),
+            new V2010(new MessagingBase(new Client(
+                username: $settings->account_sid,
+                password: $settings->auth_token,
+            ))),
             [
                 'sid' => 'abc123',
                 'status' => 'queued',
@@ -179,7 +185,10 @@ it('An sms is sent to a super admin user even if there is no available quota', f
 
     $mockMessageList->shouldReceive('create')->andReturn(
         new MessageInstance(
-            new V2010(new MessagingBase(new Client())),
+            new V2010(new MessagingBase(new Client(
+                username: $settings->account_sid,
+                password: $settings->auth_token,
+            ))),
             [
                 'sid' => 'abc123',
                 'status' => 'queued',
