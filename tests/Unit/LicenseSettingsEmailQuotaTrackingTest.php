@@ -35,9 +35,10 @@
 */
 
 use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
-use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
+use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use App\Models\Authenticatable;
+use App\Models\Tenant;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Illuminate\Mail\Events\MessageSent;
@@ -68,8 +69,10 @@ it('An email is allowed to be sent if there is available quota and its quota usa
 
             $outboundDeliverable = OutboundDeliverable::first();
 
+            $tenant = Tenant::current();
+
             return $event->message->getHeaders()->get('X-SES-CONFIGURATION-SET')->getBody() === $configurationSet
-                && $event->message->getHeaders()->get('X-SES-MESSAGE-TAGS')->getBody() === 'outbound_deliverable_id=' . $outboundDeliverable->getKey()
+                && $event->message->getHeaders()->get('X-SES-MESSAGE-TAGS')->getBody() === 'outbound_deliverable_id=' . $outboundDeliverable->getKey() . ', tenant_id=' . $tenant->getKey()
                 && $outboundDeliverable->quota_usage === 1;
         }
     );
@@ -93,11 +96,16 @@ it('An email is prevented from being sent if there is no available quota', funct
 
     $notification = new TestEmailNotification();
 
-    expect(fn () => $notifiable->notify($notification))->toThrow(NotificationQuotaExceeded::class);
+    $notifiable->notify($notification);
 
     Event::assertNotDispatched(MessageSent::class);
 
-    assertDatabaseCount(OutboundDeliverable::class, 0);
+    assertDatabaseCount(OutboundDeliverable::class, 1);
+
+    $outboundDeliverable = OutboundDeliverable::first();
+
+    expect($outboundDeliverable->quota_usage)->toBe(0)
+        ->and($outboundDeliverable->delivery_status)->toBe(NotificationDeliveryStatus::RateLimited);
 });
 
 it('An email is sent to a super admin user even if there is no available quota', function () {
