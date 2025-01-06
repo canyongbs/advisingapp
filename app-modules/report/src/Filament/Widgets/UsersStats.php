@@ -34,55 +34,45 @@
 </COPYRIGHT>
 */
 
-namespace App\Exceptions;
+namespace AdvisingApp\Report\Filament\Widgets;
 
-use Illuminate\Auth\AuthenticationException;
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Psr\Log\LogLevel;
-use Sentry\Laravel\Integration;
-use Throwable;
+use AdvisingApp\Report\Enums\TrackedEventType;
+use AdvisingApp\Report\Models\TrackedEventCount;
+use App\Models\User;
+use Carbon\Carbon;
+use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Number;
 
-class Handler extends ExceptionHandler
+class UsersStats extends StatsOverviewReportWidget
 {
-    /**
-     * A list of exception types with their corresponding custom log levels.
-     *
-     * @var array<class-string<Throwable>, LogLevel::*>
-     */
-    protected $levels = [];
-
-    /**
-     * A list of the exception types that are not reported.
-     *
-     * @var array<int, class-string<Throwable>>
-     */
-    protected $dontReport = [];
-
-    /**
-     * A list of the inputs that are never flashed to the session on validation exceptions.
-     *
-     * @var array<int, string>
-     */
-    protected $dontFlash = [
-        'current_password',
-        'password',
-        'password_confirmation',
+    protected int | string | array $columnSpan = [
+        'sm' => 2,
+        'md' => 4,
+        'lg' => 4,
     ];
 
-    /**
-     * Register the exception handling callbacks for the application.
-     */
-    public function register(): void
+    public function getStats(): array
     {
-        $this->reportable(function (Throwable $e) {
-            Integration::captureUnhandledException($e);
-        });
-    }
-
-    protected function unauthenticated($request, AuthenticationException $exception)
-    {
-        return $this->shouldReturnJson($request, $exception)
-          ? response()->json(['message' => $exception->getMessage()], 401)
-          : redirect()->guest($exception->redirectTo() ?? url('/'));
+        return [
+            Stat::make('Total Users', Number::abbreviate(
+                Cache::tags([$this->cacheTag])->remember('total-users-count', now()->addHours(24), function (): int {
+                    return User::count();
+                }),
+                maxPrecision: 2,
+            )),
+            Stat::make('New Users', Number::abbreviate(
+                Cache::tags([$this->cacheTag])->remember('new-users-count', now()->addHours(24), function (): int {
+                    return User::where('created_at', '>=', Carbon::now()->subDays(30))->count();
+                }),
+                maxPrecision: 2,
+            )),
+            Stat::make('Unique Logins', Number::abbreviate(
+                Cache::tags([$this->cacheTag])->remember('unique-logins-count', now()->addHours(24), function (): int {
+                    return TrackedEventCount::where('type', TrackedEventType::UserLogin)->sum('count');
+                }),
+                maxPrecision: 2,
+            )),
+        ];
     }
 }

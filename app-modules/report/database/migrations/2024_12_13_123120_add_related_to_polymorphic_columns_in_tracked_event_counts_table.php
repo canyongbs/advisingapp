@@ -34,55 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace App\Exceptions;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use Illuminate\Auth\AuthenticationException;
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Psr\Log\LogLevel;
-use Sentry\Laravel\Integration;
-use Throwable;
-
-class Handler extends ExceptionHandler
-{
-    /**
-     * A list of exception types with their corresponding custom log levels.
-     *
-     * @var array<class-string<Throwable>, LogLevel::*>
-     */
-    protected $levels = [];
-
-    /**
-     * A list of the exception types that are not reported.
-     *
-     * @var array<int, class-string<Throwable>>
-     */
-    protected $dontReport = [];
-
-    /**
-     * A list of the inputs that are never flashed to the session on validation exceptions.
-     *
-     * @var array<int, string>
-     */
-    protected $dontFlash = [
-        'current_password',
-        'password',
-        'password_confirmation',
-    ];
-
-    /**
-     * Register the exception handling callbacks for the application.
-     */
-    public function register(): void
+return new class () extends Migration {
+    public function up(): void
     {
-        $this->reportable(function (Throwable $e) {
-            Integration::captureUnhandledException($e);
+        Schema::table('tracked_event_counts', function (Blueprint $table) {
+            $table->nullableUuidMorphs('related_to');
+            $table->dropUnique(['type']);
+            $table->uniqueIndex(['related_to_type', 'related_to_id', 'type'])->nullsNotDistinct();
         });
     }
 
-    protected function unauthenticated($request, AuthenticationException $exception)
+    public function down(): void
     {
-        return $this->shouldReturnJson($request, $exception)
-          ? response()->json(['message' => $exception->getMessage()], 401)
-          : redirect()->guest($exception->redirectTo() ?? url('/'));
+        Schema::table('tracked_event_counts', function (Blueprint $table) {
+            $table->dropUniqueIndex(['related_to_type', 'related_to_id', 'type']);
+            $table->dropColumn(['related_to_type', 'related_to_id']);
+            $table->unique(['type']);
+        });
     }
-}
+};

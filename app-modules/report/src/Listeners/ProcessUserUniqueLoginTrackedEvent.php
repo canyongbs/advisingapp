@@ -34,55 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace App\Exceptions;
+namespace AdvisingApp\Report\Listeners;
 
-use Illuminate\Auth\AuthenticationException;
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Psr\Log\LogLevel;
-use Sentry\Laravel\Integration;
-use Throwable;
+use AdvisingApp\Report\Jobs\RecordUserUniqueLoginTrackedEvent;
+use App\Features\UserTrackedEventsFeature;
+use App\Models\User;
+use Illuminate\Auth\Events\Login;
 
-class Handler extends ExceptionHandler
+class ProcessUserUniqueLoginTrackedEvent
 {
     /**
-     * A list of exception types with their corresponding custom log levels.
-     *
-     * @var array<class-string<Throwable>, LogLevel::*>
+     * Handle the event.
      */
-    protected $levels = [];
-
-    /**
-     * A list of the exception types that are not reported.
-     *
-     * @var array<int, class-string<Throwable>>
-     */
-    protected $dontReport = [];
-
-    /**
-     * A list of the inputs that are never flashed to the session on validation exceptions.
-     *
-     * @var array<int, string>
-     */
-    protected $dontFlash = [
-        'current_password',
-        'password',
-        'password_confirmation',
-    ];
-
-    /**
-     * Register the exception handling callbacks for the application.
-     */
-    public function register(): void
+    public function handle(Login $event): void
     {
-        $this->reportable(function (Throwable $e) {
-            Integration::captureUnhandledException($e);
-        });
-    }
+        $user = $event->user;
 
-    protected function unauthenticated($request, AuthenticationException $exception)
-    {
-        return $this->shouldReturnJson($request, $exception)
-          ? response()->json(['message' => $exception->getMessage()], 401)
-          : redirect()->guest($exception->redirectTo() ?? url('/'));
+        if (UserTrackedEventsFeature::active() && $user instanceof User) {
+            dispatch(new RecordUserUniqueLoginTrackedEvent(
+                occurredAt: now(),
+                user: $user,
+            ));
+        }
     }
 }
