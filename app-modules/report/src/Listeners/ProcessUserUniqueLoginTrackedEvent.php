@@ -43,18 +43,18 @@ use Illuminate\Auth\Events\Login;
 
 class ProcessUserUniqueLoginTrackedEvent
 {
-  /**
-   * Handle the event.
-   */
-  public function handle(Login $event): void
-  {
-    $user = $event->user;
+    /**
+     * Handle the event.
+     */
+    public function handle(Login $event): void
+    {
+        $user = $event->user;
 
-    if (UserTrackedEventsFeature::active() && $user instanceof User) {
-      dispatch(new RecordUserUniqueLoginTrackedEvent(
-        occurredAt: now(),
-        user: $user,
-      ));
+        if (UserTrackedEventsFeature::active() && $user instanceof User) {
+            dispatch(new RecordUserUniqueLoginTrackedEvent(
+                occurredAt: now(),
+                user: $user,
+            ));
+        }
     }
-  }
 }
