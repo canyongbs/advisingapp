@@ -44,34 +44,34 @@ use AdvisingApp\Report\Filament\Widgets\UserUniqueLoginCountLineChart;
 
 class UserLoginActivity extends UserReport
 {
-  protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-  protected static ?string $navigationLabel = 'Login Activity';
+    protected static ?string $navigationLabel = 'Login Activity';
 
-  protected static ?string $title = 'Login Activity';
+    protected static ?string $title = 'Login Activity';
 
-  protected static string $routePath = 'Users';
+    protected static string $routePath = 'Users';
 
-  protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 10;
 
-  protected $cacheTag = 'report-user-login-activity';
+    protected $cacheTag = 'report-user-login-activity';
 
-  public function getWidgets(): array
-  {
-    return [
-      RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-      UsersStats::make(['cacheTag' => $this->cacheTag]),
-      UserUniqueLoginCountLineChart::make(['cacheTag' => $this->cacheTag]),
-      UsersLoginCountTable::make(['cacheTag' => $this->cacheTag]),
-    ];
-  }
+    public function getWidgets(): array
+    {
+        return [
+            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
+            UsersStats::make(['cacheTag' => $this->cacheTag]),
+            UserUniqueLoginCountLineChart::make(['cacheTag' => $this->cacheTag]),
+            UsersLoginCountTable::make(['cacheTag' => $this->cacheTag]),
+        ];
+    }
 
-  public function getColumns(): int | string | array
-  {
-    return [
-      'sm' => 2,
-      'md' => 4,
-      'lg' => 4,
-    ];
-  }
+    public function getColumns(): int | string | array
+    {
+        return [
+            'sm' => 2,
+            'md' => 4,
+            'lg' => 4,
+        ];
+    }
 }
