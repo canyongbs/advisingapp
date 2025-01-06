@@ -34,13 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+namespace AdvisingApp\Report\Listeners;
 
-use Filament\Clusters\Cluster;
+use AdvisingApp\Report\Jobs\RecordUserUniqueLoginTrackedEvent;
+use App\Features\UserTrackedEventsFeature;
+use App\Models\User;
+use Illuminate\Auth\Events\Login;
 
-class CaseManagement extends Cluster
+class ProcessUserUniqueLoginTrackedEvent
 {
-    protected static ?string $navigationGroup = 'Engagement Features';
+    /**
+     * Handle the event.
+     */
+    public function handle(Login $event): void
+    {
+        $user = $event->user;
 
-    protected static ?int $navigationSort = 30;
+        if (UserTrackedEventsFeature::active() && $user instanceof User) {
+            dispatch(new RecordUserUniqueLoginTrackedEvent(
+                occurredAt: now(),
+                user: $user,
+            ));
+        }
+    }
 }

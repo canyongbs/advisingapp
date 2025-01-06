@@ -34,13 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+namespace App\Features;
 
-use Filament\Clusters\Cluster;
+use App\Support\AbstractFeatureFlag;
 
-class CaseManagement extends Cluster
+class UserTrackedEventsFeature extends AbstractFeatureFlag
 {
-    protected static ?string $navigationGroup = 'Engagement Features';
-
-    protected static ?int $navigationSort = 30;
+    public function resolve(mixed $scope): mixed
+    {
+        return false;
+    }
 }

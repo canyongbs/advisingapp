@@ -34,13 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+namespace AdvisingApp\Report\Database\Factories;
 
-use Filament\Clusters\Cluster;
+use AdvisingApp\Report\Enums\TrackedEventType;
+use AdvisingApp\Report\Models\TrackedEvent;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class CaseManagement extends Cluster
+/**
+ * @extends Factory<TrackedEvent>
+ */
+class TrackedEventFactory extends Factory
 {
-    protected static ?string $navigationGroup = 'Engagement Features';
-
-    protected static ?int $navigationSort = 30;
+    public function definition(): array
+    {
+        return [
+            'type' => fake()->randomElement(TrackedEventType::cases()),
+            'occurred_at' => fake()->dateTime(),
+        ];
+    }
 }

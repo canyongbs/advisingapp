@@ -34,13 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+namespace AdvisingApp\Report\Abstract;
 
-use Filament\Clusters\Cluster;
+use App\Features\UserTrackedEventsFeature;
+use App\Filament\Clusters\ReportLibrary;
+use Filament\Pages\Dashboard;
 
-class CaseManagement extends Cluster
+abstract class UserReport extends Dashboard
 {
-    protected static ?string $navigationGroup = 'Engagement Features';
+    protected static ?string $cluster = ReportLibrary::class;
 
-    protected static ?int $navigationSort = 30;
+    protected static ?string $navigationGroup = 'Users';
+
+    public static function canAccess(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return UserTrackedEventsFeature::active() && $user->can('report-library.view-any');
+    }
 }
