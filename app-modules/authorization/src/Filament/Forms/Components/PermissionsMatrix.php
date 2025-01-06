@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Authorization\Filament\Forms\Components;
 
+use AdvisingApp\Authorization\Exceptions\NonUuidPermissionIdFound;
 use AdvisingApp\Authorization\Models\PermissionGroup;
 use Closure;
 use Exception;
@@ -59,7 +60,20 @@ class PermissionsMatrix extends Field
         });
 
         $this->saveRelationshipsUsing(function (Model $record, array $state) {
-            $record->permissions()->sync($state);
+            $record->permissions()->sync(array_filter(
+                $state,
+                function (string $value) use ($state): bool {
+                    $isUuid = Str::isUuid($value);
+
+                    if (! $isUuid) {
+                        report(new NonUuidPermissionIdFound($state, $value));
+
+                        return false;
+                    }
+
+                    return true;
+                },
+            ));
             $record->forgetCachedPermissions();
         });
 
