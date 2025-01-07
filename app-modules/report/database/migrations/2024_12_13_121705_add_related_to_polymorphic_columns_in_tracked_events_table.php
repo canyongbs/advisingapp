@@ -34,13 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use Filament\Clusters\Cluster;
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::table('tracked_events', function (Blueprint $table) {
+            $table->nullableUuidMorphs('related_to');
+        });
+    }
 
-class CaseManagement extends Cluster
-{
-    protected static ?string $navigationGroup = 'Engagement Features';
-
-    protected static ?int $navigationSort = 30;
-}
+    public function down(): void
+    {
+        Schema::table('tracked_events', function (Blueprint $table) {
+            $table->dropIndex(['related_to_type', 'related_to_id']);
+            $table->dropColumn(['related_to_type', 'related_to_id']);
+        });
+    }
+};

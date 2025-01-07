@@ -73,10 +73,14 @@ class SwitchMailTask implements SwitchTenantTask
         /** @var TenantMailConfig $config */
         $config = $tenant->config->mail;
 
+        preg_match('/^(.+)\.[^.]+\.[^.]+$/', $tenant->domain, $matches);
+
+        $subDomainBasedEmail = $matches[1] . '@' . config('mail.from.root_domain');
+
         if ($config->isDemoModeEnabled ?? false) {
             $this->setMailConfig(
                 mailer: 'array',
-                fromAddress: $this->originalFromAddress,
+                fromAddress: $subDomainBasedEmail,
                 fromName: $this->originalFromName,
                 smtpHost: null,
                 smtpPort: null,
@@ -92,7 +96,7 @@ class SwitchMailTask implements SwitchTenantTask
 
         $this->setMailConfig(
             mailer: $config->mailer,
-            fromAddress: $config->fromAddress,
+            fromAddress: $subDomainBasedEmail,
             fromName: $config->fromName,
             smtpHost: $config->mailers->smtp->host,
             smtpPort: $config->mailers->smtp->port,

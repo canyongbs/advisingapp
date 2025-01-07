@@ -44,6 +44,8 @@ enum TrackedEventType: string implements HasLabel
 
     case AiThreadSaved = 'ai-thread-saved';
 
+    case UserLogin = 'user-login';
+
     public function getLabel(): ?string
     {
         return $this->name;

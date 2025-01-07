@@ -53,7 +53,7 @@ class PermissionResource extends Resource
 {
     protected static ?string $model = Permission::class;
 
-    protected static ?string $navigationGroup = 'People Administration';
+    protected static ?string $navigationGroup = 'User Management';
 
     protected static ?int $navigationSort = 40;
 

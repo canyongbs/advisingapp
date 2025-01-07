@@ -34,13 +34,44 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+namespace AdvisingApp\Report\Filament\Pages;
 
-use Filament\Clusters\Cluster;
+use AdvisingApp\Report\Abstract\UserReport;
+use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
+use AdvisingApp\Report\Filament\Widgets\UsersLoginCountTable;
+use AdvisingApp\Report\Filament\Widgets\UsersStats;
+use AdvisingApp\Report\Filament\Widgets\UserUniqueLoginCountLineChart;
 
-class CaseManagement extends Cluster
+class UserLoginActivity extends UserReport
 {
-    protected static ?string $navigationGroup = 'Engagement Features';
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static ?int $navigationSort = 30;
+    protected static ?string $navigationLabel = 'Login Activity';
+
+    protected static ?string $title = 'Login Activity';
+
+    protected static string $routePath = 'Users';
+
+    protected static ?int $navigationSort = 10;
+
+    protected $cacheTag = 'report-user-login-activity';
+
+    public function getWidgets(): array
+    {
+        return [
+            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
+            UsersStats::make(['cacheTag' => $this->cacheTag]),
+            UserUniqueLoginCountLineChart::make(['cacheTag' => $this->cacheTag]),
+            UsersLoginCountTable::make(['cacheTag' => $this->cacheTag]),
+        ];
+    }
+
+    public function getColumns(): int | string | array
+    {
+        return [
+            'sm' => 2,
+            'md' => 4,
+            'lg' => 4,
+        ];
+    }
 }

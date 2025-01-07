@@ -158,7 +158,7 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('heroicon-o-document-chart-bar')
                     ->collapsed(),
                 NavigationGroup::make()
-                    ->label('People Administration')
+                    ->label('User Management')
                     ->icon('heroicon-o-users')
                     ->collapsed(),
                 NavigationGroup::make()

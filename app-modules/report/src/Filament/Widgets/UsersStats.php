@@ -34,13 +34,45 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+namespace AdvisingApp\Report\Filament\Widgets;
 
-use Filament\Clusters\Cluster;
+use AdvisingApp\Report\Enums\TrackedEventType;
+use AdvisingApp\Report\Models\TrackedEventCount;
+use App\Models\User;
+use Carbon\Carbon;
+use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Number;
 
-class CaseManagement extends Cluster
+class UsersStats extends StatsOverviewReportWidget
 {
-    protected static ?string $navigationGroup = 'Engagement Features';
+    protected int | string | array $columnSpan = [
+        'sm' => 2,
+        'md' => 4,
+        'lg' => 4,
+    ];
 
-    protected static ?int $navigationSort = 30;
+    public function getStats(): array
+    {
+        return [
+            Stat::make('Total Users', Number::abbreviate(
+                Cache::tags([$this->cacheTag])->remember('total-users-count', now()->addHours(24), function (): int {
+                    return User::count();
+                }),
+                maxPrecision: 2,
+            )),
+            Stat::make('New Users', Number::abbreviate(
+                Cache::tags([$this->cacheTag])->remember('new-users-count', now()->addHours(24), function (): int {
+                    return User::where('created_at', '>=', Carbon::now()->subDays(30))->count();
+                }),
+                maxPrecision: 2,
+            )),
+            Stat::make('Unique Logins', Number::abbreviate(
+                Cache::tags([$this->cacheTag])->remember('unique-logins-count', now()->addHours(24), function (): int {
+                    return TrackedEventCount::where('type', TrackedEventType::UserLogin)->sum('count');
+                }),
+                maxPrecision: 2,
+            )),
+        ];
+    }
 }

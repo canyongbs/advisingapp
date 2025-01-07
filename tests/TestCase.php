@@ -233,7 +233,6 @@ abstract class TestCase extends BaseTestCase
                         )
                     ),
                     mailer: config('mail.default'),
-                    fromAddress: config('mail.from.address'),
                     fromName: config('mail.from.name')
                 ),
             ),

@@ -49,8 +49,7 @@ class Handler extends ExceptionHandler
      *
      * @var array<class-string<Throwable>, LogLevel::*>
      */
-    protected $levels = [
-    ];
+    protected $levels = [];
 
     /**
      * A list of the exception types that are not reported.
@@ -83,7 +82,7 @@ class Handler extends ExceptionHandler
     protected function unauthenticated($request, AuthenticationException $exception)
     {
         return $this->shouldReturnJson($request, $exception)
-            ? response()->json(['message' => $exception->getMessage()], 401)
-            : redirect()->guest($exception->redirectTo() ?? url('/'));
+          ? response()->json(['message' => $exception->getMessage()], 401)
+          : redirect()->guest($exception->redirectTo() ?? url('/'));
     }
 }

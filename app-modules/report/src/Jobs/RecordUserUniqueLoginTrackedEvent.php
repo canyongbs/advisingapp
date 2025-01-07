@@ -37,49 +37,59 @@
 namespace AdvisingApp\Report\Jobs;
 
 use AdvisingApp\Report\Enums\TrackedEventType;
-use AdvisingApp\Report\Models\TrackedEvent;
 use AdvisingApp\Report\Models\TrackedEventCount;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
-class RecordTrackedEvent implements ShouldQueue
+class RecordUserUniqueLoginTrackedEvent implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
 
+    /**
+     * Create a new job instance.
+     */
     public function __construct(
-        public TrackedEventType $type,
         public Carbon $occurredAt,
+        public User $user,
     ) {}
 
+    /**
+     * Execute the job.
+     */
     public function handle(): void
     {
         try {
             DB::beginTransaction();
 
-            TrackedEvent::create([
-                'type' => $this->type,
-                'occurred_at' => $this->occurredAt,
-            ]);
+            $this->user
+                ->logins()
+                ->create([
+                    'type' => TrackedEventType::UserLogin,
+                    'occurred_at' => $this->occurredAt,
+                ]);
 
             DB::table('tracked_event_counts')
                 ->upsert(
                     [
                         [
                             'id' => (new TrackedEventCount())->newUniqueId(),
-                            'type' => $this->type,
+                            'type' => TrackedEventType::UserLogin,
                             'count' => 1,
                             'last_occurred_at' => $this->occurredAt,
                             'updated_at' => now(),
                             'created_at' => now(),
+                            'related_to_id' => $this->user->id,
+                            'related_to_type' => $this->user->getMorphClass(),
                         ],
                     ],
                     ['related_to_type', 'related_to_id', 'type'],
@@ -89,6 +99,11 @@ class RecordTrackedEvent implements ShouldQueue
                         'updated_at' => now(),
                     ]
                 );
+
+            $this->user->update([
+                'first_login_at' => $this->user->first_login_at ?? $this->occurredAt,
+                'last_logged_in_at' => $this->occurredAt,
+            ]);
 
             DB::commit();
         } catch (Throwable $e) {

@@ -89,10 +89,6 @@ class ManageAmazonSesSettings extends SettingsPage
                     ->schema([
                         TextInput::make('configuration_set')
                             ->label('Configuration Set'),
-                        TextInput::make('fromAddress')
-                            ->label('From Address')
-                            ->email()
-                            ->required(),
                         TextInput::make('fromName')
                             ->label('From Name')
                             ->string()
@@ -156,7 +152,6 @@ class ManageAmazonSesSettings extends SettingsPage
                 $config->mail->isDemoModeEnabled = $data['isDemoModeEnabled'];
             } else {
                 $config->mail->isDemoModeEnabled = $data['isDemoModeEnabled'];
-                $config->mail->fromAddress = $data['fromAddress'];
                 $config->mail->fromName = $data['fromName'];
                 $config->mail->mailers->smtp->host = $data['smtp_host'];
                 $config->mail->mailers->smtp->port = $data['smtp_port'];
@@ -173,7 +168,6 @@ class ManageAmazonSesSettings extends SettingsPage
 
             unset(
                 $data['isDemoModeEnabled'],
-                $data['fromAddress'],
                 $data['fromName'],
                 $data['smtp_host'],
                 $data['smtp_port'],
@@ -235,7 +229,6 @@ class ManageAmazonSesSettings extends SettingsPage
             [
                 ...$settings->toArray(),
                 'isDemoModeEnabled' => $config->mail->isDemoModeEnabled ?? false,
-                'fromAddress' => $config->mail->fromAddress,
                 'fromName' => $config->mail->fromName,
                 'smtp_host' => $config->mail->mailers->smtp->host,
                 'smtp_port' => $config->mail->mailers->smtp->port,

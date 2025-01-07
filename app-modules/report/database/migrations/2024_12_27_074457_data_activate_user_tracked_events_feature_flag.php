@@ -34,13 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+use App\Features\UserTrackedEventsFeature;
+use Illuminate\Database\Migrations\Migration;
 
-use Filament\Clusters\Cluster;
+return new class () extends Migration {
+    public function up(): void
+    {
+        UserTrackedEventsFeature::activate();
+    }
 
-class CaseManagement extends Cluster
-{
-    protected static ?string $navigationGroup = 'Engagement Features';
-
-    protected static ?int $navigationSort = 30;
-}
+    public function down(): void
+    {
+        UserTrackedEventsFeature::deactivate();
+    }
+};

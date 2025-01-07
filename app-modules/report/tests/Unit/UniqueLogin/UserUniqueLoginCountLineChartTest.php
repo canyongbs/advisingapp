@@ -34,13 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+use AdvisingApp\Report\Enums\TrackedEventType;
+use AdvisingApp\Report\Filament\Widgets\UserUniqueLoginCountLineChart;
+use App\Models\User;
 
-use Filament\Clusters\Cluster;
+use function Pest\Livewire\livewire;
 
-class CaseManagement extends Cluster
-{
-    protected static ?string $navigationGroup = 'Engagement Features';
+it('checks users with tracked_event_type unique-login count in line chart', function () {
+    test()->travelTo(now()->setDate(2024, 12, 10));
 
-    protected static ?int $navigationSort = 30;
-}
+    User::factory()->count(5)->hasLogins(['type' => TrackedEventType::UserLogin])->create([
+        'created_at' => now()->subMonths(1),
+    ]);
+    User::factory()->count(3)->hasLogins(['type' => TrackedEventType::UserLogin])->create([
+        'created_at' => now()->subMonths(6),
+    ]);
+
+    $widgetInstance = livewire(UserUniqueLoginCountLineChart::class, ['cacheTag' => 'report-users'])->instance();
+    $invadedWidget = invade($widgetInstance);
+
+    expect($invadedWidget->getData())->toMatchSnapshot();
+});
