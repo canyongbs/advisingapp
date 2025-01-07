@@ -180,52 +180,52 @@ class ListStudents extends ListRecords implements HasBulkEngagementAction
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
-                    ->modalDescription('Are you sure you wish to delete the selected record(s)? This action cannot be reversed')
-                    ->action(function (Collection $records) {
-                        $deletedCount = 0;
-                        $notDeleteCount = 0;
+                        ->modalDescription('Are you sure you wish to delete the selected record(s)? This action cannot be reversed')
+                        ->action(function (Collection $records) {
+                            $deletedCount = 0;
+                            $notDeleteCount = 0;
 
-                        /** @var Collection|Student[] $records */
-                        foreach ($records as $record) {
-                            /** @var Student $record */
-                            $response = Gate::inspect('delete', $record);
+                            /** @var Collection|Student[] $records */
+                            foreach ($records as $record) {
+                                /** @var Student $record */
+                                $response = Gate::inspect('delete', $record);
 
-                            if ($response->allowed()) {
-                                app(DeleteStudent::class)->execute($record);
-                                $deletedCount++;
-                            } else {
-                                $notDeleteCount++;
+                                if ($response->allowed()) {
+                                    app(DeleteStudent::class)->execute($record);
+                                    $deletedCount++;
+                                } else {
+                                    $notDeleteCount++;
 
-                                continue;
+                                    continue;
+                                }
                             }
-                        }
 
-                        $wasWere = fn ($count) => $count === 1 ? 'was' : 'were';
+                            $wasWere = fn ($count) => $count === 1 ? 'was' : 'were';
 
-                        $notification = match (true) {
-                            $deletedCount === 0 => [
-                                'title' => 'None deleted',
-                                'status' => 'danger',
-                                'body' => "{$notDeleteCount} {$wasWere($notDeleteCount)} skipped because you do not have permission to delete.",
-                            ],
-                            $deletedCount > 0 && $notDeleteCount > 0 => [
-                                'title' => 'Some deleted',
-                                'status' => 'warning',
-                                'body' => "{$deletedCount} {$wasWere($deletedCount)} deleted, but {$notDeleteCount} {$wasWere($notDeleteCount)} skipped because you do not have permission to delete.",
-                            ],
-                            default => [
-                                'title' => 'Deleted',
-                                'status' => 'success',
-                                'body' => null,
-                            ],
-                        };
+                            $notification = match (true) {
+                                $deletedCount === 0 => [
+                                    'title' => 'None deleted',
+                                    'status' => 'danger',
+                                    'body' => "{$notDeleteCount} {$wasWere($notDeleteCount)} skipped because you do not have permission to delete.",
+                                ],
+                                $deletedCount > 0 && $notDeleteCount > 0 => [
+                                    'title' => 'Some deleted',
+                                    'status' => 'warning',
+                                    'body' => "{$deletedCount} {$wasWere($deletedCount)} deleted, but {$notDeleteCount} {$wasWere($notDeleteCount)} skipped because you do not have permission to delete.",
+                                ],
+                                default => [
+                                    'title' => 'Deleted',
+                                    'status' => 'success',
+                                    'body' => null,
+                                ],
+                            };
 
-                        Notification::make()
-                            ->title($notification['title'])
-                            ->{$notification['status']}()
-                            ->body($notification['body'])
-                            ->send();
-                    }),
+                            Notification::make()
+                                ->title($notification['title'])
+                                ->{$notification['status']}()
+                                ->body($notification['body'])
+                                ->send();
+                        }),
                     SubscribeBulkAction::make(),
                     BulkEngagementAction::make(context: 'students'),
                     ToggleCareTeamBulkAction::make(),

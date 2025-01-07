@@ -66,11 +66,11 @@ class ProgramPolicy
         if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
             return Response::deny('You do not have permission to create program.');
         }
-        
+
         if ($authenticatable->canAny(['program.create', 'product_admin.create'])) {
             return Response::allow();
         }
-        
+
         return Response::deny('You do not have permission to create program.');
     }
 
@@ -79,11 +79,11 @@ class ProgramPolicy
         if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
             return Response::deny('You do not have permission to update prgorams.');
         }
-        
+
         if ($authenticatable->canAny(['program.*.update', 'product_admin.*.update'])) {
             return Response::allow();
         }
-        
+
         return Response::deny('You do not have permission to update programs.');
     }
 
@@ -92,11 +92,11 @@ class ProgramPolicy
         if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
             return Response::deny('You do not have permission to delete programs.');
         }
-        
+
         if ($authenticatable->canAny(['program.*.delete', 'product_admin.*.delete'])) {
             return Response::allow();
         }
-        
+
         return Response::deny('You do not have permission to delete programs.');
     }
 
@@ -105,11 +105,11 @@ class ProgramPolicy
         if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
             return Response::deny('You do not have permission to restore programs.');
         }
-        
+
         if ($authenticatable->canAny(['program.*.restore', 'product_admin.*.restore'])) {
             return Response::allow();
         }
-        
+
         return Response::deny('You do not have permission to restore programs.');
     }
 
@@ -118,11 +118,11 @@ class ProgramPolicy
         if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
             return Response::deny('You do not have permission to force delete programs.');
         }
-        
+
         if ($authenticatable->canAny(['program.*.force-delete', 'product_admin.*.force-delete'])) {
             return Response::allow();
         }
-        
+
         return Response::deny('You do not have permission to force delete programs.');
     }
 
@@ -131,11 +131,11 @@ class ProgramPolicy
         if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
             return Response::deny('You do not have permission to import programs.');
         }
-        
+
         if ($authenticatable->canAny(['program.create', 'product_admin.create'])) {
             return Response::allow();
         }
-        
+
         return Response::deny('You do not have permission to import programs.');
     }
 }

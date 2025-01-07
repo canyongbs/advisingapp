@@ -66,11 +66,11 @@ class EnrollmentPolicy
         if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
             return Response::deny('You do not have permission to create enrollment.');
         }
-        
+
         if ($authenticatable->canAny(['enrollment.create', 'product_admin.create'])) {
             return Response::allow();
         }
-        
+
         return Response::deny('You do not have permission to create enrollment.');
     }
 
@@ -79,11 +79,11 @@ class EnrollmentPolicy
         if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
             return Response::deny('You do not have permission to update enrollments.');
         }
-        
+
         if ($authenticatable->canAny(['enrollment.*.update', 'product_admin.*.update'])) {
             return Response::allow();
         }
-        
+
         return Response::deny('You do not have permission to update enrollments.');
     }
 
@@ -92,11 +92,11 @@ class EnrollmentPolicy
         if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
             return Response::deny('You do not have permission to delete enrollments.');
         }
-        
+
         if ($authenticatable->canAny(['enrollment.*.delete', 'product_admin.*.delete'])) {
             return Response::allow();
         }
-        
+
         return Response::deny('You do not have permission to delete enrollments.');
     }
 
@@ -105,11 +105,11 @@ class EnrollmentPolicy
         if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
             return Response::deny('You do not have permission to restore enrollments.');
         }
-        
+
         if ($authenticatable->canAny(['enrollment.*.restore', 'product_admin.*.restore'])) {
             return Response::allow();
         }
-        
+
         return Response::deny('You do not have permission to restore enrollments.');
     }
 
@@ -118,11 +118,11 @@ class EnrollmentPolicy
         if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
             return Response::deny('You do not have permission to force delete enrollments.');
         }
-        
+
         if ($authenticatable->canAny(['enrollment.*.force-delete', 'product_admin.*.force-delete'])) {
             return Response::allow();
         }
-        
+
         return Response::deny('You do not have permission to force delete enrollments.');
     }
 
@@ -131,11 +131,11 @@ class EnrollmentPolicy
         if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
             return Response::deny('You do not have permission to import enrollments.');
         }
-        
+
         if ($authenticatable->canAny(['enrollment.create', 'product_admin.create'])) {
             return Response::allow();
         }
-        
+
         return Response::deny('You do not have permission to import enrollments.');
     }
 }
