@@ -37,6 +37,7 @@
 namespace AdvisingApp\StudentDataModel\Policies;
 
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
@@ -71,49 +72,79 @@ class StudentPolicy
 
     public function create(Authenticatable $authenticatable): Response
     {
-        return $authenticatable->canOrElse(
-            abilities: 'product_admin.create',
-            denyResponse: 'You do not have permission to create student.'
-        );
+        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
+            return Response::deny('You do not have permission to create student');
+        }
+
+        if ($authenticatable->canAny(['student.create', 'product_admin.create'])) {
+            return Response::allow();
+        }
+
+        return Response::deny('You do not have permission to create student.');
     }
 
     public function update(Authenticatable $authenticatable, Student $student): Response
     {
-        return $authenticatable->canOrElse(
-            abilities: 'product_admin.*.update',
-            denyResponse: 'Students cannot be updated.'
-        );
+        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
+            return Response::deny('You do not have permission to update students');
+        }
+
+        if ($authenticatable->canAny(['student.*.update', 'product_admin.*.update'])) {
+            return Response::allow();
+        }
+
+        return Response::deny('You do not have permission to update students.');
     }
 
     public function delete(Authenticatable $authenticatable, Student $student): Response
     {
-        return $authenticatable->canOrElse(
-            abilities: 'product_admin.*.delete',
-            denyResponse: 'Students cannot be deleted.'
-        );
+        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
+            return Response::deny('You do not have permission to delete students');
+        }
+
+        if ($authenticatable->canAny(['student.*.delete', 'product_admin.*.delete'])) {
+            return Response::allow();
+        }
+
+        return Response::deny('You do not have permission to delete students.');
     }
 
     public function restore(Authenticatable $authenticatable, Student $student): Response
     {
-        return $authenticatable->canOrElse(
-            abilities: 'product_admin.*.restore',
-            denyResponse: 'Students cannot be restored.'
-        );
+        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
+            return Response::deny('You do not have permission to restore students');
+        }
+
+        if ($authenticatable->canAny(['student.*.restore', 'product_admin.*.restore'])) {
+            return Response::allow();
+        }
+
+        return Response::deny('You do not have permission to restore students.');
     }
 
     public function forceDelete(Authenticatable $authenticatable, Student $student): Response
     {
-        return $authenticatable->canOrElse(
-            abilities: 'product_admin.*.force-delete',
-            denyResponse: 'Students cannot be force deleted.'
-        );
+        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
+            return Response::deny('You do not have permission to force delete students');
+        }
+
+        if ($authenticatable->canAny(['student.*.force-delete', 'product_admin.*.force-delete'])) {
+            return Response::allow();
+        }
+
+        return Response::deny('You do not have permission to force delete students.');
     }
 
     public function import(Authenticatable $authenticatable): Response
     {
-        return $authenticatable->canOrElse(
-            abilities: 'product_admin.create',
-            denyResponse: 'You do not have permission to import students.',
-        );
+        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
+            return Response::deny('You do not have permission to create a student.');
+        }
+
+        if ($authenticatable->canAny(['student.create', 'product_admin.create'])) {
+            return Response::allow();
+        }
+
+        return Response::deny('You do not have permission to create a student.');
     }
 }

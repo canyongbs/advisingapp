@@ -37,6 +37,7 @@
 namespace AdvisingApp\StudentDataModel\Policies;
 
 use AdvisingApp\StudentDataModel\Models\Program;
+use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
@@ -62,49 +63,79 @@ class ProgramPolicy
 
     public function create(Authenticatable $authenticatable): Response
     {
-        return $authenticatable->canOrElse(
-            abilities: 'product_admin.create',
-            denyResponse: 'Programs cannot be created.'
-        );
+        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
+            return Response::deny('You do not have permission to create program.');
+        }
+        
+        if ($authenticatable->canAny(['program.create', 'product_admin.create'])) {
+            return Response::allow();
+        }
+        
+        return Response::deny('You do not have permission to create program.');
     }
 
     public function update(Authenticatable $authenticatable, Program $program): Response
     {
-        return $authenticatable->canOrElse(
-            abilities: 'product_admin.*.update',
-            denyResponse: 'Programs cannot be updated.'
-        );
+        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
+            return Response::deny('You do not have permission to update prgorams.');
+        }
+        
+        if ($authenticatable->canAny(['program.*.update', 'product_admin.*.update'])) {
+            return Response::allow();
+        }
+        
+        return Response::deny('You do not have permission to update programs.');
     }
 
     public function delete(Authenticatable $authenticatable, Program $program): Response
     {
-        return $authenticatable->canOrElse(
-            abilities: 'product_admin.*.delete',
-            denyResponse: 'Programs cannot be deleted.'
-        );
+        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
+            return Response::deny('You do not have permission to delete programs.');
+        }
+        
+        if ($authenticatable->canAny(['program.*.delete', 'product_admin.*.delete'])) {
+            return Response::allow();
+        }
+        
+        return Response::deny('You do not have permission to delete programs.');
     }
 
     public function restore(Authenticatable $authenticatable, Program $program): Response
     {
-        return $authenticatable->canOrElse(
-            abilities: 'product_admin.*.restore',
-            denyResponse: 'Programs cannot be restored.'
-        );
+        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
+            return Response::deny('You do not have permission to restore programs.');
+        }
+        
+        if ($authenticatable->canAny(['program.*.restore', 'product_admin.*.restore'])) {
+            return Response::allow();
+        }
+        
+        return Response::deny('You do not have permission to restore programs.');
     }
 
     public function forceDelete(Authenticatable $authenticatable, Program $program): Response
     {
-        return $authenticatable->canOrElse(
-            abilities: 'product_admin.*.force-delete',
-            denyResponse: 'Programs cannot be force deleted.'
-        );
+        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
+            return Response::deny('You do not have permission to force delete programs.');
+        }
+        
+        if ($authenticatable->canAny(['program.*.force-delete', 'product_admin.*.force-delete'])) {
+            return Response::allow();
+        }
+        
+        return Response::deny('You do not have permission to force delete programs.');
     }
 
     public function import(Authenticatable $authenticatable): Response
     {
-        return $authenticatable->canOrElse(
-            abilities: 'product_admin.create',
-            denyResponse: 'You do not have permission to import programs.',
-        );
+        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
+            return Response::deny('You do not have permission to import programs.');
+        }
+        
+        if ($authenticatable->canAny(['program.create', 'product_admin.create'])) {
+            return Response::allow();
+        }
+        
+        return Response::deny('You do not have permission to import programs.');
     }
 }

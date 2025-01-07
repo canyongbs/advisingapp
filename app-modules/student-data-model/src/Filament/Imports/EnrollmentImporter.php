@@ -48,15 +48,6 @@ class EnrollmentImporter extends Importer
     public static function getColumns(): array
     {
         return [
-            ImportColumn::make('sisid')
-                ->label('Student ID')
-                ->requiredMapping()
-                ->example('########')
-                ->rules([
-                    'required',
-                    'string',
-                    'max:255',
-                ]),
             ImportColumn::make('division')
                 ->example('ABC01')
                 ->label('Division')
@@ -179,7 +170,10 @@ class EnrollmentImporter extends Importer
 
     public function resolveRecord(): ?Enrollment
     {
-        return new Enrollment();
+        $enrollment = new Enrollment();
+        $enrollment->student()->associate($this->options['sisid']);
+
+        return $enrollment;
     }
 
     public static function getCompletedNotificationBody(Import $import): string
