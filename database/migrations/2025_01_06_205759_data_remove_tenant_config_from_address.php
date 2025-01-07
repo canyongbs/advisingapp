@@ -35,38 +35,26 @@
 */
 
 use App\Models\Tenant;
-use Database\Factories\TenantFactory;
+use Illuminate\Database\Migrations\Migration;
 
-use function Pest\Laravel\artisan;
+return new class () extends Migration {
+    public function up(): void
+    {
+        $tenant = Tenant::current();
 
-it('changes tenant mail from address if it is hello@example.com', function () {
-    $tenant = Tenant::factory()
-        ->createQuietly(
-            [
-                'config' => tap(TenantFactory::defaultConfig(), fn ($config) => $config->mail->fromAddress = 'hello@example.com'),
-            ]
-        );
+        if (isset($tenant->config?->mail?->fromAddress)) {
+            $config = $tenant->config;
 
-    expect($tenant->config->mail->fromAddress)->toBe('hello@example.com');
+            unset($config->mail->fromAddress);
 
-    artisan('operations:process landlord 2024_03_01_173404_update_all_tenants_mail_from_address --test');
+            $tenant->config = $config;
 
-    expect($tenant->fresh()->config->mail->fromAddress)->toBe('no-reply@advising.app');
-});
+            $tenant->save();
+        }
+    }
 
-it('will not change tenant mail from address if it is not hello@example.com', function () {
-    $tenant = Tenant::factory()
-        ->createQuietly(
-            [
-                'config' => tap(TenantFactory::defaultConfig(), fn ($config) => $config->mail->fromAddress = fake()->email()),
-            ]
-        );
-
-    $email = $tenant->config->mail->fromAddress;
-
-    expect($tenant->config->mail->fromAddress)->not()->toBe('hello@example.com');
-
-    artisan('operations:process landlord 2024_03_01_173404_update_all_tenants_mail_from_address --test');
-
-    expect($tenant->fresh()->config->mail->fromAddress)->toBe($email);
-});
+    public function down(): void
+    {
+        // Not needed
+    }
+};

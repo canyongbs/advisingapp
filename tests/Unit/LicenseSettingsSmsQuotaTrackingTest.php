@@ -36,7 +36,6 @@
 
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
-use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Models\Authenticatable;
@@ -72,7 +71,10 @@ it('An sms is allowed to be sent if there is available quota and its quota usage
 
     $mockMessageList->shouldReceive('create')->andReturn(
         new MessageInstance(
-            new V2010(new MessagingBase(new Client())),
+            new V2010(new MessagingBase(new Client(
+                username: $settings->account_sid,
+                password: $settings->auth_token,
+            ))),
             [
                 'sid' => 'abc123',
                 'status' => 'queued',
@@ -125,7 +127,10 @@ it('An sms is prevented from being sent if there is no available quota', functio
 
     $mockMessageList->shouldReceive('create')->andReturn(
         new MessageInstance(
-            new V2010(new MessagingBase(new Client())),
+            new V2010(new MessagingBase(new Client(
+                username: $settings->account_sid,
+                password: $settings->auth_token,
+            ))),
             [
                 'sid' => 'abc123',
                 'status' => 'queued',
@@ -144,10 +149,14 @@ it('An sms is prevented from being sent if there is no available quota', functio
         password: $settings->auth_token,
     ));
 
-    expect(fn () => $notifiable->notify($notification))
-        ->toThrow(NotificationQuotaExceeded::class);
+    $notifiable->notify($notification);
 
-    assertDatabaseCount(OutboundDeliverable::class, 0);
+    assertDatabaseCount(OutboundDeliverable::class, 1);
+
+    $outboundDeliverable = OutboundDeliverable::first();
+
+    expect($outboundDeliverable->quota_usage)->toBe(0)
+        ->and($outboundDeliverable->delivery_status)->toBe(NotificationDeliveryStatus::RateLimited);
 });
 
 it('An sms is sent to a super admin user even if there is no available quota', function () {
@@ -176,7 +185,10 @@ it('An sms is sent to a super admin user even if there is no available quota', f
 
     $mockMessageList->shouldReceive('create')->andReturn(
         new MessageInstance(
-            new V2010(new MessagingBase(new Client())),
+            new V2010(new MessagingBase(new Client(
+                username: $settings->account_sid,
+                password: $settings->auth_token,
+            ))),
             [
                 'sid' => 'abc123',
                 'status' => 'queued',

@@ -74,7 +74,6 @@ it('renders the correct Amazon SES settings for the Tenant', function () {
 
     livewire(ManageAmazonSesSettings::class)
         ->assertFormSet([
-            'fromAddress' => $config->mail->fromAddress,
             'fromName' => $config->mail->fromName,
             'smtp_host' => $config->mail->mailers->smtp->host,
             'smtp_port' => $config->mail->mailers->smtp->port,
@@ -97,7 +96,6 @@ it('correctly edits the Amazon SES settings for the Tenant', function () {
     livewire(ManageAmazonSesSettings::class)
         ->fillForm(
             [
-                'fromAddress' => 'new@test.com',
                 'fromName' => 'new-from-name',
                 'smtp_host' => 'new-smtp-host',
                 'smtp_port' => 123,
@@ -113,8 +111,7 @@ it('correctly edits the Amazon SES settings for the Tenant', function () {
 
     $tenant->refresh();
 
-    expect($tenant->config->mail->fromAddress)->toBe('new@test.com')
-        ->and($tenant->config->mail->fromName)->toBe('new-from-name')
+    expect($tenant->config->mail->fromName)->toBe('new-from-name')
         ->and($tenant->config->mail->mailers->smtp->host)->toBe('new-smtp-host')
         ->and($tenant->config->mail->mailers->smtp->port)->toBe(123)
         ->and($tenant->config->mail->mailers->smtp->encryption)->toBe('new-smtp-encryption')
