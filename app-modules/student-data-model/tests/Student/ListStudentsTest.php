@@ -46,87 +46,85 @@ use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('can filter students by first generation', function () {
-  Student::truncate();
+    Student::truncate();
 
-  asSuperAdmin();
+    asSuperAdmin();
 
-  $studentsWithFirstGen = Student::factory()
-    ->state([
-      'firstgen' => true,
-    ])->count(5)->create();
+    $studentsWithFirstGen = Student::factory()
+        ->state([
+            'firstgen' => true,
+        ])->count(5)->create();
 
-  $studentsWithoutFirstGen = Student::factory()
-    ->state([
-      'firstgen' => false,
-    ])->count(5)->create();
+    $studentsWithoutFirstGen = Student::factory()
+        ->state([
+            'firstgen' => false,
+        ])->count(5)->create();
 
-  livewire(ListStudents::class)
-    ->set('tableRecordsPerPage', 10)
-    ->assertCanSeeTableRecords($studentsWithFirstGen->merge($studentsWithoutFirstGen))
-    ->filterTable('firstgen', true)
-    ->assertCanSeeTableRecords($studentsWithFirstGen)
-    ->assertCanNotSeeTableRecords($studentsWithoutFirstGen)
-    ->filterTable('firstgen', false)
-    ->assertCanSeeTableRecords($studentsWithoutFirstGen)
-    ->assertCanNotSeeTableRecords($studentsWithFirstGen);
+    livewire(ListStudents::class)
+        ->set('tableRecordsPerPage', 10)
+        ->assertCanSeeTableRecords($studentsWithFirstGen->merge($studentsWithoutFirstGen))
+        ->filterTable('firstgen', true)
+        ->assertCanSeeTableRecords($studentsWithFirstGen)
+        ->assertCanNotSeeTableRecords($studentsWithoutFirstGen)
+        ->filterTable('firstgen', false)
+        ->assertCanSeeTableRecords($studentsWithoutFirstGen)
+        ->assertCanNotSeeTableRecords($studentsWithFirstGen);
 });
 
 it('renders the ImportAction based on proper access', function () {
-  $user = User::factory()->licensed(Student::getLicenseType())->create();
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
 
-  $user->givePermissionTo('student.view-any');
-  $user->givePermissionTo('student.create');
+    $user->givePermissionTo('student.view-any');
+    $user->givePermissionTo('student.create');
 
-  actingAs($user);
+    actingAs($user);
 
-  livewire(ListStudents::class)
-    ->assertOk()
-    ->assertActionHidden(ImportAction::class);
+    livewire(ListStudents::class)
+        ->assertOk()
+        ->assertActionHidden(ImportAction::class);
 
+    $studentSettings = app(ManageStudentConfigurationSettings::class);
+    $studentSettings->is_enabled = true;
+    $studentSettings->save();
 
-  $studentSettings = app(ManageStudentConfigurationSettings::class);
-  $studentSettings->is_enabled = true;
-  $studentSettings->save();
+    $user->revokePermissionTo('student.create');
 
-  $user->revokePermissionTo('student.create');
+    livewire(ListStudents::class)
+        ->assertOk()
+        ->assertActionHidden(ImportAction::class);
 
-  livewire(ListStudents::class)
-    ->assertOk()
-    ->assertActionHidden(ImportAction::class);
+    $user->givePermissionTo('student.create');
 
-  $user->givePermissionTo('student.create');
-
-  livewire(ListStudents::class)
-    ->assertOk()
-    ->assertActionVisible(ImportAction::class);
+    livewire(ListStudents::class)
+        ->assertOk()
+        ->assertActionVisible(ImportAction::class);
 });
 
 it('renders the CreateAction based on proper access', function () {
-  $user = User::factory()->licensed(Student::getLicenseType())->create();
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
 
-  $user->givePermissionTo('student.view-any');
-  $user->givePermissionTo('student.create');
+    $user->givePermissionTo('student.view-any');
+    $user->givePermissionTo('student.create');
 
-  actingAs($user);
+    actingAs($user);
 
-  livewire(ListStudents::class)
-    ->assertOk()
-    ->assertActionHidden(CreateAction::class);
+    livewire(ListStudents::class)
+        ->assertOk()
+        ->assertActionHidden(CreateAction::class);
 
+    $studentSettings = app(ManageStudentConfigurationSettings::class);
+    $studentSettings->is_enabled = true;
+    $studentSettings->save();
 
-  $studentSettings = app(ManageStudentConfigurationSettings::class);
-  $studentSettings->is_enabled = true;
-  $studentSettings->save();
+    $user->revokePermissionTo('student.create');
 
-  $user->revokePermissionTo('student.create');
+    livewire(ListStudents::class)
+        ->assertOk()
+        ->assertActionHidden(CreateAction::class);
 
-  livewire(ListStudents::class)
-    ->assertOk()
-    ->assertActionHidden(CreateAction::class);
+    $user->givePermissionTo('student.create');
 
-  $user->givePermissionTo('student.create');
-
-  livewire(ListStudents::class)
-    ->assertOk()
-    ->assertActionVisible(CreateAction::class);
+    livewire(ListStudents::class)
+        ->assertOk()
+        ->assertActionVisible(CreateAction::class);
 });

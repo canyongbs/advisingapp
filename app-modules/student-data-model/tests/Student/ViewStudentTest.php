@@ -488,7 +488,6 @@ it('renders the StudentTagsAction based on proper access', function () {
 
     $user->givePermissionTo('student.*.update');
 
-
     livewire(ViewStudent::class, [
         'record' => $student->getKey(),
     ])
@@ -538,7 +537,6 @@ it('renders the DeleteAction based on proper access', function () {
     ])
         ->assertOk()
         ->assertActionHidden(DeleteAction::class);
-
 
     $studentSettings = app(ManageStudentConfigurationSettings::class);
     $studentSettings->is_enabled = true;

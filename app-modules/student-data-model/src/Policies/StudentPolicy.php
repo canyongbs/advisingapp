@@ -130,7 +130,6 @@ class StudentPolicy
 
     public function import(Authenticatable $authenticatable): Response
     {
-
         if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
             return Response::deny('Student data configuration is not enabled.');
         }
