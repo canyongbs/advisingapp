@@ -45,97 +45,89 @@ class EnrollmentPolicy
 {
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if ($authenticatable->canAny(['enrollment.view-any', 'product_admin.view-any'])) {
-            return Response::allow();
-        }
-
-        return Response::deny('You do not have permission to view enrollments.');
+        return $authenticatable->canOrElse(
+            abilities: 'enrollment.view-any',
+            denyResponse: 'You do not have permission to view enrollments.'
+        );
     }
 
     public function view(Authenticatable $authenticatable, Enrollment $enrollment): Response
     {
-        if ($authenticatable->canAny(["enrollment.{$enrollment->getKey()}.view", 'product_admin.*.view'])) {
-            return Response::allow();
-        }
-
-        return Response::deny('You do not have permission to view this enrollment.');
+        return $authenticatable->canOrElse(
+            abilities: "enrollment.{$enrollment->getKey()}.view",
+            denyResponse: 'You do not have permission to view this enrollment.'
+        );
     }
 
     public function create(Authenticatable $authenticatable): Response
     {
         if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
-            return Response::deny('You do not have permission to create enrollment.');
+            return Response::deny('Student data configuration is not enabled.');
         }
 
-        if ($authenticatable->canAny(['enrollment.create', 'product_admin.create'])) {
-            return Response::allow();
-        }
-
-        return Response::deny('You do not have permission to create enrollment.');
+        return $authenticatable->canOrElse(
+            abilities: 'enrollment.create',
+            denyResponse: 'You do not have permission to create enrollments.'
+        );
     }
 
     public function update(Authenticatable $authenticatable, Enrollment $enrollment): Response
     {
         if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
-            return Response::deny('You do not have permission to update enrollments.');
+            return Response::deny('Student data configuration is not enabled.');
         }
 
-        if ($authenticatable->canAny(['enrollment.*.update', 'product_admin.*.update'])) {
-            return Response::allow();
-        }
-
-        return Response::deny('You do not have permission to update enrollments.');
+        return $authenticatable->canOrElse(
+            abilities: 'enrollment.*.update',
+            denyResponse: 'You do not have permission to update enrollments.'
+        );
     }
 
     public function delete(Authenticatable $authenticatable, Enrollment $enrollment): Response
     {
         if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
-            return Response::deny('You do not have permission to delete enrollments.');
+            return Response::deny('Student data configuration is not enabled.');
         }
 
-        if ($authenticatable->canAny(['enrollment.*.delete', 'product_admin.*.delete'])) {
-            return Response::allow();
-        }
-
-        return Response::deny('You do not have permission to delete enrollments.');
+        return $authenticatable->canOrElse(
+            abilities: 'enrollment.*.delete',
+            denyResponse: 'You do not have permission to delete enrollments.'
+        );
     }
 
     public function restore(Authenticatable $authenticatable, Enrollment $enrollment): Response
     {
         if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
-            return Response::deny('You do not have permission to restore enrollments.');
+            return Response::deny('Student data configuration is not enabled.');
         }
 
-        if ($authenticatable->canAny(['enrollment.*.restore', 'product_admin.*.restore'])) {
-            return Response::allow();
-        }
-
-        return Response::deny('You do not have permission to restore enrollments.');
+        return $authenticatable->canOrElse(
+            abilities: 'enrollment.*.update',
+            denyResponse: 'You do not have permission to restore enrollments.'
+        );
     }
 
     public function forceDelete(Authenticatable $authenticatable, Enrollment $enrollment): Response
     {
         if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
-            return Response::deny('You do not have permission to force delete enrollments.');
+            return Response::deny('Student data configuration is not enabled.');
         }
 
-        if ($authenticatable->canAny(['enrollment.*.force-delete', 'product_admin.*.force-delete'])) {
-            return Response::allow();
-        }
-
-        return Response::deny('You do not have permission to force delete enrollments.');
+        return $authenticatable->canOrElse(
+            abilities: 'enrollment.*.force-delete',
+            denyResponse: 'You do not have permission to force delete enrollments.'
+        );
     }
 
     public function import(Authenticatable $authenticatable): Response
     {
         if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
-            return Response::deny('You do not have permission to import enrollments.');
+            return Response::deny('Student data configuration is not enabled.');
         }
 
-        if ($authenticatable->canAny(['enrollment.create', 'product_admin.create'])) {
-            return Response::allow();
-        }
-
-        return Response::deny('You do not have permission to import enrollments.');
+        return $authenticatable->canOrElse(
+            abilities: 'enrollment.create',
+            denyResponse: 'You do not have permission to create enrollments.'
+        );
     }
 }

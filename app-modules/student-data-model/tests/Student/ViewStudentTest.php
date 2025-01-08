@@ -36,11 +36,13 @@
 
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Alert\Models\AlertStatus;
+use AdvisingApp\StudentDataModel\Enums\SisSystem;
 use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableActivityFeedWidget;
 use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableAlertsWidget;
 use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableCareTeamWidget;
 use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableSubscriptionsWidget;
 use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableTasksWidget;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Actions\StudentTagsAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ApplicationSubmissionsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementFilesRelationManager;
@@ -51,8 +53,11 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationMana
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\InteractionsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ProgramsRelationManager;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
+use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Filament\Actions\DeleteAction;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
@@ -464,4 +469,94 @@ it('renders the ApplicationSubmissionsRelationManager based on Feature access', 
     ])
         ->assertOk()
         ->assertSeeLivewire($relationManager);
+});
+
+it('renders the StudentTagsAction based on proper access', function () {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+    $student = Student::factory()->create();
+
+    $user->givePermissionTo('student.view-any');
+    $user->givePermissionTo('student.*.view');
+
+    actingAs($user);
+
+    livewire(ViewStudent::class, [
+        'record' => $student->getKey(),
+    ])
+        ->assertOk()
+        ->assertActionHidden(StudentTagsAction::class);
+
+    $user->givePermissionTo('student.*.update');
+
+
+    livewire(ViewStudent::class, [
+        'record' => $student->getKey(),
+    ])
+        ->assertOk()
+        ->assertActionVisible(StudentTagsAction::class);
+});
+
+it('renders the SyncStudentSisAction based on proper access', function () {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+    $student = Student::factory()->create();
+
+    $user->givePermissionTo('student.view-any');
+    $user->givePermissionTo('student.*.view');
+
+    actingAs($user);
+
+    livewire(ViewStudent::class, [
+        'record' => $student->getKey(),
+    ])
+        ->assertOk()
+        ->assertActionHidden('refreshSis');
+
+    $sisSettings = app(StudentInformationSystemSettings::class);
+    $sisSettings->is_enabled = true;
+    $sisSettings->sis_system = SisSystem::ThesisElements;
+    $sisSettings->save();
+
+    livewire(ViewStudent::class, [
+        'record' => $student->getKey(),
+    ])
+        ->assertOk()
+        ->assertActionVisible('refreshSis');
+});
+
+it('renders the DeleteAction based on proper access', function () {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+    $student = Student::factory()->create();
+
+    $user->givePermissionTo('student.view-any');
+    $user->givePermissionTo('student.*.view');
+    $user->givePermissionTo('student.*.delete');
+
+    actingAs($user);
+
+    livewire(ViewStudent::class, [
+        'record' => $student->getKey(),
+    ])
+        ->assertOk()
+        ->assertActionHidden(DeleteAction::class);
+
+
+    $studentSettings = app(ManageStudentConfigurationSettings::class);
+    $studentSettings->is_enabled = true;
+    $studentSettings->save();
+
+    $user->revokePermissionTo('student.*.delete');
+
+    livewire(ViewStudent::class, [
+        'record' => $student->getKey(),
+    ])
+        ->assertOk()
+        ->assertActionHidden(DeleteAction::class);
+
+    $user->givePermissionTo('student.*.delete');
+
+    livewire(ViewStudent::class, [
+        'record' => $student->getKey(),
+    ])
+        ->assertOk()
+        ->assertActionVisible(DeleteAction::class);
 });

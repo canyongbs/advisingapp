@@ -181,8 +181,9 @@ class EditStudentAction extends Action
             ])
             ->action(function (array $data, Student $student) {
                 $student->update($data);
+
                 Notification::make()
-                    ->title('Saved.')
+                    ->title('Student record updated.')
                     ->success()
                     ->send();
             })

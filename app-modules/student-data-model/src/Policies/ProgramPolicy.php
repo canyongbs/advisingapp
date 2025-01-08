@@ -45,97 +45,89 @@ class ProgramPolicy
 {
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if ($authenticatable->canAny(['program.view-any', 'product_admin.view-any'])) {
-            return Response::allow();
-        }
-
-        return Response::deny('You do not have permission to view programs.');
+        return $authenticatable->canOrElse(
+            abilities: 'program.view-any',
+            denyResponse: 'You do not have permission to view programs.'
+        );
     }
 
     public function view(Authenticatable $authenticatable, Program $program): Response
     {
-        if ($authenticatable->canAny(["program.{$program->getKey()}.view", 'product_admin.*.view'])) {
-            return Response::allow();
-        }
-
-        return Response::deny('You do not have permission to view this program.');
+        return $authenticatable->canOrElse(
+            abilities: "program.{$program->getKey()}.view",
+            denyResponse: 'You do not have permission to view this program.'
+        );
     }
 
     public function create(Authenticatable $authenticatable): Response
     {
         if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
-            return Response::deny('You do not have permission to create program.');
+            return Response::deny('Student data configuration is not enabled.');
         }
 
-        if ($authenticatable->canAny(['program.create', 'product_admin.create'])) {
-            return Response::allow();
-        }
-
-        return Response::deny('You do not have permission to create program.');
+        return $authenticatable->canOrElse(
+            abilities: 'program.create',
+            denyResponse: 'You do not have permission to create programs.'
+        );
     }
 
     public function update(Authenticatable $authenticatable, Program $program): Response
     {
         if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
-            return Response::deny('You do not have permission to update prgorams.');
+            return Response::deny('Student data configuration is not enabled.');
         }
 
-        if ($authenticatable->canAny(['program.*.update', 'product_admin.*.update'])) {
-            return Response::allow();
-        }
-
-        return Response::deny('You do not have permission to update programs.');
+        return $authenticatable->canOrElse(
+            abilities: 'program.*.update',
+            denyResponse: 'You do not have permission to update programs.'
+        );
     }
 
     public function delete(Authenticatable $authenticatable, Program $program): Response
     {
         if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
-            return Response::deny('You do not have permission to delete programs.');
+            return Response::deny('Student data configuration is not enabled.');
         }
 
-        if ($authenticatable->canAny(['program.*.delete', 'product_admin.*.delete'])) {
-            return Response::allow();
-        }
-
-        return Response::deny('You do not have permission to delete programs.');
+        return $authenticatable->canOrElse(
+            abilities: 'program.*.delete',
+            denyResponse: 'You do not have permission to delete programs.'
+        );
     }
 
     public function restore(Authenticatable $authenticatable, Program $program): Response
     {
         if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
-            return Response::deny('You do not have permission to restore programs.');
+            return Response::deny('Student data configuration is not enabled.');
         }
 
-        if ($authenticatable->canAny(['program.*.restore', 'product_admin.*.restore'])) {
-            return Response::allow();
-        }
-
-        return Response::deny('You do not have permission to restore programs.');
+        return $authenticatable->canOrElse(
+            abilities: 'program.*.restore',
+            denyResponse: 'You do not have permission to restore programs.'
+        );
     }
 
     public function forceDelete(Authenticatable $authenticatable, Program $program): Response
     {
         if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
-            return Response::deny('You do not have permission to force delete programs.');
+            return Response::deny('Student data configuration is not enabled.');
         }
 
-        if ($authenticatable->canAny(['program.*.force-delete', 'product_admin.*.force-delete'])) {
-            return Response::allow();
-        }
-
-        return Response::deny('You do not have permission to force delete programs.');
+        return $authenticatable->canOrElse(
+            abilities: 'program.*.force-delete',
+            denyResponse: 'You do not have permission to force delete students.'
+        );
     }
 
     public function import(Authenticatable $authenticatable): Response
     {
         if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
-            return Response::deny('You do not have permission to import programs.');
+            return Response::deny('Student data configuration is not enabled.');
         }
 
-        if ($authenticatable->canAny(['program.create', 'product_admin.create'])) {
-            return Response::allow();
-        }
-
-        return Response::deny('You do not have permission to import programs.');
+        return $authenticatable->canOrElse(
+            abilities: 'program.create',
+            denyResponse: 'You do not have permission to create programs.'
+        );
     }
 }
