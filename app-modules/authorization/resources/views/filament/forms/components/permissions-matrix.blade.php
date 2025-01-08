@@ -112,7 +112,7 @@
         </div>
 
         <template
-            x-for="group in visiblePermissionGroups"
+            x-for="group in visiblePermissionGroups.sort()"
             x-bind:key="group"
         >
             <div
