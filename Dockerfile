@@ -1,8 +1,9 @@
 FROM ghcr.io/roadrunner-server/roadrunner:2024.3.1 AS roadrunner
-FROM serversideup/php:8.2-fpm-nginx-v2.2.1 AS base
+FROM serversideup/php:8.2-fpm-nginx-v2.2.1 AS web-serversideup
+FROM serversideup/php:8.2-cli-v2.2.1 AS cli-serversideup
 
-LABEL authors="CanyonGBS"
-LABEL maintainer="CanyonGBS"
+LABEL authors="Canyon GBS"
+LABEL maintainer="Canyon GBS"
 
 ARG POSTGRES_VERSION=15
 
@@ -14,6 +15,9 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends postgresql-client-"$POSTGRES_VERSION" \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
+
+RUN apt-get update \
+    && apt-get upgrade -y
 
 ENV NVM_VERSION v0.40.1
 ENV NODE_VERSION 23.4.0
@@ -32,6 +36,10 @@ RUN echo "source $NVM_DIR/nvm.sh \
     && nvm use default \
     && npm install -g npm@$NPM_VERSION" | bash
 
+# END OF SHARED
+
+FROM web-serversideup AS web-base
+
 COPY ./docker/s6-overlay/scripts/ /etc/s6-overlay/scripts/
 COPY docker/s6-overlay/s6-rc.d/ /etc/s6-overlay/s6-rc.d/
 COPY ./docker/s6-overlay/user/ /etc/s6-overlay/s6-rc.d/user/contents.d/
@@ -49,9 +57,6 @@ RUN rm /etc/s6-overlay/s6-rc.d/user/contents.d/php-fpm
 RUN rm -rf /etc/s6-overlay/s6-rc.d/php-fpm
 
 COPY --from=roadrunner --chown=$PUID:$PGID --chmod=0755 /usr/bin/rr /usr/local/bin/rr
-
-RUN apt-get update \
-    && apt-get upgrade -y
 
 FROM base AS development
 
