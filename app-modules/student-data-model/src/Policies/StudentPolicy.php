@@ -87,8 +87,8 @@ class StudentPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: 'student.*.update',
-            denyResponse: 'You do not have permission to update students.'
+            abilities: "student.{$student->getKey()}.update",
+            denyResponse: 'You do not have permission to update this student.'
         );
     }
 
@@ -99,8 +99,8 @@ class StudentPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: 'student.*.delete',
-            denyResponse: 'You do not have permission to delete students.'
+            abilities: "student.{$student->getKey()}.delete",
+            denyResponse: 'You do not have permission to delete this student.'
         );
     }
 
@@ -111,8 +111,8 @@ class StudentPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: 'student.*.restore',
-            denyResponse: 'You do not have permission to restore students.'
+            abilities: "student.{$student->getKey()}.restore",
+            denyResponse: 'You do not have permission to restore this student.'
         );
     }
 
@@ -123,8 +123,8 @@ class StudentPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: 'student.*.force-delete',
-            denyResponse: 'You do not have permission to force delete students.'
+            abilities: "student.{$student->getKey()}.force-delete",
+            denyResponse: 'You do not have permission to force delete this student.'
         );
     }
 
@@ -135,8 +135,8 @@ class StudentPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: 'student.create',
-            denyResponse: 'You do not have permission to create students.'
+            abilities: 'student.import',
+            denyResponse: 'You do not have permission to import students.'
         );
     }
 }
