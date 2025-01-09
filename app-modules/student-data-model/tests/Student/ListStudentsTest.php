@@ -75,7 +75,7 @@ it('renders the ImportAction based on proper access', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $user->givePermissionTo('student.view-any');
-    $user->givePermissionTo('student.create');
+    $user->givePermissionTo('student.import');
 
     actingAs($user);
 
@@ -87,13 +87,13 @@ it('renders the ImportAction based on proper access', function () {
     $studentSettings->is_enabled = true;
     $studentSettings->save();
 
-    $user->revokePermissionTo('student.create');
+    $user->revokePermissionTo('student.import');
 
     livewire(ListStudents::class)
         ->assertOk()
         ->assertActionHidden(ImportAction::class);
 
-    $user->givePermissionTo('student.create');
+    $user->givePermissionTo('student.import');
 
     livewire(ListStudents::class)
         ->assertOk()
