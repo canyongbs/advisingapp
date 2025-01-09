@@ -198,8 +198,6 @@ class ProgramsRelationManager extends RelationManager
                                     $deletedCount++;
                                 } else {
                                     $notDeleteCount++;
-
-                                    continue;
                                 }
                             }
 

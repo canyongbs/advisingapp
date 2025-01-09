@@ -150,8 +150,6 @@ class EnrollmentsRelationManager extends RelationManager
                                     $deletedCount++;
                                 } else {
                                     $notDeleteCount++;
-
-                                    continue;
                                 }
                             }
 

@@ -195,8 +195,6 @@ class ListStudents extends ListRecords implements HasBulkEngagementAction
                                     $deletedCount++;
                                 } else {
                                     $notDeleteCount++;
-
-                                    continue;
                                 }
                             }
 
