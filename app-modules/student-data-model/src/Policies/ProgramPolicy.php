@@ -78,8 +78,8 @@ class ProgramPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: 'program.*.update',
-            denyResponse: 'You do not have permission to update programs.'
+            abilities: "program.{$program->getKey()}.update",
+            denyResponse: 'You do not have permission to update this program.'
         );
     }
 
@@ -90,8 +90,8 @@ class ProgramPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: 'program.*.delete',
-            denyResponse: 'You do not have permission to delete programs.'
+            abilities: "program.{$program->getKey()}.delete",
+            denyResponse: 'You do not have permission to delete this program.'
         );
     }
 
@@ -102,8 +102,8 @@ class ProgramPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: 'program.*.restore',
-            denyResponse: 'You do not have permission to restore programs.'
+            abilities: "program.{$program->getKey()}.restore",
+            denyResponse: 'You do not have permission to restore this program.'
         );
     }
 
@@ -114,8 +114,8 @@ class ProgramPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: 'program.*.force-delete',
-            denyResponse: 'You do not have permission to force delete students.'
+            abilities: "program.{$program->getKey()}.force-delete",
+            denyResponse: 'You do not have permission to force delete this student.'
         );
     }
 
@@ -126,8 +126,8 @@ class ProgramPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: 'program.create',
-            denyResponse: 'You do not have permission to create programs.'
+            abilities: 'program.import',
+            denyResponse: 'You do not have permission to import programs.'
         );
     }
 }
