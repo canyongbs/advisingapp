@@ -59,7 +59,7 @@ it('renders the Import Programs Action based on proper access', function () {
     $user->givePermissionTo('student.view-any');
     $user->givePermissionTo('student.*.view');
     $user->givePermissionTo('program.view-any');
-    $user->givePermissionTo('program.create');
+    $user->givePermissionTo('program.import');
 
     actingAs($user);
 
@@ -74,7 +74,7 @@ it('renders the Import Programs Action based on proper access', function () {
     $studentSettings->is_enabled = true;
     $studentSettings->save();
 
-    $user->revokePermissionTo('program.create');
+    $user->revokePermissionTo('program.import');
 
     livewire(ProgramsRelationManager::class, [
         'ownerRecord' => $student,
@@ -83,7 +83,7 @@ it('renders the Import Programs Action based on proper access', function () {
         ->assertOk()
         ->assertTableActionHidden(ImportAction::class);
 
-    $user->givePermissionTo('program.create');
+    $user->givePermissionTo('program.import');
 
     livewire(ProgramsRelationManager::class, [
         'ownerRecord' => $student,
