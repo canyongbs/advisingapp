@@ -40,6 +40,7 @@ use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Audit\Models\Audit;
+use AdvisingApp\Engagement\Actions\DeliverEngagements;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use AdvisingApp\Form\Models\FormAuthentication;
 use AdvisingApp\MeetingCenter\Console\Commands\RefreshCalendarRefreshTokens;
@@ -63,6 +64,16 @@ class Kernel extends ConsoleKernel
             ->cursor()
             ->each(function (Tenant $tenant) use ($schedule) {
                 try {
+                    $schedule->call(function () use ($tenant) {
+                        $tenant->execute(function () {
+                            dispatch(new DeliverEngagements());
+                        });
+                    })
+                        ->everyMinute()
+                        ->name('DeliverEngagementsSchedule')
+                        ->onOneServer()
+                        ->withoutOverlapping();
+
                     $schedule->command("tenants:artisan \"cache:prune-stale-tags\" --tenant={$tenant->id}")
                         ->hourly()
                         ->onOneServer()
