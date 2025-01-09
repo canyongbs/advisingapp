@@ -78,8 +78,8 @@ class EnrollmentPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: 'enrollment.*.update',
-            denyResponse: 'You do not have permission to update enrollments.'
+            abilities: "enrollment.{$enrollment->getKey()}.update",
+            denyResponse: 'You do not have permission to update this enrollment.'
         );
     }
 
@@ -90,8 +90,8 @@ class EnrollmentPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: 'enrollment.*.delete',
-            denyResponse: 'You do not have permission to delete enrollments.'
+            abilities: "enrollment.{$enrollment->getKey()}.delete",
+            denyResponse: 'You do not have permission to delete this enrollment.'
         );
     }
 
@@ -102,8 +102,8 @@ class EnrollmentPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: 'enrollment.*.update',
-            denyResponse: 'You do not have permission to restore enrollments.'
+            abilities: "enrollment.{$enrollment->getKey()}.update",
+            denyResponse: 'You do not have permission to restore this enrollment.'
         );
     }
 
@@ -114,8 +114,8 @@ class EnrollmentPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: 'enrollment.*.force-delete',
-            denyResponse: 'You do not have permission to force delete enrollments.'
+            abilities: "enrollment.{$enrollment->getKey()}.force-delete",
+            denyResponse: 'You do not have permission to force delete this enrollment.'
         );
     }
 
@@ -126,8 +126,8 @@ class EnrollmentPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: 'enrollment.create',
-            denyResponse: 'You do not have permission to create enrollments.'
+            abilities: 'enrollment.import',
+            denyResponse: 'You do not have permission to import enrollments.'
         );
     }
 }
