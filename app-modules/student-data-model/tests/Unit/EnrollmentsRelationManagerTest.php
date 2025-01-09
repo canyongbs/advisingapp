@@ -59,7 +59,7 @@ it('renders the Import Enrollments Action based on proper access', function () {
     $user->givePermissionTo('student.view-any');
     $user->givePermissionTo('student.*.view');
     $user->givePermissionTo('enrollment.view-any');
-    $user->givePermissionTo('enrollment.create');
+    $user->givePermissionTo('enrollment.import');
 
     actingAs($user);
 
@@ -74,7 +74,7 @@ it('renders the Import Enrollments Action based on proper access', function () {
     $studentSettings->is_enabled = true;
     $studentSettings->save();
 
-    $user->revokePermissionTo('enrollment.create');
+    $user->revokePermissionTo('enrollment.import');
 
     livewire(EnrollmentsRelationManager::class, [
         'ownerRecord' => $student,
@@ -83,7 +83,7 @@ it('renders the Import Enrollments Action based on proper access', function () {
         ->assertOk()
         ->assertTableActionHidden(ImportAction::class);
 
-    $user->givePermissionTo('enrollment.create');
+    $user->givePermissionTo('enrollment.import');
 
     livewire(EnrollmentsRelationManager::class, [
         'ownerRecord' => $student,
