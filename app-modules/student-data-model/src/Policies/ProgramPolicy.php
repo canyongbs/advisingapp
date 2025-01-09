@@ -37,12 +37,22 @@
 namespace AdvisingApp\StudentDataModel\Policies;
 
 use AdvisingApp\StudentDataModel\Models\Program;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
 class ProgramPolicy
 {
+    public function before(Authenticatable $authenticatable): ?Response
+    {
+        if (! $authenticatable->hasLicense(Student::getLicenseType())) {
+            return Response::deny('You are not licensed for the Retention CRM.');
+        }
+
+        return null;
+    }
+
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
