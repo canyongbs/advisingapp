@@ -38,6 +38,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Relati
 
 use AdvisingApp\StudentDataModel\Filament\Imports\EnrollmentImporter;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
+use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -179,7 +180,8 @@ class EnrollmentsRelationManager extends RelationManager
                                 ->{$notification['status']}()
                                 ->body($notification['body'])
                                 ->send();
-                        }),
+                        })
+                        ->visible(fn (): bool => app(ManageStudentConfigurationSettings::class)->is_enabled && auth()->user()->can('enrollment.*.delete')),
                 ]),
             ])
             ->headerActions([
