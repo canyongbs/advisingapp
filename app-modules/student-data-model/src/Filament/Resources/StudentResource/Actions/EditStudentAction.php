@@ -34,54 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Actions;
 
-use AdvisingApp\StudentDataModel\Filament\Resources\ManageStudentResource\Pages\ListManageStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
-use App\Filament\Clusters\ConstituentManagement;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
-use Filament\Resources\Resource;
+use Filament\Infolists\Components\Actions\Action;
+use Filament\Notifications\Notification;
 
-class ManageStudentResource extends Resource
+class EditStudentAction extends Action
 {
-    protected static ?string $model = Student::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-user';
-
-    protected static ?string $cluster = ConstituentManagement::class;
-
-    protected static ?string $navigationGroup = 'Students';
-
-    protected static ?string $label = 'Students';
-
-    protected static ?int $navigationSort = 2;
-
-    public static function canAccess(): bool
+    protected function setUp(): void
     {
-        /** @var User $user */
-        $user = auth()->user();
+        parent::setUp();
 
-        return app(ManageStudentConfigurationSettings::class)->is_enabled
-            && $user->can('product_admin.view-any');
-    }
-
-    public static function form(Form $form): Form
-    {
-        return $form
-            ->schema([
+        $this
+            ->modalHeading('Edit')
+            ->modalSubmitActionLabel('Save changes')
+            ->mountUsing(function (Form $form, $record) {
+                $form->fill($record->attributesToArray());
+            })
+            ->form([
                 Section::make('Personal Information')
                     ->schema([
-                        TextInput::make('sisid')
-                            ->label('Student ID')
-                            ->required()
-                            ->string()
-                            ->maxLength(255),
                         TextInput::make('otherid')
                             ->label('Other ID')
                             ->string()
@@ -199,13 +178,17 @@ class ManageStudentResource extends Resource
                             ->maxLength(255),
                     ])
                     ->columns(3),
-            ]);
-    }
+            ])
+            ->action(function (array $data, Student $student) {
+                $student->update($data);
 
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListManageStudents::route('/'),
-        ];
+                Notification::make()
+                    ->title('Student record updated.')
+                    ->success()
+                    ->send();
+            })
+            ->authorize(function ($record) {
+                return auth()->user()->can('update', $record);
+            });
     }
 }

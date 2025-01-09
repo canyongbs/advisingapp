@@ -36,14 +36,28 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
+use AdvisingApp\StudentDataModel\Filament\Imports\ProgramImporter;
 use AdvisingApp\StudentDataModel\Models\Program;
+use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
+use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ImportAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Gate;
 
 class ProgramsRelationManager extends RelationManager
 {
@@ -162,6 +176,126 @@ class ProgramsRelationManager extends RelationManager
             ])
             ->actions([
                 ViewAction::make(),
+                EditAction::make(),
+                DeleteAction::make()
+                    ->modalDescription('Are you sure you wish to delete the selected record(s)? This action cannot be reversed'),
+            ])
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make()
+                        ->modalDescription('Are you sure you wish to delete the selected record(s)? This action cannot be reversed')
+                        ->action(function (Collection $records) {
+                            $deletedCount = 0;
+                            $notDeleteCount = 0;
+
+                            /** @var Collection|Program[] $records */
+                            foreach ($records as $record) {
+                                /** @var Program $record */
+                                $response = Gate::inspect('delete', $record);
+
+                                if ($response->allowed()) {
+                                    $record->delete();
+                                    $deletedCount++;
+                                } else {
+                                    $notDeleteCount++;
+                                }
+                            }
+
+                            $wasWere = fn ($count) => $count === 1 ? 'was' : 'were';
+
+                            $notification = match (true) {
+                                $deletedCount === 0 => [
+                                    'title' => 'None deleted',
+                                    'status' => 'danger',
+                                    'body' => "{$notDeleteCount} {$wasWere($notDeleteCount)} skipped because you do not have permission to delete.",
+                                ],
+                                $deletedCount > 0 && $notDeleteCount > 0 => [
+                                    'title' => 'Some deleted',
+                                    'status' => 'warning',
+                                    'body' => "{$deletedCount} {$wasWere($deletedCount)} deleted, but {$notDeleteCount} {$wasWere($notDeleteCount)} skipped because you do not have permission to delete.",
+                                ],
+                                default => [
+                                    'title' => 'Deleted',
+                                    'status' => 'success',
+                                    'body' => null,
+                                ],
+                            };
+
+                            Notification::make()
+                                ->title($notification['title'])
+                                ->{$notification['status']}()
+                                ->body($notification['body'])
+                                ->send();
+                        })
+                        ->visible(fn (): bool => app(ManageStudentConfigurationSettings::class)->is_enabled && auth()->user()->can('program.*.delete')),
+                ]),
+            ])
+            ->headerActions([
+                CreateAction::make(),
+                ImportAction::make()
+                    ->importer(ProgramImporter::class)
+                    ->authorize('import', Program::class)
+                    ->options(['sisid' => $this->getOwnerRecord()->getKey()]),
+            ]);
+    }
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                TextInput::make('otherid')
+                    ->label('Other ID')
+                    ->required()
+                    ->string()
+                    ->maxLength(255),
+                TextInput::make('acad_career')
+                    ->string()
+                    ->maxLength(255)
+                    ->required()
+                    ->label('ACAD career'),
+                TextInput::make('division')
+                    ->string()
+                    ->maxLength(255)
+                    ->required()
+                    ->label('Division'),
+                TextInput::make('acad_plan')
+                    ->required()
+                    ->label('ACAD plan'),
+                TextInput::make('prog_status')
+                    ->required()
+                    ->label('PROG status')
+                    ->default('AC'),
+                TextInput::make('cum_gpa')
+                    ->required()
+                    ->label('Cum GPA')
+                    ->numeric(),
+                TextInput::make('semester')
+                    ->required()
+                    ->label('Semester')
+                    ->string()
+                    ->maxLength(255),
+                TextInput::make('descr')
+                    ->required()
+                    ->label('DESCR')
+                    ->string()
+                    ->maxLength(255),
+                TextInput::make('foi')
+                    ->required()
+                    ->label('Field of interest'),
+                DateTimePicker::make('change_dt')
+                    ->required()
+                    ->label('Change date')
+                    ->native(false)
+                    ->closeOnDateSelection()
+                    ->format('Y-m-d H:i:s')
+                    ->displayFormat('Y-m-d H:i:s'),
+                DateTimePicker::make('declare_dt')
+                    ->required()
+                    ->label('Declare date')
+                    ->native(false)
+                    ->closeOnDateSelection()
+                    ->format('Y-m-d H:i:s')
+                    ->displayFormat('Y-m-d H:i:s'),
             ]);
     }
 }

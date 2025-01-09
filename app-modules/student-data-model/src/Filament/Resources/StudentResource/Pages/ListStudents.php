@@ -46,21 +46,31 @@ use AdvisingApp\Segment\Actions\BulkSegmentAction;
 use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Models\Segment;
+use AdvisingApp\StudentDataModel\Actions\DeleteStudent;
+use AdvisingApp\StudentDataModel\Filament\Imports\StudentImporter;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\TagType;
 use App\Models\Tag;
 use App\Models\User;
+use Filament\Actions\CreateAction;
+use Filament\Actions\ImportAction;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\HtmlString;
 
 class ListStudents extends ListRecords implements HasBulkEngagementAction
 {
@@ -169,6 +179,51 @@ class ListStudents extends ListRecords implements HasBulkEngagementAction
             ])
             ->bulkActions([
                 BulkActionGroup::make([
+                    DeleteBulkAction::make()
+                        ->modalDescription('Are you sure you wish to delete the selected record(s)? This action cannot be reversed')
+                        ->action(function (Collection $records) {
+                            $deletedCount = 0;
+                            $notDeleteCount = 0;
+
+                            /** @var Collection|Student[] $records */
+                            foreach ($records as $record) {
+                                /** @var Student $record */
+                                $response = Gate::inspect('delete', $record);
+
+                                if ($response->allowed()) {
+                                    app(DeleteStudent::class)->execute($record);
+                                    $deletedCount++;
+                                } else {
+                                    $notDeleteCount++;
+                                }
+                            }
+
+                            $wasWere = fn ($count) => $count === 1 ? 'was' : 'were';
+
+                            $notification = match (true) {
+                                $deletedCount === 0 => [
+                                    'title' => 'None deleted',
+                                    'status' => 'danger',
+                                    'body' => "{$notDeleteCount} {$wasWere($notDeleteCount)} skipped because you do not have permission to delete.",
+                                ],
+                                $deletedCount > 0 && $notDeleteCount > 0 => [
+                                    'title' => 'Some deleted',
+                                    'status' => 'warning',
+                                    'body' => "{$deletedCount} {$wasWere($deletedCount)} deleted, but {$notDeleteCount} {$wasWere($notDeleteCount)} skipped because you do not have permission to delete.",
+                                ],
+                                default => [
+                                    'title' => 'Deleted',
+                                    'status' => 'success',
+                                    'body' => null,
+                                ],
+                            };
+
+                            Notification::make()
+                                ->title($notification['title'])
+                                ->{$notification['status']}()
+                                ->body($notification['body'])
+                                ->send();
+                        }),
                     SubscribeBulkAction::make(),
                     BulkEngagementAction::make(context: 'students'),
                     ToggleCareTeamBulkAction::make(),
@@ -192,6 +247,12 @@ class ListStudents extends ListRecords implements HasBulkEngagementAction
 
     protected function getHeaderActions(): array
     {
-        return [];
+        return [
+            ImportAction::make()
+                ->modalDescription(fn (ImportAction $action): Htmlable => new HtmlString('Import student records from a CSV file. Records with matched SIS IDs will be updated, while new records will be created. <br><br>' . $action->getModalAction('downloadExample')->toHtml()))
+                ->importer(StudentImporter::class)
+                ->authorize('import', Student::class),
+            CreateAction::make(),
+        ];
     }
 }

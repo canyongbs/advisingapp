@@ -48,15 +48,6 @@ class ProgramImporter extends Importer
     public static function getColumns(): array
     {
         return [
-            ImportColumn::make('sisid')
-                ->label('Student ID')
-                ->requiredMapping()
-                ->example('########')
-                ->rules([
-                    'required',
-                    'string',
-                    'max:255',
-                ]),
             ImportColumn::make('otherid')
                 ->label('Other ID')
                 ->requiredMapping()
@@ -131,6 +122,7 @@ class ProgramImporter extends Importer
             ImportColumn::make('foi')
                 ->requiredMapping()
                 ->label('Field of interest')
+                ->example('Loream ipsum')
                 ->rules([
                     'required',
                     'string',
@@ -157,7 +149,10 @@ class ProgramImporter extends Importer
 
     public function resolveRecord(): ?Program
     {
-        return new Program();
+        $program = new Program();
+        $program->student()->associate($this->options['sisid']);
+
+        return $program;
     }
 
     public static function getCompletedNotificationBody(Import $import): string

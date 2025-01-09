@@ -36,12 +36,27 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
+use AdvisingApp\StudentDataModel\Filament\Imports\EnrollmentImporter;
+use AdvisingApp\StudentDataModel\Models\Enrollment;
+use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
+use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ImportAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Gate;
 
 class EnrollmentsRelationManager extends RelationManager
 {
@@ -113,6 +128,136 @@ class EnrollmentsRelationManager extends RelationManager
             ])
             ->actions([
                 ViewAction::make(),
+                EditAction::make(),
+                DeleteAction::make()
+                    ->modalDescription('Are you sure you wish to delete the selected record(s)? This action cannot be reversed'),
+            ])
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make()
+                        ->modalDescription('Are you sure you wish to delete the selected record(s)? This action cannot be reversed')
+                        ->action(function (Collection $records) {
+                            $deletedCount = 0;
+                            $notDeleteCount = 0;
+
+                            /** @var Collection|Enrollment[] $records */
+                            foreach ($records as $record) {
+                                /** @var Program $record */
+                                $response = Gate::inspect('delete', $record);
+
+                                if ($response->allowed()) {
+                                    $record->delete();
+                                    $deletedCount++;
+                                } else {
+                                    $notDeleteCount++;
+                                }
+                            }
+
+                            $wasWere = fn ($count) => $count === 1 ? 'was' : 'were';
+
+                            $notification = match (true) {
+                                $deletedCount === 0 => [
+                                    'title' => 'None deleted',
+                                    'status' => 'danger',
+                                    'body' => "{$notDeleteCount} {$wasWere($notDeleteCount)} skipped because you do not have permission to delete.",
+                                ],
+                                $deletedCount > 0 && $notDeleteCount > 0 => [
+                                    'title' => 'Some deleted',
+                                    'status' => 'warning',
+                                    'body' => "{$deletedCount} {$wasWere($deletedCount)} deleted, but {$notDeleteCount} {$wasWere($notDeleteCount)} skipped because you do not have permission to delete.",
+                                ],
+                                default => [
+                                    'title' => 'Deleted',
+                                    'status' => 'success',
+                                    'body' => null,
+                                ],
+                            };
+
+                            Notification::make()
+                                ->title($notification['title'])
+                                ->{$notification['status']}()
+                                ->body($notification['body'])
+                                ->send();
+                        })
+                        ->visible(fn (): bool => app(ManageStudentConfigurationSettings::class)->is_enabled && auth()->user()->can('enrollment.*.delete')),
+                ]),
+            ])
+            ->headerActions([
+                CreateAction::make(),
+                ImportAction::make()
+                    ->importer(EnrollmentImporter::class)
+                    ->authorize('import', Enrollment::class)
+                    ->options(['sisid' => $this->getOwnerRecord()->getKey()]),
+            ]);
+    }
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                TextInput::make('division')
+                    ->string()
+                    ->maxLength(255)
+                    ->label('Division'),
+                TextInput::make('class_nbr')
+                    ->label('Class NBR')
+                    ->string()
+                    ->maxLength(255),
+                TextInput::make('crse_grade_off')
+                    ->string()
+                    ->maxLength(255)
+                    ->label('CRSE grade off'),
+                TextInput::make('unt_taken')
+                    ->label('UNT taken')
+                    ->numeric(),
+                TextInput::make('unt_earned')
+                    ->label('UNT earned')
+                    ->numeric(),
+                DateTimePicker::make('last_upd_dt_stmp')
+                    ->label('Last UPD date STMP')
+                    ->native(false)
+                    ->closeOnDateSelection()
+                    ->format('Y-m-d H:i:s')
+                    ->displayFormat('Y-m-d H:i:s'),
+                TextInput::make('section')
+                    ->label('Section')
+                    ->string()
+                    ->maxLength(255),
+                TextInput::make('name')
+                    ->label('Name')
+                    ->string()
+                    ->maxLength(255),
+                TextInput::make('department')
+                    ->label('Department')
+                    ->string()
+                    ->maxLength(255),
+                TextInput::make('faculty_name')
+                    ->label('Faculty name')
+                    ->string()
+                    ->maxLength(255),
+                TextInput::make('faculty_email')
+                    ->label('Faculty email')
+                    ->email(),
+                TextInput::make('semester_code')
+                    ->label('Semester code')
+                    ->string()
+                    ->maxLength(255),
+                TextInput::make('semester_name')
+                    ->label('Semester name')
+                    ->string()
+                    ->maxLength(255),
+                DateTimePicker::make('start_date')
+                    ->label('Start date')
+                    ->native(false)
+                    ->closeOnDateSelection()
+                    ->format('Y-m-d H:i:s')
+                    ->displayFormat('Y-m-d H:i:s'),
+                DateTimePicker::make('end_date')
+                    ->label('End date')
+                    ->native(false)
+                    ->closeOnDateSelection()
+                    ->format('Y-m-d H:i:s')
+                    ->displayFormat('Y-m-d H:i:s'),
             ]);
     }
 }

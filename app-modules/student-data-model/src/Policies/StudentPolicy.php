@@ -37,6 +37,7 @@
 namespace AdvisingApp\StudentDataModel\Policies;
 
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
@@ -53,67 +54,89 @@ class StudentPolicy
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if ($authenticatable->canAny(['student.view-any', 'product_admin.view-any'])) {
-            return Response::allow();
-        }
-
-        return Response::deny('You do not have permission to view students.');
+        return $authenticatable->canOrElse(
+            abilities: 'student.view-any',
+            denyResponse: 'You do not have permission to view students.'
+        );
     }
 
     public function view(Authenticatable $authenticatable, Student $student): Response
     {
-        if ($authenticatable->canAny(["student.{$student->getKey()}.view", 'product_admin.*.view'])) {
-            return Response::allow();
-        }
-
-        return Response::deny('You do not have permission to view this student.');
+        return $authenticatable->canOrElse(
+            abilities: "student.{$student->getKey()}.view",
+            denyResponse: 'You do not have permission to view this student.'
+        );
     }
 
     public function create(Authenticatable $authenticatable): Response
     {
+        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
+            return Response::deny('Student data configuration is not enabled.');
+        }
+
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.create',
-            denyResponse: 'You do not have permission to create student.'
+            abilities: 'student.create',
+            denyResponse: 'You do not have permission to create students.'
         );
     }
 
     public function update(Authenticatable $authenticatable, Student $student): Response
     {
+        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
+            return Response::deny('Student data configuration is not enabled.');
+        }
+
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.*.update',
-            denyResponse: 'Students cannot be updated.'
+            abilities: "student.{$student->getKey()}.update",
+            denyResponse: 'You do not have permission to update this student.'
         );
     }
 
     public function delete(Authenticatable $authenticatable, Student $student): Response
     {
+        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
+            return Response::deny('Student data configuration is not enabled.');
+        }
+
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.*.delete',
-            denyResponse: 'Students cannot be deleted.'
+            abilities: "student.{$student->getKey()}.delete",
+            denyResponse: 'You do not have permission to delete this student.'
         );
     }
 
     public function restore(Authenticatable $authenticatable, Student $student): Response
     {
+        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
+            return Response::deny('Student data configuration is not enabled.');
+        }
+
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.*.restore',
-            denyResponse: 'Students cannot be restored.'
+            abilities: "student.{$student->getKey()}.restore",
+            denyResponse: 'You do not have permission to restore this student.'
         );
     }
 
     public function forceDelete(Authenticatable $authenticatable, Student $student): Response
     {
+        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
+            return Response::deny('Student data configuration is not enabled.');
+        }
+
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.*.force-delete',
-            denyResponse: 'Students cannot be force deleted.'
+            abilities: "student.{$student->getKey()}.force-delete",
+            denyResponse: 'You do not have permission to force delete this student.'
         );
     }
 
     public function import(Authenticatable $authenticatable): Response
     {
+        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
+            return Response::deny('Student data configuration is not enabled.');
+        }
+
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.create',
-            denyResponse: 'You do not have permission to import students.',
+            abilities: 'student.import',
+            denyResponse: 'You do not have permission to import students.'
         );
     }
 }

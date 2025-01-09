@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Schemas;
 
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Actions\EditStudentAction;
 use App\Infolists\Components\Subsection;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
@@ -85,7 +86,11 @@ class StudentProfileInfolist
                                 ->placeholder('-'),
                         ]),
                     ])
-                    ->extraAttributes(['class' => 'fi-section-has-subsections']),
+
+                    ->extraAttributes(['class' => 'fi-section-has-subsections'])
+                    ->headerActions([
+                        EditStudentAction::make('edit'),
+                    ]),
             ]);
     }
 }
