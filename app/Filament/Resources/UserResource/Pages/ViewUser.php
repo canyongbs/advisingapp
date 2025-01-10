@@ -37,6 +37,7 @@
 namespace App\Filament\Resources\UserResource\Pages;
 
 use AdvisingApp\Authorization\Models\License;
+use AdvisingApp\Team\Models\Team;
 use App\Filament\Forms\Components\Licenses;
 use App\Filament\Resources\UserResource;
 use App\Models\User;
@@ -44,6 +45,7 @@ use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
@@ -79,15 +81,23 @@ class ViewUser extends ViewRecord
                         Toggle::make('is_external')
                             ->label('User can only login via Single Sign-On (SSO)'),
                         TextInput::make('created_at')
-                            ->formatStateUsing(fn ($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
+                            ->formatStateUsing(fn($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
                             ->disabled(),
                         TextInput::make('updated_at')
-                            ->formatStateUsing(fn ($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
+                            ->formatStateUsing(fn($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
                             ->disabled(),
                     ])
                     ->disabled(),
+                Section::make('Team')
+                    ->schema([
+                        Select::make('teams')
+                            ->label('')
+                            ->relationship('teams', 'name')
+                            ->disabled(),
+                    ])
+                    ->hidden($this->record->IsAdmin),
                 Licenses::make()
-                    ->hidden(fn (?User $record) => is_null($record))
+                    ->hidden(fn(?User $record) => is_null($record))
                     ->disabled(function () {
                         /** @var User $user */
                         $user = auth()->user();
@@ -101,7 +111,7 @@ class ViewUser extends ViewRecord
     {
         FilamentView::registerRenderHook(
             PanelsRenderHook::PAGE_HEADER_ACTIONS_AFTER,
-            fn (): View => view('filament.resources.user-resource.mfa-badge'),
+            fn(): View => view('filament.resources.user-resource.mfa-badge'),
             scopes: ViewUser::class,
         );
     }
@@ -114,14 +124,14 @@ class ViewUser extends ViewRecord
         return [
             Action::make('mfa_reset')
                 ->visible(
-                    fn (User $record) => ! $record->is_external
-                    && $record->hasConfirmedMultifactor() || $record->hasEnabledMultifactor()
-                    && auth()->user()->can('resetMultifactorAuthentication', $record),
+                    fn(User $record) => ! $record->is_external
+                        && $record->hasConfirmedMultifactor() || $record->hasEnabledMultifactor()
+                        && auth()->user()->can('resetMultifactorAuthentication', $record),
                 )
                 ->label('Reset MFA')
                 ->icon('heroicon-s-lock-open')
                 ->modalDescription('Are you sure you want to reset the multifactor authentication for this user?')
-                ->action(fn (User $record) => $record->disableMultifactorAuthentication()),
+                ->action(fn(User $record) => $record->disableMultifactorAuthentication()),
             Impersonate::make()
                 ->record($user),
             EditAction::make(),

@@ -39,8 +39,10 @@ namespace App\Filament\Resources\UserResource\Pages;
 use AdvisingApp\Authorization\Models\License;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
+use AdvisingApp\Team\Models\Team;
 use App\Filament\Forms\Components\Licenses;
 use App\Filament\Resources\UserResource;
+use App\Models\Authenticatable;
 use App\Models\User;
 use App\Notifications\SetPasswordNotification;
 use App\Rules\EmailNotInUseOrSoftDeleted;
@@ -48,6 +50,7 @@ use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
@@ -87,14 +90,22 @@ class EditUser extends EditRecord
                         Toggle::make('is_external')
                             ->label('User can only login via Single Sign-On (SSO)')
                             ->live()
-                            ->afterStateUpdated(fn (Toggle $component, $state) => $state ? null : (($azureSsoSettings || $googleSsoSettings) ? $component->state(true) && $this->mountAction('showSSOModal') : null)),
+                            ->afterStateUpdated(fn(Toggle $component, $state) => $state ? null : (($azureSsoSettings || $googleSsoSettings) ? $component->state(true) && $this->mountAction('showSSOModal') : null)),
                         TextInput::make('created_at')
-                            ->formatStateUsing(fn ($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
+                            ->formatStateUsing(fn($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
                             ->disabled(),
                         TextInput::make('updated_at')
-                            ->formatStateUsing(fn ($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
+                            ->formatStateUsing(fn($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
                             ->disabled(),
                     ]),
+                Section::make('Team')
+                    ->schema([
+                        Select::make('teams')
+                            ->label('')
+                            ->options(Team::all()->pluck('name', 'id'))
+                            ->relationship('teams', 'name'),
+                    ])
+                    ->hidden($this->record->IsAdmin),
                 Licenses::make()
                     ->disabled(function () {
                         /** @var User $user */
@@ -108,7 +119,7 @@ class EditUser extends EditRecord
     public function showSSOModal(): Action
     {
         return Action::make('Warning')
-            ->action(fn () => $this->data['is_external'] = false)
+            ->action(fn() => $this->data['is_external'] = false)
             ->requiresConfirmation()
             ->modalDescription('Are you sure you would like to create this user as a local account instead of using one of the configured SSO options?')
             ->modalSubmitActionLabel('Continue')
