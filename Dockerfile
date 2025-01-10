@@ -47,11 +47,6 @@ COPY ./docker/s6-overlay/templates/ /tmp/s6-overlay-templates
 RUN rm /etc/s6-overlay/s6-rc.d/user/contents.d/php-fpm
 RUN rm -rf /etc/s6-overlay/s6-rc.d/php-fpm
 
-FROM cli-serversideup as cli-base
-
-RUN rm -rf /etc/s6-overlay/*
-COPY --chmod=755 ./docker/cli/s6-overlay/ /etc/s6-overlay/
-
 FROM web-base as web-development
 
 COPY --from=ghcr.io/roadrunner-server/roadrunner:2024.3.1 --chown=$PUID:$PGID --chmod=0755 /usr/bin/rr /usr/local/bin/rr
@@ -85,15 +80,15 @@ RUN chown -R "$PUID":"$PGID" /var/www/html \
     && find /var/www/html \( -path /var/www/html/docker -o -path /var/www/html/node_modules -o -path /var/www/html/vendor \) -prune -o -type f -print0 | xargs -0 chmod 644 \
     && chmod -R ug+rwx /var/www/html/storage /var/www/html/bootstrap/cache
 
-FROM web-base AS worker-development
+FROM cli-serversideup AS worker-base
 
 ARG TOTAL_QUEUE_WORKERS=3
 
+RUN rm -rf /etc/s6-overlay/*
+COPY --chmod=755 ./docker/worker/s6-overlay/ /etc/s6-overlay/
+
 COPY ./docker/generate-queues.sh /generate-queues.sh
 RUN chmod +x /generate-queues.sh
-
-RUN rm /etc/s6-overlay/s6-rc.d/user/contents.d/php-fpm
-RUN rm -rf /etc/s6-overlay/s6-rc.d/php-fpm
 
 FROM base AS development
 
