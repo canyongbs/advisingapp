@@ -47,6 +47,11 @@ COPY ./docker/s6-overlay/templates/ /tmp/s6-overlay-templates
 RUN rm /etc/s6-overlay/s6-rc.d/user/contents.d/php-fpm
 RUN rm -rf /etc/s6-overlay/s6-rc.d/php-fpm
 
+FROM cli-serversideup as cli-base
+
+RUN rm -rf /etc/s6-overlay/*
+COPY --chmod=755 ./docker/cli/s6-overlay/ /etc/s6-overlay/
+
 FROM web-base as web-development
 
 COPY --from=ghcr.io/roadrunner-server/roadrunner:2024.3.1 --chown=$PUID:$PGID --chmod=0755 /usr/bin/rr /usr/local/bin/rr
