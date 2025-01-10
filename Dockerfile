@@ -44,9 +44,8 @@ COPY ./docker/nginx/site-opts.d /etc/nginx/site-opts.d
 
 COPY --from=ghcr.io/roadrunner-server/roadrunner:2024.3.1 --chown=$PUID:$PGID --chmod=0755 /usr/bin/rr /usr/local/bin/rr
 
-# make sure when we setup the s6-overlay folder for web that we don't have php-fpm
-# RUN rm /etc/s6-overlay/s6-rc.d/user/contents.d/php-fpm
-# RUN rm -rf /etc/s6-overlay/s6-rc.d/php-fpm
+RUN rm -rf /etc/s6-overlay/*
+COPY --chmod=755 ./docker/web/s6-overlay/ /etc/s6-overlay/
 
 FROM web-base as web-development
 
@@ -86,7 +85,7 @@ ARG TOTAL_QUEUE_WORKERS=3
 RUN rm -rf /etc/s6-overlay/*
 COPY --chmod=755 ./docker/worker/s6-overlay/ /etc/s6-overlay/
 
-COPY ./docker/generate-queues.sh /generate-queues.sh
+COPY ./docker/worker/generate-queues.sh /generate-queues.sh
 RUN chmod +x /generate-queues.sh
 
 FROM worker-base AS worker-development
@@ -143,11 +142,10 @@ RUN chown -R "$PUID":"$PGID" /var/www/html \
 
 FROM cli-serversideup AS scheduler-base
 
-# TODO ////////////////
+RUN rm -rf /etc/s6-overlay/*
+COPY --chmod=755 ./docker/scheduler/s6-overlay/ /etc/s6-overlay/
 
 FROM scheduler-base AS scheduler-development
-
-# TODO ////////////////
 
 # Fix permission issues in development by setting the "webuser"
 # user to the same user and group that is running docker.
@@ -163,31 +161,14 @@ RUN chown -R "$PUID":"$PGID" /var/www/html \
 
 FROM scheduler-base AS scheduler-deploy
 
-# TODO ////////////////
-
-
-
-
-
-
-
-
-
-
-
-FROM base AS deploy
-
 COPY --chown=$PUID:$PGID . /var/www/html
 
-RUN npm ci --ignore-scripts \
-    && rm -rf /var/www/html/vendor \
-    && composer install --no-dev --no-interaction --no-progress --no-suggest --optimize-autoloader --apcu-autoloader \
-    && npm run build \
-    && npm ci --ignore-scripts --omit=dev
+RUN rm -rf /var/www/html/vendor \
+    && composer install --no-dev --no-interaction --no-progress --no-suggest --optimize-autoloader --apcu-autoloader
 
 RUN chown -R "$PUID":"$PGID" /var/www/html \
     && chgrp "$PGID" /var/www/html/storage/logs \
     && chmod g+s /var/www/html/storage/logs \
     && find /var/www/html -type d -print0 | xargs -0 chmod 755 \
-    && find /var/www/html \( -path /var/www/html/docker -o -path /var/www/html/node_modules -o -path /var/www/html/vendor \) -prune -o -type f -print0 | xargs -0 chmod 644 \
+    && find /var/www/html \( -path /var/www/html/docker -o -path /var/www/html/vendor \) -prune -o -type f -print0 | xargs -0 chmod 644 \
     && chmod -R ug+rwx /var/www/html/storage /var/www/html/bootstrap/cache
