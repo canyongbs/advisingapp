@@ -42,7 +42,6 @@ use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
 use AdvisingApp\Team\Models\Team;
 use App\Filament\Forms\Components\Licenses;
 use App\Filament\Resources\UserResource;
-use App\Models\Authenticatable;
 use App\Models\User;
 use App\Notifications\SetPasswordNotification;
 use App\Rules\EmailNotInUseOrSoftDeleted;
@@ -90,12 +89,12 @@ class EditUser extends EditRecord
                         Toggle::make('is_external')
                             ->label('User can only login via Single Sign-On (SSO)')
                             ->live()
-                            ->afterStateUpdated(fn(Toggle $component, $state) => $state ? null : (($azureSsoSettings || $googleSsoSettings) ? $component->state(true) && $this->mountAction('showSSOModal') : null)),
+                            ->afterStateUpdated(fn (Toggle $component, $state) => $state ? null : (($azureSsoSettings || $googleSsoSettings) ? $component->state(true) && $this->mountAction('showSSOModal') : null)),
                         TextInput::make('created_at')
-                            ->formatStateUsing(fn($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
+                            ->formatStateUsing(fn ($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
                             ->disabled(),
                         TextInput::make('updated_at')
-                            ->formatStateUsing(fn($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
+                            ->formatStateUsing(fn ($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
                             ->disabled(),
                     ]),
                 Section::make('Team')
@@ -119,7 +118,7 @@ class EditUser extends EditRecord
     public function showSSOModal(): Action
     {
         return Action::make('Warning')
-            ->action(fn() => $this->data['is_external'] = false)
+            ->action(fn () => $this->data['is_external'] = false)
             ->requiresConfirmation()
             ->modalDescription('Are you sure you would like to create this user as a local account instead of using one of the configured SSO options?')
             ->modalSubmitActionLabel('Continue')
