@@ -1,0 +1,27 @@
+#!/command/with-contenv bash
+
+# Exit on error
+set -e
+
+if [ ! -f "$WEBUSER_HOME/artisan" ]; then
+  echo "Skipping caching because we could not detect a Laravel install..."
+  exit 1
+fi
+
+if [ "${FIX_PERMISSIONS:="false"}" == "true" ]; then
+  echo "Fixing ownership and permissions..."
+
+  chown -R "$PUID":"$PGID" /var/www/html
+  find /var/www/html -type d -print0 | xargs -0 chmod 755
+  find /var/www/html \( -path /var/www/html/docker -o -path /var/www/html/node_modules -o -path /var/www/html/vendor \) -prune -o -type f -print0 | xargs -0 chmod 644
+  chmod -R ug+rwx /var/www/html/storage /var/www/html/bootstrap/cache
+  if [ -e /var/www/html/rr ]; then
+    chmod 0755 /var/www/html/rr
+  fi
+
+  echo "Ownership and permissions fixed!"
+else
+    echo "Skipping permissions fix because it was specifically disabled..."
+fi
+
+exit 0
