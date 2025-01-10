@@ -64,8 +64,6 @@ RUN chown -R "$PUID":"$PGID" /var/www/html \
 
 FROM web-base as web-deploy
 
-# TODO ////////////////
-
 COPY --chown=$PUID:$PGID . /var/www/html
 
 RUN npm ci --ignore-scripts \
