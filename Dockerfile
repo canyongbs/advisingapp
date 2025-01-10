@@ -18,7 +18,7 @@ RUN apt-get update \
 RUN apt-get update \
     && apt-get upgrade -y
 
-# TODO: Look into only moving NVM/NPM to the web container
+FROM web-serversideup AS web-base
 
 ENV NVM_VERSION v0.40.1
 ENV NODE_VERSION 23.4.0
@@ -36,8 +36,6 @@ RUN echo "source $NVM_DIR/nvm.sh \
     && nvm alias default $NODE_VERSION \
     && nvm use default \
     && npm install -g npm@$NPM_VERSION" | bash
-
-FROM web-serversideup AS web-base
 
 COPY ./docker/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./docker/nginx/site-opts.d /etc/nginx/site-opts.d
