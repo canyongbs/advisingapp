@@ -45,7 +45,7 @@ COPY --from=ghcr.io/roadrunner-server/roadrunner:2024.3.1 --chown=$PUID:$PGID --
 RUN rm -rf /etc/s6-overlay/*
 COPY --chmod=755 ./docker/web/s6-overlay/ /etc/s6-overlay/
 
-FROM web-base as web-development
+FROM web-base AS web-development
 
 # Fix permission issues in development by setting the "webuser"
 # user to the same user and group that is running docker.
@@ -59,7 +59,7 @@ RUN set-id webuser ${USER_ID} ${GROUP_ID} ; \
 RUN chown -R "$PUID":"$PGID" /var/www/html \
     && chmod g+s -R /var/www/html
 
-FROM web-base as web-deploy
+FROM web-base AS web-deploy
 
 COPY --chown=$PUID:$PGID . /var/www/html
 
