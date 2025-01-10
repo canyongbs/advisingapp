@@ -15,29 +15,3 @@ if [[ $PUID != 9999 || $PGID != 9999 ]]; then
     # Make sure the home directory is updated with the proper UID & GID
     chown webuser:webgroup $WEBUSER_HOME
 fi
-
-if [[ $S6_LOGGING != 1 ]]; then
-echo '
---------------------------------------------------------------------
-____                             ____  _     _        _   _
-/ ___|  ___ _ ____   _____ _ __  / ___|(_) __| | ___  | | | |_ __
-\___ \ / _ \  __\ \ / / _ \  __| \___ \| |/ _` |/ _ \ | | | |  _ \
-___) |  __/ |   \ V /  __/ |     ___) | | (_| |  __/ | |_| | |_) |
-|____/ \___|_|    \_/ \___|_|    |____/|_|\__,_|\___|  \___/| .__/
-                                                            |_|
-
-Brought to you by serversideup.net
---------------------------------------------------------------------'
-
-echo '
-To support Server Side Up projects visit:
-https://serversideup.net/sponsor
--------------------------------------
-GID/UID
--------------------------------------'
-echo "
-User uid:    $(id -u webuser)
-User gid:    $(id -g webuser)
--------------------------------------
-"
-fi
