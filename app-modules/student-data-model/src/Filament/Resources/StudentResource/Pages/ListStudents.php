@@ -247,6 +247,7 @@ class ListStudents extends ListRecords implements HasBulkEngagementAction
                             ->label('Student ID')
                             ->required()
                             ->string()
+                            ->unique('students', 'sisid')
                             ->maxLength(255),
                         TextInput::make('otherid')
                             ->label('Other ID')
@@ -286,6 +287,7 @@ class ListStudents extends ListRecords implements HasBulkEngagementAction
                         TextInput::make('email')
                             ->label('Primary Email')
                             ->email()
+                            ->unique('students', 'email')
                             ->required(),
                         TextInput::make('email_2')
                             ->label('Other Email')
