@@ -39,6 +39,7 @@ namespace App\Filament\Resources\UserResource\Pages;
 use AdvisingApp\Authorization\Models\License;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
+use AdvisingApp\Team\Models\Team;
 use App\Filament\Forms\Components\Licenses;
 use App\Filament\Resources\UserResource;
 use App\Models\User;
@@ -48,6 +49,7 @@ use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
@@ -95,6 +97,14 @@ class EditUser extends EditRecord
                             ->formatStateUsing(fn ($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
                             ->disabled(),
                     ]),
+                Section::make('Team')
+                    ->schema([
+                        Select::make('teams')
+                            ->label('')
+                            ->options(Team::all()->pluck('name', 'id'))
+                            ->relationship('teams', 'name'),
+                    ])
+                    ->hidden($this->record->IsAdmin),
                 Licenses::make()
                     ->disabled(function () {
                         /** @var User $user */
