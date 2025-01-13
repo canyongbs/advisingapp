@@ -4,16 +4,10 @@ services:
       context: .
       target: web-development
       args:
-        # TOTAL_QUEUE_WORKERS: '${TOTAL_QUEUE_WORKERS:-1}'
-        # MULTIPLE_DEVELOPMENT_QUEUES: '${MULTIPLE_DEVELOPMENT_QUEUES:-false}'
         USER_ID: '${SPIN_USER_ID:-9999}'
         GROUP_ID: '${SPIN_GROUP_ID:-9999}'
     environment:
       SSL_MODE: "mixed"
-    #   LANDLORD_MIGRATE: '${LANDLORD_MIGRATE:-true}'
-    #   TENANT_MIGRATE: '${TENANT_MIGRATE:-true}'
-    #   LARAVEL_SCHEDULER_ENABLED: '${LARAVEL_SCHEDULER_ENABLED:-true}'
-    #   LARAVEL_QUEUE_ENABLED: '${LARAVEL_QUEUE_ENABLED:-true}'
       LARAVEL_OCTANE_WATCH: '${LARAVEL_OCTANE_WATCH:-false}'
       CACHE_MODULES: '${CACHE_MODULES:-false}'
       CACHE_CONFIG: '${CACHE_CONFIG:-false}'
@@ -24,12 +18,6 @@ services:
       CACHE_FILAMENT_COMPONENTS: '${CACHE_FILAMENT_COMPONENTS:-false}'
       PUID: '${SPIN_USER_ID:-9999}'
       PGID: '${SPIN_GROUP_ID:-9999}'
-    #   SQS_QUEUE: '${SQS_QUEUE:-default}'
-    #   LANDLORD_SQS_QUEUE: '${LANDLORD_SQS_QUEUE:-landlord}'
-    #   OUTBOUND_COMMUNICATION_QUEUE: '${OUTBOUND_COMMUNICATION_QUEUE:-outbound-communication}'
-    #   AUDIT_QUEUE_QUEUE: '${AUDIT_QUEUE_QUEUE:-audit}'
-    #   MEETING_CENTER_QUEUE: '${MEETING_CENTER_QUEUE:-meeting-center}'
-    #   IMPORT_EXPORT_QUEUE: '${IMPORT_EXPORT_QUEUE:-import-export}'
       FIX_PERMISSIONS: '${FIX_PERMISSIONS:-true}'
     labels:
       - "traefik.enable=true"
