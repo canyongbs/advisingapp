@@ -20,7 +20,7 @@ services:
       CACHE_FILAMENT_COMPONENTS: '${CACHE_FILAMENT_COMPONENTS:-false}'
       PUID: '${PLS_USER_ID:-9999}'
       PGID: '${PLS_GROUP_ID:-9999}'
-      FIX_PERMISSIONS: '${FIX_PERMISSIONS:-true}'
+      FIX_PERMISSIONS: '${FIX_PERMISSIONS:-false}'
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.advisingapp-app.rule=HostRegexp(`advisingapp.local`, `{subdomain:[a-z0-9]+}.advisingapp.local`)"
@@ -75,7 +75,7 @@ services:
       AUDIT_QUEUE_QUEUE: '${AUDIT_QUEUE_QUEUE:-audit}'
       MEETING_CENTER_QUEUE: '${MEETING_CENTER_QUEUE:-meeting-center}'
       IMPORT_EXPORT_QUEUE: '${IMPORT_EXPORT_QUEUE:-import-export}'
-      FIX_PERMISSIONS: '${FIX_PERMISSIONS:-true}'
+      FIX_PERMISSIONS: '${FIX_PERMISSIONS:-false}'
     extra_hosts:
       - 'host.docker.internal:host-gateway'
     volumes:
@@ -108,7 +108,7 @@ services:
       CACHE_FILAMENT_COMPONENTS: false
       PUID: '${PLS_USER_ID:-9999}'
       PGID: '${PLS_GROUP_ID:-9999}'
-      FIX_PERMISSIONS: '${FIX_PERMISSIONS:-true}'
+      FIX_PERMISSIONS: '${FIX_PERMISSIONS:-false}'
     extra_hosts:
       - 'host.docker.internal:host-gateway'
     volumes:
