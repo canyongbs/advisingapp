@@ -18,6 +18,7 @@ if [ "${FIX_PERMISSIONS:="false"}" == "true" ]; then
   if [ -e /var/www/html/rr ]; then
     chmod 0755 /var/www/html/rr
   fi
+  chmod +x /var/www/html/pls
 
   echo "Ownership and permissions fixed!"
 else

@@ -4,8 +4,10 @@ services:
       context: .
       target: web-development
       args:
-        USER_ID: '${SPIN_USER_ID:-9999}'
-        GROUP_ID: '${SPIN_GROUP_ID:-9999}'
+        PUID: '${PLS_USER_ID:-9999}'
+        PGID: '${PLS_GROUP_ID:-9999}'
+    profiles:
+      - app
     environment:
       SSL_MODE: "mixed"
       LARAVEL_OCTANE_WATCH: '${LARAVEL_OCTANE_WATCH:-false}'
@@ -16,8 +18,8 @@ services:
       CACHE_EVENTS: '${CACHE_EVENTS:-false}'
       CACHE_ICONS: '${CACHE_ICONS:-false}'
       CACHE_FILAMENT_COMPONENTS: '${CACHE_FILAMENT_COMPONENTS:-false}'
-      PUID: '${SPIN_USER_ID:-9999}'
-      PGID: '${SPIN_GROUP_ID:-9999}'
+      PUID: '${PLS_USER_ID:-9999}'
+      PGID: '${PLS_GROUP_ID:-9999}'
       FIX_PERMISSIONS: '${FIX_PERMISSIONS:-true}'
     labels:
       - "traefik.enable=true"
@@ -49,8 +51,10 @@ services:
       args:
         TOTAL_QUEUE_WORKERS: '${TOTAL_QUEUE_WORKERS:-1}'
         MULTIPLE_DEVELOPMENT_QUEUES: '${MULTIPLE_DEVELOPMENT_QUEUES:-false}'
-        USER_ID: '${SPIN_USER_ID:-9999}'
-        GROUP_ID: '${SPIN_GROUP_ID:-9999}'
+        USER_ID: '${PLS_USER_ID:-9999}'
+        GROUP_ID: '${PLS_GROUP_ID:-9999}'
+    profiles:
+      - worker
     environment:
       LANDLORD_MIGRATE: '${LANDLORD_MIGRATE:-true}'
       TENANT_MIGRATE: '${TENANT_MIGRATE:-true}'
@@ -63,8 +67,8 @@ services:
       CACHE_EVENTS: false
       CACHE_ICONS: false
       CACHE_FILAMENT_COMPONENTS: false
-      PUID: '${SPIN_USER_ID:-9999}'
-      PGID: '${SPIN_GROUP_ID:-9999}'
+      PUID: '${PLS_USER_ID:-9999}'
+      PGID: '${PLS_GROUP_ID:-9999}'
       SQS_QUEUE: '${SQS_QUEUE:-default}'
       LANDLORD_SQS_QUEUE: '${LANDLORD_SQS_QUEUE:-landlord}'
       OUTBOUND_COMMUNICATION_QUEUE: '${OUTBOUND_COMMUNICATION_QUEUE:-outbound-communication}'
@@ -88,8 +92,10 @@ services:
       context: .
       target: scheduler-development
       args:
-        USER_ID: '${SPIN_USER_ID:-9999}'
-        GROUP_ID: '${SPIN_GROUP_ID:-9999}'
+        USER_ID: '${PLS_USER_ID:-9999}'
+        GROUP_ID: '${PLS_GROUP_ID:-9999}'
+    profiles:
+      - scheduler
     environment:
       # TODO: Determine if this is needed or if we should just allow not starting the service
       LARAVEL_SCHEDULER_ENABLED: '${LARAVEL_SCHEDULER_ENABLED:-true}'
@@ -100,8 +106,8 @@ services:
       CACHE_EVENTS: false
       CACHE_ICONS: false
       CACHE_FILAMENT_COMPONENTS: false
-      PUID: '${SPIN_USER_ID:-9999}'
-      PGID: '${SPIN_GROUP_ID:-9999}'
+      PUID: '${PLS_USER_ID:-9999}'
+      PGID: '${PLS_GROUP_ID:-9999}'
       FIX_PERMISSIONS: '${FIX_PERMISSIONS:-true}'
     extra_hosts:
       - 'host.docker.internal:host-gateway'
