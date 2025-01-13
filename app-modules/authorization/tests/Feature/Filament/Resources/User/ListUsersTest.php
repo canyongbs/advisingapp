@@ -423,7 +423,7 @@ it('Filter users based on Created After', function () {
         ->create();
 
     livewire(ListUsers::class)
-        ->filterTable('created_after', ['created_at'=>'11/20/2024 23:00:00'])
+        ->filterTable('created_after', ['created_at' => '11/20/2024 23:00:00'])
         ->assertCanSeeTableRecords($createdAfterUsers)
         ->assertCanNotSeeTableRecords($createdBeforeUsers);
 });
