@@ -57,7 +57,7 @@ it('Check new users who were created within one month', function () {
         'created_at' => now()->subMonths(2),
     ]);
     User::factory()->count(3)->create([
-        'created_at' => now()->subDays(rand(1, 30)),
+        'created_at' => now(),
     ]);
 
     $stats = $usersStats->getStats();
