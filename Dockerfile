@@ -1,4 +1,22 @@
 FROM serversideup/php:8.2-fpm-nginx-v2.2.1 AS web-serversideup
+
+LABEL authors="Canyon GBS"
+LABEL maintainer="Canyon GBS"
+
+ARG POSTGRES_VERSION=15
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends git gnupg php8.2-apcu php8.2-imagick php8.2-pcov php8.2-pgsql php8.2-redis php8.2-xdebug s6 unzip zip \
+    && curl -sS https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | tee /etc/apt/keyrings/pgdg.gpg >/dev/null \
+    && echo "deb [signed-by=/etc/apt/keyrings/pgdg.gpg] https://apt.postgresql.org/pub/repos/apt jammy-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends postgresql-client-"$POSTGRES_VERSION" \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
+
+RUN apt-get update \
+    && apt-get upgrade -y
+
 FROM serversideup/php:8.2-cli-v2.2.1 AS cli-serversideup
 
 LABEL authors="Canyon GBS"
@@ -42,8 +60,20 @@ COPY ./docker/nginx/site-opts.d /etc/nginx/site-opts.d
 
 COPY --from=ghcr.io/roadrunner-server/roadrunner:2024.3.1 --chown=$PUID:$PGID --chmod=0755 /usr/bin/rr /usr/local/bin/rr
 
-RUN rm -rf /etc/s6-overlay/*
+RUN rm -rf /etc/s6-overlay/s6-rc.d/laravel-automations
+RUN rm /etc/s6-overlay/s6-rc.d/user/contents.d/laravel-automations
+RUN rm /etc/s6-overlay/scripts/laravel-automations
+
+RUN rm -rf /etc/s6-overlay/s6-rc.d/msmtp
+RUN rm /etc/s6-overlay/s6-rc.d/user/contents.d/msmtp
+RUN rm /etc/s6-overlay/scripts/msmtp
+
+RUN rm -rf /etc/s6-overlay/s6-rc.d/php-fpm
+RUN rm /etc/s6-overlay/s6-rc.d/user/contents.d/php-fpm
+
 COPY --chmod=755 ./docker/web/s6-overlay/ /etc/s6-overlay/
+COPY --chmod=755 ./docker/s6-overlay-shared/s6-rc.d /etc/s6-overlay/s6-rc.d
+COPY --chmod=755 ./docker/s6-overlay-shared/scripts /etc/s6-overlay/scripts
 
 FROM web-base AS web-development
 
