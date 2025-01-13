@@ -1,5 +1,5 @@
 services:
-  advisingapp.local:
+  app:
     build:
       context: .
       target: web-development
@@ -33,6 +33,8 @@ services:
     networks:
       cgbs-development:
         ipv4_address: 172.16.1.3
+        aliases:
+          - advisingapp.local
     dns:
       - 172.16.1.1
     depends_on:
