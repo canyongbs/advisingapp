@@ -52,6 +52,47 @@ services:
       - advisingapp-mailpit
       - advisingapp-pgsql
 
+  worker:
+    build:
+      context: .
+      target: worker-development
+      args:
+        TOTAL_QUEUE_WORKERS: '${TOTAL_QUEUE_WORKERS:-1}'
+        MULTIPLE_DEVELOPMENT_QUEUES: '${MULTIPLE_DEVELOPMENT_QUEUES:-false}'
+        USER_ID: '${SPIN_USER_ID:-9999}'
+        GROUP_ID: '${SPIN_GROUP_ID:-9999}'
+    environment:
+      LANDLORD_MIGRATE: '${LANDLORD_MIGRATE:-true}'
+      TENANT_MIGRATE: '${TENANT_MIGRATE:-true}'
+      # TODO: Determine if we need LARAVEL_QUEUE_ENABLED or if we can just not start the container
+      LARAVEL_QUEUE_ENABLED: '${LARAVEL_QUEUE_ENABLED:-true}'
+      CACHE_MODULES: false
+      CACHE_CONFIG: false
+      CACHE_ROUTES: false
+      CACHE_VIEWS: false
+      CACHE_EVENTS: false
+      CACHE_ICONS: false
+      CACHE_FILAMENT_COMPONENTS: false
+      PUID: '${SPIN_USER_ID:-9999}'
+      PGID: '${SPIN_GROUP_ID:-9999}'
+      SQS_QUEUE: '${SQS_QUEUE:-default}'
+      LANDLORD_SQS_QUEUE: '${LANDLORD_SQS_QUEUE:-landlord}'
+      OUTBOUND_COMMUNICATION_QUEUE: '${OUTBOUND_COMMUNICATION_QUEUE:-outbound-communication}'
+      AUDIT_QUEUE_QUEUE: '${AUDIT_QUEUE_QUEUE:-audit}'
+      MEETING_CENTER_QUEUE: '${MEETING_CENTER_QUEUE:-meeting-center}'
+      IMPORT_EXPORT_QUEUE: '${IMPORT_EXPORT_QUEUE:-import-export}'
+      FIX_PERMISSIONS: '${FIX_PERMISSIONS:-true}'
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    volumes:
+      - '.:/var/www/html'
+    networks:
+      - cgbs-development
+    depends_on:
+      - advisingapp-redis
+      - advisingapp-mailpit
+      - advisingapp-pgsql
+
   advisingapp-redis:
     image: 'redis:alpine'
     ports:
