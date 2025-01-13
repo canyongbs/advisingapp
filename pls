@@ -18,7 +18,7 @@ main() {
   shift
 
   PROFILE=$1
-  if [[ "$PROFILE" == "app" || "$PROFILE" == "worker" || "$PROFILE" == "scheduler" ]]; then
+  if [[ $COMMAND != "logs" && "$PROFILE" == "app" || "$PROFILE" == "worker" || "$PROFILE" == "scheduler" ]]; then
     PROFILE_OPTION="--profile=$PROFILE"
     shift
   else 
