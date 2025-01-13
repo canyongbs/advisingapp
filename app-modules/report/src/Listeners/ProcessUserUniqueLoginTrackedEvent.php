@@ -37,7 +37,6 @@
 namespace AdvisingApp\Report\Listeners;
 
 use AdvisingApp\Report\Jobs\RecordUserUniqueLoginTrackedEvent;
-use App\Features\UserTrackedEventsFeature;
 use App\Models\User;
 use Illuminate\Auth\Events\Login;
 
@@ -50,7 +49,7 @@ class ProcessUserUniqueLoginTrackedEvent
     {
         $user = $event->user;
 
-        if (UserTrackedEventsFeature::active() && $user instanceof User) {
+        if ($user instanceof User) {
             dispatch(new RecordUserUniqueLoginTrackedEvent(
                 occurredAt: now(),
                 user: $user,

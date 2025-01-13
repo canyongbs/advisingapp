@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Report\Abstract;
 
-use App\Features\UserTrackedEventsFeature;
 use App\Filament\Clusters\ReportLibrary;
 use Filament\Pages\Dashboard;
 
@@ -51,6 +50,6 @@ abstract class UserReport extends Dashboard
         /** @var User $user */
         $user = auth()->user();
 
-        return UserTrackedEventsFeature::active() && $user->can('report-library.view-any');
+        return $user->can('report-library.view-any');
     }
 }
