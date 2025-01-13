@@ -84,9 +84,9 @@ FROM web-base AS web-development
 # user to the same user and group that is running docker.
 COPY ./docker/set-id /set-id
 
-ARG USER_ID
-ARG GROUP_ID
-RUN set-id webuser ${USER_ID} ${GROUP_ID} ; \
+ARG PUID
+ARG PGID
+RUN set-id webuser ${PUID} ${PGID} ; \
     rm /set-id
 
 RUN chown -R "$PUID":"$PGID" /var/www/html \
@@ -127,9 +127,9 @@ FROM worker-base AS worker-development
 # user to the same user and group that is running docker.
 COPY ./docker/set-id /set-id
 
-ARG USER_ID
-ARG GROUP_ID
-RUN set-id webuser ${USER_ID} ${GROUP_ID} ; \
+ARG PUID
+ARG PGID
+RUN set-id webuser ${PUID} ${PGID} ; \
     rm /set-id
 
 ARG MULTIPLE_DEVELOPMENT_QUEUES=false
@@ -186,9 +186,9 @@ FROM scheduler-base AS scheduler-development
 # user to the same user and group that is running docker.
 COPY ./docker/set-id /set-id
 
-ARG USER_ID
-ARG GROUP_ID
-RUN set-id webuser ${USER_ID} ${GROUP_ID} ; \
+ARG PUID
+ARG PGID
+RUN set-id webuser ${PUID} ${PGID} ; \
     rm /set-id
 
 RUN chown -R "$PUID":"$PGID" /var/www/html \
