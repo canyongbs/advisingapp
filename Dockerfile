@@ -178,6 +178,8 @@ FROM cli-serversideup AS scheduler-base
 COPY --chmod=755 ./docker/scheduler/s6-overlay/ /etc/s6-overlay/
 COPY --chmod=755 ./docker/s6-overlay-shared/ /etc/s6-overlay/
 
+ENTRYPOINT ["/init"]
+
 FROM scheduler-base AS scheduler-development
 
 # Fix permission issues in development by setting the "webuser"
