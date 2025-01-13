@@ -93,6 +93,37 @@ services:
       - advisingapp-mailpit
       - advisingapp-pgsql
 
+  scheduler:
+    build:
+      context: .
+      target: scheduler-development
+      args:
+        USER_ID: '${SPIN_USER_ID:-9999}'
+        GROUP_ID: '${SPIN_GROUP_ID:-9999}'
+    environment:
+      # TODO: Determine if this is needed or if we should just allow not starting the service
+      LARAVEL_SCHEDULER_ENABLED: '${LARAVEL_SCHEDULER_ENABLED:-true}'
+      CACHE_MODULES: false
+      CACHE_CONFIG: false
+      CACHE_ROUTES: false
+      CACHE_VIEWS: false
+      CACHE_EVENTS: false
+      CACHE_ICONS: false
+      CACHE_FILAMENT_COMPONENTS: false
+      PUID: '${SPIN_USER_ID:-9999}'
+      PGID: '${SPIN_GROUP_ID:-9999}'
+      FIX_PERMISSIONS: '${FIX_PERMISSIONS:-true}'
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    volumes:
+      - '.:/var/www/html'
+    networks:
+      - cgbs-development
+    depends_on:
+      - advisingapp-redis
+      - advisingapp-mailpit
+      - advisingapp-pgsql
+
   advisingapp-redis:
     image: 'redis:alpine'
     ports:
