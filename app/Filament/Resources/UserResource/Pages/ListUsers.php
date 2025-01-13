@@ -51,7 +51,6 @@ use App\Settings\DisplaySettings;
 use Carbon\Carbon;
 use Filament\Actions\CreateAction;
 use Filament\Actions\ImportAction;
-use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
@@ -248,10 +247,10 @@ class ListUsers extends ListRecords
                 Filter::make('created_after')
                     ->form([
                         DateTimePicker::make('created_at')
-                        ->label('Created After')
-                        ->format('m/d/Y H:i:s')
-                        ->displayFormat('m/d/Y H:i:s')
-                        ->native(false),
+                            ->label('Created After')
+                            ->format('m/d/Y H:i:s')
+                            ->displayFormat('m/d/Y H:i:s')
+                            ->native(false),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
@@ -264,7 +263,7 @@ class ListUsers extends ListRecords
                         if (! $data['created_at']) {
                             return null;
                         }
-                 
+
                         return 'Created After ' . Carbon::parse($data['created_at'], app(DisplaySettings::class)->getTimezone() ?? config('app.timezone'))->setTimezone('UTC')->format('m/d/Y H:i:s');
                     }),
             ])
