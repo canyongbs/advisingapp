@@ -76,8 +76,7 @@ RUN rm -rf /etc/s6-overlay/s6-rc.d/php-fpm
 RUN rm /etc/s6-overlay/s6-rc.d/user/contents.d/php-fpm
 
 COPY --chmod=755 ./docker/web/s6-overlay/ /etc/s6-overlay/
-COPY --chmod=755 ./docker/s6-overlay-shared/s6-rc.d /etc/s6-overlay/s6-rc.d
-COPY --chmod=755 ./docker/s6-overlay-shared/scripts /etc/s6-overlay/scripts
+COPY --chmod=755 ./docker/s6-overlay-shared /etc/s6-overlay
 
 FROM web-base AS web-development
 
@@ -114,11 +113,13 @@ FROM cli-serversideup AS worker-base
 
 ARG TOTAL_QUEUE_WORKERS=3
 
-RUN rm -rf /etc/s6-overlay/*
-COPY --chmod=755 ./docker/worker/s6-overlay/ /etc/s6-overlay/
+COPY --chmod=755 ./docker/s6-overlay-shared/ /etc/s6-overlay/
 
 COPY ./docker/worker/generate-queues.sh /generate-queues.sh
+COPY ./docker/worker/templates/ /tmp/s6-overlay-templates
 RUN chmod +x /generate-queues.sh
+
+ENTRYPOINT ["/init"]
 
 FROM worker-base AS worker-development
 
@@ -174,8 +175,8 @@ RUN chown -R "$PUID":"$PGID" /var/www/html \
 
 FROM cli-serversideup AS scheduler-base
 
-RUN rm -rf /etc/s6-overlay/*
 COPY --chmod=755 ./docker/scheduler/s6-overlay/ /etc/s6-overlay/
+COPY --chmod=755 ./docker/s6-overlay-shared/ /etc/s6-overlay/
 
 FROM scheduler-base AS scheduler-development
 
