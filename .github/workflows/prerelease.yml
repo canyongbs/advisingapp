@@ -57,14 +57,27 @@ jobs:
           container-name: "app"
           image: ${{ steps.build-image.outputs.image }}
 
-      # - name: Deploy Amazon ECS task definition
-      #   # SHA of release v2.2.0
-      #   uses: aws-actions/amazon-ecs-deploy-task-definition@0e82244a9c6dac43d70151a94c67ebc4bab18fc5
-      #   with:
-      #     task-definition: ${{ steps.task-def.outputs.task-definition }}
-      #     service: "advisingapp-dev-service"
-      #     cluster: "advisingapp-dev"
-      #     wait-for-service-stability: true
+      - name: Deploy Amazon ECS task definition
+        id: task-deploy
+        # SHA of release v2.2.0
+        uses: aws-actions/amazon-ecs-deploy-task-definition@0e82244a9c6dac43d70151a94c67ebc4bab18fc5
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: "advisingapp-dev-service"
+          cluster: "advisingapp-dev"
+          wait-for-service-stability: true
+
+      - name: Check if deployment was successful
+        id: check-deployment
+        run: |
+          CURRENT_TASK_DEF_ARN=$(aws ecs describe-services --cluster advisingapp-dev --services advisingapp-dev-service --query services[0].deployments[0].taskDefinition | jq -r ".")
+          NEW_TASK_DEF_ARN=${{ steps.task-deploy.outputs.task-definition-arn }}
+          echo "Current task arn: $CURRENT_TASK_DEF_ARN"
+          echo "New task arn: $NEW_TASK_DEF_ARN"
+          if [ "$CURRENT_TASK_DEF_ARN" != "$NEW_TASK_DEF_ARN" ]; then
+            echo "Deployment failed."
+            exit 1
+          fi
 
   deploy-worker:
     name: Deploy Worker Service
@@ -115,14 +128,27 @@ jobs:
           container-name: "worker"
           image: ${{ steps.build-image.outputs.image }}
 
-      # - name: Deploy Amazon ECS task definition
-      #   # SHA of release v2.2.0
-      #   uses: aws-actions/amazon-ecs-deploy-task-definition@0e82244a9c6dac43d70151a94c67ebc4bab18fc5
-      #   with:
-      #     task-definition: ${{ steps.task-def.outputs.task-definition }}
-      #     service: "advisingapp-dev-service"
-      #     cluster: "advisingapp-dev"
-      #     wait-for-service-stability: true
+      - name: Deploy Amazon ECS task definition
+        id: task-deploy
+        # SHA of release v2.2.0
+        uses: aws-actions/amazon-ecs-deploy-task-definition@0e82244a9c6dac43d70151a94c67ebc4bab18fc5
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: "advisingapp-worker-dev-service"
+          cluster: "advisingapp-dev"
+          wait-for-service-stability: true
+
+      - name: Check if deployment was successful
+        id: check-deployment
+        run: |
+          CURRENT_TASK_DEF_ARN=$(aws ecs describe-services --cluster advisingapp-dev --services advisingapp-worker-dev-service --query services[0].deployments[0].taskDefinition | jq -r ".")
+          NEW_TASK_DEF_ARN=${{ steps.task-deploy.outputs.task-definition-arn }}
+          echo "Current task arn: $CURRENT_TASK_DEF_ARN"
+          echo "New task arn: $NEW_TASK_DEF_ARN"
+          if [ "$CURRENT_TASK_DEF_ARN" != "$NEW_TASK_DEF_ARN" ]; then
+            echo "Deployment failed."
+            exit 1
+          fi
 
   deploy-scheduler:
     name: Deploy Scheduler Service
@@ -173,17 +199,31 @@ jobs:
           container-name: "scheduler"
           image: ${{ steps.build-image.outputs.image }}
 
-      # - name: Deploy Amazon ECS task definition
-      #   # SHA of release v2.2.0
-      #   uses: aws-actions/amazon-ecs-deploy-task-definition@0e82244a9c6dac43d70151a94c67ebc4bab18fc5
-      #   with:
-      #     task-definition: ${{ steps.task-def.outputs.task-definition }}
-      #     service: "advisingapp-dev-service"
-      #     cluster: "advisingapp-dev"
-      #     wait-for-service-stability: true
+      - name: Deploy Amazon ECS task definition
+        id: task-deploy
+        # SHA of release v2.2.0
+        uses: aws-actions/amazon-ecs-deploy-task-definition@0e82244a9c6dac43d70151a94c67ebc4bab18fc5
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: "advisingapp-scheduler-dev-service"
+          cluster: "advisingapp-dev"
+          wait-for-service-stability: true
+
+      - name: Check if deployment was successful
+        id: check-deployment
+        run: |
+          CURRENT_TASK_DEF_ARN=$(aws ecs describe-services --cluster advisingapp-dev --services advisingapp-worker-dev-service --query services[0].deployments[0].taskDefinition | jq -r ".")
+          NEW_TASK_DEF_ARN=${{ steps.task-deploy.outputs.task-definition-arn }}
+          echo "Current task arn: $CURRENT_TASK_DEF_ARN"
+          echo "New task arn: $NEW_TASK_DEF_ARN"
+          if [ "$CURRENT_TASK_DEF_ARN" != "$NEW_TASK_DEF_ARN" ]; then
+            echo "Deployment failed."
+            exit 1
+          fi
 
   deploy-release-automation:
     name: Deploy and Run Release Automation Service
+    needs: [deploy-web, deploy-worker, deploy-scheduler]
     runs-on: ubuntu-22.04
     environment: staging
 
@@ -231,11 +271,17 @@ jobs:
           container-name: "release-automation"
           image: ${{ steps.build-image.outputs.image }}
 
-      # - name: Deploy Amazon ECS task definition
-      #   # SHA of release v2.2.0
-      #   uses: aws-actions/amazon-ecs-deploy-task-definition@0e82244a9c6dac43d70151a94c67ebc4bab18fc5
-      #   with:
-      #     task-definition: ${{ steps.task-def.outputs.task-definition }}
-      #     service: "advisingapp-dev-service"
-      #     cluster: "advisingapp-dev"
-      #     wait-for-service-stability: true
+      - name: Deploy Amazon ECS task definition
+        # SHA of release v2.2.0
+        uses: aws-actions/amazon-ecs-deploy-task-definition@0e82244a9c6dac43d70151a94c67ebc4bab18fc5
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          cluster: "advisingapp-dev"
+          desired-count: 1
+          run-task: true
+          run-task-security-groups: ${{ secrets.RELEASE_AUTOMATION_SECURITY_GROUPS }}
+          run-task-subnets: ${{ secrets.RELEASE_AUTOMATION_SUBNETS }}
+          run-task-assign-public-IP: "DISABLED"
+          run-task-launch-type: "FARGATE"
+          wait-for-task-stopped: true
+          wait-for-service-stability: true
