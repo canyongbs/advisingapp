@@ -56,8 +56,6 @@ services:
     profiles:
       - worker
     environment:
-      LANDLORD_MIGRATE: '${LANDLORD_MIGRATE:-true}'
-      TENANT_MIGRATE: '${TENANT_MIGRATE:-true}'
       # TODO: Determine if we need LARAVEL_QUEUE_ENABLED or if we can just not start the container
       LARAVEL_QUEUE_ENABLED: '${LARAVEL_QUEUE_ENABLED:-true}'
       CACHE_MODULES: false
