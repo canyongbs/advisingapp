@@ -9,14 +9,14 @@ cd "$WEBUSER_HOME" || exit 0
 
 echo "Generating API documentation..."
 
-  {
-    USERNAME=$(id -nu "$PUID")
+{
+USERNAME=$(id -nu "$PUID")
 
-    s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" api:print-schema \
-    && s6-setuidgid "$USERNAME" npm run api-docs:generate \
-    && echo "API documentation generation complete!"
-  } || {
-    echo "API documentation generation failed!"
-  }
+s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" api:print-schema \
+&& s6-setuidgid "$USERNAME" npm run api-docs:generate \
+&& echo "API documentation generation complete!"
+} || {
+echo "API documentation generation failed!"
+}
 
 exit 0
