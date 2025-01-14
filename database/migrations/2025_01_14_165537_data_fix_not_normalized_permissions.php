@@ -1,9 +1,8 @@
 <?php
 
-use AdvisingApp\Authorization\Models\Permission;
-use AdvisingApp\Authorization\Models\PermissionGroup;
 use Database\Migrations\Concerns\CanModifyPermissions;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
 return new class () extends Migration {
     use CanModifyPermissions;
@@ -23,10 +22,10 @@ return new class () extends Migration {
                     ], $guard);
                 });
 
-            Permission::query()
+            DB::table('permissions')
                 ->where('name', 'like', 'realtime_chat.%')
                 ->update([
-                    'group_id' => PermissionGroup::query()
+                    'group_id' => DB::table('permission_groups')
                         ->where('name', 'Realtime Chat')
                         ->value('id'),
                 ]);
