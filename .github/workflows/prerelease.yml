@@ -9,7 +9,7 @@ env:
 
 jobs:
   deploy-web:
-    name: Deploy
+    name: Deploy Web Service
     runs-on: ubuntu-22.04
     environment: staging
 
@@ -67,7 +67,7 @@ jobs:
       #     wait-for-service-stability: true
 
   deploy-worker:
-    name: Deploy
+    name: Deploy Worker Service
     runs-on: ubuntu-22.04
     environment: staging
 
@@ -125,7 +125,7 @@ jobs:
       #     wait-for-service-stability: true
 
   deploy-scheduler:
-    name: Deploy
+    name: Deploy Scheduler Service
     runs-on: ubuntu-22.04
     environment: staging
 
@@ -183,7 +183,7 @@ jobs:
       #     wait-for-service-stability: true
 
   deploy-release-automation:
-    name: Deploy
+    name: Deploy and Run Release Automation Service
     runs-on: ubuntu-22.04
     environment: staging
 
