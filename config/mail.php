@@ -131,7 +131,7 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'no-reply@advising.app'),
+        'address' => env('MAIL_FROM_ADDRESS', 'no-reply@mail-dev.advising.app'),
         'name' => env('MAIL_FROM_NAME', 'Advising App™'),
         'root_domain' => env('MAIL_ROOT_DOMAIN', 'mail.advising.app'),
     ],
