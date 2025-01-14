@@ -1,0 +1,22 @@
+#!/command/with-contenv bash
+
+if [ ! -f "$WEBUSER_HOME/artisan" ]; then
+  echo "Skipping Feature Flag purge because we could not detect a Laravel install..."
+  exit 0
+fi
+
+cd "$WEBUSER_HOME" || exit 0
+
+echo "Purging any unregistered Feature Flags..."
+
+USERNAME=$(id -nu "$PUID")
+
+{
+s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" pennant:purge --except-registered \
+&& s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" tenants:artisan "pennant:purge --except-registered" \
+&& echo "Unregistered Feature Flags purged!"
+} || {
+echo "Feature Flag purge failed!"
+}
+
+exit 0
