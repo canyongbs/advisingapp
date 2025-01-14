@@ -227,7 +227,7 @@ RUN echo "source $NVM_DIR/nvm.sh \
     && nvm use default \
     && npm install -g npm@$NPM_VERSION" | bash
 
-COPY --chmod=755 ./docker/release-automations/s6-overlay/ /etc/s6-overlay/
+COPY --chmod=755 ./docker/release-automation/s6-overlay/ /etc/s6-overlay/
 COPY --chmod=755 ./docker/s6-overlay-shared /etc/s6-overlay
 
 COPY --chown=$PUID:$PGID . /var/www/html
