@@ -48,14 +48,14 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-      # - name: Fill in the new image ID in the Amazon ECS task definition
-      #   id: task-def
-      #   # SHA of release v1.6.1
-      #   uses: aws-actions/amazon-ecs-render-task-definition@469db592f4341616e992bf7f231e19b3ab9b4efa
-      #   with:
-      #     task-definition: "docker/devops/ecs/advisingapp/advisingapp-dev-task-definition.json"
-      #     container-name: "app"
-      #     image: ${{ steps.build-image.outputs.image }}
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        # SHA of release v1.6.1
+        uses: aws-actions/amazon-ecs-render-task-definition@469db592f4341616e992bf7f231e19b3ab9b4efa
+        with:
+          task-definition: "docker/devops/ecs/advisingapp/advisingapp-dev-task-definition.json"
+          container-name: "app"
+          image: ${{ steps.build-image.outputs.image }}
 
       # - name: Deploy Amazon ECS task definition
       #   # SHA of release v2.2.0
@@ -106,14 +106,14 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-      # - name: Fill in the new image ID in the Amazon ECS task definition
-      #   id: task-def
-      #   # SHA of release v1.6.1
-      #   uses: aws-actions/amazon-ecs-render-task-definition@469db592f4341616e992bf7f231e19b3ab9b4efa
-      #   with:
-      #     task-definition: "docker/devops/ecs/advisingapp/advisingapp-dev-task-definition.json"
-      #     container-name: "app"
-      #     image: ${{ steps.build-image.outputs.image }}
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        # SHA of release v1.6.1
+        uses: aws-actions/amazon-ecs-render-task-definition@469db592f4341616e992bf7f231e19b3ab9b4efa
+        with:
+          task-definition: "docker/devops/ecs/advisingapp/advisingapp-worker-dev-task-definition.json"
+          container-name: "worker"
+          image: ${{ steps.build-image.outputs.image }}
 
       # - name: Deploy Amazon ECS task definition
       #   # SHA of release v2.2.0
@@ -164,14 +164,14 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-      # - name: Fill in the new image ID in the Amazon ECS task definition
-      #   id: task-def
-      #   # SHA of release v1.6.1
-      #   uses: aws-actions/amazon-ecs-render-task-definition@469db592f4341616e992bf7f231e19b3ab9b4efa
-      #   with:
-      #     task-definition: "docker/devops/ecs/advisingapp/advisingapp-dev-task-definition.json"
-      #     container-name: "app"
-      #     image: ${{ steps.build-image.outputs.image }}
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        # SHA of release v1.6.1
+        uses: aws-actions/amazon-ecs-render-task-definition@469db592f4341616e992bf7f231e19b3ab9b4efa
+        with:
+          task-definition: "docker/devops/ecs/advisingapp/advisingapp-scheduler-dev-task-definition.json"
+          container-name: "scheduler"
+          image: ${{ steps.build-image.outputs.image }}
 
       # - name: Deploy Amazon ECS task definition
       #   # SHA of release v2.2.0
@@ -222,14 +222,14 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-      # - name: Fill in the new image ID in the Amazon ECS task definition
-      #   id: task-def
-      #   # SHA of release v1.6.1
-      #   uses: aws-actions/amazon-ecs-render-task-definition@469db592f4341616e992bf7f231e19b3ab9b4efa
-      #   with:
-      #     task-definition: "docker/devops/ecs/advisingapp/advisingapp-dev-task-definition.json"
-      #     container-name: "app"
-      #     image: ${{ steps.build-image.outputs.image }}
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        # SHA of release v1.6.1
+        uses: aws-actions/amazon-ecs-render-task-definition@469db592f4341616e992bf7f231e19b3ab9b4efa
+        with:
+          task-definition: "docker/devops/ecs/advisingapp/advisingapp-release-automation-dev-task-definition.json"
+          container-name: "release-automation"
+          image: ${{ steps.build-image.outputs.image }}
 
       # - name: Deploy Amazon ECS task definition
       #   # SHA of release v2.2.0
