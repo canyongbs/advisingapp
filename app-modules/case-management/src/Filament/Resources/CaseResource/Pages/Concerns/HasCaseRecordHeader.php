@@ -41,27 +41,42 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Contracts\View\View;
+use Livewire\Attributes\Url;
 
-trait HasCaseHeader
+trait HasCaseRecordHeader
 {
+    #[Url]
+    public ?string $referrer = null;
+
     public function getHeader(): ?View
     {
-        $referrer = request()->query('referrer');
-
-        if ($referrer === 'studentProfile' && $this->record->respondent instanceof Student) {
-            $backButtonLabel = 'Back to student';
-            $backButtonUrl = StudentResource::getUrl('view', ['record' => $this->record->respondent->getKey()]);
-        } elseif ($referrer === 'prospectProfile' && $this->record->respondent instanceof Prospect) {
-            $backButtonLabel = 'Back to prospect';
-            $backButtonUrl = ProspectResource::getUrl('view', ['record' => $this->record->respondent->getKey()]);
+        if ($this->referrer === 'respondentProfile') {
+            if ($this->record->respondent instanceof Student) {
+                $backButtonLabel = 'Back to student';
+                $backButtonUrl = StudentResource::getUrl('view', ['record' => $this->record->respondent]);
+            } elseif ($this->record->respondent instanceof Prospect) {
+                $backButtonLabel = 'Back to prospect';
+                $backButtonUrl = ProspectResource::getUrl('view', ['record' => $this->record->respondent]);
+            }
         }
 
-        return view('case-management::filament.resources.case-resource.view-case.header', [
-            'heading' => 'View Case',
+        return view('case-management::filament.resources.case-resource.pages.record-header', [
+            'heading' => $this->getHeading(),
             'actions' => $this->getCachedHeaderActions(),
             'breadcrumbs' => $this->getBreadcrumbs(),
             'backButtonLabel' => $backButtonLabel ?? null,
             'backButtonUrl' => $backButtonUrl ?? null,
         ]);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getSubNavigationParameters(): array
+    {
+        return [
+            ...parent::getSubNavigationParameters(),
+            ...filled($this->referrer) ? ['referrer' => $this->referrer] : [],
+        ];
     }
 }
