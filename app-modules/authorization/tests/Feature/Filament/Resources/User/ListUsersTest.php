@@ -396,3 +396,35 @@ it('Filter users based on licenses', function () {
         ->assertCanSeeTableRecords($usersWithoutLicense)
         ->assertCanNotSeeTableRecords($usersWithRetentionCrmLicense->merge($usersWithRecruitmentCrmLicense)->merge($usersWithConversationalAiLicense));
 });
+
+it('Filter users based on Created After', function () {
+    asSuperAdmin();
+
+    $createdAfterUsers = User::factory()
+        ->count(5)
+        ->sequence(
+            ['created_at' => '2024-11-20 23:00:00'],
+            ['created_at' => '2024-11-22 03:00:00'],
+            ['created_at' => '2024-11-23 04:00:00'],
+            ['created_at' => '2024-11-24 05:30:00'],
+            ['created_at' => '2024-11-25 06:00:00'],
+        )
+        ->create();
+
+    $createdBeforeUsers = User::factory()
+        ->count(4)
+        ->sequence(
+            ['created_at' => '2024-11-20 22:00:00'],
+            ['created_at' => '2024-11-18 03:00:00'],
+            ['created_at' => '2024-11-17 04:00:00'],
+            ['created_at' => '2024-11-16 05:30:00'],
+        )
+        ->create();
+
+    livewire(ListUsers::class)
+        ->set('tableRecordsPerPage', 10)
+        ->assertCanSeeTableRecords($createdAfterUsers->merge($createdBeforeUsers))
+        ->filterTable('created_after', ['created_at' => '11/20/2024 23:00:00'])
+        ->assertCanSeeTableRecords($createdAfterUsers)
+        ->assertCanNotSeeTableRecords($createdBeforeUsers);
+});
