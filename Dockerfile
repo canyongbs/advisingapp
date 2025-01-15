@@ -175,6 +175,23 @@ RUN chown -R "$PUID":"$PGID" /var/www/html \
 
 FROM cli-serversideup AS scheduler-base
 
+ENV NVM_VERSION v0.40.1
+ENV NODE_VERSION 23.4.0
+ENV NPM_VERSION ^11.0.0
+ENV NVM_DIR /usr/local/nvm
+RUN mkdir "$NVM_DIR"
+
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_VERSION/install.sh | bash
+
+ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
+ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+
+RUN echo "source $NVM_DIR/nvm.sh \
+    && nvm install $NODE_VERSION \
+    && nvm alias default $NODE_VERSION \
+    && nvm use default \
+    && npm install -g npm@$NPM_VERSION" | bash
+
 COPY --chmod=755 ./docker/scheduler/s6-overlay/ /etc/s6-overlay/
 COPY --chmod=755 ./docker/s6-overlay-shared/ /etc/s6-overlay/
 
@@ -198,14 +215,17 @@ FROM scheduler-base AS scheduler-deploy
 
 COPY --chown=$PUID:$PGID . /var/www/html
 
-RUN rm -rf /var/www/html/vendor \
-    && composer install --no-dev --no-interaction --no-progress --no-suggest --optimize-autoloader --apcu-autoloader
+RUN npm ci --ignore-scripts \
+    && rm -rf /var/www/html/vendor \
+    && composer install --no-dev --no-interaction --no-progress --no-suggest --optimize-autoloader --apcu-autoloader \
+    && npm run build:vite \
+    && npm ci --ignore-scripts --omit=dev
 
 RUN chown -R "$PUID":"$PGID" /var/www/html \
     && chgrp "$PGID" /var/www/html/storage/logs \
     && chmod g+s /var/www/html/storage/logs \
     && find /var/www/html -type d -print0 | xargs -0 chmod 755 \
-    && find /var/www/html \( -path /var/www/html/docker -o -path /var/www/html/vendor \) -prune -o -type f -print0 | xargs -0 chmod 644 \
+    && find /var/www/html \( -path /var/www/html/docker -o -path /var/www/html/node_modules -o -path /var/www/html/vendor \) -prune -o -type f -print0 | xargs -0 chmod 644 \
     && chmod -R ug+rwx /var/www/html/storage /var/www/html/bootstrap/cache
 
 FROM cli-serversideup AS release-automation
@@ -244,3 +264,5 @@ RUN chown -R "$PUID":"$PGID" /var/www/html \
     && find /var/www/html -type d -print0 | xargs -0 chmod 755 \
     && find /var/www/html \( -path /var/www/html/docker -o -path /var/www/html/node_modules -o -path /var/www/html/vendor \) -prune -o -type f -print0 | xargs -0 chmod 644 \
     && chmod -R ug+rwx /var/www/html/storage /var/www/html/bootstrap/cache
+
+ENTRYPOINT ["/init"]
