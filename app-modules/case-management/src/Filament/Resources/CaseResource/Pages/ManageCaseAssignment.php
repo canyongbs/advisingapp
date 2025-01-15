@@ -37,6 +37,7 @@
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages;
 
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\Concerns\HasCaseRecordHeader;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\RelationManagers\AssignedToRelationManager;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\RelationManagers\CreatedByRelationManager;
 use Filament\Resources\Pages\ManageRelatedRecords;
@@ -44,6 +45,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class ManageCaseAssignment extends ManageRelatedRecords
 {
+    use HasCaseRecordHeader;
+
     protected static string $resource = CaseResource::class;
 
     // TODO: Obsolete when there is no table, remove from Filament

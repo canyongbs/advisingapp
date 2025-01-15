@@ -37,6 +37,7 @@
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages;
 
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\Concerns\HasCaseRecordHeader;
 use AdvisingApp\CaseManagement\Models\CaseAssignment;
 use AdvisingApp\CaseManagement\Models\CaseHistory;
 use AdvisingApp\CaseManagement\Models\CaseUpdate;
@@ -45,6 +46,8 @@ use AdvisingApp\Timeline\Filament\Pages\TimelinePage;
 
 class CaseTimeline extends TimelinePage
 {
+    use HasCaseRecordHeader;
+
     protected static string $resource = CaseResource::class;
 
     protected static ?string $navigationLabel = 'Timeline';

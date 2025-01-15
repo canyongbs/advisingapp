@@ -37,6 +37,7 @@
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages;
 
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\Concerns\HasCaseRecordHeader;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Models\CasePriority;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
@@ -56,6 +57,8 @@ use Illuminate\Support\Collection;
 
 class EditCase extends EditRecord
 {
+    use HasCaseRecordHeader;
+
     protected static string $resource = CaseResource::class;
 
     public function form(Form $form): Form
