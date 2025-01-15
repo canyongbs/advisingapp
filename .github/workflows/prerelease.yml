@@ -283,5 +283,3 @@ jobs:
           run-task-subnets: ${{ secrets.RELEASE_AUTOMATION_SUBNETS }}
           run-task-assign-public-IP: "DISABLED"
           run-task-launch-type: "FARGATE"
-          wait-for-task-stopped: true
-          wait-for-service-stability: true
