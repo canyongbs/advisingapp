@@ -3,17 +3,15 @@
 # Exit on error
 set -e
 
-# Check to see if an Artisan file exists and assume it means Laravel is configured.
-if [ -f "$WEBUSER_HOME/artisan" ] && [ "${LARAVEL_SCHEDULER_ENABLED:="true"}" == "true" ]; then
-        echo "Starting Laravel Scheduler..."
-
-        cd "$WEBUSER_HOME"
-
-        USERNAME=$(id -nu "$PUID")
-
-        s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" schedule:work
-else
-    echo "👉 Skipping Laravel Scheduler because we could not detect a Laravel install or it was specifically disabled..."
-
-    tail -f /dev/null
+if [ ! -f "$WEBUSER_HOME/artisan" ]; then
+  echo "Skipping Laravel Scheduler because we could not detect a Laravel install..."
+  exit 1
 fi
+
+echo "Starting Laravel Scheduler..."
+
+cd "$WEBUSER_HOME"
+
+USERNAME=$(id -nu "$PUID")
+
+s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" schedule:work
