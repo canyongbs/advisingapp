@@ -52,7 +52,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 
 class ListSegments extends ListRecords
 {
-    protected ?string $heading = 'Population Segments';
+    protected ?string $heading = 'Segments';
 
     protected static string $resource = SegmentResource::class;
 

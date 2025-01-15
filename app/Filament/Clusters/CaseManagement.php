@@ -45,4 +45,6 @@ class CaseManagement extends Cluster
     protected static ?int $navigationSort = 30;
 
     protected static ?string $navigationLabel = 'Cases';
+
+    protected static ?string $title = 'Cases';
 }
