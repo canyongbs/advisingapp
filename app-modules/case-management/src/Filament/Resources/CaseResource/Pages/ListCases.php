@@ -58,7 +58,7 @@ use Illuminate\Database\Query\JoinClause;
 
 class ListCases extends ListRecords
 {
-    protected ?string $heading = 'Case Management';
+    protected ?string $heading = 'Cases';
 
     protected static string $resource = CaseResource::class;
 

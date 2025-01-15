@@ -46,17 +46,17 @@ class SegmentResource extends Resource
 {
     protected static ?string $model = Segment::class;
 
-    protected static ?string $navigationGroup = 'Engagement Features';
+    protected static ?string $navigationGroup = 'Product Features';
 
-    protected static ?int $navigationSort = 40;
+    protected static ?int $navigationSort = 60;
 
-    protected static ?string $navigationLabel = 'Population Segments';
+    protected static ?string $navigationLabel = 'Segments';
 
-    protected static ?string $breadcrumb = 'Population Segments';
+    protected static ?string $breadcrumb = 'Segments';
 
-    protected static ?string $modelLabel = 'Population Segment';
+    protected static ?string $modelLabel = 'Segment';
 
-    protected static ?string $pluralModelLabel = 'Population Segments';
+    protected static ?string $pluralModelLabel = 'Segments';
 
     public static function getPages(): array
     {
