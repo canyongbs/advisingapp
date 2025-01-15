@@ -256,7 +256,7 @@ class ListUsers extends ListRecords
                         return $query
                             ->when(
                                 $data['created_at'],
-                                fn (Builder $query, $date): Builder => $query->where('created_at', '>=', Carbon::parse($date, app(DisplaySettings::class)->getTimezone() ?? config('app.timezone'))->setTimezone('UTC')),
+                                fn (Builder $query, $date): Builder => $query->where('created_at', '>=', Carbon::parse($date, app(DisplaySettings::class)->getTimezone())->setTimezone('UTC')),
                             );
                     })
                     ->indicateUsing(function (array $data): ?string {
@@ -264,7 +264,7 @@ class ListUsers extends ListRecords
                             return null;
                         }
 
-                        return 'Created After ' . Carbon::parse($data['created_at'], app(DisplaySettings::class)->getTimezone() ?? config('app.timezone'))->setTimezone('UTC')->format('m/d/Y H:i:s');
+                        return 'Created After ' . Carbon::parse($data['created_at'], app(DisplaySettings::class)->getTimezone())->setTimezone('UTC')->format('m/d/Y H:i:s');
                     }),
             ])
             ->defaultSort('name', 'asc');
