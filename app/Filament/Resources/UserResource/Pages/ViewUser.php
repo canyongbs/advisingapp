@@ -44,6 +44,7 @@ use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
@@ -86,6 +87,14 @@ class ViewUser extends ViewRecord
                             ->disabled(),
                     ])
                     ->disabled(),
+                Section::make('Team')
+                    ->schema([
+                        Select::make('teams')
+                            ->label('')
+                            ->relationship('teams', 'name')
+                            ->disabled(),
+                    ])
+                    ->hidden($this->record->IsAdmin),
                 Licenses::make()
                     ->hidden(fn (?User $record) => is_null($record))
                     ->disabled(function () {
@@ -115,8 +124,8 @@ class ViewUser extends ViewRecord
             Action::make('mfa_reset')
                 ->visible(
                     fn (User $record) => ! $record->is_external
-                    && $record->hasConfirmedMultifactor() || $record->hasEnabledMultifactor()
-                    && auth()->user()->can('resetMultifactorAuthentication', $record),
+                        && $record->hasConfirmedMultifactor() || $record->hasEnabledMultifactor()
+                        && auth()->user()->can('resetMultifactorAuthentication', $record),
                 )
                 ->label('Reset MFA')
                 ->icon('heroicon-s-lock-open')

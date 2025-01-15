@@ -118,7 +118,7 @@ class PermissionsMatrix extends Field
                         "{$permissionGroupNameSlugHyphen}.create", "{$permissionGroupNameSlugUnderscore}.create" => 'create',
                         "{$permissionGroupNameSlugHyphen}.*.update", "{$permissionGroupNameSlugUnderscore}.*.update" => 'update',
                         "{$permissionGroupNameSlugHyphen}.*.delete", "{$permissionGroupNameSlugUnderscore}.*.delete" => 'delete',
-                        "{$permissionGroupNameSlugHyphen}.import", "{$permissionGroupNameSlugHyphen}.import" => 'import',
+                        "{$permissionGroupNameSlugHyphen}.import", "{$permissionGroupNameSlugUnderscore}.import" => 'import',
                         "{$permissionGroupNameSlugHyphen}.*.force-delete", "{$permissionGroupNameSlugUnderscore}.*.force-delete" => 'force-delete',
                         "{$permissionGroupNameSlugHyphen}.*.restore", "{$permissionGroupNameSlugUnderscore}.*.restore" => 'restore',
                         default => null,
