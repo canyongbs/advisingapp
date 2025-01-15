@@ -152,7 +152,7 @@ class ListTasks extends ListRecords
                     ->multiple(),
                 SelectFilter::make('status')
                     ->label('Status')
-                    ->options(collect(TaskStatus::cases())->mapWithKeys(fn (TaskStatus $direction) => [$direction->value => \Livewire\str($direction->name)->title()->headline()]))
+                    ->options(collect(TaskStatus::cases())->mapWithKeys(fn (TaskStatus $status) => [$status->value => $status->getLabel()]))
                     ->multiple()
                     ->default([
                         TaskStatus::Pending->value,
