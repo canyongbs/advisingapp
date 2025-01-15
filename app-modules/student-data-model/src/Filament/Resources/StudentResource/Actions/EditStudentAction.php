@@ -99,6 +99,7 @@ class EditStudentAction extends Action
                         TextInput::make('email')
                             ->label('Primary Email')
                             ->email()
+                            ->unique(ignoreRecord: true)
                             ->required(),
                         TextInput::make('email_2')
                             ->label('Other Email')

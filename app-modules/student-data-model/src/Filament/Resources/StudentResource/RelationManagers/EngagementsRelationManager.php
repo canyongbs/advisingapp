@@ -63,6 +63,7 @@ use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
+use Filament\Pages\Page;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\ViewAction;
@@ -166,7 +167,7 @@ class EngagementsRelationManager extends RelationManager
                             'student email',
                             'student preferred name',
                         ])
-                        ->showMergeTagsInBlocksPanel(! ($form->getLivewire() instanceof RelationManager))
+                        ->showMergeTagsInBlocksPanel(! ($form->getLivewire() instanceof Page))
                         ->profile('email')
                         ->required()
                         ->hintAction(fn (TiptapEditor $component) => Action::make('loadEmailTemplate')
