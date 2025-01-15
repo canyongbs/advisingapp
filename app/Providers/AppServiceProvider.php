@@ -160,5 +160,11 @@ class AppServiceProvider extends ServiceProvider
                 ->paginationPageOptions([5, 10, 20, 'all'])
                 ->defaultPaginationPageOption(5);
         });
+
+        configureScope(function (Scope $scope): void {
+            $scope->setTags([
+                'service' => $event->tenant->getKey(),
+            ]);
+        });
     }
 }

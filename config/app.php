@@ -285,4 +285,6 @@ return [
     'allow_super_admin_creation' => env('ALLOW_SUPER_ADMIN_CREATION', false),
 
     'allow_license_settings_editing' => env('ALLOW_LICENSE_SETTINGS_EDITING', false),
+
+    'service' => env('SERVICE', null),
 ];
