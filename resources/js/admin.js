@@ -31,23 +31,35 @@
 
 </COPYRIGHT>
 */
-import { defineConfig } from 'vite';
-import laravel, { refreshPaths } from 'laravel-vite-plugin';
+// https://github.com/livewire/livewire/discussions/5923#discussioncomment-9202549
 
-export default defineConfig({
-    plugins: [
-        laravel({
-            input: ['resources/css/app.css', 'resources/js/app.js', 'resources/js/admin.js', 'resources/css/filament/admin/theme.css'],
-            refresh: [
-                ...refreshPaths,
-                'app/Filament/**',
-                'app/Forms/Components/**',
-                'app/Livewire/**',
-                'app/Infolists/Components/**',
-                'app/Providers/Filament/**',
-                'app/Tables/Columns/**',
-                'portals/**',
-            ],
-        }),
-    ],
-});
+const original = window.history.replaceState;
+let timer = Date.now();
+
+let timeout = null;
+let lastArgs = null;
+
+window.history.replaceState = function (...args) {
+    const time = Date.now();
+
+    if (time - timer < 300) {
+        lastArgs = args;
+
+        if (timeout) {
+            clearTimeout(timeout);
+        }
+
+        timeout = setTimeout(() => {
+            original.apply(this, lastArgs);
+
+            timeout = null;
+            lastArgs = null;
+        }, 100);
+
+        return;
+    }
+
+    timer = time;
+
+    original.apply(this, args);
+};

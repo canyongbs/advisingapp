@@ -47,8 +47,11 @@ use App\Filament\Resources\UserResource\Actions\AssignRolesBulkAction;
 use App\Filament\Resources\UserResource\Actions\AssignTeamBulkAction;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\User;
+use App\Settings\DisplaySettings;
+use Carbon\Carbon;
 use Filament\Actions\CreateAction;
 use Filament\Actions\ImportAction;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -58,6 +61,7 @@ use Filament\Tables\Actions\RestoreBulkAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
@@ -239,6 +243,29 @@ class ListUsers extends ListRecords
                     ->multiple()
                     ->searchable()
                     ->preload(),
+
+                Filter::make('created_after')
+                    ->form([
+                        DateTimePicker::make('created_at')
+                            ->label('Created After')
+                            ->format('m/d/Y H:i:s')
+                            ->displayFormat('m/d/Y H:i:s')
+                            ->native(false),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['created_at'],
+                                fn (Builder $query, $date): Builder => $query->where('created_at', '>=', Carbon::parse($date, app(DisplaySettings::class)->getTimezone())->setTimezone('UTC')),
+                            );
+                    })
+                    ->indicateUsing(function (array $data): ?string {
+                        if (! $data['created_at']) {
+                            return null;
+                        }
+
+                        return 'Created After ' . Carbon::parse($data['created_at'], app(DisplaySettings::class)->getTimezone())->setTimezone('UTC')->format('m/d/Y H:i:s');
+                    }),
             ])
             ->defaultSort('name', 'asc');
     }

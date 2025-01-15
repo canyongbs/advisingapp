@@ -43,6 +43,7 @@ use AdvisingApp\Report\Filament\Exports\StudentExporter;
 use AdvisingApp\Report\Filament\Exports\UserExporter;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Tables\StudentsTable;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Filament\Tables\UsersTable;
 use App\Models\Authenticatable;
 use App\Models\User;
 use Filament\Support\Contracts\HasLabel;
@@ -81,6 +82,7 @@ enum ReportModel: string implements HasLabel
         return (match ($this) {
             static::Student => StudentsTable::class,
             static::Prospect => ProspectsTable::class,
+            static::User => UsersTable::class,
         })::configure($table);
     }
 
