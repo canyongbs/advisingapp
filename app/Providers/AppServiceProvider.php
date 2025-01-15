@@ -163,7 +163,7 @@ class AppServiceProvider extends ServiceProvider
 
         configureScope(function (Scope $scope): void {
             $scope->setTags([
-                'service' => $event->tenant->getKey(),
+                'service' => config('app.service'),
             ]);
         });
     }
