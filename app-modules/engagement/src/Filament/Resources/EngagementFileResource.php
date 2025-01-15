@@ -53,7 +53,7 @@ class EngagementFileResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-document-duplicate';
 
-    protected static ?string $navigationGroup = 'Engagement Features';
+    protected static ?string $navigationGroup = 'Product Features';
 
     protected static ?int $navigationSort = 7;
 

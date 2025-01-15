@@ -151,7 +151,7 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('heroicon-o-magnifying-glass')
                     ->collapsed(),
                 NavigationGroup::make()
-                    ->label('Engagement Features')
+                    ->label('Product Features')
                     ->icon('heroicon-o-signal')
                     ->collapsed(),
                 NavigationGroup::make()

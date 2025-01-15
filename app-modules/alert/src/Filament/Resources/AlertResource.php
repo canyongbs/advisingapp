@@ -44,7 +44,7 @@ class AlertResource extends Resource
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static ?string $navigationGroup = 'Engagement Features';
+    protected static ?string $navigationGroup = 'Product Features';
 
     protected static ?int $navigationSort = 5;
 
