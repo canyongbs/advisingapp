@@ -8,10 +8,12 @@ env:
   AWS_REGION: "us-west-2"
 
 jobs:
-  deploy-web:
-    name: Deploy Web Service
+  build-web:
+    name: Build Web Image
     runs-on: ubuntu-22.04
     environment: staging
+    outputs:
+      image: ${{ steps.build-image.outputs.image }}
 
     steps:
       - name: Checkout
@@ -48,6 +50,13 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
+  deploy-web:
+    name: Deploy Web Service
+    runs-on: ubuntu-22.04
+    needs: [build-web]
+    environment: staging
+
+    steps:
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
         # SHA of release v1.6.1
@@ -55,7 +64,7 @@ jobs:
         with:
           task-definition: "docker/devops/ecs/advisingapp/advisingapp-dev-task-definition.json"
           container-name: "app"
-          image: ${{ steps.build-image.outputs.image }}
+          image: ${{ needs.build-web.outputs.image }}
 
       - name: Deploy Amazon ECS task definition
         id: task-deploy
