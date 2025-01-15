@@ -75,4 +75,11 @@ class UsersTable
                     ->url(fn (User $record) => UserResource::getUrl('view', ['record' => $record])),
             ]);
     }
+
+    public static function configure(Table $table): Table
+    {
+        $instance = new self();
+
+        return $instance($table);
+    }
 }
