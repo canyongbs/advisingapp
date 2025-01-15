@@ -57,6 +57,13 @@ jobs:
     environment: staging
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          ref: ${{ github.head_ref }}
+          token: ${{ secrets.PAT }}
+
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
         # SHA of release v1.6.1
