@@ -38,14 +38,13 @@ namespace AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages;
 
 use AdvisingApp\CaseManagement\Enums\SlaComplianceStatus;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\Concerns\HasCaseHeader;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\Concerns\HasCaseRecordHeader;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Carbon\CarbonInterval;
-use Filament\Actions\EditAction;
 use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
@@ -55,7 +54,7 @@ use Filament\Resources\Pages\ViewRecord;
 
 class ViewCase extends ViewRecord
 {
-    use HasCaseHeader;
+    use HasCaseRecordHeader;
 
     protected static string $resource = CaseResource::class;
 
@@ -161,12 +160,5 @@ class ViewCase extends ViewRecord
                             ->view('filament.infolists.components.submission-entry'),
                     ]),
             ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            EditAction::make(),
-        ];
     }
 }
