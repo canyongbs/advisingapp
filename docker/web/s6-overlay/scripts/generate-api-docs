@@ -1,0 +1,22 @@
+#!/command/with-contenv bash
+
+if [ ! -f "$WEBUSER_HOME/artisan" ]; then
+  echo "Skipping API documentation generation because we could not detect a Laravel install..."
+  exit 0
+fi
+
+cd "$WEBUSER_HOME" || exit 0
+
+echo "Generating API documentation..."
+
+{
+USERNAME=$(id -nu "$PUID")
+
+s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" api:print-schema \
+&& s6-setuidgid "$USERNAME" npm run api-docs:generate \
+&& echo "API documentation generation complete!"
+} || {
+echo "API documentation generation failed!"
+}
+
+exit 0
