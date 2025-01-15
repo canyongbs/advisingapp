@@ -106,11 +106,7 @@ class CasesRelationManager extends RelationManager
                 ViewAction::make()
                     ->url(fn (CaseModel $record) => CaseResource::getUrl('view', ['record' => $record, 'referrer' => 'respondentProfile'])),
                 EditAction::make()
-                    ->mutateRecordDataUsing(function ($data, CaseModel $record) {
-                        $data['type_id'] = $record?->priority?->type->getKey();
-
-                        return $data;
-                    }),
+                    ->url(fn (CaseModel $record) => CaseResource::getUrl('edit', ['record' => $record, 'referrer' => 'respondentProfile'])),
             ])
             ->defaultSort('created_at', 'desc');
     }
