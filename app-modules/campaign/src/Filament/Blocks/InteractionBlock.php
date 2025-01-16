@@ -143,7 +143,7 @@ class InteractionBlock extends CampaignActionBlock
                 ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())
                 ->hintIconTooltip('This time is set in ' . app(CampaignSettings::class)->getActionExecutionTimezoneLabel() . '.')
                 ->lazy()
-                ->helperText(fn($state): ?string => filled($state) ? $this->generateUserTimezoneHint(CarbonImmutable::parse($state)) : null)
+                ->helperText(fn ($state): ?string => filled($state) ? $this->generateUserTimezoneHint(CarbonImmutable::parse($state)) : null)
                 ->required()
                 ->minDate(now()),
         ];

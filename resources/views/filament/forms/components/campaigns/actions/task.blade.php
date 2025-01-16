@@ -53,7 +53,8 @@
         </div>
         <div class="flex flex-col pt-3">
             <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Due</dt>
-            <dd class="text-sm font-semibold">{{ $action['due'] ? Carbon::parse($action['due'])->format('M j, Y H:i:s') : null }}</dd>
+            <dd class="text-sm font-semibold">
+                {{ $action['due'] ? Carbon::parse($action['due'])->format('M j, Y H:i:s') : null }}</dd>
         </div>
         <div class="flex flex-col pt-3">
             <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Assigned To</dt>
