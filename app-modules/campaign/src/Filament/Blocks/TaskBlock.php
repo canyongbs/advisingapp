@@ -47,51 +47,51 @@ use Filament\Forms\Components\TextInput;
 
 class TaskBlock extends CampaignActionBlock
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
+  protected function setUp(): void
+  {
+    parent::setUp();
 
-        $this->model(Task::class);
+    $this->model(Task::class);
 
-        $this->schema($this->createFields());
-    }
+    $this->schema($this->createFields());
+  }
 
-    public function generateFields(string $fieldPrefix = ''): array
-    {
-        return [
-            Fieldset::make('Details')
-                ->schema([
-                    TextInput::make($fieldPrefix . 'title')
-                        ->required()
-                        ->maxLength(100)
-                        ->string(),
-                    Textarea::make($fieldPrefix . 'description')
-                        ->required()
-                        ->string(),
-                    DateTimePicker::make($fieldPrefix . 'due')
-                        ->label('Due Date'),
-                    Select::make($fieldPrefix . 'assigned_to')
-                        ->label('Assigned To')
-                        ->relationship('assignedTo', 'name')
-                        ->model(Task::class)
-                        ->nullable()
-                        ->searchable()
-                        ->default(auth()->id()),
-                ]),
-            DateTimePicker::make($fieldPrefix . 'execute_at')
-                ->label('When should the journey step be executed?')
-                ->columnSpanFull()
-                ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())
-                ->hintIconTooltip('This time is set in ' . app(CampaignSettings::class)->getActionExecutionTimezoneLabel() . '.')
-                ->lazy()
-                ->helperText(fn ($state): ?string => filled($state) ? $this->generateUserTimezoneHint(CarbonImmutable::parse($state)) : null)
-                ->required()
-                ->minDate(now()),
-        ];
-    }
+  public function generateFields(string $fieldPrefix = ''): array
+  {
+    return [
+      Fieldset::make('Details')
+        ->schema([
+          TextInput::make($fieldPrefix . 'title')
+            ->required()
+            ->maxLength(100)
+            ->string(),
+          Textarea::make($fieldPrefix . 'description')
+            ->required()
+            ->string(),
+          DateTimePicker::make($fieldPrefix . 'due')
+            ->label('Due Date'),
+          Select::make($fieldPrefix . 'assigned_to')
+            ->label('Assigned To')
+            ->relationship('assignedTo', 'name')
+            ->model(Task::class)
+            ->nullable()
+            ->searchable()
+            ->default(auth()->id()),
+        ]),
+      DateTimePicker::make('execute_at')
+        ->label('When should the journey step be executed?')
+        ->columnSpanFull()
+        ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())
+        ->hintIconTooltip('This time is set in ' . app(CampaignSettings::class)->getActionExecutionTimezoneLabel() . '.')
+        ->lazy()
+        ->helperText(fn($state): ?string => filled($state) ? $this->generateUserTimezoneHint(CarbonImmutable::parse($state)) : null)
+        ->required()
+        ->minDate(now()),
+    ];
+  }
 
-    public static function type(): string
-    {
-        return 'task';
-    }
+  public static function type(): string
+  {
+    return 'task';
+  }
 }

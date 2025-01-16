@@ -44,39 +44,39 @@ use Filament\Forms\Components\Select;
 
 class EventBlock extends CampaignActionBlock
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
+  protected function setUp(): void
+  {
+    parent::setUp();
 
-        $this->label = 'Invite Event';
+    $this->label = 'Invite Event';
 
-        $this->model(Event::class);
+    $this->model(Event::class);
 
-        $this->schema($this->createFields());
-    }
+    $this->schema($this->createFields());
+  }
 
-    public function generateFields(string $fieldPrefix = ''): array
-    {
-        return [
-            Select::make($fieldPrefix . 'event')
-                ->label('Select Event')
-                ->options(Event::where('ends_at', '>=', now())->pluck('title', 'id')->toArray())
-                ->nullable()
-                ->searchable(),
-            DateTimePicker::make($fieldPrefix . 'execute_at')
-                ->label('When should the journey step be executed?')
-                ->columnSpanFull()
-                ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())
-                ->helperText(app(CampaignSettings::class)->getActionExecutionTimezoneLabel())
-                ->lazy()
-                ->hint(fn ($state): ?string => filled($state) ? $this->generateUserTimezoneHint(CarbonImmutable::parse($state)) : null)
-                ->required()
-                ->minDate(now()),
-        ];
-    }
+  public function generateFields(string $fieldPrefix = ''): array
+  {
+    return [
+      Select::make($fieldPrefix . 'event')
+        ->label('Select Event')
+        ->options(Event::where('ends_at', '>=', now())->pluck('title', 'id')->toArray())
+        ->nullable()
+        ->searchable(),
+      DateTimePicker::make('execute_at')
+        ->label('When should the journey step be executed?')
+        ->columnSpanFull()
+        ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())
+        ->helperText(app(CampaignSettings::class)->getActionExecutionTimezoneLabel())
+        ->lazy()
+        ->hint(fn($state): ?string => filled($state) ? $this->generateUserTimezoneHint(CarbonImmutable::parse($state)) : null)
+        ->required()
+        ->minDate(now()),
+    ];
+  }
 
-    public static function type(): string
-    {
-        return 'event';
-    }
+  public static function type(): string
+  {
+    return 'event';
+  }
 }
