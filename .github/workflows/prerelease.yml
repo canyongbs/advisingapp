@@ -401,14 +401,19 @@ jobs:
       
       - name: Regenerate API Docs
         run: |
+          set -e  # Exit immediately if a command exits with a non-zero status
           aws ecs list-tasks --cluster advisingapp-dev --service-name advisingapp-dev-service --query 'taskArns[]' --output text | tr '\t' '\n' | while read -r task; do
-            echo "Executing command on task: $task"
-            aws ecs execute-command \
-              --cluster advisingapp-dev \
-              --task $task \
-              --container app \
-              --command "ls"
-              --non-interactive
-          done
+          echo "Executing command on task: $task"
+          if ! aws ecs execute-command \
+            --cluster advisingapp-dev \
+            --task $task \
+            --container app \
+            --command "ls" \
+            --non-interactive;
+          then
+            echo "Command execution failed on task: $task"
+            exit 1
+          fi
+            done
 
     
