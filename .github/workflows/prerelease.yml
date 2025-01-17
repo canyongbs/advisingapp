@@ -398,13 +398,14 @@ jobs:
         run: |
           curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_64bit/session-manager-plugin.deb" -o "session-manager-plugin.deb"
           sudo dpkg -i session-manager-plugin.deb
+          apt install -y expect
       
       - name: Regenerate API Docs
         run: |
           set -e  # Exit immediately if a command exits with a non-zero status
           aws ecs list-tasks --cluster advisingapp-dev --service-name advisingapp-dev-service --query 'taskArns[]' --output text | tr '\t' '\n' | while read -r task; do
           echo "Executing command on task: $task"
-          if ! aws ecs execute-command \
+          if ! unbuffer aws ecs execute-command \
             --cluster advisingapp-dev \
             --task $task \
             --container app \
