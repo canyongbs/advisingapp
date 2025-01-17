@@ -408,7 +408,7 @@ jobs:
             --cluster advisingapp-dev \
             --task $task \
             --container app \
-            --command "USERNAME=$(id -nu "$PUID") ; s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" api:print-schema" \
+            --command "php artisan api:print-schema" \
             --interactive;
           then
             echo "Command execution failed on task: $task"
