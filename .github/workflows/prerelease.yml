@@ -413,7 +413,7 @@ jobs:
             --cluster advisingapp-dev \
             --task $task \
             --container app \
-            --command "php artisan api:print-schema ; npm run api-docs:generate" \
+            --command "/bin/sh -c 'php artisan api:print-schema && npm run api-docs:generate'" \
             --interactive;
           then
             echo "Command execution failed on task: $task"
