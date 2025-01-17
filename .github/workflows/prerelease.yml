@@ -409,7 +409,7 @@ jobs:
             --task $task \
             --container app \
             --command "ls" \
-            --non-interactive;
+            --interactive;
           then
             echo "Command execution failed on task: $task"
             exit 1
