@@ -408,7 +408,19 @@ jobs:
             --cluster advisingapp-dev \
             --task $task \
             --container app \
-            --command "ls" \
+            --command "
+              USERNAME=$(id -nu "$PUID")
+
+              s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" api:print-schema \
+              && s6-setuidgid "$USERNAME" npm run api-docs:generate \
+              && echo "API documentation generation complete!"
+              } || {
+                echo "API documentation generation failed!"
+                exit 1
+              }
+
+              exit 0
+            " \
             --interactive;
           then
             echo "Command execution failed on task: $task"
