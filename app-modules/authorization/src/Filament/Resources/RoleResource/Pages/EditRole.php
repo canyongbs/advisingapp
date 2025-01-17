@@ -52,49 +52,50 @@ use Illuminate\Validation\Rules\Unique;
 
 class EditRole extends EditRecord
 {
-  use EditPageRedirection;
-  protected static string $resource = RoleResource::class;
+    use EditPageRedirection;
 
-  public function form(Form $form): Form
-  {
-    return $form
-      ->schema([
-        TextInput::make('name')
-          ->required()
-          ->maxLength(125)
-          ->unique(
-            table: 'roles',
-            column: 'name',
-            ignoreRecord: true,
-            modifyRuleUsing: function (Unique $rule) {
-              /** @var Role $role */
-              $role = $this->record;
+    protected static string $resource = RoleResource::class;
 
-              $rule->where('guard_name', $role->guard_name);
-            }
-          ),
-        Select::make('guard_name')
-          ->options([
-            'web' => 'Web',
-            'api' => 'API',
-          ])
-          ->disabled()
-          ->dehydrated(),
-        Textarea::make('description')
-          ->nullable()
-          ->maxLength(65535)
-          ->columnSpanFull(),
-        PermissionsMatrix::make('permissions')
-          ->columnSpanFull()
-          ->guard(fn(Get $get): string => $get('guard_name')),
-      ]);
-  }
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                TextInput::make('name')
+                    ->required()
+                    ->maxLength(125)
+                    ->unique(
+                        table: 'roles',
+                        column: 'name',
+                        ignoreRecord: true,
+                        modifyRuleUsing: function (Unique $rule) {
+                            /** @var Role $role */
+                            $role = $this->record;
 
-  protected function getHeaderActions(): array
-  {
-    return [
-      ViewAction::make(),
-      DeleteAction::make(),
-    ];
-  }
+                            $rule->where('guard_name', $role->guard_name);
+                        }
+                    ),
+                Select::make('guard_name')
+                    ->options([
+                        'web' => 'Web',
+                        'api' => 'API',
+                    ])
+                    ->disabled()
+                    ->dehydrated(),
+                Textarea::make('description')
+                    ->nullable()
+                    ->maxLength(65535)
+                    ->columnSpanFull(),
+                PermissionsMatrix::make('permissions')
+                    ->columnSpanFull()
+                    ->guard(fn (Get $get): string => $get('guard_name')),
+            ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            ViewAction::make(),
+            DeleteAction::make(),
+        ];
+    }
 }

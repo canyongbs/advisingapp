@@ -48,34 +48,35 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditPromptType extends EditRecord
 {
-  use EditPageRedirection;
-  protected static string $resource = PromptTypeResource::class;
+    use EditPageRedirection;
 
-  public function form(Form $form): Form
-  {
-    return $form
-      ->schema([
-        Section::make()
-          ->columns()
-          ->schema([
-            TextInput::make('title')
-              ->unique(ignoreRecord: true)
-              ->required()
-              ->string()
-              ->maxLength(255)
-              ->columnSpanFull(),
-            Textarea::make('description')
-              ->string()
-              ->columnSpanFull(),
-          ]),
-      ]);
-  }
+    protected static string $resource = PromptTypeResource::class;
 
-  protected function getHeaderActions(): array
-  {
-    return [
-      ViewAction::make(),
-      DeleteAction::make(),
-    ];
-  }
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Section::make()
+                    ->columns()
+                    ->schema([
+                        TextInput::make('title')
+                            ->unique(ignoreRecord: true)
+                            ->required()
+                            ->string()
+                            ->maxLength(255)
+                            ->columnSpanFull(),
+                        Textarea::make('description')
+                            ->string()
+                            ->columnSpanFull(),
+                    ]),
+            ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            ViewAction::make(),
+            DeleteAction::make(),
+        ];
+    }
 }

@@ -43,13 +43,14 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditSla extends EditRecord
 {
-  use EditPageRedirection;
-  protected static string $resource = SlaResource::class;
+    use EditPageRedirection;
 
-  protected function getHeaderActions(): array
-  {
-    return [
-      Actions\DeleteAction::make(),
-    ];
-  }
+    protected static string $resource = SlaResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Actions\DeleteAction::make(),
+        ];
+    }
 }

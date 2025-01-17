@@ -49,54 +49,54 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditApplication extends EditRecord
 {
-  use HasSharedFormConfiguration;
-  use EditPageRedirection;
+    use HasSharedFormConfiguration;
+    use EditPageRedirection;
 
-  protected static string $resource = ApplicationResource::class;
+    protected static string $resource = ApplicationResource::class;
 
-  protected static ?string $navigationLabel = 'Edit';
+    protected static ?string $navigationLabel = 'Edit';
 
-  public function form(FilamentForm $form): FilamentForm
-  {
-    return $form
-      ->schema($this->fields());
-  }
+    public function form(FilamentForm $form): FilamentForm
+    {
+        return $form
+            ->schema($this->fields());
+    }
 
-  protected function getHeaderActions(): array
-  {
-    return [
-      Action::make('view')
-        ->url(fn(Application $application) => route('applications.show', ['application' => $application]))
-        ->icon('heroicon-m-arrow-top-right-on-square')
-        ->openUrlInNewTab(),
-      Action::make('embed_snippet')
-        ->label('Embed Snippet')
-        ->infolist(
-          [
-            TextEntry::make('snippet')
-              ->label('Click to Copy')
-              ->state(function (Application $application) {
-                $code = resolve(GenerateSubmissibleEmbedCode::class)->handle($application);
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('view')
+                ->url(fn (Application $application) => route('applications.show', ['application' => $application]))
+                ->icon('heroicon-m-arrow-top-right-on-square')
+                ->openUrlInNewTab(),
+            Action::make('embed_snippet')
+                ->label('Embed Snippet')
+                ->infolist(
+                    [
+                        TextEntry::make('snippet')
+                            ->label('Click to Copy')
+                            ->state(function (Application $application) {
+                                $code = resolve(GenerateSubmissibleEmbedCode::class)->handle($application);
 
-                $state = <<<EOD
+                                $state = <<<EOD
                                 ```
                                 {$code}
                                 ```
                                 EOD;
 
-                return str($state)->markdown()->toHtmlString();
-              })
-              ->copyable()
-              ->copyableState(fn(Application $application) => resolve(GenerateSubmissibleEmbedCode::class)->handle($application))
-              ->copyMessage('Copied!')
-              ->copyMessageDuration(1500)
-              ->extraAttributes(['class' => 'embed-code-snippet']),
-          ]
-        )
-        ->modalSubmitAction(false)
-        ->modalCancelActionLabel('Close')
-        ->hidden(fn(Application $application) => ! $application->embed_enabled),
-      DeleteAction::make(),
-    ];
-  }
+                                return str($state)->markdown()->toHtmlString();
+                            })
+                            ->copyable()
+                            ->copyableState(fn (Application $application) => resolve(GenerateSubmissibleEmbedCode::class)->handle($application))
+                            ->copyMessage('Copied!')
+                            ->copyMessageDuration(1500)
+                            ->extraAttributes(['class' => 'embed-code-snippet']),
+                    ]
+                )
+                ->modalSubmitAction(false)
+                ->modalCancelActionLabel('Close')
+                ->hidden(fn (Application $application) => ! $application->embed_enabled),
+            DeleteAction::make(),
+        ];
+    }
 }

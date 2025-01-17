@@ -51,6 +51,7 @@ use Filament\Resources\Pages\EditRecord;
 class EditAlertStatus extends EditRecord
 {
     use EditPageRedirection;
+
     protected static string $resource = AlertStatusResource::class;
 
     protected ?bool $hasDatabaseTransactions = true;

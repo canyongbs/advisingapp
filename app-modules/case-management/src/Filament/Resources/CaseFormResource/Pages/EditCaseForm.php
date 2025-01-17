@@ -49,52 +49,52 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditCaseForm extends EditRecord
 {
-  use HasSharedFormConfiguration;
-  use EditPageRedirection;
+    use HasSharedFormConfiguration;
+    use EditPageRedirection;
 
-  protected static string $resource = CaseFormResource::class;
+    protected static string $resource = CaseFormResource::class;
 
-  public function form(Form $form): Form
-  {
-    return $form
-      ->schema($this->fields());
-  }
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema($this->fields());
+    }
 
-  protected function getHeaderActions(): array
-  {
-    return [
-      Action::make('view')
-        ->url(fn(CaseForm $caseForm) => route('case-forms.show', ['caseForm' => $caseForm]))
-        ->icon('heroicon-m-arrow-top-right-on-square')
-        ->openUrlInNewTab(),
-      Action::make('embed_snippet')
-        ->label('Embed Snippet')
-        ->infolist(
-          [
-            TextEntry::make('snippet')
-              ->label('Click to Copy')
-              ->state(function (CaseForm $caseForm) {
-                $code = resolve(GenerateSubmissibleEmbedCode::class)->handle($caseForm);
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('view')
+                ->url(fn (CaseForm $caseForm) => route('case-forms.show', ['caseForm' => $caseForm]))
+                ->icon('heroicon-m-arrow-top-right-on-square')
+                ->openUrlInNewTab(),
+            Action::make('embed_snippet')
+                ->label('Embed Snippet')
+                ->infolist(
+                    [
+                        TextEntry::make('snippet')
+                            ->label('Click to Copy')
+                            ->state(function (CaseForm $caseForm) {
+                                $code = resolve(GenerateSubmissibleEmbedCode::class)->handle($caseForm);
 
-                $state = <<<EOD
+                                $state = <<<EOD
                                 ```
                                 {$code}
                                 ```
                                 EOD;
 
-                return str($state)->markdown()->toHtmlString();
-              })
-              ->copyable()
-              ->copyableState(fn(CaseForm $caseForm) => resolve(GenerateSubmissibleEmbedCode::class)->handle($caseForm))
-              ->copyMessage('Copied!')
-              ->copyMessageDuration(1500)
-              ->extraAttributes(['class' => 'embed-code-snippet']),
-          ]
-        )
-        ->modalSubmitAction(false)
-        ->modalCancelActionLabel('Close')
-        ->hidden(fn(CaseForm $caseForm) => ! $caseForm->embed_enabled),
-      DeleteAction::make(),
-    ];
-  }
+                                return str($state)->markdown()->toHtmlString();
+                            })
+                            ->copyable()
+                            ->copyableState(fn (CaseForm $caseForm) => resolve(GenerateSubmissibleEmbedCode::class)->handle($caseForm))
+                            ->copyMessage('Copied!')
+                            ->copyMessageDuration(1500)
+                            ->extraAttributes(['class' => 'embed-code-snippet']),
+                    ]
+                )
+                ->modalSubmitAction(false)
+                ->modalCancelActionLabel('Close')
+                ->hidden(fn (CaseForm $caseForm) => ! $caseForm->embed_enabled),
+            DeleteAction::make(),
+        ];
+    }
 }

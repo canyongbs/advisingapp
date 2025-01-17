@@ -44,19 +44,19 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditCaseUpdate extends EditRecord
 {
-  use CaseUpdateBreadcrumbs;
-  use EditPageRedirection;
+    use CaseUpdateBreadcrumbs;
+    use EditPageRedirection;
 
-  protected static ?string $breadcrumb = 'Edit';
+    protected static ?string $breadcrumb = 'Edit';
 
-  protected static ?string $navigationLabel = 'Edit';
+    protected static ?string $navigationLabel = 'Edit';
 
-  protected static string $resource = CaseUpdateResource::class;
+    protected static string $resource = CaseUpdateResource::class;
 
-  protected function getHeaderActions(): array
-  {
-    return [
-      Actions\DeleteAction::make(),
-    ];
-  }
+    protected function getHeaderActions(): array
+    {
+        return [
+            Actions\DeleteAction::make(),
+        ];
+    }
 }

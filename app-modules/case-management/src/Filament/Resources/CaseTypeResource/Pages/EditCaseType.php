@@ -53,49 +53,50 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditCaseType extends EditRecord
 {
-  use EditPageRedirection;
-  protected static string $resource = CaseTypeResource::class;
+    use EditPageRedirection;
 
-  public function form(Form $form): Form
-  {
-    return $form
-      ->schema([
-        Section::make()
-          ->columns()
-          ->schema([
-            TextInput::make('name')
-              ->label('Name')
-              ->required()
-              ->string(),
-            Group::make()
-              ->schema([
-                Toggle::make('has_enabled_feedback_collection')
-                  ->label('Enable feedback collection')
-                  ->live(),
-                Toggle::make('has_enabled_csat')
-                  ->label('CSAT')
-                  ->visible(fn(Get $get) => $get('has_enabled_feedback_collection')),
-                Toggle::make('has_enabled_nps')
-                  ->label('NPS')
-                  ->visible(fn(Get $get) => $get('has_enabled_feedback_collection')),
-              ]),
-          ]),
-      ])
-      ->disabled(fn(CaseType $record) => $record->trashed());
-  }
+    protected static string $resource = CaseTypeResource::class;
 
-  protected function getSaveFormAction(): Action
-  {
-    return parent::getSaveFormAction()
-      ->hidden(fn(CaseType $record) => $record->trashed());
-  }
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Section::make()
+                    ->columns()
+                    ->schema([
+                        TextInput::make('name')
+                            ->label('Name')
+                            ->required()
+                            ->string(),
+                        Group::make()
+                            ->schema([
+                                Toggle::make('has_enabled_feedback_collection')
+                                    ->label('Enable feedback collection')
+                                    ->live(),
+                                Toggle::make('has_enabled_csat')
+                                    ->label('CSAT')
+                                    ->visible(fn (Get $get) => $get('has_enabled_feedback_collection')),
+                                Toggle::make('has_enabled_nps')
+                                    ->label('NPS')
+                                    ->visible(fn (Get $get) => $get('has_enabled_feedback_collection')),
+                            ]),
+                    ]),
+            ])
+            ->disabled(fn (CaseType $record) => $record->trashed());
+    }
 
-  protected function getHeaderActions(): array
-  {
-    return [
-      DeleteAction::make(),
-      RestoreAction::make(),
-      ForceDeleteAction::make(),
-    ];
-  }
+    protected function getSaveFormAction(): Action
+    {
+        return parent::getSaveFormAction()
+            ->hidden(fn (CaseType $record) => $record->trashed());
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            DeleteAction::make(),
+            RestoreAction::make(),
+            ForceDeleteAction::make(),
+        ];
+    }
 }

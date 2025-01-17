@@ -53,6 +53,7 @@ use FilamentTiptapEditor\TiptapEditor;
 class EditDivision extends EditRecord
 {
     use EditPageRedirection;
+
     protected static string $resource = DivisionResource::class;
 
     protected ?bool $hasDatabaseTransactions = true;

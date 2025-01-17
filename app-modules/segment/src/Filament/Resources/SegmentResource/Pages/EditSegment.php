@@ -103,7 +103,7 @@ class EditSegment extends EditRecord implements HasTable
         if ($segment->type === SegmentType::Static) {
             $keys = $segment->subjects()->pluck('subject_id');
 
-            $table->modifyQueryUsing(fn(Builder $query) => $query->whereKey($keys));
+            $table->modifyQueryUsing(fn (Builder $query) => $query->whereKey($keys));
         }
 
         return $table;

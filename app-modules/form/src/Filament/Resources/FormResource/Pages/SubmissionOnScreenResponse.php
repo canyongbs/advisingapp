@@ -44,22 +44,23 @@ use Filament\Resources\Pages\EditRecord;
 
 class SubmissionOnScreenResponse extends EditRecord
 {
-  use EditPageRedirection;
-  protected static string $resource = FormResource::class;
+    use EditPageRedirection;
 
-  protected static ?string $navigationLabel = 'On-Screen Response';
+    protected static string $resource = FormResource::class;
 
-  protected static ?string $navigationIcon = 'heroicon-o-bars-arrow-up';
+    protected static ?string $navigationLabel = 'On-Screen Response';
 
-  public function form(FilamentForm $form): FilamentForm
-  {
-    return $form
-      ->schema(
-        [
-          MarkdownEditor::make('on_screen_response')
-            ->disableToolbarButtons(['attachFiles'])
-            ->columnSpanFull(),
-        ]
-      );
-  }
+    protected static ?string $navigationIcon = 'heroicon-o-bars-arrow-up';
+
+    public function form(FilamentForm $form): FilamentForm
+    {
+        return $form
+            ->schema(
+                [
+                    MarkdownEditor::make('on_screen_response')
+                        ->disableToolbarButtons(['attachFiles'])
+                        ->columnSpanFull(),
+                ]
+            );
+    }
 }

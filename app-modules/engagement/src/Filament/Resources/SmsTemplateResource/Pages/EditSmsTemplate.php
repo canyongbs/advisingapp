@@ -50,44 +50,45 @@ use FilamentTiptapEditor\TiptapEditor;
 
 class EditSmsTemplate extends EditRecord
 {
-  use EditPageRedirection;
-  protected static string $resource = SmsTemplateResource::class;
+    use EditPageRedirection;
 
-  public function form(Form $form): Form
-  {
-    return $form
-      ->columns(1)
-      ->schema([
-        TextInput::make('name')
-          ->string()
-          ->required()
-          ->autocomplete(false),
-        Textarea::make('description')
-          ->string(),
-        TiptapEditor::make('content')
-          ->mergeTags($mergeTags = [
-            'student first name',
-            'student last name',
-            'student full name',
-            'student email',
-            'student preferred name',
-          ])
-          ->profile('sms')
-          ->columnSpanFull()
-          ->extraInputAttributes(['style' => 'min-height: 12rem;'])
-          ->required(),
-        Actions::make([
-          DraftTemplateWithAiAction::make()
-            ->channel(NotificationChannel::Sms)
-            ->mergeTags($mergeTags),
-        ]),
-      ]);
-  }
+    protected static string $resource = SmsTemplateResource::class;
 
-  protected function getHeaderActions(): array
-  {
-    return [
-      DeleteAction::make(),
-    ];
-  }
+    public function form(Form $form): Form
+    {
+        return $form
+            ->columns(1)
+            ->schema([
+                TextInput::make('name')
+                    ->string()
+                    ->required()
+                    ->autocomplete(false),
+                Textarea::make('description')
+                    ->string(),
+                TiptapEditor::make('content')
+                    ->mergeTags($mergeTags = [
+                        'student first name',
+                        'student last name',
+                        'student full name',
+                        'student email',
+                        'student preferred name',
+                    ])
+                    ->profile('sms')
+                    ->columnSpanFull()
+                    ->extraInputAttributes(['style' => 'min-height: 12rem;'])
+                    ->required(),
+                Actions::make([
+                    DraftTemplateWithAiAction::make()
+                        ->channel(NotificationChannel::Sms)
+                        ->mergeTags($mergeTags),
+                ]),
+            ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            DeleteAction::make(),
+        ];
+    }
 }

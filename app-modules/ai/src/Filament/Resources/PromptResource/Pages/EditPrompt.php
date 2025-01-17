@@ -51,50 +51,51 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditPrompt extends EditRecord
 {
-  use EditPageRedirection;
-  protected static string $resource = PromptResource::class;
+    use EditPageRedirection;
 
-  public function form(Form $form): Form
-  {
-    return $form
-      ->schema([
-        Section::make()
-          ->columns()
-          ->schema([
-            TextInput::make('title')
-              ->unique(ignoreRecord: true)
-              ->required()
-              ->string()
-              ->maxLength(255),
-            Select::make('type_id')
-              ->relationship('type', 'title')
-              ->preload()
-              ->searchable()
-              ->required(),
-            Textarea::make('description')
-              ->string()
-              ->columnSpanFull(),
-            Textarea::make('prompt')
-              ->required()
-              ->string()
-              ->columnSpanFull(),
-            ToggleButtons::make('is_smart')
-              ->label('Kind')
-              ->options([
-                0 => 'Custom',
-                1 => 'Smart',
-              ])
-              ->grouped()
-              ->visible(auth()->user()->hasRole(Authenticatable::SUPER_ADMIN_ROLE)),
-          ]),
-      ]);
-  }
+    protected static string $resource = PromptResource::class;
 
-  protected function getHeaderActions(): array
-  {
-    return [
-      ViewAction::make(),
-      DeleteAction::make(),
-    ];
-  }
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Section::make()
+                    ->columns()
+                    ->schema([
+                        TextInput::make('title')
+                            ->unique(ignoreRecord: true)
+                            ->required()
+                            ->string()
+                            ->maxLength(255),
+                        Select::make('type_id')
+                            ->relationship('type', 'title')
+                            ->preload()
+                            ->searchable()
+                            ->required(),
+                        Textarea::make('description')
+                            ->string()
+                            ->columnSpanFull(),
+                        Textarea::make('prompt')
+                            ->required()
+                            ->string()
+                            ->columnSpanFull(),
+                        ToggleButtons::make('is_smart')
+                            ->label('Kind')
+                            ->options([
+                                0 => 'Custom',
+                                1 => 'Smart',
+                            ])
+                            ->grouped()
+                            ->visible(auth()->user()->hasRole(Authenticatable::SUPER_ADMIN_ROLE)),
+                    ]),
+            ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            ViewAction::make(),
+            DeleteAction::make(),
+        ];
+    }
 }

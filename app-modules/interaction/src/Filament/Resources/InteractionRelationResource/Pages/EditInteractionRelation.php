@@ -43,13 +43,14 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditInteractionRelation extends EditRecord
 {
-  use EditPageRedirection;
-  protected static string $resource = InteractionRelationResource::class;
+    use EditPageRedirection;
 
-  protected function getHeaderActions(): array
-  {
-    return [
-      Actions\DeleteAction::make(),
-    ];
-  }
+    protected static string $resource = InteractionRelationResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Actions\DeleteAction::make(),
+        ];
+    }
 }

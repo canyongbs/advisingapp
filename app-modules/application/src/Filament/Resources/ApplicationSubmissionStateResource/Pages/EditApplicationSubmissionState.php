@@ -50,41 +50,42 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditApplicationSubmissionState extends EditRecord
 {
-  use EditPageRedirection;
-  protected static string $resource = ApplicationSubmissionStateResource::class;
+    use EditPageRedirection;
 
-  public function form(Form $form): Form
-  {
-    return $form
-      ->schema([
-        TextInput::make('name')
-          ->label('Name')
-          ->required()
-          ->string(),
-        Select::make('classification')
-          ->label('Classification')
-          ->searchable()
-          ->options(ApplicationSubmissionStateClassification::class)
-          ->required()
-          ->enum(ApplicationSubmissionStateClassification::class),
-        Select::make('color')
-          ->label('Color')
-          ->searchable()
-          ->options(ApplicationSubmissionStateColorOptions::class)
-          ->required()
-          ->enum(ApplicationSubmissionStateColorOptions::class),
-        Textarea::make('description')
-          ->label('Description')
-          ->required()
-          ->string(),
-      ]);
-  }
+    protected static string $resource = ApplicationSubmissionStateResource::class;
 
-  protected function getHeaderActions(): array
-  {
-    return [
-      ViewAction::make(),
-      DeleteAction::make(),
-    ];
-  }
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                TextInput::make('name')
+                    ->label('Name')
+                    ->required()
+                    ->string(),
+                Select::make('classification')
+                    ->label('Classification')
+                    ->searchable()
+                    ->options(ApplicationSubmissionStateClassification::class)
+                    ->required()
+                    ->enum(ApplicationSubmissionStateClassification::class),
+                Select::make('color')
+                    ->label('Color')
+                    ->searchable()
+                    ->options(ApplicationSubmissionStateColorOptions::class)
+                    ->required()
+                    ->enum(ApplicationSubmissionStateColorOptions::class),
+                Textarea::make('description')
+                    ->label('Description')
+                    ->required()
+                    ->string(),
+            ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            ViewAction::make(),
+            DeleteAction::make(),
+        ];
+    }
 }

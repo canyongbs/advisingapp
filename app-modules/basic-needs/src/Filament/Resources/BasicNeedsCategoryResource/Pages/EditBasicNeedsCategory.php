@@ -50,42 +50,43 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditBasicNeedsCategory extends EditRecord
 {
-  use EditPageRedirection;
-  protected static string $resource = BasicNeedsCategoryResource::class;
+    use EditPageRedirection;
 
-  public function form(Form $form): Form
-  {
-    return $form
-      ->schema([
-        TextInput::make('name')
-          ->label('Category Name')
-          ->required()
-          ->maxLength(255)
-          ->string(),
-        Textarea::make('description')
-          ->label('Description')
-          ->maxLength(65535)
-          ->string(),
-      ])->columns(1);
-  }
+    protected static string $resource = BasicNeedsCategoryResource::class;
 
-  protected function getHeaderActions(): array
-  {
-    return [
-      ViewAction::make(),
-      DeleteAction::make()
-        ->using(function (BasicNeedsCategory $basicNeedsCategory) {
-          try {
-            $basicNeedsCategory->delete();
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                TextInput::make('name')
+                    ->label('Category Name')
+                    ->required()
+                    ->maxLength(255)
+                    ->string(),
+                Textarea::make('description')
+                    ->label('Description')
+                    ->maxLength(65535)
+                    ->string(),
+            ])->columns(1);
+    }
 
-            return $basicNeedsCategory;
-          } catch (SoftDeleteContraintViolationException $e) {
-            Notification::make()
-              ->title($e->getMessage())
-              ->danger()
-              ->send();
-          }
-        }),
-    ];
-  }
+    protected function getHeaderActions(): array
+    {
+        return [
+            ViewAction::make(),
+            DeleteAction::make()
+                ->using(function (BasicNeedsCategory $basicNeedsCategory) {
+                    try {
+                        $basicNeedsCategory->delete();
+
+                        return $basicNeedsCategory;
+                    } catch (SoftDeleteContraintViolationException $e) {
+                        Notification::make()
+                            ->title($e->getMessage())
+                            ->danger()
+                            ->send();
+                    }
+                }),
+        ];
+    }
 }

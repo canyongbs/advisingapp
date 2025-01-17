@@ -67,6 +67,7 @@ use Illuminate\Database\Query\Expression;
 class EditEngagement extends EditRecord
 {
     use EditPageRedirection;
+
     protected static string $resource = EngagementResource::class;
 
     public function form(Form $form): Form
@@ -78,7 +79,7 @@ class EditEngagement extends EditRecord
                     ->required()
                     ->placeholder(__('Subject'))
                     ->columnSpanFull()
-                    ->visible(fn(Engagement $record): bool => $record->channel === NotificationChannel::Email),
+                    ->visible(fn (Engagement $record): bool => $record->channel === NotificationChannel::Email),
                 TiptapEditor::make('body')
                     ->disk('s3-public')
                     ->label('Body')
@@ -88,7 +89,7 @@ class EditEngagement extends EditRecord
                     ])
                     ->profile('email')
                     ->required()
-                    ->hintAction(fn(TiptapEditor $component) => Action::make('loadEmailTemplate')
+                    ->hintAction(fn (TiptapEditor $component) => Action::make('loadEmailTemplate')
                         ->form([
                             Select::make('emailTemplate')
                                 ->searchable()
@@ -96,7 +97,7 @@ class EditEngagement extends EditRecord
                                     return EmailTemplate::query()
                                         ->when(
                                             $get('onlyMyTemplates'),
-                                            fn(Builder $query) => $query->whereBelongsTo(auth()->user())
+                                            fn (Builder $query) => $query->whereBelongsTo(auth()->user())
                                         )
                                         ->orderBy('name')
                                         ->limit(50)
@@ -107,11 +108,11 @@ class EditEngagement extends EditRecord
                                     return EmailTemplate::query()
                                         ->when(
                                             $get('onlyMyTemplates'),
-                                            fn(Builder $query) => $query->whereBelongsTo(auth()->user())
+                                            fn (Builder $query) => $query->whereBelongsTo(auth()->user())
                                         )
                                         ->when(
                                             $get('onlyMyTeamTemplates'),
-                                            fn(Builder $query) => $query->whereIn('user_id', auth()->user()->teams->users->pluck('id'))
+                                            fn (Builder $query) => $query->whereIn('user_id', auth()->user()->teams->users->pluck('id'))
                                         )
                                         ->where(new Expression('lower(name)'), 'like', "%{$search}%")
                                         ->orderBy('name')
@@ -122,11 +123,11 @@ class EditEngagement extends EditRecord
                             Checkbox::make('onlyMyTemplates')
                                 ->label('Only show my templates')
                                 ->live()
-                                ->afterStateUpdated(fn(Set $set) => $set('emailTemplate', null)),
+                                ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
                             Checkbox::make('onlyMyTeamTemplates')
                                 ->label("Only show my team's templates")
                                 ->live()
-                                ->afterStateUpdated(fn(Set $set) => $set('emailTemplate', null)),
+                                ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
                         ])
                         ->action(function (array $data) use ($component) {
                             $template = EmailTemplate::find($data['emailTemplate']);
@@ -139,7 +140,7 @@ class EditEngagement extends EditRecord
                                 $component->generateImageUrls($template->content),
                             );
                         }))
-                    ->visible(fn(Engagement $record): bool => $record->channel === NotificationChannel::Email)
+                    ->visible(fn (Engagement $record): bool => $record->channel === NotificationChannel::Email)
                     ->showMergeTagsInBlocksPanel($form->getLivewire() instanceof Page)
                     ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
                     ->columnSpanFull(),
@@ -154,7 +155,7 @@ class EditEngagement extends EditRecord
                             ->helperText('By default, this engagement will send as soon as it is created unless you schedule it to send later.'),
                         DateTimePicker::make('deliver_at')
                             ->required()
-                            ->visible(fn(callable $get) => $get('send_later')),
+                            ->visible(fn (callable $get) => $get('send_later')),
                     ]),
             ]);
     }

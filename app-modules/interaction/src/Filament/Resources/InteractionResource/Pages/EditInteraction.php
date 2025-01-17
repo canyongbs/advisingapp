@@ -64,6 +64,7 @@ use Illuminate\Database\Eloquent\Builder;
 class EditInteraction extends EditRecord
 {
     use EditPageRedirection;
+
     protected static string $resource = InteractionResource::class;
 
     public function form(Form $form): Form
@@ -81,7 +82,7 @@ class EditInteraction extends EditRecord
                             Type::make(Prospect::class)
                                 ->titleAttribute(Prospect::displayNameKey())
                                 ->modifyOptionsQueryUsing(
-                                    fn(Builder $query, $record) => $query
+                                    fn (Builder $query, $record) => $query
                                         ->tap(new ExcludeConvertedProspects())
                                         ->orWhere('id', '=', $record->interactable_id)
                                 ),

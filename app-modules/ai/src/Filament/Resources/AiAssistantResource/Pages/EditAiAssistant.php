@@ -84,7 +84,7 @@ class EditAiAssistant extends EditRecord
                 Action::make('justSave')
                     ->label('Just save the settings')
                     ->color('gray')
-                    ->action(fn() => $this->save())
+                    ->action(fn () => $this->save())
                     ->cancelParentActions(),
             ])
             ->action(function (ResetAiServiceIdsForAssistant $resetAiServiceIds, ReInitializeAiServiceAssistant $reInitializeAiServiceAssistant) {
@@ -135,7 +135,7 @@ class EditAiAssistant extends EditRecord
                         ->success()
                         ->send();
                 })
-                ->hidden(fn(): bool => (bool) $this->getRecord()->archived_at),
+                ->hidden(fn (): bool => (bool) $this->getRecord()->archived_at),
             Action::make('restore')
                 ->action(function () {
                     $assistant = $this->getRecord();

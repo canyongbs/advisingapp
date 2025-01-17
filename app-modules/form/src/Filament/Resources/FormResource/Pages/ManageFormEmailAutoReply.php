@@ -58,6 +58,7 @@ use Illuminate\Database\Query\Expression;
 class ManageFormEmailAutoReply extends EditRecord
 {
     use EditPageRedirection;
+
     protected static string $resource = FormResource::class;
 
     protected static ?string $navigationLabel = 'Email Auto Reply';
@@ -91,7 +92,7 @@ class ManageFormEmailAutoReply extends EditRecord
                             ->label('Enabled')
                             ->live(),
                         TextInput::make('subject')
-                            ->required(fn(Get $get) => $get('is_enabled'))
+                            ->required(fn (Get $get) => $get('is_enabled'))
                             ->placeholder('Subject')
                             ->columnSpanFull(),
                         TiptapEditor::make('body')
@@ -104,8 +105,8 @@ class ManageFormEmailAutoReply extends EditRecord
                                 'student preferred name',
                             ])
                             ->profile('email')
-                            ->required(fn(Get $get) => $get('is_enabled'))
-                            ->hintAction(fn(TiptapEditor $component) => Action::make('loadEmailTemplate')
+                            ->required(fn (Get $get) => $get('is_enabled'))
+                            ->hintAction(fn (TiptapEditor $component) => Action::make('loadEmailTemplate')
                                 ->form([
                                     Select::make('emailTemplate')
                                         ->searchable()
@@ -116,7 +117,7 @@ class ManageFormEmailAutoReply extends EditRecord
                                             return EmailTemplate::query()
                                                 ->when(
                                                     $get('onlyMyTemplates'),
-                                                    fn(Builder $query) => $query->whereBelongsTo($user)
+                                                    fn (Builder $query) => $query->whereBelongsTo($user)
                                                 )
                                                 ->orderBy('name')
                                                 ->limit(50)
@@ -130,11 +131,11 @@ class ManageFormEmailAutoReply extends EditRecord
                                             return EmailTemplate::query()
                                                 ->when(
                                                     $get('onlyMyTemplates'),
-                                                    fn(Builder $query) => $query->whereBelongsTo($user)
+                                                    fn (Builder $query) => $query->whereBelongsTo($user)
                                                 )
                                                 ->when(
                                                     $get('onlyMyTeamTemplates'),
-                                                    fn(Builder $query) => $query->whereIn('user_id', $user->teams->users->pluck('id'))
+                                                    fn (Builder $query) => $query->whereIn('user_id', $user->teams->users->pluck('id'))
                                                 )
                                                 ->where(new Expression('lower(name)'), 'like', "%{$search}%")
                                                 ->orderBy('name')
@@ -145,11 +146,11 @@ class ManageFormEmailAutoReply extends EditRecord
                                     Checkbox::make('onlyMyTemplates')
                                         ->label('Only show my templates')
                                         ->live()
-                                        ->afterStateUpdated(fn(Set $set) => $set('emailTemplate', null)),
+                                        ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
                                     Checkbox::make('onlyMyTeamTemplates')
                                         ->label("Only show my team's templates")
                                         ->live()
-                                        ->afterStateUpdated(fn(Set $set) => $set('emailTemplate', null)),
+                                        ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
                                 ])
                                 ->action(function (array $data) use ($component) {
                                     $template = EmailTemplate::find($data['emailTemplate']);

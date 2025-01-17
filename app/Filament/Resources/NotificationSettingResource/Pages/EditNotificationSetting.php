@@ -48,37 +48,38 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditNotificationSetting extends EditRecord
 {
-  use EditPageRedirection;
-  protected static string $resource = NotificationSettingResource::class;
+    use EditPageRedirection;
 
-  public function form(Form $form): Form
-  {
-    return $form
-      ->columns(1)
-      ->schema([
-        TextInput::make('name')
-          ->string()
-          ->required()
-          ->autocomplete(false),
-        TextInput::make('from_name')
-          ->string()
-          ->maxLength(150)
-          ->autocomplete(false),
-        Textarea::make('description')
-          ->string(),
-        ColorSelect::make('primary_color'),
-        SpatieMediaLibraryFileUpload::make('logo')
-          ->disk('s3')
-          ->collection('logo')
-          ->visibility('private')
-          ->image(),
-      ]);
-  }
+    protected static string $resource = NotificationSettingResource::class;
 
-  protected function getHeaderActions(): array
-  {
-    return [
-      DeleteAction::make(),
-    ];
-  }
+    public function form(Form $form): Form
+    {
+        return $form
+            ->columns(1)
+            ->schema([
+                TextInput::make('name')
+                    ->string()
+                    ->required()
+                    ->autocomplete(false),
+                TextInput::make('from_name')
+                    ->string()
+                    ->maxLength(150)
+                    ->autocomplete(false),
+                Textarea::make('description')
+                    ->string(),
+                ColorSelect::make('primary_color'),
+                SpatieMediaLibraryFileUpload::make('logo')
+                    ->disk('s3')
+                    ->collection('logo')
+                    ->visibility('private')
+                    ->image(),
+            ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            DeleteAction::make(),
+        ];
+    }
 }

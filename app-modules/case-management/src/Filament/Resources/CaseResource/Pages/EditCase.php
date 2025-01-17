@@ -78,43 +78,43 @@ class EditCase extends EditRecord
                 Select::make('status_id')
                     ->relationship('status', 'name')
                     ->label('Status')
-                    ->options(fn(CaseModel $record) => CaseStatus::withTrashed()
+                    ->options(fn (CaseModel $record) => CaseStatus::withTrashed()
                         ->whereKey($record->status_id)
                         ->orWhereNull('deleted_at')
                         ->orderBy('classification')
                         ->orderBy('name')
                         ->get(['id', 'name', 'classification'])
-                        ->groupBy(fn(CaseStatus $status) => $status->classification->getlabel())
-                        ->map(fn(Collection $group) => $group->pluck('name', 'id')))
+                        ->groupBy(fn (CaseStatus $status) => $status->classification->getlabel())
+                        ->map(fn (Collection $group) => $group->pluck('name', 'id')))
                     ->required()
                     ->exists((new CaseStatus())->getTable(), 'id')
-                    ->disableOptionWhen(fn(string $value) => $disabledStatuses->contains($value)),
+                    ->disableOptionWhen(fn (string $value) => $disabledStatuses->contains($value)),
                 Grid::make()
                     ->schema([
                         Select::make('type_id')
                             ->options(
-                                fn(CaseModel $record) => CaseType::withTrashed()
+                                fn (CaseModel $record) => CaseType::withTrashed()
                                     ->whereKey($record->priority?->type_id)
                                     ->orWhereNull('deleted_at')
                                     ->orderBy('name')
                                     ->pluck('name', 'id')
                             )
-                            ->afterStateUpdated(fn(Set $set) => $set('priority_id', null))
+                            ->afterStateUpdated(fn (Set $set) => $set('priority_id', null))
                             ->label('Type')
                             ->required()
                             ->live()
                             ->exists(CaseType::class, 'id')
-                            ->disableOptionWhen(fn(string $value) => $disabledTypes->contains($value)),
+                            ->disableOptionWhen(fn (string $value) => $disabledTypes->contains($value)),
                         Select::make('priority_id')
                             ->relationship(
                                 name: 'priority',
                                 titleAttribute: 'name',
-                                modifyQueryUsing: fn(Get $get, Builder $query, $record) => $query->where('type_id', $get('type_id'))->orderBy('order'),
+                                modifyQueryUsing: fn (Get $get, Builder $query, $record) => $query->where('type_id', $get('type_id'))->orderBy('order'),
                             )
                             ->label('Priority')
                             ->required()
                             ->exists(CasePriority::class, 'id')
-                            ->visible(fn(Get $get): bool => filled($get('type_id'))),
+                            ->visible(fn (Get $get): bool => filled($get('type_id'))),
                     ]),
                 Textarea::make('close_details')
                     ->label('Close Details/Description')

@@ -43,11 +43,12 @@ use Illuminate\Contracts\Support\Htmlable;
 
 class EditConsentAgreement extends EditRecord
 {
-  use EditPageRedirection;
-  protected static string $resource = ConsentAgreementResource::class;
+    use EditPageRedirection;
 
-  public function getTitle(): string | Htmlable
-  {
-    return "Edit {$this->record->title}";
-  }
+    protected static string $resource = ConsentAgreementResource::class;
+
+    public function getTitle(): string | Htmlable
+    {
+        return "Edit {$this->record->title}";
+    }
 }

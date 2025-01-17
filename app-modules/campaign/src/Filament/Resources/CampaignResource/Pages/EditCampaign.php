@@ -47,31 +47,32 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditCampaign extends EditRecord
 {
-  use EditPageRedirection;
-  protected static string $resource = CampaignResource::class;
+    use EditPageRedirection;
 
-  public function form(Form $form): Form
-  {
-    /** @var User $user */
-    $user = auth()->user();
+    protected static string $resource = CampaignResource::class;
 
-    return $form
-      ->schema([
-        TextInput::make('name')
-          ->required(),
-        Select::make('segment_id')
-          ->label('Population Segment')
-          ->options($user->segments()->pluck('name', 'id'))
-          ->searchable()
-          ->required(),
-        Toggle::make('enabled'),
-      ]);
-  }
+    public function form(Form $form): Form
+    {
+        /** @var User $user */
+        $user = auth()->user();
 
-  protected function getHeaderActions(): array
-  {
-    return [
-      DeleteAction::make(),
-    ];
-  }
+        return $form
+            ->schema([
+                TextInput::make('name')
+                    ->required(),
+                Select::make('segment_id')
+                    ->label('Population Segment')
+                    ->options($user->segments()->pluck('name', 'id'))
+                    ->searchable()
+                    ->required(),
+                Toggle::make('enabled'),
+            ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            DeleteAction::make(),
+        ];
+    }
 }

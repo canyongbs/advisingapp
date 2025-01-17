@@ -49,6 +49,7 @@ use Filament\Resources\Pages\EditRecord;
 class EditBasicNeedsProgram extends EditRecord
 {
     use EditPageRedirection;
+
     protected static string $resource = BasicNeedsProgramResource::class;
 
     protected static ?string $navigationLabel = 'Edit';
