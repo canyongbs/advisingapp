@@ -37,18 +37,20 @@
 namespace AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages;
 
 use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource;
+use App\Concerns\EditPageRedirection;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
 class EditEngagementFile extends EditRecord
 {
-    protected static string $resource = EngagementFileResource::class;
+  use EditPageRedirection;
+  protected static string $resource = EngagementFileResource::class;
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\ViewAction::make(),
-            Actions\DeleteAction::make(),
-        ];
-    }
+  protected function getHeaderActions(): array
+  {
+    return [
+      Actions\ViewAction::make(),
+      Actions\DeleteAction::make(),
+    ];
+  }
 }

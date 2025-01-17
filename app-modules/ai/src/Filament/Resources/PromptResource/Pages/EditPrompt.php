@@ -37,6 +37,7 @@
 namespace AdvisingApp\Ai\Filament\Resources\PromptResource\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\PromptResource;
+use App\Concerns\EditPageRedirection;
 use App\Models\Authenticatable;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
@@ -50,49 +51,50 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditPrompt extends EditRecord
 {
-    protected static string $resource = PromptResource::class;
+  use EditPageRedirection;
+  protected static string $resource = PromptResource::class;
 
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                Section::make()
-                    ->columns()
-                    ->schema([
-                        TextInput::make('title')
-                            ->unique(ignoreRecord: true)
-                            ->required()
-                            ->string()
-                            ->maxLength(255),
-                        Select::make('type_id')
-                            ->relationship('type', 'title')
-                            ->preload()
-                            ->searchable()
-                            ->required(),
-                        Textarea::make('description')
-                            ->string()
-                            ->columnSpanFull(),
-                        Textarea::make('prompt')
-                            ->required()
-                            ->string()
-                            ->columnSpanFull(),
-                        ToggleButtons::make('is_smart')
-                            ->label('Kind')
-                            ->options([
-                                0 => 'Custom',
-                                1 => 'Smart',
-                            ])
-                            ->grouped()
-                            ->visible(auth()->user()->hasRole(Authenticatable::SUPER_ADMIN_ROLE)),
-                    ]),
-            ]);
-    }
+  public function form(Form $form): Form
+  {
+    return $form
+      ->schema([
+        Section::make()
+          ->columns()
+          ->schema([
+            TextInput::make('title')
+              ->unique(ignoreRecord: true)
+              ->required()
+              ->string()
+              ->maxLength(255),
+            Select::make('type_id')
+              ->relationship('type', 'title')
+              ->preload()
+              ->searchable()
+              ->required(),
+            Textarea::make('description')
+              ->string()
+              ->columnSpanFull(),
+            Textarea::make('prompt')
+              ->required()
+              ->string()
+              ->columnSpanFull(),
+            ToggleButtons::make('is_smart')
+              ->label('Kind')
+              ->options([
+                0 => 'Custom',
+                1 => 'Smart',
+              ])
+              ->grouped()
+              ->visible(auth()->user()->hasRole(Authenticatable::SUPER_ADMIN_ROLE)),
+          ]),
+      ]);
+  }
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            ViewAction::make(),
-            DeleteAction::make(),
-        ];
-    }
+  protected function getHeaderActions(): array
+  {
+    return [
+      ViewAction::make(),
+      DeleteAction::make(),
+    ];
+  }
 }

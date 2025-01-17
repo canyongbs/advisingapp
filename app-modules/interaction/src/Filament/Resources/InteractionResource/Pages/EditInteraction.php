@@ -47,6 +47,7 @@ use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Concerns\EditPageRedirection;
 use App\Models\Scopes\ExcludeConvertedProspects;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\DateTimePicker;
@@ -62,6 +63,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class EditInteraction extends EditRecord
 {
+    use EditPageRedirection;
     protected static string $resource = InteractionResource::class;
 
     public function form(Form $form): Form
@@ -79,7 +81,7 @@ class EditInteraction extends EditRecord
                             Type::make(Prospect::class)
                                 ->titleAttribute(Prospect::displayNameKey())
                                 ->modifyOptionsQueryUsing(
-                                    fn (Builder $query, $record) => $query
+                                    fn(Builder $query, $record) => $query
                                         ->tap(new ExcludeConvertedProspects())
                                         ->orWhere('id', '=', $record->interactable_id)
                                 ),

@@ -37,6 +37,7 @@
 namespace AdvisingApp\Ai\Filament\Resources\PromptTypeResource\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\PromptTypeResource;
+use App\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Section;
@@ -47,33 +48,34 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditPromptType extends EditRecord
 {
-    protected static string $resource = PromptTypeResource::class;
+  use EditPageRedirection;
+  protected static string $resource = PromptTypeResource::class;
 
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                Section::make()
-                    ->columns()
-                    ->schema([
-                        TextInput::make('title')
-                            ->unique(ignoreRecord: true)
-                            ->required()
-                            ->string()
-                            ->maxLength(255)
-                            ->columnSpanFull(),
-                        Textarea::make('description')
-                            ->string()
-                            ->columnSpanFull(),
-                    ]),
-            ]);
-    }
+  public function form(Form $form): Form
+  {
+    return $form
+      ->schema([
+        Section::make()
+          ->columns()
+          ->schema([
+            TextInput::make('title')
+              ->unique(ignoreRecord: true)
+              ->required()
+              ->string()
+              ->maxLength(255)
+              ->columnSpanFull(),
+            Textarea::make('description')
+              ->string()
+              ->columnSpanFull(),
+          ]),
+      ]);
+  }
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            ViewAction::make(),
-            DeleteAction::make(),
-        ];
-    }
+  protected function getHeaderActions(): array
+  {
+    return [
+      ViewAction::make(),
+      DeleteAction::make(),
+    ];
+  }
 }

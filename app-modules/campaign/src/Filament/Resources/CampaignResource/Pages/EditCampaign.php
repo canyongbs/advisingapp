@@ -37,6 +37,7 @@
 namespace AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages;
 
 use AdvisingApp\Campaign\Filament\Resources\CampaignResource;
+use App\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -46,30 +47,31 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditCampaign extends EditRecord
 {
-    protected static string $resource = CampaignResource::class;
+  use EditPageRedirection;
+  protected static string $resource = CampaignResource::class;
 
-    public function form(Form $form): Form
-    {
-        /** @var User $user */
-        $user = auth()->user();
+  public function form(Form $form): Form
+  {
+    /** @var User $user */
+    $user = auth()->user();
 
-        return $form
-            ->schema([
-                TextInput::make('name')
-                    ->required(),
-                Select::make('segment_id')
-                    ->label('Population Segment')
-                    ->options($user->segments()->pluck('name', 'id'))
-                    ->searchable()
-                    ->required(),
-                Toggle::make('enabled'),
-            ]);
-    }
+    return $form
+      ->schema([
+        TextInput::make('name')
+          ->required(),
+        Select::make('segment_id')
+          ->label('Population Segment')
+          ->options($user->segments()->pluck('name', 'id'))
+          ->searchable()
+          ->required(),
+        Toggle::make('enabled'),
+      ]);
+  }
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            DeleteAction::make(),
-        ];
-    }
+  protected function getHeaderActions(): array
+  {
+    return [
+      DeleteAction::make(),
+    ];
+  }
 }

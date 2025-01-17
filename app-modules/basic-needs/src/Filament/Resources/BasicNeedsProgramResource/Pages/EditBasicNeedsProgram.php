@@ -37,6 +37,7 @@
 namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages;
 
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource;
+use App\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
@@ -47,6 +48,7 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditBasicNeedsProgram extends EditRecord
 {
+    use EditPageRedirection;
     protected static string $resource = BasicNeedsProgramResource::class;
 
     protected static ?string $navigationLabel = 'Edit';

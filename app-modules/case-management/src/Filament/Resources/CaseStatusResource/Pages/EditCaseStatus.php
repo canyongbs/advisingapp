@@ -40,6 +40,7 @@ use AdvisingApp\CaseManagement\Enums\ColumnColorOptions;
 use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
+use App\Concerns\EditPageRedirection;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ForceDeleteAction;
@@ -52,46 +53,47 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditCaseStatus extends EditRecord
 {
-    protected static string $resource = CaseStatusResource::class;
+  use EditPageRedirection;
+  protected static string $resource = CaseStatusResource::class;
 
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                Section::make()
-                    ->columns()
-                    ->schema([
-                        TextInput::make('name')
-                            ->label('Name')
-                            ->required()
-                            ->string(),
-                        Select::make('classification')
-                            ->searchable()
-                            ->options(SystemCaseClassification::class)
-                            ->required()
-                            ->enum(SystemCaseClassification::class),
-                        Select::make('color')
-                            ->label('Color')
-                            ->searchable()
-                            ->options(ColumnColorOptions::class)
-                            ->required()
-                            ->enum(ColumnColorOptions::class),
-                    ]),
-            ])->disabled(fn (CaseStatus $record) => $record->trashed());
-    }
+  public function form(Form $form): Form
+  {
+    return $form
+      ->schema([
+        Section::make()
+          ->columns()
+          ->schema([
+            TextInput::make('name')
+              ->label('Name')
+              ->required()
+              ->string(),
+            Select::make('classification')
+              ->searchable()
+              ->options(SystemCaseClassification::class)
+              ->required()
+              ->enum(SystemCaseClassification::class),
+            Select::make('color')
+              ->label('Color')
+              ->searchable()
+              ->options(ColumnColorOptions::class)
+              ->required()
+              ->enum(ColumnColorOptions::class),
+          ]),
+      ])->disabled(fn(CaseStatus $record) => $record->trashed());
+  }
 
-    protected function getSaveFormAction(): Action
-    {
-        return parent::getSaveFormAction()
-            ->hidden(fn (CaseStatus $record) => $record->trashed());
-    }
+  protected function getSaveFormAction(): Action
+  {
+    return parent::getSaveFormAction()
+      ->hidden(fn(CaseStatus $record) => $record->trashed());
+  }
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            DeleteAction::make(),
-            RestoreAction::make(),
-            ForceDeleteAction::make(),
-        ];
-    }
+  protected function getHeaderActions(): array
+  {
+    return [
+      DeleteAction::make(),
+      RestoreAction::make(),
+      ForceDeleteAction::make(),
+    ];
+  }
 }

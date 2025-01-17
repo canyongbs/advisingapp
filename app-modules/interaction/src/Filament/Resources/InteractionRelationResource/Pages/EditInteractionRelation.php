@@ -37,17 +37,19 @@
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionRelationResource\Pages;
 
 use AdvisingApp\Interaction\Filament\Resources\InteractionRelationResource;
+use App\Concerns\EditPageRedirection;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
 class EditInteractionRelation extends EditRecord
 {
-    protected static string $resource = InteractionRelationResource::class;
+  use EditPageRedirection;
+  protected static string $resource = InteractionRelationResource::class;
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\DeleteAction::make(),
-        ];
-    }
+  protected function getHeaderActions(): array
+  {
+    return [
+      Actions\DeleteAction::make(),
+    ];
+  }
 }

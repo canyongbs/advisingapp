@@ -39,6 +39,7 @@ namespace AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource\Pages;
 use AdvisingApp\Engagement\Filament\Resources\Actions\DraftTemplateWithAiAction;
 use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource;
 use AdvisingApp\Notification\Enums\NotificationChannel;
+use App\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Textarea;
@@ -49,43 +50,44 @@ use FilamentTiptapEditor\TiptapEditor;
 
 class EditSmsTemplate extends EditRecord
 {
-    protected static string $resource = SmsTemplateResource::class;
+  use EditPageRedirection;
+  protected static string $resource = SmsTemplateResource::class;
 
-    public function form(Form $form): Form
-    {
-        return $form
-            ->columns(1)
-            ->schema([
-                TextInput::make('name')
-                    ->string()
-                    ->required()
-                    ->autocomplete(false),
-                Textarea::make('description')
-                    ->string(),
-                TiptapEditor::make('content')
-                    ->mergeTags($mergeTags = [
-                        'student first name',
-                        'student last name',
-                        'student full name',
-                        'student email',
-                        'student preferred name',
-                    ])
-                    ->profile('sms')
-                    ->columnSpanFull()
-                    ->extraInputAttributes(['style' => 'min-height: 12rem;'])
-                    ->required(),
-                Actions::make([
-                    DraftTemplateWithAiAction::make()
-                        ->channel(NotificationChannel::Sms)
-                        ->mergeTags($mergeTags),
-                ]),
-            ]);
-    }
+  public function form(Form $form): Form
+  {
+    return $form
+      ->columns(1)
+      ->schema([
+        TextInput::make('name')
+          ->string()
+          ->required()
+          ->autocomplete(false),
+        Textarea::make('description')
+          ->string(),
+        TiptapEditor::make('content')
+          ->mergeTags($mergeTags = [
+            'student first name',
+            'student last name',
+            'student full name',
+            'student email',
+            'student preferred name',
+          ])
+          ->profile('sms')
+          ->columnSpanFull()
+          ->extraInputAttributes(['style' => 'min-height: 12rem;'])
+          ->required(),
+        Actions::make([
+          DraftTemplateWithAiAction::make()
+            ->channel(NotificationChannel::Sms)
+            ->mergeTags($mergeTags),
+        ]),
+      ]);
+  }
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            DeleteAction::make(),
-        ];
-    }
+  protected function getHeaderActions(): array
+  {
+    return [
+      DeleteAction::make(),
+    ];
+  }
 }

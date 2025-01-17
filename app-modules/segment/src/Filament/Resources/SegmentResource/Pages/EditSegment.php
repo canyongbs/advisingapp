@@ -41,6 +41,7 @@ use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Enums\SegmentType;
 use AdvisingApp\Segment\Filament\Resources\SegmentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
@@ -58,6 +59,7 @@ class EditSegment extends EditRecord implements HasTable
     use InteractsWithTable {
         bootedInteractsWithTable as baseBootedInteractsWithTable;
     }
+    use EditPageRedirection;
 
     protected static string $resource = SegmentResource::class;
 
@@ -101,7 +103,7 @@ class EditSegment extends EditRecord implements HasTable
         if ($segment->type === SegmentType::Static) {
             $keys = $segment->subjects()->pluck('subject_id');
 
-            $table->modifyQueryUsing(fn (Builder $query) => $query->whereKey($keys));
+            $table->modifyQueryUsing(fn(Builder $query) => $query->whereKey($keys));
         }
 
         return $table;

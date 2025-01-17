@@ -39,6 +39,7 @@ namespace AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateR
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateColorOptions;
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResource;
+use App\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
@@ -49,40 +50,41 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditApplicationSubmissionState extends EditRecord
 {
-    protected static string $resource = ApplicationSubmissionStateResource::class;
+  use EditPageRedirection;
+  protected static string $resource = ApplicationSubmissionStateResource::class;
 
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->string(),
-                Select::make('classification')
-                    ->label('Classification')
-                    ->searchable()
-                    ->options(ApplicationSubmissionStateClassification::class)
-                    ->required()
-                    ->enum(ApplicationSubmissionStateClassification::class),
-                Select::make('color')
-                    ->label('Color')
-                    ->searchable()
-                    ->options(ApplicationSubmissionStateColorOptions::class)
-                    ->required()
-                    ->enum(ApplicationSubmissionStateColorOptions::class),
-                Textarea::make('description')
-                    ->label('Description')
-                    ->required()
-                    ->string(),
-            ]);
-    }
+  public function form(Form $form): Form
+  {
+    return $form
+      ->schema([
+        TextInput::make('name')
+          ->label('Name')
+          ->required()
+          ->string(),
+        Select::make('classification')
+          ->label('Classification')
+          ->searchable()
+          ->options(ApplicationSubmissionStateClassification::class)
+          ->required()
+          ->enum(ApplicationSubmissionStateClassification::class),
+        Select::make('color')
+          ->label('Color')
+          ->searchable()
+          ->options(ApplicationSubmissionStateColorOptions::class)
+          ->required()
+          ->enum(ApplicationSubmissionStateColorOptions::class),
+        Textarea::make('description')
+          ->label('Description')
+          ->required()
+          ->string(),
+      ]);
+  }
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            ViewAction::make(),
-            DeleteAction::make(),
-        ];
-    }
+  protected function getHeaderActions(): array
+  {
+    return [
+      ViewAction::make(),
+      DeleteAction::make(),
+    ];
+  }
 }

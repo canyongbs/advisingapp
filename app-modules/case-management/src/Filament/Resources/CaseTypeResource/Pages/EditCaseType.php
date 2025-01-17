@@ -38,6 +38,7 @@ namespace AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages;
 
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
 use AdvisingApp\CaseManagement\Models\CaseType;
+use App\Concerns\EditPageRedirection;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ForceDeleteAction;
@@ -52,48 +53,49 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditCaseType extends EditRecord
 {
-    protected static string $resource = CaseTypeResource::class;
+  use EditPageRedirection;
+  protected static string $resource = CaseTypeResource::class;
 
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                Section::make()
-                    ->columns()
-                    ->schema([
-                        TextInput::make('name')
-                            ->label('Name')
-                            ->required()
-                            ->string(),
-                        Group::make()
-                            ->schema([
-                                Toggle::make('has_enabled_feedback_collection')
-                                    ->label('Enable feedback collection')
-                                    ->live(),
-                                Toggle::make('has_enabled_csat')
-                                    ->label('CSAT')
-                                    ->visible(fn (Get $get) => $get('has_enabled_feedback_collection')),
-                                Toggle::make('has_enabled_nps')
-                                    ->label('NPS')
-                                    ->visible(fn (Get $get) => $get('has_enabled_feedback_collection')),
-                            ]),
-                    ]),
-            ])
-            ->disabled(fn (CaseType $record) => $record->trashed());
-    }
+  public function form(Form $form): Form
+  {
+    return $form
+      ->schema([
+        Section::make()
+          ->columns()
+          ->schema([
+            TextInput::make('name')
+              ->label('Name')
+              ->required()
+              ->string(),
+            Group::make()
+              ->schema([
+                Toggle::make('has_enabled_feedback_collection')
+                  ->label('Enable feedback collection')
+                  ->live(),
+                Toggle::make('has_enabled_csat')
+                  ->label('CSAT')
+                  ->visible(fn(Get $get) => $get('has_enabled_feedback_collection')),
+                Toggle::make('has_enabled_nps')
+                  ->label('NPS')
+                  ->visible(fn(Get $get) => $get('has_enabled_feedback_collection')),
+              ]),
+          ]),
+      ])
+      ->disabled(fn(CaseType $record) => $record->trashed());
+  }
 
-    protected function getSaveFormAction(): Action
-    {
-        return parent::getSaveFormAction()
-            ->hidden(fn (CaseType $record) => $record->trashed());
-    }
+  protected function getSaveFormAction(): Action
+  {
+    return parent::getSaveFormAction()
+      ->hidden(fn(CaseType $record) => $record->trashed());
+  }
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            DeleteAction::make(),
-            RestoreAction::make(),
-            ForceDeleteAction::make(),
-        ];
-    }
+  protected function getHeaderActions(): array
+  {
+    return [
+      DeleteAction::make(),
+      RestoreAction::make(),
+      ForceDeleteAction::make(),
+    ];
+  }
 }

@@ -39,6 +39,7 @@ namespace AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages;
 use AdvisingApp\Authorization\Filament\Forms\Components\PermissionsMatrix;
 use AdvisingApp\Authorization\Filament\Resources\RoleResource;
 use AdvisingApp\Authorization\Models\Role;
+use App\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
@@ -51,48 +52,49 @@ use Illuminate\Validation\Rules\Unique;
 
 class EditRole extends EditRecord
 {
-    protected static string $resource = RoleResource::class;
+  use EditPageRedirection;
+  protected static string $resource = RoleResource::class;
 
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                TextInput::make('name')
-                    ->required()
-                    ->maxLength(125)
-                    ->unique(
-                        table: 'roles',
-                        column: 'name',
-                        ignoreRecord: true,
-                        modifyRuleUsing: function (Unique $rule) {
-                            /** @var Role $role */
-                            $role = $this->record;
+  public function form(Form $form): Form
+  {
+    return $form
+      ->schema([
+        TextInput::make('name')
+          ->required()
+          ->maxLength(125)
+          ->unique(
+            table: 'roles',
+            column: 'name',
+            ignoreRecord: true,
+            modifyRuleUsing: function (Unique $rule) {
+              /** @var Role $role */
+              $role = $this->record;
 
-                            $rule->where('guard_name', $role->guard_name);
-                        }
-                    ),
-                Select::make('guard_name')
-                    ->options([
-                        'web' => 'Web',
-                        'api' => 'API',
-                    ])
-                    ->disabled()
-                    ->dehydrated(),
-                Textarea::make('description')
-                    ->nullable()
-                    ->maxLength(65535)
-                    ->columnSpanFull(),
-                PermissionsMatrix::make('permissions')
-                    ->columnSpanFull()
-                    ->guard(fn (Get $get): string => $get('guard_name')),
-            ]);
-    }
+              $rule->where('guard_name', $role->guard_name);
+            }
+          ),
+        Select::make('guard_name')
+          ->options([
+            'web' => 'Web',
+            'api' => 'API',
+          ])
+          ->disabled()
+          ->dehydrated(),
+        Textarea::make('description')
+          ->nullable()
+          ->maxLength(65535)
+          ->columnSpanFull(),
+        PermissionsMatrix::make('permissions')
+          ->columnSpanFull()
+          ->guard(fn(Get $get): string => $get('guard_name')),
+      ]);
+  }
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            ViewAction::make(),
-            DeleteAction::make(),
-        ];
-    }
+  protected function getHeaderActions(): array
+  {
+    return [
+      ViewAction::make(),
+      DeleteAction::make(),
+    ];
+  }
 }
