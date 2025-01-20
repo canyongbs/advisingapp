@@ -194,7 +194,7 @@ class ProgramsRelationManager extends RelationManager
                                 }
                             }
 
-                            $wasWere = fn($count) => $count === 1 ? 'was' : 'were';
+                            $wasWere = fn ($count) => $count === 1 ? 'was' : 'were';
 
                             $notification = match (true) {
                                 $deletedCount === 0 => [
@@ -220,7 +220,7 @@ class ProgramsRelationManager extends RelationManager
                                 ->body($notification['body'])
                                 ->send();
                         })
-                        ->visible(fn(): bool => app(ManageStudentConfigurationSettings::class)->is_enabled && auth()->user()->can('program.*.delete')),
+                        ->visible(fn (): bool => app(ManageStudentConfigurationSettings::class)->is_enabled && auth()->user()->can('program.*.delete')),
                 ]),
             ])
             ->headerActions([
