@@ -37,6 +37,7 @@
 namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource\Pages;
 
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource;
+use App\Concerns\EditPageRedirection;
 use App\Filament\Forms\Components\IconSelect;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
@@ -47,30 +48,31 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditResourceHubCategory extends EditRecord
 {
-    protected static string $resource = ResourceHubCategoryResource::class;
+  use EditPageRedirection;
+  protected static string $resource = ResourceHubCategoryResource::class;
 
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->string(),
-                IconSelect::make('icon'),
-                Textarea::make('description')
-                    ->label('Description')
-                    ->nullable()
-                    ->string()
-                    ->columnSpanFull(),
-            ]);
-    }
+  public function form(Form $form): Form
+  {
+    return $form
+      ->schema([
+        TextInput::make('name')
+          ->label('Name')
+          ->required()
+          ->string(),
+        IconSelect::make('icon'),
+        Textarea::make('description')
+          ->label('Description')
+          ->nullable()
+          ->string()
+          ->columnSpanFull(),
+      ]);
+  }
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            ViewAction::make(),
-            DeleteAction::make(),
-        ];
-    }
+  protected function getHeaderActions(): array
+  {
+    return [
+      ViewAction::make(),
+      DeleteAction::make(),
+    ];
+  }
 }

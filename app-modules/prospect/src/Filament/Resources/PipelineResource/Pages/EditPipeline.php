@@ -40,6 +40,7 @@ use AdvisingApp\Prospect\Filament\Resources\PipelineResource;
 use AdvisingApp\Prospect\Models\Pipeline;
 use AdvisingApp\Prospect\Models\PipelineStage;
 use AdvisingApp\Prospect\Models\Prospect;
+use App\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Repeater;
@@ -54,6 +55,7 @@ use Illuminate\Support\Str;
 
 class EditPipeline extends EditRecord
 {
+    use EditPageRedirection;
     protected static string $resource = PipelineResource::class;
 
     public function form(Form $form): Form
@@ -66,7 +68,7 @@ class EditPipeline extends EditRecord
                 Select::make('segment_id')
                     ->label('Segment')
                     ->required()
-                    ->relationship('segment', 'name', fn (Builder $query) => $query->where('model', app(Prospect::class)->getMorphClass()))
+                    ->relationship('segment', 'name', fn(Builder $query) => $query->where('model', app(Prospect::class)->getMorphClass()))
                     ->searchable()
                     ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                     ->preload(),

@@ -37,6 +37,7 @@
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages;
 
 use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource;
+use App\Concerns\EditPageRedirection;
 use Filament\Actions;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -44,24 +45,25 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditProspectSource extends EditRecord
 {
-    protected static string $resource = ProspectSourceResource::class;
+  use EditPageRedirection;
+  protected static string $resource = ProspectSourceResource::class;
 
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->string(),
-            ]);
-    }
+  public function form(Form $form): Form
+  {
+    return $form
+      ->schema([
+        TextInput::make('name')
+          ->label('Name')
+          ->required()
+          ->string(),
+      ]);
+  }
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\ViewAction::make(),
-            Actions\DeleteAction::make(),
-        ];
-    }
+  protected function getHeaderActions(): array
+  {
+    return [
+      Actions\ViewAction::make(),
+      Actions\DeleteAction::make(),
+    ];
+  }
 }

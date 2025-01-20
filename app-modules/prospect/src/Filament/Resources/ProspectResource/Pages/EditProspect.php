@@ -43,6 +43,7 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\Disassociat
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
+use App\Concerns\EditPageRedirection;
 use App\Models\User;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
@@ -59,6 +60,7 @@ use Illuminate\Database\Eloquent\Builder;
 class EditProspect extends EditRecord
 {
     use ProspectHolisticViewPage;
+    use EditPageRedirection;
 
     protected static string $resource = ProspectResource::class;
 
@@ -155,7 +157,7 @@ class EditProspect extends EditRecord
                         Select::make('status_id')
                             ->label('Status')
                             ->required()
-                            ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('sort'))
+                            ->relationship('status', 'name', fn(Builder $query) => $query->orderBy('sort'))
                             ->exists(
                                 table: (new ProspectStatus())->getTable(),
                                 column: (new ProspectStatus())->getKeyName()
@@ -203,8 +205,8 @@ class EditProspect extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            ConvertToStudent::make()->visible(fn (Prospect $record) => ! $record->student()->exists()),
-            DisassociateStudent::make()->visible(fn (Prospect $record) => $record->student()->exists()),
+            ConvertToStudent::make()->visible(fn(Prospect $record) => ! $record->student()->exists()),
+            DisassociateStudent::make()->visible(fn(Prospect $record) => $record->student()->exists()),
             ViewAction::make(),
             DeleteAction::make(),
         ];

@@ -38,6 +38,7 @@ namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages;
 
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\Concerns\HasSharedEventFormConfiguration;
+use App\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Form;
@@ -45,23 +46,24 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditEvent extends EditRecord
 {
-    use HasSharedEventFormConfiguration;
+  use HasSharedEventFormConfiguration;
+  use EditPageRedirection;
 
-    protected static string $resource = EventResource::class;
+  protected static string $resource = EventResource::class;
 
-    // TODO: Automatically set from Filament
-    protected static ?string $navigationLabel = 'Edit';
+  // TODO: Automatically set from Filament
+  protected static ?string $navigationLabel = 'Edit';
 
-    public function form(Form $form): Form
-    {
-        return $form->schema($this->fields());
-    }
+  public function form(Form $form): Form
+  {
+    return $form->schema($this->fields());
+  }
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            ViewAction::make(),
-            DeleteAction::make(),
-        ];
-    }
+  protected function getHeaderActions(): array
+  {
+    return [
+      ViewAction::make(),
+      DeleteAction::make(),
+    ];
+  }
 }

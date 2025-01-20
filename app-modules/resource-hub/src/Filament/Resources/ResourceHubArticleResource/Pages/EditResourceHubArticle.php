@@ -39,6 +39,7 @@ namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\ResourceHub\Filament\Actions\DraftResourceHubArticleWithAiAction;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource;
+use App\Concerns\EditPageRedirection;
 use Filament\Actions\Action as BaseAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Actions;
@@ -53,6 +54,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class EditResourceHubArticle extends EditRecord
 {
+    use EditPageRedirection;
     protected static string $resource = ResourceHubArticleResource::class;
 
     public function form(Form $form): Form

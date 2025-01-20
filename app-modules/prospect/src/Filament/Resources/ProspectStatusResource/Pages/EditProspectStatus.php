@@ -39,6 +39,7 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages;
 use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource;
+use App\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
@@ -48,41 +49,42 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditProspectStatus extends EditRecord
 {
-    protected static string $resource = ProspectStatusResource::class;
+  use EditPageRedirection;
+  protected static string $resource = ProspectStatusResource::class;
 
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->string(),
-                Select::make('classification')
-                    ->label('Classification')
-                    ->searchable()
-                    ->options(SystemProspectClassification::class)
-                    ->required()
-                    ->enum(SystemProspectClassification::class),
-                Select::make('color')
-                    ->label('Color')
-                    ->searchable()
-                    ->options(ProspectStatusColorOptions::class)
-                    ->required()
-                    ->enum(ProspectStatusColorOptions::class),
-                TextInput::make('sort')
-                    ->required()
-                    ->integer()
-                    ->minValue(1)
-                    ->maxValue(2147483647),
-            ]);
-    }
+  public function form(Form $form): Form
+  {
+    return $form
+      ->schema([
+        TextInput::make('name')
+          ->label('Name')
+          ->required()
+          ->string(),
+        Select::make('classification')
+          ->label('Classification')
+          ->searchable()
+          ->options(SystemProspectClassification::class)
+          ->required()
+          ->enum(SystemProspectClassification::class),
+        Select::make('color')
+          ->label('Color')
+          ->searchable()
+          ->options(ProspectStatusColorOptions::class)
+          ->required()
+          ->enum(ProspectStatusColorOptions::class),
+        TextInput::make('sort')
+          ->required()
+          ->integer()
+          ->minValue(1)
+          ->maxValue(2147483647),
+      ]);
+  }
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            ViewAction::make(),
-            DeleteAction::make(),
-        ];
-    }
+  protected function getHeaderActions(): array
+  {
+    return [
+      ViewAction::make(),
+      DeleteAction::make(),
+    ];
+  }
 }

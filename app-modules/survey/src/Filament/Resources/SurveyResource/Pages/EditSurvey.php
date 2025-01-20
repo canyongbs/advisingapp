@@ -40,6 +40,7 @@ use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
 use AdvisingApp\Survey\Filament\Resources\SurveyResource;
 use AdvisingApp\Survey\Filament\Resources\SurveyResource\Pages\Concerns\HasSharedFormConfiguration;
 use AdvisingApp\Survey\Models\Survey;
+use App\Concerns\EditPageRedirection;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Form;
@@ -48,53 +49,54 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditSurvey extends EditRecord
 {
-    use HasSharedFormConfiguration;
+  use HasSharedFormConfiguration;
+  use EditPageRedirection;
 
-    protected static string $resource = SurveyResource::class;
+  protected static string $resource = SurveyResource::class;
 
-    protected static ?string $navigationLabel = 'Edit';
+  protected static ?string $navigationLabel = 'Edit';
 
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema($this->fields());
-    }
+  public function form(Form $form): Form
+  {
+    return $form
+      ->schema($this->fields());
+  }
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            Action::make('view')
-                ->url(fn (Survey $survey) => route('surveys.show', ['survey' => $survey]))
-                ->icon('heroicon-m-arrow-top-right-on-square')
-                ->openUrlInNewTab(),
-            Action::make('embed_snippet')
-                ->label('Embed Snippet')
-                ->infolist(
-                    [
-                        TextEntry::make('snippet')
-                            ->label('Click to Copy')
-                            ->state(function (Survey $survey) {
-                                $code = resolve(GenerateSubmissibleEmbedCode::class)->handle($survey);
+  protected function getHeaderActions(): array
+  {
+    return [
+      Action::make('view')
+        ->url(fn(Survey $survey) => route('surveys.show', ['survey' => $survey]))
+        ->icon('heroicon-m-arrow-top-right-on-square')
+        ->openUrlInNewTab(),
+      Action::make('embed_snippet')
+        ->label('Embed Snippet')
+        ->infolist(
+          [
+            TextEntry::make('snippet')
+              ->label('Click to Copy')
+              ->state(function (Survey $survey) {
+                $code = resolve(GenerateSubmissibleEmbedCode::class)->handle($survey);
 
-                                $state = <<<EOD
+                $state = <<<EOD
                                 ```
                                 {$code}
                                 ```
                                 EOD;
 
-                                return str($state)->markdown()->toHtmlString();
-                            })
-                            ->copyable()
-                            ->copyableState(fn (Survey $survey) => resolve(GenerateSubmissibleEmbedCode::class)->handle($survey))
-                            ->copyMessage('Copied!')
-                            ->copyMessageDuration(1500)
-                            ->extraAttributes(['class' => 'embed-code-snippet']),
-                    ]
-                )
-                ->modalSubmitAction(false)
-                ->modalCancelActionLabel('Close')
-                ->hidden(fn (Survey $survey) => ! $survey->embed_enabled),
-            DeleteAction::make(),
-        ];
-    }
+                return str($state)->markdown()->toHtmlString();
+              })
+              ->copyable()
+              ->copyableState(fn(Survey $survey) => resolve(GenerateSubmissibleEmbedCode::class)->handle($survey))
+              ->copyMessage('Copied!')
+              ->copyMessageDuration(1500)
+              ->extraAttributes(['class' => 'embed-code-snippet']),
+          ]
+        )
+        ->modalSubmitAction(false)
+        ->modalCancelActionLabel('Close')
+        ->hidden(fn(Survey $survey) => ! $survey->embed_enabled),
+      DeleteAction::make(),
+    ];
+  }
 }
