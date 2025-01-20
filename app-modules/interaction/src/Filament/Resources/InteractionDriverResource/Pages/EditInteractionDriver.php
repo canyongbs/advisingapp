@@ -37,7 +37,7 @@
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource\Pages;
 
 use AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource;
-use App\Concerns\EditPageRedirection;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 

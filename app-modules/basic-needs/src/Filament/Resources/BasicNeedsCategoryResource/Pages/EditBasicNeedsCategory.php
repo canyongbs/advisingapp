@@ -38,8 +38,8 @@ namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource\P
 
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsCategory;
-use App\Concerns\EditPageRedirection;
 use App\Exceptions\SoftDeleteContraintViolationException;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Textarea;

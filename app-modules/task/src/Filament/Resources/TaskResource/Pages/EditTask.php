@@ -38,29 +38,29 @@ namespace AdvisingApp\Task\Filament\Resources\TaskResource\Pages;
 
 use AdvisingApp\Task\Filament\Concerns\TaskEditForm;
 use AdvisingApp\Task\Filament\Resources\TaskResource;
-use App\Concerns\EditPageRedirection;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 
 class EditTask extends EditRecord
 {
-  use TaskEditForm;
-  use EditPageRedirection;
+    use TaskEditForm;
+    use EditPageRedirection;
 
-  protected static string $resource = TaskResource::class;
+    protected static string $resource = TaskResource::class;
 
-  public function form(Form $form): Form
-  {
-    return $form
-      ->schema($this->editFormFields());
-  }
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema($this->editFormFields());
+    }
 
-  protected function getHeaderActions(): array
-  {
-    return [
-      Actions\ViewAction::make(),
-      Actions\DeleteAction::make(),
-    ];
-  }
+    protected function getHeaderActions(): array
+    {
+        return [
+            Actions\ViewAction::make(),
+            Actions\DeleteAction::make(),
+        ];
+    }
 }

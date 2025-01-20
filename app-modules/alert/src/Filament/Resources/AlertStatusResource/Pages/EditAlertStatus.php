@@ -39,7 +39,7 @@ namespace AdvisingApp\Alert\Filament\Resources\AlertStatusResource\Pages;
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Alert\Filament\Resources\AlertStatusResource;
 use AdvisingApp\Alert\Models\AlertStatus;
-use App\Concerns\EditPageRedirection;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;

@@ -39,7 +39,7 @@ namespace AdvisingApp\Form\Filament\Resources\FormResource\Pages;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Form\Filament\Resources\FormResource;
 use AdvisingApp\Form\Models\Form;
-use App\Concerns\EditPageRedirection;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;

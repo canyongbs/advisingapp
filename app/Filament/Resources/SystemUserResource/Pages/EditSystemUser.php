@@ -36,7 +36,7 @@
 
 namespace App\Filament\Resources\SystemUserResource\Pages;
 
-use App\Concerns\EditPageRedirection;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Filament\Resources\SystemUserResource;
 use App\Models\SystemUser;
 use Filament\Actions\Action;
@@ -48,6 +48,7 @@ use Filament\Resources\Pages\EditRecord;
 class EditSystemUser extends EditRecord
 {
     use EditPageRedirection;
+
     protected static string $resource = SystemUserResource::class;
 
     protected ?string $heading = 'Edit Programmatic (API) User';
@@ -62,7 +63,7 @@ class EditSystemUser extends EditRecord
                 ->hint('Please copy the token, it will only be shown once.')
                 ->disabled()
                 ->dehydrated(false)
-                ->visible(fn(?string $state) => filled($state)),
+                ->visible(fn (?string $state) => filled($state)),
         ]);
     }
 

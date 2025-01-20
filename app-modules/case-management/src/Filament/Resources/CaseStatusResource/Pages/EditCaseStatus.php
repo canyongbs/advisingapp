@@ -40,7 +40,7 @@ use AdvisingApp\CaseManagement\Enums\ColumnColorOptions;
 use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
-use App\Concerns\EditPageRedirection;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ForceDeleteAction;

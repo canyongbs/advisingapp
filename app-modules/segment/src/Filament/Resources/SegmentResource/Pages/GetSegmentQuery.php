@@ -38,7 +38,7 @@ namespace AdvisingApp\Segment\Filament\Resources\SegmentResource\Pages;
 
 use AdvisingApp\Segment\Enums\SegmentType;
 use AdvisingApp\Segment\Filament\Resources\SegmentResourceForProcesses;
-use App\Concerns\EditPageRedirection;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -47,54 +47,54 @@ use Illuminate\Database\Eloquent\Builder;
 
 class GetSegmentQuery extends EditRecord implements HasTable
 {
-  use InteractsWithTable {
-    bootedInteractsWithTable as baseBootedInteractsWithTable;
-  }
-  use EditPageRedirection;
+    use InteractsWithTable {
+        bootedInteractsWithTable as baseBootedInteractsWithTable;
+    }
+    use EditPageRedirection;
 
-  protected static string $resource = SegmentResourceForProcesses::class;
+    protected static string $resource = SegmentResourceForProcesses::class;
 
-  public function mount(int | string $record): void
-  {
-    $this->record = $this->resolveRecord($record);
+    public function mount(int | string $record): void
+    {
+        $this->record = $this->resolveRecord($record);
 
-    $this->fillForm();
+        $this->fillForm();
 
-    $this->previousUrl = url()->previous();
-  }
-
-  public function table(Table $table): Table
-  {
-    $segment = $this->getRecord();
-
-    $table = $segment->model->table($table);
-
-    if ($segment->type === SegmentType::Static) {
-      $keys = $segment->subjects()->pluck('subject_id');
-
-      $table->modifyQueryUsing(fn(Builder $query) => $query->whereKey($keys));
+        $this->previousUrl = url()->previous();
     }
 
-    return $table;
-  }
+    public function table(Table $table): Table
+    {
+        $segment = $this->getRecord();
 
-  public function bootedInteractsWithTable(): void
-  {
-    if ($this->shouldMountInteractsWithTable) {
-      $this->tableFilters = $this->getRecord()->filters;
+        $table = $segment->model->table($table);
+
+        if ($segment->type === SegmentType::Static) {
+            $keys = $segment->subjects()->pluck('subject_id');
+
+            $table->modifyQueryUsing(fn (Builder $query) => $query->whereKey($keys));
+        }
+
+        return $table;
     }
 
-    $this->baseBootedInteractsWithTable();
-  }
+    public function bootedInteractsWithTable(): void
+    {
+        if ($this->shouldMountInteractsWithTable) {
+            $this->tableFilters = $this->getRecord()->filters;
+        }
 
-  protected function mutateFormDataBeforeFill(array $data): array
-  {
-    $segment = $this->getRecord();
+        $this->baseBootedInteractsWithTable();
+    }
 
-    $data['model'] = $segment->model;
-    $data['type'] = $segment->type;
-    $data['user']['name'] = $segment->user->name;
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        $segment = $this->getRecord();
 
-    return $data;
-  }
+        $data['model'] = $segment->model;
+        $data['type'] = $segment->type;
+        $data['user']['name'] = $segment->user->name;
+
+        return $data;
+    }
 }

@@ -37,7 +37,7 @@
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource\Pages;
 
 use AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource;
-use App\Concerns\EditPageRedirection;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 

@@ -37,7 +37,7 @@
 namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages;
 
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource;
-use App\Concerns\EditPageRedirection;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;

@@ -37,7 +37,7 @@
 namespace AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages;
 
 use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource;
-use App\Concerns\EditPageRedirection;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Contracts\Support\Htmlable;
 

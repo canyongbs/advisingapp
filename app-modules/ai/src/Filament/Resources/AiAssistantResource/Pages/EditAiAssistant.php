@@ -43,7 +43,7 @@ use AdvisingApp\Ai\Filament\Resources\AiAssistantResource;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Concerns\HandlesFileUploads;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Forms\AiAssistantForm;
 use AdvisingApp\Ai\Models\AiAssistant;
-use App\Concerns\EditPageRedirection;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Settings\LicenseSettings;
 use Filament\Actions\Action;
 use Filament\Forms\Form;

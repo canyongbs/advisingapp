@@ -39,7 +39,7 @@ namespace AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource\Pages;
 use AdvisingApp\Engagement\Filament\Resources\Actions\DraftTemplateWithAiAction;
 use AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource;
 use AdvisingApp\Notification\Enums\NotificationChannel;
-use App\Concerns\EditPageRedirection;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Textarea;

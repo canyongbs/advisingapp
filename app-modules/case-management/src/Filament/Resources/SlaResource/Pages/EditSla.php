@@ -37,7 +37,7 @@
 namespace AdvisingApp\CaseManagement\Filament\Resources\SlaResource\Pages;
 
 use AdvisingApp\CaseManagement\Filament\Resources\SlaResource;
-use App\Concerns\EditPageRedirection;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 

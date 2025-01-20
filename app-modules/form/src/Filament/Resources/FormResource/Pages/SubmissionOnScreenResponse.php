@@ -37,7 +37,7 @@
 namespace AdvisingApp\Form\Filament\Resources\FormResource\Pages;
 
 use AdvisingApp\Form\Filament\Resources\FormResource;
-use App\Concerns\EditPageRedirection;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Form as FilamentForm;
 use Filament\Resources\Pages\EditRecord;

@@ -39,7 +39,7 @@ namespace AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages;
 use AdvisingApp\Authorization\Filament\Forms\Components\PermissionsMatrix;
 use AdvisingApp\Authorization\Filament\Resources\RoleResource;
 use AdvisingApp\Authorization\Models\Role;
-use App\Concerns\EditPageRedirection;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;

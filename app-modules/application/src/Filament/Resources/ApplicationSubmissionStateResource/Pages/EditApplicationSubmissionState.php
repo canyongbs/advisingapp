@@ -39,7 +39,7 @@ namespace AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateR
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateColorOptions;
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResource;
-use App\Concerns\EditPageRedirection;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;

@@ -37,7 +37,7 @@
 namespace AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource\Pages;
 
 use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource;
-use App\Concerns\EditPageRedirection;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DateTimePicker;
@@ -49,33 +49,34 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditCalendarEvent extends EditRecord
 {
-  use EditPageRedirection;
-  protected static string $resource = CalendarEventResource::class;
+    use EditPageRedirection;
 
-  public function form(Form $form): Form
-  {
-    return $form->schema([
-      TextInput::make('title')
-        ->string()
-        ->required(),
-      Textarea::make('description')
-        ->string()
-        ->nullable(),
-      DateTimePicker::make('starts_at')
-        ->required(),
-      DateTimePicker::make('ends_at')
-        ->required(),
-      TagsInput::make('attendees')
-        ->placeholder('Add attendee email')
-        ->nestedRecursiveRules(['email']),
-    ]);
-  }
+    protected static string $resource = CalendarEventResource::class;
 
-  protected function getHeaderActions(): array
-  {
-    return [
-      ViewAction::make(),
-      DeleteAction::make(),
-    ];
-  }
+    public function form(Form $form): Form
+    {
+        return $form->schema([
+            TextInput::make('title')
+                ->string()
+                ->required(),
+            Textarea::make('description')
+                ->string()
+                ->nullable(),
+            DateTimePicker::make('starts_at')
+                ->required(),
+            DateTimePicker::make('ends_at')
+                ->required(),
+            TagsInput::make('attendees')
+                ->placeholder('Add attendee email')
+                ->nestedRecursiveRules(['email']),
+        ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            ViewAction::make(),
+            DeleteAction::make(),
+        ];
+    }
 }

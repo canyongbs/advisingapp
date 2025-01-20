@@ -40,7 +40,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Enums\ReportModel;
 use AdvisingApp\Report\Filament\Resources\ReportResource;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Concerns\EditPageRedirection;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
@@ -92,9 +92,9 @@ class EditReport extends EditRecord implements HasTable
                     ])
                     ->columns(3),
                 CheckboxList::make('columns')
-                    ->options(fn(): array => array_reduce(
+                    ->options(fn (): array => array_reduce(
                         $this->getRecord()->model->exporter()::getColumns(),
-                        fn(array $options, ExportColumn $column): array => [
+                        fn (array $options, ExportColumn $column): array => [
                             ...$options,
                             $column->getName() => $column->getLabel(),
                         ],
@@ -116,7 +116,7 @@ class EditReport extends EditRecord implements HasTable
         return $report->model->table($table)
             ->columns(array_reduce(
                 $report->model->exporter()::getColumns(type: TextColumn::class),
-                fn(array $carry, TextColumn $column): array => [
+                fn (array $carry, TextColumn $column): array => [
                     ...$carry,
                     ...(in_array($column->getName(), $columns) ? [$column->getName() => $column] : []),
                 ],
@@ -159,7 +159,7 @@ class EditReport extends EditRecord implements HasTable
                         ->exporter($exporter)
                         ->modalHidden()
                         ->formData([
-                            'columnMap' => array_reduce($exporter::getColumns(), fn(array $carry, ExportColumn $column): array => [
+                            'columnMap' => array_reduce($exporter::getColumns(), fn (array $carry, ExportColumn $column): array => [
                                 ...$carry,
                                 $column->getName() => [
                                     'isEnabled' => in_array($column->getName(), $columns),

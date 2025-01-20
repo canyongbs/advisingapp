@@ -38,7 +38,7 @@ namespace AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Pages
 
 use AdvisingApp\CaseManagement\Filament\Concerns\CaseUpdateBreadcrumbs;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;
-use App\Concerns\EditPageRedirection;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 

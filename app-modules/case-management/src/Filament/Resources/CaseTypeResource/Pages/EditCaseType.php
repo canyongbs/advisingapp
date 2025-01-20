@@ -38,7 +38,7 @@ namespace AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages;
 
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
 use AdvisingApp\CaseManagement\Models\CaseType;
-use App\Concerns\EditPageRedirection;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ForceDeleteAction;

@@ -37,7 +37,7 @@
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentTagResource\Pages;
 
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentTagResource;
-use App\Concerns\EditPageRedirection;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -45,25 +45,26 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditStudentTag extends EditRecord
 {
-  use EditPageRedirection;
-  protected static string $resource = StudentTagResource::class;
+    use EditPageRedirection;
 
-  public function form(Form $form): Form
-  {
-    return $form
-      ->schema([
-        TextInput::make('name')
-          ->label('Name')
-          ->required()
-          ->maxLength(255)
-          ->string(),
-      ]);
-  }
+    protected static string $resource = StudentTagResource::class;
 
-  protected function getHeaderActions(): array
-  {
-    return [
-      DeleteAction::make(),
-    ];
-  }
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                TextInput::make('name')
+                    ->label('Name')
+                    ->required()
+                    ->maxLength(255)
+                    ->string(),
+            ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            DeleteAction::make(),
+        ];
+    }
 }

@@ -37,7 +37,7 @@
 namespace AdvisingApp\Ai\Filament\Resources\PromptTypeResource\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\PromptTypeResource;
-use App\Concerns\EditPageRedirection;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Section;

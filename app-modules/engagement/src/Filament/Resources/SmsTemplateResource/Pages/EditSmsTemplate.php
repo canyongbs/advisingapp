@@ -39,7 +39,7 @@ namespace AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource\Pages;
 use AdvisingApp\Engagement\Filament\Resources\Actions\DraftTemplateWithAiAction;
 use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource;
 use AdvisingApp\Notification\Enums\NotificationChannel;
-use App\Concerns\EditPageRedirection;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Textarea;

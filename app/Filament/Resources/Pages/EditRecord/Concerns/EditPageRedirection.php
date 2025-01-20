@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace App\Concerns;
+namespace App\Filament\Resources\Pages\EditRecord\Concerns;
 
 trait EditPageRedirection
 {

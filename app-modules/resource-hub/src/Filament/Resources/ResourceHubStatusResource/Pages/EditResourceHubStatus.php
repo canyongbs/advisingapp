@@ -37,7 +37,7 @@
 namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource\Pages;
 
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource;
-use App\Concerns\EditPageRedirection;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\TextInput;
@@ -46,25 +46,26 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditResourceHubStatus extends EditRecord
 {
-  use EditPageRedirection;
-  protected static string $resource = ResourceHubStatusResource::class;
+    use EditPageRedirection;
 
-  public function form(Form $form): Form
-  {
-    return $form
-      ->schema([
-        TextInput::make('name')
-          ->label('Name')
-          ->required()
-          ->string(),
-      ]);
-  }
+    protected static string $resource = ResourceHubStatusResource::class;
 
-  protected function getHeaderActions(): array
-  {
-    return [
-      ViewAction::make(),
-      DeleteAction::make(),
-    ];
-  }
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                TextInput::make('name')
+                    ->label('Name')
+                    ->required()
+                    ->string(),
+            ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            ViewAction::make(),
+            DeleteAction::make(),
+        ];
+    }
 }

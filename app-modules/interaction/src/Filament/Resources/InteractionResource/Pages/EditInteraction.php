@@ -47,7 +47,7 @@ use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Concerns\EditPageRedirection;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\Scopes\ExcludeConvertedProspects;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\DateTimePicker;
