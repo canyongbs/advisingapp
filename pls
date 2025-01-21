@@ -63,6 +63,8 @@ show_help() {
   echo "  exec      Execute a command in a running container"
   echo "  shell     Start a shell in a running container as webuser"
   echo "  rshell    Start a shell in a running container as root"
+  echo "  install   Install pls to $HOME/bin"
+  echo "  ih        (Install Helper) Runs the passed command in a CLI container with the same environment as the app container"
   echo "Options:"
   echo "  Any additional options will be passed directly to the respective docker compose commands"
   echo "  -v, --version  Display the version of pls"
@@ -111,6 +113,9 @@ main() {
       fi
 
       exec "${COMPOSE_CMD[@]}" exec -it "$service" /bin/bash
+      ;;
+    ih)
+      exec docker compose -f docker-compose.local-cli.yml run -e PUID="${PLS_USER_ID}" -e PGID="${PLS_GROUP_ID}" --build local-cli "$@"
       ;;
     -h|--help)
       show_help

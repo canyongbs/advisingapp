@@ -42,6 +42,12 @@ In order to access the application in a web browser either in local or remote de
 
 ### Setup
 
+Going forward this document will make reference to the `pls` command.
+
+The `pls` command is a custom made script that acts as a tool to run our sometimes complex `docker compose` and other related commands. It is located in the root directory of the project and can be run by using `./pls`.
+
+It comes with an install command `./pls install` that will "install" the current version into your home directory `bin` folder so that it can be used like a regular command `pls`. This documentation will assume you have done so.
+
 #### 1. Set up the `.env` file
 First, create an `.env` file based on `.env.example`
 ```bash
@@ -50,31 +56,40 @@ cp .env.example .env
 
 ---
 
-#### 2. Install Composer Dependencies
+#### 2. Install Dependencies
+
+##### Composer Dependencies
 
 ```bash
-docker run --rm \
-    -u "$(id -u):$(id -g)" \
-    -v "$(pwd):/var/www/html" \
-    -w /var/www/html \
-    laravelsail/php82-composer:latest \
-    composer install --ignore-platform-reqs --no-scripts
+pls ih composer install --ignore-platform-reqs
+```
+
+##### JS Dependencies Installation and Build
+
+```bash
+pls ih npm ci && npm run build
 ```
 
 ---
 
 #### 3. Start the containers and open a shell into the main PHP container
 
+Generate an encryption key:
+
+```bash
+php artisan key:generate
+```
+
 Run the following command to start the containers:
 
 ```bash
-spin up -d
+pls up -d
 ```
 
 Once the containers are started you can now start a shell into the main PHP container by running the following command:
 
 ```bash
-spin exec -it -u webuser advisingapp.local bash
+pls shell
 ```
 
 All following commands will and should be run from within the PHP container.
@@ -83,15 +98,11 @@ All following commands will and should be run from within the PHP container.
 
 #### 4. Set up the application
 
+Generate an App Key:
+
 We will set up the application by running the following commands:
 ```bash
 php artisan migrate:landlord:fresh
-php artisan key:generate
-php artisan queue:restart
-php artisan schedule:interrupt
-npm ci
-php artisan filament:upgrade
-npm run build
 ```
 
 The above commands will set up the application for the "landlord" database. The landlord database is in charge of holding all information on tenants. Next we will set up a tenant.
@@ -100,11 +111,13 @@ The above commands will set up the application for the "landlord" database. The 
 php artisan tenants:create [A Name for the Tenant] [A domain for the tenant]
 ```
 
+Example : `php artisan tenants:create test test.advisingapp.local`
+
 These commands will create a new tenant with the name and domain you supplied and then refresh and seed the tenant's database.
 
 After this the application should be accessible at the domain you supplied.
 
-Spin can be stopped by running `spin stop` and turned back on by running `spin up -d`
+The containers can be stopped by running `pls stop` and turned back on by running `pls up -d`
 
 Setup is now complete.
 
@@ -128,7 +141,7 @@ Those variables will allow you to edit particular settings and forwarding ports 
 ### Accessing the Database
 Within the containers, MySQL lives on port 3306. And by default it can be accessed outside of the containers on port 3308 as well.
 
-If port 3306 is already in use on your system or you prefer to use another port,
+If port 3308 is already in use on your system or you prefer to use another port,
 you can set the `FORWARD_DB_PORT` in your `.env` file to whatever available
 port you want.
 
