@@ -155,6 +155,25 @@ services:
       retries: 3
       timeout: 5s
 
+  local-cli:
+    profiles:
+      - local-cli
+    build:
+      context: .
+      target: cli-local-tooling
+      args:
+        PUID: '${PLS_USER_ID:-9999}'
+        PGID: '${PLS_GROUP_ID:-9999}'
+    environment:
+      PUID: '${PLS_USER_ID:-9999}'
+      PGID: '${PLS_GROUP_ID:-9999}'
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    volumes:
+      - '.:/var/www/html'
+    networks:
+      - cgbs-development
+
 networks:
   cgbs-development:
     external: true

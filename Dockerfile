@@ -266,3 +266,22 @@ RUN chown -R "$PUID":"$PGID" /var/www/html \
     && chmod -R ug+rwx /var/www/html/storage /var/www/html/bootstrap/cache
 
 ENTRYPOINT ["/init"]
+
+FROM cli-serversideup AS cli-local-tooling
+
+ENV NVM_VERSION v0.40.1
+ENV NODE_VERSION 23.4.0
+ENV NPM_VERSION ^11.0.0
+ENV NVM_DIR /usr/local/nvm
+RUN mkdir "$NVM_DIR"
+
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_VERSION/install.sh | bash
+
+ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
+ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+
+RUN echo "source $NVM_DIR/nvm.sh \
+    && nvm install $NODE_VERSION \
+    && nvm alias default $NODE_VERSION \
+    && nvm use default \
+    && npm install -g npm@$NPM_VERSION" | bash
