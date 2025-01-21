@@ -49,7 +49,7 @@ return new class () extends Migration {
     public function down(): void
     {
         Schema::table('programs', function (Blueprint $table) {
-            $table->string('otherid');
+            $table->string('otherid')->nullable();
         });
     }
 };
