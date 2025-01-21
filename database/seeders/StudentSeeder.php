@@ -61,7 +61,6 @@ class StudentSeeder extends Seeder
             $programs[] = Program::factory()->make(
                 [
                     'sisid' => $student->sisid,
-                    'otherid' => $student->otherid,
                 ]
             )->toArray();
         });

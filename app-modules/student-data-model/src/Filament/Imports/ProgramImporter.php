@@ -48,15 +48,6 @@ class ProgramImporter extends Importer
     public static function getColumns(): array
     {
         return [
-            ImportColumn::make('otherid')
-                ->label('Other ID')
-                ->requiredMapping()
-                ->example('########')
-                ->rules([
-                    'required',
-                    'string',
-                    'max:255',
-                ]),
             ImportColumn::make('acad_career')
                 ->requiredMapping()
                 ->label('ACAD career')
