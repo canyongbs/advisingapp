@@ -107,6 +107,8 @@ php artisan migrate:landlord:fresh
 
 The above commands will set up the application for the "landlord" database. The landlord database is in charge of holding all information on tenants. Next we will set up a tenant.
 
+> Note: This command above actually in most cases is not needed since the Landlord is migrated on initial startup of the web service in local development
+
 ```bash
 php artisan tenants:create [A Name for the Tenant] [A domain for the tenant]
 ```
@@ -177,9 +179,10 @@ AWS_S3_ROOT=
 
 ### Queue and Scheduler
 
-The application should automatically start a queue worker and scheduler when you run `spin up -d`. If you preferred to not have these running. You can see the corresponding `env` variables to false like so:
+`pls up -d` will automatically start the app, worker, and scheduler services.
 
-```dotenv
-LARAVEL_SCHEDULER_ENABLED=false
-LARAVEL_QUEUE_ENABLED=false
-```
+As the names suggest, the worker and scheduler service are dedicated services for the running of a queue worker and an on-going schedule run process.
+
+Having this working is useful in most use-cases. But if you want more control over when / how the queue or scheduler is run then you can specify which services you want to turn on in the `pls up` command.
+
+For example, if you just wanted the app service you could run `pls up app -d`. Or if you wanted the app and the scheduler service you could run `pls up app scheduler -d`
