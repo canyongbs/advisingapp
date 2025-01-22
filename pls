@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-VERSION="1.0.0"
+VERSION="1.2.0"
 
 export COMPOSE_CMD=(docker compose -f docker-compose.dev.yml)
 
@@ -51,20 +51,22 @@ check_version
 show_help() {
   echo "Usage: pls [command] [options]"
   echo "Commands:"
-  echo "  build     Build Docker images"
-  echo "  up        Start Docker containers"
-  echo "            The -d option can be used to start the containers in detached mode (e.g. ${BLUE}pls up -d${RESET})"
-  echo "  stop      Stop Docker containers"
-  echo "  down      Stop Docker containers"
-  echo "            The -v option can be used to remove volumes (e.g. ${BLUE}pls down -v${RESET})"
-  echo "  logs      Show logs for Docker containers"
-  echo "              One or more names of the services, seperated by spaces, can be passed as arguments to filter the logs (e.g. ${BLUE}pls log apps${RESET} or ${BLUE}pls logs app worker${RESET})"
-  echo "              The -f option can be used to follow the logs (e.g. ${BLUE}pls logs app -f${RESET})"
-  echo "  exec      Execute a command in a running container"
-  echo "  shell     Start a shell in a running container as webuser"
-  echo "  rshell    Start a shell in a running container as root"
-  echo "  install   Install pls to $HOME/bin"
-  echo "  ih        (Install Helper) Runs the passed command in a CLI container with the same environment as the app container"
+  echo "  build          Build Docker images"
+  echo "  up             Start Docker containers"
+  echo "                   The -d option can be used to start the containers in detached mode (e.g. ${BLUE}pls up -d${RESET})"
+  echo "  stop           Stop Docker containers"
+  echo "  down           Stop Docker containers"
+  echo "                   The -v option can be used to remove volumes (e.g. ${BLUE}pls down -v${RESET})"
+  echo "  logs           Show logs for Docker containers"
+  echo "                   One or more names of the services, seperated by spaces, can be passed as arguments to filter the logs (e.g. ${BLUE}pls log apps${RESET} or ${BLUE}pls logs app worker${RESET})"
+  echo "                   The -f option can be used to follow the logs (e.g. ${BLUE}pls logs app -f${RESET})"
+  echo "  exec           Execute a command in a running container"
+  echo "  shell          Start a shell in a running container as webuser"
+  echo "  rshell         Start a shell in a running container as root"
+  echo "  install        Install pls to $HOME/bin"
+  echo "  ih             (Install Helper) Runs the passed command in a CLI container with the same environment as the app container"
+  echo "  npmsetup       Run npm ci in the local-cli container and change the owner of the node_modules directory to the current user then runs npm run build. This is useful for first setting up the node_modules directory."
+  echo "  composersetup  Run composer install in the local-cli container and change the owner of the vendor directory to the current user. This is useful for first setting up the vendor directory."
   echo "Options:"
   echo "  Any additional options will be passed directly to the respective docker compose commands"
   echo "  -v, --version  Display the version of pls"
@@ -116,6 +118,14 @@ main() {
       ;;
     ih)
       exec docker compose -f docker-compose.local-cli.yml run -e PUID="${PLS_USER_ID}" -e PGID="${PLS_GROUP_ID}" --build local-cli "$@"
+      ;;
+    npmsetup)
+      exec docker compose -f docker-compose.local-cli.yml run -e PUID="${PLS_USER_ID}" -e PGID="${PLS_GROUP_ID}" --build local-cli \
+        /bin/bash -c "npm ci && chown -R "$PLS_USER_ID":"$PLS_GROUP_ID" /var/www/html/node_modules && npm run build"
+      ;;
+    composersetup)
+      exec docker compose -f docker-compose.local-cli.yml run -e PUID="${PLS_USER_ID}" -e PGID="${PLS_GROUP_ID}" --build local-cli \
+        /bin/bash -c "composer install && chown -R "$PLS_USER_ID":"$PLS_GROUP_ID" /var/www/html/vendor"
       ;;
     -h|--help)
       show_help

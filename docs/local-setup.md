@@ -48,37 +48,44 @@ The `pls` command is a custom made script that acts as a tool to run our sometim
 
 It comes with an install command `./pls install` that will "install" the current version into your home directory `bin` folder so that it can be used like a regular command `pls`. This documentation will assume you have done so.
 
-#### 1. Set up the `.env` file
-First, create an `.env` file based on `.env.example`
+#### 1. Initial setup
+
+The following instructions use a combination of commands run on the host and commands run in helper containers to faciliate the initial setup of the project.
+
+Typically these commands only need to be run when first setting up the project. All further work can be done while within a shell of the `app` container.
+
+> Note: The commands run in helper containers, like `pls composersetup`, are done in containers to prevent the need to have OS dependancies installed on the host. They also run processes to ensure file permissions and further setup are correct.
+>
+> As mentioned above, typically you only need run these commands when first setting up the project. Further composer installs, npm installs, and other commands can typically be done from within a shell of the `app` container. But sometimes if something gets broken with dependancies the respective `composersetup` and `npmsetup` commands can be used to re-install while the `app` contaner is shutdown.
+
+##### 1.1 Create a `.env`
+
+Create an `.env` file based on `.env.example`
 ```bash
 cp .env.example .env
 ```
 
----
-
-#### 2. Install Dependencies
-
-##### Composer Dependencies
+##### 1.2 Install Composer Dependencies
 
 ```bash
-pls ih composer install --ignore-platform-reqs
+pls composersetup
 ```
 
-##### JS Dependencies Installation and Build
+##### 1.3 JS Dependencies Installation and Build
 
 ```bash
-pls ih npm ci && npm run build
+pls npmsetup
 ```
 
----
-
-#### 3. Start the containers and open a shell into the main PHP container
-
-Generate an encryption key:
+##### 1.4 Generate an Encryption Key
 
 ```bash
 pls ih php artisan key:generate
 ```
+
+---
+
+#### 2. Start the containers and open a shell into the main PHP container
 
 Run the following command to start the containers:
 
