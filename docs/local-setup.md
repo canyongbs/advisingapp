@@ -77,7 +77,7 @@ pls ih npm ci && npm run build
 Generate an encryption key:
 
 ```bash
-php artisan key:generate
+pls ih php artisan key:generate
 ```
 
 Run the following command to start the containers:
