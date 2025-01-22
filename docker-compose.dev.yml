@@ -19,7 +19,7 @@ services:
       CACHE_FILAMENT_COMPONENTS: '${CACHE_FILAMENT_COMPONENTS:-false}'
       PUID: '${PLS_USER_ID:-9999}'
       PGID: '${PLS_GROUP_ID:-9999}'
-      FIX_PERMISSIONS: '${FIX_PERMISSIONS:-false}'
+      FIX_PERMISSIONS: '${FIX_PERMISSIONS:-true}'
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.advisingapp-app.rule=HostRegexp(`advisingapp.local`, `{subdomain:[a-z0-9]+}.advisingapp.local`)"
