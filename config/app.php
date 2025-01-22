@@ -124,8 +124,6 @@ return [
 
     'landlord_url' => env('LANDLORD_APP_URL', 'http://localhost'),
 
-    'landlord_host' => env('LANDLORD_APP_HOST', 'localhost'),
-
     'url' => env('APP_URL', env('LANDLORD_APP_URL', 'http://localhost')),
 
     'force_https' => env('APP_FORCE_HTTPS', true),
