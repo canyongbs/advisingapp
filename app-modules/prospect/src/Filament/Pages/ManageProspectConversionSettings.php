@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Prospect\Filament\Pages;
 
+use AdvisingApp\Prospect\Models\Prospect;
 use App\Filament\Clusters\ConstituentManagement;
 use App\Filament\Forms\Components\Heading;
 use App\Filament\Forms\Components\Paragraph;
@@ -56,7 +57,7 @@ class ManageProspectConversionSettings extends SettingsPage
 
     protected static ?string $title = 'Conversion';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 30;
 
     protected static ?string $navigationGroup = 'Prospects';
 
@@ -66,6 +67,10 @@ class ManageProspectConversionSettings extends SettingsPage
     {
         /** @var User $user */
         $user = auth()->user();
+
+        if (! $user->hasLicense(Prospect::getLicenseType())) {
+            return false;
+        }
 
         return $user->can(['product_admin.view-any']);
     }

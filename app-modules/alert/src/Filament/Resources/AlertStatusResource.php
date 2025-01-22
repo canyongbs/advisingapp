@@ -56,7 +56,7 @@ class AlertStatusResource extends Resource
 
     protected static ?string $navigationGroup = 'Alert';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 30;
 
     public static function getPages(): array
     {
