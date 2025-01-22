@@ -57,7 +57,7 @@ class ManageProspectConversionSettings extends SettingsPage
 
     protected static ?string $title = 'Conversion';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 30;
 
     protected static ?string $navigationGroup = 'Prospects';
 
