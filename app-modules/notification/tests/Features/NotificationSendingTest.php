@@ -36,15 +36,12 @@
 
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\Concerns\DatabaseChannelTrait;
-use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
-use AdvisingApp\Notification\Notifications\DatabaseNotification;
-use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use App\Models\Authenticatable;
 use App\Models\User;
 use Filament\Notifications\Notification as FilamentNotification;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Tests\Unit\TestEmailNotification;
 
 it('will create an outbound deliverable for the outbound notification', function () {
@@ -89,12 +86,19 @@ it('will not count emails sent to Super Admin Users against quota usage', functi
     expect(OutboundDeliverable::where('recipient_id', $nonSuperAdminUser->id)->where('channel', NotificationChannel::Email)->first()->quota_usage)->toBe(1);
 });
 
-class TestMultipleChannelNotification extends BaseNotification implements EmailNotification, DatabaseNotification
+class TestMultipleChannelNotification extends Notification implements ShouldQueue
 {
-    use EmailChannelTrait;
-    use DatabaseChannelTrait;
+    use Queueable;
 
-    public function toEmail(object $notifiable): MailMessage
+    /**
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
+    {
+        return ['mail', 'database'];
+    }
+
+    public function toMail(object $notifiable): MailMessage
     {
         return MailMessage::make()
             ->subject('Test Subject')

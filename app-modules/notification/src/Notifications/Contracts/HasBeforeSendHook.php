@@ -34,35 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace App\Notifications;
+namespace AdvisingApp\Notification\Notifications;
 
-use App\Models\NotificationSetting;
-use Illuminate\Notifications\Messages\MailMessage as BaseMailMessage;
+use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
+use Illuminate\Notifications\AnonymousNotifiable;
 
-class MailMessage extends BaseMailMessage
+interface HasBeforeSendHook
 {
-    public static function make(): static
-    {
-        return app(static::class);
-    }
-
-    public function content(string $content): static
-    {
-        $this->viewData = [
-            $this->viewData,
-            'content' => $content,
-        ];
-
-        return $this;
-    }
-
-    public function settings(?NotificationSetting $setting): static
-    {
-        $this->viewData = [
-            $this->viewData,
-            'settings' => $setting,
-        ];
-
-        return $this;
-    }
+    public function beforeSend(AnonymousNotifiable|NotifiableInterface $notifiable, OutboundDeliverable $deliverable, NotificationChannel $channel): void;
 }
