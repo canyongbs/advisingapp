@@ -41,6 +41,7 @@ use App\Filament\Clusters\ProductIntegrations;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Multitenancy\DataTransferObjects\TenantConfig;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -79,11 +80,13 @@ class ManageAmazonSesSettings extends SettingsPage
 
     public function form(Form $form): Form
     {
+        // DO we need to clear the isSystemNotificationEnabled filed or leave it as it is? : ->afterStateUpdated(fn (callable $set) => $set('recordId', null)),
         return $form
             ->schema([
                 Toggle::make('isDemoModeEnabled')
                     ->label('Demo Mode')
-                    ->live(),
+                    ->live()
+                    ->afterStateUpdated(fn (callable $set) => $set('isSystemNotificationEnabled', false)),
                 Section::make()
                     ->columnSpanFull()
                     ->schema([
@@ -123,6 +126,11 @@ class ManageAmazonSesSettings extends SettingsPage
                             ]),
                     ])
                     ->visible(fn (Get $get): bool => ! $get('isDemoModeEnabled')),
+                Checkbox::make('isSystemNotificationEnabled')
+                    ->label('Exclude authentication related messages')
+                    ->inline()
+                    ->columnSpanFull()
+                    ->visible(fn (Get $get): bool => $get('isDemoModeEnabled')),
             ]);
     }
 
@@ -150,7 +158,9 @@ class ManageAmazonSesSettings extends SettingsPage
 
             if ($data['isDemoModeEnabled']) {
                 $config->mail->isDemoModeEnabled = $data['isDemoModeEnabled'];
+                $config->mail->isSystemNotificationEnabled = $data['isSystemNotificationEnabled'];
             } else {
+                $config->mail->isSystemNotificationEnabled = false;
                 $config->mail->isDemoModeEnabled = $data['isDemoModeEnabled'];
                 $config->mail->fromName = $data['fromName'];
                 $config->mail->mailers->smtp->host = $data['smtp_host'];
@@ -168,6 +178,7 @@ class ManageAmazonSesSettings extends SettingsPage
 
             unset(
                 $data['isDemoModeEnabled'],
+                $data['isSystemNotificationEnabled'],
                 $data['fromName'],
                 $data['smtp_host'],
                 $data['smtp_port'],
@@ -229,6 +240,7 @@ class ManageAmazonSesSettings extends SettingsPage
             [
                 ...$settings->toArray(),
                 'isDemoModeEnabled' => $config->mail->isDemoModeEnabled ?? false,
+                'isSystemNotificationEnabled' => $config->mail->isSystemNotificationEnabled ?? false,
                 'fromName' => $config->mail->fromName,
                 'smtp_host' => $config->mail->mailers->smtp->host,
                 'smtp_port' => $config->mail->mailers->smtp->port,

@@ -45,6 +45,7 @@ enum NotificationDeliveryStatus: string implements HasLabel
     case Dispatched = 'dispatched';
     case DispatchFailed = 'failed_dispatch';
     case RateLimited = 'rate_limited';
+    case BlockedByDemoMode = 'blocked_by_demo_mode';
 
     // External
     case Failed = 'failed';
@@ -65,6 +66,7 @@ enum NotificationDeliveryStatus: string implements HasLabel
 
             NotificationDeliveryStatus::Failed,
             NotificationDeliveryStatus::RateLimited,
+            NotificationDeliveryStatus::BlockedByDemoMode,
             NotificationDeliveryStatus::DispatchFailed => 'text-red-500',
         };
     }
@@ -79,6 +81,7 @@ enum NotificationDeliveryStatus: string implements HasLabel
 
             NotificationDeliveryStatus::Failed,
             NotificationDeliveryStatus::RateLimited,
+            NotificationDeliveryStatus::BlockedByDemoMode,
             NotificationDeliveryStatus::DispatchFailed => 'danger',
         };
     }
@@ -93,6 +96,7 @@ enum NotificationDeliveryStatus: string implements HasLabel
 
             NotificationDeliveryStatus::Failed,
             NotificationDeliveryStatus::RateLimited,
+            NotificationDeliveryStatus::BlockedByDemoMode,
             NotificationDeliveryStatus::DispatchFailed => 'heroicon-s-exclamation-circle',
         };
     }
@@ -104,6 +108,7 @@ enum NotificationDeliveryStatus: string implements HasLabel
             NotificationDeliveryStatus::Processing, NotificationDeliveryStatus::Dispatched => 'Awaiting delivery',
             NotificationDeliveryStatus::Failed, NotificationDeliveryStatus::DispatchFailed => 'Failed to send',
             NotificationDeliveryStatus::RateLimited => 'Failed to send due to rate limits',
+            NotificationDeliveryStatus::BlockedByDemoMode => 'Failed to send due to blocked by demo mode',
         };
     }
 }
