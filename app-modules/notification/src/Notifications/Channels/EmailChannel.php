@@ -74,6 +74,10 @@ class EmailChannel extends MailChannel implements NotificationChannelInterface
                 $notification->metadata['tenant_id'] = Tenant::current()->getKey();
             }
 
+            //throw => If demo mode is on and exclude check box is off then all the messages will fail so we throw it like below line. and then update the status like $deliverable->update(['delivery_status' => NotificationDeliveryStatus::RateLimited]); for BlockedByDemoMode.
+
+            //If demo mode is on and exclude checkbox is also on then all notifications should still be blocked unless the notification class passed in here and contains the attribute that overrides the demo mode.
+
             throw_if(! $this->canSendWithinQuotaLimits($notification, $notifiable), new NotificationQuotaExceeded());
 
             $result = $this->handle($notifiable, $notification);

@@ -43,6 +43,7 @@ class TenantMailConfig extends Data
     public function __construct(
         public TenantMailersConfig $mailers,
         public bool $isDemoModeEnabled = false,
+        public bool $isSystemNotificationEnabled = false,
         public string $mailer = 'smtp',
         public string $fromName = 'Advising App™',
     ) {}
