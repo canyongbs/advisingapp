@@ -49,9 +49,6 @@ class ProgramFactory extends Factory
     {
         return [
             'sisid' => Student::factory(),
-            'otherid' => function (array $attributes) {
-                return Student::find($attributes['sisid'])->otherid;
-            },
             'acad_career' => $this->faker->randomElement(['NC', 'CRED']),
             'division' => $this->faker->randomElement(['ABC01', 'ABD02', 'ABE03']),
             'acad_plan' => json_encode([

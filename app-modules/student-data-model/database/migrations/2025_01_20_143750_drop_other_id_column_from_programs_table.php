@@ -34,39 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace Database\Seeders;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\StudentDataModel\Models\Enrollment;
-use AdvisingApp\StudentDataModel\Models\Program;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Seeder;
-
-class StudentSeeder extends Seeder
-{
-    public function run(): void
+return new class () extends Migration {
+    public function up(): void
     {
-        /** @var Collection $students */
-        $students = Student::factory(500)
-            ->make();
-
-        $enrollments = [];
-        $programs = [];
-
-        $students->each(function ($student) use (&$enrollments, &$programs) {
-            foreach (Enrollment::factory(5)->make(['sisid' => $student->sisid])->toArray() as $enrollment) {
-                $enrollments[] = $enrollment;
-            }
-
-            $programs[] = Program::factory()->make(
-                [
-                    'sisid' => $student->sisid,
-                ]
-            )->toArray();
+        Schema::table('programs', function (Blueprint $table) {
+            $table->dropColumn('otherid');
         });
-
-        Student::insert($students->toArray());
-        Enrollment::insert($enrollments);
-        Program::insert($programs);
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('programs', function (Blueprint $table) {
+            $table->string('otherid')->nullable();
+        });
+    }
+};

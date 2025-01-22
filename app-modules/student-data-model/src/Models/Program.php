@@ -68,7 +68,6 @@ class Program extends Model
 
     protected $fillable = [
         'sisid',
-        'otherid',
         'acad_career',
         'division',
         'acad_plan',
