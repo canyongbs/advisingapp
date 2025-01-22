@@ -34,6 +34,9 @@
 @php
     use AdvisingApp\Campaign\Settings\CampaignSettings;
     use Carbon\Carbon;
+    use AdvisingApp\Alert\Models\AlertStatus;
+
+    $alertStatus = AlertStatus::findOrFail($action['status_id']);
 @endphp
 
 <x-filament::fieldset>
@@ -52,7 +55,7 @@
         </div>
         <div class="flex flex-col pt-3">
             <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Status</dt>
-            <dd class="text-sm font-semibold">{{ $action['status_id'] }}</dd>
+            <dd class="text-sm font-semibold">{{ $alertStatus?->name }}</dd>
         </div>
         <div class="flex flex-col pt-3">
             <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Suggested Intervention</dt>
