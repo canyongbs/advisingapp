@@ -53,7 +53,7 @@ jobs:
   deploy-web:
     name: Deploy Web Service
     runs-on: ubuntu-22.04
-    needs: [build-web, deploy-worker]
+    needs: [build-web]
     environment: production
 
     steps:
@@ -145,58 +145,58 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-  deploy-worker:
-    name: Deploy Worker Service
-    runs-on: ubuntu-22.04
-    needs: [build-worker]
-    environment: production
+#   deploy-worker:
+#     name: Deploy Worker Service
+#     runs-on: ubuntu-22.04
+#     needs: [build-worker]
+#     environment: production
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: true
-          ref: ${{ github.head_ref }}
-          token: ${{ secrets.PAT }}
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v4
+#         with:
+#           submodules: true
+#           ref: ${{ github.head_ref }}
+#           token: ${{ secrets.PAT }}
 
-      - name: Configure AWS credentials
-        # SHA of release v4.0.2
-        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
-        with:
-          aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+#       - name: Configure AWS credentials
+#         # SHA of release v4.0.2
+#         uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
+#         with:
+#           aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
+#           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Fill in the new image ID in the Amazon ECS task definition
-        id: task-def
-        # SHA of release v1.6.1
-        uses: aws-actions/amazon-ecs-render-task-definition@469db592f4341616e992bf7f231e19b3ab9b4efa
-        with:
-          task-definition: "docker/devops/ecs/advisingapp/advisingapp-worker-prod-task-definition.json"
-          container-name: "worker"
-          image: ${{ needs.build-worker.outputs.image }}
+#       - name: Fill in the new image ID in the Amazon ECS task definition
+#         id: task-def
+#         # SHA of release v1.6.1
+#         uses: aws-actions/amazon-ecs-render-task-definition@469db592f4341616e992bf7f231e19b3ab9b4efa
+#         with:
+#           task-definition: "docker/devops/ecs/advisingapp/advisingapp-worker-prod-task-definition.json"
+#           container-name: "worker"
+#           image: ${{ needs.build-worker.outputs.image }}
 
-      - name: Deploy Amazon ECS task definition
-        id: task-deploy
-        # SHA of release v2.2.0
-        uses: aws-actions/amazon-ecs-deploy-task-definition@0e82244a9c6dac43d70151a94c67ebc4bab18fc5
-        with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: "advisingapp-worker-prod-service"
-          cluster: "advisingapp-prod"
-          wait-for-service-stability: true
+#       - name: Deploy Amazon ECS task definition
+#         id: task-deploy
+#         # SHA of release v2.2.0
+#         uses: aws-actions/amazon-ecs-deploy-task-definition@0e82244a9c6dac43d70151a94c67ebc4bab18fc5
+#         with:
+#           task-definition: ${{ steps.task-def.outputs.task-definition }}
+#           service: "advisingapp-worker-prod-service"
+#           cluster: "advisingapp-prod"
+#           wait-for-service-stability: true
 
-      - name: Check if deployment was successful
-        id: check-deployment
-        run: |
-          CURRENT_TASK_DEF_ARN=$(aws ecs describe-services --cluster advisingapp-prod --services advisingapp-worker-prod-service --query services[0].deployments[0].taskDefinition | jq -r ".")
-          NEW_TASK_DEF_ARN=${{ steps.task-deploy.outputs.task-definition-arn }}
-          echo "Current task arn: $CURRENT_TASK_DEF_ARN"
-          echo "New task arn: $NEW_TASK_DEF_ARN"
-          if [ "$CURRENT_TASK_DEF_ARN" != "$NEW_TASK_DEF_ARN" ]; then
-            echo "Deployment failed."
-            exit 1
-          fi
+#       - name: Check if deployment was successful
+#         id: check-deployment
+#         run: |
+#           CURRENT_TASK_DEF_ARN=$(aws ecs describe-services --cluster advisingapp-prod --services advisingapp-worker-prod-service --query services[0].deployments[0].taskDefinition | jq -r ".")
+#           NEW_TASK_DEF_ARN=${{ steps.task-deploy.outputs.task-definition-arn }}
+#           echo "Current task arn: $CURRENT_TASK_DEF_ARN"
+#           echo "New task arn: $NEW_TASK_DEF_ARN"
+#           if [ "$CURRENT_TASK_DEF_ARN" != "$NEW_TASK_DEF_ARN" ]; then
+#             echo "Deployment failed."
+#             exit 1
+#           fi
 
   build-scheduler:
     name: Build Scheduler Image
@@ -240,186 +240,186 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-  deploy-scheduler:
-    name: Deploy Scheduler Service
-    runs-on: ubuntu-22.04
-    needs: [build-scheduler, deploy-worker]
-    environment: production
+#   deploy-scheduler:
+#     name: Deploy Scheduler Service
+#     runs-on: ubuntu-22.04
+#     needs: [build-scheduler, deploy-worker]
+#     environment: production
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: true
-          ref: ${{ github.head_ref }}
-          token: ${{ secrets.PAT }}
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v4
+#         with:
+#           submodules: true
+#           ref: ${{ github.head_ref }}
+#           token: ${{ secrets.PAT }}
 
-      - name: Configure AWS credentials
-        # SHA of release v4.0.2
-        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
-        with:
-          aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+#       - name: Configure AWS credentials
+#         # SHA of release v4.0.2
+#         uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
+#         with:
+#           aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
+#           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Fill in the new image ID in the Amazon ECS task definition
-        id: task-def
-        # SHA of release v1.6.1
-        uses: aws-actions/amazon-ecs-render-task-definition@469db592f4341616e992bf7f231e19b3ab9b4efa
-        with:
-          task-definition: "docker/devops/ecs/advisingapp/advisingapp-scheduler-prod-task-definition.json"
-          container-name: "scheduler"
-          image: ${{ needs.build-scheduler.outputs.image }}
+#       - name: Fill in the new image ID in the Amazon ECS task definition
+#         id: task-def
+#         # SHA of release v1.6.1
+#         uses: aws-actions/amazon-ecs-render-task-definition@469db592f4341616e992bf7f231e19b3ab9b4efa
+#         with:
+#           task-definition: "docker/devops/ecs/advisingapp/advisingapp-scheduler-prod-task-definition.json"
+#           container-name: "scheduler"
+#           image: ${{ needs.build-scheduler.outputs.image }}
 
-      - name: Deploy Amazon ECS task definition
-        id: task-deploy
-        # SHA of release v2.2.0
-        uses: aws-actions/amazon-ecs-deploy-task-definition@0e82244a9c6dac43d70151a94c67ebc4bab18fc5
-        with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: "advisingapp-scheduler-prod-service"
-          cluster: "advisingapp-prod"
-          wait-for-service-stability: true
+#       - name: Deploy Amazon ECS task definition
+#         id: task-deploy
+#         # SHA of release v2.2.0
+#         uses: aws-actions/amazon-ecs-deploy-task-definition@0e82244a9c6dac43d70151a94c67ebc4bab18fc5
+#         with:
+#           task-definition: ${{ steps.task-def.outputs.task-definition }}
+#           service: "advisingapp-scheduler-prod-service"
+#           cluster: "advisingapp-prod"
+#           wait-for-service-stability: true
 
-      - name: Check if deployment was successful
-        id: check-deployment
-        run: |
-          CURRENT_TASK_DEF_ARN=$(aws ecs describe-services --cluster advisingapp-prod --services advisingapp-scheduler-prod-service --query services[0].deployments[0].taskDefinition | jq -r ".")
-          NEW_TASK_DEF_ARN=${{ steps.task-deploy.outputs.task-definition-arn }}
-          echo "Current task arn: $CURRENT_TASK_DEF_ARN"
-          echo "New task arn: $NEW_TASK_DEF_ARN"
-          if [ "$CURRENT_TASK_DEF_ARN" != "$NEW_TASK_DEF_ARN" ]; then
-            echo "Deployment failed."
-            exit 1
-          fi
+#       - name: Check if deployment was successful
+#         id: check-deployment
+#         run: |
+#           CURRENT_TASK_DEF_ARN=$(aws ecs describe-services --cluster advisingapp-prod --services advisingapp-scheduler-prod-service --query services[0].deployments[0].taskDefinition | jq -r ".")
+#           NEW_TASK_DEF_ARN=${{ steps.task-deploy.outputs.task-definition-arn }}
+#           echo "Current task arn: $CURRENT_TASK_DEF_ARN"
+#           echo "New task arn: $NEW_TASK_DEF_ARN"
+#           if [ "$CURRENT_TASK_DEF_ARN" != "$NEW_TASK_DEF_ARN" ]; then
+#             echo "Deployment failed."
+#             exit 1
+#           fi
 
-  build-release-automation:
-    name: Build Release Automation Image
-    runs-on: ubuntu-22.04
-    outputs:
-      image: ${{ steps.build-image.outputs.image }}
-    environment: production
+#   build-release-automation:
+#     name: Build Release Automation Image
+#     runs-on: ubuntu-22.04
+#     outputs:
+#       image: ${{ steps.build-image.outputs.image }}
+#     environment: production
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: true
-          ref: ${{ github.head_ref }}
-          token: ${{ secrets.PAT }}
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v4
+#         with:
+#           submodules: true
+#           ref: ${{ github.head_ref }}
+#           token: ${{ secrets.PAT }}
 
-      - name: Configure AWS credentials
-        # SHA of release v4.0.2
-        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
-        with:
-          aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+#       - name: Configure AWS credentials
+#         # SHA of release v4.0.2
+#         uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
+#         with:
+#           aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
+#           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        # SHA of release v2.0.1
-        uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076
+#       - name: Login to Amazon ECR
+#         id: login-ecr
+#         # SHA of release v2.0.1
+#         uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076
 
-      - name: Build, tag, and push image to Amazon ECR
-        id: build-image
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ github.event.release.tag_name }}
-          ECR_REPOSITORY: "advisingapp/release-automation"
-        run: |
-          # Build a docker container and
-          # push it to ECR so that it can
-          # be deployed to ECS.
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --target release-automation --platform linux/amd64 --build-arg USER_ID=9999 --build-arg GROUP_ID=9999 .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+#       - name: Build, tag, and push image to Amazon ECR
+#         id: build-image
+#         env:
+#           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#           IMAGE_TAG: ${{ github.event.release.tag_name }}
+#           ECR_REPOSITORY: "advisingapp/release-automation"
+#         run: |
+#           # Build a docker container and
+#           # push it to ECR so that it can
+#           # be deployed to ECS.
+#           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --target release-automation --platform linux/amd64 --build-arg USER_ID=9999 --build-arg GROUP_ID=9999 .
+#           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+#           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-  deploy-release-automation:
-    name: Deploy and Run Release Automation Service
-    needs: [deploy-web, deploy-worker, deploy-scheduler, build-release-automation]
-    runs-on: ubuntu-22.04
-    environment: production
+#   deploy-release-automation:
+#     name: Deploy and Run Release Automation Service
+#     needs: [deploy-web, deploy-worker, deploy-scheduler, build-release-automation]
+#     runs-on: ubuntu-22.04
+#     environment: production
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: true
-          ref: ${{ github.head_ref }}
-          token: ${{ secrets.PAT }}
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v4
+#         with:
+#           submodules: true
+#           ref: ${{ github.head_ref }}
+#           token: ${{ secrets.PAT }}
 
-      - name: Configure AWS credentials
-        # SHA of release v4.0.2
-        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
-        with:
-          aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+#       - name: Configure AWS credentials
+#         # SHA of release v4.0.2
+#         uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
+#         with:
+#           aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
+#           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Fill in the new image ID in the Amazon ECS task definition
-        id: task-def
-        # SHA of release v1.6.1
-        uses: aws-actions/amazon-ecs-render-task-definition@469db592f4341616e992bf7f231e19b3ab9b4efa
-        with:
-          task-definition: "docker/devops/ecs/advisingapp/advisingapp-release-automation-prod-task-definition.json"
-          container-name: "release-automation"
-          image: ${{ needs.build-release-automation.outputs.image }}
+#       - name: Fill in the new image ID in the Amazon ECS task definition
+#         id: task-def
+#         # SHA of release v1.6.1
+#         uses: aws-actions/amazon-ecs-render-task-definition@469db592f4341616e992bf7f231e19b3ab9b4efa
+#         with:
+#           task-definition: "docker/devops/ecs/advisingapp/advisingapp-release-automation-prod-task-definition.json"
+#           container-name: "release-automation"
+#           image: ${{ needs.build-release-automation.outputs.image }}
 
-      - name: Deploy Amazon ECS task definition
-        # SHA of release v2.2.0
-        uses: aws-actions/amazon-ecs-deploy-task-definition@0e82244a9c6dac43d70151a94c67ebc4bab18fc5
-        with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
-          cluster: "advisingapp-prod"
-          desired-count: 1
-          run-task: true
-          run-task-security-groups: ${{ secrets.RELEASE_AUTOMATION_SECURITY_GROUPS }}
-          run-task-subnets: ${{ secrets.RELEASE_AUTOMATION_SUBNETS }}
-          run-task-assign-public-IP: "DISABLED"
-          run-task-launch-type: "FARGATE"
-          wait-for-task-stopped: true
+#       - name: Deploy Amazon ECS task definition
+#         # SHA of release v2.2.0
+#         uses: aws-actions/amazon-ecs-deploy-task-definition@0e82244a9c6dac43d70151a94c67ebc4bab18fc5
+#         with:
+#           task-definition: ${{ steps.task-def.outputs.task-definition }}
+#           cluster: "advisingapp-prod"
+#           desired-count: 1
+#           run-task: true
+#           run-task-security-groups: ${{ secrets.RELEASE_AUTOMATION_SECURITY_GROUPS }}
+#           run-task-subnets: ${{ secrets.RELEASE_AUTOMATION_SUBNETS }}
+#           run-task-assign-public-IP: "DISABLED"
+#           run-task-launch-type: "FARGATE"
+#           wait-for-task-stopped: true
 
-  regnerate-api-docs:
-    name: Regenerate API Docuemntation in Web Tasks
-    needs: [deploy-release-automation]
-    runs-on: ubuntu-22.04
-    environment: production
+#   regnerate-api-docs:
+#     name: Regenerate API Docuemntation in Web Tasks
+#     needs: [deploy-release-automation]
+#     runs-on: ubuntu-22.04
+#     environment: production
 
-    steps:
-      - name: Configure AWS credentials
-        # SHA of release v4.0.2
-        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
-        with:
-          aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+#     steps:
+#       - name: Configure AWS credentials
+#         # SHA of release v4.0.2
+#         uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
+#         with:
+#           aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
+#           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Install session manager plugin
-        run: |
-          curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_64bit/session-manager-plugin.deb" -o "session-manager-plugin.deb"
-          sudo dpkg -i session-manager-plugin.deb
+#       - name: Install session manager plugin
+#         run: |
+#           curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_64bit/session-manager-plugin.deb" -o "session-manager-plugin.deb"
+#           sudo dpkg -i session-manager-plugin.deb
 
-      - name: Install unbuffer
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y expect
+#       - name: Install unbuffer
+#         run: |
+#           sudo apt-get update
+#           sudo apt-get install -y expect
       
-      - name: Regenerate API Docs
-        run: |
-          set -e  # Exit immediately if a command exits with a non-zero status
-          aws ecs list-tasks --cluster advisingapp-prod --service-name advisingapp-p-crm-ecs-service --query 'taskArns[]' --output text | tr '\t' '\n' | while read -r task; do
-          echo "Executing command on task: $task"
-          if ! unbuffer aws ecs execute-command \
-            --cluster advisingapp-prod \
-            --task $task \
-            --container app \
-            --command "/bin/sh -c 'php artisan api:print-schema && npm run api-docs:generate'" \
-            --interactive;
-          then
-            echo "Command execution failed on task: $task"
-            exit 1
-          fi
-            done
+#       - name: Regenerate API Docs
+#         run: |
+#           set -e  # Exit immediately if a command exits with a non-zero status
+#           aws ecs list-tasks --cluster advisingapp-prod --service-name advisingapp-p-crm-ecs-service --query 'taskArns[]' --output text | tr '\t' '\n' | while read -r task; do
+#           echo "Executing command on task: $task"
+#           if ! unbuffer aws ecs execute-command \
+#             --cluster advisingapp-prod \
+#             --task $task \
+#             --container app \
+#             --command "/bin/sh -c 'php artisan api:print-schema && npm run api-docs:generate'" \
+#             --interactive;
+#           then
+#             echo "Command execution failed on task: $task"
+#             exit 1
+#           fi
+#             done
 
     
