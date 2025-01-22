@@ -98,8 +98,6 @@ All following commands will and should be run from within the PHP container.
 
 #### 4. Set up the application
 
-Generate an App Key:
-
 We will set up the application by running the following commands:
 ```bash
 php artisan migrate:landlord:fresh
