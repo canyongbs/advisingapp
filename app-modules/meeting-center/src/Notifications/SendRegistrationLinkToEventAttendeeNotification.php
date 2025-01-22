@@ -38,23 +38,30 @@ namespace AdvisingApp\MeetingCenter\Notifications;
 
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
-use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
-use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use App\Models\NotificationSetting;
 use App\Models\User;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class SendRegistrationLinkToEventAttendeeNotification extends BaseNotification implements EmailNotification
+class SendRegistrationLinkToEventAttendeeNotification extends Notification implements ShouldQueue
 {
-    use EmailChannelTrait;
+    use Queueable;
 
     public function __construct(
         protected Event $event,
         protected User $sender
     ) {}
 
-    public function toEmail(object $notifiable): MailMessage
+    /**
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
+    {
+        return ['mail'];
+    }
+
+    public function toMail(object $notifiable): MailMessage
     {
         return MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable))

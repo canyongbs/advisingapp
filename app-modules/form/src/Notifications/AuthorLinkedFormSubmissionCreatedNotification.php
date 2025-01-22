@@ -37,9 +37,7 @@
 namespace AdvisingApp\Form\Notifications;
 
 use AdvisingApp\Form\Models\FormSubmission;
-use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\Concerns\DatabaseChannelTrait;
-use AdvisingApp\Notification\Notifications\DatabaseNotification;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
@@ -47,7 +45,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Support\HtmlString;
 
-class AuthorLinkedFormSubmissionCreatedNotification extends BaseNotification implements DatabaseNotification
+class AuthorLinkedFormSubmissionCreatedNotification extends BaseNotification
 {
     use DatabaseChannelTrait;
 

@@ -41,11 +41,11 @@ use AdvisingApp\Notification\Actions\MakeOutboundDeliverable;
 use AdvisingApp\Notification\DataTransferObjects\DatabaseChannelResultData;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
-use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\Channels\Contracts\NotificationChannelInterface;
 use AdvisingApp\Notification\Notifications\DatabaseNotification;
 use App\Models\Tenant;
 use Illuminate\Notifications\Channels\DatabaseChannel as BaseDatabaseChannel;
+use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Notification;
 use Throwable;
 

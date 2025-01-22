@@ -37,18 +37,25 @@
 namespace AdvisingApp\Form\Notifications;
 
 use AdvisingApp\Form\Models\FormSubmission;
-use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\Concerns\SmsChannelTrait;
 use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
-use AdvisingApp\Notification\Notifications\SmsNotification;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class FormSubmissionRequestSmsNotification extends BaseNotification implements SmsNotification
+class FormSubmissionRequestSmsNotification extends Notification implements ShouldQueue
 {
-    use SmsChannelTrait;
+    use Queueable;
 
     public function __construct(
         public FormSubmission $submission,
     ) {}
+
+    /**
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
+    {
+        return ['sms'];
+    }
 
     public function toSms(object $notifiable): TwilioMessage
     {

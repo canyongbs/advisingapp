@@ -36,11 +36,12 @@
 
 namespace AdvisingApp\Notification\Notifications;
 
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
+use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
+use Illuminate\Notifications\AnonymousNotifiable;
 
-interface EmailNotification
+interface HasAfterSendHook
 {
-    public function toEmail(object $notifiable): MailMessage;
-
-    public function toMail(object $notifiable): MailMessage;
+    public function afterSend(AnonymousNotifiable|NotifiableInterface $notifiable, OutboundDeliverable $deliverable, NotificationResultData $result): void;
 }
