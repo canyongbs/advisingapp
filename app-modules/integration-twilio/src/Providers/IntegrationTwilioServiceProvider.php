@@ -40,14 +40,10 @@ use AdvisingApp\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
 use AdvisingApp\Engagement\Actions\FindEngagementResponseSender;
 use AdvisingApp\IntegrationTwilio\Actions\Playground\FindEngagementResponseSender as PlaygroundFindEngagementResponseSender;
 use AdvisingApp\IntegrationTwilio\IntegrationTwilioPlugin;
-use AdvisingApp\IntegrationTwilio\Jobs\CheckStatusOfOutboundDeliverablesWithoutATerminalStatus;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use App\Enums\Integration;
 use App\Exceptions\IntegrationException;
-use App\Models\Scopes\SetupIsComplete;
-use App\Models\Tenant;
 use Filament\Panel;
-use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\ServiceProvider;
 use Twilio\Rest\Client;
 
@@ -73,23 +69,6 @@ class IntegrationTwilioServiceProvider extends ServiceProvider
                 ? new Client($settings->account_sid, $settings->auth_token)
                 : throw IntegrationException::make(Integration::Twilio)
         );
-
-        $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
-            $schedule->call(function () {
-                Tenant::query()
-                    ->tap(new SetupIsComplete())
-                    ->cursor()
-                    ->each(function (Tenant $tenant) {
-                        $tenant->execute(function () {
-                            dispatch(new CheckStatusOfOutboundDeliverablesWithoutATerminalStatus());
-                        });
-                    });
-            })
-                ->daily()
-                ->name('CheckStatusOfOutboundDeliverablesWithoutATerminalStatus')
-                ->onOneServer()
-                ->withoutOverlapping();
-        });
     }
 
     public function boot(): void {}
