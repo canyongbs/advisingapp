@@ -81,12 +81,14 @@ class EmailChannel extends MailChannel implements NotificationChannelInterface
 
             $isSystemNotification = $this->isSystemNotification($notification);
 
-            if ($demoMode && (! $isSystemNotificationEnabled || ! $isSystemNotification)) {
-                $deliverable->update([
-                    'delivery_status' => NotificationDeliveryStatus::BlockedByDemoMode,
-                ]);
+            if ($demoMode) {
+                if (! $isSystemNotificationEnabled || ($isSystemNotificationEnabled && ! $isSystemNotification)) {
+                    $deliverable->update([
+                        'delivery_status' => NotificationDeliveryStatus::BlockedByDemoMode,
+                    ]);
 
-                return;
+                    return;
+                }
             }
 
             throw_if(! $this->canSendWithinQuotaLimits($notification, $notifiable), new NotificationQuotaExceeded());
