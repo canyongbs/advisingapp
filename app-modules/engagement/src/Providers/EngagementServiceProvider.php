@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Engagement\Providers;
 
-use AdvisingApp\Engagement\Actions\DeliverEngagements;
 use AdvisingApp\Engagement\EngagementPlugin;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Models\Engagement;
@@ -47,10 +46,7 @@ use AdvisingApp\Engagement\Models\SmsTemplate;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use App\Concerns\ImplementsGraphQL;
-use App\Models\Scopes\SetupIsComplete;
-use App\Models\Tenant;
 use Filament\Panel;
-use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 
@@ -73,23 +69,6 @@ class EngagementServiceProvider extends ServiceProvider
             'engagement' => Engagement::class,
             'sms_template' => SmsTemplate::class,
         ]);
-
-        $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
-            $schedule->call(function () {
-                Tenant::query()
-                    ->tap(new SetupIsComplete())
-                    ->cursor()
-                    ->each(function (Tenant $tenant) {
-                        $tenant->execute(function () {
-                            dispatch(new DeliverEngagements());
-                        });
-                    });
-            })
-                ->everyMinute()
-                ->name('DeliverEngagementsSchedule')
-                ->onOneServer()
-                ->withoutOverlapping();
-        });
 
         $this->registerGraphQL();
     }
