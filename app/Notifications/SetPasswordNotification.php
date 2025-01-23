@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2024, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -40,10 +40,12 @@ use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use App\Models\Attributes\SystemNotification;
 use App\Models\NotificationSetting;
 use App\Models\User;
 use Illuminate\Support\Facades\URL;
 
+#[SystemNotification]
 class SetPasswordNotification extends BaseNotification implements EmailNotification
 {
     use EmailChannelTrait;

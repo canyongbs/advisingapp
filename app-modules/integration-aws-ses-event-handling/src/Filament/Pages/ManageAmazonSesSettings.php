@@ -80,7 +80,6 @@ class ManageAmazonSesSettings extends SettingsPage
 
     public function form(Form $form): Form
     {
-        // DO we need to clear the isSystemNotificationEnabled filed or leave it as it is? : ->afterStateUpdated(fn (callable $set) => $set('recordId', null)),
         return $form
             ->schema([
                 Toggle::make('isDemoModeEnabled')
