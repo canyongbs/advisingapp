@@ -59,6 +59,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
+        $schedule->command('model:prune', ['--model' => MonitoredScheduledTaskLogItem::class])
+            ->daily()
+            ->onOneServer()
+            ->withoutOverlapping(720);
+
         Tenant::query()
             ->tap(new SetupIsComplete())
             ->cursor()
@@ -92,7 +97,6 @@ class Kernel extends ConsoleKernel
                         EngagementFile::class,
                         FailedImportRow::class,
                         FormAuthentication::class,
-                        MonitoredScheduledTaskLogItem::class,
                     ])
                         ->each(
                             fn ($model) => $schedule->command("tenants:artisan \"model:prune --model={$model}\" --tenant={$tenant->id}")
