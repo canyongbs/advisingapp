@@ -38,7 +38,7 @@ namespace AdvisingApp\Engagement\Notifications;
 
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
+use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use App\Models\NotificationSetting;
 use App\Models\User;
@@ -89,7 +89,7 @@ class EngagementFailedNotification extends Notification implements ShouldQueue
             ->getDatabaseMessage();
     }
 
-    private function resolveNotificationSetting(NotifiableInterface $notifiable): ?NotificationSetting
+    private function resolveNotificationSetting(CanBeNotified $notifiable): ?NotificationSetting
     {
         return $notifiable instanceof User ? $this->engagement->createdBy->teams()->first()?->division?->notificationSetting?->setting : null;
     }

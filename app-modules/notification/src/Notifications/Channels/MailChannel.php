@@ -105,13 +105,13 @@ class MailChannel extends BaseMailChannel
 
             try {
                 if ($result->success) {
-                    $demoMode = Tenant::current()?->config->mail->isDemoModeEnabled ?? false;
+                    $isDemoModeEnabled = Tenant::current()?->config->mail->isDemoModeEnabled ?? false;
 
                     $deliverable->update([
-                        'delivery_status' => ! $demoMode
+                        'delivery_status' => (! $isDemoModeEnabled)
                             ? NotificationDeliveryStatus::Dispatched
                             : NotificationDeliveryStatus::Successful,
-                        'quota_usage' => ! $demoMode
+                        'quota_usage' => (! $isDemoModeEnabled)
                             ? $this->determineQuotaUsage($result->recipients)
                             : 0,
                     ]);
@@ -121,27 +121,28 @@ class MailChannel extends BaseMailChannel
                     ]);
                 }
 
-                // Consider dispatching this as a seperate job so that it can be encapsulated to be retried if it fails, but also avoid changing the status of the deliverable if it fails
+                // Consider dispatching this as a seperate job so that it can be encapsulated to be retried if it fails, but also avoid changing the status of the deliverable if it fails.
                 if ($notification instanceof HasAfterSendHook) {
                     $notification->afterSend($notifiable, $deliverable, $result);
                 }
-            } catch (Throwable $e) {
-                report($e);
+            } catch (Throwable $exception) {
+                report($exception);
             }
-        } catch (NotificationQuotaExceeded $e) {
+        } catch (NotificationQuotaExceeded $exception) {
             $deliverable->update(['delivery_status' => NotificationDeliveryStatus::RateLimited]);
-        } catch (Throwable $e) {
+        } catch (Throwable $exception) {
             $deliverable->update([
                 'delivery_status' => NotificationDeliveryStatus::DispatchFailed,
             ]);
 
-            throw $e;
+            throw $exception;
         }
     }
 
     protected function determineQuotaUsage(array $recipients): int
     {
-        $users = User::with('roles')
+        $users = User::query()
+            ->with('roles')
             ->whereIn('email', array_map(
                 fn (Address $recipient): string => $recipient->getAddress(),
                 $recipients,
@@ -156,13 +157,7 @@ class MailChannel extends BaseMailChannel
 
     protected function canSendWithinQuotaLimits(MailMessage $message, OutboundDeliverable $deliverable): bool
     {
-        $recipient = $deliverable->recipient;
-
-        $primaryRecipientUsage = 1;
-
-        if ($recipient instanceof User && $recipient->isSuperAdmin()) {
-            $primaryRecipientUsage = 0;
-        }
+        $primaryRecipientUsage = ($deliverable->recipient instanceof User && $deliverable->recipient->isSuperAdmin()) ? 0 : 1;
 
         // 1 for the primary recipient, plus the number of cc and bcc recipients
         $estimatedQuotaUsage = $primaryRecipientUsage + count($message->cc) + count($message->bcc);
@@ -171,7 +166,8 @@ class MailChannel extends BaseMailChannel
 
         $resetWindow = $licenseSettings->data->limits->getResetWindow();
 
-        $currentQuotaUsage = OutboundDeliverable::where('channel', 'email')
+        $currentQuotaUsage = OutboundDeliverable::query()
+            ->where('channel', NotificationChannel::Email)
             ->whereBetween('created_at', [$resetWindow['start'], $resetWindow['end']])
             ->sum('quota_usage');
 

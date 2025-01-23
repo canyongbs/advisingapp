@@ -34,11 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Notifications\Channels\Contracts;
+namespace AdvisingApp\Notification\Notifications\Contracts;
 
-use Illuminate\Notifications\Notification;
-
-interface NotificationChannelInterface
+interface OnDemandNotification
 {
-    public function send(object $notifiable, Notification $notification): void;
+    public function identifyRecipient(): array;
 }

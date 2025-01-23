@@ -38,7 +38,7 @@ namespace AdvisingApp\CaseManagement\Notifications;
 
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
+use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\HasBeforeSendHook;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
@@ -88,7 +88,7 @@ class SendEducatableCaseOpenedNotification extends Notification implements Shoul
             ->lines(str(nl2br($this->case->close_details))->explode('<br />'));
     }
 
-    public function beforeSend(AnonymousNotifiable|NotifiableInterface $notifiable, OutboundDeliverable $deliverable, NotificationChannel $channel): void
+    public function beforeSend(AnonymousNotifiable|CanBeNotified $notifiable, OutboundDeliverable $deliverable, NotificationChannel $channel): void
     {
         $deliverable->related()->associate($this->case);
     }

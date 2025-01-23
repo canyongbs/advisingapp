@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Portal\Notifications;
 
+use AdvisingApp\Notification\Notifications\Contracts\OnDemandNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use AdvisingApp\Notification\Notifications\OnDemandNotification;
 use AdvisingApp\Portal\Models\PortalAuthentication;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

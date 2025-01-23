@@ -39,7 +39,7 @@ namespace AdvisingApp\Ai\Notifications;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
-use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
+use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\HasAfterSendHook;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
@@ -118,7 +118,7 @@ class SendAssistantTranscriptNotification extends Notification implements Should
         return $message;
     }
 
-    public function afterSend(AnonymousNotifiable|NotifiableInterface $notifiable, OutboundDeliverable $deliverable, NotificationResultData $result): void
+    public function afterSend(AnonymousNotifiable|CanBeNotified $notifiable, OutboundDeliverable $deliverable, NotificationResultData $result): void
     {
         if ($result->success) {
             $this->thread->increment('emailed_count');
