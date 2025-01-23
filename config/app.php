@@ -124,8 +124,6 @@ return [
 
     'landlord_url' => env('LANDLORD_APP_URL', 'http://localhost'),
 
-    'landlord_host' => env('LANDLORD_APP_HOST', 'localhost'),
-
     'url' => env('APP_URL', env('LANDLORD_APP_URL', 'http://localhost')),
 
     'force_https' => env('APP_FORCE_HTTPS', true),
@@ -285,4 +283,6 @@ return [
     'allow_super_admin_creation' => env('ALLOW_SUPER_ADMIN_CREATION', false),
 
     'allow_license_settings_editing' => env('ALLOW_LICENSE_SETTINGS_EDITING', false),
+
+    'service' => env('SERVICE', null),
 ];

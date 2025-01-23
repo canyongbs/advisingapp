@@ -1,0 +1,34 @@
+#!/command/with-contenv bash
+
+if [ ! -f "$WEBUSER_HOME/artisan" ]; then
+  echo "Skipping migrations because we could not detect a Laravel install..."
+  exit 0
+fi
+
+cd "$WEBUSER_HOME" || exit 0
+
+USERNAME=$(id -nu "$PUID")
+
+echo "Starting landlord migrations..."
+
+{
+s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" migrate --database=landlord --path=database/landlord --force --isolated \
+&& echo "Landlord migrations completed!"
+} || {
+echo "Landlord migrations failed!"
+
+# TODO: Do something to send an alert that landlord migrations failed. Currently this will NOT stop the container.
+}
+
+echo "Starting tenant migrations..."
+
+{
+s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" tenants:artisan "migrate --database=tenant --force --isolated" \
+&& echo "Tenant migrations completed!"
+} || {
+echo "Tenant migrations failed!"
+
+# TODO: Do something to send an alert that tenant migration failed. Currently this will NOT stop the container.
+}
+
+exit 0

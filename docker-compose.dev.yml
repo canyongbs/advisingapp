@@ -1,18 +1,14 @@
 services:
-  advisingapp.local:
+  app:
     build:
-      target: development
+      context: .
+      target: web-development
       args:
-        TOTAL_QUEUE_WORKERS: '${TOTAL_QUEUE_WORKERS:-1}'
-        MULTIPLE_DEVELOPMENT_QUEUES: '${MULTIPLE_DEVELOPMENT_QUEUES:-false}'
-        USER_ID: '${SPIN_USER_ID:-9999}'
-        GROUP_ID: '${SPIN_GROUP_ID:-9999}'
+        PUID: '${PLS_USER_ID:-9999}'
+        PGID: '${PLS_GROUP_ID:-9999}'
     environment:
+      SERVICE: "web"
       SSL_MODE: "mixed"
-      LANDLORD_MIGRATE: '${LANDLORD_MIGRATE:-true}'
-      TENANT_MIGRATE: '${TENANT_MIGRATE:-true}'
-      LARAVEL_SCHEDULER_ENABLED: '${LARAVEL_SCHEDULER_ENABLED:-true}'
-      LARAVEL_QUEUE_ENABLED: '${LARAVEL_QUEUE_ENABLED:-true}'
       LARAVEL_OCTANE_WATCH: '${LARAVEL_OCTANE_WATCH:-false}'
       CACHE_MODULES: '${CACHE_MODULES:-false}'
       CACHE_CONFIG: '${CACHE_CONFIG:-false}'
@@ -21,14 +17,8 @@ services:
       CACHE_EVENTS: '${CACHE_EVENTS:-false}'
       CACHE_ICONS: '${CACHE_ICONS:-false}'
       CACHE_FILAMENT_COMPONENTS: '${CACHE_FILAMENT_COMPONENTS:-false}'
-      PUID: '${SPIN_USER_ID:-9999}'
-      PGID: '${SPIN_GROUP_ID:-9999}'
-      SQS_QUEUE: '${SQS_QUEUE:-default}'
-      LANDLORD_SQS_QUEUE: '${LANDLORD_SQS_QUEUE:-landlord}'
-      OUTBOUND_COMMUNICATION_QUEUE: '${OUTBOUND_COMMUNICATION_QUEUE:-outbound-communication}'
-      AUDIT_QUEUE_QUEUE: '${AUDIT_QUEUE_QUEUE:-audit}'
-      MEETING_CENTER_QUEUE: '${MEETING_CENTER_QUEUE:-meeting-center}'
-      IMPORT_EXPORT_QUEUE: '${IMPORT_EXPORT_QUEUE:-import-export}'
+      PUID: '${PLS_USER_ID:-9999}'
+      PGID: '${PLS_GROUP_ID:-9999}'
       FIX_PERMISSIONS: '${FIX_PERMISSIONS:-true}'
     labels:
       - "traefik.enable=true"
@@ -44,8 +34,78 @@ services:
     networks:
       cgbs-development:
         ipv4_address: 172.16.1.3
+        aliases:
+          - advisingapp.local
     dns:
       - 172.16.1.1
+    depends_on:
+      - advisingapp-redis
+      - advisingapp-mailpit
+      - advisingapp-pgsql
+
+  worker:
+    build:
+      context: .
+      target: worker-development
+      args:
+        TOTAL_QUEUE_WORKERS: '${TOTAL_QUEUE_WORKERS:-1}'
+        MULTIPLE_DEVELOPMENT_QUEUES: '${MULTIPLE_DEVELOPMENT_QUEUES:-false}'
+        USER_ID: '${PLS_USER_ID:-9999}'
+        GROUP_ID: '${PLS_GROUP_ID:-9999}'
+    environment:
+      SERVICE: "worker"
+      CACHE_MODULES: false
+      CACHE_CONFIG: false
+      CACHE_ROUTES: false
+      CACHE_VIEWS: false
+      CACHE_EVENTS: false
+      CACHE_ICONS: false
+      CACHE_FILAMENT_COMPONENTS: false
+      PUID: '${PLS_USER_ID:-9999}'
+      PGID: '${PLS_GROUP_ID:-9999}'
+      SQS_QUEUE: '${SQS_QUEUE:-default}'
+      LANDLORD_SQS_QUEUE: '${LANDLORD_SQS_QUEUE:-landlord}'
+      OUTBOUND_COMMUNICATION_QUEUE: '${OUTBOUND_COMMUNICATION_QUEUE:-outbound-communication}'
+      AUDIT_QUEUE_QUEUE: '${AUDIT_QUEUE_QUEUE:-audit}'
+      MEETING_CENTER_QUEUE: '${MEETING_CENTER_QUEUE:-meeting-center}'
+      IMPORT_EXPORT_QUEUE: '${IMPORT_EXPORT_QUEUE:-import-export}'
+      FIX_PERMISSIONS: '${FIX_PERMISSIONS:-false}'
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    volumes:
+      - '.:/var/www/html'
+    networks:
+      - cgbs-development
+    depends_on:
+      - advisingapp-redis
+      - advisingapp-mailpit
+      - advisingapp-pgsql
+
+  scheduler:
+    build:
+      context: .
+      target: scheduler-development
+      args:
+        USER_ID: '${PLS_USER_ID:-9999}'
+        GROUP_ID: '${PLS_GROUP_ID:-9999}'
+    environment:
+      SERVICE: "scheduler"
+      CACHE_MODULES: false
+      CACHE_CONFIG: false
+      CACHE_ROUTES: false
+      CACHE_VIEWS: false
+      CACHE_EVENTS: false
+      CACHE_ICONS: false
+      CACHE_FILAMENT_COMPONENTS: false
+      PUID: '${PLS_USER_ID:-9999}'
+      PGID: '${PLS_GROUP_ID:-9999}'
+      FIX_PERMISSIONS: '${FIX_PERMISSIONS:-false}'
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    volumes:
+      - '.:/var/www/html'
+    networks:
+      - cgbs-development
     depends_on:
       - advisingapp-redis
       - advisingapp-mailpit
@@ -94,6 +154,25 @@ services:
       test: [ "CMD", "pg_isready", "-q", "-d", "${DB_DATABASE}", "-U", "${DB_USERNAME}" ]
       retries: 3
       timeout: 5s
+
+  local-cli:
+    profiles:
+      - local-cli
+    build:
+      context: .
+      target: cli-local-tooling
+      args:
+        PUID: '${PLS_USER_ID:-9999}'
+        PGID: '${PLS_GROUP_ID:-9999}'
+    environment:
+      PUID: '${PLS_USER_ID:-9999}'
+      PGID: '${PLS_GROUP_ID:-9999}'
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    volumes:
+      - '.:/var/www/html'
+    networks:
+      - cgbs-development
 
 networks:
   cgbs-development:
