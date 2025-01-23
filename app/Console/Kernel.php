@@ -80,10 +80,10 @@ class Kernel extends ConsoleKernel
                         });
                     })
                         ->everyMinute()
-                        ->name("Deliver Engagements | Tenant {$tenant->domain}")
                         ->onOneServer()
                         ->withoutOverlapping(15)
-                        ->monitorName("Deliver Engagements | Tenant {$tenant->domain}");
+                        ->name("Dispatch DeliverEngagements | Tenant {$tenant->domain}")
+                        ->monitorName("Dispatch DeliverEngagements | Tenant {$tenant->domain}");
 
                     $schedule->call(function () use ($tenant) {
                         $tenant->execute(function () {
@@ -91,10 +91,10 @@ class Kernel extends ConsoleKernel
                         });
                     })
                         ->everyMinute()
-                        ->name("Sync Calendars Schedule | Tenant {$tenant->domain}")
                         ->onOneServer()
                         ->withoutOverlapping(15)
-                        ->monitorName("Sync Calendars | Tenant {$tenant->domain}");
+                        ->name("Dispatch SyncCalendars | Tenant {$tenant->domain}")
+                        ->monitorName("Dispatch SyncCalendars | Tenant {$tenant->domain}");
 
                     $schedule->call(function () use ($tenant) {
                         $tenant->execute(function () {
@@ -102,10 +102,10 @@ class Kernel extends ConsoleKernel
                         });
                     })
                         ->daily()
-                        ->name("Check Status Of Outbound Deliverables Without A Terminal Status | Tenant {$tenant->domain}")
                         ->onOneServer()
                         ->withoutOverlapping(720)
-                        ->monitorName("Check Status Of Outbound Deliverables Without A Terminal Status | Tenant {$tenant->domain}");
+                        ->name("Dispatch CheckStatusOfOutboundDeliverablesWithoutATerminalStatus | Tenant {$tenant->domain}")
+                        ->monitorName("Dispatch CheckStatusOfOutboundDeliverablesWithoutATerminalStatus | Tenant {$tenant->domain}");
 
                     $schedule->call(function () use ($tenant) {
                         $tenant->execute(function () {
@@ -113,30 +113,33 @@ class Kernel extends ConsoleKernel
                         });
                     })
                         ->everyMinute()
-                        ->name("Execute Campaign Actions Schedule | Tenant {$tenant->domain}")
                         ->onOneServer()
                         ->withoutOverlapping(15)
-                        ->monitorName("Execute Campaign Actions | Tenant {$tenant->domain}");
+                        ->name("Dispatch ExecuteCampaignActions | Tenant {$tenant->domain}")
+                        ->monitorName("Dispatch ExecuteCampaignActions | Tenant {$tenant->domain}");
 
                     $schedule->command("tenants:artisan \"cache:prune-stale-tags\" --tenant={$tenant->id}")
                         ->hourly()
                         ->onOneServer()
                         ->withoutOverlapping(15)
+                        ->name("Prune Stale Cache Tags | Tenant {$tenant->domain}")
                         ->monitorName("Prune Stale Cache Tags | Tenant {$tenant->domain}");
 
                     $schedule->command("tenants:artisan \"health:queue-check-heartbeat\" --tenant={$tenant->id}")
                         ->everyMinute()
                         ->onOneServer()
                         ->withoutOverlapping(15)
+                        ->name("Queue Check Heartbeat | Tenant {$tenant->domain}")
                         ->monitorName("Queue Check Heartbeat | Tenant {$tenant->domain}");
 
                     $schedule->command("ai:delete-unsaved-ai-threads --tenant={$tenant->id}")
                         ->daily()
                         ->onOneServer()
                         ->withoutOverlapping(720)
+                        ->name("Delete Unsaved AI Threads | Tenant {$tenant->domain}")
                         ->monitorName("Delete Unsaved AI Threads | Tenant {$tenant->domain}");
 
-                    // We prune these models in different schedules to avoid one failing blocking the others.
+                    // TODO: Combine this all into a single command
                     collect([
                         AiMessageFile::class,
                         AiMessage::class,
@@ -151,6 +154,7 @@ class Kernel extends ConsoleKernel
                                 ->daily()
                                 ->onOneServer()
                                 ->withoutOverlapping(720)
+                                ->name("Prune {$model} | Tenant {$tenant->domain}")
                                 ->monitorName("Prune {$model} | Tenant {$tenant->domain}")
                         );
 
@@ -163,12 +167,14 @@ class Kernel extends ConsoleKernel
                         ->daily()
                         ->onOneServer()
                         ->withoutOverlapping(720)
+                        ->name("Refresh Calendar Refresh Tokens | Tenant {$tenant->domain}")
                         ->monitorName("Refresh Calendar Refresh Tokens | Tenant {$tenant->domain}");
 
                     $schedule->command("tenants:artisan \"health:check\" --tenant={$tenant->id}")
                         ->everyMinute()
                         ->onOneServer()
                         ->withoutOverlapping(15)
+                        ->name("Health Check | Tenant {$tenant->domain}")
                         ->monitorName("Health Check | Tenant {$tenant->domain}");
 
                     $schedule->command("tenants:artisan \"health:schedule-check-heartbeat\" --tenant={$tenant->id}")
@@ -176,6 +182,7 @@ class Kernel extends ConsoleKernel
                         ->everyMinute()
                         ->onOneServer()
                         ->withoutOverlapping(15)
+                        ->name("Schedule Check Heartbeat | Tenant {$tenant->domain}")
                         ->monitorName("Schedule Check Heartbeat | Tenant {$tenant->domain}");
                 } catch (Throwable $th) {
                     Log::error('Error scheduling tenant commands.', [
