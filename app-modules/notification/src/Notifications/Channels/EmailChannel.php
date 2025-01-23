@@ -46,12 +46,14 @@ use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\Channels\Contracts\NotificationChannelInterface;
 use AdvisingApp\Notification\Notifications\EmailNotification;
+use App\Models\Attributes\SystemNotification;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Exception;
 use Illuminate\Notifications\Channels\MailChannel;
 use Illuminate\Notifications\Notification;
+use ReflectionClass;
 use Throwable;
 
 class EmailChannel extends MailChannel implements NotificationChannelInterface
@@ -74,9 +76,18 @@ class EmailChannel extends MailChannel implements NotificationChannelInterface
                 $notification->metadata['tenant_id'] = Tenant::current()->getKey();
             }
 
-            //throw => If demo mode is on and exclude check box is off then all the messages will fail so we throw it like below line. and then update the status like $deliverable->update(['delivery_status' => NotificationDeliveryStatus::RateLimited]); for BlockedByDemoMode.
+            $demoMode = Tenant::current()?->config->mail->isDemoModeEnabled ?? false;
+            $isSystemNotificationEnabled = Tenant::current()?->config->mail->isSystemNotificationEnabled ?? false;
 
-            //If demo mode is on and exclude checkbox is also on then all notifications should still be blocked unless the notification class passed in here and contains the attribute that overrides the demo mode.
+            $isSystemNotification = $this->isSystemNotification($notification);
+
+            if ($demoMode && (! $isSystemNotificationEnabled || ! $isSystemNotification)) {
+                $deliverable->update([
+                    'delivery_status' => NotificationDeliveryStatus::BlockedByDemoMode,
+                ]);
+
+                return;
+            }
 
             throw_if(! $this->canSendWithinQuotaLimits($notification, $notifiable), new NotificationQuotaExceeded());
 
@@ -171,5 +182,12 @@ class EmailChannel extends MailChannel implements NotificationChannelInterface
             ->sum('quota_usage');
 
         return $currentQuotaUsage + $estimatedQuotaUsage <= $licenseSettings->data->limits->emails;
+    }
+
+    private function isSystemNotification(Notification $notification): bool
+    {
+        $reflection = new ReflectionClass($notification);
+
+        return ! empty($reflection->getAttributes(SystemNotification::class));
     }
 }
