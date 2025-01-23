@@ -39,6 +39,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Spatie\ScheduleMonitor\Models\MonitoredScheduledTask as BaseMonitoredScheduledTask;
 
+/**
+ * @mixin IdeHelperMonitoredScheduledTask
+ */
 class MonitoredScheduledTask extends BaseMonitoredScheduledTask
 {
     use HasUuids;
