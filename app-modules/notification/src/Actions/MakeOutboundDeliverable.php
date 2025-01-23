@@ -39,7 +39,7 @@ namespace AdvisingApp\Notification\Actions;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\Notifications\OnDemandNotification;
+use AdvisingApp\Notification\Notifications\Contracts\OnDemandNotification;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Notification;
 

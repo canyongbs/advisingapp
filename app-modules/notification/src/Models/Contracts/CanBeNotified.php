@@ -34,16 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Notifications\Concerns;
+namespace AdvisingApp\Notification\Models\Contracts;
 
-use AdvisingApp\Notification\Notifications\Channels\DatabaseChannel;
-
-trait DatabaseChannelTrait
+interface CanBeNotified
 {
-    use ChannelTrait;
+    public function notify($instance);
 
-    public static function getDatabaseChannel(): string
-    {
-        return DatabaseChannel::class;
-    }
+    public function notifyNow($instance, array $channels = null);
+
+    public function routeNotificationFor($driver, $notification = null);
+
+    public function notifications();
+
+    public function readNotifications();
+
+    public function unreadNotifications();
+
+    public function canRecieveSms(): bool;
 }

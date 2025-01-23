@@ -55,7 +55,7 @@ use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MultifactorAuthentication\Traits\MultifactorAuthenticatable;
 use AdvisingApp\Notification\Models\Concerns\NotifiableViaSms;
-use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
+use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Enums\TrackedEventType;
@@ -96,7 +96,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 /**
  * @mixin IdeHelperUser
  */
-class User extends Authenticatable implements HasLocalePreference, FilamentUser, Auditable, HasMedia, HasAvatar, NotifiableInterface, HasFilamentResource
+class User extends Authenticatable implements HasLocalePreference, FilamentUser, Auditable, HasMedia, HasAvatar, CanBeNotified, HasFilamentResource
 {
     use HasFactory;
     use HasAdvancedFilter;
@@ -514,6 +514,11 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
 
         // Assign the new team
         $this->teams()->attach($teamId);
+    }
+
+    public function canRecieveSms(): bool
+    {
+        return false;
     }
 
     protected function serializeDate(DateTimeInterface $date): string

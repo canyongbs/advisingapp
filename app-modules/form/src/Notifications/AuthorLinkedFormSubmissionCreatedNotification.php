@@ -37,19 +37,25 @@
 namespace AdvisingApp\Form\Notifications;
 
 use AdvisingApp\Form\Models\FormSubmission;
-use AdvisingApp\Notification\Notifications\Concerns\DatabaseChannelTrait;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Notifications\Notification as FilamentNotification;
+use Illuminate\Notifications\Notification;
 use Illuminate\Support\HtmlString;
 
-class AuthorLinkedFormSubmissionCreatedNotification extends BaseNotification
+class AuthorLinkedFormSubmissionCreatedNotification extends Notification
 {
-    use DatabaseChannelTrait;
-
     public function __construct(public FormSubmission $submission) {}
+
+    /**
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
+    {
+        return ['database'];
+    }
 
     public function toDatabase(object $notifiable): array
     {

@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Notification\Models\Contracts;
 
-interface NotifiableInterface
+interface CanBeNotified
 {
     public function notify($instance);
 

@@ -37,8 +37,8 @@
 namespace AdvisingApp\Form\Notifications;
 
 use AdvisingApp\Form\Models\SubmissibleAuthentication;
+use AdvisingApp\Notification\Notifications\Contracts\OnDemandNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use AdvisingApp\Notification\Notifications\OnDemandNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
