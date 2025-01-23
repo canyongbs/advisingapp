@@ -32,7 +32,7 @@ class CreateScheduleMonitorTables extends Migration
         Schema::create('monitored_scheduled_task_log_items', function (Blueprint $table) {
             $table->uuid('id')->primary();
 
-            $table->unsignedBigInteger('monitored_scheduled_task_id');
+            $table->uuid('monitored_scheduled_task_id');
             $table
                 ->foreign('monitored_scheduled_task_id', 'fk_scheduled_task_id')
                 ->references('id')
