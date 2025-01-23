@@ -43,6 +43,7 @@ use AdvisingApp\Audit\Models\Audit;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use AdvisingApp\Form\Models\FormAuthentication;
 use AdvisingApp\MeetingCenter\Console\Commands\RefreshCalendarRefreshTokens;
+use App\Models\MonitoredScheduledTaskLogItem;
 use App\Models\Scopes\SetupIsComplete;
 use App\Models\Tenant;
 use Filament\Actions\Imports\Models\FailedImportRow;
@@ -91,6 +92,7 @@ class Kernel extends ConsoleKernel
                         EngagementFile::class,
                         FailedImportRow::class,
                         FormAuthentication::class,
+                        MonitoredScheduledTaskLogItem::class,
                     ])
                         ->each(
                             fn ($model) => $schedule->command("tenants:artisan \"model:prune --model={$model}\" --tenant={$tenant->id}")
