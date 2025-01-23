@@ -39,6 +39,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Spatie\ScheduleMonitor\Models\MonitoredScheduledTaskLogItem as BaseMonitoredScheduledTaskLogItem;
 
+/**
+ * @mixin IdeHelperMonitoredScheduledTaskLogItem
+ */
 class MonitoredScheduledTaskLogItem extends BaseMonitoredScheduledTaskLogItem
 {
     use HasUuids;
