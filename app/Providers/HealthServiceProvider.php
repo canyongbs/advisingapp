@@ -36,7 +36,6 @@
 
 namespace App\Providers;
 
-use App\Features\ScheduleMonitor;
 use App\Health\Checks\ScheduleMonitorCheck;
 use Illuminate\Support\ServiceProvider;
 use Spatie\Health\Checks\Checks\CacheCheck;
@@ -49,7 +48,6 @@ use Spatie\Health\Checks\Checks\QueueCheck;
 use Spatie\Health\Checks\Checks\RedisCheck;
 use Spatie\Health\Checks\Checks\ScheduleCheck;
 use Spatie\Health\Facades\Health;
-use Spatie\Multitenancy\Landlord;
 
 class HealthServiceProvider extends ServiceProvider
 {
@@ -86,11 +84,7 @@ class HealthServiceProvider extends ServiceProvider
             RedisCheck::new(),
             ScheduleCheck::new()
                 ->heartbeatMaxAgeInMinutes(2),
-            ...[
-                Landlord::execute(fn () => ScheduleMonitor::active())
-                    ? ScheduleMonitorCheck::new()
-                    : [],
-            ],
+            ScheduleMonitorCheck::new(),
         ]);
     }
 }
