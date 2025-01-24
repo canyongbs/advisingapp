@@ -203,6 +203,16 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
         // Do we need to be able to relate campaigns/actions to the RESULT of their actions?
     }
 
+    public function confidentialAccessUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'interaction_confidential_users');
+    }
+
+    public function confidentialAccessTeams(): BelongsToMany
+    {
+        return $this->belongsToMany(Team::class, 'interaction_confidential_teams');
+    }
+
     protected static function booted(): void
     {
         static::addGlobalScope('licensed', function (Builder $builder) {
@@ -243,15 +253,5 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
                         )),
                     ));
         });
-    }
-
-    public function confidentialAccessUsers(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class, 'interaction_confidential_users');
-    }
-
-    public function confidentialAccessTeams(): BelongsToMany
-    {
-        return $this->belongsToMany(Team::class, 'interaction_confidential_teams');
     }
 }

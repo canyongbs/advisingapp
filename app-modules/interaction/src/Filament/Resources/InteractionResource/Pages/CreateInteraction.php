@@ -67,8 +67,6 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 
-use function PHPUnit\Framework\isFalse;
-
 class CreateInteraction extends CreateRecord
 {
     protected static string $resource = InteractionResource::class;
@@ -191,8 +189,8 @@ class CreateInteraction extends CreateRecord
                             ->required()
                             ->exists((new InteractionType())->getTable(), 'id'),
                         Checkbox::make('is_confidential')
-                                ->label('Confidential')
-                                ->live(),
+                            ->label('Confidential')
+                            ->live(),
                         Select::make('interaction_confidential_users')
                             ->relationship('confidentialAccessUsers', 'name')
                             ->preload()
