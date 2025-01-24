@@ -37,7 +37,7 @@
 namespace AdvisingApp\Ai\Jobs;
 
 use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Notifications\SendAssistantTranscriptNotification;
+use AdvisingApp\Ai\Notifications\AssistantTranscriptNotification;
 use App\Models\User;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
@@ -68,6 +68,6 @@ class EmailAiThread implements ShouldQueue
 
     public function handle(): void
     {
-        $this->recipient->notify(new SendAssistantTranscriptNotification($this->thread, $this->sender));
+        $this->recipient->notify(new AssistantTranscriptNotification($this->thread, $this->sender));
     }
 }

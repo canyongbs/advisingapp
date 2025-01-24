@@ -41,8 +41,8 @@ use AdvisingApp\CaseManagement\Cases\CaseNumber\Contracts\CaseNumberGenerator;
 use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
 use AdvisingApp\CaseManagement\Exceptions\CaseNumberUpdateAttemptException;
 use AdvisingApp\CaseManagement\Models\CaseModel;
-use AdvisingApp\CaseManagement\Notifications\SendEducatableCaseClosedNotification;
-use AdvisingApp\CaseManagement\Notifications\SendEducatableCaseOpenedNotification;
+use AdvisingApp\CaseManagement\Notifications\EducatableCaseClosedNotification;
+use AdvisingApp\CaseManagement\Notifications\EducatableCaseOpenedNotification;
 use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 use App\Models\User;
 
@@ -62,7 +62,7 @@ class CaseObserver
         }
 
         if ($case->status->classification === SystemCaseClassification::Open) {
-            $case->respondent->notify(new SendEducatableCaseOpenedNotification($case));
+            $case->respondent->notify(new EducatableCaseOpenedNotification($case));
         }
     }
 
@@ -86,7 +86,7 @@ class CaseObserver
             $case->wasChanged('status_id')
             && $case->status->classification === SystemCaseClassification::Closed
         ) {
-            $case->respondent->notify(new SendEducatableCaseClosedNotification($case));
+            $case->respondent->notify(new EducatableCaseClosedNotification($case));
         }
     }
 }

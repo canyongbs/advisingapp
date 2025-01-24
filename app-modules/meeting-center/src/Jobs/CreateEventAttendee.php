@@ -39,7 +39,7 @@ namespace AdvisingApp\MeetingCenter\Jobs;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
-use AdvisingApp\MeetingCenter\Notifications\SendRegistrationLinkToEventAttendeeNotification;
+use AdvisingApp\MeetingCenter\Notifications\RegistrationLinkToEventAttendeeNotification;
 use App\Models\User;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
@@ -84,6 +84,6 @@ class CreateEventAttendee implements ShouldQueue
             'status' => EventAttendeeStatus::Invited,
         ]);
 
-        $attendee->notify(new SendRegistrationLinkToEventAttendeeNotification($this->event, $this->sender));
+        $attendee->notify(new RegistrationLinkToEventAttendeeNotification($this->event, $this->sender));
     }
 }

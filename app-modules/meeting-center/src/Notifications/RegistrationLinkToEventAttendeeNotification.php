@@ -34,29 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Notifications;
+namespace AdvisingApp\MeetingCenter\Notifications;
 
-use AdvisingApp\CaseManagement\Models\CaseModel;
-use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\Notifications\HasBeforeSendHook;
+use AdvisingApp\MeetingCenter\Models\Event;
+use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
-use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\NotificationSetting;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Notification;
 
-class SendEducatableCaseClosedNotification extends Notification implements ShouldQueue, HasBeforeSendHook
+class RegistrationLinkToEventAttendeeNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
     public function __construct(
-        protected CaseModel $case,
+        protected Event $event,
+        protected User $sender
     ) {}
 
     /**
@@ -69,30 +64,17 @@ class SendEducatableCaseClosedNotification extends Notification implements Shoul
 
     public function toMail(object $notifiable): MailMessage
     {
-        /** @var Educatable $educatable */
-        $educatable = $notifiable;
-
-        $name = match ($notifiable::class) {
-            Student::class => $educatable->first,
-            Prospect::class => $educatable->first_name,
-        };
-
-        $status = $this->case->status;
-
         return MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable))
-            ->subject("{$this->case->case_number} - is now {$status->name}")
-            ->greeting("Hi {$name},")
-            ->line("Your request {$this->case->case_number} for case is now {$status->name}.");
-    }
-
-    public function beforeSend(AnonymousNotifiable|CanBeNotified $notifiable, OutboundDeliverable $deliverable, NotificationChannel $channel): void
-    {
-        $deliverable->related()->associate($this->case);
+            ->subject('You have been invited to an event!')
+            ->line("You have been invited to {$this->event->title}.")
+            ->action('Register', route('event-registration.show', ['event' => $this->event]));
     }
 
     private function resolveNotificationSetting(object $notifiable): ?NotificationSetting
     {
-        return $this->case->division?->notificationSetting?->setting;
+        return $notifiable instanceof EventAttendee
+            ? $this->sender->teams()->first()?->division?->notificationSetting?->setting
+            : null;
     }
 }
