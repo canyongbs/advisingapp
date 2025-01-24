@@ -37,10 +37,11 @@
 namespace App\Overrides\LastDragon_ru\LaraASP\GraphQL\SearchBy\Definitions;
 
 use App\GraphQL\Directives\CanUseInQueryDirective;
+use LastDragon_ru\LaraASP\GraphQL\Builder\Contracts\Context as ContextContract;
 use LastDragon_ru\LaraASP\GraphQL\Builder\Contracts\Operator;
 use LastDragon_ru\LaraASP\GraphQL\Builder\Exceptions\Client\ConditionEmpty;
 use LastDragon_ru\LaraASP\GraphQL\Builder\Exceptions\Client\ConditionTooManyOperators;
-use LastDragon_ru\LaraASP\GraphQL\Builder\Property;
+use LastDragon_ru\LaraASP\GraphQL\Builder\Field;
 use LastDragon_ru\LaraASP\GraphQL\SearchBy\Definitions\SearchByDirective as BaseSearchByDirective;
 use LastDragon_ru\LaraASP\GraphQL\Utils\ArgumentFactory;
 use Nuwave\Lighthouse\Execution\Arguments\ArgumentSet;
@@ -54,8 +55,12 @@ class SearchByDirective extends BaseSearchByDirective
      *
      * @return T
      */
-    protected function call(object $builder, Property $property, ArgumentSet $operator): object
-    {
+    protected function call(
+        object $builder,
+        Field $field,
+        ArgumentSet $operator,
+        ContextContract $context,
+    ): object {
         // Arguments?
         if (count($operator->arguments) > 1) {
             throw new ConditionTooManyOperators(
@@ -80,9 +85,9 @@ class SearchByDirective extends BaseSearchByDirective
                 }
             }
 
-            $property = $property->getChild($name);
+            $field = $field->getChild($name);
             $value = $argument;
-            $op = reset($operators);
+            $op = $operators[0] ?? null;
 
             if (count($operators) > 1) {
                 throw new ConditionTooManyOperators(
@@ -97,11 +102,11 @@ class SearchByDirective extends BaseSearchByDirective
         }
 
         // Operator?
-        if (! $op || ! $value) {
+        if ($op === null || $value === null) {
             throw new ConditionEmpty();
         }
 
         // Return
-        return $op->call($this, $builder, $property, $value);
+        return $op->call($this, $builder, $field, $value, $context);
     }
 }

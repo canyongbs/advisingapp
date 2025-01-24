@@ -46,21 +46,22 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use function is_a;
 
 use LastDragon_ru\LaraASP\Eloquent\ModelHelper;
+use LastDragon_ru\LaraASP\GraphQL\Builder\Contracts\Context;
 use LastDragon_ru\LaraASP\GraphQL\Builder\Contracts\Handler;
 use LastDragon_ru\LaraASP\GraphQL\Builder\Contracts\TypeProvider;
 use LastDragon_ru\LaraASP\GraphQL\Builder\Contracts\TypeSource;
 use LastDragon_ru\LaraASP\GraphQL\Builder\Exceptions\OperatorUnsupportedBuilder;
-use LastDragon_ru\LaraASP\GraphQL\Builder\Property;
+use LastDragon_ru\LaraASP\GraphQL\Builder\Field;
 use LastDragon_ru\LaraASP\GraphQL\SearchBy\Definitions\SearchByOperatorPropertyDirective;
 use LastDragon_ru\LaraASP\GraphQL\SearchBy\Exceptions\OperatorInvalidArgumentValue;
-use LastDragon_ru\LaraASP\GraphQL\SearchBy\Operators\BaseOperator;
 use LastDragon_ru\LaraASP\GraphQL\SearchBy\Operators\Complex\RelationType;
+use LastDragon_ru\LaraASP\GraphQL\SearchBy\Operators\Operator;
 use Nuwave\Lighthouse\Execution\Arguments\Argument;
 use Nuwave\Lighthouse\Execution\Arguments\ArgumentSet;
 
 use function reset;
 
-class MorphToRelationDirective extends BaseOperator
+class MorphToRelationDirective extends Operator
 {
     public function __construct(
         protected SearchByOperatorPropertyDirective $property,
@@ -73,7 +74,7 @@ class MorphToRelationDirective extends BaseOperator
         return 'relation';
     }
 
-    public function getFieldType(TypeProvider $provider, TypeSource $source): string
+    public function getFieldType(TypeProvider $provider, TypeSource $source, Context $context): ?string
     {
         return $provider->getType(RelationType::class, $source);
     }
@@ -88,8 +89,13 @@ class MorphToRelationDirective extends BaseOperator
         return is_a($builder, EloquentBuilder::class, true);
     }
 
-    public function call(Handler $handler, object $builder, Property $property, Argument $argument): object
-    {
+    public function call(
+        Handler $handler,
+        object $builder,
+        Field $field,
+        Argument $argument,
+        Context $context,
+    ): object {
         // TODO: Update this directive to remove things that are not needed for MorphTo relations
 
         // Supported?
@@ -103,7 +109,7 @@ class MorphToRelationDirective extends BaseOperator
         }
 
         // Conditions
-        $relation = (new ModelHelper($builder))->getRelation($property->getName());
+        $relation = (new ModelHelper($builder))->getRelation($field->getName());
         $hasCount = $argument->value->arguments['count'] ?? null;
         $notExists = (bool) ($argument->value->arguments['notExists']->value ?? false);
 
@@ -114,7 +120,7 @@ class MorphToRelationDirective extends BaseOperator
 
         if ($hasCount instanceof Argument) {
             $query = $builder->getQuery()->newQuery();
-            $query = $this->property->call($handler, $query, new Property(), $hasCount);
+            $query = $this->property->call($handler, $query, new Field(), $hasCount);
             $where = reset($query->wheres);
             $count = $where['value'] ?? $count;
             $operator = $where['operator'] ?? $operator;
@@ -133,7 +139,7 @@ class MorphToRelationDirective extends BaseOperator
                             if (! $alias || $alias === $relation->getRelationCountHash(false)) {
                                 $alias = $builder->getModel()->getTable();
                             }
-                            $handler->handle($builder, new Property($alias), $argument->value->arguments['where']->value);
+                            $handler->handle($builder, new Field($alias), $argument->value->arguments['where']->value);
                         }
                     };
                 }
@@ -144,7 +150,7 @@ class MorphToRelationDirective extends BaseOperator
         $this->build(
             $builder,
             $relationshipTypes,
-            $property,
+            $field,
             $operator,
             $count,
         );
@@ -168,14 +174,14 @@ class MorphToRelationDirective extends BaseOperator
     protected function build(
         EloquentBuilder $builder,
         array $relationshipTypes,
-        Property $property,
+        Field $field,
         string $operator,
         int $count,
     ): void {
         foreach ($relationshipTypes as $type => $closure) {
             $method = array_key_first($relationshipTypes) == $type ? 'whereHasMorph' : 'orWhereHasMorph';
 
-            $builder->{$method}($property->getName(), $type, $closure, $operator, $count);
+            $builder->{$method}($field->getName(), $type, $closure, $operator, $count);
         }
     }
 }
