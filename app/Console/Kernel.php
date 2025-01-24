@@ -139,8 +139,7 @@ class Kernel extends ConsoleKernel
                         ->onOneServer()
                         ->withoutOverlapping(720);
 
-                    // TODO: Combine this all into a single command
-                    collect([
+                    $modelsToPrune = collect([
                         AiMessageFile::class,
                         AiMessage::class,
                         AiThread::class,
@@ -149,14 +148,14 @@ class Kernel extends ConsoleKernel
                         FailedImportRow::class,
                         FormAuthentication::class,
                     ])
-                        ->each(
-                            fn ($model) => $schedule->command("tenants:artisan \"model:prune --model={$model}\" --tenant={$tenant->id}")
-                                ->daily()
-                                ->name("Prune {$model} | Tenant {$tenant->domain}")
-                                ->monitorName("Prune {$model} | Tenant {$tenant->domain}")
-                                ->onOneServer()
-                                ->withoutOverlapping(720)
-                        );
+                        ->join(',');
+
+                    $schedule->command("tenants:artisan \"model:prune --model={$modelsToPrune}\" --tenant={$tenant->id}")
+                        ->daily()
+                        ->name("Prune Models | Tenant {$tenant->domain}")
+                        ->monitorName("Prune Models | Tenant {$tenant->domain}")
+                        ->onOneServer()
+                        ->withoutOverlapping(720);
 
                     $schedule->command(
                         command: RefreshCalendarRefreshTokens::class,
