@@ -36,6 +36,7 @@
 
 namespace App\Listeners;
 
+use App\Features\ScheduleMonitor;
 use App\Multitenancy\Events\NewTenantSetupComplete;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Artisan;
@@ -46,6 +47,10 @@ class SyncScheduleMonitor implements ShouldQueue, NotTenantAware
 {
     public function handle(NewTenantSetupComplete $event): void
     {
+        if (! ScheduleMonitor::active()) {
+            return;
+        }
+
         Artisan::call(SyncCommand::class);
     }
 }
