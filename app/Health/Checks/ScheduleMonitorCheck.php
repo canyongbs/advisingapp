@@ -36,6 +36,7 @@
 
 namespace App\Health\Checks;
 
+use App\Features\ScheduleMonitor;
 use Spatie\Health\Checks\Check;
 use Spatie\Health\Checks\Result;
 use Spatie\Multitenancy\Landlord;
@@ -47,6 +48,12 @@ class ScheduleMonitorCheck extends Check
     public function run(): Result
     {
         return Landlord::execute(function () {
+            if (! ScheduleMonitor::active()) {
+                return Result::make()
+                    ->shortSummary('Schedule Monitor feature is not active')
+                    ->warning();
+            }
+
             $tasks = ScheduledTasks::createForSchedule()->monitoredTasks();
 
             $lateTasks = $tasks->filter(fn (Task $task) => $task->lastRunFinishedTooLate());
