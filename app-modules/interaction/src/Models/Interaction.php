@@ -49,6 +49,7 @@ use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Team\Models\Team;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Timeline\Models\Timeline;
 use AdvisingApp\Timeline\Timelines\InteractionTimeline;
@@ -60,6 +61,7 @@ use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -91,11 +93,13 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
         'start_datetime',
         'subject',
         'user_id',
+        'is_confidential',
     ];
 
     protected $casts = [
         'start_datetime' => 'datetime',
         'end_datetime' => 'datetime',
+        'is_confidential' => 'boolean',
     ];
 
     public function user(): BelongsTo
@@ -239,5 +243,15 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
                         )),
                     ));
         });
+    }
+
+    public function confidentialAccessUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'interaction_confidential_users');
+    }
+
+    public function confidentialAccessTeams(): BelongsToMany
+    {
+        return $this->belongsToMany(Team::class, 'interaction_confidential_teams');
     }
 }
