@@ -43,11 +43,9 @@ use GraphQL\Error\InvariantViolation;
 use GraphQL\Language\AST\Node;
 use GraphQL\Language\AST\StringValueNode;
 use GraphQL\Language\AST\TypeDefinitionNode;
-use GraphQL\Language\AST\ValueNode;
 use GraphQL\Type\Definition\ScalarType;
-use GraphQL\Type\Definition\Type;
 use GraphQL\Utils\Utils;
-use LastDragon_ru\LaraASP\GraphQL\Builder\BuilderInfo;
+use LastDragon_ru\LaraASP\GraphQL\Builder\Contracts\Context;
 use LastDragon_ru\LaraASP\GraphQL\Builder\Contracts\TypeDefinition;
 use LastDragon_ru\LaraASP\GraphQL\Builder\Contracts\TypeSource;
 use LastDragon_ru\LaraASP\GraphQL\Builder\Manipulator;
@@ -106,16 +104,17 @@ class UUID extends ScalarType implements TypeDefinition
         return $valueNode->value;
     }
 
-    public function getTypeName(Manipulator $manipulator, BuilderInfo $builder, TypeSource $source): string
+    public function getTypeName(TypeSource $source, Context $context): string
     {
         return $this->name();
     }
 
     public function getTypeDefinition(
         Manipulator $manipulator,
-        string $name,
         TypeSource $source,
-    ): TypeDefinitionNode|Type|null {
+        Context $context,
+        string $name,
+    ): (TypeDefinitionNode&Node)|string|null {
         return $this;
     }
 

@@ -37,18 +37,26 @@
 namespace App\Overrides\LastDragon_ru\LaraASP\GraphQL\SearchBy\Types;
 
 use App\GraphQL\Directives\CanUseInQueryDirective;
+use LastDragon_ru\LaraASP\GraphQL\Builder\Contracts\Context;
 use LastDragon_ru\LaraASP\GraphQL\Builder\Manipulator;
-use LastDragon_ru\LaraASP\GraphQL\SearchBy\Types\Condition as BaseCondition;
+use LastDragon_ru\LaraASP\GraphQL\Builder\Sources\InputFieldSource;
+use LastDragon_ru\LaraASP\GraphQL\Builder\Sources\InterfaceFieldSource;
+use LastDragon_ru\LaraASP\GraphQL\Builder\Sources\ObjectFieldSource;
+use LastDragon_ru\LaraASP\GraphQL\SearchBy\Types\Condition\Condition as BaseCondition;
 use Nuwave\Lighthouse\Support\Contracts\Directive;
 
 class Condition extends BaseCondition
 {
-    protected function isFieldDirectiveAllowed(Manipulator $manipulator, Directive $directive): bool
-    {
+    protected function isFieldDirectiveAllowed(
+        Manipulator $manipulator,
+        InputFieldSource|ObjectFieldSource|InterfaceFieldSource $field,
+        Context $context,
+        Directive $directive,
+    ): bool {
         if ($directive instanceof CanUseInQueryDirective) {
             return true;
         }
 
-        return parent::isFieldDirectiveAllowed($manipulator, $directive);
+        return parent::isFieldDirectiveAllowed($manipulator, $field, $context, $directive);
     }
 }
