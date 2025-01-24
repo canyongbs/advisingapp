@@ -151,7 +151,7 @@ class MailChannel extends BaseMailChannel
             ->keyBy('email');
 
         return collect($recipients)
-            ->filter(fn (Address $recipient): bool => ($users[$recipient->getAddress()] ?? null)?->isSuperAdmin() ?? false)
+            ->filter(fn (Address $recipient): bool => ! ($users[$recipient->getAddress()] ?? null)?->isSuperAdmin())
             ->count();
     }
 
