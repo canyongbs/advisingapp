@@ -34,40 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\Notifications;
+namespace App\Models\Attributes;
 
-use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
-use AdvisingApp\Notification\Notifications\EmailNotification;
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use AdvisingApp\Notification\Notifications\OnDemandNotification;
-use AdvisingApp\Portal\Models\PortalAuthentication;
-use App\Models\Attributes\SystemNotification;
+use Attribute;
 
-#[SystemNotification]
-class AuthenticatePortalNotification extends BaseNotification implements EmailNotification, OnDemandNotification
-{
-    use EmailChannelTrait;
-
-    public function __construct(
-        public PortalAuthentication $authentication,
-        public int $code,
-    ) {}
-
-    public function toEmail(object $notifiable): MailMessage
-    {
-        return MailMessage::make()
-            ->subject("Your authentication code for {$this->authentication->portal_type->getLabel()}")
-            ->line("Your code is: {$this->code}.")
-            ->line('You should type this code into the portal to authenticate yourself.')
-            ->line('For security reasons, the code will expire in 24 hours, but you can always request another.');
-    }
-
-    public function identifyRecipient(): array
-    {
-        return [
-            $this->authentication->educatable->getKey(),
-            $this->authentication->educatable->getMorphClass(),
-        ];
-    }
-}
+#[Attribute]
+class SystemNotification {}

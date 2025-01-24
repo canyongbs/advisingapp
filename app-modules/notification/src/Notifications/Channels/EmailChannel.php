@@ -46,12 +46,14 @@ use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\Channels\Contracts\NotificationChannelInterface;
 use AdvisingApp\Notification\Notifications\EmailNotification;
+use App\Models\Attributes\SystemNotification;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Exception;
 use Illuminate\Notifications\Channels\MailChannel;
 use Illuminate\Notifications\Notification;
+use ReflectionClass;
 use Throwable;
 
 class EmailChannel extends MailChannel implements NotificationChannelInterface
@@ -72,6 +74,21 @@ class EmailChannel extends MailChannel implements NotificationChannelInterface
 
             if (Tenant::checkCurrent()) {
                 $notification->metadata['tenant_id'] = Tenant::current()->getKey();
+            }
+
+            $demoMode = Tenant::current()?->config->mail->isDemoModeEnabled ?? false;
+            $isSystemNotificationEnabled = Tenant::current()?->config->mail->isSystemNotificationEnabled ?? false;
+
+            $isSystemNotification = $this->isSystemNotification($notification);
+
+            if ($demoMode) {
+                if (! $isSystemNotificationEnabled || ($isSystemNotificationEnabled && ! $isSystemNotification)) {
+                    $deliverable->update([
+                        'delivery_status' => NotificationDeliveryStatus::BlockedByDemoMode,
+                    ]);
+
+                    return;
+                }
             }
 
             throw_if(! $this->canSendWithinQuotaLimits($notification, $notifiable), new NotificationQuotaExceeded());
@@ -167,5 +184,12 @@ class EmailChannel extends MailChannel implements NotificationChannelInterface
             ->sum('quota_usage');
 
         return $currentQuotaUsage + $estimatedQuotaUsage <= $licenseSettings->data->limits->emails;
+    }
+
+    private function isSystemNotification(Notification $notification): bool
+    {
+        $reflection = new ReflectionClass($notification);
+
+        return ! empty($reflection->getAttributes(SystemNotification::class));
     }
 }
