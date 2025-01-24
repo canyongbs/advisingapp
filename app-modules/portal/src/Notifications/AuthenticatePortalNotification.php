@@ -42,7 +42,9 @@ use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Notification\Notifications\OnDemandNotification;
 use AdvisingApp\Portal\Models\PortalAuthentication;
+use App\Models\Attributes\SystemNotification;
 
+#[SystemNotification]
 class AuthenticatePortalNotification extends BaseNotification implements EmailNotification, OnDemandNotification
 {
     use EmailChannelTrait;
