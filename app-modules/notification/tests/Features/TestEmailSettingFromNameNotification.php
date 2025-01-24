@@ -40,6 +40,7 @@ use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use App\Models\NotificationSetting;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Notification;
 
 class TestEmailSettingFromNameNotification extends Notification implements ShouldQueue
 {

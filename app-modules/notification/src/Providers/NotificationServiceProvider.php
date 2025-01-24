@@ -45,11 +45,14 @@ use AdvisingApp\Notification\Listeners\NotifyUserOfSubscriptionDeleted;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\Notification\Notifications\ChannelManager;
+use AdvisingApp\Notification\Notifications\Channels\DatabaseChannel;
 use AdvisingApp\Notification\Notifications\Channels\MailChannel;
+use AdvisingApp\Notification\Notifications\Channels\SmsChannel;
 use App\Concerns\ImplementsGraphQL;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Notifications\ChannelManager as BaseChannelManager;
+use Illuminate\Notifications\Channels\DatabaseChannel as BaseDatabaseChannel;
 use Illuminate\Notifications\Channels\MailChannel as BaseMailChannel;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
@@ -61,7 +64,9 @@ class NotificationServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(BaseMailChannel::class, MailChannel::class);
-        $this->app->singleton(BaseChannelManager::class, fn (Container $app) => new ChannelManager($app));
+        $this->app->bind(BaseDatabaseChannel::class, DatabaseChannel::class);
+        $this->app->singleton(BaseChannelManager::class, fn (Container $app) => (new ChannelManager($app))
+            ->extend('sms', fn (): SmsChannel => $this->app->make(SmsChannel::class)));
     }
 
     public function boot(): void

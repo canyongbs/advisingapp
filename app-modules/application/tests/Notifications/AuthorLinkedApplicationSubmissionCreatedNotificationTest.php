@@ -37,29 +37,29 @@
 use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Notifications\AuthorLinkedApplicationSubmissionCreatedNotification;
-use AdvisingApp\Notification\Notifications\Channels\DatabaseChannel;
 use App\Models\User;
+use Illuminate\Support\Facades\Notification;
 
 use function Pest\Laravel\seed;
-use function Tests\Helpers\testItIsDispatchedToTheProperChannels;
 
-testItIsDispatchedToTheProperChannels(
-    notification: AuthorLinkedApplicationSubmissionCreatedNotification::class,
-    deliveryChannels: [DatabaseChannel::class],
-    triggerNotificationToNotifiable: function () {
-        seed(ApplicationSubmissionStateSeeder::class);
+it('can be sent', function () {
+    Notification::fake();
 
-        $submission = ApplicationSubmission::factory()->make();
+    seed(ApplicationSubmissionStateSeeder::class);
 
-        $user = User::factory()->create();
+    $submission = ApplicationSubmission::factory()->make();
 
-        $user->subscriptions()->create([
-            'subscribable_id' => $submission->author->getKey(),
-            'subscribable_type' => $submission->author->getMorphClass(),
-        ]);
+    $user = User::factory()->create();
 
-        $submission->save();
+    $user->subscriptions()->create([
+        'subscribable_id' => $submission->author->getKey(),
+        'subscribable_type' => $submission->author->getMorphClass(),
+    ]);
 
-        return $user;
-    }
-);
+    $submission->save();
+
+    Notification::assertSentTo(
+        $user,
+        AuthorLinkedApplicationSubmissionCreatedNotification::class,
+    );
+});

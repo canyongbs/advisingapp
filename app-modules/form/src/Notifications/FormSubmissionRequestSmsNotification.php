@@ -40,6 +40,7 @@ use AdvisingApp\Form\Models\FormSubmission;
 use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Notification;
 
 class FormSubmissionRequestSmsNotification extends Notification implements ShouldQueue
 {

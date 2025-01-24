@@ -43,6 +43,7 @@ use App\Models\User;
 use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Notification;
 
 class EngagementBatchStartedNotification extends Notification implements ShouldQueue
 {
