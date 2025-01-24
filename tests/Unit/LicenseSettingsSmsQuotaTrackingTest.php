@@ -93,7 +93,7 @@ it('An sms is allowed to be sent if there is available quota and its quota usage
         password: $settings->auth_token,
     ));
 
-    $notifiable->notify($notification);
+    $notifiable->notifyNow($notification);
 
     $outboundDeliverable = OutboundDeliverable::first();
 
@@ -149,7 +149,7 @@ it('An sms is prevented from being sent if there is no available quota', functio
         password: $settings->auth_token,
     ));
 
-    $notifiable->notify($notification);
+    $notifiable->notifyNow($notification);
 
     assertDatabaseCount(OutboundDeliverable::class, 1);
 
@@ -207,7 +207,7 @@ it('An sms is sent to a super admin user even if there is no available quota', f
         password: $settings->auth_token,
     ));
 
-    $notifiable->notify($notification);
+    $notifiable->notifyNow($notification);
 
     assertDatabaseCount(OutboundDeliverable::class, 1);
 });

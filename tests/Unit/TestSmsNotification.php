@@ -50,7 +50,7 @@ class TestSmsNotification extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['sms'];
     }
 
     public function toSms(object $notifiable): TwilioMessage

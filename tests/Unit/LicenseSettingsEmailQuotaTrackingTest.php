@@ -61,7 +61,7 @@ it('An email is allowed to be sent if there is available quota and its quota usa
 
     $notification = new TestEmailNotification();
 
-    $notifiable->notify($notification);
+    $notifiable->notifyNow($notification);
 
     Event::assertDispatched(
         function (MessageSent $event) use ($configurationSet) {
@@ -96,7 +96,7 @@ it('An email is prevented from being sent if there is no available quota', funct
 
     $notification = new TestEmailNotification();
 
-    $notifiable->notify($notification);
+    $notifiable->notifyNow($notification);
 
     Event::assertNotDispatched(MessageSent::class);
 
@@ -128,7 +128,7 @@ it('An email is sent to a super admin user even if there is no available quota',
 
     $notification = new TestEmailNotification();
 
-    $notifiable->notify($notification);
+    $notifiable->notifyNow($notification);
 
     Event::assertDispatched(MessageSent::class);
 
