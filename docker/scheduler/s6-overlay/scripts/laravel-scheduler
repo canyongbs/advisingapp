@@ -8,10 +8,18 @@ if [ ! -f "$WEBUSER_HOME/artisan" ]; then
   exit 1
 fi
 
-echo "Starting Laravel Scheduler..."
-
 cd "$WEBUSER_HOME"
 
 USERNAME=$(id -nu "$PUID")
+
+{
+echo "Clearing schedule cache..." \
+&& s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" schedule:clear-cache \
+&& echo "Schedule cache cleared!"
+} || {
+echo "Schedule cache clear failed!"
+}
+
+echo "Starting Laravel Scheduler..."
 
 s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" schedule:work
