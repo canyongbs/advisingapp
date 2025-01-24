@@ -3,3 +3,4 @@ fix-permissions
 startup-caching
 laravel-migrate
 feature-flag-purge
+sync-schedule-monitor

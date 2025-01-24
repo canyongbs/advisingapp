@@ -1,0 +1,20 @@
+#!/command/with-contenv bash
+
+if [ ! -f "$WEBUSER_HOME/artisan" ]; then
+  echo "Skipping Sync Schedule Monitor because we could not detect a Laravel install..."
+  exit 0
+fi
+
+cd "$WEBUSER_HOME" || exit 0
+
+USERNAME=$(id -nu "$PUID")
+
+{
+echo "Running sync on schedule monitor..." \
+&& s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" schedule-monitor:sync \
+&& echo "Schedule monitor sync completed!"
+} || {
+echo "Schedule monitor sync failed!"
+}
+
+exit 0
