@@ -37,27 +37,32 @@
 namespace AdvisingApp\Engagement\Notifications;
 
 use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
-use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\Concerns\DatabaseChannelTrait;
-use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
-use AdvisingApp\Notification\Notifications\DatabaseNotification;
-use AdvisingApp\Notification\Notifications\EmailNotification;
+use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use App\Models\NotificationSetting;
 use App\Models\User;
 use Filament\Notifications\Notification as FilamentNotification;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Notification;
 
-class EngagementEmailSentNotification extends BaseNotification implements EmailNotification, DatabaseNotification
+class EngagementEmailSentNotification extends Notification implements ShouldQueue
 {
-    use EmailChannelTrait;
-    use DatabaseChannelTrait;
+    use Queueable;
 
     public function __construct(
         public Engagement $engagement
     ) {}
 
-    public function toEmail(object $notifiable): MailMessage
+    /**
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
+    {
+        return ['mail', 'database'];
+    }
+
+    public function toMail(object $notifiable): MailMessage
     {
         $morph = str($this->engagement->recipient->getMorphClass());
 
@@ -78,7 +83,7 @@ class EngagementEmailSentNotification extends BaseNotification implements EmailN
             ->getDatabaseMessage();
     }
 
-    private function resolveNotificationSetting(NotifiableInterface $notifiable): ?NotificationSetting
+    private function resolveNotificationSetting(CanBeNotified $notifiable): ?NotificationSetting
     {
         return $notifiable instanceof User ? $this->engagement->createdBy->teams()->first()?->division?->notificationSetting?->setting : null;
     }

@@ -52,7 +52,7 @@ use AdvisingApp\Interaction\Models\Concerns\HasManyMorphedInteractions;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\Notification\Models\Concerns\HasSubscriptions;
 use AdvisingApp\Notification\Models\Concerns\NotifiableViaSms;
-use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
+use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -90,7 +90,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  *
  * @mixin IdeHelperStudent
  */
-class Student extends BaseAuthenticatable implements Auditable, Subscribable, Educatable, HasFilamentResource, NotifiableInterface
+class Student extends BaseAuthenticatable implements Auditable, Subscribable, Educatable, HasFilamentResource, CanBeNotified
 {
     use SoftDeletes;
     use HasApiTokens;

@@ -37,7 +37,7 @@
 namespace AdvisingApp\StudentDataModel\Models\Contracts;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
+use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -46,7 +46,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
  * @property-read Collection $careTeam
  * @property string $email
  */
-interface Educatable extends Identifiable, NotifiableInterface
+interface Educatable extends Identifiable, CanBeNotified
 {
     public static function getLabel(): string;
 

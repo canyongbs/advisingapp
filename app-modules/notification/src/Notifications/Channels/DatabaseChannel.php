@@ -36,67 +36,51 @@
 
 namespace AdvisingApp\Notification\Notifications\Channels;
 
-use AdvisingApp\Engagement\Exceptions\InvalidNotificationTypeInChannel;
 use AdvisingApp\Notification\Actions\MakeOutboundDeliverable;
 use AdvisingApp\Notification\DataTransferObjects\DatabaseChannelResultData;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
-use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\Channels\Contracts\NotificationChannelInterface;
-use AdvisingApp\Notification\Notifications\DatabaseNotification;
-use App\Models\Tenant;
+use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
+use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
 use Illuminate\Notifications\Channels\DatabaseChannel as BaseDatabaseChannel;
 use Illuminate\Notifications\Notification;
 use Throwable;
 
-class DatabaseChannel extends BaseDatabaseChannel implements NotificationChannelInterface
+class DatabaseChannel extends BaseDatabaseChannel
 {
     public function send($notifiable, Notification $notification): void
     {
-        $deliverable = resolve(MakeOutboundDeliverable::class)->handle($notification, $notifiable, NotificationChannel::Database);
+        $deliverable = app(MakeOutboundDeliverable::class)->execute($notification, $notifiable, NotificationChannel::Database);
 
-        /** @var BaseNotification $notification */
-        $notification->beforeSend($notifiable, $deliverable, NotificationChannel::Database);
+        if ($notification instanceof HasBeforeSendHook) {
+            $notification->beforeSend($notifiable, $deliverable, NotificationChannel::Database);
+        }
 
         $deliverable->save();
 
         try {
-            throw_if(! $notification instanceof DatabaseNotification || ! $notification instanceof BaseNotification, new InvalidNotificationTypeInChannel());
+            parent::send($notifiable, $notification);
 
-            $notification->metadata['outbound_deliverable_id'] = $deliverable->id;
-
-            if (Tenant::checkCurrent()) {
-                $notification->metadata['tenant_id'] = Tenant::current()->getKey();
-            }
-
-            $result = $this->handle($notifiable, $notification);
+            $result = new DatabaseChannelResultData(
+                success: true,
+            );
 
             try {
-                if ($result->success) {
-                    $deliverable->markDeliverySuccessful();
-                } else {
-                    $deliverable->markDeliveryFailed('Failed to send notification');
-                }
+                $deliverable->markDeliverySuccessful();
 
-                $notification->afterSend($notifiable, $deliverable, $result);
-            } catch (Throwable $e) {
-                report($e);
+                // Consider dispatching this as a seperate job so that it can be encapsulated to be retried if it fails, but also avoid changing the status of the deliverable if it fails.
+                if ($notification instanceof HasAfterSendHook) {
+                    $notification->afterSend($notifiable, $deliverable, $result);
+                }
+            } catch (Throwable $exception) {
+                report($exception);
             }
-        } catch (Throwable $e) {
+        } catch (Throwable $exception) {
             $deliverable->update([
                 'delivery_status' => NotificationDeliveryStatus::DispatchFailed,
             ]);
 
-            throw $e;
+            throw $exception;
         }
-    }
-
-    public function handle(object $notifiable, BaseNotification $notification): DatabaseChannelResultData
-    {
-        parent::send($notifiable, $notification);
-
-        return new DatabaseChannelResultData(
-            success: true,
-        );
     }
 }

@@ -38,27 +38,36 @@ namespace AdvisingApp\CaseManagement\Notifications;
 
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
+use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
-use AdvisingApp\Notification\Notifications\EmailNotification;
+use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\NotificationSetting;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\AnonymousNotifiable;
+use Illuminate\Notifications\Notification;
 
-class SendEducatableCaseOpenedNotification extends BaseNotification implements EmailNotification
+class EducatableCaseClosedNotification extends Notification implements ShouldQueue, HasBeforeSendHook
 {
-    use EmailChannelTrait;
+    use Queueable;
 
     public function __construct(
         protected CaseModel $case,
     ) {}
 
-    public function toEmail(object $notifiable): MailMessage
+    /**
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
+    {
+        return ['mail'];
+    }
+
+    public function toMail(object $notifiable): MailMessage
     {
         /** @var Educatable $educatable */
         $educatable = $notifiable;
@@ -69,18 +78,15 @@ class SendEducatableCaseOpenedNotification extends BaseNotification implements E
         };
 
         $status = $this->case->status;
-        $type = $this->case->priority->type;
 
         return MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable))
             ->subject("{$this->case->case_number} - is now {$status->name}")
-            ->greeting("Hello {$name},")
-            ->line("A new {$type->name} case has been created and is now in a {$status->name} status. Your new ticket number is: {$this->case->case_number}.")
-            ->line('The details of your case are shown below:')
-            ->lines(str(nl2br($this->case->close_details))->explode('<br />'));
+            ->greeting("Hi {$name},")
+            ->line("Your request {$this->case->case_number} for case is now {$status->name}.");
     }
 
-    public function beforeSend(AnonymousNotifiable|NotifiableInterface $notifiable, OutboundDeliverable $deliverable, NotificationChannel $channel): void
+    public function beforeSend(AnonymousNotifiable|CanBeNotified $notifiable, OutboundDeliverable $deliverable, NotificationChannel $channel): void
     {
         $deliverable->related()->associate($this->case);
     }

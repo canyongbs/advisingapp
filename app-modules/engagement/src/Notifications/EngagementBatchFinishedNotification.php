@@ -37,20 +37,17 @@
 namespace AdvisingApp\Engagement\Notifications;
 
 use AdvisingApp\Engagement\Models\EngagementBatch;
-use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\Concerns\DatabaseChannelTrait;
-use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
-use AdvisingApp\Notification\Notifications\DatabaseNotification;
-use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use App\Models\NotificationSetting;
 use App\Models\User;
 use Filament\Notifications\Notification as FilamentNotification;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Notification;
 
-class EngagementBatchFinishedNotification extends BaseNotification implements DatabaseNotification, EmailNotification
+class EngagementBatchFinishedNotification extends Notification implements ShouldQueue
 {
-    use DatabaseChannelTrait;
-    use EmailChannelTrait;
+    use Queueable;
 
     private string $title;
 
@@ -65,7 +62,15 @@ class EngagementBatchFinishedNotification extends BaseNotification implements Da
                     : 'Bulk text message request has been processed and text messages have been sent successfully.';
     }
 
-    public function toEmail(object $notifiable): MailMessage
+    /**
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
+    {
+        return ['mail', 'database'];
+    }
+
+    public function toMail(object $notifiable): MailMessage
     {
         $message = MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable));

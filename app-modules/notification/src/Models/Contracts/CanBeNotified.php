@@ -34,9 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Notifications;
+namespace AdvisingApp\Notification\Models\Contracts;
 
-interface DatabaseNotification
+interface CanBeNotified
 {
-    public function toDatabase(object $notifiable): array;
+    public function notify($instance);
+
+    public function notifyNow($instance, array $channels = null);
+
+    public function routeNotificationFor($driver, $notification = null);
+
+    public function notifications();
+
+    public function readNotifications();
+
+    public function unreadNotifications();
+
+    public function canRecieveSms(): bool;
 }

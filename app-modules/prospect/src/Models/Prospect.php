@@ -52,7 +52,7 @@ use AdvisingApp\Interaction\Models\Concerns\HasManyMorphedInteractions;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\Notification\Models\Concerns\HasSubscriptions;
 use AdvisingApp\Notification\Models\Concerns\NotifiableViaSms;
-use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
+use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
@@ -94,7 +94,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @mixin IdeHelperProspect
  */
 #[ObservedBy([ProspectObserver::class])]
-class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, Educatable, HasFilamentResource, NotifiableInterface
+class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, Educatable, HasFilamentResource, CanBeNotified
 {
     use HasApiTokens;
     use AuditableTrait;
