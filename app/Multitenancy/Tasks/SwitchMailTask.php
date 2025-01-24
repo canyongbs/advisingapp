@@ -77,23 +77,6 @@ class SwitchMailTask implements SwitchTenantTask
 
         $subDomainBasedEmail = $matches[1] . '@' . config('mail.from.root_domain');
 
-        // if ($config->isDemoModeEnabled ?? false) {
-        //     $this->setMailConfig(
-        //         mailer: 'array',
-        //         fromAddress: $subDomainBasedEmail,
-        //         fromName: $this->originalFromName,
-        //         smtpHost: null,
-        //         smtpPort: null,
-        //         smtpEncryption: null,
-        //         smtpUsername: null,
-        //         smtpPassword: null,
-        //         smtpTimeout: null,
-        //         smtpLocalDomain: null,
-        //     );
-
-        //     return;
-        // }
-
         $this->setMailConfig(
             mailer: $config->mailer,
             fromAddress: $subDomainBasedEmail,
