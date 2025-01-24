@@ -43,8 +43,8 @@ use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\Notifications\HasAfterSendHook;
-use AdvisingApp\Notification\Notifications\HasBeforeSendHook;
+use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
+use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Settings\LicenseSettings;
@@ -151,7 +151,7 @@ class MailChannel extends BaseMailChannel
             ->keyBy('email');
 
         return collect($recipients)
-            ->filter(fn (Address $recipient): bool => $users[$recipient->getAddress()]?->isSuperAdmin() ?? false)
+            ->filter(fn (Address $recipient): bool => ($users[$recipient->getAddress()] ?? null)?->isSuperAdmin() ?? false)
             ->count();
     }
 

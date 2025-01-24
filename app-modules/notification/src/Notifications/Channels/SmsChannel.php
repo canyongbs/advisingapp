@@ -44,8 +44,8 @@ use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\Notifications\HasAfterSendHook;
-use AdvisingApp\Notification\Notifications\HasBeforeSendHook;
+use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
+use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
 use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
 use App\Models\User;
 use App\Settings\LicenseSettings;
@@ -172,10 +172,8 @@ class SmsChannel
 
     protected function determineQuotaUsage(SmsChannelResultData $result): int
     {
-        if ($user = User::query()->where('phone_number', $result->message->to)->first()) {
-            if ($user->isSuperAdmin()) {
-                return 0;
-            }
+        if (User::query()->where('phone_number', $result->message->to)->first()?->isSuperAdmin()) {
+            return 0;
         }
 
         return $result->message->numSegments;

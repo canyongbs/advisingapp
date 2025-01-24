@@ -41,7 +41,7 @@ use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\Notifications\HasAfterSendHook;
+use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use App\Models\NotificationSetting;
 use App\Models\User;
@@ -50,7 +50,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Notification;
 
-class SendAssistantTranscriptNotification extends Notification implements ShouldQueue, HasAfterSendHook
+class AssistantTranscriptNotification extends Notification implements ShouldQueue, HasAfterSendHook
 {
     use Queueable;
 
