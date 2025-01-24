@@ -41,6 +41,8 @@ use AdvisingApp\Report\Listeners\ProcessUserUniqueLoginTrackedEvent;
 use App\Listeners\ClearSentryUser;
 use App\Listeners\LoadSettingsDefaults;
 use App\Listeners\SetSentryUser;
+use App\Listeners\SyncScheduleMonitor;
+use App\Multitenancy\Events\NewTenantSetupComplete;
 use App\Multitenancy\Listeners\RemoveSentryTenantTag;
 use App\Multitenancy\Listeners\SetSentryTenantTag;
 use Illuminate\Auth\Events\Authenticated;
@@ -90,6 +92,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         LoadingSettings::class => [
             LoadSettingsDefaults::class,
+        ],
+        NewTenantSetupComplete::class => [
+            SyncScheduleMonitor::class,
         ],
     ];
 
