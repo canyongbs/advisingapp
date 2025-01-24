@@ -42,6 +42,7 @@ use App\Models\User;
 use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Notification;
 use Tests\Unit\TestEmailNotification;
 
 it('will create an outbound deliverable for the outbound notification', function () {

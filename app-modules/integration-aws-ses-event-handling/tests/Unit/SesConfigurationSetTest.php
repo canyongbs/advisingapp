@@ -42,6 +42,7 @@ use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Events\MessageSent;
+use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
 
