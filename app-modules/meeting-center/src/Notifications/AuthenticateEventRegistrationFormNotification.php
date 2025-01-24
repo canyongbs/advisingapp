@@ -41,6 +41,7 @@ use AdvisingApp\Notification\Notifications\Contracts\OnDemandNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Notification;
 
 class AuthenticateEventRegistrationFormNotification extends Notification implements ShouldQueue, OnDemandNotification
 {

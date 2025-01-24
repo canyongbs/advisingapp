@@ -45,6 +45,7 @@ use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\AnonymousNotifiable;
+use Illuminate\Notifications\Notification;
 use Throwable;
 
 class EngagementSmsNotification extends Notification implements ShouldQueue, HasBeforeSendHook

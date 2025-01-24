@@ -49,6 +49,7 @@ use App\Models\NotificationSetting;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\AnonymousNotifiable;
+use Illuminate\Notifications\Notification;
 
 class SendEducatableCaseClosedNotification extends Notification implements ShouldQueue, HasBeforeSendHook
 {

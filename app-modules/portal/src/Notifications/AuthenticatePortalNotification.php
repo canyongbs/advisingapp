@@ -41,6 +41,7 @@ use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Portal\Models\PortalAuthentication;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Notification;
 
 class AuthenticatePortalNotification extends Notification implements ShouldQueue, OnDemandNotification
 {

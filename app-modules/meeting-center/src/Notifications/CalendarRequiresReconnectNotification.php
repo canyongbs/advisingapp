@@ -45,6 +45,7 @@ use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Notification;
 
 class CalendarRequiresReconnectNotification extends Notification implements ShouldQueue
 {

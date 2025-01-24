@@ -43,6 +43,7 @@ use App\Models\NotificationSetting;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Notification;
 
 class SendRegistrationLinkToEventAttendeeNotification extends Notification implements ShouldQueue
 {
