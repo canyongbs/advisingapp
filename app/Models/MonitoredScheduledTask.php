@@ -34,42 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationTwilio\Providers;
+namespace App\Models;
 
-use AdvisingApp\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
-use AdvisingApp\Engagement\Actions\FindEngagementResponseSender;
-use AdvisingApp\IntegrationTwilio\Actions\Playground\FindEngagementResponseSender as PlaygroundFindEngagementResponseSender;
-use AdvisingApp\IntegrationTwilio\IntegrationTwilioPlugin;
-use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
-use App\Enums\Integration;
-use App\Exceptions\IntegrationException;
-use Filament\Panel;
-use Illuminate\Support\ServiceProvider;
-use Twilio\Rest\Client;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Spatie\ScheduleMonitor\Models\MonitoredScheduledTask as BaseMonitoredScheduledTask;
 
-class IntegrationTwilioServiceProvider extends ServiceProvider
+/**
+ * @mixin IdeHelperMonitoredScheduledTask
+ */
+class MonitoredScheduledTask extends BaseMonitoredScheduledTask
 {
-    public function register(): void
-    {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new IntegrationTwilioPlugin()));
-
-        $this->app->scoped(EngagementResponseSenderFinder::class, function () {
-            if (config('local_development.twilio.enable_test_sender') === true) {
-                return new PlaygroundFindEngagementResponseSender();
-            }
-
-            return new FindEngagementResponseSender();
-        });
-
-        $settings = $this->app->make(TwilioSettings::class);
-
-        $this->app->scoped(
-            Client::class,
-            fn () => Integration::Twilio->isOn()
-                ? new Client($settings->account_sid, $settings->auth_token)
-                : throw IntegrationException::make(Integration::Twilio)
-        );
-    }
-
-    public function boot(): void {}
+    use HasUuids;
 }

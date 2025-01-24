@@ -224,6 +224,35 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\MonitoredScheduledTask
+ *
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\MonitoredScheduledTaskLogItem> $logItems
+ * @property-read int|null $log_items_count
+ * @method static \Illuminate\Database\Eloquent\Builder|MonitoredScheduledTask newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|MonitoredScheduledTask newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|MonitoredScheduledTask query()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperMonitoredScheduledTask {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\MonitoredScheduledTaskLogItem
+ *
+ * @property-read \App\Models\MonitoredScheduledTask|null $monitoredScheduledTask
+ * @method static \Illuminate\Database\Eloquent\Builder|MonitoredScheduledTaskLogItem newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|MonitoredScheduledTaskLogItem newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|MonitoredScheduledTaskLogItem query()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperMonitoredScheduledTaskLogItem {}
+}
+
+namespace App\Models{
+/**
  * App\Models\NotificationSetting
  *
  * @property string $id
@@ -527,6 +556,8 @@ namespace App\Models{
  * @property-read string|null $multifactor_recovery_codes
  * @property string|null $multifactor_confirmed_at
  * @property bool $is_branding_bar_dismissed
+ * @property \Illuminate\Support\Carbon|null $first_login_at
+ * @property \Illuminate\Support\Carbon|null $last_logged_in_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\AiAssistantUpvote> $aiAssistantUpvotes
  * @property-read int|null $ai_assistant_upvotes_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\AiThreadFolder> $aiThreadFolders
@@ -555,6 +586,10 @@ namespace App\Models{
  * @property-read mixed $is_admin
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Authorization\Models\License> $licenses
  * @property-read int|null $licenses_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Report\Models\TrackedEvent> $logins
+ * @property-read int|null $logins_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Report\Models\TrackedEventCount> $loginsCount
+ * @property-read int|null $logins_count_count
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
@@ -607,6 +642,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User whereEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereEmailVerifiedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereEmplid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereFirstLoginAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereHasEnabledPublicProfile($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereIsBioVisibleOnProfile($value)
@@ -617,6 +653,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User whereIsPhoneNumberVisibleOnProfile($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereJobTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereLastChatPingAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereLastLoggedInAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereLocale($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereMultifactorConfirmedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereMultifactorRecoveryCodes($value)
@@ -2499,7 +2536,7 @@ namespace AdvisingApp\Engagement\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property \AdvisingApp\Notification\Enums\NotificationChannel|null $channel
+ * @property \AdvisingApp\Notification\Enums\NotificationChannel $channel
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \AdvisingApp\Engagement\Models\EngagementBatch|null $batch
@@ -4097,12 +4134,18 @@ namespace AdvisingApp\Report\Models{
  * @property \AdvisingApp\Report\Enums\TrackedEventType $type
  * @property string|null $occurred_at
  * @property string|null $deleted_at
+ * @property string|null $related_to_type
+ * @property string|null $related_to_id
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $relatedTo
+ * @method static \AdvisingApp\Report\Database\Factories\TrackedEventFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|TrackedEvent newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|TrackedEvent newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|TrackedEvent query()
  * @method static \Illuminate\Database\Eloquent\Builder|TrackedEvent whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TrackedEvent whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TrackedEvent whereOccurredAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TrackedEvent whereRelatedToId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TrackedEvent whereRelatedToType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TrackedEvent whereType($value)
  * @mixin \Eloquent
  */
@@ -4121,6 +4164,9 @@ namespace AdvisingApp\Report\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
+ * @property string|null $related_to_type
+ * @property string|null $related_to_id
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $relatedTo
  * @method static \AdvisingApp\Report\Database\Factories\TrackedEventCountFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|TrackedEventCount newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|TrackedEventCount newQuery()
@@ -4130,6 +4176,8 @@ namespace AdvisingApp\Report\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|TrackedEventCount whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TrackedEventCount whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TrackedEventCount whereLastOccurredAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TrackedEventCount whereRelatedToId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TrackedEventCount whereRelatedToType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TrackedEventCount whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TrackedEventCount whereUpdatedAt($value)
  * @mixin \Eloquent
@@ -4478,7 +4526,6 @@ namespace AdvisingApp\StudentDataModel\Models{
  * AdvisingApp\StudentDataModel\Models\Program
  *
  * @property string $sisid
- * @property string|null $otherid
  * @property string|null $acad_career
  * @property string|null $division
  * @property string|null $prog_status
@@ -4511,7 +4558,6 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Program whereFoi($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Program whereGraduationDt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Program whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Program whereOtherid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Program whereProgStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Program whereSemester($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Program whereSisid($value)

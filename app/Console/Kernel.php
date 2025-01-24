@@ -40,9 +40,14 @@ use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Audit\Models\Audit;
+use AdvisingApp\Campaign\Actions\ExecuteCampaignActions;
+use AdvisingApp\Engagement\Actions\DeliverEngagements;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use AdvisingApp\Form\Models\FormAuthentication;
+use AdvisingApp\IntegrationTwilio\Jobs\CheckStatusOfOutboundDeliverablesWithoutATerminalStatus;
 use AdvisingApp\MeetingCenter\Console\Commands\RefreshCalendarRefreshTokens;
+use AdvisingApp\MeetingCenter\Jobs\SyncCalendars;
+use App\Models\MonitoredScheduledTaskLogItem;
 use App\Models\Scopes\SetupIsComplete;
 use App\Models\Tenant;
 use Filament\Actions\Imports\Models\FailedImportRow;
@@ -58,32 +63,83 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
+        $schedule->command('model:prune', ['--model' => MonitoredScheduledTaskLogItem::class])
+            ->daily()
+            ->onOneServer()
+            ->withoutOverlapping(720)
+            ->monitorName('Landlord Prune MonitoredScheduledTaskLogItems');
+
         Tenant::query()
             ->tap(new SetupIsComplete())
             ->cursor()
             ->each(function (Tenant $tenant) use ($schedule) {
                 try {
+                    $schedule->call(function () use ($tenant) {
+                        $tenant->execute(function () {
+                            dispatch(new DeliverEngagements());
+                        });
+                    })
+                        ->everyMinute()
+                        ->name("Dispatch DeliverEngagements | Tenant {$tenant->domain}")
+                        ->monitorName("Dispatch DeliverEngagements | Tenant {$tenant->domain}")
+                        ->onOneServer()
+                        ->withoutOverlapping(15);
+
+                    $schedule->call(function () use ($tenant) {
+                        $tenant->execute(function () {
+                            dispatch(new SyncCalendars());
+                        });
+                    })
+                        ->everyMinute()
+                        ->name("Dispatch SyncCalendars | Tenant {$tenant->domain}")
+                        ->monitorName("Dispatch SyncCalendars | Tenant {$tenant->domain}")
+                        ->onOneServer()
+                        ->withoutOverlapping(15);
+
+                    $schedule->call(function () use ($tenant) {
+                        $tenant->execute(function () {
+                            dispatch(new CheckStatusOfOutboundDeliverablesWithoutATerminalStatus());
+                        });
+                    })
+                        ->daily()
+                        ->name("Dispatch CheckStatusOfOutboundDeliverablesWithoutATerminalStatus | Tenant {$tenant->domain}")
+                        ->monitorName("Dispatch CheckStatusOfOutboundDeliverablesWithoutATerminalStatus | Tenant {$tenant->domain}")
+                        ->onOneServer()
+                        ->withoutOverlapping(720);
+
+                    $schedule->call(function () use ($tenant) {
+                        $tenant->execute(function () {
+                            dispatch(new ExecuteCampaignActions());
+                        });
+                    })
+                        ->everyMinute()
+                        ->name("Dispatch ExecuteCampaignActions | Tenant {$tenant->domain}")
+                        ->monitorName("Dispatch ExecuteCampaignActions | Tenant {$tenant->domain}")
+                        ->onOneServer()
+                        ->withoutOverlapping(15);
+
                     $schedule->command("tenants:artisan \"cache:prune-stale-tags\" --tenant={$tenant->id}")
                         ->hourly()
+                        ->name("Prune Stale Cache Tags | Tenant {$tenant->domain}")
+                        ->monitorName("Prune Stale Cache Tags | Tenant {$tenant->domain}")
                         ->onOneServer()
-                        ->withoutOverlapping();
-
-                    $schedule->command("tenants:artisan \"health:check\" --tenant={$tenant->id}")
-                        ->everyMinute()
-                        ->onOneServer()
-                        ->withoutOverlapping();
+                        ->withoutOverlapping(15);
 
                     $schedule->command("tenants:artisan \"health:queue-check-heartbeat\" --tenant={$tenant->id}")
                         ->everyMinute()
+                        ->name("Queue Check Heartbeat | Tenant {$tenant->domain}")
+                        ->monitorName("Queue Check Heartbeat | Tenant {$tenant->domain}")
                         ->onOneServer()
-                        ->withoutOverlapping();
+                        ->withoutOverlapping(15);
 
                     $schedule->command("ai:delete-unsaved-ai-threads --tenant={$tenant->id}")
                         ->daily()
+                        ->name("Delete Unsaved AI Threads | Tenant {$tenant->domain}")
+                        ->monitorName("Delete Unsaved AI Threads | Tenant {$tenant->domain}")
                         ->onOneServer()
-                        ->withoutOverlapping();
+                        ->withoutOverlapping(720);
 
-                    collect([
+                    $modelsToPrune = collect([
                         AiMessageFile::class,
                         AiMessage::class,
                         AiThread::class,
@@ -92,12 +148,14 @@ class Kernel extends ConsoleKernel
                         FailedImportRow::class,
                         FormAuthentication::class,
                     ])
-                        ->each(
-                            fn ($model) => $schedule->command("tenants:artisan \"model:prune --model={$model}\" --tenant={$tenant->id}")
-                                ->daily()
-                                ->onOneServer()
-                                ->withoutOverlapping()
-                        );
+                        ->join(',');
+
+                    $schedule->command("tenants:artisan \"model:prune --model={$modelsToPrune}\" --tenant={$tenant->id}")
+                        ->daily()
+                        ->name("Prune Models | Tenant {$tenant->domain}")
+                        ->monitorName("Prune Models | Tenant {$tenant->domain}")
+                        ->onOneServer()
+                        ->withoutOverlapping(720);
 
                     $schedule->command(
                         command: RefreshCalendarRefreshTokens::class,
@@ -106,13 +164,24 @@ class Kernel extends ConsoleKernel
                         ]
                     )
                         ->daily()
+                        ->name("Refresh Calendar Refresh Tokens | Tenant {$tenant->domain}")
+                        ->monitorName("Refresh Calendar Refresh Tokens | Tenant {$tenant->domain}")
                         ->onOneServer()
-                        ->withoutOverlapping();
+                        ->withoutOverlapping(720);
+
+                    $schedule->command("tenants:artisan \"health:check\" --tenant={$tenant->id}")
+                        ->everyMinute()
+                        ->name("Health Check | Tenant {$tenant->domain}")
+                        ->monitorName("Health Check | Tenant {$tenant->domain}")
+                        ->onOneServer()
+                        ->withoutOverlapping(15);
 
                     $schedule->command("tenants:artisan \"health:schedule-check-heartbeat\" --tenant={$tenant->id}")
-                        ->name("health:schedule-check-heartbeat-{$tenant->id}")
                         ->everyMinute()
-                        ->onOneServer();
+                        ->name("Schedule Check Heartbeat | Tenant {$tenant->domain}")
+                        ->monitorName("Schedule Check Heartbeat | Tenant {$tenant->domain}")
+                        ->onOneServer()
+                        ->withoutOverlapping(15);
                 } catch (Throwable $th) {
                     Log::error('Error scheduling tenant commands.', [
                         'tenant' => $tenant->id,

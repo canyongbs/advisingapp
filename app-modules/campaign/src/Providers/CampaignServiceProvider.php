@@ -36,14 +36,10 @@
 
 namespace AdvisingApp\Campaign\Providers;
 
-use AdvisingApp\Campaign\Actions\ExecuteCampaignActions;
 use AdvisingApp\Campaign\CampaignPlugin;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
-use App\Models\Scopes\SetupIsComplete;
-use App\Models\Tenant;
 use Filament\Panel;
-use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 
@@ -60,22 +56,5 @@ class CampaignServiceProvider extends ServiceProvider
             'campaign' => Campaign::class,
             'campaign_action' => CampaignAction::class,
         ]);
-
-        $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
-            $schedule->call(function () {
-                Tenant::query()
-                    ->tap(new SetupIsComplete())
-                    ->cursor()
-                    ->each(function (Tenant $tenant) {
-                        $tenant->execute(function () {
-                            dispatch(new ExecuteCampaignActions());
-                        });
-                    });
-            })
-                ->everyMinute()
-                ->name('ExecuteCampaignActionsSchedule')
-                ->onOneServer()
-                ->withoutOverlapping();
-        });
     }
 }

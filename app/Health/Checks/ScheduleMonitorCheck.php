@@ -34,42 +34,44 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationTwilio\Providers;
+namespace App\Health\Checks;
 
-use AdvisingApp\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
-use AdvisingApp\Engagement\Actions\FindEngagementResponseSender;
-use AdvisingApp\IntegrationTwilio\Actions\Playground\FindEngagementResponseSender as PlaygroundFindEngagementResponseSender;
-use AdvisingApp\IntegrationTwilio\IntegrationTwilioPlugin;
-use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
-use App\Enums\Integration;
-use App\Exceptions\IntegrationException;
-use Filament\Panel;
-use Illuminate\Support\ServiceProvider;
-use Twilio\Rest\Client;
+use App\Features\ScheduleMonitor;
+use Spatie\Health\Checks\Check;
+use Spatie\Health\Checks\Result;
+use Spatie\Multitenancy\Landlord;
+use Spatie\ScheduleMonitor\Support\ScheduledTasks\ScheduledTasks;
+use Spatie\ScheduleMonitor\Support\ScheduledTasks\Tasks\Task;
 
-class IntegrationTwilioServiceProvider extends ServiceProvider
+class ScheduleMonitorCheck extends Check
 {
-    public function register(): void
+    public function run(): Result
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new IntegrationTwilioPlugin()));
-
-        $this->app->scoped(EngagementResponseSenderFinder::class, function () {
-            if (config('local_development.twilio.enable_test_sender') === true) {
-                return new PlaygroundFindEngagementResponseSender();
+        return Landlord::execute(function () {
+            if (! ScheduleMonitor::active()) {
+                return Result::make()
+                    ->shortSummary('Schedule Monitor feature is not active')
+                    ->warning();
             }
 
-            return new FindEngagementResponseSender();
+            $tasks = ScheduledTasks::createForSchedule()->monitoredTasks();
+
+            $lateTasks = $tasks->filter(fn (Task $task) => $task->lastRunFinishedTooLate());
+
+            $failedTasks = $tasks->filter(fn (Task $task) => $task->lastRunFailed());
+
+            $result = Result::make();
+
+            if ($lateTasks->isNotEmpty() || $failedTasks->isNotEmpty()) {
+                return $result->shortSummary("Late Tasks: {$lateTasks->count()} | Failed Tasks: {$failedTasks->count()}")
+                    ->meta([
+                        'late_tasks' => $lateTasks->map(fn (Task $task) => $task->name())->toArray(),
+                        'failed_tasks' => $failedTasks->map(fn (Task $task) => $task->name())->toArray(),
+                    ])
+                    ->failed();
+            }
+
+            return $result->ok();
         });
-
-        $settings = $this->app->make(TwilioSettings::class);
-
-        $this->app->scoped(
-            Client::class,
-            fn () => Integration::Twilio->isOn()
-                ? new Client($settings->account_sid, $settings->auth_token)
-                : throw IntegrationException::make(Integration::Twilio)
-        );
     }
-
-    public function boot(): void {}
 }

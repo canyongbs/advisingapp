@@ -36,6 +36,7 @@
 
 namespace App\Providers;
 
+use App\Health\Checks\ScheduleMonitorCheck;
 use Illuminate\Support\ServiceProvider;
 use Spatie\Health\Checks\Checks\CacheCheck;
 use Spatie\Health\Checks\Checks\DatabaseCheck;
@@ -83,6 +84,7 @@ class HealthServiceProvider extends ServiceProvider
             RedisCheck::new(),
             ScheduleCheck::new()
                 ->heartbeatMaxAgeInMinutes(2),
+            ScheduleMonitorCheck::new(),
         ]);
     }
 }
