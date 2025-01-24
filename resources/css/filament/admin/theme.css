@@ -200,3 +200,7 @@
     border: none;
     border-radius: 50%;
 }
+
+.fi-page-sub-navigation-sidebar-ctn{
+    @apply bg-white border rounded border-gray-500	dark:bg-gray-950;
+}
