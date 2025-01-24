@@ -64,7 +64,7 @@ class AuthorLinkedFormSubmissionCreatedNotification extends Notification
         $name = $author->{$author->displayNameKey()};
 
         [$target, $targetRoute] = match ($author::class) {
-            Prospect::class => [ProspectResource::class, 'manage-form-submissions'],
+            Prospect::class => [ProspectResource::class, 'view'],
             Student::class => [StudentResource::class, 'view'],
         };
 
