@@ -39,6 +39,7 @@ namespace App\Models;
 use App\Casts\LandlordEncrypted;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Multitenancy\Actions\MakeTenantCurrentAction;
 use Spatie\Multitenancy\Models\Concerns\UsesLandlordConnection;
 use Spatie\Multitenancy\Models\Tenant as SpatieTenant;
 
@@ -64,4 +65,18 @@ class Tenant extends SpatieTenant
         'config' => LandlordEncrypted::class,
         'setup_complete' => 'boolean',
     ];
+
+    public function makeCurrent(): static
+    {
+        static::forgetCurrent();
+
+        $this
+            ->getMultitenancyActionClass(
+                actionName: 'make_tenant_current_action',
+                actionClass: MakeTenantCurrentAction::class
+            )
+            ->execute($this);
+
+        return $this;
+    }
 }
