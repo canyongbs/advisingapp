@@ -37,7 +37,7 @@
 use App\Filament\Resources\UserResource\Pages\EditUser;
 use App\Filament\Resources\UserResource\Pages\ViewUser;
 use App\Models\User;
-use Illuminate\View\ViewException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
@@ -88,7 +88,7 @@ it('does not render super admin profile for regular user', function () {
     // Attempt to load the EditUser component with the super admin's route key
     livewire(ViewUser::class, ['record' => $superAdmin->getRouteKey()])
         ->assertStatus(404);
-})->throws(ViewException::class);
+})->throws(ModelNotFoundException::class);
 
 it('allows super admin user to impersonate', function () {
     $superAdmin = User::factory()->create();
