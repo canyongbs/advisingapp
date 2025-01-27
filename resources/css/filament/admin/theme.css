@@ -202,5 +202,18 @@
 }
 
 .fi-page-sub-navigation-sidebar-ctn{
-    @apply bg-white border rounded border-gray-500	dark:bg-gray-950;
+    @apply bg-white border border-gray-950/5 rounded-xl dark:bg-gray-900 dark:border-white/10;
+
+}
+
+.fi-page-sub-navigation-sidebar{
+    @apply p-4;
+}
+
+.fi-sidebar-item-icon{
+    display: none;
+}
+
+.fi-page-sub-navigation-sidebar > li > ul > li a{
+    @apply p-3;
 }
