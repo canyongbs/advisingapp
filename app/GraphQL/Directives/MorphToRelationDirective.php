@@ -46,27 +46,30 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use function is_a;
 
 use LastDragon_ru\LaraASP\Eloquent\ModelHelper;
+use LastDragon_ru\LaraASP\GraphQL\Builder\Contracts\BuilderFieldResolver;
 use LastDragon_ru\LaraASP\GraphQL\Builder\Contracts\Context;
 use LastDragon_ru\LaraASP\GraphQL\Builder\Contracts\Handler;
 use LastDragon_ru\LaraASP\GraphQL\Builder\Contracts\TypeProvider;
 use LastDragon_ru\LaraASP\GraphQL\Builder\Contracts\TypeSource;
 use LastDragon_ru\LaraASP\GraphQL\Builder\Exceptions\OperatorUnsupportedBuilder;
 use LastDragon_ru\LaraASP\GraphQL\Builder\Field;
-use LastDragon_ru\LaraASP\GraphQL\SearchBy\Definitions\SearchByOperatorPropertyDirective;
+use LastDragon_ru\LaraASP\GraphQL\SearchBy\Definitions\SearchByOperatorConditionDirective;
 use LastDragon_ru\LaraASP\GraphQL\SearchBy\Exceptions\OperatorInvalidArgumentValue;
-use LastDragon_ru\LaraASP\GraphQL\SearchBy\Operators\Complex\RelationType;
+use LastDragon_ru\LaraASP\GraphQL\SearchBy\Operators\Complex\RelationshipType;
 use LastDragon_ru\LaraASP\GraphQL\SearchBy\Operators\Operator;
 use Nuwave\Lighthouse\Execution\Arguments\Argument;
 use Nuwave\Lighthouse\Execution\Arguments\ArgumentSet;
+use Override;
 
 use function reset;
 
 class MorphToRelationDirective extends Operator
 {
     public function __construct(
-        protected SearchByOperatorPropertyDirective $property,
+        protected readonly SearchByOperatorConditionDirective $field,
+        BuilderFieldResolver $resolver,
     ) {
-        parent::__construct();
+        parent::__construct($resolver);
     }
 
     public static function getName(): string
@@ -74,9 +77,10 @@ class MorphToRelationDirective extends Operator
         return 'relation';
     }
 
+    #[Override]
     public function getFieldType(TypeProvider $provider, TypeSource $source, Context $context): ?string
     {
-        return $provider->getType(RelationType::class, $source);
+        return $provider->getType(RelationshipType::class, $source, $context);
     }
 
     public function getFieldDescription(): string
@@ -120,7 +124,7 @@ class MorphToRelationDirective extends Operator
 
         if ($hasCount instanceof Argument) {
             $query = $builder->getQuery()->newQuery();
-            $query = $this->property->call($handler, $query, new Field(), $hasCount);
+            $query = $this->field->call($handler, $query, new Field(), $hasCount, $context);
             $where = reset($query->wheres);
             $count = $where['value'] ?? $count;
             $operator = $where['operator'] ?? $operator;
@@ -159,14 +163,13 @@ class MorphToRelationDirective extends Operator
         return $builder;
     }
 
-    // <editor-fold desc="Directive">
-    // =========================================================================
     /**
      * @inheritDoc
      */
-    protected static function getDirectiveLocations(): array
+    #[Override]
+    protected static function locations(): array
     {
-        return array_merge(parent::getDirectiveLocations(), [
+        return array_merge(parent::locations(), [
             DirectiveLocation::FIELD_DEFINITION,
         ]);
     }
