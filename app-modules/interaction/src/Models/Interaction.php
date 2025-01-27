@@ -41,6 +41,7 @@ use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Division\Models\Division;
+use AdvisingApp\Interaction\Models\Scopes\InteractionConfidentialScope;
 use AdvisingApp\Interaction\Providers\InteractionServiceProvider;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
@@ -58,6 +59,7 @@ use App\Models\BaseModel;
 use App\Models\User;
 use Exception;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -71,7 +73,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 /**
  * @mixin IdeHelperInteraction
  */
-#[ObservedBy([InteractionServiceProvider::class])]
+#[ObservedBy([InteractionServiceProvider::class])] #[ScopedBy(InteractionConfidentialScope::class)]
 class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscription, ExecutableFromACampaignAction, ProvidesATimeline
 {
     use AuditableTrait;
@@ -205,12 +207,14 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
 
     public function confidentialAccessUsers(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'interaction_confidential_users');
+        return $this->belongsToMany(User::class, 'interaction_confidential_users')
+            ->withTimestamps();
     }
 
     public function confidentialAccessTeams(): BelongsToMany
     {
-        return $this->belongsToMany(Team::class, 'interaction_confidential_teams');
+        return $this->belongsToMany(Team::class, 'interaction_confidential_teams')
+            ->withTimestamps();
     }
 
     protected static function booted(): void

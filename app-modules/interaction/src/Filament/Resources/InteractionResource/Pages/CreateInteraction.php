@@ -196,6 +196,7 @@ class CreateInteraction extends CreateRecord
                             ->preload()
                             ->label('Users')
                             ->required()
+                            ->multiple()
                             ->exists('users', 'id')
                             ->visible(fn (Get $get) => $get('is_confidential')),
                         Select::make('interaction_confidential_teams')
@@ -203,6 +204,7 @@ class CreateInteraction extends CreateRecord
                             ->preload()
                             ->label('Teams')
                             ->required()
+                            ->multiple()
                             ->exists('teams', 'id')
                             ->visible(fn (Get $get) => $get('is_confidential')),
                     ]),
