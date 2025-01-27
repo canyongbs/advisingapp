@@ -103,7 +103,8 @@ trait HasManyMorphedInteractionsTrait
                 IdColumn::make(),
                 IconColumn::make('is_confidential')
                     ->label('Confidential')
-                    ->icon(fn (string $state): ?string => $state ? 'heroicon-o-lock-closed' : null)
+                    ->trueIcon('heroicon-o-lock-closed')
+                    ->falseIcon('')
                     ->tooltip(fn (string $state): ?string => $state ? 'Confidential Interaction' : null),
                 TextColumn::make('initiative.name'),
                 TextColumn::make('driver.name'),
