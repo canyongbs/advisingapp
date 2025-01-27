@@ -44,5 +44,12 @@ use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
  */
 class HealthCheckResultHistoryItem extends SpatieHealthCheckResultHistoryItem
 {
-    use UsesTenantConnection;
+    use UsesTenantConnection {
+        getConnectionName as baseGetConnectionName;
+    }
+
+    public function getConnectionName(): string
+    {
+        return $this->baseGetConnectionName();
+    }
 }
