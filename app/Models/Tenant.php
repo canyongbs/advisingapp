@@ -68,6 +68,10 @@ class Tenant extends SpatieTenant
 
     public function makeCurrent(): static
     {
+        if ($this->isCurrent() && ! $this->hasChanged()) {
+            return $this;
+        }
+
         static::forgetCurrent();
 
         $this
@@ -78,5 +82,16 @@ class Tenant extends SpatieTenant
             ->execute($this);
 
         return $this;
+    }
+
+    public function hasChanged(): bool
+    {
+        $current = static::current();
+
+        if (! $current) {
+            return true;
+        }
+
+        return $current->updated_at->lessThan($this->updated_at);
     }
 }
