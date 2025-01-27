@@ -41,12 +41,14 @@ use AdvisingApp\Prospect\Models\Prospect;
 use App\Filament\Tables\Columns\IdColumn;
 use Carbon\CarbonInterface;
 use Filament\Infolists\Components\Fieldset;
+use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -56,6 +58,11 @@ trait HasManyMorphedInteractionsTrait
     {
         return $infolist
             ->schema([
+                IconEntry::make('is_confidential')
+                    ->label('')
+                    ->icon(fn (string $state): ?string => $state ? 'heroicon-o-lock-closed' : null)
+                    ->tooltip(fn (string $state): ?string => $state ? 'Confidential Interaction' : null)
+                    ->visible(fn ($record): bool => $record->is_confidential),
                 TextEntry::make('user.name')
                     ->label('Created By'),
                 Fieldset::make('Details')
@@ -94,6 +101,10 @@ trait HasManyMorphedInteractionsTrait
             ->recordTitleAttribute('id')
             ->columns([
                 IdColumn::make(),
+                IconColumn::make('is_confidential')
+                    ->label('Confidential')
+                    ->icon(fn (string $state): ?string => $state ? 'heroicon-o-lock-closed' : null)
+                    ->tooltip(fn (string $state): ?string => $state ? 'Confidential Interaction' : null),
                 TextColumn::make('initiative.name'),
                 TextColumn::make('driver.name'),
                 TextColumn::make('division.name'),
