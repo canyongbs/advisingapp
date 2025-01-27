@@ -72,9 +72,17 @@ class MorphToRelationDirective extends Operator
         parent::__construct($resolver);
     }
 
+    #[Override]
     public static function getName(): string
     {
         return 'relation';
+    }
+
+    #[Override]
+    public function isAvailable(TypeProvider $provider, TypeSource $source, Context $context): bool
+    {
+        return parent::isAvailable($provider, $source, $context)
+            && $source->isObject();
     }
 
     #[Override]
@@ -93,6 +101,7 @@ class MorphToRelationDirective extends Operator
         return is_a($builder, EloquentBuilder::class, true);
     }
 
+    #[Override]
     public function call(
         Handler $handler,
         object $builder,
@@ -114,6 +123,7 @@ class MorphToRelationDirective extends Operator
 
         // Conditions
         $relation = (new ModelHelper($builder))->getRelation($field->getName());
+        $has = $argument->value->arguments['where'] ?? null;
         $hasCount = $argument->value->arguments['count'] ?? null;
         $notExists = (bool) ($argument->value->arguments['notExists']->value ?? false);
 
@@ -138,12 +148,13 @@ class MorphToRelationDirective extends Operator
         foreach ($argument->value->arguments['where'] as $item) {
             if ($item instanceof ArgumentSet) {
                 foreach ($item->arguments as $key => $argument) {
-                    $relationshipTypes[$key] = function (EloquentBuilder $builder) use ($relation, $argument, $alias, $handler) {
-                        if ($argument instanceof Argument && $argument->value instanceof ArgumentSet) {
-                            if (! $alias || $alias === $relation->getRelationCountHash(false)) {
+                    $relationshipTypes[$key] = function (EloquentBuilder $builder) use ($context, $relation, $handler, $alias, $has) {
+                        if ($has instanceof Argument && $has->value instanceof ArgumentSet) {
+                            if ($alias === '' || $alias === $relation->getRelationCountHash(false)) {
                                 $alias = $builder->getModel()->getTable();
                             }
-                            $handler->handle($builder, new Field($alias), $argument->value->arguments['where']->value);
+
+                            $handler->handle($builder, new Field($alias), $has->value, $context);
                         }
                     };
                 }
