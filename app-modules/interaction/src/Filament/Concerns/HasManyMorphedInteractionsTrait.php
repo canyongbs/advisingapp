@@ -78,7 +78,7 @@ trait HasManyMorphedInteractionsTrait
                             ->dateTime(),
                         TextEntry::make('start_datetime')
                             ->label('Duration')
-                            ->state(fn ($record) => $record->end_datetime->diffForHumans($record->start_datetime, CarbonInterface::DIFF_ABSOLUTE, true, 6)),
+                            ->state(fn ($record) => $record->end_datetime ? $record->end_datetime->diffForHumans($record->start_datetime, CarbonInterface::DIFF_ABSOLUTE, true, 6) : '-'),
                     ]),
                 Fieldset::make('Notes')
                     ->schema([
