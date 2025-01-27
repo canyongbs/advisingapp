@@ -41,7 +41,7 @@ use App\Models\Authenticatable;
 use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Actions\AttachAction;
-use Illuminate\View\ViewException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
@@ -80,7 +80,7 @@ it('does not render super admin profile for regular user', function () {
     // Attempt to load the EditUser component with the super admin's route key
     livewire(EditUser::class, ['record' => $superAdmin->getRouteKey()])
         ->assertStatus(404);
-})->throws(ViewException::class);
+})->throws(ModelNotFoundException::class);
 
 it('does not render impersonate button for super admin users at all', function () {
     $superAdmin = User::factory()->create();
