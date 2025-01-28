@@ -50,8 +50,6 @@ class InteractionRelationResource extends Resource
 {
     protected static ?string $model = InteractionRelation::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-arrows-right-left';
-
     protected static ?string $navigationLabel = 'Relations';
 
     protected static ?int $navigationSort = 4;

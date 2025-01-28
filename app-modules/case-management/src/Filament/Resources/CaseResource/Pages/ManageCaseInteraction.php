@@ -55,8 +55,6 @@ class ManageCaseInteraction extends ManageRelatedRecords
 
     protected static ?string $breadcrumb = 'Interactions';
 
-    protected static ?string $navigationIcon = 'heroicon-o-arrow-path-rounded-square';
-
     public static function canAccess(array $arguments = []): bool
     {
         return (bool) count(static::managers($arguments['record'] ?? null));

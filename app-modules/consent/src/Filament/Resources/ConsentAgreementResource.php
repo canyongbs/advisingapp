@@ -49,8 +49,6 @@ class ConsentAgreementResource extends Resource
 
     protected static ?string $navigationLabel = 'User Agreement';
 
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
-
     protected static ?int $navigationSort = 10;
 
     public static function getRelations(): array

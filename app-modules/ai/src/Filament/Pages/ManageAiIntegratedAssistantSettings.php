@@ -58,8 +58,6 @@ class ManageAiIntegratedAssistantSettings extends SettingsPage
 
     protected static ?string $cluster = GlobalArtificialIntelligence::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-cube-transparent';
-
     protected static ?int $navigationSort = 20;
 
     public static function canAccess(): bool

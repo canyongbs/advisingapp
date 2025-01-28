@@ -51,8 +51,6 @@ class StudentEngagementReport extends StudentReport
 
     protected static string $routePath = 'student-engagement-report';
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
-
     protected static ?string $navigationGroup = 'Students';
 
     protected $cacheTag = 'report-student-engagement';

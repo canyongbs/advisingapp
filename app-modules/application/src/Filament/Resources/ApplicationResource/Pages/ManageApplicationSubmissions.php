@@ -70,8 +70,6 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
 
     protected static ?string $breadcrumb = 'Submissions';
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
-
     public function getDefaultActiveTab(): string | int | null
     {
         return 'received';

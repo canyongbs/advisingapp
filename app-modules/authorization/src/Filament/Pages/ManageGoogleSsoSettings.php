@@ -48,8 +48,6 @@ use Filament\Pages\SettingsPage;
 
 class ManageGoogleSsoSettings extends SettingsPage
 {
-    protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
-
     protected static string $settings = GoogleSsoSettings::class;
 
     protected static ?string $title = 'Google SSO Settings';

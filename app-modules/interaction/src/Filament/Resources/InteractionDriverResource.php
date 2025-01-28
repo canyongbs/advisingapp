@@ -50,8 +50,6 @@ class InteractionDriverResource extends Resource
 {
     protected static ?string $model = InteractionDriver::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-cursor-arrow-ripple';
-
     protected static ?string $navigationLabel = 'Drivers';
 
     protected static ?int $navigationSort = 2;

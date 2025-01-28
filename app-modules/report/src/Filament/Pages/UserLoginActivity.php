@@ -44,8 +44,6 @@ use AdvisingApp\Report\Filament\Widgets\UserUniqueLoginCountLineChart;
 
 class UserLoginActivity extends UserReport
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
-
     protected static ?string $navigationLabel = 'Login Activity';
 
     protected static ?string $title = 'Login Activity';

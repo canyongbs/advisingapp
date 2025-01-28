@@ -56,8 +56,6 @@ class ManageCaseAssignment extends ManageRelatedRecords
 
     protected static ?string $breadcrumb = 'Assignments';
 
-    protected static ?string $navigationIcon = 'heroicon-o-users';
-
     public static function canAccess(array $arguments = []): bool
     {
         return (bool) count(static::managers($arguments['record'] ?? null));

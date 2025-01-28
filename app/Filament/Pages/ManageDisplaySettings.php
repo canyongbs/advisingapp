@@ -45,8 +45,6 @@ use Tapp\FilamentTimezoneField\Forms\Components\TimezoneSelect;
 
 class ManageDisplaySettings extends SettingsPage
 {
-    protected static ?string $navigationIcon = 'heroicon-o-globe-alt';
-
     protected static ?string $navigationLabel = 'Dates and Times';
 
     protected static ?int $navigationSort = 10;

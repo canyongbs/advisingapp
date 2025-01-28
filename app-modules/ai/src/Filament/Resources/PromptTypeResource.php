@@ -49,8 +49,6 @@ class PromptTypeResource extends Resource
 {
     protected static ?string $model = PromptType::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
     protected static ?int $navigationSort = 50;
 
     protected static ?string $cluster = ArtificialIntelligence::class;

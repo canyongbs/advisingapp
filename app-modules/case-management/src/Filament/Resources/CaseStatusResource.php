@@ -50,8 +50,6 @@ class CaseStatusResource extends Resource
 {
     protected static ?string $model = CaseStatus::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-tag';
-
     protected static ?int $navigationSort = 20;
 
     protected static ?string $cluster = CaseManagementAdministration::class;
