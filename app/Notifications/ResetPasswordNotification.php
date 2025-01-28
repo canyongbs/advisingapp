@@ -34,39 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Notifications;
+namespace App\Notifications;
 
-use AdvisingApp\MeetingCenter\Models\Event;
-use AdvisingApp\MeetingCenter\Models\EventAttendee;
-use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
-use AdvisingApp\Notification\Notifications\EmailNotification;
+use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use App\Models\NotificationSetting;
 use App\Models\User;
+use Filament\Notifications\Auth\ResetPassword;
 
-class SendRegistrationLinkToEventAttendeeNotification extends BaseNotification implements EmailNotification
+#[SystemNotification]
+class ResetPasswordNotification extends ResetPassword
 {
-    use EmailChannelTrait;
-
-    public function __construct(
-        protected Event $event,
-        protected User $sender
-    ) {}
-
-    public function toEmail(object $notifiable): MailMessage
+    /**
+     * @inheritDoc
+     */
+    public function toMail($notifiable): MailMessage
     {
         return MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable))
-            ->subject('You have been invited to an event!')
-            ->line("You have been invited to {$this->event->title}.")
-            ->action('Register', route('event-registration.show', ['event' => $this->event]));
+            ->subject(__('Reset Password Notification'))
+            ->line(__('You are receiving this email because we received a password reset request for your account.'))
+            ->action(__('Reset Password'), $this->resetUrl($notifiable))
+            ->line(__('This password reset link will expire in :count minutes.', ['count' => config('auth.passwords.' . config('auth.defaults.passwords') . '.expire')]))
+            ->line(__('If you did not request a password reset, no further action is required.'));
     }
 
-    private function resolveNotificationSetting(object $notifiable): ?NotificationSetting
+    private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
     {
-        return $notifiable instanceof EventAttendee
-            ? $this->sender->teams()->first()?->division?->notificationSetting?->setting
-            : null;
+        return $notifiable->teams()->first()?->division?->notificationSetting?->setting;
     }
 }

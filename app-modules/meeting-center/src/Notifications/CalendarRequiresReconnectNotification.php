@@ -38,25 +38,30 @@ namespace AdvisingApp\MeetingCenter\Notifications;
 
 use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource;
 use AdvisingApp\MeetingCenter\Models\Calendar;
-use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\Concerns\DatabaseChannelTrait;
-use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
-use AdvisingApp\Notification\Notifications\DatabaseNotification;
-use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use App\Models\NotificationSetting;
 use App\Models\User;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification as FilamentNotification;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Notification;
 
-class CalendarRequiresReconnectNotification extends BaseNotification implements EmailNotification, DatabaseNotification
+class CalendarRequiresReconnectNotification extends Notification implements ShouldQueue
 {
-    use EmailChannelTrait;
-    use DatabaseChannelTrait;
+    use Queueable;
 
     public function __construct(public Calendar $calendar) {}
 
-    public function toEmail(object $notifiable): MailMessage
+    /**
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
+    {
+        return ['mail', 'database'];
+    }
+
+    public function toMail(object $notifiable): MailMessage
     {
         return MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable))

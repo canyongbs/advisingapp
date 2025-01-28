@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Notifications\Messages\Contracts;
+namespace AdvisingApp\Notification\Notifications\Attributes;
 
-interface Message
-{
-    public function toArray(): array;
-}
+use Attribute;
+
+#[Attribute]
+class SystemNotification {}

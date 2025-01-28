@@ -34,16 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Notifications\Concerns;
+namespace AdvisingApp\Notification\Notifications\Contracts;
 
-use AdvisingApp\Notification\Notifications\Channels\DatabaseChannel;
-
-trait DatabaseChannelTrait
+interface OnDemandNotification
 {
-    use ChannelTrait;
-
-    public static function getDatabaseChannel(): string
-    {
-        return DatabaseChannel::class;
-    }
+    public function identifyRecipient(): array;
 }

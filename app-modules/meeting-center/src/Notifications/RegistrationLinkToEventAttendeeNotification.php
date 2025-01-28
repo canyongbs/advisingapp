@@ -34,19 +34,47 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Models\Contracts;
+namespace AdvisingApp\MeetingCenter\Notifications;
 
-interface NotifiableInterface
+use AdvisingApp\MeetingCenter\Models\Event;
+use AdvisingApp\MeetingCenter\Models\EventAttendee;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use App\Models\NotificationSetting;
+use App\Models\User;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Notification;
+
+class RegistrationLinkToEventAttendeeNotification extends Notification implements ShouldQueue
 {
-    public function notify($instance);
+    use Queueable;
 
-    public function notifyNow($instance, array $channels = null);
+    public function __construct(
+        protected Event $event,
+        protected User $sender
+    ) {}
 
-    public function routeNotificationFor($driver, $notification = null);
+    /**
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
+    {
+        return ['mail'];
+    }
 
-    public function notifications();
+    public function toMail(object $notifiable): MailMessage
+    {
+        return MailMessage::make()
+            ->settings($this->resolveNotificationSetting($notifiable))
+            ->subject('You have been invited to an event!')
+            ->line("You have been invited to {$this->event->title}.")
+            ->action('Register', route('event-registration.show', ['event' => $this->event]));
+    }
 
-    public function readNotifications();
-
-    public function unreadNotifications();
+    private function resolveNotificationSetting(object $notifiable): ?NotificationSetting
+    {
+        return $notifiable instanceof EventAttendee
+            ? $this->sender->teams()->first()?->division?->notificationSetting?->setting
+            : null;
+    }
 }

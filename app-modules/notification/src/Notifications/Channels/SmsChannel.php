@@ -36,18 +36,17 @@
 
 namespace AdvisingApp\Notification\Notifications\Channels;
 
-use AdvisingApp\Engagement\Exceptions\InvalidNotificationTypeInChannel;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\Notification\Actions\MakeOutboundDeliverable;
 use AdvisingApp\Notification\DataTransferObjects\SmsChannelResultData;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
+use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\Channels\Contracts\NotificationChannelInterface;
-use AdvisingApp\Notification\Notifications\SmsNotification;
-use App\Models\Tenant;
+use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
+use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
+use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Illuminate\Notifications\Notification;
@@ -60,22 +59,20 @@ use Twilio\Rest\Api\V2010\Account\MessageInstance;
 use Twilio\Rest\Client;
 use Twilio\Rest\MessagingBase;
 
-class SmsChannel implements NotificationChannelInterface
+class SmsChannel
 {
     public function send(object $notifiable, Notification $notification): void
     {
-        $deliverable = resolve(MakeOutboundDeliverable::class)->handle($notification, $notifiable, NotificationChannel::Sms);
+        $deliverable = resolve(MakeOutboundDeliverable::class)->execute($notification, $notifiable, NotificationChannel::Sms);
 
-        /** @var BaseNotification $notification */
-        $notification->beforeSend($notifiable, $deliverable, NotificationChannel::Sms);
+        if ($notification instanceof HasBeforeSendHook) {
+            $notification->beforeSend($notifiable, $deliverable, NotificationChannel::Sms);
+        }
 
         $deliverable->save();
 
         try {
-            throw_if(! $notification instanceof SmsNotification || ! $notification instanceof BaseNotification, new InvalidNotificationTypeInChannel());
-
-            // Look into moving this up to the NotifiableInterface and type hinting that instead
-            if (method_exists($notifiable, 'canRecieveSms') && ! $notifiable->canRecieveSms()) {
+            if ((! ($notifiable instanceof CanBeNotified)) || (! $notifiable->canRecieveSms())) {
                 $deliverable->update([
                     'delivery_status' => NotificationDeliveryStatus::DispatchFailed,
                     'last_delivery_attempt' => now(),
@@ -85,138 +82,120 @@ class SmsChannel implements NotificationChannelInterface
                 return;
             }
 
-            $notification->metadata['outbound_deliverable_id'] = $deliverable->id;
+            $message = $notification->toSms($notifiable);
 
-            if (Tenant::checkCurrent()) {
-                $notification->metadata['tenant_id'] = Tenant::current()->getKey();
+            $twilioSettings = app(TwilioSettings::class);
+
+            $quotaUsage = $twilioSettings->is_demo_mode_enabled ? 0 : $this->determineQuotaUsage($message, $deliverable);
+
+            throw_if($quotaUsage && (! $this->canSendWithinQuotaLimits($quotaUsage)), new NotificationQuotaExceeded());
+
+            if (! $twilioSettings->is_demo_mode_enabled) {
+                $client = app(Client::class);
+
+                $messageContent = [
+                    'from' => $message->getFrom(),
+                    'body' => $message->getContent(),
+                ];
+
+                if (! app()->environment('local')) {
+                    $messageContent['statusCallback'] = config('app.url') . route('inbound.webhook.twilio', 'status_callback', false);
+                }
+
+                $result = SmsChannelResultData::from([
+                    'success' => false,
+                ]);
+
+                try {
+                    $message = $client->messages->create(
+                        config('local_development.twilio.to_number') ?: $message->getRecipientPhoneNumber(),
+                        $messageContent
+                    );
+
+                    $result->success = true;
+                    $result->message = $message;
+                } catch (TwilioException $exception) {
+                    $result->error = $exception->getMessage();
+                }
+            } else {
+                $result = SmsChannelResultData::from([
+                    'success' => true,
+                    'message' => new MessageInstance(
+                        new V2010(new MessagingBase(new Client(username: 'abc123', password: 'abc123'))),
+                        [
+                            'sid' => Str::random(),
+                            'status' => 'delivered',
+                            'from' => $message->getFrom(),
+                            'to' => $message->getRecipientPhoneNumber(),
+                            'body' => $message->getContent(),
+                            'num_segments' => 1,
+                        ],
+                        'abc123'
+                    ),
+                ]);
             }
 
-            throw_if(! $this->canSendWithinQuotaLimits($notification, $notifiable), new NotificationQuotaExceeded());
-
-            $smsData = $this->handle($notifiable, $notification);
-
             try {
-                if ($smsData->success) {
-                    $demoMode = app(TwilioSettings::class)->is_demo_mode_enabled ?? false;
-
+                if ($result->success) {
                     $deliverable->update([
-                        'external_reference_id' => $smsData->message->sid,
-                        'external_status' => $smsData->message->status,
-                        'delivery_status' => ! $demoMode ? NotificationDeliveryStatus::Dispatched : NotificationDeliveryStatus::Successful,
-                        'quota_usage' => ! $demoMode ? self::determineQuotaUsage($smsData) : 0,
+                        'external_reference_id' => $result->message->sid,
+                        'external_status' => $result->message->status,
+                        'delivery_status' => $twilioSettings->is_demo_mode_enabled
+                            ? NotificationDeliveryStatus::BlockedByDemoMode
+                            : NotificationDeliveryStatus::Dispatched,
+                        'quota_usage' => $twilioSettings->is_demo_mode_enabled
+                            ? 0
+                            : $this->determineQuotaUsage($result, $deliverable),
                     ]);
                 } else {
                     $deliverable->update([
                         'delivery_status' => NotificationDeliveryStatus::DispatchFailed,
-                        'delivery_response' => $smsData->error,
+                        'delivery_response' => $result->error,
                     ]);
                 }
 
-                // Consider dispatching this as a seperate job so that it can be encapsulated to be retried if it fails, but also avoid changing the status of the deliverable if it fails
-                $notification->afterSend($notifiable, $deliverable, $smsData);
-            } catch (Throwable $e) {
-                report($e);
+                // Consider dispatching this as a seperate job so that it can be encapsulated to be retried if it fails, but also avoid changing the status of the deliverable if it fails.
+                if ($notification instanceof HasAfterSendHook) {
+                    $notification->afterSend($notifiable, $deliverable, $result);
+                }
+            } catch (Throwable $exception) {
+                report($exception);
             }
-        } catch (NotificationQuotaExceeded $e) {
+        } catch (NotificationQuotaExceeded $exception) {
             $deliverable->update(['delivery_status' => NotificationDeliveryStatus::RateLimited]);
-        } catch (Throwable $e) {
+        } catch (Throwable $exception) {
             $deliverable->update([
                 'delivery_status' => NotificationDeliveryStatus::DispatchFailed,
             ]);
 
-            throw $e;
+            throw $exception;
         }
     }
 
-    public function handle(object $notifiable, BaseNotification&SmsNotification $notification): SmsChannelResultData
+    protected function determineQuotaUsage(TwilioMessage | SmsChannelResultData $message, OutboundDeliverable $deliverable): int
     {
-        $twilioMessage = $notification->toSms($notifiable);
-
-        $twilioSettings = app(TwilioSettings::class);
-
-        if ($twilioSettings->is_demo_mode_enabled ?? false) {
-            return SmsChannelResultData::from([
-                'success' => true,
-                'message' => new MessageInstance(
-                    new V2010(new MessagingBase(new Client(username: 'abc123', password: 'abc123'))),
-                    [
-                        'sid' => Str::random(),
-                        'status' => 'delivered',
-                        'from' => $twilioMessage->getFrom(),
-                        'to' => $twilioMessage->getRecipientPhoneNumber(),
-                        'body' => $twilioMessage->getContent(),
-                        'num_segments' => 1,
-                    ],
-                    'abc123'
-                ),
-            ]);
+        if ($deliverable->recipient instanceof User && $deliverable->isSuperAdmin()) {
+            return 0;
         }
 
-        $client = app(Client::class);
-
-        $messageContent = [
-            'from' => $twilioMessage->getFrom(),
-            'body' => $twilioMessage->getContent(),
-        ];
-
-        if (! app()->environment('local')) {
-            $messageContent['statusCallback'] = config('app.url') . route('inbound.webhook.twilio', 'status_callback', false);
+        if ($message instanceof TwilioMessage) {
+            return SegmentCalculator::segmentsCount($message->getContent());
         }
 
-        $result = SmsChannelResultData::from([
-            'success' => false,
-        ]);
-
-        try {
-            $message = $client->messages->create(
-                config('local_development.twilio.to_number') ?: $twilioMessage->getRecipientPhoneNumber(),
-                $messageContent
-            );
-
-            $result->success = true;
-            $result->message = $message;
-        } catch (TwilioException $e) {
-            $result->error = $e->getMessage();
-        }
-
-        return $result;
+        return $message->message->numSegments;
     }
 
-    public static function determineQuotaUsage(SmsChannelResultData $result): int
+    protected function canSendWithinQuotaLimits(int $usage): bool
     {
-        if ($user = User::with('roles')->where('phone_number', $result->message->to)->first()) {
-            if ($user->isSuperAdmin()) {
-                return 0;
-            }
-        }
-
-        return $result->message->numSegments;
-    }
-
-    public function canSendWithinQuotaLimits(SmsNotification $notification, object $notifiable): bool
-    {
-        $estimatedQuotaUsage = SegmentCalculator::segmentsCount($notification->toSms($notifiable)->getContent());
-
-        if ($notification instanceof BaseNotification) {
-            if ($notification->getMetadata()['outbound_deliverable_id']) {
-                $deliverable = OutboundDeliverable::with('recipient')->find($notification->getMetadata()['outbound_deliverable_id']);
-
-                $recipient = $deliverable->recipient;
-
-                if ($recipient instanceof User && $recipient->isSuperAdmin()) {
-                    $estimatedQuotaUsage = 0;
-                }
-            }
-        }
-
         $licenseSettings = app(LicenseSettings::class);
 
         $resetWindow = $licenseSettings->data->limits->getResetWindow();
 
-        $currentQuotaUsage = OutboundDeliverable::where('channel', NotificationChannel::Sms)
+        $currentQuotaUsage = OutboundDeliverable::query()
+            ->where('channel', NotificationChannel::Sms)
             ->whereBetween('created_at', [$resetWindow['start'], $resetWindow['end']])
             ->sum('quota_usage');
 
-        return $currentQuotaUsage + $estimatedQuotaUsage <= $licenseSettings->data->limits->sms;
+        return ($currentQuotaUsage + $usage) <= $licenseSettings->data->limits->sms;
     }
 }

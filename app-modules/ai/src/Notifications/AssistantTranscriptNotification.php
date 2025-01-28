@@ -39,26 +39,35 @@ namespace AdvisingApp\Ai\Notifications;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
-use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
+use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
-use AdvisingApp\Notification\Notifications\EmailNotification;
+use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use App\Models\NotificationSetting;
 use App\Models\User;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\AnonymousNotifiable;
+use Illuminate\Notifications\Notification;
 
-class SendAssistantTranscriptNotification extends BaseNotification implements EmailNotification
+class AssistantTranscriptNotification extends Notification implements ShouldQueue, HasAfterSendHook
 {
-    use EmailChannelTrait;
+    use Queueable;
 
     public function __construct(
         protected AiThread $thread,
         protected User $sender
     ) {}
 
-    public function toEmail(object $notifiable): MailMessage
+    /**
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
+    {
+        return ['mail'];
+    }
+
+    public function toMail(object $notifiable): MailMessage
     {
         $message = MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable))
@@ -109,7 +118,7 @@ class SendAssistantTranscriptNotification extends BaseNotification implements Em
         return $message;
     }
 
-    public function afterSend(AnonymousNotifiable|NotifiableInterface $notifiable, OutboundDeliverable $deliverable, NotificationResultData $result): void
+    public function afterSend(AnonymousNotifiable|CanBeNotified $notifiable, OutboundDeliverable $deliverable, NotificationResultData $result): void
     {
         if ($result->success) {
             $this->thread->increment('emailed_count');
