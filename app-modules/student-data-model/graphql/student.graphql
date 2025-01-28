@@ -19,9 +19,9 @@ type Student @model(class: "AdvisingApp\\StudentDataModel\\Models\\Student") {
 
     mobile: String
 
-    sms_opt_out: Boolean!
+    sms_opt_out: Boolean
 
-    email_bounce: Boolean!
+    email_bounce: Boolean
 
     phone: String
 

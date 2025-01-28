@@ -9,13 +9,13 @@ type Prospect @model(class: "AdvisingApp\\Prospect\\Models\\Prospect") {
     source: ProspectSource! @belongsTo
 
     "The first name of the prospect."
-    first_name: String!
+    first_name: String
 
     "The last name of the prospect."
-    last_name: String!
+    last_name: String
 
     "The full name of the prospect."
-    full_name: String!
+    full_name: String
 
     "The preferred name of the prospect."
     preferred: String
@@ -66,7 +66,7 @@ type Prospect @model(class: "AdvisingApp\\Prospect\\Models\\Prospect") {
     birthdate: Date
 
     "The High School graduation year of the prospect."
-    hsgrad: String
+    hsgrad: Year
 
     "The created date of the prospect."
     created_at: DateTime

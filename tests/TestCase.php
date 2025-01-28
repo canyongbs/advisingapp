@@ -159,7 +159,7 @@ abstract class TestCase extends BaseTestCase
     {
         $database = $this->app->make('db');
 
-        $this->app->instance('db.transactions', $transactionsManager = new DatabaseTransactionsManager());
+        $this->app->instance('db.transactions', $transactionsManager = new DatabaseTransactionsManager([$name]));
 
         $connection = $database->connection($name);
         $connection->setTransactionManager($transactionsManager);
