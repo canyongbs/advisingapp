@@ -37,12 +37,14 @@
 namespace AdvisingApp\MeetingCenter\Notifications;
 
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormAuthentication;
+use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
 use AdvisingApp\Notification\Notifications\Contracts\OnDemandNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 
+#[SystemNotification]
 class AuthenticateEventRegistrationFormNotification extends Notification implements ShouldQueue, OnDemandNotification
 {
     use Queueable;

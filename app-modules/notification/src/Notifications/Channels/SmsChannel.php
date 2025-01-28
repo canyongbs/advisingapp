@@ -84,9 +84,11 @@ class SmsChannel
 
             $message = $notification->toSms($notifiable);
 
-            throw_if(! $this->canSendWithinQuotaLimits($message, $deliverable), new NotificationQuotaExceeded());
-
             $twilioSettings = app(TwilioSettings::class);
+
+            $quotaUsage = $twilioSettings->is_demo_mode_enabled ? 0 : $this->determineQuotaUsage($message, $deliverable);
+
+            throw_if($quotaUsage && (! $this->canSendWithinQuotaLimits($quotaUsage)), new NotificationQuotaExceeded());
 
             if (! $twilioSettings->is_demo_mode_enabled) {
                 $client = app(Client::class);
@@ -138,12 +140,12 @@ class SmsChannel
                     $deliverable->update([
                         'external_reference_id' => $result->message->sid,
                         'external_status' => $result->message->status,
-                        'delivery_status' => (! $twilioSettings->is_demo_mode_enabled)
-                            ? NotificationDeliveryStatus::Dispatched
-                            : NotificationDeliveryStatus::Successful,
-                        'quota_usage' => (! $twilioSettings->is_demo_mode_enabled)
-                            ? $this->determineQuotaUsage($result)
-                            : 0,
+                        'delivery_status' => $twilioSettings->is_demo_mode_enabled
+                            ? NotificationDeliveryStatus::BlockedByDemoMode
+                            : NotificationDeliveryStatus::Dispatched,
+                        'quota_usage' => $twilioSettings->is_demo_mode_enabled
+                            ? 0
+                            : $this->determineQuotaUsage($result, $deliverable),
                     ]);
                 } else {
                     $deliverable->update([
@@ -170,21 +172,21 @@ class SmsChannel
         }
     }
 
-    protected function determineQuotaUsage(SmsChannelResultData $result): int
+    protected function determineQuotaUsage(TwilioMessage | SmsChannelResultData $message, OutboundDeliverable $deliverable): int
     {
-        if (User::query()->where('phone_number', $result->message->to)->first()?->isSuperAdmin()) {
+        if ($deliverable->recipient instanceof User && $deliverable->isSuperAdmin()) {
             return 0;
         }
 
-        return $result->message->numSegments;
+        if ($message instanceof TwilioMessage) {
+            return SegmentCalculator::segmentsCount($message->getContent());
+        }
+
+        return $message->message->numSegments;
     }
 
-    protected function canSendWithinQuotaLimits(TwilioMessage $message, OutboundDeliverable $deliverable): bool
+    protected function canSendWithinQuotaLimits(int $usage): bool
     {
-        $estimatedQuotaUsage = ($deliverable->recipient instanceof User && $deliverable->recipient->isSuperAdmin())
-            ? 0
-            : SegmentCalculator::segmentsCount($message->getContent());
-
         $licenseSettings = app(LicenseSettings::class);
 
         $resetWindow = $licenseSettings->data->limits->getResetWindow();
@@ -194,6 +196,6 @@ class SmsChannel
             ->whereBetween('created_at', [$resetWindow['start'], $resetWindow['end']])
             ->sum('quota_usage');
 
-        return ($currentQuotaUsage + $estimatedQuotaUsage) <= $licenseSettings->data->limits->sms;
+        return ($currentQuotaUsage + $usage) <= $licenseSettings->data->limits->sms;
     }
 }

@@ -41,6 +41,7 @@ use App\Filament\Clusters\ProductIntegrations;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Multitenancy\DataTransferObjects\TenantConfig;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -84,6 +85,9 @@ class ManageAmazonSesSettings extends SettingsPage
                 Toggle::make('isDemoModeEnabled')
                     ->label('Demo Mode')
                     ->live(),
+                Checkbox::make('isExcludingSystemNotificationsFromDemoMode')
+                    ->label('Exclude authentication related messages')
+                    ->visible(fn (Get $get): bool => (bool) $get('isDemoModeEnabled')),
                 Section::make()
                     ->columnSpanFull()
                     ->schema([
@@ -150,6 +154,7 @@ class ManageAmazonSesSettings extends SettingsPage
 
             if ($data['isDemoModeEnabled']) {
                 $config->mail->isDemoModeEnabled = $data['isDemoModeEnabled'];
+                $config->mail->isExcludingSystemNotificationsFromDemoMode = $data['isExcludingSystemNotificationsFromDemoMode'];
             } else {
                 $config->mail->isDemoModeEnabled = $data['isDemoModeEnabled'];
                 $config->mail->fromName = $data['fromName'];
@@ -229,6 +234,7 @@ class ManageAmazonSesSettings extends SettingsPage
             [
                 ...$settings->toArray(),
                 'isDemoModeEnabled' => $config->mail->isDemoModeEnabled ?? false,
+                'isExcludingSystemNotificationsFromDemoMode' => $config->mail->isExcludingSystemNotificationsFromDemoMode ?? true,
                 'fromName' => $config->mail->fromName,
                 'smtp_host' => $config->mail->mailers->smtp->host,
                 'smtp_port' => $config->mail->mailers->smtp->port,

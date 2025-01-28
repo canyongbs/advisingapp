@@ -34,17 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace App\Multitenancy\DataTransferObjects;
+namespace App\Notifications;
 
-use Spatie\LaravelData\Data;
+use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use App\Models\NotificationSetting;
+use App\Models\User;
+use Filament\Notifications\Auth\ResetPassword;
 
-class TenantMailConfig extends Data
+#[SystemNotification]
+class ResetPasswordNotification extends ResetPassword
 {
-    public function __construct(
-        public TenantMailersConfig $mailers,
-        public bool $isDemoModeEnabled = false,
-        public bool $isExcludingSystemNotificationsFromDemoMode = true,
-        public string $mailer = 'smtp',
-        public string $fromName = 'Advising App™',
-    ) {}
+    /**
+     * @inheritDoc
+     */
+    public function toMail($notifiable): MailMessage
+    {
+        return MailMessage::make()
+            ->settings($this->resolveNotificationSetting($notifiable))
+            ->subject(__('Reset Password Notification'))
+            ->line(__('You are receiving this email because we received a password reset request for your account.'))
+            ->action(__('Reset Password'), $this->resetUrl($notifiable))
+            ->line(__('This password reset link will expire in :count minutes.', ['count' => config('auth.passwords.' . config('auth.defaults.passwords') . '.expire')]))
+            ->line(__('If you did not request a password reset, no further action is required.'));
+    }
+
+    private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
+    {
+        return $notifiable->teams()->first()?->division?->notificationSetting?->setting;
+    }
 }

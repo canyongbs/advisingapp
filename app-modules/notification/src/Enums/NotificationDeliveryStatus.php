@@ -45,6 +45,7 @@ enum NotificationDeliveryStatus: string implements HasLabel
     case Dispatched = 'dispatched';
     case DispatchFailed = 'failed_dispatch';
     case RateLimited = 'rate_limited';
+    case BlockedByDemoMode = 'blocked_by_demo_mode';
 
     // External
     case Failed = 'failed';
@@ -58,52 +59,56 @@ enum NotificationDeliveryStatus: string implements HasLabel
     public function getTextColorClass(): string
     {
         return match ($this) {
-            NotificationDeliveryStatus::Processing,
-            NotificationDeliveryStatus::Dispatched => 'text-yellow-500',
+            self::Processing,
+            self::BlockedByDemoMode,
+            self::Dispatched => 'text-yellow-500',
 
-            NotificationDeliveryStatus::Successful => 'text-green-500',
+            self::Successful => 'text-green-500',
 
-            NotificationDeliveryStatus::Failed,
-            NotificationDeliveryStatus::RateLimited,
-            NotificationDeliveryStatus::DispatchFailed => 'text-red-500',
+            self::Failed,
+            self::RateLimited,
+            self::DispatchFailed => 'text-red-500',
         };
     }
 
     public function getColor(): string
     {
         return match ($this) {
-            NotificationDeliveryStatus::Processing,
-            NotificationDeliveryStatus::Dispatched => 'info',
+            self::Processing,
+            self::BlockedByDemoMode,
+            self::Dispatched => 'info',
 
-            NotificationDeliveryStatus::Successful => 'success',
+            self::Successful => 'success',
 
-            NotificationDeliveryStatus::Failed,
-            NotificationDeliveryStatus::RateLimited,
-            NotificationDeliveryStatus::DispatchFailed => 'danger',
+            self::Failed,
+            self::RateLimited,
+            self::DispatchFailed => 'danger',
         };
     }
 
     public function getIconClass(): string
     {
         return match ($this) {
-            NotificationDeliveryStatus::Processing,
-            NotificationDeliveryStatus::Dispatched => 'heroicon-s-clock',
+            self::Processing,
+            self::Dispatched => 'heroicon-s-clock',
 
-            NotificationDeliveryStatus::Successful => 'heroicon-s-check-circle',
+            self::BlockedByDemoMode,
+            self::Successful => 'heroicon-s-check-circle',
 
-            NotificationDeliveryStatus::Failed,
-            NotificationDeliveryStatus::RateLimited,
-            NotificationDeliveryStatus::DispatchFailed => 'heroicon-s-exclamation-circle',
+            self::Failed,
+            self::RateLimited,
+            self::DispatchFailed => 'heroicon-s-exclamation-circle',
         };
     }
 
     public function getMessage(): string
     {
         return match ($this) {
-            NotificationDeliveryStatus::Successful => 'Successfully delivered',
-            NotificationDeliveryStatus::Processing, NotificationDeliveryStatus::Dispatched => 'Awaiting delivery',
-            NotificationDeliveryStatus::Failed, NotificationDeliveryStatus::DispatchFailed => 'Failed to send',
-            NotificationDeliveryStatus::RateLimited => 'Failed to send due to rate limits',
+            self::Successful => 'Successfully delivered',
+            self::Processing, self::Dispatched => 'Awaiting delivery',
+            self::Failed, self::DispatchFailed => 'Failed to send',
+            self::RateLimited => 'Failed to send due to rate limits',
+            self::BlockedByDemoMode => 'Blocked by demo mode',
         };
     }
 }

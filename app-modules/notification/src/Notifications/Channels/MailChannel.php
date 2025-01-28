@@ -43,6 +43,7 @@ use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
 use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
 use App\Models\Tenant;
@@ -51,7 +52,7 @@ use App\Settings\LicenseSettings;
 use Illuminate\Notifications\Channels\MailChannel as BaseMailChannel;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use Symfony\Component\Mime\Address;
+use ReflectionClass;
 use Symfony\Component\Mime\Email;
 use Throwable;
 
@@ -67,53 +68,74 @@ class MailChannel extends BaseMailChannel
 
         $deliverable->save();
 
+        $tenant = Tenant::current();
+        $tenantMailConfig = $tenant?->config->mail;
+
+        $notificationReflection = new ReflectionClass($notification);
+        $isSystemNotification = filled($notificationReflection->getAttributes(SystemNotification::class));
+
         try {
-            $message = $notification->toMail($notifiable)
-                ->withSymfonyMessage(function (Email $message) use ($deliverable) {
-                    $settings = app(SesSettings::class);
+            if (
+                (! ($tenantMailConfig?->isDemoModeEnabled ?? false))
+                || ($isSystemNotification && $tenantMailConfig->isExcludingSystemNotificationsFromDemoMode)
+            ) {
+                $message = $notification->toMail($notifiable)
+                    ->withSymfonyMessage(function (Email $message) use ($deliverable, $tenant) {
+                        $settings = app(SesSettings::class);
 
-                    if (filled($settings->configuration_set)) {
+                        if (filled($settings->configuration_set)) {
+                            $message->getHeaders()->addTextHeader(
+                                'X-SES-CONFIGURATION-SET',
+                                $settings->configuration_set
+                            );
+                        }
+
                         $message->getHeaders()->addTextHeader(
-                            'X-SES-CONFIGURATION-SET',
-                            $settings->configuration_set
+                            'X-SES-MESSAGE-TAGS',
+                            implode(', ', [
+                                "outbound_deliverable_id={$deliverable->getKey()}",
+                                ...($tenant ? ['tenant_id=' . $tenant->getKey()] : []),
+                            ]),
                         );
-                    }
+                    });
 
-                    $message->getHeaders()->addTextHeader(
-                        'X-SES-MESSAGE-TAGS',
-                        implode(', ', [
-                            "outbound_deliverable_id={$deliverable->getKey()}",
-                            ...(Tenant::checkCurrent() ? ['tenant_id=' . Tenant::current()->getKey()] : []),
-                        ]),
+                $quotaUsage = $isSystemNotification ? 0 : $this->determineQuotaUsage($message, $deliverable);
+
+                throw_if($quotaUsage && (! $this->canSendWithinQuotaLimits($quotaUsage)), new NotificationQuotaExceeded());
+
+                $result = new EmailChannelResultData(
+                    success: false,
+                );
+
+                try {
+                    $sentMessage = $this->mailer->mailer($message->mailer ?? null)->send(
+                        $this->buildView($message),
+                        array_merge($message->data(), $this->additionalMessageData($notification)),
+                        $this->messageBuilder($notifiable, $notification, $message)
                     );
-                });
+                } catch (Throwable $exception) {
+                    $sendingException = $exception;
+                }
 
-            throw_if(! $this->canSendWithinQuotaLimits($message, $deliverable), new NotificationQuotaExceeded());
+                if ($sentMessage ?? null) {
+                    $result->success = true;
+                    $result->recipients = $sentMessage->getEnvelope()->getRecipients();
+                }
+            } else {
+                $result = new EmailChannelResultData(
+                    success: true,
+                );
 
-            $result = new EmailChannelResultData(
-                success: false,
-            );
-
-            $sentMessage = $this->mailer->mailer($message->mailer ?? null)->send(
-                $this->buildView($message),
-                array_merge($message->data(), $this->additionalMessageData($notification)),
-                $this->messageBuilder($notifiable, $notification, $message)
-            );
-
-            $result->success = true;
-            $result->recipients = $sentMessage->getEnvelope()->getRecipients();
+                $quotaUsage = 0;
+            }
 
             try {
                 if ($result->success) {
-                    $isDemoModeEnabled = Tenant::current()?->config->mail->isDemoModeEnabled ?? false;
-
                     $deliverable->update([
-                        'delivery_status' => (! $isDemoModeEnabled)
-                            ? NotificationDeliveryStatus::Dispatched
-                            : NotificationDeliveryStatus::Successful,
-                        'quota_usage' => (! $isDemoModeEnabled)
-                            ? $this->determineQuotaUsage($result->recipients)
-                            : 0,
+                        'delivery_status' => $tenantMailConfig?->isDemoModeEnabled
+                            ? NotificationDeliveryStatus::BlockedByDemoMode
+                            : NotificationDeliveryStatus::Dispatched,
+                        'quota_usage' => $quotaUsage,
                     ]);
                 } else {
                     $deliverable->update([
@@ -128,6 +150,10 @@ class MailChannel extends BaseMailChannel
             } catch (Throwable $exception) {
                 report($exception);
             }
+
+            if ($sendingException ?? null) {
+                throw $sendingException;
+            }
         } catch (NotificationQuotaExceeded $exception) {
             $deliverable->update(['delivery_status' => NotificationDeliveryStatus::RateLimited]);
         } catch (Throwable $exception) {
@@ -139,29 +165,30 @@ class MailChannel extends BaseMailChannel
         }
     }
 
-    protected function determineQuotaUsage(array $recipients): int
+    protected function determineQuotaUsage(MailMessage $message, OutboundDeliverable $deliverable): int
     {
-        $users = User::query()
-            ->with('roles')
-            ->whereIn('email', array_map(
-                fn (Address $recipient): string => $recipient->getAddress(),
-                $recipients,
-            ))
-            ->get()
-            ->keyBy('email');
+        $usage = ($deliverable->recipient instanceof User && $deliverable->recipient->isSuperAdmin()) ? 0 : 1;
 
-        return collect($recipients)
-            ->filter(fn (Address $recipient): bool => ! ($users[$recipient->getAddress()] ?? null)?->isSuperAdmin())
+        $recipientCcEmails = [
+            ...$message->cc,
+            ...$message->bcc,
+        ];
+
+        if ($recipientCcEmails) {
+            $users = User::query()
+                ->with('roles')
+                ->whereIn('email', $recipientCcEmails)
+                ->get()
+                ->keyBy('email');
+        }
+
+        return $usage + collect($recipientCcEmails)
+            ->filter(fn (string $ccEmail): bool => ! ($users[$ccEmail] ?? null)?->isSuperAdmin())
             ->count();
     }
 
-    protected function canSendWithinQuotaLimits(MailMessage $message, OutboundDeliverable $deliverable): bool
+    protected function canSendWithinQuotaLimits(int $usage): bool
     {
-        $primaryRecipientUsage = ($deliverable->recipient instanceof User && $deliverable->recipient->isSuperAdmin()) ? 0 : 1;
-
-        // 1 for the primary recipient, plus the number of cc and bcc recipients
-        $estimatedQuotaUsage = $primaryRecipientUsage + count($message->cc) + count($message->bcc);
-
         $licenseSettings = app(LicenseSettings::class);
 
         $resetWindow = $licenseSettings->data->limits->getResetWindow();
@@ -171,6 +198,6 @@ class MailChannel extends BaseMailChannel
             ->whereBetween('created_at', [$resetWindow['start'], $resetWindow['end']])
             ->sum('quota_usage');
 
-        return ($currentQuotaUsage + $estimatedQuotaUsage) <= $licenseSettings->data->limits->emails;
+        return ($currentQuotaUsage + $usage) <= $licenseSettings->data->limits->emails;
     }
 }
