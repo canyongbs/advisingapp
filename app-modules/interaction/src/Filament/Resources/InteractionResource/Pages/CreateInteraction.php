@@ -51,6 +51,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\Scopes\ExcludeConvertedProspects;
 use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\MorphToSelect;
@@ -187,6 +188,25 @@ class CreateInteraction extends CreateRecord
                             ->label('Type')
                             ->required()
                             ->exists((new InteractionType())->getTable(), 'id'),
+                        Checkbox::make('is_confidential')
+                            ->label('Confidential')
+                            ->live(),
+                        Select::make('interaction_confidential_users')
+                            ->relationship('confidentialAccessUsers', 'name')
+                            ->preload()
+                            ->label('Users')
+                            ->required()
+                            ->multiple()
+                            ->exists('users', 'id')
+                            ->visible(fn (Get $get) => $get('is_confidential')),
+                        Select::make('interaction_confidential_teams')
+                            ->relationship('confidentialAccessTeams', 'name')
+                            ->preload()
+                            ->label('Teams')
+                            ->required()
+                            ->multiple()
+                            ->exists('teams', 'id')
+                            ->visible(fn (Get $get) => $get('is_confidential')),
                     ]),
                 Fieldset::make('Time')
                     ->schema([
