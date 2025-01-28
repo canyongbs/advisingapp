@@ -40,9 +40,9 @@ use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use App\Models\Attributes\SystemNotification;
 use App\Models\NotificationSetting;
 use App\Models\User;
+use App\Notifications\Attributes\SystemNotification;
 use Illuminate\Support\Facades\URL;
 
 #[SystemNotification]

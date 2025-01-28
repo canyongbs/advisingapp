@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Attributes;
+namespace App\Notifications\Attributes;
 
 use Attribute;
 
