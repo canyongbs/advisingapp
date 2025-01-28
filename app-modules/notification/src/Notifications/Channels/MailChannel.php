@@ -77,7 +77,7 @@ class MailChannel extends BaseMailChannel
         try {
             if (
                 (! ($tenantMailConfig?->isDemoModeEnabled ?? false))
-                || ($isSystemNotification && $tenantMailConfig->isExcludingSystemNotificationsFromDemoMode)
+                || ($isSystemNotification && $tenantMailConfig?->isExcludingSystemNotificationsFromDemoMode)
             ) {
                 $message = $notification->toMail($notifiable)
                     ->withSymfonyMessage(function (Email $message) use ($deliverable, $tenant) {
@@ -132,7 +132,10 @@ class MailChannel extends BaseMailChannel
             try {
                 if ($result->success) {
                     $deliverable->update([
-                        'delivery_status' => $tenantMailConfig?->isDemoModeEnabled
+                        'delivery_status' => (
+                            ($tenantMailConfig?->isDemoModeEnabled ?? false)
+                            && ((! $isSystemNotification) || (! $tenantMailConfig?->isExcludingSystemNotificationsFromDemoMode))
+                        )
                             ? NotificationDeliveryStatus::BlockedByDemoMode
                             : NotificationDeliveryStatus::Dispatched,
                         'quota_usage' => $quotaUsage,
