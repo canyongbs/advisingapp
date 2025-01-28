@@ -56,9 +56,9 @@ class InteractionConfidentialScope implements Scope
                 ->where(function (Builder $query) {
                     $query->where('user_id', auth()->id())
                         ->orWhereHas('confidentialAccessTeams', function (Builder $query) {
-                                $query->whereHas('users', function (Builder $query) {
-                                    $query->where('user_id', auth()->id());
-                                });
+                            $query->whereHas('users', function (Builder $query) {
+                                $query->where('user_id', auth()->id());
+                            });
                         })
                         ->orWhereHas('confidentialAccessUsers', function (Builder $query) {
                             $query->where('user_id', auth()->id());
