@@ -34,42 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationTwilio\Providers;
+namespace App\Listeners;
 
-use AdvisingApp\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
-use AdvisingApp\Engagement\Actions\FindEngagementResponseSender;
-use AdvisingApp\IntegrationTwilio\Actions\Playground\FindEngagementResponseSender as PlaygroundFindEngagementResponseSender;
-use AdvisingApp\IntegrationTwilio\IntegrationTwilioPlugin;
-use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
-use App\Enums\Integration;
-use App\Exceptions\IntegrationException;
-use Filament\Panel;
-use Illuminate\Support\ServiceProvider;
-use Twilio\Rest\Client;
+use App\Features\ScheduleMonitor;
+use App\Multitenancy\Events\NewTenantSetupComplete;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Artisan;
+use Spatie\Multitenancy\Jobs\NotTenantAware;
+use Spatie\ScheduleMonitor\Commands\SyncCommand;
 
-class IntegrationTwilioServiceProvider extends ServiceProvider
+class SyncScheduleMonitor implements ShouldQueue, NotTenantAware
 {
-    public function register(): void
+    public function handle(NewTenantSetupComplete $event): void
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new IntegrationTwilioPlugin()));
+        if (! ScheduleMonitor::active()) {
+            return;
+        }
 
-        $this->app->scoped(EngagementResponseSenderFinder::class, function () {
-            if (config('local_development.twilio.enable_test_sender') === true) {
-                return new PlaygroundFindEngagementResponseSender();
-            }
-
-            return new FindEngagementResponseSender();
-        });
-
-        $settings = $this->app->make(TwilioSettings::class);
-
-        $this->app->scoped(
-            Client::class,
-            fn () => Integration::Twilio->isOn()
-                ? new Client($settings->account_sid, $settings->auth_token)
-                : throw IntegrationException::make(Integration::Twilio)
-        );
+        Artisan::call(SyncCommand::class);
     }
-
-    public function boot(): void {}
 }

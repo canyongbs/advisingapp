@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\MeetingCenter\Providers;
 
-use AdvisingApp\MeetingCenter\Jobs\SyncCalendars;
 use AdvisingApp\MeetingCenter\Livewire\EventAttendeeSubmissionsManager;
 use AdvisingApp\MeetingCenter\MeetingCenterPlugin;
 use AdvisingApp\MeetingCenter\Models\Calendar;
@@ -48,10 +47,7 @@ use AdvisingApp\MeetingCenter\Models\EventRegistrationFormAuthentication;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
-use App\Models\Scopes\SetupIsComplete;
-use App\Models\Tenant;
 use Filament\Panel;
-use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
@@ -78,23 +74,6 @@ class MeetingCenterServiceProvider extends ServiceProvider
             'event_registration_form_step' => EventRegistrationFormStep::class,
             'event_registration_form_submission' => EventRegistrationFormSubmission::class,
         ]);
-
-        $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
-            $schedule->call(function () {
-                Tenant::query()
-                    ->tap(new SetupIsComplete())
-                    ->cursor()
-                    ->each(function (Tenant $tenant) {
-                        $tenant->execute(function () {
-                            dispatch(new SyncCalendars());
-                        });
-                    });
-            })
-                ->everyMinute()
-                ->name('SyncCalendarsSchedule')
-                ->onOneServer()
-                ->withoutOverlapping();
-        });
 
         Livewire::component('event-attendee-submissions-manager', EventAttendeeSubmissionsManager::class);
     }
