@@ -51,15 +51,17 @@ class InteractionConfidentialScope implements Scope
             return;
         }
 
-        $builder->where('is_confidential', false)->orWhere(function (Builder $builder) {
-            $builder->where('is_confidential', true)
-                ->where(function ($builder) {
-                    $builder->where('user_id', auth()->id())
-                        ->orWhereHas('confidentialAccessTeams', function ($builder) {
-                            $builder->where('team_id', auth()->user()->current_team_id);
+        $builder->where('is_confidential', false)->orWhere(function (Builder $query) {
+            $query->where('is_confidential', true)
+                ->where(function (Builder $query) {
+                    $query->where('user_id', auth()->id())
+                        ->orWhereHas('confidentialAccessTeams', function (Builder $query) {
+                                $query->whereHas('users', function (Builder $query) {
+                                    $query->where('user_id', auth()->id());
+                                });
                         })
-                        ->orWhereHas('confidentialAccessUsers', function ($builder) {
-                            $builder->where('user_id', auth()->id());
+                        ->orWhereHas('confidentialAccessUsers', function (Builder $query) {
+                            $query->where('user_id', auth()->id());
                         });
                 });
         });
