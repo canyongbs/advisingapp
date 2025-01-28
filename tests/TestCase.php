@@ -104,8 +104,6 @@ abstract class TestCase extends BaseTestCase
     {
         $tenant ??= Tenant::firstOrFail();
 
-        $tenant->makeCurrent();
-
         $tenant->execute(function () use ($tenant) {
             $this->artisan('migrate:fresh', [
                 '--database' => $this->tenantDatabaseConnectionName(),
@@ -155,8 +153,6 @@ abstract class TestCase extends BaseTestCase
                 )
             ));
         });
-
-        Tenant::forgetCurrent();
     }
 
     public function beginDatabaseTransactionOnConnection(string $name)

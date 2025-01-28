@@ -36,7 +36,12 @@
 
 namespace App\Multitenancy\Tasks;
 
+use AdvisingApp\Notification\Notifications\Channels\EmailChannel;
 use App\Multitenancy\DataTransferObjects\TenantMailConfig;
+use Illuminate\Contracts\Mail\Factory;
+use Illuminate\Contracts\Mail\Mailer;
+use Illuminate\Mail\Mailer as MailMailer;
+use Illuminate\Mail\MailManager;
 use Illuminate\Notifications\ChannelManager;
 use Illuminate\Notifications\Channels\MailChannel;
 use Spatie\Multitenancy\Models\Tenant;
@@ -151,8 +156,14 @@ class SwitchMailTask implements SwitchTenantTask
             ]
         );
 
+        app()->forgetInstance('mailer');
         app()->forgetInstance('mail.manager');
+        app()->forgetInstance(Mailer::class);
+        app()->forgetInstance(MailMailer::class);
+        app()->forgetInstance(MailManager::class);
+        app()->forgetInstance(Factory::class);
         app()->forgetInstance(ChannelManager::class);
         app()->forgetInstance(MailChannel::class);
+        app()->forgetInstance(EmailChannel::class);
     }
 }
