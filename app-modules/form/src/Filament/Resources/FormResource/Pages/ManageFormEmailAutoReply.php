@@ -63,8 +63,6 @@ class ManageFormEmailAutoReply extends EditRecord
 
     protected static ?string $navigationLabel = 'Email Auto Reply';
 
-    protected static ?string $navigationIcon = 'heroicon-o-envelope';
-
     protected static ?string $breadcrumb = 'Email Auto Reply';
 
     protected ?string $heading = 'Email Auto Reply';

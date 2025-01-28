@@ -52,8 +52,6 @@ class InteractionStatusResource extends Resource
 {
     protected static ?string $model = InteractionStatus::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-tag';
-
     protected static ?string $navigationLabel = 'Statuses';
 
     protected static ?int $navigationSort = 5;

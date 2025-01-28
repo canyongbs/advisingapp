@@ -48,8 +48,6 @@ class ResourceHubCategoryResource extends Resource
 {
     protected static ?string $model = ResourceHubCategory::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
     protected static ?string $navigationLabel = 'Categories';
 
     protected static ?string $modelLabel = 'resource hub category';

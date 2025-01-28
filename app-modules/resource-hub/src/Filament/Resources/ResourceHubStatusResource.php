@@ -48,8 +48,6 @@ class ResourceHubStatusResource extends Resource
 {
     protected static ?string $model = ResourceHubStatus::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-tag';
-
     protected static ?string $navigationLabel = 'Statuses';
 
     protected static ?string $modelLabel = 'resource hub status';

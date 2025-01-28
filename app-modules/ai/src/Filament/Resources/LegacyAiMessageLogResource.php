@@ -57,8 +57,6 @@ class LegacyAiMessageLogResource extends Resource
 {
     protected static ?string $model = LegacyAiMessageLog::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-ellipsis';
-
     protected static ?string $navigationLabel = 'Assistant Utilization';
 
     protected static ?int $navigationSort = 30;

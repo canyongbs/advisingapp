@@ -48,8 +48,6 @@ class AlertStatusResource extends Resource
 {
     protected static ?string $model = AlertStatus::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
     protected static ?string $navigationLabel = 'Statuses';
 
     protected static ?string $cluster = ConstituentManagement::class;

@@ -47,8 +47,6 @@ class CaseFormResource extends Resource
 {
     protected static ?string $model = CaseForm::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard';
-
     protected static ?int $navigationSort = 30;
 
     protected static ?string $cluster = CaseManagementAdministration::class;

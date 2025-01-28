@@ -48,8 +48,6 @@ class BasicNeedsCategoryResource extends Resource
 {
     protected static ?string $model = BasicNeedsCategory::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-group';
-
     protected static ?string $navigationLabel = 'Category';
 
     protected static ?string $modelLabel = 'Category';

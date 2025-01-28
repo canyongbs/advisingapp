@@ -64,8 +64,6 @@ class AmazonS3 extends Page implements HasForms
     use CanUseDatabaseTransactions;
     use HasUnsavedDataChangesAlert;
 
-    protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
-
     protected static ?string $title = 'Amazon S3 Settings';
 
     protected static ?string $navigationLabel = 'Amazon S3';

@@ -67,8 +67,6 @@ class ManageSurveySubmissions extends ManageRelatedRecords
 
     protected static ?string $breadcrumb = 'Submissions';
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
-
     public function table(Table $table): Table
     {
         return $table

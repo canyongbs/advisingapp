@@ -48,8 +48,6 @@ class ProspectSourceResource extends Resource
 {
     protected static ?string $model = ProspectSource::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-viewfinder-circle';
-
     protected static ?string $navigationLabel = 'Sources';
 
     protected static ?int $navigationSort = 20;

@@ -53,8 +53,6 @@ class ProspectEnagagementReport extends ProspectReport
 
     protected static string $routePath = 'prospect-enagement-report';
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
-
     protected $cacheTag = 'report-prospect-engagement';
 
     protected static ?int $navigationSort = 20;

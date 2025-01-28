@@ -49,8 +49,6 @@ use Filament\Pages\SettingsPage;
 
 class ManageStudentInformationSystemSettings extends SettingsPage
 {
-    protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
-
     protected static ?string $title = 'Student Information System';
 
     protected static string $settings = StudentInformationSystemSettings::class;

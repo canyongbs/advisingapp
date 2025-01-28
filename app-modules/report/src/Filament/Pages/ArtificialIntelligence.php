@@ -47,8 +47,6 @@ use App\Filament\Clusters\ReportLibrary;
 
 class ArtificialIntelligence extends AiReport
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
-
     protected static ?string $cluster = ReportLibrary::class;
 
     protected static ?string $navigationGroup = 'Artificial Intelligence';
