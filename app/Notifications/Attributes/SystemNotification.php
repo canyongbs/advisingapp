@@ -34,39 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace App\Notifications;
+namespace App\Notifications\Attributes;
 
-use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
-use AdvisingApp\Notification\Notifications\EmailNotification;
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use App\Models\NotificationSetting;
-use App\Models\User;
-use App\Notifications\Attributes\SystemNotification;
-use Illuminate\Support\Facades\URL;
+use Attribute;
 
-#[SystemNotification]
-class SetPasswordNotification extends BaseNotification implements EmailNotification
-{
-    use EmailChannelTrait;
-
-    public function toEmail(object $notifiable): MailMessage
-    {
-        return MailMessage::make()
-            ->settings($this->resolveNotificationSetting($notifiable))
-            ->line('A new account has been created for you.')
-            ->action('Set up your password', url(URL::temporarySignedRoute(
-                name: 'login.one-time',
-                expiration: now()->addDay(),
-                parameters: ['user' => $notifiable],
-                absolute: false,
-            )))
-            ->line('For security reasons, this link will expire in 24 hours.')
-            ->line('Please contact support if you need a new link or have any issues setting up your account.');
-    }
-
-    private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
-    {
-        return $notifiable->teams()->first()?->division?->notificationSetting?->setting;
-    }
-}
+#[Attribute]
+class SystemNotification {}
