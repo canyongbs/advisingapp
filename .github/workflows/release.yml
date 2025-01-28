@@ -381,7 +381,7 @@ jobs:
           wait-for-task-stopped: true
 
   regnerate-api-docs:
-    name: Regenerate API Docuemntation in Web Tasks
+    name: Regenerate API Documentation in Web Tasks
     needs: [deploy-release-automation]
     runs-on: ubuntu-22.04
     environment: production
