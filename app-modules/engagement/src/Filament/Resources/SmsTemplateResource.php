@@ -47,8 +47,6 @@ class SmsTemplateResource extends Resource
 {
     protected static ?string $model = SmsTemplate::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-device-phone-mobile';
-
     protected static ?string $navigationLabel = 'Text Message Templates';
 
     protected static ?string $modelLabel = 'text message template';

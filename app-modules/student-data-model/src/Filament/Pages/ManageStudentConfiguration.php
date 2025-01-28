@@ -48,8 +48,6 @@ class ManageStudentConfiguration extends SettingsPage
 {
     protected static string $settings = ManageStudentConfigurationSettings::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-cog-8-tooth';
-
     protected static ?string $cluster = ConstituentManagement::class;
 
     protected static ?string $navigationGroup = 'Students';

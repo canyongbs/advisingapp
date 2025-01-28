@@ -49,8 +49,6 @@ use Filament\Pages\SettingsPage;
 
 class ManageProspectConversionSettings extends SettingsPage
 {
-    protected static ?string $navigationIcon = 'heroicon-o-currency-dollar';
-
     protected static string $settings = ProspectConversionSettings::class;
 
     public string $currency = 'USD';

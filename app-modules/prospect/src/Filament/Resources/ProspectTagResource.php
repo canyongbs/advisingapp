@@ -51,8 +51,6 @@ class ProspectTagResource extends Resource
 {
     protected static ?string $model = Tag::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-tag';
-
     protected static ?string $navigationLabel = 'Tags';
 
     protected static ?int $navigationSort = 50;

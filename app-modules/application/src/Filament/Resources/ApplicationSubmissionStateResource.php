@@ -48,8 +48,6 @@ class ApplicationSubmissionStateResource extends Resource
 {
     protected static ?string $model = ApplicationSubmissionState::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
     protected static ?string $navigationLabel = 'Submission States';
 
     protected static ?int $navigationSort = 1;

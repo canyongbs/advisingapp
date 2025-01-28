@@ -55,8 +55,6 @@ class ManageCaseUpdate extends ManageRelatedRecords
 
     protected static ?string $breadcrumb = 'Updates';
 
-    protected static ?string $navigationIcon = 'heroicon-o-adjustments-vertical';
-
     public static function canAccess(array $arguments = []): bool
     {
         return (bool) count(static::managers($arguments['record'] ?? null));

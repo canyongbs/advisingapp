@@ -45,8 +45,6 @@ use App\Filament\Clusters\ReportLibrary;
 
 class Students extends StudentReport
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
-
     protected static ?string $cluster = ReportLibrary::class;
 
     protected static ?string $navigationGroup = 'Students';

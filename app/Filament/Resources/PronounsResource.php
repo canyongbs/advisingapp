@@ -53,8 +53,6 @@ class PronounsResource extends Resource
 {
     protected static ?string $model = Pronouns::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-user-group';
-
     protected static ?string $label = 'Profile Pronoun';
 
     protected static ?string $navigationLabel = 'Personal Pronouns';

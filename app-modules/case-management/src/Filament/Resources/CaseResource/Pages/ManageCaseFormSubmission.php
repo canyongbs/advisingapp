@@ -55,8 +55,6 @@ class ManageCaseFormSubmission extends ManageRelatedRecords
 
     protected static ?string $breadcrumb = 'Form Submission';
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-check';
-
     public static function canAccess(array $arguments = []): bool
     {
         return (bool) count(static::managers($arguments['record'] ?? null));

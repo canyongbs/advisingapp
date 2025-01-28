@@ -57,8 +57,6 @@ use Throwable;
 
 class ManageAmazonSesSettings extends SettingsPage
 {
-    protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
-
     protected static string $settings = SesSettings::class;
 
     protected static ?string $title = 'Amazon SES Settings';

@@ -54,8 +54,6 @@ class CaseResource extends Resource
 {
     protected static ?string $model = CaseModel::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-briefcase';
-
     protected static ?int $navigationSort = 10;
 
     protected static ?string $modelLabel = 'Case';
