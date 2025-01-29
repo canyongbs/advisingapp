@@ -50,8 +50,6 @@ class SubmissionOnScreenResponse extends EditRecord
 
     protected static ?string $navigationLabel = 'On-Screen Response';
 
-    protected static ?string $navigationIcon = 'heroicon-o-bars-arrow-up';
-
     public function form(FilamentForm $form): FilamentForm
     {
         return $form

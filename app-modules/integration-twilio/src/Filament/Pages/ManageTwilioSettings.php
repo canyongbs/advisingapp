@@ -49,8 +49,6 @@ use Filament\Pages\SettingsPage;
 
 class ManageTwilioSettings extends SettingsPage
 {
-    protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
-
     protected static string $settings = TwilioSettings::class;
 
     protected static ?string $title = 'Twilio Settings';

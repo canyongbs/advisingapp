@@ -58,8 +58,6 @@ class ManageProspectPipelineSettings extends SettingsPage
 
     protected static string $settings = ProspectPipelineSettings::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
-
     protected static ?int $navigationSort = 40;
 
     public static function canAccess(): bool

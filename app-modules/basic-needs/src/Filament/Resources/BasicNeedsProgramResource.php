@@ -49,8 +49,6 @@ class BasicNeedsProgramResource extends Resource
 {
     protected static ?string $model = BasicNeedsProgram::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-square-3-stack-3d';
-
     protected static ?string $navigationLabel = 'Program';
 
     protected static ?string $modelLabel = 'Program';

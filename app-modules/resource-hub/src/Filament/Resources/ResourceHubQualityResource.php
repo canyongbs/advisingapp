@@ -48,8 +48,6 @@ class ResourceHubQualityResource extends Resource
 {
     protected static ?string $model = ResourceHubQuality::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
     protected static ?string $navigationLabel = 'Qualities';
 
     protected static ?string $modelLabel = 'resource hub quality';

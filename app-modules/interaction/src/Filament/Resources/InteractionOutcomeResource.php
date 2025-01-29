@@ -50,8 +50,6 @@ class InteractionOutcomeResource extends Resource
 {
     protected static ?string $model = InteractionOutcome::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-map';
-
     protected static ?string $navigationLabel = 'Outcomes';
 
     protected static ?int $navigationSort = 3;

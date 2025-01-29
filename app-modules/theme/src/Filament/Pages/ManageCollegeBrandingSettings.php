@@ -48,8 +48,6 @@ use Filament\Pages\SettingsPage;
 
 class ManageCollegeBrandingSettings extends SettingsPage
 {
-    protected static ?string $navigationIcon = 'heroicon-o-paint-brush';
-
     protected static ?string $navigationLabel = 'Branding';
 
     protected static ?int $navigationSort = 20;

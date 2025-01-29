@@ -200,3 +200,19 @@
     border: none;
     border-radius: 50%;
 }
+
+.fi-page-sub-navigation-sidebar-ctn {
+    @apply bg-white border border-gray-950/5 rounded-xl dark:bg-gray-900 dark:border-white/10;
+}
+
+.fi-page-sub-navigation-sidebar {
+    @apply p-3;
+}
+
+.fi-page-sub-navigation-sidebar .fi-sidebar-item-icon {
+    @apply hidden;
+}
+
+.fi-page-sub-navigation-sidebar .fi-sidebar-item-grouped-border {
+    @apply hidden;
+}

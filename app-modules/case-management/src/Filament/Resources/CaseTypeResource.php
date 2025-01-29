@@ -51,8 +51,6 @@ class CaseTypeResource extends Resource
 {
     protected static ?string $model = CaseType::class;
 
-    protected static ?string $navigationIcon = 'heroicon-m-rectangle-stack';
-
     protected static ?int $navigationSort = 10;
 
     protected static ?string $cluster = CaseManagementAdministration::class;

@@ -50,8 +50,6 @@ class InteractionInitiativeResource extends Resource
 {
     protected static ?string $model = InteractionInitiative::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-megaphone';
-
     protected static ?string $navigationLabel = 'Initiatives';
 
     protected static ?int $navigationSort = 1;

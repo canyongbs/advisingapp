@@ -47,8 +47,6 @@ use Filament\Pages\SettingsPage;
 
 class ManageGoogleRecaptchaSettings extends SettingsPage
 {
-    protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
-
     protected static string $settings = GoogleRecaptchaSettings::class;
 
     protected static ?string $title = 'Google reCAPTCHA Settings';
