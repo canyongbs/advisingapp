@@ -53,58 +53,56 @@
         @endif
 
         @forelse ($timelineRecords->slice(0, 5) as $record)
-            @if ($record->timelineable)
-                <button
-                    class="flex w-full items-center gap-6 px-6 py-3 text-start"
-                    type="button"
-                    wire:click="viewRecord('{{ $record->timelineable->getKey() }}', '{{ $record->timelineable->getMorphClass() }}')"
-                >
-                    <div class="shrink-0 rounded-full bg-blue-100 p-3 dark:bg-blue-500/20">
-                        @svg($record->timelineable->timeline()->icon(), 'h-6 w-6 text-blue-500 dark:text-blue-400', ['wire:loading.remove', 'wire:target' => "viewRecord('{$record->timelineable->getKey()}', '{$record->timelineable->getMorphClass()}')"])
+            <button
+                class="flex w-full items-center gap-6 px-6 py-3 text-start"
+                type="button"
+                wire:click="viewRecord('{{ $record->timelineable->getKey() }}', '{{ $record->timelineable->getMorphClass() }}')"
+            >
+                <div class="shrink-0 rounded-full bg-blue-100 p-3 dark:bg-blue-500/20">
+                    @svg($record->timelineable->timeline()->icon(), 'h-6 w-6 text-blue-500 dark:text-blue-400', ['wire:loading.remove', 'wire:target' => "viewRecord('{$record->timelineable->getKey()}', '{$record->timelineable->getMorphClass()}')"])
 
-                        <x-filament::loading-indicator
-                            class="h-6 w-6 text-blue-500 dark:text-blue-400"
-                            wire:loading.delay.none
-                            wire:target="viewRecord('{{ $record->timelineable->getKey() }}', '{{ $record->timelineable->getMorphClass() }}')"
-                        />
-                    </div>
+                    <x-filament::loading-indicator
+                        class="h-6 w-6 text-blue-500 dark:text-blue-400"
+                        wire:loading.delay.none
+                        wire:target="viewRecord('{{ $record->timelineable->getKey() }}', '{{ $record->timelineable->getMorphClass() }}')"
+                    />
+                </div>
 
-                    <div class="grid flex-1 gap-1 whitespace-nowrap">
-                        <div class="flex flex-wrap gap-x-3">
-                            <div class="flex flex-1 flex-wrap items-end gap-x-3 gap-y-1">
-                                <p class="font-medium text-gray-950 dark:text-white">
-                                    @if ($record->timelineable()->timeline()->providesCustomView())
-                                        {{ $this->getTimelineRecordTitle($record->timelineable) }}
-                                    @else
-                                        {{ $record->timelineable?->timelineRecordTitle() }}
-                                    @endif
-                                </p>
+                <div class="grid flex-1 gap-1 whitespace-nowrap">
+                    <div class="flex flex-wrap gap-x-3">
+                        <div class="flex flex-1 flex-wrap items-end gap-x-3 gap-y-1">
+                            <p class="font-medium text-gray-950 dark:text-white">
+                                @if ($record->timelineable()->timeline()->providesCustomView())
+                                    {{ $this->getTimelineRecordTitle($record->timelineable) }}
+                                @else
+                                    {{ $record->timelineable?->timelineRecordTitle() }}
+                                @endif
+                            </p>
 
-                                <p class="mb-0.5 text-xs text-gray-500 dark:text-gray-400">
-                                    <span
-                                        class="font-medium text-gray-950 dark:text-white">{{ $record->timelineable?->created_at?->toFormattedDateString() }}</span>
-                                    at {{ $record->timelineable?->created_at?->format('g:ia') }}
-                                </p>
-                            </div>
-
-                            @if ($user = $this->getTimelineRecordUser($record->timelineable))
-                                <div class="mt-0.5 shrink-0">
-                                    <x-filament::badge
-                                        color="gray"
-                                        size="sm"
-                                    >
-                                        {{ $user->name }}
-                                    </x-filament::badge>
-                                </div>
-                            @endif
+                            <p class="mb-0.5 text-xs text-gray-500 dark:text-gray-400">
+                                <span
+                                    class="font-medium text-gray-950 dark:text-white">{{ $record->timelineable?->created_at?->toFormattedDateString() }}</span>
+                                at {{ $record->timelineable?->created_at?->format('g:ia') }}
+                            </p>
                         </div>
 
-                        <p class="truncate text-sm text-gray-500 dark:text-gray-400">
-                            {{ $this->getTimelineRecordDescription($record->timelineable) }}
-                        </p>
+                        @if ($user = $this->getTimelineRecordUser($record->timelineable))
+                            <div class="mt-0.5 shrink-0">
+                                <x-filament::badge
+                                    color="gray"
+                                    size="sm"
+                                >
+                                    {{ $user->name }}
+                                </x-filament::badge>
+                            </div>
+                        @endif
                     </div>
-                </button>
-            @endif
+
+                    <p class="truncate text-sm text-gray-500 dark:text-gray-400">
+                        {{ $this->getTimelineRecordDescription($record->timelineable) }}
+                    </p>
+                </div>
+            </button>
         @empty
             <div class="p-6">
                 <div class="mx-auto grid max-w-lg justify-items-center gap-4 text-center">
