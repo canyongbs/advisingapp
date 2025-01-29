@@ -41,7 +41,8 @@ use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Division\Models\Division;
-use AdvisingApp\Interaction\Providers\InteractionServiceProvider;
+use AdvisingApp\Interaction\Models\Scopes\InteractionConfidentialScope;
+use AdvisingApp\Interaction\Observers\InteractionObserver;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -49,6 +50,7 @@ use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Team\Models\Team;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Timeline\Models\Timeline;
 use AdvisingApp\Timeline\Timelines\InteractionTimeline;
@@ -57,9 +59,11 @@ use App\Models\BaseModel;
 use App\Models\User;
 use Exception;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -69,7 +73,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 /**
  * @mixin IdeHelperInteraction
  */
-#[ObservedBy([InteractionServiceProvider::class])]
+#[ObservedBy([InteractionObserver::class])] #[ScopedBy(InteractionConfidentialScope::class)]
 class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscription, ExecutableFromACampaignAction, ProvidesATimeline
 {
     use AuditableTrait;
@@ -91,11 +95,13 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
         'start_datetime',
         'subject',
         'user_id',
+        'is_confidential',
     ];
 
     protected $casts = [
         'start_datetime' => 'datetime',
         'end_datetime' => 'datetime',
+        'is_confidential' => 'boolean',
     ];
 
     public function user(): BelongsTo
@@ -197,6 +203,20 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
         }
 
         // Do we need to be able to relate campaigns/actions to the RESULT of their actions?
+    }
+
+    public function confidentialAccessUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'interaction_confidential_users')
+            ->using(InteractionConfidentialUser::class)
+            ->withTimestamps();
+    }
+
+    public function confidentialAccessTeams(): BelongsToMany
+    {
+        return $this->belongsToMany(Team::class, 'interaction_confidential_teams')
+            ->using(InteractionConfidentialTeam::class)
+            ->withTimestamps();
     }
 
     protected static function booted(): void
