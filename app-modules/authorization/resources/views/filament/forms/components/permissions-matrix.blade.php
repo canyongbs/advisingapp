@@ -55,7 +55,7 @@
         },
     
         addGroup: function(group) {
-            this.visiblePermissionGroups = this.visiblePermissionGroups.concat([group])
+            this.visiblePermissionGroups.push(group)
         },
     
         removeGroup: function(group) {
@@ -127,7 +127,7 @@
             <div class="hidden divide-x divide-gray-950/5 text-xs dark:divide-white/10 xl:grid xl:grid-cols-7 xl:gap-0">
                 @foreach (['View', 'Create', 'Update', 'Delete', 'Import', 'Force Delete', 'Restore'] as $operationLabel)
                     <div
-                        class="flex flex-col items-center justify-center gap-1 p-2 font-semibold text-gray-950 dark:text-white xl:w-24">
+                        class="flex flex-col items-center justify-center p-2 font-semibold text-gray-950 dark:text-white xl:w-24">
                         <div>{{ $operationLabel }}</div>
                         {{-- prettier-ignore-start --}}
                         <div
