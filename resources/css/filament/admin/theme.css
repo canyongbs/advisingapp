@@ -206,7 +206,7 @@
 }
 
 .fi-page-sub-navigation-sidebar {
-    @apply p-4;
+    @apply p-3;
 }
 
 .fi-page-sub-navigation-sidebar > li > ul > li a .fi-sidebar-item-icon {
@@ -218,5 +218,5 @@
 }
 
 .fi-page-sub-navigation-sidebar > li > ul > li a {
-    @apply p-4;
+    @apply p-3;
 }
