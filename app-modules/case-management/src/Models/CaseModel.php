@@ -329,10 +329,10 @@ class CaseModel extends BaseModel implements Auditable, CanTriggerAutoSubscripti
     public function getResolutionSeconds(): int
     {
         if (! $this->isResolved()) {
-            return $this->created_at->diffInSeconds();
+            return round($this->created_at->diffInSeconds());
         }
 
-        return $this->created_at->diffInSeconds($this->getResolvedAt());
+        return round($this->created_at->diffInSeconds($this->getResolvedAt()));
     }
 
     public function getSlaResponseSeconds(): ?int
