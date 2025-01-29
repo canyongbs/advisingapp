@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Notification\Tests\Features\TestEmailSettingFromNameNotification;
+use AdvisingApp\Notification\Tests\Feature\TestEmailSettingFromNameNotification;
 use App\Models\NotificationSetting;
 use App\Models\User;
 use Illuminate\Support\Facades\Notification;
