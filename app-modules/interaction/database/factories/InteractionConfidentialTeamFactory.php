@@ -36,8 +36,9 @@
 
 namespace AdvisingApp\Interaction\Database\Factories;
 
+use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\InteractionConfidentialTeam;
-use AdvisingApp\Team\Database\Factories\TeamFactory;
+use AdvisingApp\Team\Models\Team;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -53,8 +54,8 @@ class InteractionConfidentialTeamFactory extends Factory
     public function definition(): array
     {
         return [
-            'interaction_id' => InteractionFactory::new()->create(),
-            'team_id' => TeamFactory::new()->create(),
+            'interaction_id' => Interaction::factory()->create(),
+            'team_id' => Team::factory()->create(),
         ];
     }
 }

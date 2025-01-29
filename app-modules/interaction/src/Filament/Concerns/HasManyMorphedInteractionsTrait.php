@@ -42,7 +42,6 @@ use App\Features\ConfidentialInteractionFeatureFlag;
 use App\Filament\Tables\Columns\IdColumn;
 use Carbon\CarbonInterface;
 use Filament\Infolists\Components\Fieldset;
-use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Tables\Actions\CreateAction;
@@ -59,17 +58,17 @@ trait HasManyMorphedInteractionsTrait
     {
         return $infolist
             ->schema([
-                IconEntry::make('is_confidential')
-                    ->label('')
-                    ->icon(fn (string $state): ?string => $state ? 'heroicon-o-lock-closed' : null)
-                    ->tooltip(fn (string $state): ?string => $state ? 'Confidential Interaction' : null)
-                    ->visible(fn ($record): bool => ConfidentialInteractionFeatureFlag::active() && $record->is_confidential),
                 TextEntry::make('user.name')
                     ->label('Created By'),
                 Fieldset::make('Details')
                     ->schema([
                         TextEntry::make('initiative.name'),
                         TextEntry::make('driver.name'),
+                        TextEntry::make('is_confidential')
+                            ->label('')
+                            ->badge()
+                            ->formatStateUsing(fn ($state): string => $state ? 'Confidential' : '')
+                            ->visible(fn ($record): bool => ConfidentialInteractionFeatureFlag::active() && $record->is_confidential),
                         TextEntry::make('division.name'),
                         TextEntry::make('outcome.name'),
                         TextEntry::make('relation.name'),

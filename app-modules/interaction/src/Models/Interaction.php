@@ -42,7 +42,7 @@ use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Interaction\Models\Scopes\InteractionConfidentialScope;
-use AdvisingApp\Interaction\Providers\InteractionServiceProvider;
+use AdvisingApp\Interaction\Observers\InteractionObserver;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -73,7 +73,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 /**
  * @mixin IdeHelperInteraction
  */
-#[ObservedBy([InteractionServiceProvider::class])] #[ScopedBy(InteractionConfidentialScope::class)]
+#[ObservedBy([InteractionObserver::class])] #[ScopedBy(InteractionConfidentialScope::class)]
 class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscription, ExecutableFromACampaignAction, ProvidesATimeline
 {
     use AuditableTrait;

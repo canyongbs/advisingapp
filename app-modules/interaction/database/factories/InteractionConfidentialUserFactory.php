@@ -36,8 +36,9 @@
 
 namespace AdvisingApp\Interaction\Database\Factories;
 
+use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\InteractionConfidentialUser;
-use Database\Factories\UserFactory;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -53,8 +54,8 @@ class InteractionConfidentialUserFactory extends Factory
     public function definition(): array
     {
         return [
-            'interaction_id' => InteractionFactory::new()->create(),
-            'user_id' => UserFactory::new()->create(),
+            'interaction_id' => Interaction::factory()->create(),
+            'user_id' => User::factory()->create(),
         ];
     }
 }
