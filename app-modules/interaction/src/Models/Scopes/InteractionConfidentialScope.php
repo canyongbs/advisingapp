@@ -48,7 +48,7 @@ class InteractionConfidentialScope implements Scope
      */
     public function apply(Builder $builder, Model $model): void
     {
-        if (auth()->user()?->IsAdmin || ! ConfidentialInteractionFeatureFlag::active()) {
+        if (! ConfidentialInteractionFeatureFlag::active() || auth()->user()?->IsAdmin) {
             return;
         }
 
