@@ -34,42 +34,50 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationTwilio\Providers;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
-use AdvisingApp\Engagement\Actions\FindEngagementResponseSender;
-use AdvisingApp\IntegrationTwilio\Actions\Playground\FindEngagementResponseSender as PlaygroundFindEngagementResponseSender;
-use AdvisingApp\IntegrationTwilio\IntegrationTwilioPlugin;
-use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
-use App\Enums\Integration;
-use App\Exceptions\IntegrationException;
-use Filament\Panel;
-use Illuminate\Support\ServiceProvider;
-use Twilio\Rest\Client;
-
-class IntegrationTwilioServiceProvider extends ServiceProvider
+class CreateScheduleMonitorTables extends Migration
 {
-    public function register(): void
+    public function up()
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new IntegrationTwilioPlugin()));
+        Schema::create('monitored_scheduled_tasks', function (Blueprint $table) {
+            $table->uuid('id')->primary();
 
-        $this->app->scoped(EngagementResponseSenderFinder::class, function () {
-            if (config('local_development.twilio.enable_test_sender') === true) {
-                return new PlaygroundFindEngagementResponseSender();
-            }
+            $table->string('name');
+            $table->string('type')->nullable();
+            $table->string('cron_expression');
+            $table->string('timezone')->nullable();
+            $table->string('ping_url')->nullable();
 
-            return new FindEngagementResponseSender();
+            $table->dateTime('last_started_at')->nullable();
+            $table->dateTime('last_finished_at')->nullable();
+            $table->dateTime('last_failed_at')->nullable();
+            $table->dateTime('last_skipped_at')->nullable();
+
+            $table->dateTime('registered_on_oh_dear_at')->nullable();
+            $table->dateTime('last_pinged_at')->nullable();
+            $table->integer('grace_time_in_minutes');
+
+            $table->timestamps();
         });
 
-        $settings = $this->app->make(TwilioSettings::class);
+        Schema::create('monitored_scheduled_task_log_items', function (Blueprint $table) {
+            $table->uuid('id')->primary();
 
-        $this->app->scoped(
-            Client::class,
-            fn () => Integration::Twilio->isOn()
-                ? new Client($settings->account_sid, $settings->auth_token)
-                : throw IntegrationException::make(Integration::Twilio)
-        );
+            $table->uuid('monitored_scheduled_task_id');
+            $table
+                ->foreign('monitored_scheduled_task_id', 'fk_scheduled_task_id')
+                ->references('id')
+                ->on('monitored_scheduled_tasks')
+                ->cascadeOnDelete();
+
+            $table->string('type');
+
+            $table->json('meta')->nullable();
+
+            $table->timestamps();
+        });
     }
-
-    public function boot(): void {}
 }
