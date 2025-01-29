@@ -46,11 +46,6 @@ class InteractionConfidentialTeam extends Pivot
     use HasFactory;
     use HasUuids;
 
-    protected $fillable = [
-        'interaction_id',
-        'team_id',
-    ];
-
     public function interaction()
     {
         return $this->belongsTo(Interaction::class);

@@ -38,6 +38,7 @@ namespace AdvisingApp\Interaction\Filament\Concerns;
 
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Prospect\Models\Prospect;
+use App\Features\ConfidentialInteractionFeatureFlag;
 use App\Filament\Tables\Columns\IdColumn;
 use Carbon\CarbonInterface;
 use Filament\Infolists\Components\Fieldset;
@@ -62,7 +63,7 @@ trait HasManyMorphedInteractionsTrait
                     ->label('')
                     ->icon(fn (string $state): ?string => $state ? 'heroicon-o-lock-closed' : null)
                     ->tooltip(fn (string $state): ?string => $state ? 'Confidential Interaction' : null)
-                    ->visible(fn ($record): bool => $record->is_confidential),
+                    ->visible(fn ($record): bool => ConfidentialInteractionFeatureFlag::active() && $record->is_confidential),
                 TextEntry::make('user.name')
                     ->label('Created By'),
                 Fieldset::make('Details')
@@ -105,7 +106,8 @@ trait HasManyMorphedInteractionsTrait
                     ->label('Confidential')
                     ->trueIcon('heroicon-o-lock-closed')
                     ->falseIcon('')
-                    ->tooltip(fn (string $state): ?string => $state ? 'Confidential Interaction' : null),
+                    ->tooltip(fn (string $state): ?string => $state ? 'Confidential Interaction' : null)
+                    ->visible(fn (): bool => ConfidentialInteractionFeatureFlag::active()),
                 TextColumn::make('initiative.name'),
                 TextColumn::make('driver.name'),
                 TextColumn::make('division.name'),

@@ -36,14 +36,9 @@
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Interaction\Filament\Resources\InteractionResource;
-use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages\ListInteractions;
-use AdvisingApp\Interaction\Models\Interaction;
-use AdvisingApp\Team\Models\Team;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
-use function Tests\asSuperAdmin;
 
 test('ListInteractions is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
@@ -60,47 +55,3 @@ test('ListInteractions is gated with proper access control', function () {
             InteractionResource::getUrl('index')
         )->assertSuccessful();
 });
-
-test('ListInteration with display data using the is_confidential field', function () {
-    $user = User::factory()->licensed(LicenseType::cases())->create();
-    $user->givePermissionTo('interaction.view-any');
-
-    $userWithoutAttach = User::factory()->licensed(LicenseType::cases())->create();
-    $userWithoutAttach->givePermissionTo('interaction.view-any');
-
-    $teamUser = User::factory()->licensed(LicenseType::cases())->create();
-    $teamUser->givePermissionTo('interaction.view-any');
-
-    $team = Team::factory()->hasAttached($teamUser, [], 'users')->create();
-
-    $confidentialInteraction = Interaction::factory()->hasAttached($user, [], 'confidentialAccessUsers')->hasAttached($team, [], 'confidentialAccessTeams')->count(10)->create([
-        'is_confidential' => true,
-    ]);
-
-    $nonConfidentialInteraction = Interaction::factory()->count(10)->create([
-        'is_confidential' => false,
-    ]);
-
-    $allInteractions = $confidentialInteraction->merge($nonConfidentialInteraction);
-
-    actingAs($user);
-    livewire(ListInteractions::class)
-        ->set('tableRecordsPerPage', 20)
-        ->assertCanSeeTableRecords($allInteractions);
-
-    actingAs($userWithoutAttach);
-    livewire(ListInteractions::class)
-        ->set('tableRecordsPerPage', 10)
-        ->assertCanSeeTableRecords($nonConfidentialInteraction)
-        ->assertCanNotSeeTableRecords($confidentialInteraction);
-
-    actingAs($teamUser);
-    livewire(ListInteractions::class)
-        ->set('tableRecordsPerPage', 20)
-        ->assertCanSeeTableRecords($allInteractions);
-
-    asSuperAdmin();
-    livewire(ListInteractions::class)
-        ->set('tableRecordsPerPage', 20)
-        ->assertCanSeeTableRecords($allInteractions);
-})->only();

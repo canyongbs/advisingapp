@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Interaction\Models;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\Pivot;
@@ -45,8 +46,13 @@ class InteractionConfidentialUser extends Pivot
     use HasFactory;
     use HasUuids;
 
-    protected $fillable = [
-        'interaction_id',
-        'user_id',
-    ];
+    public function interaction()
+    {
+        return $this->belongsTo(Interaction::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
