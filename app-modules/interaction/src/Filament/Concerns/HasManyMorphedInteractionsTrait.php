@@ -48,9 +48,9 @@ use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\HtmlString;
 
 trait HasManyMorphedInteractionsTrait
 {
@@ -58,17 +58,18 @@ trait HasManyMorphedInteractionsTrait
     {
         return $infolist
             ->schema([
+                TextEntry::make('is_confidential')
+                    ->columnSpanFull()
+                    ->label('')
+                    ->badge()
+                    ->formatStateUsing(fn ($state): string => $state ? 'Confidential' : '')
+                    ->visible(fn ($record): bool => ConfidentialInteractionFeatureFlag::active() && $record->is_confidential),
                 TextEntry::make('user.name')
                     ->label('Created By'),
                 Fieldset::make('Details')
                     ->schema([
                         TextEntry::make('initiative.name'),
                         TextEntry::make('driver.name'),
-                        TextEntry::make('is_confidential')
-                            ->label('')
-                            ->badge()
-                            ->formatStateUsing(fn ($state): string => $state ? 'Confidential' : '')
-                            ->visible(fn ($record): bool => ConfidentialInteractionFeatureFlag::active() && $record->is_confidential),
                         TextEntry::make('division.name'),
                         TextEntry::make('outcome.name'),
                         TextEntry::make('relation.name'),
@@ -101,13 +102,32 @@ trait HasManyMorphedInteractionsTrait
             ->recordTitleAttribute('id')
             ->columns([
                 IdColumn::make(),
-                IconColumn::make('is_confidential')
-                    ->label('Confidential')
-                    ->trueIcon('heroicon-o-lock-closed')
-                    ->falseIcon('')
-                    ->tooltip(fn (string $state): ?string => $state ? 'Confidential Interaction' : null)
-                    ->visible(fn (): bool => ConfidentialInteractionFeatureFlag::active()),
-                TextColumn::make('initiative.name'),
+                TextColumn::make('initiative.name')
+                    ->description(
+                        function (Interaction $record) {
+                            if (! ConfidentialInteractionFeatureFlag::active() || ! $record->is_confidential) {
+                                return null;
+                            }
+
+                            return new HtmlString(
+                                <<<HTML
+                                    <div class="fi-ta-text grid w-full gap-y-1">
+                                        <div class="flex gap-1.5 flex-wrap ">
+                                            <div class="flex w-max" style="">
+                                                <span style="--c-50:var(--primary-50);--c-400:var(--primary-400);--c-600:var(--primary-600);" class="fi-badge flex items-center justify-center gap-x-1 rounded-md text-xs font-medium ring-1 ring-inset px-2 min-w-[theme(spacing.6)] py-1 fi-color-custom bg-custom-50 text-custom-600 ring-custom-600/10 dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30 fi-color-primary">
+                                                    <span class="grid">
+                                                        <span class="truncate">
+                                                            Confidential
+                                                        </span>
+                                                    </span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                HTML
+                            );
+                        }
+                    ),
                 TextColumn::make('driver.name'),
                 TextColumn::make('division.name'),
                 TextColumn::make('outcome.name'),
