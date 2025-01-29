@@ -34,16 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Notifications\Concerns;
+use AdvisingApp\Notification\Tests\Feature\TestEmailSettingFromNameNotification;
+use App\Models\NotificationSetting;
+use App\Models\User;
+use Illuminate\Support\Facades\Notification;
 
-use AdvisingApp\Notification\Notifications\Channels\DatabaseChannel;
+it('sets the mail from name based on settings fromName if set', function () {
+    Notification::fake();
 
-trait DatabaseChannelTrait
-{
-    use ChannelTrait;
+    $user = User::factory()->create();
 
-    public static function getDatabaseChannel(): string
-    {
-        return DatabaseChannel::class;
-    }
-}
+    $notificationSetting = new NotificationSetting();
+
+    $notificationSetting->from_name = fake()->name();
+
+    $notification = new TestEmailSettingFromNameNotification($notificationSetting);
+
+    $user->notify($notification);
+
+    Notification::assertSentTo(
+        $user,
+        function (TestEmailSettingFromNameNotification $notification, array $channels) use ($notificationSetting, $user) {
+            $mailMessage = $notification->toMail($user);
+
+            return $mailMessage->from[1] === $notificationSetting->from_name;
+        }
+    );
+});

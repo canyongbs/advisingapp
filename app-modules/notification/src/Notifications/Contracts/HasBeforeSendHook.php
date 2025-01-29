@@ -34,39 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Notifications;
+namespace AdvisingApp\Notification\Notifications\Contracts;
 
-use AdvisingApp\MeetingCenter\Models\Event;
-use AdvisingApp\MeetingCenter\Models\EventAttendee;
-use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
-use AdvisingApp\Notification\Notifications\EmailNotification;
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use App\Models\NotificationSetting;
-use App\Models\User;
+use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
+use Illuminate\Notifications\AnonymousNotifiable;
 
-class SendRegistrationLinkToEventAttendeeNotification extends BaseNotification implements EmailNotification
+interface HasBeforeSendHook
 {
-    use EmailChannelTrait;
-
-    public function __construct(
-        protected Event $event,
-        protected User $sender
-    ) {}
-
-    public function toEmail(object $notifiable): MailMessage
-    {
-        return MailMessage::make()
-            ->settings($this->resolveNotificationSetting($notifiable))
-            ->subject('You have been invited to an event!')
-            ->line("You have been invited to {$this->event->title}.")
-            ->action('Register', route('event-registration.show', ['event' => $this->event]));
-    }
-
-    private function resolveNotificationSetting(object $notifiable): ?NotificationSetting
-    {
-        return $notifiable instanceof EventAttendee
-            ? $this->sender->teams()->first()?->division?->notificationSetting?->setting
-            : null;
-    }
+    public function beforeSend(AnonymousNotifiable|CanBeNotified $notifiable, OutboundDeliverable $deliverable, NotificationChannel $channel): void;
 }

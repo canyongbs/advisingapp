@@ -37,21 +37,25 @@
 namespace AdvisingApp\Form\Notifications;
 
 use AdvisingApp\Form\Models\FormSubmission;
-use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\Concerns\DatabaseChannelTrait;
-use AdvisingApp\Notification\Notifications\DatabaseNotification;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Notifications\Notification as FilamentNotification;
+use Illuminate\Notifications\Notification;
 use Illuminate\Support\HtmlString;
 
-class AuthorLinkedFormSubmissionCreatedNotification extends BaseNotification implements DatabaseNotification
+class AuthorLinkedFormSubmissionCreatedNotification extends Notification
 {
-    use DatabaseChannelTrait;
-
     public function __construct(public FormSubmission $submission) {}
+
+    /**
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
+    {
+        return ['database'];
+    }
 
     public function toDatabase(object $notifiable): array
     {
@@ -60,7 +64,7 @@ class AuthorLinkedFormSubmissionCreatedNotification extends BaseNotification imp
         $name = $author->{$author->displayNameKey()};
 
         [$target, $targetRoute] = match ($author::class) {
-            Prospect::class => [ProspectResource::class, 'manage-form-submissions'],
+            Prospect::class => [ProspectResource::class, 'view'],
             Student::class => [StudentResource::class, 'view'],
         };
 

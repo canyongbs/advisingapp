@@ -37,20 +37,28 @@
 namespace AdvisingApp\Form\Notifications;
 
 use AdvisingApp\Form\Models\FormSubmission;
-use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
-use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Notification;
 
-class FormSubmissionRequestNotification extends BaseNotification implements EmailNotification
+class FormSubmissionRequestNotification extends Notification implements ShouldQueue
 {
-    use EmailChannelTrait;
+    use Queueable;
 
     public function __construct(
         public FormSubmission $submission,
     ) {}
 
-    public function toEmail(object $notifiable): MailMessage
+    /**
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
+    {
+        return ['mail'];
+    }
+
+    public function toMail(object $notifiable): MailMessage
     {
         $division = $this->submission->requester->teams()->first()?->division;
 

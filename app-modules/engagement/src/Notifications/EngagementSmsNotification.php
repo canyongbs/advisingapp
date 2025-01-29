@@ -38,22 +38,31 @@ namespace AdvisingApp\Engagement\Notifications;
 
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
+use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\Concerns\SmsChannelTrait;
+use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
 use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
-use AdvisingApp\Notification\Notifications\SmsNotification;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\AnonymousNotifiable;
+use Illuminate\Notifications\Notification;
 use Throwable;
 
-class EngagementSmsNotification extends BaseNotification implements SmsNotification
+class EngagementSmsNotification extends Notification implements ShouldQueue, HasBeforeSendHook
 {
-    use SmsChannelTrait;
+    use Queueable;
 
     public function __construct(
         public Engagement $engagement,
     ) {}
+
+    /**
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
+    {
+        return ['sms'];
+    }
 
     public function toSms(object $notifiable): TwilioMessage
     {
@@ -68,7 +77,7 @@ class EngagementSmsNotification extends BaseNotification implements SmsNotificat
         }
     }
 
-    public function beforeSend(AnonymousNotifiable|NotifiableInterface $notifiable, OutboundDeliverable $deliverable, NotificationChannel $channel): void
+    public function beforeSend(AnonymousNotifiable|CanBeNotified $notifiable, OutboundDeliverable $deliverable, NotificationChannel $channel): void
     {
         $deliverable->related()->associate($this->engagement);
     }

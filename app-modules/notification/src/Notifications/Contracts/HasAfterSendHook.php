@@ -34,9 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Notifications;
+namespace AdvisingApp\Notification\Notifications\Contracts;
 
-interface DatabaseNotification
+use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
+use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
+use Illuminate\Notifications\AnonymousNotifiable;
+
+interface HasAfterSendHook
 {
-    public function toDatabase(object $notifiable): array;
+    public function afterSend(AnonymousNotifiable|CanBeNotified $notifiable, OutboundDeliverable $deliverable, NotificationResultData $result): void;
 }

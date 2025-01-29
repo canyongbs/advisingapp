@@ -40,6 +40,7 @@ use AdvisingApp\Prospect\Models\Pipeline;
 use AdvisingApp\Prospect\Models\PipelineStage;
 use App\Models\SystemUser;
 use App\Models\Tenant;
+use App\Notifications\ResetPasswordNotification;
 use App\Overrides\Filament\Actions\Imports\Jobs\ImportCsvOverride;
 use App\Overrides\Filament\Actions\Imports\Jobs\PrepareCsvExportOverride;
 use App\Overrides\Laravel\PermissionMigrationCreator;
@@ -48,6 +49,7 @@ use App\Overrides\LastDragon_ru\LaraASP\GraphQL\SearchBy\Definitions\SearchByDir
 use App\Overrides\LastDragon_ru\LaraASP\GraphQL\SearchBy\Types\Condition as GraphQLSearchByTypesConditionOverride;
 use Filament\Actions\Exports\Jobs\PrepareCsvExport;
 use Filament\Actions\Imports\Jobs\ImportCsv;
+use Filament\Notifications\Auth\ResetPassword;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Session\Middleware\StartSession;
@@ -80,6 +82,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(GraphQLSearchByDirectiveAlias::class, GraphQLSearchByDirectiveOverride::class);
         $this->app->bind(ImportCsv::class, ImportCsvOverride::class);
         $this->app->bind(PrepareCsvExport::class, PrepareCsvExportOverride::class);
+        $this->app->bind(ResetPassword::class, ResetPasswordNotification::class);
 
         // Laravel Octane does not register the `ReloadCommand` when the application is not running in the console.
         // We need to call this command from the `UpdateBrandSettingsController` during an HTTP request.

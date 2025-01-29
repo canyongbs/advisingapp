@@ -34,30 +34,36 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Notification\Tests\Features\TestEmailSettingFromNameNotification;
+namespace AdvisingApp\Notification\Tests\Feature;
+
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use App\Models\NotificationSetting;
-use App\Models\User;
-use Illuminate\Support\Facades\Notification;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Notification;
 
-it('sets the mail from name based on settings fromName if set', function () {
-    Notification::fake();
+class TestEmailSettingFromNameNotification extends Notification implements ShouldQueue
+{
+    use Queueable;
 
-    $user = User::factory()->create();
+    public function __construct(
+        public NotificationSetting $setting,
+    ) {}
 
-    $notificationSetting = new NotificationSetting();
+    /**
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
+    {
+        return ['mail'];
+    }
 
-    $notificationSetting->from_name = fake()->name();
-
-    $notification = new TestEmailSettingFromNameNotification($notificationSetting);
-
-    $user->notify($notification);
-
-    Notification::assertSentTo(
-        $user,
-        function (TestEmailSettingFromNameNotification $notification, array $channels) use ($notificationSetting, $user) {
-            $mailMessage = $notification->toMail($user);
-
-            return $mailMessage->from[1] === $notificationSetting->from_name;
-        }
-    );
-});
+    public function toMail(object $notifiable): MailMessage
+    {
+        return MailMessage::make()
+            ->settings($this->setting)
+            ->subject('Test Subject')
+            ->greeting('Test Greeting')
+            ->content('This is a test email');
+    }
+}

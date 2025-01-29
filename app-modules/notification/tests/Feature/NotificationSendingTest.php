@@ -35,16 +35,17 @@
 */
 
 use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\Concerns\DatabaseChannelTrait;
-use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
-use AdvisingApp\Notification\Notifications\DatabaseNotification;
-use AdvisingApp\Notification\Notifications\EmailNotification;
+use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use App\Models\Authenticatable;
+use App\Models\Tenant;
 use App\Models\User;
 use Filament\Notifications\Notification as FilamentNotification;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Notification;
 use Tests\Unit\TestEmailNotification;
 
 it('will create an outbound deliverable for the outbound notification', function () {
@@ -89,12 +90,96 @@ it('will not count emails sent to Super Admin Users against quota usage', functi
     expect(OutboundDeliverable::where('recipient_id', $nonSuperAdminUser->id)->where('channel', NotificationChannel::Email)->first()->quota_usage)->toBe(1);
 });
 
-class TestMultipleChannelNotification extends BaseNotification implements EmailNotification, DatabaseNotification
-{
-    use EmailChannelTrait;
-    use DatabaseChannelTrait;
+it('will not send emails in demo mode and mark the outbound deliverable as blocked', function () {
+    expect(OutboundDeliverable::count())->toBe(0);
 
-    public function toEmail(object $notifiable): MailMessage
+    $user = User::factory()->create();
+
+    $tenantConfig = Tenant::current()->config;
+    $tenantConfig->mail->isDemoModeEnabled = true;
+    Tenant::current()->update([
+        'config' => $tenantConfig,
+    ]);
+
+    $notification = new TestNotification();
+    $user->notify($notification);
+
+    expect(OutboundDeliverable::count())->toBe(1);
+    expect(OutboundDeliverable::first()->delivery_status)->toBe(NotificationDeliveryStatus::BlockedByDemoMode);
+});
+
+it('will send system notifications in demo mode', function () {
+    expect(OutboundDeliverable::count())->toBe(0);
+
+    $user = User::factory()->create();
+
+    $tenantConfig = Tenant::current()->config;
+    $tenantConfig->mail->isDemoModeEnabled = true;
+    $tenantConfig->mail->isExcludingSystemNotificationsFromDemoMode = true;
+    Tenant::current()->update([
+        'config' => $tenantConfig,
+    ]);
+
+    $notification = new TestSystemNotification();
+    $user->notify($notification);
+
+    expect(OutboundDeliverable::count())->toBe(1);
+    expect(OutboundDeliverable::first()->delivery_status)->not->toBe(NotificationDeliveryStatus::BlockedByDemoMode);
+});
+
+it('will not send system notifications in demo mode when system notifications are not excluded', function () {
+    expect(OutboundDeliverable::count())->toBe(0);
+
+    $user = User::factory()->create();
+
+    $tenantConfig = Tenant::current()->config;
+    $tenantConfig->mail->isDemoModeEnabled = true;
+    $tenantConfig->mail->isExcludingSystemNotificationsFromDemoMode = false;
+    Tenant::current()->update([
+        'config' => $tenantConfig,
+    ]);
+
+    $notification = new TestSystemNotification();
+    $user->notify($notification);
+
+    expect(OutboundDeliverable::count())->toBe(1);
+    expect(OutboundDeliverable::first()->delivery_status)->toBe(NotificationDeliveryStatus::BlockedByDemoMode);
+});
+
+class TestNotification extends Notification implements ShouldQueue
+{
+    use Queueable;
+
+    /**
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
+    {
+        return ['mail'];
+    }
+
+    public function toMail(object $notifiable): MailMessage
+    {
+        return MailMessage::make()
+            ->subject('Test Subject')
+            ->greeting('Test Greeting')
+            ->content('This is a test email');
+    }
+}
+
+class TestMultipleChannelNotification extends Notification implements ShouldQueue
+{
+    use Queueable;
+
+    /**
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
+    {
+        return ['mail', 'database'];
+    }
+
+    public function toMail(object $notifiable): MailMessage
     {
         return MailMessage::make()
             ->subject('Test Subject')
@@ -109,5 +194,24 @@ class TestMultipleChannelNotification extends BaseNotification implements EmailN
             ->title('This is a test database notification.')
             ->body('This is the content of your test database notification')
             ->getDatabaseMessage();
+    }
+}
+
+#[SystemNotification]
+class TestSystemNotification extends Notification implements ShouldQueue
+{
+    use Queueable;
+
+    public function via(object $notifiable): array
+    {
+        return ['mail'];
+    }
+
+    public function toMail(object $notifiable): MailMessage
+    {
+        return MailMessage::make()
+            ->subject('Test Subject')
+            ->greeting('Test Greeting')
+            ->content('This is a test email');
     }
 }

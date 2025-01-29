@@ -34,6 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Notifications\Concerns;
+namespace AdvisingApp\Notification\Notifications\Attributes;
 
-trait ChannelTrait {}
+use Attribute;
+
+#[Attribute]
+class SystemNotification {}

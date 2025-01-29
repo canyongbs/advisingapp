@@ -38,24 +38,33 @@ namespace AdvisingApp\Engagement\Notifications;
 
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
+use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
-use AdvisingApp\Notification\Notifications\EmailNotification;
+use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\AnonymousNotifiable;
+use Illuminate\Notifications\Notification;
 use Throwable;
 
-class EngagementEmailNotification extends BaseNotification implements EmailNotification
+class EngagementEmailNotification extends Notification implements ShouldQueue, HasBeforeSendHook
 {
-    use EmailChannelTrait;
+    use Queueable;
 
     public function __construct(
         public Engagement $engagement
     ) {}
 
-    public function toEmail(object $notifiable): MailMessage
+    /**
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
+    {
+        return ['mail'];
+    }
+
+    public function toMail(object $notifiable): MailMessage
     {
         return MailMessage::make()
             ->subject($this->engagement->subject)
@@ -70,7 +79,7 @@ class EngagementEmailNotification extends BaseNotification implements EmailNotif
         }
     }
 
-    public function beforeSend(AnonymousNotifiable|NotifiableInterface $notifiable, OutboundDeliverable $deliverable, NotificationChannel $channel): void
+    public function beforeSend(AnonymousNotifiable|CanBeNotified $notifiable, OutboundDeliverable $deliverable, NotificationChannel $channel): void
     {
         $deliverable->related()->associate($this->engagement);
     }

@@ -34,19 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Models\Contracts;
+namespace App\Notifications;
 
-interface NotifiableInterface
+use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use App\Models\NotificationSetting;
+use App\Models\User;
+use Filament\Notifications\Auth\ResetPassword;
+
+#[SystemNotification]
+class ResetPasswordNotification extends ResetPassword
 {
-    public function notify($instance);
+    /**
+     * @inheritDoc
+     */
+    public function toMail($notifiable): MailMessage
+    {
+        return MailMessage::make()
+            ->settings($this->resolveNotificationSetting($notifiable))
+            ->subject(__('Reset Password Notification'))
+            ->line(__('You are receiving this email because we received a password reset request for your account.'))
+            ->action(__('Reset Password'), $this->resetUrl($notifiable))
+            ->line(__('This password reset link will expire in :count minutes.', ['count' => config('auth.passwords.' . config('auth.defaults.passwords') . '.expire')]))
+            ->line(__('If you did not request a password reset, no further action is required.'));
+    }
 
-    public function notifyNow($instance, array $channels = null);
-
-    public function routeNotificationFor($driver, $notification = null);
-
-    public function notifications();
-
-    public function readNotifications();
-
-    public function unreadNotifications();
+    private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
+    {
+        return $notifiable->teams()->first()?->division?->notificationSetting?->setting;
+    }
 }

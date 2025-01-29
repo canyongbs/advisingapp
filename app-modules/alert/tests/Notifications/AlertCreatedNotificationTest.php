@@ -37,28 +37,27 @@
 use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\Alert\Notifications\AlertCreatedNotification;
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Notification\Notifications\Channels\DatabaseChannel;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
+use Illuminate\Support\Facades\Notification;
 
-use function Tests\Helpers\testItIsDispatchedToTheProperChannels;
+it('can be sent', function () {
+    Notification::fake();
 
-testItIsDispatchedToTheProperChannels(
-    notification: AlertCreatedNotification::class,
-    deliveryChannels: [DatabaseChannel::class],
-    triggerNotificationToNotifiable: function () {
-        $user = User::factory()->licensed(LicenseType::cases())->create();
-        $student = Student::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $student = Student::factory()->create();
 
-        $student->subscriptions()->create([
-            'user_id' => $user->id,
-        ]);
+    $student->subscriptions()->create([
+        'user_id' => $user->id,
+    ]);
 
-        Alert::factory()->create([
-            'concern_id' => $student->sisid,
-            'concern_type' => Student::class,
-        ]);
+    Alert::factory()->create([
+        'concern_id' => $student->sisid,
+        'concern_type' => Student::class,
+    ]);
 
-        return $user;
-    }
-);
+    Notification::assertSentTo(
+        $user,
+        AlertCreatedNotification::class,
+    );
+});

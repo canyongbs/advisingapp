@@ -37,7 +37,7 @@
 namespace AdvisingApp\MeetingCenter\Models;
 
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
-use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
+use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\BaseModel;
@@ -48,7 +48,7 @@ use Illuminate\Notifications\Notifiable;
 /**
  * @mixin IdeHelperEventAttendee
  */
-class EventAttendee extends BaseModel implements NotifiableInterface
+class EventAttendee extends BaseModel implements CanBeNotified
 {
     use Notifiable;
 
@@ -88,5 +88,10 @@ class EventAttendee extends BaseModel implements NotifiableInterface
             foreignKey: 'email',
             localKey: 'email',
         );
+    }
+
+    public function canRecieveSms(): bool
+    {
+        return false;
     }
 }

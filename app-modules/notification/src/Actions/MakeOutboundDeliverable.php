@@ -39,21 +39,18 @@ namespace AdvisingApp\Notification\Actions;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\DatabaseNotification;
-use AdvisingApp\Notification\Notifications\EmailNotification;
-use AdvisingApp\Notification\Notifications\OnDemandNotification;
-use AdvisingApp\Notification\Notifications\SmsNotification;
+use AdvisingApp\Notification\Notifications\Contracts\OnDemandNotification;
 use Illuminate\Notifications\AnonymousNotifiable;
+use Illuminate\Notifications\Notification;
 
 class MakeOutboundDeliverable
 {
-    public function handle(BaseNotification $notification, object $notifiable, NotificationChannel $channel): OutboundDeliverable
+    public function execute(Notification $notification, object $notifiable, NotificationChannel $channel): OutboundDeliverable
     {
-        $content = match (true) {
-            $channel === NotificationChannel::Sms && $notification instanceof SmsNotification => $notification->toSms($notifiable)->toArray(),
-            $channel === NotificationChannel::Email && $notification instanceof EmailNotification => $notification->toMail($notifiable)->toArray(),
-            $channel === NotificationChannel::Database && $notification instanceof DatabaseNotification => $notification->toDatabase($notifiable),
+        $content = match ($channel) {
+            NotificationChannel::Sms => $notification->toSms($notifiable)->toArray(),
+            NotificationChannel::Email => $notification->toMail($notifiable)->toArray(),
+            NotificationChannel::Database => $notification->toDatabase($notifiable),
         };
 
         $recipientId = null;
@@ -65,7 +62,7 @@ class MakeOutboundDeliverable
 
         return new OutboundDeliverable([
             'channel' => $channel,
-            'notification_class' => get_class($notification),
+            'notification_class' => $notification::class,
             'content' => $content,
             'recipient_id' => ! $notifiable instanceof AnonymousNotifiable ? $notifiable->getKey() : $recipientId,
             'recipient_type' => ! $notifiable instanceof AnonymousNotifiable ? $notifiable->getMorphClass() : $recipientType,

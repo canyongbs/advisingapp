@@ -34,35 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace App\Notifications;
+namespace AdvisingApp\Notification\Notifications\Contracts;
 
-use App\Models\NotificationSetting;
-use Illuminate\Notifications\Messages\MailMessage as BaseMailMessage;
-
-class MailMessage extends BaseMailMessage
+interface OnDemandNotification
 {
-    public static function make(): static
-    {
-        return app(static::class);
-    }
-
-    public function content(string $content): static
-    {
-        $this->viewData = [
-            $this->viewData,
-            'content' => $content,
-        ];
-
-        return $this;
-    }
-
-    public function settings(?NotificationSetting $setting): static
-    {
-        $this->viewData = [
-            $this->viewData,
-            'settings' => $setting,
-        ];
-
-        return $this;
-    }
+    public function identifyRecipient(): array;
 }

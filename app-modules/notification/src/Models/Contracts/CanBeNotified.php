@@ -34,9 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Notifications\Messages\Contracts;
+namespace AdvisingApp\Notification\Models\Contracts;
 
-interface Message
+interface CanBeNotified
 {
-    public function toArray(): array;
+    public function notify($instance);
+
+    public function notifyNow($instance, array $channels = null);
+
+    public function routeNotificationFor($driver, $notification = null);
+
+    public function notifications();
+
+    public function readNotifications();
+
+    public function unreadNotifications();
+
+    public function canRecieveSms(): bool;
 }
