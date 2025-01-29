@@ -54,8 +54,8 @@ class InteractionConfidentialUserFactory extends Factory
     public function definition(): array
     {
         return [
-            'interaction_id' => Interaction::factory()->create(),
-            'user_id' => User::factory()->create(),
+            'interaction_id' => Interaction::factory(),
+            'user_id' => User::factory(),
         ];
     }
 }

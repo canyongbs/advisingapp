@@ -54,8 +54,8 @@ class InteractionConfidentialTeamFactory extends Factory
     public function definition(): array
     {
         return [
-            'interaction_id' => Interaction::factory()->create(),
-            'team_id' => Team::factory()->create(),
+            'interaction_id' => Interaction::factory(),
+            'team_id' => Team::factory(),
         ];
     }
 }
