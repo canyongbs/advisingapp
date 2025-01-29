@@ -70,6 +70,26 @@
             this.state = this.state.filter((permission) => !permissions.includes(permission))
         },
     
+        selectAllInColumn: function(column) {
+            $root.querySelectorAll(`input[type='checkbox'][data-column='${column}']:not([disabled]):not([style*='display: none']):not(:checked)`).forEach((checkbox) => {
+                if (checkbox.checked) {
+                    return
+                }
+    
+                checkbox.click();
+            })
+        },
+    
+        selectNoneInColumn: function(column) {
+            $root.querySelectorAll(`input[type='checkbox'][data-column='${column}']:not([disabled]):not([style*='display: none']):checked`).forEach((checkbox) => {
+                if (!checkbox.checked) {
+                    return
+                }
+    
+                checkbox.click();
+            })
+        },
+    
     }"
     wire:key="{{ $getKey() }}.{{ $getGuard() }}"
 >
@@ -96,16 +116,50 @@
     @endif
 
     <div
-        class="grid divide-y divide-gray-950/5 rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:divide-white/10 dark:bg-gray-900 dark:ring-white/10">
+        class="grid divide-y divide-gray-950/5 rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:divide-white/10 dark:bg-gray-900 dark:ring-white/10"
+        x-ref="table"
+    >
         <div class="divide-gray-950/5 dark:divide-white/10 xl:flex xl:divide-x xl:divide-y-0">
-            <div class="px-3 py-2 font-medium text-gray-950 dark:text-white xl:flex-1">
+            <div class="flex items-center px-3 py-2 font-medium text-gray-950 dark:text-white xl:flex-1">
                 Permissions
             </div>
 
             <div class="hidden divide-x divide-gray-950/5 text-xs dark:divide-white/10 xl:grid xl:grid-cols-7 xl:gap-0">
                 @foreach (['View', 'Create', 'Update', 'Delete', 'Import', 'Force Delete', 'Restore'] as $operationLabel)
-                    <div class="flex items-center justify-center p-2 text-gray-950 dark:text-white xl:w-24">
-                        {{ $operationLabel }}
+                    <div
+                        class="flex flex-col items-center justify-center p-2 font-semibold text-gray-950 dark:text-white xl:w-24">
+                        <div>{{ $operationLabel }}</div>
+                        {{-- prettier-ignore-start --}}
+                        <div
+                            class="flex items-center gap-2"
+                            x-data="{ isVisible{{ $loop->index }}: false }"
+                            x-init="setInterval(() => isVisible{{ $loop->index }} = $el.closest(`[x-ref=\'table\']`).querySelectorAll(`input[type='checkbox'][data-column='{{ $loop->index }}']:not([disabled]):not([style*='display: none'])`).length, 100)"
+                            x-show="isVisible{{ $loop->index }}"
+                            x-cloak
+                        >
+                            <x-filament::link
+                                tag="button"
+                                :x-on:click="'selectAllInColumn('.$loop->index.')'"
+                                :x-data="'{ isAllVisible'.$loop->index.': false }'"
+                                :x-init="'setInterval(() => isAllVisible'.$loop->index.' = $el.closest(`[x-ref=\'table\']`).querySelectorAll(`input[type=\'checkbox\'][data-column=\''.$loop->index.'\']:not([disabled]):not([style*=\'display: none\']):not(:checked)`).length, 100)'"
+                                :x-show="'isAllVisible'.$loop->index"
+                                x-cloak
+                            >
+                                <span class="text-xs">All</span>
+                            </x-filament::link>
+
+                            <x-filament::link
+                                tag="button"
+                                :x-on:click="'selectNoneInColumn('.$loop->index.')'"
+                                :x-data="'{ isNoneVisible'.$loop->index.': false }'"
+                                :x-init="'setInterval(() => isNoneVisible'.$loop->index.' = $el.closest(`[x-ref=\'table\']`).querySelectorAll(`input[type=\'checkbox\'][data-column=\''.$loop->index.'\']:not([disabled]):not([style*=\'display: none\']):checked`).length, 100)'"
+                                :x-show="'isNoneVisible'.$loop->index"
+                                x-cloak
+                            >
+                                <span class="text-xs">None</span>
+                            </x-filament::link>
+                        </div>
+                        {{-- prettier-ignore-end --}}
                     </div>
                 @endforeach
             </div>
@@ -142,12 +196,13 @@
                         <label
                             class="flex items-center gap-2 xl:flex xl:w-24 xl:justify-center xl:px-3 xl:py-2"
                             @if ($operation !== 'view-any') x-bind:class="{
-                                    'opacity-50': ! state.includes(availablePermissions[group]['view-any']),
-                                    'hidden': ! Object.keys(availablePermissions[group]).includes(@js($operation)),
-                                }" @endif
+                                'opacity-50': ! state.includes(availablePermissions[group]['view-any']),
+                                'hidden': ! Object.keys(availablePermissions[group]).includes(@js($operation)),
+                            }" @endif
                         >
                             <x-filament::input.checkbox
                                 x-model="state"
+                                :data-column="$loop->index"
                                 :x-bind:value="'availablePermissions[group]['.Js::from($operation).
                                 ']'"
                                 :x-bind:disabled="(($operation === 'view-any') || $isDisabled) ? null:
