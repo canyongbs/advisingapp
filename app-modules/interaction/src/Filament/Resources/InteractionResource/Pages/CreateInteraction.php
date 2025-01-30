@@ -92,7 +92,7 @@ class CreateInteraction extends CreateRecord
             }
 
             $set('end_datetime', Carbon::parse($startDateTime)
-                ->addMinutes($duration)
+                ->addMinutes((int) $duration)
                 ->toDateTimeString());
         };
 
