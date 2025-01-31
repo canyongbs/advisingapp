@@ -35,9 +35,9 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\InteractionsRelationManager;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\InteractionsRelationManager;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Team\Models\Team;
 use App\Models\User;
