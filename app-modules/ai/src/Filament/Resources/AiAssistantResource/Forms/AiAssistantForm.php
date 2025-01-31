@@ -169,12 +169,12 @@ class AiAssistantForm
                             ->storeFiles(false)
                             ->helperText(function (?AiAssistant $record): string {
                                 if ($record?->files->count() < 3) {
-                                    return 'You may upload a total of 3 files to your custom assistant. Files must be less than 256mb.';
+                                    return 'You may upload a total of 3 files to your custom assistant. Files must be less than 20MB.';
                                 }
 
                                 return "You've reached the maximum file upload limit of 3 for custom assistants. Please delete a file if you wish to upload another.";
                             })
-                            ->maxSize(256)
+                            ->maxSize(20000)
                             ->columnSpan(function (Get $get) {
                                 $files = $get('files');
                                 $firstFile = reset($files);
