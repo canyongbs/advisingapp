@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Interaction\Models\Scopes;
 
-use App\Features\ConfidentialInteractionFeatureFlag;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
@@ -48,7 +47,7 @@ class InteractionConfidentialScope implements Scope
      */
     public function apply(Builder $builder, Model $model): void
     {
-        if (! ConfidentialInteractionFeatureFlag::active() || auth()->user()?->IsAdmin) {
+        if (auth()->user()?->IsAdmin) {
             return;
         }
 
