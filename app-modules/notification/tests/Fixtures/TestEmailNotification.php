@@ -34,14 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace Tests\Unit;
+namespace AdvisingApp\Notification\Tests\Fixtures;
 
-use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 
-class TestSmsNotification extends Notification implements ShouldQueue
+class TestEmailNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -50,12 +50,14 @@ class TestSmsNotification extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['sms'];
+        return ['mail'];
     }
 
-    public function toSms(object $notifiable): TwilioMessage
+    public function toMail(object $notifiable): MailMessage
     {
-        return TwilioMessage::make($notifiable)
-            ->content('This is a test');
+        return MailMessage::make()
+            ->subject('Test Subject')
+            ->greeting('Test Greeting')
+            ->content('This is a test email');
     }
 }

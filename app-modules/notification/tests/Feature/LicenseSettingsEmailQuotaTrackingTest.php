@@ -37,7 +37,7 @@
 use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
-use App\Models\Authenticatable;
+use AdvisingApp\Notification\Tests\Fixtures\TestEmailNotification;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Settings\LicenseSettings;
@@ -46,9 +46,7 @@ use Illuminate\Support\Facades\Event;
 
 use function Pest\Laravel\assertDatabaseCount;
 
-use Tests\Unit\TestEmailNotification;
-
-it('An email is allowed to be sent if there is available quota and its quota usage is tracked', function () {
+test('An email is allowed to be sent if there is available quota and its quota usage is tracked', function () {
     Event::fake(MessageSent::class);
 
     $configurationSet = 'test';
@@ -78,7 +76,7 @@ it('An email is allowed to be sent if there is available quota and its quota usa
     );
 });
 
-it('An email is prevented from being sent if there is no available quota', function () {
+test('An email is prevented from being sent if there is no available quota', function () {
     Event::fake(MessageSent::class);
 
     $configurationSet = 'test';
@@ -108,7 +106,7 @@ it('An email is prevented from being sent if there is no available quota', funct
         ->and($outboundDeliverable->delivery_status)->toBe(NotificationDeliveryStatus::RateLimited);
 });
 
-it('An email is sent to a super admin user even if there is no available quota', function () {
+test('An email is sent to a user even if there is no available quota', function () {
     Event::fake(MessageSent::class);
 
     $configurationSet = 'test';
@@ -123,8 +121,6 @@ it('An email is sent to a super admin user even if there is no available quota',
     $licenseSettings->save();
 
     $notifiable = User::factory()->create();
-
-    $notifiable->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
 
     $notification = new TestEmailNotification();
 

@@ -39,6 +39,7 @@ use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use AdvisingApp\Notification\Tests\Fixtures\TestEmailNotification;
 use App\Models\Authenticatable;
 use App\Models\Tenant;
 use App\Models\User;
@@ -46,7 +47,6 @@ use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
-use Tests\Unit\TestEmailNotification;
 
 it('will create an outbound deliverable for the outbound notification', function () {
     $notifiable = User::factory()->create();

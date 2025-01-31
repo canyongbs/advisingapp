@@ -38,9 +38,9 @@ namespace AdvisingApp\Notification\Database\Factories;
 
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
+use AdvisingApp\Notification\Tests\Fixtures\TestEmailNotification;
+use AdvisingApp\Notification\Tests\Fixtures\TestSmsNotification;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Tests\Unit\TestEmailNotification;
-use Tests\Unit\TestSmsNotification;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Notification\Models\OutboundDeliverable>

@@ -86,7 +86,7 @@ class SmsChannel
 
             $twilioSettings = app(TwilioSettings::class);
 
-            $quotaUsage = $twilioSettings->is_demo_mode_enabled ? 0 : $this->determineQuotaUsage($message, $deliverable);
+            $quotaUsage = $this->determineQuotaUsage($message, $deliverable);
 
             throw_if($quotaUsage && (! $this->canSendWithinQuotaLimits($quotaUsage)), new NotificationQuotaExceeded());
 
@@ -143,9 +143,7 @@ class SmsChannel
                         'delivery_status' => $twilioSettings->is_demo_mode_enabled
                             ? NotificationDeliveryStatus::BlockedByDemoMode
                             : NotificationDeliveryStatus::Dispatched,
-                        'quota_usage' => $twilioSettings->is_demo_mode_enabled
-                            ? 0
-                            : $this->determineQuotaUsage($result, $deliverable),
+                        'quota_usage' => $this->determineQuotaUsage($result, $deliverable),
                     ]);
                 } else {
                     $deliverable->update([
@@ -174,7 +172,11 @@ class SmsChannel
 
     protected function determineQuotaUsage(TwilioMessage | SmsChannelResultData $message, OutboundDeliverable $deliverable): int
     {
-        if ($deliverable->recipient instanceof User && $deliverable->isSuperAdmin()) {
+        if (app(TwilioSettings::class)->is_demo_mode_enabled) {
+            return 0;
+        }
+
+        if ($deliverable->recipient instanceof User) {
             return 0;
         }
 
