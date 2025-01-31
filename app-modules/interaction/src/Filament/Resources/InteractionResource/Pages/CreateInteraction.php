@@ -49,7 +49,6 @@ use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\ConfidentialInteractionFeatureFlag;
 use App\Models\Scopes\ExcludeConvertedProspects;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Checkbox;
@@ -134,8 +133,7 @@ class CreateInteraction extends CreateRecord
                             ->multiple()
                             ->exists('teams', 'id')
                             ->visible(fn (Get $get) => $get('is_confidential')),
-                    ])
-                    ->visible(fn (): bool => ConfidentialInteractionFeatureFlag::active()),
+                    ]),
                 Fieldset::make('Details')
                     ->schema([
                         Select::make('interaction_initiative_id')
