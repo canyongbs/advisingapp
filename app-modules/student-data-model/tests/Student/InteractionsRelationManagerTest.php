@@ -36,7 +36,6 @@
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\RelationManagers\InteractionsRelationManager;
-use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages\ListInteractions;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -70,45 +69,53 @@ test('ListInteration with display data using the is_confidential field', functio
     $allInteractions = $confidentialInteraction->merge($nonConfidentialInteraction);
 
     $student = Student::factory()
-    ->create();
+        ->create();
 
     $student->interactions()->saveMany($allInteractions);
     $student->refresh();
 
     actingAs($user);
-    livewire(InteractionsRelationManager::class,
-    [
-        'ownerRecord' => $student,
-        'pageClass' => ViewStudent::class,
-    ])
+    livewire(
+        InteractionsRelationManager::class,
+        [
+            'ownerRecord' => $student,
+            'pageClass' => ViewStudent::class,
+        ]
+    )
         ->set('tableRecordsPerPage', 20)
         ->assertCanSeeTableRecords($allInteractions);
 
     actingAs($userWithoutAttach);
-    livewire(InteractionsRelationManager::class,
-    [
-        'ownerRecord' => $student,
-        'pageClass' => ViewStudent::class,
-    ])
+    livewire(
+        InteractionsRelationManager::class,
+        [
+            'ownerRecord' => $student,
+            'pageClass' => ViewStudent::class,
+        ]
+    )
         ->set('tableRecordsPerPage', 10)
         ->assertCanSeeTableRecords($nonConfidentialInteraction)
         ->assertCanNotSeeTableRecords($confidentialInteraction);
 
     actingAs($teamUser);
-    livewire(InteractionsRelationManager::class,
-    [
-        'ownerRecord' => $student,
-        'pageClass' => ViewStudent::class,
-    ])
+    livewire(
+        InteractionsRelationManager::class,
+        [
+            'ownerRecord' => $student,
+            'pageClass' => ViewStudent::class,
+        ]
+    )
         ->set('tableRecordsPerPage', 20)
         ->assertCanSeeTableRecords($allInteractions);
 
     asSuperAdmin();
-    livewire(InteractionsRelationManager::class,
-    [
-        'ownerRecord' => $student,
-        'pageClass' => ViewStudent::class,
-    ])
+    livewire(
+        InteractionsRelationManager::class,
+        [
+            'ownerRecord' => $student,
+            'pageClass' => ViewStudent::class,
+        ]
+    )
         ->set('tableRecordsPerPage', 20)
         ->assertCanSeeTableRecords($allInteractions);
 });
