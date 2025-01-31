@@ -170,7 +170,7 @@ class MailChannel extends BaseMailChannel
 
     protected function determineQuotaUsage(MailMessage $message, OutboundDeliverable $deliverable): int
     {
-        $usage = ($deliverable->recipient instanceof User && $deliverable->recipient->isSuperAdmin()) ? 0 : 1;
+        $usage = ($deliverable->recipient instanceof User) ? 0 : 1;
 
         $recipientCcEmails = [
             ...$message->cc,
@@ -178,16 +178,12 @@ class MailChannel extends BaseMailChannel
         ];
 
         if ($recipientCcEmails) {
-            $users = User::query()
-                ->with('roles')
+            $usage += (count($recipientCcEmails) - User::query()
                 ->whereIn('email', $recipientCcEmails)
-                ->get()
-                ->keyBy('email');
+                ->count());
         }
 
-        return $usage + collect($recipientCcEmails)
-            ->filter(fn (string $ccEmail): bool => ! ($users[$ccEmail] ?? null)?->isSuperAdmin())
-            ->count();
+        return $usage;
     }
 
     protected function canSendWithinQuotaLimits(int $usage): bool

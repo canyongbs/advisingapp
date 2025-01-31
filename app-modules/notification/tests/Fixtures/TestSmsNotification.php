@@ -34,36 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Tests\Feature;
+namespace AdvisingApp\Notification\Tests\Fixtures;
 
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use App\Models\NotificationSetting;
+use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 
-class TestEmailSettingFromNameNotification extends Notification implements ShouldQueue
+class TestSmsNotification extends Notification implements ShouldQueue
 {
     use Queueable;
-
-    public function __construct(
-        public NotificationSetting $setting,
-    ) {}
 
     /**
      * @return array<int, string>
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['sms'];
     }
 
-    public function toMail(object $notifiable): MailMessage
+    public function toSms(object $notifiable): TwilioMessage
     {
-        return MailMessage::make()
-            ->settings($this->setting)
-            ->subject('Test Subject')
-            ->greeting('Test Greeting')
-            ->content('This is a test email');
+        return TwilioMessage::make($notifiable)
+            ->content('This is a test');
     }
 }

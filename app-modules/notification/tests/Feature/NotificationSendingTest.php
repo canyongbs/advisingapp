@@ -39,14 +39,13 @@ use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use App\Models\Authenticatable;
+use AdvisingApp\Notification\Tests\Fixtures\TestEmailNotification;
 use App\Models\Tenant;
 use App\Models\User;
 use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
-use Tests\Unit\TestEmailNotification;
 
 it('will create an outbound deliverable for the outbound notification', function () {
     $notifiable = User::factory()->create();
@@ -69,25 +68,6 @@ it('will create an outbound deliverable for each of the channels that the notifi
     expect(OutboundDeliverable::count())->toBe(2);
     expect(OutboundDeliverable::where('channel', NotificationChannel::Email)->count())->toBe(1);
     expect(OutboundDeliverable::where('channel', NotificationChannel::Database)->count())->toBe(1);
-});
-
-it('will not count emails sent to Super Admin Users against quota usage', function () {
-    // Given that we have a super admin user
-    $user = User::factory()->create();
-    $nonSuperAdminUser = User::factory()->create();
-
-    $user->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
-
-    // And they are sent a deliverable of any kind
-    $notification = new TestMultipleChannelNotification();
-    $user->notify($notification);
-
-    $notification = new TestMultipleChannelNotification();
-    $nonSuperAdminUser->notify($notification);
-
-    // Then the quota usage for the super admin user should be 0
-    expect(OutboundDeliverable::where('recipient_id', $user->id)->where('channel', NotificationChannel::Email)->first()->quota_usage)->toBe(0);
-    expect(OutboundDeliverable::where('recipient_id', $nonSuperAdminUser->id)->where('channel', NotificationChannel::Email)->first()->quota_usage)->toBe(1);
 });
 
 it('will not send emails in demo mode and mark the outbound deliverable as blocked', function () {
