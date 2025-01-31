@@ -72,8 +72,9 @@ return [
     'notifications' => [
         /*
          * Notifications will only get sent if this option is set to `true`.
+         * NOTE: If we decide to turn this back on, the `Notifiable` class will need to be updated. As right now it fails when trying to create the OutboundDeliverable.
          */
-        'enabled' => true,
+        'enabled' => false,
 
         'notifications' => [
             CheckFailedNotification::class => ['mail'],

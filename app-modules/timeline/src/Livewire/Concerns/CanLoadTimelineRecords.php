@@ -67,6 +67,7 @@ trait CanLoadTimelineRecords
 
         $records = Timeline::query()
             ->forEntity($this->recordModel)
+            ->whereHas('timelineable')
             ->whereIn(
                 'timelineable_type',
                 collect($this->modelsToTimeline)->map(fn ($model) => resolve($model)->getMorphClass())->toArray()
