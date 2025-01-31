@@ -38,6 +38,7 @@ use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Tests\Fixtures\TestEmailNotification;
+use AdvisingApp\Prospect\Models\Prospect;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Settings\LicenseSettings;
@@ -55,7 +56,7 @@ test('An email is allowed to be sent if there is available quota and its quota u
     $settings->configuration_set = $configurationSet;
     $settings->save();
 
-    $notifiable = User::factory()->create();
+    $notifiable = Prospect::factory()->create();
 
     $notification = new TestEmailNotification();
 
@@ -90,7 +91,7 @@ test('An email is prevented from being sent if there is no available quota', fun
     $licenseSettings->data->limits->emails = 0;
     $licenseSettings->save();
 
-    $notifiable = User::factory()->create();
+    $notifiable = Prospect::factory()->create();
 
     $notification = new TestEmailNotification();
 
