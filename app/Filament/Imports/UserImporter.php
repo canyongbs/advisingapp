@@ -38,6 +38,7 @@ namespace App\Filament\Imports;
 
 use App\Models\User;
 use App\Notifications\SetPasswordNotification;
+use App\Rules\EmailNotInUseOrSoftDeleted;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
@@ -50,25 +51,22 @@ class UserImporter extends Importer
     {
         return [
             ImportColumn::make('name')
-                ->rules(['required'])
+                ->rules(['required', 'max:255'])
                 ->requiredMapping()
                 ->example('Jonathan Smith'),
             ImportColumn::make('email')
-                ->rules(['required', 'email'])
+                ->rules(['required', 'email', new EmailNotInUseOrSoftDeleted(), 'max:255'])
                 ->requiredMapping()
                 ->example('johnsmith@gmail.com'),
             ImportColumn::make('job_title')
-                ->rules(['required'])
+                ->rules(['required', 'string', 'max:255'])
                 ->requiredMapping()
                 ->example('Advisor'),
-            ImportColumn::make('emplid')
-                ->rules(['string'])
-                ->example('12345'),
             ImportColumn::make('is_external')
                 ->label('External User')
                 ->boolean()
                 ->rules(['boolean'])
-                ->example('yes'),
+                ->example('true'),
         ];
     }
 
@@ -90,6 +88,13 @@ class UserImporter extends Importer
         }
 
         return $body;
+    }
+
+    protected function afterFill(): void
+    {
+        /** @var User $record */
+        $record = $this->record;
+        $record->is_external ??= true;
     }
 
     protected function afterCreate(): void
