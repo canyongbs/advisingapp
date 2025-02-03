@@ -37,38 +37,39 @@
 namespace AdvisingApp\Engagement\Actions;
 
 use AdvisingApp\Engagement\Models\Engagement;
-use App\Models\Tenant;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\Middleware\WithoutOverlapping;
-use Illuminate\Queue\SerializesModels;
 
-/**
- * @deprecated Remove after deploying engagements refactor.
- */
-class DeliverEngagements implements ShouldQueue
+class CreateBatchedEngagement
 {
+    use Batchable;
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
 
+    public function __construct(
+        public EngagementBatch $engagementBatch,
+        public CanBeNotified $recipient,
+    ) {}
+
     public function handle(): void
     {
-        Engagement::query()
-            ->where('deliver_at', '<=', now())
-            ->whereDoesntHave('outboundDeliverables')
-            ->isNotPartOfABatch()
-            ->cursor()
-            ->each(function (Engagement $engagement) {
-                $engagement->driver()->deliver();
-            });
-    }
+        $engagement = new Engagement();
+        $engagement->engagementBatch()->associate($this->engagementBatch);
+        $engagement->user()->associate($this->engagementBatch->user);
+        $engagement->recipient()->associate($this->recipient);
+        $engagement->channel = $this->engagementBatch->channel;
+        $engagement->subject = $this->engagementBatch->subject;
+        $engagement->scheduled_at = $this->engagementBatch->scheduledAt;
 
-    public function middleware(): array
-    {
-        return [(new WithoutOverlapping(Tenant::current()->id))->dontRelease()->expireAfter(180)];
+        /**
+         * @deprecated Remove after deploying engagements refactor.
+         */
+        $engagement->deliver_at = $data->scheduledAt ?? now();
+
+        $engagement->save();
+
+        if (! $engagement->scheduled_at) {
+            $engagement->recipient->notify($engagement->makeNotification());
+        }
     }
 }

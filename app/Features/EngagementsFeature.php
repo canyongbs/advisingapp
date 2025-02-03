@@ -34,41 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Actions;
+namespace App\Features;
 
-use AdvisingApp\Engagement\Models\Engagement;
-use App\Models\Tenant;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\Middleware\WithoutOverlapping;
-use Illuminate\Queue\SerializesModels;
+use App\Support\AbstractFeatureFlag;
 
-/**
- * @deprecated Remove after deploying engagements refactor.
- */
-class DeliverEngagements implements ShouldQueue
+class EngagementsFeature extends AbstractFeatureFlag
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
-    public function handle(): void
+    public function resolve(mixed $scope): mixed
     {
-        Engagement::query()
-            ->where('deliver_at', '<=', now())
-            ->whereDoesntHave('outboundDeliverables')
-            ->isNotPartOfABatch()
-            ->cursor()
-            ->each(function (Engagement $engagement) {
-                $engagement->driver()->deliver();
-            });
-    }
-
-    public function middleware(): array
-    {
-        return [(new WithoutOverlapping(Tenant::current()->id))->dontRelease()->expireAfter(180)];
+        return false;
     }
 }

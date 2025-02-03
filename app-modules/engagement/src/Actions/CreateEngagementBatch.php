@@ -37,10 +37,12 @@
 namespace AdvisingApp\Engagement\Actions;
 
 use AdvisingApp\Engagement\DataTransferObjects\EngagementBatchCreationData;
+use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Engagement\Notifications\EngagementBatchFinishedNotification;
 use AdvisingApp\Engagement\Notifications\EngagementBatchStartedNotification;
+use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Bus\Batch;
@@ -50,7 +52,15 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\DB;
 
+/**
+ * @deprecated After deploying engagements refactor:
+ * - Remove interface
+ * - Remove all traits
+ * - Remove constructor
+ * - Remove `handle()` method, this is an action class and not a job.
+ */
 class CreateEngagementBatch implements ShouldQueue
 {
     use Dispatchable;
@@ -59,8 +69,50 @@ class CreateEngagementBatch implements ShouldQueue
     use SerializesModels;
 
     public function __construct(
-        public EngagementBatchCreationData $data
+        public ?EngagementBatchCreationData $data = null,
     ) {}
+
+    public function execute(EngagementCreationData $data): void
+    {
+        $engagementBatch = new EngagementBatch();
+        $engagementBatch->user()->associate($data->user);
+        $engagementBatch->channel = $data->channel;
+        $engagementBatch->subject = $data->subject;
+        $engagementBatch->scheduled_at = $data->scheduledAt;
+        $engagementBatch->total_engagements = $data->recipient->count();
+        $engagementBatch->processed_engagements = 0;
+        $engagementBatch->successful_engagements = 0;
+
+        DB::transaction(function () use ($engagementBatch, $data) {
+            $engagementBatch->save();
+
+            [$engagementBatch->body] = tiptap_converter()->saveImages(
+                $data->body,
+                disk: 's3-public',
+                record: $engagementBatch,
+                recordAttribute: 'body',
+                newImages: $data->temporaryBodyImages,
+            );
+            $engagementBatch->save();
+
+            $batch = Bus::batch(
+                $data->recipient
+                    ->map(fn (CanBeNotified $recipient): CreateBatchedEngagement => new CreateBatchedEngagement($engagementBatch, $recipient))
+                    ->all(),
+            )
+                ->name("Bulk Engagement {$engagementBatch->getKey()}")
+                ->finally(function () use ($engagementBatch) {
+                    $engagementBatch->refresh();
+
+                    $engagementBatch->user->notify(new EngagementBatchFinishedNotification($engagementBatch));
+                })
+                ->allowFailures()
+                ->dispatch();
+
+            $engagementBatch->identifier = $batch->id;
+            $engagementBatch->save();
+        });
+    }
 
     public function handle(): void
     {

@@ -36,39 +36,43 @@
 
 namespace AdvisingApp\Engagement\Actions;
 
+use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Engagement\Models\Engagement;
-use App\Models\Tenant;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\Middleware\WithoutOverlapping;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\DB;
 
-/**
- * @deprecated Remove after deploying engagements refactor.
- */
-class DeliverEngagements implements ShouldQueue
+class CreateEngagement
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
-    public function handle(): void
+    public function execute(EngagementCreationData $data): Engagement
     {
-        Engagement::query()
-            ->where('deliver_at', '<=', now())
-            ->whereDoesntHave('outboundDeliverables')
-            ->isNotPartOfABatch()
-            ->cursor()
-            ->each(function (Engagement $engagement) {
-                $engagement->driver()->deliver();
-            });
-    }
+        $engagement = new Engagement();
+        $engagement->user()->associate($data->user);
+        $engagement->recipient()->associate($data->recipient);
+        $engagement->channel = $data->channel;
+        $engagement->subject = $data->subject;
+        $engagement->scheduled_at = $data->scheduledAt;
 
-    public function middleware(): array
-    {
-        return [(new WithoutOverlapping(Tenant::current()->id))->dontRelease()->expireAfter(180)];
+        /**
+         * @deprecated Remove after deploying engagements refactor.
+         */
+        $engagement->deliver_at = $data->scheduledAt ?? now();
+
+        DB::transaction(function () use ($data, $engagement) {
+            $engagement->save();
+
+            [$engagement->body] = tiptap_converter()->saveImages(
+                $data->body,
+                disk: 's3-public',
+                record: $engagement,
+                recordAttribute: 'body',
+                newImages: $data->temporaryBodyImages,
+            );
+            $engagement->save();
+        });
+
+        if (! $engagement->scheduled_at) {
+            $engagement->recipient->notify($engagement->makeNotification());
+        }
+
+        return $engagement;
     }
 }

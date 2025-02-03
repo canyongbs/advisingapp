@@ -34,41 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Actions;
+namespace AdvisingApp\Engagement\DataTransferObjects;
 
-use AdvisingApp\Engagement\Models\Engagement;
-use App\Models\Tenant;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\Middleware\WithoutOverlapping;
-use Illuminate\Queue\SerializesModels;
+use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
+use App\Models\User;
+use Carbon\CarbonInterface;
+use Illuminate\Database\Eloquent\Collection;
+use Spatie\LaravelData\Data;
 
-/**
- * @deprecated Remove after deploying engagements refactor.
- */
-class DeliverEngagements implements ShouldQueue
+class EngagementCreationData extends Data
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
-    public function handle(): void
-    {
-        Engagement::query()
-            ->where('deliver_at', '<=', now())
-            ->whereDoesntHave('outboundDeliverables')
-            ->isNotPartOfABatch()
-            ->cursor()
-            ->each(function (Engagement $engagement) {
-                $engagement->driver()->deliver();
-            });
-    }
-
-    public function middleware(): array
-    {
-        return [(new WithoutOverlapping(Tenant::current()->id))->dontRelease()->expireAfter(180)];
-    }
+    public function __construct(
+        public User $user,
+        public CanBeNotified | Collection $recipient,
+        public NotificationChannel $channel,
+        public ?string $subject = null,
+        public ?array $body = null,
+        public array $temporaryBodyImages = [],
+        public ?CarbonInterface $scheduledAt = null,
+    ) {}
 }
