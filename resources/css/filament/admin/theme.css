@@ -216,3 +216,15 @@
 .fi-page-sub-navigation-sidebar .fi-sidebar-item-grouped-border {
     @apply hidden;
 }
+
+.fi-sidebar {
+    @apply !bg-white dark:!bg-gray-900;
+}
+
+.fi-sidebar-nav > ul > li .fi-active > a {
+    @apply dark:bg-white/20;
+}
+
+.fi-sidebar-nav > ul > li a {
+    @apply dark:hover:!bg-white/20;
+}
