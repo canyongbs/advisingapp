@@ -125,7 +125,6 @@ jobs:
       DB_USERNAME: root
       DB_PASSWORD: root
       DB_DATABASE: testing_landlord
-      SCOUT_PREFIX: test_
       REDIS_HOST: 127.0.0.1
 
     timeout-minutes: 15
@@ -212,7 +211,6 @@ jobs:
       DB_USERNAME: root
       DB_PASSWORD: root
       DB_DATABASE: testing_landlord
-      SCOUT_PREFIX: test_
       PENNANT_STORE: array
 
     timeout-minutes: 15
