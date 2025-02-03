@@ -34,17 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Tests\EngagementFile\RequestFactories;
+namespace AdvisingApp\Engagement\Tests\Feature\EngagementFile\RequestFactories;
 
 use Worksome\RequestFactories\RequestFactory;
 
-class EditEngagementFileRequestFactory extends RequestFactory
+class CreateEngagementFileRequestFactory extends RequestFactory
 {
     public function definition(): array
     {
         return [
             'description' => $this->faker->sentence(3),
-            'file' => 'fake-file.pdf',
+            'file' => $this->faker->file(),
         ];
     }
 }

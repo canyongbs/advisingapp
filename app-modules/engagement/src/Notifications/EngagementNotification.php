@@ -37,21 +37,23 @@
 namespace AdvisingApp\Engagement\Notifications;
 
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Engagement\Models\EngagementBatch;
+use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\DB;
 use Throwable;
 
-/**
- * @deprecated Remove after deploying engagements refactor.
- */
-class EngagementEmailNotification extends Notification implements ShouldQueue, HasBeforeSendHook
+class EngagementNotification extends Notification implements ShouldQueue, HasBeforeSendHook, HasAfterSendHook
 {
     use Queueable;
 
@@ -64,7 +66,10 @@ class EngagementEmailNotification extends Notification implements ShouldQueue, H
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return [match ($this->engagement->channel) {
+            NotificationChannel::Email => 'mail',
+            NotificationChannel::Sms => 'sms',
+        }];
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -73,6 +78,12 @@ class EngagementEmailNotification extends Notification implements ShouldQueue, H
             ->subject($this->engagement->subject)
             ->greeting("Hello {$this->engagement->recipient->display_name}!")
             ->content($this->engagement->getBody());
+    }
+
+    public function toSms(object $notifiable): TwilioMessage
+    {
+        return TwilioMessage::make($notifiable)
+            ->content($this->engagement->getBodyMarkdown());
     }
 
     public function failed(?Throwable $exception): void
@@ -85,5 +96,20 @@ class EngagementEmailNotification extends Notification implements ShouldQueue, H
     public function beforeSend(AnonymousNotifiable|CanBeNotified $notifiable, OutboundDeliverable $deliverable, NotificationChannel $channel): void
     {
         $deliverable->related()->associate($this->engagement);
+    }
+
+    public function afterSend(AnonymousNotifiable|CanBeNotified $notifiable, OutboundDeliverable $deliverable, NotificationResultData $result): void
+    {
+        if (! $this->engagement->engagementBatch) {
+            return;
+        }
+
+        EngagementBatch::query()
+            ->whereKey($this->engagement->engagementBatch)
+            ->lockForUpdate()
+            ->update([
+                'processed_engagements' => DB::raw('processed_engagements + 1'),
+                ...($result->success ? ['successful_engagements' => DB::raw('successful_engagements + 1')] : []),
+            ]);
     }
 }

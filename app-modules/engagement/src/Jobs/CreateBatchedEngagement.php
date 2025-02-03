@@ -34,11 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Actions;
+namespace AdvisingApp\Engagement\Jobs;
 
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Engagement\Models\EngagementBatch;
+use AdvisingApp\Engagement\Notifications\EngagementNotification;
+use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
+use Illuminate\Bus\Batchable;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\DB;
 
-class CreateBatchedEngagement
+class CreateBatchedEngagement implements ShouldQueue
 {
     use Batchable;
     use Dispatchable;
@@ -59,17 +69,18 @@ class CreateBatchedEngagement
         $engagement->recipient()->associate($this->recipient);
         $engagement->channel = $this->engagementBatch->channel;
         $engagement->subject = $this->engagementBatch->subject;
-        $engagement->scheduled_at = $this->engagementBatch->scheduledAt;
-
-        /**
-         * @deprecated Remove after deploying engagements refactor.
-         */
-        $engagement->deliver_at = $data->scheduledAt ?? now();
-
-        $engagement->save();
+        $engagement->scheduled_at = $this->engagementBatch->scheduled_at;
 
         if (! $engagement->scheduled_at) {
-            $engagement->recipient->notify($engagement->makeNotification());
+            $engagement->dispatched_at = now();
         }
+
+        DB::transaction(function () use ($engagement) {
+            $engagement->save();
+
+            if (! $engagement->scheduled_at) {
+                $engagement->recipient->notifyNow(new EngagementNotification($engagement));
+            }
+        });
     }
 }

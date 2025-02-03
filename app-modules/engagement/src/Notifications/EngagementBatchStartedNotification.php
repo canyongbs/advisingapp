@@ -37,6 +37,7 @@
 namespace AdvisingApp\Engagement\Notifications;
 
 use AdvisingApp\Engagement\Models\EngagementBatch;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use App\Models\NotificationSetting;
 use App\Models\User;
@@ -49,17 +50,9 @@ class EngagementBatchStartedNotification extends Notification implements ShouldQ
 {
     use Queueable;
 
-    private string $title;
-
     public function __construct(
         public EngagementBatch $engagementBatch,
-        public int $jobsToProcess,
-        public string $channel,
-    ) {
-        $this->title = $this->channel === 'email'
-                  ? 'Bulk email request is being processed and will be sent shortly.'
-                  : 'Bulk text request is being processed and will be sent shortly.';
-    }
+    ) {}
 
     /**
      * @return array<int, string>
@@ -73,16 +66,20 @@ class EngagementBatchStartedNotification extends Notification implements ShouldQ
     {
         return MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable))
-            ->subject($this->title)
-            ->line("We've started processing your bulk engagement of {$this->jobsToProcess} jobs, and we'll keep you updated on the progress.");
+            ->subject(($this->engagementBatch->channel === NotificationChannel::Email)
+                ? 'Bulk email started processing'
+                : 'Bulk SMS started processing')
+            ->line("We've started processing your bulk engagement of {$this->engagementBatch->total_engagements} messages, and we'll keep you updated on the progress.");
     }
 
     public function toDatabase(object $notifiable): array
     {
         return FilamentNotification::make()
             ->status('success')
-            ->title($this->title)
-            ->body("{$this->jobsToProcess} jobs due for processing.")
+            ->title(($this->engagementBatch->channel === NotificationChannel::Email)
+            ? 'Bulk email started processing'
+            : 'Bulk SMS started processing')
+            ->body("We've started processing your bulk engagement of {$this->engagementBatch->total_engagements} messages, and we'll keep you updated on the progress.")
             ->getDatabaseMessage();
     }
 

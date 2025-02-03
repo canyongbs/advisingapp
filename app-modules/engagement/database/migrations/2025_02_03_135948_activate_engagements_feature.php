@@ -34,8 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Exceptions;
+use App\Features\EngagementsFeature;
+use Illuminate\Database\Migrations\Migration;
 
-use Exception;
+return new class () extends Migration {
+    public function up(): void
+    {
+        EngagementsFeature::activate();
+    }
 
-class InvalidNotificationTypeInChannel extends Exception {}
+    public function down(): void
+    {
+        EngagementsFeature::deactivate();
+    }
+};

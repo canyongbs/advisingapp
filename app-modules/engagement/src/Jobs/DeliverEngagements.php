@@ -34,57 +34,52 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Notifications;
+namespace AdvisingApp\Engagement\Jobs;
 
 use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use App\Models\NotificationSetting;
-use App\Models\User;
-use Filament\Notifications\Notification as FilamentNotification;
+use AdvisingApp\Engagement\Notifications\EngagementNotification;
+use App\Models\Tenant;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Notification;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
+use Illuminate\Support\Facades\DB;
 
-class EngagementEmailSentNotification extends Notification implements ShouldQueue
+class DeliverEngagements implements ShouldQueue
 {
+    use Dispatchable;
+    use InteractsWithQueue;
     use Queueable;
 
-    public function __construct(
-        public Engagement $engagement
-    ) {}
-
-    /**
-     * @return array<int, string>
-     */
-    public function via(object $notifiable): array
+    public function handle(): void
     {
-        return ['mail', 'database'];
+        Engagement::query()
+            ->where(fn (Builder $query) => $query
+                ->whereNull('scheduled_at')
+                ->orWhere('scheduled_at', '<=', now()))
+            ->whereNull('dispatched_at')
+            ->with('recipient')
+            ->chunkById(
+                250,
+                fn (Engagement $engagement) => DB::transaction(function () use ($engagement) {
+                    $updatedEngagementsCount = Engagement::query()
+                        ->whereNull('dispatched_at')
+                        ->whereKey($engagement)
+                        ->update(['dispatched_at' => now()]);
+
+                    if (! $updatedEngagementsCount) {
+                        return;
+                    }
+
+                    $engagement->recipient->notify(new EngagementNotification($engagement));
+                }),
+            );
     }
 
-    public function toMail(object $notifiable): MailMessage
+    public function middleware(): array
     {
-        $morph = str($this->engagement->recipient->getMorphClass());
-
-        return MailMessage::make()
-            ->settings($this->resolveNotificationSetting($notifiable))
-            ->subject('Your Engagement email has successfully been delivered.')
-            ->line("Your engagement was successfully delivered to {$morph} {$this->engagement->recipient->display_name}.");
-    }
-
-    public function toDatabase(object $notifiable): array
-    {
-        $morph = str($this->engagement->recipient->getMorphClass());
-
-        return FilamentNotification::make()
-            ->success()
-            ->title('Engagement Email Successfully Delivered')
-            ->body("Your engagement email was successfully delivered to {$morph} {$this->engagement->recipient->display_name}.")
-            ->getDatabaseMessage();
-    }
-
-    private function resolveNotificationSetting(CanBeNotified $notifiable): ?NotificationSetting
-    {
-        return $notifiable instanceof User ? $this->engagement->createdBy->teams()->first()?->division?->notificationSetting?->setting : null;
+        return [(new WithoutOverlapping(Tenant::current()->id))->dontRelease()->expireAfter(180)];
     }
 }

@@ -42,8 +42,6 @@ use AdvisingApp\Engagement\Drivers\Contracts\EngagementDeliverableDriver;
 use AdvisingApp\Engagement\Drivers\EngagementEmailDriver;
 use AdvisingApp\Engagement\Drivers\EngagementSmsDriver;
 use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
-use AdvisingApp\Engagement\Notifications\EngagementEmailNotification;
-use AdvisingApp\Engagement\Notifications\EngagementSmsNotification;
 use AdvisingApp\Engagement\Observers\EngagementObserver;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
@@ -67,7 +65,6 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Notifications\Notification;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 use League\HTMLToMarkdown\HtmlConverter;
@@ -96,12 +93,16 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         'recipient_id',
         'recipient_type',
         'deliver_at',
+        'scheduled_at',
+        'dispatched_at',
         'channel',
     ];
 
     protected $casts = [
         'body' => 'array',
         'deliver_at' => 'datetime',
+        'scheduled_at' => 'datetime',
+        'dispatched_at' => 'datetime',
         'channel' => NotificationChannel::class,
     ];
 
@@ -239,14 +240,6 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
                 'student preferred name',
             ],
             default => [],
-        };
-    }
-
-    public function makeNotification(): Notification
-    {
-        return match ($this->channel) {
-            NotificationChannel::Email => new EngagementEmailNotification($this),
-            NotificationChannel::Sms => new EngagementSmsNotification($this),
         };
     }
 

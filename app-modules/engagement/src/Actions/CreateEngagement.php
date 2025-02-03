@@ -38,6 +38,7 @@ namespace AdvisingApp\Engagement\Actions;
 
 use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Engagement\Notifications\EngagementNotification;
 use Illuminate\Support\Facades\DB;
 
 class CreateEngagement
@@ -51,10 +52,9 @@ class CreateEngagement
         $engagement->subject = $data->subject;
         $engagement->scheduled_at = $data->scheduledAt;
 
-        /**
-         * @deprecated Remove after deploying engagements refactor.
-         */
-        $engagement->deliver_at = $data->scheduledAt ?? now();
+        if (! $engagement->scheduled_at) {
+            $engagement->dispatched_at = now();
+        }
 
         DB::transaction(function () use ($data, $engagement) {
             $engagement->save();
@@ -67,11 +67,11 @@ class CreateEngagement
                 newImages: $data->temporaryBodyImages,
             );
             $engagement->save();
-        });
 
-        if (! $engagement->scheduled_at) {
-            $engagement->recipient->notify($engagement->makeNotification());
-        }
+            if (! $engagement->scheduled_at) {
+                $engagement->recipient->notify(new EngagementNotification($engagement));
+            }
+        });
 
         return $engagement;
     }

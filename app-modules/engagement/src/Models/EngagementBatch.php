@@ -42,6 +42,7 @@ use AdvisingApp\Engagement\Actions\CreateEngagementBatch;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementBatchCreationData;
 use AdvisingApp\Engagement\Models\Concerns\HasManyEngagements;
 use AdvisingApp\Engagement\Observers\EngagementBatchObserver;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use App\Models\BaseModel;
 use App\Models\User;
 use DOMDocument;
@@ -63,6 +64,22 @@ class EngagementBatch extends BaseModel implements ExecutableFromACampaignAction
 
     protected $fillable = [
         'user_id',
+        'subject',
+        'body',
+        'scheduled_at',
+        'channel',
+        'total_engagements',
+        'processed_engagements',
+        'successful_engagements',
+    ];
+
+    protected $casts = [
+        'body' => 'array',
+        'scheduled_at' => 'datetime',
+        'channel' => NotificationChannel::class,
+        'total_engagements' => 'integer',
+        'processed_engagements' => 'integer',
+        'successful_engagements' => 'integer',
     ];
 
     public function user(): BelongsTo

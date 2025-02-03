@@ -38,6 +38,7 @@ namespace AdvisingApp\Engagement\Actions;
 
 use AdvisingApp\Engagement\DataTransferObjects\EngagementBatchCreationData;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
+use AdvisingApp\Engagement\Jobs\CreateBatchedEngagement;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Engagement\Notifications\EngagementBatchFinishedNotification;
@@ -112,6 +113,8 @@ class CreateEngagementBatch implements ShouldQueue
             $engagementBatch->identifier = $batch->id;
             $engagementBatch->save();
         });
+
+        $engagementBatch->user->notify(new EngagementBatchStartedNotification($engagementBatch));
     }
 
     public function handle(): void
@@ -146,12 +149,12 @@ class CreateEngagementBatch implements ShouldQueue
             return $engagement->driver()->jobForDelivery();
         });
 
-        $engagementBatch->user->notify(new EngagementBatchStartedNotification($engagementBatch, $deliverableJobs->count(), $channel));
+        $engagementBatch->user->notify(new EngagementBatchStartedNotification($engagementBatch));
 
         Bus::batch($deliverableJobs)
             ->name("Process Bulk Engagement {$engagementBatch->id}")
-            ->finally(function (Batch $batchQueue) use ($engagementBatch, $channel) {
-                $engagementBatch->user->notify(new EngagementBatchFinishedNotification($engagementBatch, $batchQueue->totalJobs, $batchQueue->failedJobs, $channel));
+            ->finally(function (Batch $batchQueue) use ($engagementBatch) {
+                $engagementBatch->user->notify(new EngagementBatchFinishedNotification($engagementBatch));
             })
             ->allowFailures()
             ->dispatch();

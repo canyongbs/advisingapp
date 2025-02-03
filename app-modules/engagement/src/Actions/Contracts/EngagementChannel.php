@@ -36,6 +36,9 @@
 
 namespace AdvisingApp\Engagement\Actions\Contracts;
 
+/**
+ * @deprecated Remove after deploying engagements refactor.
+ */
 interface EngagementChannel
 {
     public function deliver(): void;
