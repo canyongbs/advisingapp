@@ -34,16 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Filament\Resources\EngagementResource\Pages;
+namespace AdvisingApp\Engagement\Filament\Actions;
 
-use AdvisingApp\Engagement\Filament\Resources\EngagementResource;
-use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Fields\EngagementSmsBodyField;
+use AdvisingApp\Engagement\Actions\CreateEngagement;
+use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
+use AdvisingApp\Engagement\Filament\Forms\Components\EngagementSmsBodyInput;
+use AdvisingApp\Engagement\Filament\ManageRelatedRecords\ManageRelatedEngagementRecords\Actions\RelationManagerDraftWithAiAction;
 use AdvisingApp\Engagement\Models\EmailTemplate;
+use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use App\Filament\Forms\Components\EducatableSelect;
-use Filament\Forms\Components\Actions\Action;
+use App\Features\EngagementsFeature;
+use Filament\Actions\Action;
+use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Fieldset;
@@ -54,26 +57,34 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
-use Filament\Resources\Pages\CreateRecord;
-use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables\Actions\CreateAction;
 use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
-class CreateEngagement extends CreateRecord
+class RelationManagerSendEngagementAction extends CreateAction
 {
-    protected static string $resource = EngagementResource::class;
-
-    public function form(Form $form): Form
+    protected function setUp(): void
     {
-        return $form
-            ->schema([
+        parent::setUp();
+
+        $this->icon('heroicon-m-chat-bubble-bottom-center-text')
+            ->label('New Email or Text')
+            ->modalHeading('Create new email or text')
+            ->model(Engagement::class)
+            ->authorize(function (RelationManager $livewire) {
+                $ownerRecord = $livewire->getOwnerRecord();
+
+                return auth()->user()->can('create', [Engagement::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
+            })
+            ->form(fn (Form $form) => $form->schema([
                 Select::make('channel')
                     ->label('What would you like to send?')
                     ->options(NotificationChannel::getEngagementOptions())
                     ->default(NotificationChannel::Email->value)
-                    ->disableOptionWhen(fn (string $value): bool => NotificationChannel::tryFrom($value)?->getCaseDisabled())
+                    ->disableOptionWhen(fn (RelationManager $livewire, string $value): bool => (($value == (NotificationChannel::Sms->value) && ! $livewire->getOwnerRecord()->canRecieveSms())) || NotificationChannel::tryFrom($value)?->getCaseDisabled())
                     ->selectablePlaceholder(false)
                     ->live(),
                 Fieldset::make('Content')
@@ -87,14 +98,13 @@ class CreateEngagement extends CreateRecord
                         TiptapEditor::make('body')
                             ->disk('s3-public')
                             ->label('Body')
-                            ->mergeTags([
+                            ->mergeTags($mergeTags = [
                                 'student first name',
                                 'student last name',
                                 'student full name',
                                 'student email',
                                 'student preferred name',
                             ])
-                            ->showMergeTagsInBlocksPanel(! ($form->getLivewire() instanceof RelationManager))
                             ->profile('email')
                             ->required()
                             ->hintAction(fn (TiptapEditor $component) => Action::make('loadEmailTemplate')
@@ -151,12 +161,12 @@ class CreateEngagement extends CreateRecord
                             ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
                             ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
                             ->columnSpanFull(),
-                        EngagementSmsBodyField::make(context: 'create', form: $form),
+                        EngagementSmsBodyInput::make(context: 'create', form: $form),
+                        Actions::make([
+                            RelationManagerDraftWithAiAction::make()
+                                ->mergeTags($mergeTags),
+                        ]),
                     ]),
-                EducatableSelect::make('recipient')
-                    ->label('Recipient')
-                    ->required()
-                    ->hiddenOn([RelationManager::class, ManageRelatedRecords::class]),
                 Fieldset::make('Send your email or text')
                     ->schema([
                         Toggle::make('send_later')
@@ -164,30 +174,60 @@ class CreateEngagement extends CreateRecord
                             ->helperText('By default, this email or text will send as soon as it is created unless you schedule it to send later.'),
                         DateTimePicker::make('deliver_at')
                             ->required()
-                            ->visible(fn (callable $get) => $get('send_later')),
+                            ->visible(fn (Get $get) => $get('send_later')),
                     ]),
+            ]))
+            ->action(function (array $data, Form $form, RelationManager $livewire) {
+                if ($data['channel'] == NotificationChannel::Sms->value && ! $livewire->getOwnerRecord()->canRecieveSms()) {
+                    Notification::make()
+                        ->title('Student does not have mobile number.')
+                        ->danger()
+                        ->send();
+
+                    $this->halt();
+                }
+
+                if (EngagementsFeature::active()) {
+                    $engagement = app(CreateEngagement::class)->execute(new EngagementCreationData(
+                        user: auth()->user(),
+                        recipient: $livewire->getOwnerRecord(),
+                        channel: NotificationChannel::parse($data['channel']),
+                        subject: $data['subject'] ?? null,
+                        body: $data['body'] ?? null,
+                        temporaryBodyImages: array_map(
+                            fn (TemporaryUploadedFile $file): array => [
+                                'extension' => $file->getClientOriginalExtension(),
+                                'path' => (fn () => $this->path)->call($file),
+                            ],
+                            $form->getFlatFields()['body']->getTemporaryImages(),
+                        ),
+                        scheduledAt: ($data['send_later'] ?? false) ? ($data['deliver_at'] ?? null) : null,
+                    ));
+                } else {
+                    $engagement = new Engagement($data);
+                    $engagement->recipient()->associate($livewire->getOwnerRecord());
+                    $engagement->save();
+                }
+
+                $form->model($engagement)->saveRelationships();
+            })
+            ->modalSubmitActionLabel('Send')
+            ->modalCloseButton(false)
+            ->closeModalByClickingAway(false)
+            ->closeModalByEscaping(false)
+            ->createAnother(false)
+            ->extraModalFooterActions([
+                Action::make('cancel')
+                    ->color('gray')
+                    ->cancelParentActions()
+                    ->requiresConfirmation()
+                    ->action(fn () => null)
+                    ->modalSubmitAction(fn (Action $action) => $action->color('danger')),
             ]);
     }
 
-    public function beforeCreate(): void
+    public static function getDefaultName(): ?string
     {
-        $record = null;
-
-        $data = $this->form->getState();
-
-        if ($data['recipient_type'] == app(Prospect::class)->getMorphClass()) {
-            $record = Prospect::find($data['recipient_id']);
-        } elseif ($data['recipient_type'] == app(Student::class)->getMorphClass()) {
-            $record = Student::find($data['recipient_id']);
-        }
-
-        if ($record && ! $record->canRecieveSms()) {
-            Notification::make()
-                ->title(ucfirst($data['recipient_type']) . ' does not have mobile number.')
-                ->danger()
-                ->send();
-
-            $this->halt();
-        }
+        return 'engage';
     }
 }

@@ -36,11 +36,15 @@
 
 namespace AdvisingApp\Timeline\Timelines;
 
-use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Components\EngagementViewAction;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Timeline\Models\CustomTimeline;
 use Filament\Actions\ViewAction;
+use Filament\Infolists\Components\Fieldset;
+use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\TextEntry;
+use Illuminate\Support\HtmlString;
 
 // TODO Decide where these belong - might want to keep these in the context of the original module
 class EngagementTimeline extends CustomTimeline
@@ -75,6 +79,39 @@ class EngagementTimeline extends CustomTimeline
 
     public function modalViewAction(): ViewAction
     {
-        return EngagementViewAction::make()->record($this->engagement);
+        return ViewAction::make()
+            ->infolist([
+                TextEntry::make('user.name')
+                    ->label('Created By'),
+                Fieldset::make('Content')
+                    ->schema([
+                        TextEntry::make('subject')
+                            ->hidden(fn ($state): bool => blank($state))
+                            ->columnSpanFull(),
+                        TextEntry::make('body')
+                            ->getStateUsing(fn (Engagement $engagement): HtmlString => $engagement->getBody())
+                            ->columnSpanFull(),
+                    ]),
+                Fieldset::make('latestOutboundDeliverable')
+                    ->label('Delivery Information')
+                    ->columnSpanFull()
+                    ->schema([
+                        TextEntry::make('channel')
+                            ->label('Channel'),
+                        IconEntry::make('latestOutboundDeliverable.delivery_status')
+                            ->icon(fn (NotificationDeliveryStatus $state): string => $state->getIconClass())
+                            ->color(fn (NotificationDeliveryStatus $state): string => $state->getColor())
+                            ->label('Status')
+                            ->default(NotificationDeliveryStatus::Processing),
+                        TextEntry::make('latestOutboundDeliverable.delivered_at')
+                            ->label('Delivered At')
+                            ->hidden(fn (Engagement $engagement): bool => is_null($engagement->latestOutboundDeliverable?->delivered_at)),
+                        TextEntry::make('latestOutboundDeliverable.delivery_response')
+                            ->label('Error Details')
+                            ->hidden(fn (Engagement $engagement): bool => is_null($engagement->latestOutboundDeliverable?->delivery_response)),
+                    ])
+                    ->columns(2),
+            ])
+            ->record($this->engagement);
     }
 }

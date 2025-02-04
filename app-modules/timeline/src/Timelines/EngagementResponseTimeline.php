@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Timeline\Timelines;
 
-use AdvisingApp\Engagement\Filament\Resources\EngagementResponseResource\Components\EngagementResponseViewAction;
+use AdvisingApp\Engagement\Filament\Resources\EngagementResponseResource\Actions\EngagementResponseViewAction;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Timeline\Models\CustomTimeline;
 use Filament\Actions\ViewAction;

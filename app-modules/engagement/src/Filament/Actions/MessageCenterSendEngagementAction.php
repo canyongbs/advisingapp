@@ -36,19 +36,23 @@
 
 namespace AdvisingApp\Engagement\Filament\Actions;
 
-use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Fields\EngagementSmsBodyField;
+use AdvisingApp\Engagement\Actions\CreateEngagement;
+use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
+use AdvisingApp\Engagement\Filament\Forms\Components\EngagementSmsBodyInput;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use App\Features\EngagementsFeature;
 use Filament\Actions\Action;
-use Filament\Actions\StaticAction;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
@@ -56,8 +60,9 @@ use Filament\Notifications\Notification;
 use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
-class SendEngagementAction extends Action
+class MessageCenterSendEngagementAction extends Action
 {
     protected Educatable $educatable;
 
@@ -65,7 +70,7 @@ class SendEngagementAction extends Action
     {
         parent::setUp();
 
-        $this->icon('heroicon-o-chat-bubble-bottom-center-text')
+        $this->icon('heroicon-m-chat-bubble-bottom-center-text')
             ->modalHeading('Send Engagement')
             ->modalDescription(fn () => "Send an engagement to {$this->getEducatable()->display_name}.")
             ->model(Engagement::class)
@@ -151,11 +156,20 @@ class SendEngagementAction extends Action
                             ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
                             ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
                             ->columnSpanFull(),
-                        EngagementSmsBodyField::make(context: 'create'),
+                        EngagementSmsBodyInput::make(context: 'create'),
                         Actions::make([
                             MessageCenterDraftWithAiAction::make()
                                 ->mergeTags($mergeTags),
                         ]),
+                    ]),
+                Fieldset::make('Send your email or text')
+                    ->schema([
+                        Toggle::make('send_later')
+                            ->reactive()
+                            ->helperText('By default, this email or text will send as soon as it is created unless you schedule it to send later.'),
+                        DateTimePicker::make('deliver_at')
+                            ->required()
+                            ->visible(fn (Get $get) => $get('send_later')),
                     ]),
             ])
             ->action(function (array $data, Form $form) {
@@ -168,13 +182,29 @@ class SendEngagementAction extends Action
                     $this->halt();
                 }
 
-                $createOnDemandEngagement = resolve(CreateOnDemandEngagement::class);
+                if (EngagementsFeature::active()) {
+                    $engagement = app(CreateEngagement::class)->execute(new EngagementCreationData(
+                        user: auth()->user(),
+                        recipient: $this->getEducatable(),
+                        channel: NotificationChannel::parse($data['channel']),
+                        subject: $data['subject'] ?? null,
+                        body: $data['body'] ?? null,
+                        temporaryBodyImages: array_map(
+                            fn (TemporaryUploadedFile $file): array => [
+                                'extension' => $file->getClientOriginalExtension(),
+                                'path' => (fn () => $this->path)->call($file),
+                            ],
+                            $form->getFlatFields()['body']->getTemporaryImages(),
+                        ),
+                        scheduledAt: ($data['send_later'] ?? false) ? ($data['deliver_at'] ?? null) : null,
+                    ));
+                } else {
+                    $engagement = new Engagement($data);
+                    $engagement->recipient()->associate($this->getEducatable());
+                    $engagement->save();
+                }
 
-                $createOnDemandEngagement(
-                    $this->getEducatable(),
-                    $data,
-                    afterCreation: fn (Engagement $engagement) => $form->model($engagement)->saveRelationships(),
-                );
+                $form->model($engagement)->saveRelationships();
             })
             ->modalSubmitActionLabel('Send')
             ->modalCloseButton(false)
@@ -187,7 +217,7 @@ class SendEngagementAction extends Action
                     ->cancelParentActions()
                     ->requiresConfirmation()
                     ->action(fn () => null)
-                    ->modalSubmitAction(fn (StaticAction $action) => $action->color('danger')),
+                    ->modalSubmitAction(fn (Action $action) => $action->color('danger')),
             ]);
     }
 

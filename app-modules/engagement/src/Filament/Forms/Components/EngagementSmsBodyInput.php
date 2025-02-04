@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Filament\Resources\EngagementResource\Fields;
+namespace AdvisingApp\Engagement\Filament\Forms\Components;
 
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\SmsTemplate;
@@ -51,7 +51,7 @@ use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 
-class EngagementSmsBodyField
+class EngagementSmsBodyInput
 {
     public static function make(string $context, ?Form $form = null, string $fieldPrefix = '')
     {

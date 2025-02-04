@@ -36,44 +36,24 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
-use AdvisingApp\Engagement\Filament\ManageRelatedRecords\ManageRelatedEngagementRecords\Actions\DraftWithAiAction;
-use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Fields\EngagementSmsBodyField;
+use AdvisingApp\Engagement\Filament\Actions\RelationManagerSendEngagementAction;
 use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
-use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Timeline\Models\Timeline;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Infolists\Components\Fieldset as InfolistFieldset;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
-use Filament\Notifications\Notification;
-use Filament\Pages\Page;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Query\Expression;
 use Illuminate\Support\HtmlString;
 
 class EngagementsRelationManager extends RelationManager
@@ -139,109 +119,6 @@ class EngagementsRelationManager extends RelationManager
         });
     }
 
-    public function form(Form $form): Form
-    {
-        return $form->schema([
-            Select::make('channel')
-                ->label('What would you like to send?')
-                ->options(NotificationChannel::getEngagementOptions())
-                ->default(NotificationChannel::Email->value)
-                ->disableOptionWhen(fn (string $value): bool => (($value == (NotificationChannel::Sms->value) && ! $this->getOwnerRecord()->canRecieveSms())) || NotificationChannel::tryFrom($value)?->getCaseDisabled())
-                ->selectablePlaceholder(false)
-                ->live(),
-            Fieldset::make('Content')
-                ->schema([
-                    TextInput::make('subject')
-                        ->autofocus()
-                        ->required()
-                        ->placeholder(__('Subject'))
-                        ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
-                        ->columnSpanFull(),
-                    TiptapEditor::make('body')
-                        ->disk('s3-public')
-                        ->label('Body')
-                        ->mergeTags($mergeTags = [
-                            'student first name',
-                            'student last name',
-                            'student full name',
-                            'student email',
-                            'student preferred name',
-                        ])
-                        ->showMergeTagsInBlocksPanel(! ($form->getLivewire() instanceof Page))
-                        ->profile('email')
-                        ->required()
-                        ->hintAction(fn (TiptapEditor $component) => Action::make('loadEmailTemplate')
-                            ->form([
-                                Select::make('emailTemplate')
-                                    ->searchable()
-                                    ->options(function (Get $get): array {
-                                        return EmailTemplate::query()
-                                            ->when(
-                                                $get('onlyMyTemplates'),
-                                                fn (Builder $query) => $query->whereBelongsTo(auth()->user())
-                                            )
-                                            ->orderBy('name')
-                                            ->limit(50)
-                                            ->pluck('name', 'id')
-                                            ->toArray();
-                                    })
-                                    ->getSearchResultsUsing(function (Get $get, string $search): array {
-                                        return EmailTemplate::query()
-                                            ->when(
-                                                $get('onlyMyTemplates'),
-                                                fn (Builder $query) => $query->whereBelongsTo(auth()->user())
-                                            )
-                                            ->when(
-                                                $get('onlyMyTeamTemplates'),
-                                                fn (Builder $query) => $query->whereIn('user_id', auth()->user()->teams->users->pluck('id'))
-                                            )
-                                            ->where(new Expression('lower(name)'), 'like', "%{$search}%")
-                                            ->orderBy('name')
-                                            ->limit(50)
-                                            ->pluck('name', 'id')
-                                            ->toArray();
-                                    }),
-                                Checkbox::make('onlyMyTemplates')
-                                    ->label('Only show my templates')
-                                    ->live()
-                                    ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
-                                Checkbox::make('onlyMyTeamTemplates')
-                                    ->label("Only show my team's templates")
-                                    ->live()
-                                    ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
-                            ])
-                            ->action(function (array $data) use ($component) {
-                                $template = EmailTemplate::find($data['emailTemplate']);
-
-                                if (! $template) {
-                                    return;
-                                }
-
-                                $component->state(
-                                    $component->generateImageUrls($template->content),
-                                );
-                            }))
-                        ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
-                        ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
-                        ->columnSpanFull(),
-                    EngagementSmsBodyField::make(context: 'create', form: $form),
-                    Actions::make([
-                        DraftWithAiAction::make()
-                            ->mergeTags($mergeTags),
-                    ]),
-                ]),
-            Fieldset::make('Send your email or text')
-                ->schema([
-                    Toggle::make('send_later')
-                        ->reactive()
-                        ->helperText('By default, this email or text will send as soon as it is created unless you schedule it to send later.'),
-                    DateTimePicker::make('deliver_at')
-                        ->required()
-                        ->visible(fn (Get $get) => $get('send_later')),
-                ]),
-        ]);
-    }
-
     public function table(Table $table): Table
     {
         $canAccessEngagements = auth()->user()->can('viewAny', Engagement::class);
@@ -277,34 +154,7 @@ class EngagementsRelationManager extends RelationManager
                     ->sortable(),
             ])
             ->headerActions([
-                CreateAction::make()
-                    ->label('New Email or Text')
-                    ->modalHeading('Create new email or text')
-                    ->authorize(function () {
-                        $ownerRecord = $this->getOwnerRecord();
-
-                        return auth()->user()->can('create', [Engagement::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
-                    })
-                    ->createAnother(false)
-                    ->action(function (CreateAction $action, array $data, Form $form) {
-                        if ($data['channel'] == NotificationChannel::Sms->value && ! $this->getOwnerRecord()->canRecieveSms()) {
-                            Notification::make()
-                                ->title('Student does not have mobile number.')
-                                ->danger()
-                                ->send();
-
-                            $action->halt();
-                        }
-
-                        /** @var Student $record */
-                        $record = $this->getOwnerRecord();
-
-                        $engagement = new Engagement($data);
-                        $engagement->recipient()->associate($record);
-                        $engagement->save();
-
-                        $form->model($engagement)->saveRelationships();
-                    }),
+                RelationManagerSendEngagementAction::make(),
             ])
             ->actions([
                 ViewAction::make()

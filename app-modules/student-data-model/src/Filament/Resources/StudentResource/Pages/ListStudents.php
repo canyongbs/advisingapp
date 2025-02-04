@@ -38,8 +38,6 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
 use AdvisingApp\CareTeam\Filament\Actions\ToggleCareTeamBulkAction;
 use AdvisingApp\Engagement\Filament\Actions\BulkEngagementAction;
-use AdvisingApp\Engagement\Filament\Actions\Concerns\ImplementsHasBulkEngagementAction;
-use AdvisingApp\Engagement\Filament\Actions\Contracts\HasBulkEngagementAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeBulkAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeTableAction;
 use AdvisingApp\Segment\Actions\BulkSegmentAction;
@@ -77,10 +75,8 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\HtmlString;
 
-class ListStudents extends ListRecords implements HasBulkEngagementAction
+class ListStudents extends ListRecords
 {
-    use ImplementsHasBulkEngagementAction;
-
     protected static string $resource = StudentResource::class;
 
     public function table(Table $table): Table

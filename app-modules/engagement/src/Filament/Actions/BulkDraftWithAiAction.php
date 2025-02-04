@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Filament\ManageRelatedRecords\ManageRelatedEngagementRecords\Actions;
+namespace AdvisingApp\Engagement\Filament\Actions;
 
 use AdvisingApp\Ai\Actions\CompletePrompt;
 use AdvisingApp\Ai\Exceptions\MessageResponseException;
@@ -49,13 +49,12 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
-use Filament\Resources\Pages\ManageRelatedRecords;
-use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Resources\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Str;
 
-class DraftWithAiAction extends Action
+class BulkDraftWithAiAction extends Action
 {
     protected array | Closure $mergeTags = [];
 
@@ -67,8 +66,8 @@ class DraftWithAiAction extends Action
             ->label('Draft with AI Assistant')
             ->link()
             ->icon('heroicon-m-pencil')
-            ->modalContent(fn (ManageRelatedRecords | RelationManager $livewire) => view('engagement::filament.manage-related-records.manage-related-engagement-records.draft-with-ai-modal-content', [
-                'recordTitle' => $livewire->getOwnerRecord()->getAttribute($livewire->getOwnerRecord()::displayNameKey()),
+            ->modalContent(fn (Page $livewire) => view('engagement::filament.actions.draft-with-ai-modal-content', [
+                'recordTitle' => $livewire::getResource()::getPluralModelLabel(),
                 'avatarUrl' => AiAssistant::query()->where('is_default', true)->first()
                     ?->getFirstTemporaryUrl(now()->addHour(), 'avatar', 'avatar-height-250px') ?: Vite::asset('resources/images/canyon-ai-headshot.jpg'),
             ]))
@@ -81,13 +80,13 @@ class DraftWithAiAction extends Action
                     ->placeholder('What do you want to write about?')
                     ->required(),
             ])
-            ->action(function (array $data, Get $get, Set $set, ManageRelatedRecords | RelationManager $livewire) {
+            ->action(function (array $data, Get $get, Set $set, Page $livewire) {
                 $model = app(AiIntegratedAssistantSettings::class)->default_model;
 
                 $userName = auth()->user()->name;
                 $userJobTitle = auth()->user()->job_title ?? 'staff member';
                 $clientName = app(LicenseSettings::class)->data->subscription->clientName;
-                $educatableLabel = $livewire->getOwnerRecord()::getLabel();
+                $educatableLabel = $livewire::getResource()::getPluralModelLabel();
 
                 $mergeTagsList = collect($this->getMergeTags())
                     ->map(fn (string $tag): string => <<<HTML
@@ -101,7 +100,7 @@ class DraftWithAiAction extends Action
                             aiModel: $model,
                             prompt: <<<EOL
                                 The user's name is {$userName} and they are a {$userJobTitle} at {$clientName}.
-                                Please draft a short SMS message for a {$educatableLabel} at their college.
+                                Please draft a short SMS message for {$educatableLabel} at their college.
                                 The user will send a message to you containing instructions for the content.
 
                                 You should only respond with the SMS content, you should never greet them.
@@ -135,7 +134,7 @@ class DraftWithAiAction extends Action
                         aiModel: $model,
                         prompt: <<<EOL
                             The user's name is {$userName} and they are a {$userJobTitle} at {$clientName}.
-                            Please draft an email for a {$educatableLabel} at their college.
+                            Please draft an email for {$educatableLabel} at their college.
                             The user will send a message to you containing instructions for the content.
 
                             You should only respond with the email content, you should never greet them.
