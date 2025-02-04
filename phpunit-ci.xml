@@ -33,7 +33,6 @@
     <server name="AUDIT_QUEUE_CONNECTION" value="sync"/>
     <server name="SESSION_DRIVER" value="array"/>
     <server name="TELESCOPE_ENABLED" value="false"/>
-    <server name="SCOUT_QUEUE" value="false"/>
     <env name="REDIS_HOST" value="127.0.0.1"/>
     <env name="DB_CONNECTION" value="landlord"/>
     <env name="DB_HOST" value="127.0.0.1"/>
@@ -47,6 +46,5 @@
     <env name="TENANT_DB_USERNAME" value="root"/>
     <env name="TENANT_DB_PASSWORD" value="root"/>
     <env name="AZURE_OPEN_AI_ENABLE_TEST_MODE" value="true"/>
-    <env name="SCOUT_DRIVER" value="database"/>
   </php>
 </phpunit>

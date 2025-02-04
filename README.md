@@ -75,7 +75,6 @@ Amazon Web Services (AWS):
 * AWS ALB
 * AWS EC2 (Multi-AZ)
 * AWS SQS
-* AWS OpenSearch (Serverless)
 * AWS ElastiCache Redis Instance
 * AWS RDS Aurora PostgreSQL w/ FDW Configuration (Serverless)
 * AWS RDS ElastiCache Redis Instance

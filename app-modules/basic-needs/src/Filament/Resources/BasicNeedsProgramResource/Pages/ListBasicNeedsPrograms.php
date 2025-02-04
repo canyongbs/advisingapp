@@ -38,13 +38,13 @@ namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pa
 
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource;
 use App\Filament\Tables\Columns\IdColumn;
-use App\Filament\Tables\Columns\OpenSearch\TextColumn;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 

@@ -37,12 +37,12 @@
 namespace App\Filament\Resources\NotificationSettingResource\Pages;
 
 use App\Filament\Resources\NotificationSettingResource;
-use App\Filament\Tables\Columns\OpenSearch\TextColumn;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
 class ListNotificationSettings extends ListRecords
