@@ -39,7 +39,6 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use App\Models\User;
 use Filament\Actions\CreateAction;
-use Filament\Actions\ImportAction;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
@@ -81,7 +80,7 @@ it('renders the ImportAction based on proper access', function () {
 
     livewire(ListStudents::class)
         ->assertOk()
-        ->assertActionHidden(ImportAction::class);
+        ->assertActionHidden('importStudents');
 
     $studentSettings = app(ManageStudentConfigurationSettings::class);
     $studentSettings->is_enabled = true;
@@ -91,13 +90,13 @@ it('renders the ImportAction based on proper access', function () {
 
     livewire(ListStudents::class)
         ->assertOk()
-        ->assertActionHidden(ImportAction::class);
+        ->assertActionHidden('importStudents');
 
     $user->givePermissionTo('student.import');
 
     livewire(ListStudents::class)
         ->assertOk()
-        ->assertActionVisible(ImportAction::class);
+        ->assertActionVisible('importStudents');
 });
 
 it('renders the CreateAction based on proper access', function () {
