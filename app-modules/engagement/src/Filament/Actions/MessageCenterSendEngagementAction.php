@@ -45,6 +45,7 @@ use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use App\Features\EngagementsFeature;
 use Filament\Actions\Action;
+use Filament\Actions\StaticAction;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\Checkbox;
@@ -217,7 +218,7 @@ class MessageCenterSendEngagementAction extends Action
                     ->cancelParentActions()
                     ->requiresConfirmation()
                     ->action(fn () => null)
-                    ->modalSubmitAction(fn (Action $action) => $action->color('danger')),
+                    ->modalSubmitAction(fn (StaticAction $action) => $action->color('danger')),
             ]);
     }
 

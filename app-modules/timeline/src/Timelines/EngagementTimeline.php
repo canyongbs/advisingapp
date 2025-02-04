@@ -40,6 +40,7 @@ use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Timeline\Models\CustomTimeline;
+use App\Features\EngagementsFeature;
 use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\IconEntry;
@@ -64,6 +65,10 @@ class EngagementTimeline extends CustomTimeline
 
     public function sortableBy(): string
     {
+        if (EngagementsFeature::active()) {
+            return $this->engagement->scheduled_at ?? $this->engagement->created_at;
+        }
+
         return $this->engagement->deliver_at;
     }
 

@@ -39,14 +39,14 @@ namespace AdvisingApp\Engagement\Filament\Actions;
 use AdvisingApp\Engagement\Actions\CreateEngagement;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Engagement\Filament\Forms\Components\EngagementSmsBodyInput;
-use AdvisingApp\Engagement\Filament\ManageRelatedRecords\ManageRelatedEngagementRecords\Actions\RelationManagerDraftWithAiAction;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Features\EngagementsFeature;
-use Filament\Actions\Action;
+use Filament\Actions\StaticAction;
 use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Actions\Action as FormComponentAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Fieldset;
@@ -58,6 +58,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\CreateAction;
 use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
@@ -107,7 +108,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                             ])
                             ->profile('email')
                             ->required()
-                            ->hintAction(fn (TiptapEditor $component) => Action::make('loadEmailTemplate')
+                            ->hintAction(fn (TiptapEditor $component) => FormComponentAction::make('loadEmailTemplate')
                                 ->form([
                                     Select::make('emailTemplate')
                                         ->searchable()
@@ -216,13 +217,14 @@ class RelationManagerSendEngagementAction extends CreateAction
             ->closeModalByClickingAway(false)
             ->closeModalByEscaping(false)
             ->createAnother(false)
+            ->modalCancelAction(false)
             ->extraModalFooterActions([
                 Action::make('cancel')
                     ->color('gray')
                     ->cancelParentActions()
                     ->requiresConfirmation()
                     ->action(fn () => null)
-                    ->modalSubmitAction(fn (Action $action) => $action->color('danger')),
+                    ->modalSubmitAction(fn (StaticAction $action) => $action->color('danger')),
             ]);
     }
 

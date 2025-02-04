@@ -66,9 +66,11 @@ class EngagementBatchStartedNotification extends Notification implements ShouldQ
     {
         return MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable))
-            ->subject(($this->engagementBatch->channel === NotificationChannel::Email)
-                ? 'Bulk email started processing'
-                : 'Bulk SMS started processing')
+            ->subject(match ($this->engagementBatch->channel) {
+                NotificationChannel::Email => 'Bulk email started processing',
+                NotificationChannel::Sms => 'Bulk SMS started processing',
+                default => 'Bulk engagement started processing',
+            })
             ->line("We've started processing your bulk engagement of {$this->engagementBatch->total_engagements} messages, and we'll keep you updated on the progress.");
     }
 
@@ -76,9 +78,11 @@ class EngagementBatchStartedNotification extends Notification implements ShouldQ
     {
         return FilamentNotification::make()
             ->status('success')
-            ->title(($this->engagementBatch->channel === NotificationChannel::Email)
-            ? 'Bulk email started processing'
-            : 'Bulk SMS started processing')
+            ->title(match ($this->engagementBatch->channel) {
+                NotificationChannel::Email => 'Bulk email started processing',
+                NotificationChannel::Sms => 'Bulk SMS started processing',
+                default => 'Bulk engagement started processing',
+            })
             ->body("We've started processing your bulk engagement of {$this->engagementBatch->total_engagements} messages, and we'll keep you updated on the progress.")
             ->getDatabaseMessage();
     }

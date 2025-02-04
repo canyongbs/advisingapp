@@ -217,15 +217,6 @@ class BulkEngagementAction
             ->deselectRecordsAfterCompletion()
             ->modalCloseButton(false)
             ->closeModalByClickingAway(false)
-            ->closeModalByEscaping(false)
-            ->modalCancelAction(false)
-            ->extraModalFooterActions([
-                Action::make('cancel')
-                    ->color('gray')
-                    ->cancelParentActions()
-                    ->requiresConfirmation()
-                    ->action(fn () => null)
-                    ->modalSubmitAction(fn (Action $action) => $action->color('danger')),
-            ]);
+            ->closeModalByEscaping(false);
     }
 }

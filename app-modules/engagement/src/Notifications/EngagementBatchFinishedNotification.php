@@ -69,16 +69,20 @@ class EngagementBatchFinishedNotification extends Notification implements Should
 
         if ($this->engagementBatch->successful_engagements < $this->engagementBatch->total_engagements) {
             return $message
-                ->subject(($this->engagementBatch->channel === NotificationChannel::Email)
-                    ? 'Bulk email has been processed with failures'
-                    : 'Bulk SMS has been processed with failures')
+                ->subject(match ($this->engagementBatch->channel) {
+                    NotificationChannel::Email => 'Bulk email has been processed with failures',
+                    NotificationChannel::Sms => 'Bulk SMS has been processed with failures',
+                    default => 'Bulk engagement has been processed with failures',
+                })
                 ->line(($this->engagementBatch->total_engagements - $this->engagementBatch->successful_engagements) . " engagements failed out of {$this->engagementBatch->total_engagements}.");
         }
 
         return $message
-            ->subject(($this->engagementBatch->channel === NotificationChannel::Email)
-                ? 'Bulk email has been processed'
-                : 'Bulk SMS has been processed')
+            ->subject(match ($this->engagementBatch->channel) {
+                NotificationChannel::Email => 'Bulk email has been processed',
+                NotificationChannel::Sms => 'Bulk SMS has been processed',
+                default => 'Bulk engagement has been processed',
+            })
             ->line("{$this->engagementBatch->total_engagements} engagements sent successfully.");
     }
 
@@ -87,18 +91,22 @@ class EngagementBatchFinishedNotification extends Notification implements Should
         if ($this->engagementBatch->successful_engagements < $this->engagementBatch->total_engagements) {
             return FilamentNotification::make()
                 ->warning()
-                ->title(($this->engagementBatch->channel === NotificationChannel::Email)
-                    ? 'Bulk email has been processed with failures'
-                    : 'Bulk SMS has been processed with failures')
+                ->title(match ($this->engagementBatch->channel) {
+                    NotificationChannel::Email => 'Bulk email has been processed with failures',
+                    NotificationChannel::Sms => 'Bulk SMS has been processed with failures',
+                    default => 'Bulk engagement has been processed with failures',
+                })
                 ->body(($this->engagementBatch->total_engagements - $this->engagementBatch->successful_engagements) . " engagements failed out of {$this->engagementBatch->total_engagements}.")
                 ->getDatabaseMessage();
         }
 
         return FilamentNotification::make()
             ->success()
-            ->title(($this->engagementBatch->channel === NotificationChannel::Email)
-                ? 'Bulk email has been processed'
-                : 'Bulk SMS has been processed')
+            ->title(match ($this->engagementBatch->channel) {
+                NotificationChannel::Email => 'Bulk email has been processed',
+                NotificationChannel::Sms => 'Bulk SMS has been processed',
+                default => 'Bulk engagement has been processed',
+            })
             ->body("{$this->engagementBatch->total_engagements} engagements sent successfully.")
             ->getDatabaseMessage();
     }

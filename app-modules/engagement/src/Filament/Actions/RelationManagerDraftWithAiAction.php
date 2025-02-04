@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Filament\ManageRelatedRecords\ManageRelatedEngagementRecords\Actions;
+namespace AdvisingApp\Engagement\Filament\Actions;
 
 use AdvisingApp\Ai\Actions\CompletePrompt;
 use AdvisingApp\Ai\Exceptions\MessageResponseException;

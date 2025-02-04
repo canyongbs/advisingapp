@@ -168,8 +168,8 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
 
     public function scopeHasBeenDelivered(Builder $query): void
     {
-        $query->whereDoesntHave('outboundDeliverables', function (Builder $query) {
-            $query->whereNull('delivered_at');
+        $query->whereHas('outboundDeliverables', function (Builder $query) {
+            $query->whereNotNull('delivered_at');
         });
     }
 
