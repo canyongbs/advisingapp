@@ -66,10 +66,7 @@ class StudentEnrollmentImporter extends Importer
 
     public function resolveRecord(): ?Enrollment
     {
-        $enrollment = new Enrollment();
-        $enrollment->student()->associate($this->data['sisid']);
-
-        return $enrollment;
+        return new Enrollment();
     }
 
     public static function getCompletedNotificationBody(Import $import): string

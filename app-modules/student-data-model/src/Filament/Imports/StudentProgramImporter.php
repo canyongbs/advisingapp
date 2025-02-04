@@ -66,10 +66,7 @@ class StudentProgramImporter extends Importer
 
     public function resolveRecord(): ?Program
     {
-        $program = new Program();
-        $program->student()->associate($this->data['sisid']);
-
-        return $program;
+        return new Program();
     }
 
     public static function getCompletedNotificationBody(Import $import): string

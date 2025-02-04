@@ -70,7 +70,7 @@ it('can filter students by first generation', function () {
         ->assertCanNotSeeTableRecords($studentsWithFirstGen);
 });
 
-it('renders the ImportAction based on proper access', function () {
+it('renders the importStudents Action based on proper access', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $user->givePermissionTo('student.view-any');
@@ -97,6 +97,64 @@ it('renders the ImportAction based on proper access', function () {
     livewire(ListStudents::class)
         ->assertOk()
         ->assertActionVisible('importStudents');
+});
+
+it('renders the importPrograms Action based on proper access', function () {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+
+    $user->givePermissionTo('student.view-any');
+    $user->givePermissionTo('program.import');
+
+    actingAs($user);
+
+    livewire(ListStudents::class)
+        ->assertOk()
+        ->assertActionHidden('importPrograms');
+
+    $studentSettings = app(ManageStudentConfigurationSettings::class);
+    $studentSettings->is_enabled = true;
+    $studentSettings->save();
+
+    $user->revokePermissionTo('program.import');
+
+    livewire(ListStudents::class)
+        ->assertOk()
+        ->assertActionHidden('importPrograms');
+
+    $user->givePermissionTo('program.import');
+
+    livewire(ListStudents::class)
+        ->assertOk()
+        ->assertActionVisible('importPrograms');
+});
+
+it('renders the importEnrollments Action based on proper access', function () {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+
+    $user->givePermissionTo('student.view-any');
+    $user->givePermissionTo('enrollment.import');
+
+    actingAs($user);
+
+    livewire(ListStudents::class)
+        ->assertOk()
+        ->assertActionHidden('importEnrollments');
+
+    $studentSettings = app(ManageStudentConfigurationSettings::class);
+    $studentSettings->is_enabled = true;
+    $studentSettings->save();
+
+    $user->revokePermissionTo('enrollment.import');
+
+    livewire(ListStudents::class)
+        ->assertOk()
+        ->assertActionHidden('importEnrollments');
+
+    $user->givePermissionTo('enrollment.import');
+
+    livewire(ListStudents::class)
+        ->assertOk()
+        ->assertActionVisible('importEnrollments');
 });
 
 it('renders the CreateAction based on proper access', function () {
