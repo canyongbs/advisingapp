@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class EmailMessageEvent extends BaseModel
 {
+    // TODO: Create Factory
+
     protected $fillable = [
         'type',
         'payload',
