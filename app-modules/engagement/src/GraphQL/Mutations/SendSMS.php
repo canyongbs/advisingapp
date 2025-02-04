@@ -36,13 +36,16 @@
 
 namespace AdvisingApp\Engagement\GraphQL\Mutations;
 
+use AdvisingApp\Engagement\Actions\CreateEngagement;
 use AdvisingApp\Engagement\Actions\GenerateTipTapBodyJson;
+use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\Integration;
 use App\Exceptions\IntegrationException;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Nuwave\Lighthouse\Execution\ResolveInfo;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
@@ -55,7 +58,6 @@ class SendSMS
             throw IntegrationException::make(Integration::Twilio);
         }
 
-        /** @var Student|Prospect $morph */
         $morph = Relation::getMorphedModel($args['recipient_type']);
 
         $mergeTags = collect(Engagement::getMergeTags($morph))
@@ -69,12 +71,18 @@ class SendSMS
             ])
             ->toString();
 
-        $args['body'] = app(GenerateTipTapBodyJson::class)(body: $body, mergeTags: $mergeTags);
+        $body = app(GenerateTipTapBodyJson::class)(body: $body, mergeTags: $mergeTags);
 
-        $engagement = Engagement::create([
-            ...$args,
-            'channel' => NotificationChannel::Sms->value,
-        ]);
+        $engagement = app(CreateEngagement::class)->execute(new EngagementCreationData(
+            user: User::findOrFail($args['user_id']),
+            recipient: match ($morph) {
+                Student::class => Student::findOrFail($args['recipient_id']),
+                Prospect::class => Prospect::findOrFail($args['recipient_id']),
+            },
+            channel: NotificationChannel::Sms,
+            body: $body,
+            scheduledAt: $args['scheduled_at'],
+        ));
 
         return $engagement->refresh();
     }
