@@ -3,6 +3,7 @@
 namespace AdvisingApp\Notification\Models;
 
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class SmsMessage extends BaseModel
@@ -34,5 +35,10 @@ class SmsMessage extends BaseModel
             type: 'recipient_type',
             id: 'recipient_id',
         );
+    }
+
+    public function events(): HasMany
+    {
+        return $this->hasMany(SmsMessageEvent::class);
     }
 }
