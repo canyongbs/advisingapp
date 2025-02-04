@@ -42,13 +42,18 @@ use AdvisingApp\Notification\DataTransferObjects\EmailChannelResultData;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
+use AdvisingApp\Notification\Models\EmailMessage;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
 use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
+use AdvisingApp\Notification\Notifications\Contracts\OnDemandNotification;
+use App\Features\MessagesAndMessageEvents;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Channels\MailChannel as BaseMailChannel;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -60,7 +65,22 @@ class MailChannel extends BaseMailChannel
 {
     public function send($notifiable, Notification $notification): void
     {
-        $deliverable = app(MakeOutboundDeliverable::class)->execute($notification, $notifiable, NotificationChannel::Email);
+        if (MessagesAndMessageEvents::active()) {
+            [$recipientId, $recipientType] = match (true) {
+                $notifiable instanceof Model => [$notifiable->getKey(), $notifiable->getMorphClass()],
+                $notification instanceof AnonymousNotifiable && $notification instanceof OnDemandNotification => $notification->identifyRecipient(),
+                default => [null, 'anonymous'],
+            };
+
+            $deliverable = new EmailMessage([
+                'notification_class' => $notification::class,
+                'content' => $notification->toMail($notifiable)->toArray(),
+                'recipient_id' => $recipientId,
+                'recipient_type' => $recipientType,
+            ]);
+        } else {
+            $deliverable = app(MakeOutboundDeliverable::class)->execute($notification, $notifiable, NotificationChannel::Email);
+        }
 
         if ($notification instanceof HasBeforeSendHook) {
             $notification->beforeSend($notifiable, $deliverable, NotificationChannel::Email);
