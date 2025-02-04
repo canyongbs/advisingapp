@@ -17,7 +17,7 @@ test('Interaction model has applied global scope', function(){
 
     $interaction = Interaction::factory()->create();
 
-    $this->assertTrue($interaction->hasGlobalScope(InteractionConfidentialScope::class));
+    expect($interaction->hasGlobalScope(InteractionConfidentialScope::class))->toBeTrue();
 });
 
 test('InteractionsRelationManager with display data for created user', function(){
