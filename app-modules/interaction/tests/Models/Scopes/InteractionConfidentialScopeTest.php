@@ -47,14 +47,13 @@ use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
-test('Interaction model has applied global scope', function(){
-
+test('Interaction model has applied global scope', function () {
     $interaction = Interaction::factory()->create();
 
     $this->assertTrue($interaction->hasGlobalScope(InteractionConfidentialScope::class));
 });
 
-test('InteractionsRelationManager with display data for created user', function(){
+test('InteractionsRelationManager with display data for created user', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo('interaction.view-any');
 
@@ -90,8 +89,7 @@ test('InteractionsRelationManager with display data for created user', function(
         ->assertCanNotSeeTableRecords($otherConfidentialInteraction);
 });
 
-test('InteractionsRelationManager with display data for team user', function(){
-
+test('InteractionsRelationManager with display data for team user', function () {
     $teamUser = User::factory()->licensed(LicenseType::cases())->create();
     $teamUser->givePermissionTo('interaction.view-any');
 
@@ -105,7 +103,7 @@ test('InteractionsRelationManager with display data for team user', function(){
     $otherConfidentialInteraction = Interaction::factory()->count(10)->create([
         'is_confidential' => true,
     ]);
-$nonConfidentialInteraction = Interaction::factory()->count(10)->create([
+    $nonConfidentialInteraction = Interaction::factory()->count(10)->create([
         'is_confidential' => false,
     ]);
 
@@ -127,8 +125,7 @@ $nonConfidentialInteraction = Interaction::factory()->count(10)->create([
         ->assertCanNotSeeTableRecords($otherConfidentialInteraction);
 });
 
-test('InteractionsRelationManager with display data for assigned user', function(){
-
+test('InteractionsRelationManager with display data for assigned user', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo('interaction.view-any');
 
@@ -141,7 +138,7 @@ test('InteractionsRelationManager with display data for assigned user', function
         'is_confidential' => true,
     ]);
 
-$nonConfidentialInteraction = Interaction::factory()->count(10)->create([
+    $nonConfidentialInteraction = Interaction::factory()->count(10)->create([
         'is_confidential' => false,
     ]);
 
@@ -163,8 +160,7 @@ $nonConfidentialInteraction = Interaction::factory()->count(10)->create([
         ->assertCanNotSeeTableRecords($otherConfidentialInteraction);
 });
 
-test('InteractionsRelationManager with display all data for superadmin user', function(){
-
+test('InteractionsRelationManager with display all data for superadmin user', function () {
     asSuperAdmin();
     $confidentialInteraction = Interaction::factory()->count(10)->create([
         'is_confidential' => true,
@@ -189,4 +185,4 @@ test('InteractionsRelationManager with display all data for superadmin user', fu
     )
         ->set('tableRecordsPerPage', 20)
         ->assertCanSeeTableRecords($confidentialInteraction->merge($nonConfidentialInteraction));
-    });
+});
