@@ -61,6 +61,10 @@ class StudentPhoneNumber extends BaseModel implements Auditable
         'is_mobile' => 'boolean',
     ];
 
+    protected $casts = [
+      'is_mobile' => 'boolean',
+    ];
+
     public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class, 'sisid', 'sisid');
