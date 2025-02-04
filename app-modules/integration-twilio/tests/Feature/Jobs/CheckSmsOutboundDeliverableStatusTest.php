@@ -36,9 +36,9 @@
 
 use AdvisingApp\IntegrationTwilio\Jobs\CheckSmsOutboundDeliverableStatus;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
+use AdvisingApp\IntegrationTwilio\Tests\Fixtures\ClientMock;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
-use Tests\Unit\ClientMock;
 use Twilio\Rest\Api\V2010;
 use Twilio\Rest\Api\V2010\Account\MessageContext;
 use Twilio\Rest\Api\V2010\Account\MessageInstance;

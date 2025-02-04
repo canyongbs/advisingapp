@@ -34,34 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace Tests\Unit;
+namespace AdvisingApp\Notification\Tests\Fixtures;
 
-use AllowDynamicProperties;
-use Twilio\Http\Client as HttpClient;
-use Twilio\Rest\Client;
+use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Notification;
 
-#[AllowDynamicProperties]
-class ClientMock extends Client
+class TestSmsNotification extends Notification implements ShouldQueue
 {
-    public function __construct(
-        $messageList = null,
-        string $username = null,
-        string $password = null,
-        string $accountSid = null,
-        string $region = null,
-        HttpClient $httpClient = null,
-        array $environment = null,
-        array $userAgentExtensions = null,
-    ) {
-        parent::__construct(
-            $username,
-            $password,
-            $accountSid,
-            $region,
-            $httpClient,
-            $environment,
-            $userAgentExtensions
-        );
-        $this->messages = $messageList;
+    use Queueable;
+
+    /**
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
+    {
+        return ['sms'];
+    }
+
+    public function toSms(object $notifiable): TwilioMessage
+    {
+        return TwilioMessage::make($notifiable)
+            ->content('This is a test');
     }
 }

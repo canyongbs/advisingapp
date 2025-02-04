@@ -35,24 +35,23 @@
 */
 
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
+use AdvisingApp\IntegrationTwilio\Tests\Fixtures\ClientMock;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\Notification\Tests\Fixtures\TestSmsNotification;
 use AdvisingApp\Prospect\Models\Prospect;
-use App\Models\Authenticatable;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\assertDatabaseCount;
 
-use Tests\Unit\ClientMock;
-use Tests\Unit\TestSmsNotification;
 use Twilio\Rest\Api\V2010;
 use Twilio\Rest\Api\V2010\Account\MessageInstance;
 use Twilio\Rest\Api\V2010\Account\MessageList;
 use Twilio\Rest\Client;
 use Twilio\Rest\MessagingBase;
 
-it('An sms is allowed to be sent if there is available quota and its quota usage is tracked', function () {
+test('An sms is allowed to be sent if there is available quota and its quota usage is tracked', function () {
     $notifiable = Prospect::factory()->create();
 
     $notification = new TestSmsNotification();
@@ -103,7 +102,7 @@ it('An sms is allowed to be sent if there is available quota and its quota usage
         ->toBe(NotificationDeliveryStatus::Dispatched);
 });
 
-it('An sms is prevented from being sent if there is no available quota', function () {
+test('An sms is prevented from being sent if there is no available quota', function () {
     $notifiable = Prospect::factory()->create();
 
     $notification = new TestSmsNotification();
@@ -159,10 +158,8 @@ it('An sms is prevented from being sent if there is no available quota', functio
         ->and($outboundDeliverable->delivery_status)->toBe(NotificationDeliveryStatus::RateLimited);
 });
 
-it('An sms is sent to a super admin user even if there is no available quota', function () {
+test('An sms is sent to a user even if there is no available quota', function () {
     $notifiable = User::factory()->create();
-
-    $notifiable->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
 
     $notification = new TestSmsNotification();
 

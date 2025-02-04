@@ -34,30 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace Tests\Unit;
+namespace AdvisingApp\IntegrationTwilio\Tests\Fixtures;
 
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Notification;
+use AllowDynamicProperties;
+use Twilio\Http\Client as HttpClient;
+use Twilio\Rest\Client;
 
-class TestEmailNotification extends Notification implements ShouldQueue
+#[AllowDynamicProperties]
+class ClientMock extends Client
 {
-    use Queueable;
-
-    /**
-     * @return array<int, string>
-     */
-    public function via(object $notifiable): array
-    {
-        return ['mail'];
-    }
-
-    public function toMail(object $notifiable): MailMessage
-    {
-        return MailMessage::make()
-            ->subject('Test Subject')
-            ->greeting('Test Greeting')
-            ->content('This is a test email');
+    public function __construct(
+        $messageList = null,
+        string $username = null,
+        string $password = null,
+        string $accountSid = null,
+        string $region = null,
+        HttpClient $httpClient = null,
+        array $environment = null,
+        array $userAgentExtensions = null,
+    ) {
+        parent::__construct(
+            $username,
+            $password,
+            $accountSid,
+            $region,
+            $httpClient,
+            $environment,
+            $userAgentExtensions
+        );
+        $this->messages = $messageList;
     }
 }

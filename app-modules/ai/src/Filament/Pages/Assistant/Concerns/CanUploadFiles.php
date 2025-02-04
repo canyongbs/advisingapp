@@ -69,8 +69,8 @@ trait CanUploadFiles
                 FileUpload::make('attachment')
                     ->acceptedFileTypes(config('ai.supported_file_types'))
                     ->storeFiles(false)
-                    ->helperText('The maximum file size is 256KB.')
-                    ->maxSize(256)
+                    ->helperText('The maximum file size is 20MB.')
+                    ->maxSize(20000)
                     ->required(),
             ])
             ->action(function (array $data) {

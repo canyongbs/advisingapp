@@ -47,6 +47,7 @@ use AdvisingApp\Form\Models\FormAuthentication;
 use AdvisingApp\IntegrationTwilio\Jobs\CheckStatusOfOutboundDeliverablesWithoutATerminalStatus;
 use AdvisingApp\MeetingCenter\Console\Commands\RefreshCalendarRefreshTokens;
 use AdvisingApp\MeetingCenter\Jobs\SyncCalendars;
+use App\Models\HealthCheckResultHistoryItem;
 use App\Models\MonitoredScheduledTaskLogItem;
 use App\Models\Scopes\SetupIsComplete;
 use App\Models\Tenant;
@@ -147,6 +148,7 @@ class Kernel extends ConsoleKernel
                         EngagementFile::class,
                         FailedImportRow::class,
                         FormAuthentication::class,
+                        HealthCheckResultHistoryItem::class,
                     ])
                         ->join(',');
 

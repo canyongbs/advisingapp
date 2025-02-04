@@ -34,14 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+namespace AdvisingApp\Notification\Tests\Fixtures;
 
-use App\Support\AbstractFeatureFlag;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Notification;
 
-class ScheduleMonitor extends AbstractFeatureFlag
+class TestEmailNotification extends Notification implements ShouldQueue
 {
-    public function resolve(mixed $scope): mixed
+    use Queueable;
+
+    /**
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
     {
-        return false;
+        return ['mail'];
+    }
+
+    public function toMail(object $notifiable): MailMessage
+    {
+        return MailMessage::make()
+            ->subject('Test Subject')
+            ->greeting('Test Greeting')
+            ->content('This is a test email');
     }
 }
