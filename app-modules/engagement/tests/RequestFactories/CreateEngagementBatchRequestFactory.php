@@ -50,7 +50,7 @@ class CreateEngagementBatchRequestFactory extends RequestFactory
             'subject' => fake()->sentence,
             'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->paragraph]]]]],
             'scheduledAt' => fake()->dateTimeBetween('-1 year', '-1 day'),
-            'channel' => fake()->randomElement(NotificationChannel::cases()),
+            'channel' => fake()->randomElement([NotificationChannel::Email, NotificationChannel::Sms]),
         ];
     }
 
