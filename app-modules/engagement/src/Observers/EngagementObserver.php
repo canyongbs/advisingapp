@@ -40,6 +40,7 @@ use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
 use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
+use App\Features\DropEngagementsDeliverAtColumnFeature;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
@@ -52,12 +53,11 @@ class EngagementObserver
         }
     }
 
-    /**
-     * @deprecated Remove after deploying engagements refactor.
-     */
     public function saving(Engagement $engagement): void
     {
-        $engagement->deliver_at = $engagement->deliver_at ?? now();
+        if (! DropEngagementsDeliverAtColumnFeature::active()) {
+            $engagement->deliver_at = now();
+        }
     }
 
     public function created(Engagement $engagement): void

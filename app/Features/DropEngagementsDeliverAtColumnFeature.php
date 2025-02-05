@@ -34,43 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Actions;
+namespace App\Features;
 
-use AdvisingApp\Engagement\Actions\Contracts\EngagementChannel;
-use AdvisingApp\Engagement\Models\Engagement;
-use App\Models\Tenant;
-use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use App\Support\AbstractFeatureFlag;
 
-/**
- * @deprecated Remove after deploying engagements refactor.
- */
-abstract class QueuedEngagementDelivery implements EngagementChannel, ShouldQueue, ShouldBeUnique
+class DropEngagementsDeliverAtColumnFeature extends AbstractFeatureFlag
 {
-    use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
-    public $tries = 3;
-
-    public function __construct(
-        public Engagement $engagement
-    ) {}
-
-    public function uniqueId(): string
+    public function resolve(mixed $scope): mixed
     {
-        return Tenant::current()->getKey() . ':' . $this->engagement->getKey();
-    }
-
-    public function handle(): void
-    {
-        $this->deliver();
+        return false;
     }
 }

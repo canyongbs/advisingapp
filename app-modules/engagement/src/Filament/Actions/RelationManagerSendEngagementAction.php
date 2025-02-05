@@ -43,7 +43,6 @@ use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
-use App\Features\EngagementsFeature;
 use Filament\Actions\StaticAction;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action as FormComponentAction;
@@ -174,7 +173,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                         Toggle::make('send_later')
                             ->reactive()
                             ->helperText('By default, this email or text will send as soon as it is created unless you schedule it to send later.'),
-                        DateTimePicker::make('deliver_at')
+                        DateTimePicker::make('scheduled_at')
                             ->required()
                             ->visible(fn (Get $get) => $get('send_later')),
                     ]),
@@ -189,27 +188,21 @@ class RelationManagerSendEngagementAction extends CreateAction
                     $this->halt();
                 }
 
-                if (EngagementsFeature::active()) {
-                    $engagement = app(CreateEngagement::class)->execute(new EngagementCreationData(
-                        user: auth()->user(),
-                        recipient: $livewire->getOwnerRecord(),
-                        channel: NotificationChannel::parse($data['channel']),
-                        subject: $data['subject'] ?? null,
-                        body: $data['body'] ?? null,
-                        temporaryBodyImages: array_map(
-                            fn (TemporaryUploadedFile $file): array => [
-                                'extension' => $file->getClientOriginalExtension(),
-                                'path' => (fn () => $this->path)->call($file),
-                            ],
-                            $form->getFlatFields()['body']->getTemporaryImages(),
-                        ),
-                        scheduledAt: ($data['send_later'] ?? false) ? Carbon::parse($data['deliver_at'] ?? null) : null,
-                    ));
-                } else {
-                    $engagement = new Engagement($data);
-                    $engagement->recipient()->associate($livewire->getOwnerRecord());
-                    $engagement->save();
-                }
+                $engagement = app(CreateEngagement::class)->execute(new EngagementCreationData(
+                    user: auth()->user(),
+                    recipient: $livewire->getOwnerRecord(),
+                    channel: NotificationChannel::parse($data['channel']),
+                    subject: $data['subject'] ?? null,
+                    body: $data['body'] ?? null,
+                    temporaryBodyImages: array_map(
+                        fn (TemporaryUploadedFile $file): array => [
+                            'extension' => $file->getClientOriginalExtension(),
+                            'path' => (fn () => $this->path)->call($file),
+                        ],
+                        $form->getFlatFields()['body']->getTemporaryImages(),
+                    ),
+                    scheduledAt: ($data['send_later'] ?? false) ? Carbon::parse($data['scheduled_at'] ?? null) : null,
+                ));
 
                 $form->model($engagement)->saveRelationships();
             })

@@ -34,29 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Actions;
+use App\Features\DropEngagementsDeliverAtColumnFeature;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\Engagement\DataTransferObjects\EngagementResponseData;
-use AdvisingApp\Engagement\Notifications\EngagementSmsNotification;
-use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
-use App\Features\TwilioDemoAutoReplyModeFeature;
-
-/**
- * @deprecated Remove after deploying engagements refactor.
- */
-class EngagementSmsChannelDelivery extends QueuedEngagementDelivery
-{
-    public function deliver(): void
+return new class () extends Migration {
+    public function up(): void
     {
-        $recipient = $this->engagement->recipient;
-
-        $recipient->notifyNow(new EngagementSmsNotification($this->engagement));
-
-        if (TwilioDemoAutoReplyModeFeature::active() && app(TwilioSettings::class)->is_demo_auto_reply_mode_enabled) {
-            app(CreateEngagementResponse::class)(EngagementResponseData::from([
-                'from' => $this->engagement->recipient->routeNotificationForSms(),
-                'body' => 'Just got your message, thanks for sending over these details.',
-            ]));
-        }
+        DropEngagementsDeliverAtColumnFeature::activate();
     }
-}
+
+    public function down(): void
+    {
+        DropEngagementsDeliverAtColumnFeature::deactivate();
+    }
+};
