@@ -69,8 +69,6 @@ test('An email is allowed to be sent if there is available quota and its quota u
 
             $outboundDeliverable = OutboundDeliverable::first();
 
-            $tenant = Tenant::current();
-
             return $event->message->getHeaders()->get('X-SES-CONFIGURATION-SET')->getBody() === $configurationSet
                 && $event->message->getHeaders()->get('X-SES-MESSAGE-TAGS')->getBody() === sprintf('outbound_deliverable_id=%s, app_message_id=%s, tenant_id=%s', OutboundDeliverable::first()->getKey(), EmailMessage::first()->getKey(), Tenant::current()->getKey())
                 && $outboundDeliverable->quota_usage === 1;
