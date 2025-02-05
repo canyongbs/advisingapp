@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Engagement\Jobs\CreateBatchedEngagement;
+use AdvisingApp\Engagement\Actions\CreateEngagement;
+use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Engagement\Notifications\EngagementNotification;
-use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Engagement\Tests\RequestFactories\CreateEngagementRequestFactory;
 use Illuminate\Support\Facades\Notification;
 
 use function Pest\Laravel\assertDatabaseCount;
@@ -46,32 +46,32 @@ use function Pest\Laravel\assertDatabaseCount;
 it('will create and send an engagement immediately', function () {
     Notification::fake();
 
-    $engagementBatch = EngagementBatch::factory()->create([
-        'scheduled_at' => null,
-    ]);
-    $recipient = Student::factory()->create();
-
     assertDatabaseCount(Engagement::class, 0);
 
-    dispatch(app(CreateBatchedEngagement::class, [
-        'engagementBatch' => $engagementBatch,
-        'recipient' => $recipient,
-    ]));
+    $data = CreateEngagementRequestFactory::new()->create();
+
+    app(CreateEngagement::class)->execute(new EngagementCreationData(
+        user: $data['user'],
+        recipient: $data['recipient'],
+        channel: $data['channel'],
+        subject: $data['subject'],
+        body: $data['body'],
+        scheduledAt: null,
+    ));
 
     assertDatabaseCount(Engagement::class, 1);
 
     expect(Engagement::first())
-        ->engagementBatch->is($engagementBatch)->toBeTrue()
-        ->user->is($engagementBatch->user)->toBeTrue()
-        ->recipient->is($recipient)->toBeTrue()
-        ->channel->toBe($engagementBatch->channel)
-        ->subject->toBe($engagementBatch->subject)
-        ->body->toMatchArray($engagementBatch->body)
+        ->user->is($data['user'])->toBeTrue()
+        ->recipient->is($data['recipient'])->toBeTrue()
+        ->channel->toBe($data['channel'])
+        ->subject->toBe($data['subject'])
+        ->body->toMatchArray($data['body'])
         ->scheduled_at->toBeNull()
         ->dispatched_at->not->toBeNull();
 
     Notification::assertSentTo(
-        $recipient,
+        $data['recipient'],
         EngagementNotification::class
     );
 });
@@ -79,32 +79,32 @@ it('will create and send an engagement immediately', function () {
 it('will create but not dispatch a scheduled engagement', function () {
     Notification::fake();
 
-    $engagementBatch = EngagementBatch::factory()->create([
-        'scheduled_at' => now()->addMinute(),
-    ]);
-    $recipient = Student::factory()->create();
-
     assertDatabaseCount(Engagement::class, 0);
 
-    dispatch(app(CreateBatchedEngagement::class, [
-        'engagementBatch' => $engagementBatch,
-        'recipient' => $recipient,
-    ]));
+    $data = CreateEngagementRequestFactory::new()->create();
+
+    app(CreateEngagement::class)->execute(new EngagementCreationData(
+        user: $data['user'],
+        recipient: $data['recipient'],
+        channel: $data['channel'],
+        subject: $data['subject'],
+        body: $data['body'],
+        scheduledAt: $scheduledAt = now()->addMinute(),
+    ));
 
     assertDatabaseCount(Engagement::class, 1);
 
     expect(Engagement::first())
-        ->engagementBatch->is($engagementBatch)->toBeTrue()
-        ->user->is($engagementBatch->user)->toBeTrue()
-        ->recipient->is($recipient)->toBeTrue()
-        ->channel->toBe($engagementBatch->channel)
-        ->subject->toBe($engagementBatch->subject)
-        ->body->toMatchArray($engagementBatch->body)
-        ->scheduled_at->startOfSecond()->eq($engagementBatch->scheduled_at->startOfSecond())->toBeTrue()
+        ->user->is($data['user'])->toBeTrue()
+        ->recipient->is($data['recipient'])->toBeTrue()
+        ->channel->toBe($data['channel'])
+        ->subject->toBe($data['subject'])
+        ->body->toMatchArray($data['body'])
+        ->scheduled_at->startOfSecond()->eq($scheduledAt->startOfSecond())->toBeTrue()
         ->dispatched_at->toBeNull();
 
     Notification::assertNotSentTo(
-        $recipient,
+        $data['recipient'],
         EngagementNotification::class
     );
 });
