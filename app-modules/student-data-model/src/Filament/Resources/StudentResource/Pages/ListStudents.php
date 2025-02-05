@@ -47,12 +47,17 @@ use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Actions\DeleteStudent;
+use AdvisingApp\StudentDataModel\Filament\Imports\StudentEnrollmentImporter;
 use AdvisingApp\StudentDataModel\Filament\Imports\StudentImporter;
+use AdvisingApp\StudentDataModel\Filament\Imports\StudentProgramImporter;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\StudentDataModel\Models\Enrollment;
+use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\TagType;
 use App\Models\Tag;
 use App\Models\User;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\ImportAction;
 use Filament\Forms\Components\DatePicker;
@@ -386,10 +391,21 @@ class ListStudents extends ListRecords implements HasBulkEngagementAction
     protected function getHeaderActions(): array
     {
         return [
-            ImportAction::make()
-                ->modalDescription(fn (ImportAction $action): Htmlable => new HtmlString('Import student records from a CSV file. Records with matched SIS IDs will be updated, while new records will be created. <br><br>' . $action->getModalAction('downloadExample')->toHtml()))
-                ->importer(StudentImporter::class)
-                ->authorize('import', Student::class),
+            ActionGroup::make([
+                ImportAction::make('importStudents')
+                    ->modalDescription(fn (ImportAction $action): Htmlable => new HtmlString('Import student records from a CSV file. Records with matched SIS IDs will be updated, while new records will be created. <br><br>' . $action->getModalAction('downloadExample')->toHtml()))
+                    ->importer(StudentImporter::class)
+                    ->authorize('import', Student::class),
+                ImportAction::make('importPrograms')
+                    ->importer(StudentProgramImporter::class)
+                    ->authorize('import', Program::class),
+                ImportAction::make('importEnrollments')
+                    ->importer(StudentEnrollmentImporter::class)
+                    ->authorize('import', Enrollment::class),
+            ])
+                ->label('Import')
+                ->icon('')
+                ->button(),
             CreateAction::make(),
         ];
     }

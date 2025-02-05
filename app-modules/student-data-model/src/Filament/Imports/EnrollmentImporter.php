@@ -36,136 +36,20 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Imports;
 
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concerns\ImportColumns;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
-use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
 
 class EnrollmentImporter extends Importer
 {
+    use ImportColumns;
+
     protected static ?string $model = Enrollment::class;
 
     public static function getColumns(): array
     {
-        return [
-            ImportColumn::make('division')
-                ->example('ABC01')
-                ->label('Division')
-                ->rules([
-                    'nullable',
-                    'string',
-                    'max:255',
-                ]),
-            ImportColumn::make('class_nbr')
-                ->label('Class NBR')
-                ->example('19309')
-                ->rules([
-                    'nullable',
-                    'string',
-                    'max:255',
-                ]),
-            ImportColumn::make('crse_grade_off')
-                ->example('A')
-                ->label('CRSE grade off')
-                ->rules([
-                    'nullable',
-                    'string',
-                    'max:255',
-                ]),
-            ImportColumn::make('unt_taken')
-                ->label('UNT taken')
-                ->example('1')
-                ->numeric()
-                ->rules([
-                    'nullable',
-                    'numeric',
-                ]),
-            ImportColumn::make('unt_earned')
-                ->label('UNT earned')
-                ->example('1')
-                ->numeric()
-                ->rules([
-                    'nullable',
-                    'numeric',
-                ]),
-            ImportColumn::make('last_upd_dt_stmp')
-                ->label('Last UPD date STMP')
-                ->example('1995-02-11 14:01:12+00')
-                ->rules([
-                    'nullable',
-                    'date',
-                ]),
-            ImportColumn::make('section')
-                ->label('Section')
-                ->example('7661')
-                ->rules([
-                    'nullable',
-                    'string',
-                    'max:255',
-                ]),
-            ImportColumn::make('name')
-                ->label('Name')
-                ->example('Introduction to Mathematics')
-                ->rules([
-                    'nullable',
-                    'string',
-                    'max:255',
-                ]),
-            ImportColumn::make('department')
-                ->label('Department')
-                ->example('Business')
-                ->rules([
-                    'nullable',
-                    'string',
-                    'max:255',
-                ]),
-            ImportColumn::make('faculty_name')
-                ->label('Faculty name')
-                ->example('Keyon Metz')
-                ->rules([
-                    'nullable',
-                    'string',
-                    'max:255',
-                ]),
-            ImportColumn::make('faculty_email')
-                ->label('Faculty email')
-                ->example('jerry72@example.net')
-                ->rules([
-                    'nullable',
-                    'email',
-                    'max:255',
-                ]),
-            ImportColumn::make('semester_code')
-                ->label('Semester code')
-                ->example('4209')
-                ->rules([
-                    'nullable',
-                    'string',
-                    'max:255',
-                ]),
-            ImportColumn::make('semester_name')
-                ->label('Semester name')
-                ->example('Fall 2006')
-                ->rules([
-                    'nullable',
-                    'string',
-                    'max:255',
-                ]),
-            ImportColumn::make('start_date')
-                ->label('Start date')
-                ->example('2001-09-30 19:55:54')
-                ->rules([
-                    'nullable',
-                    'date',
-                ]),
-            ImportColumn::make('end_date')
-                ->label('End date')
-                ->example('2001-09-30 19:55:54')
-                ->rules([
-                    'nullable',
-                    'date',
-                ]),
-        ];
+        return self::getEnrollmentColumns();
     }
 
     public function resolveRecord(): ?Enrollment

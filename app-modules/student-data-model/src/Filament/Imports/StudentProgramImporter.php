@@ -38,10 +38,11 @@ namespace AdvisingApp\StudentDataModel\Filament\Imports;
 
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concerns\ImportColumns;
 use AdvisingApp\StudentDataModel\Models\Program;
+use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
 
-class ProgramImporter extends Importer
+class StudentProgramImporter extends Importer
 {
     use ImportColumns;
 
@@ -49,15 +50,23 @@ class ProgramImporter extends Importer
 
     public static function getColumns(): array
     {
-        return self::getProgramColumns();
+        return [
+            ImportColumn::make('sisid')
+                ->label('Student ID')
+                ->requiredMapping()
+                ->example('########')
+                ->rules([
+                    'required',
+                    'string',
+                    'max:255',
+                ]),
+            ...self::getProgramColumns(),
+        ];
     }
 
     public function resolveRecord(): ?Program
     {
-        $program = new Program();
-        $program->student()->associate($this->options['sisid']);
-
-        return $program;
+        return new Program();
     }
 
     public static function getCompletedNotificationBody(Import $import): string
