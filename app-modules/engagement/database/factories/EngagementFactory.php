@@ -72,7 +72,7 @@ class EngagementFactory extends Factory
             },
             'subject' => fake()->sentence,
             'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->paragraph]]]]],
-            'deliver_at' => fake()->dateTimeBetween('-1 year', '-1 day'),
+            'scheduled_at' => fake()->dateTimeBetween('-1 year', '-1 day'),
             'channel' => fake()->randomElement(NotificationChannel::cases()),
         ];
     }
@@ -93,17 +93,10 @@ class EngagementFactory extends Factory
         ]);
     }
 
-    public function deliverNow(): self
-    {
-        return $this->state([
-            'deliver_at' => now(),
-        ]);
-    }
-
     public function deliverLater(): self
     {
         return $this->state([
-            'deliver_at' => fake()->dateTimeBetween('+1 day', '+1 week'),
+            'scheduled_at' => fake()->dateTimeBetween('+1 day', '+1 week'),
         ]);
     }
 
