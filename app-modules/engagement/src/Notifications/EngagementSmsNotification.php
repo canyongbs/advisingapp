@@ -39,6 +39,7 @@ namespace AdvisingApp\Engagement\Notifications;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
+use AdvisingApp\Notification\Models\Contracts\Message;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
 use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
@@ -80,8 +81,12 @@ class EngagementSmsNotification extends Notification implements ShouldQueue, Has
         }
     }
 
-    public function beforeSend(AnonymousNotifiable|CanBeNotified $notifiable, OutboundDeliverable $deliverable, NotificationChannel $channel): void
+    public function beforeSend(AnonymousNotifiable|CanBeNotified $notifiable, OutboundDeliverable $deliverable, NotificationChannel $channel, ?Message $messsage): void
     {
         $deliverable->related()->associate($this->engagement);
+
+        if ($messsage) {
+            $messsage->related()->associate($this->engagement);
+        }
     }
 }

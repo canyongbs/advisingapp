@@ -68,25 +68,34 @@ class MailChannel extends BaseMailChannel
         if (MessagesAndMessageEvents::active()) {
             [$recipientId, $recipientType] = match (true) {
                 $notifiable instanceof Model => [$notifiable->getKey(), $notifiable->getMorphClass()],
-                $notification instanceof AnonymousNotifiable && $notification instanceof OnDemandNotification => $notification->identifyRecipient(),
+                $notifiable instanceof AnonymousNotifiable && $notification instanceof OnDemandNotification => $notification->identifyRecipient(),
                 default => [null, 'anonymous'],
             };
 
-            $deliverable = new EmailMessage([
+            $emailMessage = new EmailMessage([
                 'notification_class' => $notification::class,
                 'content' => $notification->toMail($notifiable)->toArray(),
                 'recipient_id' => $recipientId,
                 'recipient_type' => $recipientType,
             ]);
-        } else {
-            $deliverable = app(MakeOutboundDeliverable::class)->execute($notification, $notifiable, NotificationChannel::Email);
         }
 
+        $deliverable = app(MakeOutboundDeliverable::class)->execute($notification, $notifiable, NotificationChannel::Email);
+
         if ($notification instanceof HasBeforeSendHook) {
-            $notification->beforeSend($notifiable, $deliverable, NotificationChannel::Email);
+            $notification->beforeSend(
+                notifiable: $notifiable,
+                deliverable: $deliverable,
+                message: MessagesAndMessageEvents::active() ? $emailMessage : null,
+                channel: NotificationChannel::Email
+            );
         }
 
         $deliverable->save();
+
+        if (MessagesAndMessageEvents::active()) {
+            $emailMessage->save();
+        }
 
         $tenant = Tenant::current();
         $tenantMailConfig = $tenant?->config->mail;
@@ -100,7 +109,7 @@ class MailChannel extends BaseMailChannel
                 || ($isSystemNotification && $tenantMailConfig?->isExcludingSystemNotificationsFromDemoMode)
             ) {
                 $message = $notification->toMail($notifiable)
-                    ->withSymfonyMessage(function (Email $message) use ($deliverable, $tenant) {
+                    ->withSymfonyMessage(function (Email $message) use ($deliverable, $tenant, $emailMessage) {
                         $settings = app(SesSettings::class);
 
                         if (filled($settings->configuration_set)) {
@@ -114,11 +123,13 @@ class MailChannel extends BaseMailChannel
                             'X-SES-MESSAGE-TAGS',
                             implode(', ', [
                                 "outbound_deliverable_id={$deliverable->getKey()}",
+                                ...(MessagesAndMessageEvents::active() ? ["app_message_id={$emailMessage->getKey()}"] : []),
                                 ...($tenant ? ['tenant_id=' . $tenant->getKey()] : []),
                             ]),
                         );
                     });
 
+                // TODO: Change this to check the $emailMessage instead of the $deliverable
                 $quotaUsage = $isSystemNotification ? 0 : $this->determineQuotaUsage($message, $deliverable);
 
                 throw_if($quotaUsage && (! $this->canSendWithinQuotaLimits($quotaUsage)), new NotificationQuotaExceeded());
@@ -128,6 +139,7 @@ class MailChannel extends BaseMailChannel
                 );
 
                 try {
+                    // TODO: See if we can retrieve the message ID from the SES response and store it in the deliverable/message
                     $sentMessage = $this->mailer->mailer($message->mailer ?? null)->send(
                         $this->buildView($message),
                         array_merge($message->data(), $this->additionalMessageData($notification)),

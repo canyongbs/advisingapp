@@ -2,11 +2,12 @@
 
 namespace AdvisingApp\Notification\Models;
 
+use AdvisingApp\Notification\Models\Contracts\Message;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-class SmsMessage extends BaseModel
+class SmsMessage extends BaseModel implements Message
 {
     protected $fillable = [
         'notification_class',
