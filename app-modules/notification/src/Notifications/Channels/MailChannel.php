@@ -42,7 +42,6 @@ use AdvisingApp\Notification\DataTransferObjects\EmailChannelResultData;
 use AdvisingApp\Notification\Enums\EmailMessageEventType;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
-use AdvisingApp\Notification\Events\EmailMessageEventHappened;
 use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
 use AdvisingApp\Notification\Models\EmailMessage;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
@@ -59,7 +58,6 @@ use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Channels\MailChannel as BaseMailChannel;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\Facades\Event;
 use ReflectionClass;
 use Symfony\Component\Mime\Email;
 use Throwable;
@@ -179,17 +177,16 @@ class MailChannel extends BaseMailChannel
                     if ($emailMessage) {
                         $emailMessage->quota_usage = $quotaUsage;
 
-                        $event = (
-                            ($tenantMailConfig?->isDemoModeEnabled ?? false)
-                            && ((! $isSystemNotification) || (! $tenantMailConfig?->isExcludingSystemNotificationsFromDemoMode))
-                        )
-                            ? EmailMessageEventType::BlockedByDemoMode
-                            : EmailMessageEventType::Dispatched;
-
-                        Event::dispatch(new EmailMessageEventHappened(
-                            type: $event,
-                            emailMessage: $emailMessage
-                        ));
+                        $emailMessage->events()->create([
+                            'type' => (
+                                ($tenantMailConfig?->isDemoModeEnabled ?? false)
+                                && ((! $isSystemNotification) || (! $tenantMailConfig?->isExcludingSystemNotificationsFromDemoMode))
+                            )
+                                ? EmailMessageEventType::BlockedByDemoMode
+                                : EmailMessageEventType::Dispatched,
+                            'payload' => $result->toArray(),
+                            'occurred_at' => now(),
+                        ]);
 
                         $emailMessage->save();
                     }
@@ -197,11 +194,19 @@ class MailChannel extends BaseMailChannel
                     $deliverable->update([
                         'delivery_status' => NotificationDeliveryStatus::DispatchFailed,
                     ]);
+
+                    if ($emailMessage) {
+                        $emailMessage->events()->create([
+                            'type' => EmailMessageEventType::DispatchFailed,
+                            'payload' => $result->toArray(),
+                            'occurred_at' => now(),
+                        ]);
+                    }
                 }
 
                 // Consider dispatching this as a seperate job so that it can be encapsulated to be retried if it fails, but also avoid changing the status of the deliverable if it fails.
                 if ($notification instanceof HasAfterSendHook) {
-                    $notification->afterSend($notifiable, $deliverable, $result);
+                    $notification->afterSend($notifiable, $deliverable, $result, $emailMessage);
                 }
             } catch (Throwable $exception) {
                 report($exception);
@@ -212,10 +217,26 @@ class MailChannel extends BaseMailChannel
             }
         } catch (NotificationQuotaExceeded $exception) {
             $deliverable->update(['delivery_status' => NotificationDeliveryStatus::RateLimited]);
+
+            if ($emailMessage) {
+                $emailMessage->events()->create([
+                    'type' => EmailMessageEventType::RateLimited,
+                    'payload' => [],
+                    'occurred_at' => now(),
+                ]);
+            }
         } catch (Throwable $exception) {
             $deliverable->update([
                 'delivery_status' => NotificationDeliveryStatus::DispatchFailed,
             ]);
+
+            if ($emailMessage) {
+                $emailMessage->events()->create([
+                    'type' => EmailMessageEventType::DispatchFailed,
+                    'payload' => [],
+                    'occurred_at' => now(),
+                ]);
+            }
 
             throw $exception;
         }
