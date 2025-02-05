@@ -61,10 +61,6 @@ class ProspectPhoneNumber extends BaseModel implements Auditable
         'is_mobile' => 'boolean',
     ];
 
-    protected $casts = [
-        'is_mobile' => 'boolean',
-    ];
-
     public function prospect(): BelongsTo
     {
         return $this->belongsTo(Prospect::class);
