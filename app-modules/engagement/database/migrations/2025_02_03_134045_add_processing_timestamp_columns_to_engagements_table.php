@@ -44,6 +44,7 @@ return new class () extends Migration {
         Schema::table('engagements', function (Blueprint $table) {
             $table->dateTime('scheduled_at')->nullable();
             $table->dateTime('dispatched_at')->nullable();
+            $table->dateTime('deliver_at')->nullable()->change();
         });
     }
 
@@ -52,6 +53,7 @@ return new class () extends Migration {
         Schema::table('engagements', function (Blueprint $table) {
             $table->dropColumn('scheduled_at');
             $table->dropColumn('dispatched_at');
+            $table->dateTime('deliver_at')->nullable(false)->change();
         });
     }
 };
