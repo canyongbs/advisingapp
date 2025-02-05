@@ -7,6 +7,9 @@ use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
+/**
+ * @mixin IdeHelperSmsMessage
+ */
 class SmsMessage extends BaseModel implements Message
 {
     protected $fillable = [

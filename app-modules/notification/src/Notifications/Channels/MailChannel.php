@@ -39,8 +39,10 @@ namespace AdvisingApp\Notification\Notifications\Channels;
 use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
 use AdvisingApp\Notification\Actions\MakeOutboundDeliverable;
 use AdvisingApp\Notification\DataTransferObjects\EmailChannelResultData;
+use AdvisingApp\Notification\Enums\EmailMessageEventType;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
+use AdvisingApp\Notification\Events\EmailMessageEventHappened;
 use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
 use AdvisingApp\Notification\Models\EmailMessage;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
@@ -57,6 +59,7 @@ use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Channels\MailChannel as BaseMailChannel;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Event;
 use ReflectionClass;
 use Symfony\Component\Mime\Email;
 use Throwable;
@@ -65,20 +68,20 @@ class MailChannel extends BaseMailChannel
 {
     public function send($notifiable, Notification $notification): void
     {
-        if (MessagesAndMessageEvents::active()) {
-            [$recipientId, $recipientType] = match (true) {
-                $notifiable instanceof Model => [$notifiable->getKey(), $notifiable->getMorphClass()],
-                $notifiable instanceof AnonymousNotifiable && $notification instanceof OnDemandNotification => $notification->identifyRecipient(),
-                default => [null, 'anonymous'],
-            };
+        [$recipientId, $recipientType] = match (true) {
+            $notifiable instanceof Model => [$notifiable->getKey(), $notifiable->getMorphClass()],
+            $notifiable instanceof AnonymousNotifiable && $notification instanceof OnDemandNotification => $notification->identifyRecipient(),
+            default => [null, 'anonymous'],
+        };
 
-            $emailMessage = new EmailMessage([
+        $emailMessage = MessagesAndMessageEvents::active()
+            ? new EmailMessage([
                 'notification_class' => $notification::class,
                 'content' => $notification->toMail($notifiable)->toArray(),
                 'recipient_id' => $recipientId,
                 'recipient_type' => $recipientType,
-            ]);
-        }
+            ])
+            : null;
 
         $deliverable = app(MakeOutboundDeliverable::class)->execute($notification, $notifiable, NotificationChannel::Email);
 
@@ -86,14 +89,14 @@ class MailChannel extends BaseMailChannel
             $notification->beforeSend(
                 notifiable: $notifiable,
                 deliverable: $deliverable,
-                message: MessagesAndMessageEvents::active() ? $emailMessage : null,
+                message: $emailMessage,
                 channel: NotificationChannel::Email
             );
         }
 
         $deliverable->save();
 
-        if (MessagesAndMessageEvents::active()) {
+        if ($emailMessage) {
             $emailMessage->save();
         }
 
@@ -123,7 +126,7 @@ class MailChannel extends BaseMailChannel
                             'X-SES-MESSAGE-TAGS',
                             implode(', ', [
                                 "outbound_deliverable_id={$deliverable->getKey()}",
-                                ...(MessagesAndMessageEvents::active() ? ["app_message_id={$emailMessage->getKey()}"] : []),
+                                ...($emailMessage ? ["app_message_id={$emailMessage->getKey()}"] : []),
                                 ...($tenant ? ['tenant_id=' . $tenant->getKey()] : []),
                             ]),
                         );
@@ -172,6 +175,24 @@ class MailChannel extends BaseMailChannel
                             : NotificationDeliveryStatus::Dispatched,
                         'quota_usage' => $quotaUsage,
                     ]);
+
+                    if ($emailMessage) {
+                        $emailMessage->quota_usage = $quotaUsage;
+
+                        $event = (
+                            ($tenantMailConfig?->isDemoModeEnabled ?? false)
+                            && ((! $isSystemNotification) || (! $tenantMailConfig?->isExcludingSystemNotificationsFromDemoMode))
+                        )
+                            ? EmailMessageEventType::BlockedByDemoMode
+                            : EmailMessageEventType::Dispatched;
+
+                        Event::dispatch(new EmailMessageEventHappened(
+                            type: $event,
+                            emailMessage: $emailMessage
+                        ));
+
+                        $emailMessage->save();
+                    }
                 } else {
                     $deliverable->update([
                         'delivery_status' => NotificationDeliveryStatus::DispatchFailed,

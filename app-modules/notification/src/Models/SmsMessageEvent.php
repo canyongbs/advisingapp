@@ -6,6 +6,9 @@ use AdvisingApp\Notification\Enums\SmsMessageEventType;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @mixin IdeHelperSmsMessageEvent
+ */
 class SmsMessageEvent extends BaseModel
 {
     // TODO: Create Factory
