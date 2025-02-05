@@ -36,9 +36,7 @@
 
 namespace AdvisingApp\Engagement\Console\Commands;
 
-use AdvisingApp\Engagement\Actions\DeliverEngagements as DeliverEngagementsAction;
 use AdvisingApp\Engagement\Jobs\DeliverEngagements as DeliverEngagementsJob;
-use App\Features\EngagementsFeature;
 use Illuminate\Console\Command;
 use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 
@@ -52,11 +50,7 @@ class DeliverEngagements extends Command
 
     public function handle(): int
     {
-        if (EngagementsFeature::active()) {
-            dispatch(new DeliverEngagementsJob());
-        } else {
-            dispatch(new DeliverEngagementsAction());
-        }
+        dispatch(new DeliverEngagementsJob());
 
         return static::SUCCESS;
     }
