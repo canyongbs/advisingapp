@@ -81,12 +81,12 @@ class EngagementSmsNotification extends Notification implements ShouldQueue, Has
         }
     }
 
-    public function beforeSend(AnonymousNotifiable|CanBeNotified $notifiable, OutboundDeliverable $deliverable, NotificationChannel $channel, ?Message $messsage): void
+    public function beforeSend(AnonymousNotifiable|CanBeNotified $notifiable, OutboundDeliverable $deliverable, NotificationChannel $channel, ?Message $message): void
     {
         $deliverable->related()->associate($this->engagement);
 
-        if ($messsage) {
-            $messsage->related()->associate($this->engagement);
+        if ($message) {
+            $message->related()->associate($this->engagement);
         }
     }
 }

@@ -17,6 +17,8 @@ class SmsMessage extends BaseModel implements Message
         'external_reference_id',
         'content',
         'quota_usage',
+        'recipient_id',
+        'recipient_type',
     ];
 
     protected $casts = [

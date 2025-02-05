@@ -15,6 +15,8 @@ class DatabaseMessage extends BaseModel implements Message
         'notification_class',
         'notification_id',
         'content',
+        'recipient_id',
+        'recipient_type',
     ];
 
     protected $casts = [
