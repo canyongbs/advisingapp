@@ -40,7 +40,6 @@ use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
 use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
-use App\Features\DropEngagementsDeliverAtColumnFeature;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
@@ -50,13 +49,6 @@ class EngagementObserver
     {
         if (is_null($engagement->user_id) && auth()->check()) {
             $engagement->user_id = auth()->id();
-        }
-    }
-
-    public function saving(Engagement $engagement): void
-    {
-        if (! DropEngagementsDeliverAtColumnFeature::active()) {
-            $engagement->deliver_at = now();
         }
     }
 
