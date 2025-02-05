@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Engagement\Database\Factories;
 
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -48,6 +49,31 @@ class EngagementBatchFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
+            'subject' => fake()->sentence,
+            'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->paragraph]]]]],
+            'scheduled_at' => fake()->dateTimeBetween('-1 year', '-1 day'),
+            'channel' => fake()->randomElement(NotificationChannel::cases()),
         ];
+    }
+
+    public function deliverLater(): self
+    {
+        return $this->state([
+            'scheduled_at' => fake()->dateTimeBetween('+1 day', '+1 week'),
+        ]);
+    }
+
+    public function email(): self
+    {
+        return $this->state([
+            'channel' => NotificationChannel::Email,
+        ]);
+    }
+
+    public function sms(): self
+    {
+        return $this->state([
+            'channel' => NotificationChannel::Sms,
+        ]);
     }
 }
