@@ -34,7 +34,7 @@ input EngagementsQuery {
 
     body: JSON
 
-    deliver_at: DateTime
+    scheduled_at: DateTime
 
     created_at: DateTime
 

@@ -34,8 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Notifications;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
+<<<<<<< HEAD:app-modules/engagement/src/Notifications/EngagementSmsNotification.php
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
@@ -64,15 +67,23 @@ class EngagementSmsNotification extends Notification implements ShouldQueue, Has
      * @return array<int, string>
      */
     public function via(object $notifiable): array
+=======
+return new class () extends Migration {
+    public function up(): void
+>>>>>>> 5115ed66a (Clean up engagements refactor):app-modules/engagement/database/migrations/2025_02_05_134045_drop_deliver_at_column_from_engagements_table.php
     {
-        return ['sms'];
+        Schema::table('engagements', function (Blueprint $table) {
+            $table->dropColumn('deliver_at');
+        });
     }
 
-    public function toSms(object $notifiable): TwilioMessage
+    public function down(): void
     {
-        return TwilioMessage::make($notifiable)
-            ->content($this->engagement->getBodyMarkdown());
+        Schema::table('engagements', function (Blueprint $table) {
+            $table->dateTime('deliver_at')->nullable();
+        });
     }
+<<<<<<< HEAD:app-modules/engagement/src/Notifications/EngagementSmsNotification.php
 
     public function failed(?Throwable $exception): void
     {
@@ -90,3 +101,6 @@ class EngagementSmsNotification extends Notification implements ShouldQueue, Has
         }
     }
 }
+=======
+};
+>>>>>>> 5115ed66a (Clean up engagements refactor):app-modules/engagement/database/migrations/2025_02_05_134045_drop_deliver_at_column_from_engagements_table.php

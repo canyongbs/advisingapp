@@ -41,14 +41,12 @@ use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Audit\Models\Audit;
 use AdvisingApp\Campaign\Actions\ExecuteCampaignActions;
-use AdvisingApp\Engagement\Actions\DeliverEngagements as DeliverEngagementsAction;
 use AdvisingApp\Engagement\Jobs\DeliverEngagements as DeliverEngagementsJob;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use AdvisingApp\Form\Models\FormAuthentication;
 use AdvisingApp\IntegrationTwilio\Jobs\CheckStatusOfOutboundDeliverablesWithoutATerminalStatus;
 use AdvisingApp\MeetingCenter\Console\Commands\RefreshCalendarRefreshTokens;
 use AdvisingApp\MeetingCenter\Jobs\SyncCalendars;
-use App\Features\EngagementsFeature;
 use App\Models\HealthCheckResultHistoryItem;
 use App\Models\MonitoredScheduledTaskLogItem;
 use App\Models\Scopes\SetupIsComplete;
@@ -79,11 +77,7 @@ class Kernel extends ConsoleKernel
                 try {
                     $schedule->call(function () use ($tenant) {
                         $tenant->execute(function () {
-                            if (EngagementsFeature::active()) {
-                                dispatch(new DeliverEngagementsJob());
-                            } else {
-                                dispatch(new DeliverEngagementsAction());
-                            }
+                            dispatch(app(DeliverEngagementsJob::class));
                         });
                     })
                         ->everyMinute()

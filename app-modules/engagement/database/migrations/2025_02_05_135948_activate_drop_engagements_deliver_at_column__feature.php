@@ -34,43 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Actions;
+use App\Features\DropEngagementsDeliverAtColumnFeature;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\Engagement\Actions\Contracts\EngagementChannel;
-use AdvisingApp\Engagement\Models\Engagement;
-use App\Models\Tenant;
-use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-
-/**
- * @deprecated Remove after deploying engagements refactor.
- */
-abstract class QueuedEngagementDelivery implements EngagementChannel, ShouldQueue, ShouldBeUnique
-{
-    use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
-    public $tries = 3;
-
-    public function __construct(
-        public Engagement $engagement
-    ) {}
-
-    public function uniqueId(): string
+return new class () extends Migration {
+    public function up(): void
     {
-        return Tenant::current()->getKey() . ':' . $this->engagement->getKey();
+        DropEngagementsDeliverAtColumnFeature::activate();
     }
 
-    public function handle(): void
+    public function down(): void
     {
-        $this->deliver();
+        DropEngagementsDeliverAtColumnFeature::deactivate();
     }
-}
+};
