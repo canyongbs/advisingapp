@@ -103,28 +103,28 @@ it('correctly handles the incoming SES event', function (string $event, Notifica
     }
 })->with([
     'HandleSesBounceEvent' => [
-        'event' => 'Bounce',
-        'status' => NotificationDeliveryStatus::Failed,
-        'response' => 'The email was not successfully delivered due to a permanent rejection from the recipient mail server.',
+        'Bounce',
+        NotificationDeliveryStatus::Failed,
+        'The email was not successfully delivered due to a permanent rejection from the recipient mail server.',
     ],
     'HandleSesDeliveryEvent' => [
-        'event' => 'Delivery',
-        'status' => NotificationDeliveryStatus::Successful,
-        'response' => null,
+        'Delivery',
+        NotificationDeliveryStatus::Successful,
+        null,
     ],
     'HandleSesDeliveryDelayEvent' => [
-        'event' => 'DeliveryDelay',
-        'status' => NotificationDeliveryStatus::Failed,
-        'response' => 'The email was not successfully delivered due to a temporary issue.',
+        'DeliveryDelay',
+        NotificationDeliveryStatus::Failed,
+        'The email was not successfully delivered due to a temporary issue.',
     ],
     'HandleSesRejectEvent' => [
-        'event' => 'Reject',
-        'status' => NotificationDeliveryStatus::Failed,
-        'response' => 'The email was not attempted to be delivered due to unsafe contents.',
+        'Reject',
+        NotificationDeliveryStatus::Failed,
+        'The email was not attempted to be delivered due to unsafe contents.',
     ],
     'HandleSesRenderingFailureEvent' => [
-        'event' => 'RenderingFailure',
-        'status' => NotificationDeliveryStatus::Failed,
-        'response' => 'The email not successfully delivered due to a template rendering error.',
+        'RenderingFailure',
+        NotificationDeliveryStatus::Failed,
+        'The email not successfully delivered due to a template rendering error.',
     ],
 ]);
