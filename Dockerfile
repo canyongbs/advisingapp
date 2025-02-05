@@ -78,7 +78,7 @@ RUN echo "source $NVM_DIR/nvm.sh \
 COPY ./docker/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./docker/nginx/site-opts.d /etc/nginx/site-opts.d
 
-COPY --from=ghcr.io/roadrunner-server/roadrunner:2024.3.1 --chown=$PUID:$PGID --chmod=0755 /usr/bin/rr /usr/local/bin/rr
+COPY --from=ghcr.io/roadrunner-server/roadrunner:2024.3.2 --chown=$PUID:$PGID --chmod=0755 /usr/bin/rr /usr/local/bin/rr
 
 RUN rm -rf /etc/s6-overlay/s6-rc.d/laravel-automations
 RUN rm /etc/s6-overlay/s6-rc.d/user/contents.d/laravel-automations
