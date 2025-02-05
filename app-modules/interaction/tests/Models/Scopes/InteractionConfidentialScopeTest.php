@@ -67,7 +67,7 @@ test('Interactions model with fetch data count for created user', function () {
         'is_confidential' => false,
     ]);
 
-    expect(Interaction::all()->count())->toBe(20);
+    expect(Interaction::query()->count())->toBe(20);
 });
 
 test('Interactions model with fetch data count for team user', function () {
@@ -89,7 +89,7 @@ test('Interactions model with fetch data count for team user', function () {
         'is_confidential' => false,
     ]);
 
-    expect(Interaction::all()->count())->toBe(20);
+    expect(Interaction::query()->count())->toBe(20);
 });
 
 test('Interactions model with fetch data count for assigned user', function () {
@@ -109,7 +109,7 @@ test('Interactions model with fetch data count for assigned user', function () {
         'is_confidential' => false,
     ]);
 
-    expect(Interaction::all()->count())->toBe(20);
+    expect(Interaction::query()->count())->toBe(20);
 });
 
 test('Interactions model with fetch data count for superadmin user', function () {
@@ -122,5 +122,5 @@ test('Interactions model with fetch data count for superadmin user', function ()
         'is_confidential' => false,
     ]);
 
-    expect(Interaction::all()->count())->toBe(20);
+    expect(Interaction::query()->count())->toBe(20);
 });
