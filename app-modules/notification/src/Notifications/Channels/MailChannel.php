@@ -140,7 +140,7 @@ class MailChannel extends BaseMailChannel
                 );
 
                 try {
-                    // TODO: See if we can retrieve the message ID from the SES response and store it in the deliverable/message
+                    // TODO: Find a way to get the SES Message ID attached to the deliverable/message. We will probably need to get it through the MessageSent event
                     $sentMessage = $this->mailer->mailer($message->mailer ?? null)->send(
                         $this->buildView($message),
                         array_merge($message->data(), $this->additionalMessageData($notification)),
@@ -266,6 +266,7 @@ class MailChannel extends BaseMailChannel
 
         $resetWindow = $licenseSettings->data->limits->getResetWindow();
 
+        // TODO: Change this to use the MailMessage model instead of the OutboundDeliverable model
         $currentQuotaUsage = OutboundDeliverable::query()
             ->where('channel', NotificationChannel::Email)
             ->whereBetween('created_at', [$resetWindow['start'], $resetWindow['end']])
