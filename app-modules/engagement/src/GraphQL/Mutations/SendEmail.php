@@ -45,6 +45,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Stringable;
 use Nuwave\Lighthouse\Execution\ResolveInfo;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
@@ -78,7 +79,7 @@ class SendEmail
             channel: NotificationChannel::Email,
             subject: $args['subject'],
             body: $body,
-            scheduledAt: $args['scheduled_at'],
+            scheduledAt: Carbon::parse($args['scheduled_at']),
         ));
 
         return $engagement->refresh();

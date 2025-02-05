@@ -94,15 +94,21 @@ class CreateEngagementBatch implements ShouldQueue
                 recordAttribute: 'body',
                 newImages: $data->temporaryBodyImages,
             );
+
             $engagementBatch->save();
 
-            $batch = Bus::batch(
-                $data->recipient
+            $batch = Bus::batch([
+                ...blank($data->scheduledAt) ? [fn () => $engagementBatch->user->notify(new EngagementBatchStartedNotification($engagementBatch))] : [],
+                ...$data->recipient
                     ->map(fn (CanBeNotified $recipient): CreateBatchedEngagement => new CreateBatchedEngagement($engagementBatch, $recipient))
                     ->all(),
-            )
+            ])
                 ->name("Bulk Engagement {$engagementBatch->getKey()}")
                 ->finally(function () use ($engagementBatch) {
+                    if ($engagementBatch->scheduled_at) {
+                        return;
+                    }
+
                     $engagementBatch->refresh();
 
                     $engagementBatch->user->notify(new EngagementBatchFinishedNotification($engagementBatch));
@@ -113,8 +119,6 @@ class CreateEngagementBatch implements ShouldQueue
             $engagementBatch->identifier = $batch->id;
             $engagementBatch->save();
         });
-
-        $engagementBatch->user->notify(new EngagementBatchStartedNotification($engagementBatch));
     }
 
     public function handle(): void

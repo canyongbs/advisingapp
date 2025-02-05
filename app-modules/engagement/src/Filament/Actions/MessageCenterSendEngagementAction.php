@@ -61,6 +61,7 @@ use Filament\Notifications\Notification;
 use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
+use Illuminate\Support\Carbon;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class MessageCenterSendEngagementAction extends Action
@@ -197,7 +198,7 @@ class MessageCenterSendEngagementAction extends Action
                             ],
                             $form->getFlatFields()['body']->getTemporaryImages(),
                         ),
-                        scheduledAt: ($data['send_later'] ?? false) ? ($data['deliver_at'] ?? null) : null,
+                        scheduledAt: ($data['send_later'] ?? false) ? Carbon::parse($data['deliver_at'] ?? null) : null,
                     ));
                 } else {
                     $engagement = new Engagement($data);

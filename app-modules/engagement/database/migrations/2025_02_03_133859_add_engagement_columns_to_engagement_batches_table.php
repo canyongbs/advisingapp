@@ -43,7 +43,6 @@ return new class () extends Migration {
     {
         Schema::table('engagement_batches', function (Blueprint $table) {
             $table->string('channel')->nullable();
-            $table->foreignUuid('user_id')->nullable()->constrained();
             $table->string('subject')->nullable();
             $table->jsonb('body')->nullable();
             $table->dateTime('scheduled_at')->nullable();
@@ -57,7 +56,6 @@ return new class () extends Migration {
     {
         Schema::table('engagement_batches', function (Blueprint $table) {
             $table->dropColumn('channel');
-            $table->dropConstrainedForeignId('user_id');
             $table->dropColumn('subject');
             $table->dropColumn('body');
             $table->dropColumn('scheduled_at');

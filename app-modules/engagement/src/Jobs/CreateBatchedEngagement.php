@@ -69,6 +69,7 @@ class CreateBatchedEngagement implements ShouldQueue
         $engagement->recipient()->associate($this->recipient);
         $engagement->channel = $this->engagementBatch->channel;
         $engagement->subject = $this->engagementBatch->subject;
+        $engagement->body = $this->engagementBatch->body;
         $engagement->scheduled_at = $this->engagementBatch->scheduled_at;
 
         if (! $engagement->scheduled_at) {

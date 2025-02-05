@@ -47,6 +47,7 @@ use App\Enums\Integration;
 use App\Exceptions\IntegrationException;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Carbon;
 use Nuwave\Lighthouse\Execution\ResolveInfo;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
@@ -81,7 +82,7 @@ class SendSMS
             },
             channel: NotificationChannel::Sms,
             body: $body,
-            scheduledAt: $args['scheduled_at'],
+            scheduledAt: Carbon::parse($args['scheduled_at']),
         ));
 
         return $engagement->refresh();

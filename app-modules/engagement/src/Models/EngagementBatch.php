@@ -97,7 +97,7 @@ class EngagementBatch extends BaseModel implements ExecutableFromACampaignAction
                 $channel = NotificationChannel::parse($action->data['channel']);
                 $records = $action->campaign->segment->retrieveRecords();
 
-                app(CreateEngagementBatch::class)->execute(new EngagementCreationData(
+                app(CreateEngagementBatch::class, ['data' => null])->execute(new EngagementCreationData(
                     user: $action->campaign->createdBy,
                     recipient: ($channel === NotificationChannel::Sms) ? $records->filter(fn (CanBeNotified $record) => $record->canRecieveSms()) : $records,
                     channel: $channel,

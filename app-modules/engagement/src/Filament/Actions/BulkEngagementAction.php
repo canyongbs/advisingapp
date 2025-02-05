@@ -59,6 +59,7 @@ use Filament\Tables\Actions\BulkAction;
 use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
@@ -179,7 +180,7 @@ class BulkEngagementAction
                 if (EngagementsFeature::active()) {
                     $channel = NotificationChannel::parse($data['channel']);
 
-                    app(CreateEngagementBatch::class)->execute(new EngagementCreationData(
+                    app(CreateEngagementBatch::class, ['data' => null])->execute(new EngagementCreationData(
                         user: auth()->user(),
                         recipient: ($channel === NotificationChannel::Sms) ? $records->filter(fn (CanBeNotified $record) => $record->canRecieveSms()) : $records,
                         channel: $channel,
@@ -192,7 +193,7 @@ class BulkEngagementAction
                             ],
                             $form->getFlatFields()['body']->getTemporaryImages(),
                         ),
-                        scheduledAt: ($data['send_later'] ?? false) ? ($data['deliver_at'] ?? null) : null,
+                        scheduledAt: ($data['send_later'] ?? false) ? Carbon::parse($data['deliver_at'] ?? null) : null,
                     ));
                 } else {
                     CreateEngagementBatch::dispatch(EngagementBatchCreationData::from([

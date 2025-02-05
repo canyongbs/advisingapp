@@ -61,8 +61,7 @@ class DeliverEngagements implements ShouldQueue
                 ->orWhere('scheduled_at', '<=', now()))
             ->whereNull('dispatched_at')
             ->with('recipient')
-            ->chunkById(
-                250,
+            ->eachById(
                 fn (Engagement $engagement) => DB::transaction(function () use ($engagement) {
                     $updatedEngagementsCount = Engagement::query()
                         ->whereNull('dispatched_at')
@@ -75,6 +74,7 @@ class DeliverEngagements implements ShouldQueue
 
                     $engagement->recipient->notify(new EngagementNotification($engagement));
                 }),
+                250,
             );
     }
 
