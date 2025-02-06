@@ -46,7 +46,6 @@ use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
 use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\OnDemandNotification;
-use App\Features\MessagesAndMessageEvents;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Settings\LicenseSettings;
@@ -69,14 +68,12 @@ class MailChannel extends BaseMailChannel
             default => [null, 'anonymous'],
         };
 
-        $emailMessage = MessagesAndMessageEvents::active()
-            ? new EmailMessage([
-                'notification_class' => $notification::class,
-                'content' => $notification->toMail($notifiable)->toArray(),
-                'recipient_id' => $recipientId,
-                'recipient_type' => $recipientType,
-            ])
-            : null;
+        $emailMessage = new EmailMessage([
+            'notification_class' => $notification::class,
+            'content' => $notification->toMail($notifiable)->toArray(),
+            'recipient_id' => $recipientId,
+            'recipient_type' => $recipientType,
+        ]);
 
         if ($notification instanceof HasBeforeSendHook) {
             $notification->beforeSend(

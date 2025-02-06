@@ -47,7 +47,6 @@ use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\OnDemandNotification;
 use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
-use App\Features\MessagesAndMessageEvents;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Illuminate\Database\Eloquent\Model;
@@ -72,14 +71,12 @@ class SmsChannel
             default => [null, 'anonymous'],
         };
 
-        $smsMessage = MessagesAndMessageEvents::active()
-            ? new SmsMessage([
-                'notification_class' => $notification::class,
-                'content' => $notification->toSms($notifiable)->toArray(),
-                'recipient_id' => $recipientId,
-                'recipient_type' => $recipientType,
-            ])
-            : null;
+        $smsMessage = new SmsMessage([
+            'notification_class' => $notification::class,
+            'content' => $notification->toSms($notifiable)->toArray(),
+            'recipient_id' => $recipientId,
+            'recipient_type' => $recipientType,
+        ]);
 
         if ($notification instanceof HasBeforeSendHook) {
             $notification->beforeSend(
