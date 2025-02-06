@@ -178,17 +178,19 @@ class SmsChannel
 
             try {
                 if ($result->success) {
+                    $quotaUsage = $this->determineQuotaUsage($result, $deliverable);
+
                     $deliverable->update([
                         'external_reference_id' => $result->message->sid,
                         'external_status' => $result->message->status,
                         'delivery_status' => $twilioSettings->is_demo_mode_enabled
                             ? NotificationDeliveryStatus::BlockedByDemoMode
                             : NotificationDeliveryStatus::Dispatched,
-                        'quota_usage' => $this->determineQuotaUsage($result, $deliverable),
+                        'quota_usage' => $quotaUsage,
                     ]);
 
                     if ($smsMessage) {
-                        $smsMessage->quota_usage = $this->determineQuotaUsage($result, $deliverable);
+                        $smsMessage->quota_usage = $quotaUsage;
                         $smsMessage->external_reference_id = $result->message->sid;
 
                         $smsMessage->events()->create([
