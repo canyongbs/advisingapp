@@ -52,7 +52,7 @@ it('will create an engagement batch', function () {
 
     $data = CreateEngagementBatchRequestFactory::new()->create();
 
-    app(CreateEngagementBatch::class, ['data' => null])->execute(new EngagementCreationData(
+    app(CreateEngagementBatch::class)->execute(new EngagementCreationData(
         user: $data['user'],
         recipient: Student::factory()->count(10)->create(),
         channel: $data['channel'],

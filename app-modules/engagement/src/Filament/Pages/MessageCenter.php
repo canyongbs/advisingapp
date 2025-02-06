@@ -239,7 +239,7 @@ class MessageCenter extends Page
             ->$engagementScope()
             ->hasBeenDelivered()
             ->tap(function (Builder $query) {
-                $this->applyFilters(query: $query, dateColumn: 'deliver_at', idColumn: 'recipient_id');
+                $this->applyFilters(query: $query, dateColumn: 'dispatched_at', idColumn: 'recipient_id');
             })
             ->pluck('recipient_id')
             ->unique();
@@ -259,7 +259,7 @@ class MessageCenter extends Page
     {
         $latestEngagementsForEducatables = DB::table('engagements')
             ->whereIn('recipient_id', $ids)
-            ->select('recipient_id as educatable_id', DB::raw('MAX(deliver_at) as latest_deliver_at'))
+            ->select('recipient_id as educatable_id', DB::raw('MAX(dispatched_at) as latest_deliver_at'))
             ->groupBy('educatable_id');
 
         $latestEngagementResponsesForEducatables = DB::table('engagement_responses')

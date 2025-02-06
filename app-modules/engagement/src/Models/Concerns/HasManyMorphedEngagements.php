@@ -52,6 +52,7 @@ trait HasManyMorphedEngagements
     public function orderedEngagements(): MorphMany
     {
         return $this->engagements()
-            ->orderBy('deliver_at', 'desc');
+            ->whereNotNull('dispatched_at')
+            ->orderBy('dispatched_at', 'desc');
     }
 }

@@ -52,14 +52,6 @@ class EngagementObserver
         }
     }
 
-    /**
-     * @deprecated Remove after deploying engagements refactor.
-     */
-    public function saving(Engagement $engagement): void
-    {
-        $engagement->deliver_at = $engagement->deliver_at ?? now();
-    }
-
     public function created(Engagement $engagement): void
     {
         $user = auth()->user();
