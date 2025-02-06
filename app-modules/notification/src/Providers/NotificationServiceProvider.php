@@ -42,7 +42,12 @@ use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 use AdvisingApp\Notification\Listeners\CreateAutoSubscription;
 use AdvisingApp\Notification\Listeners\NotifyUserOfSubscriptionCreated;
 use AdvisingApp\Notification\Listeners\NotifyUserOfSubscriptionDeleted;
+use AdvisingApp\Notification\Models\DatabaseMessage;
+use AdvisingApp\Notification\Models\EmailMessage;
+use AdvisingApp\Notification\Models\EmailMessageEvent;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\Notification\Models\SmsMessage;
+use AdvisingApp\Notification\Models\SmsMessageEvent;
 use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\Notification\Notifications\ChannelManager;
 use AdvisingApp\Notification\Notifications\Channels\DatabaseChannel;
@@ -74,6 +79,11 @@ class NotificationServiceProvider extends ServiceProvider
         Relation::morphMap([
             'subscription' => Subscription::class,
             'outbound_deliverable' => OutboundDeliverable::class,
+            'email_message' => EmailMessage::class,
+            'email_message_event' => EmailMessageEvent::class,
+            'sms_message' => SmsMessage::class,
+            'sms_message_event' => SmsMessageEvent::class,
+            'database_message' => DatabaseMessage::class,
         ]);
 
         $this->registerEvents();

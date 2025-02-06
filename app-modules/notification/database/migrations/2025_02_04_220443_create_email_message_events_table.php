@@ -34,15 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Notifications\Contracts;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
-use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
-use AdvisingApp\Notification\Models\Contracts\Message;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
-use Illuminate\Notifications\AnonymousNotifiable;
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::create('email_message_events', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->foreignUuid('email_message_id')->constrained('email_messages')->cascadeOnDelete();
+            $table->string('type');
+            $table->jsonb('payload');
+            $table->timestamp('occurred_at');
+            $table->timestamps();
+        });
+    }
 
-interface HasAfterSendHook
-{
-    public function afterSend(AnonymousNotifiable|CanBeNotified $notifiable, OutboundDeliverable $deliverable, NotificationResultData $result, ?Message $message): void;
-}
+    public function down(): void
+    {
+        Schema::dropIfExists('email_message_events');
+    }
+};

@@ -35,6 +35,7 @@
 */
 
 use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
+use AdvisingApp\Notification\Models\EmailMessage;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use App\Models\Tenant;
@@ -82,7 +83,7 @@ it('The configuration set headers are present and emails are sent if configurati
 
     Event::assertDispatched(
         fn (MessageSent $event) => $event->message->getHeaders()->get('X-SES-CONFIGURATION-SET')->getBody() === $configurationSet
-            && $event->message->getHeaders()->get('X-SES-MESSAGE-TAGS')->getBody() === sprintf('outbound_deliverable_id=%s, tenant_id=%s', OutboundDeliverable::first()->getKey(), Tenant::current()->getKey())
+            && $event->message->getHeaders()->get('X-SES-MESSAGE-TAGS')->getBody() === sprintf('outbound_deliverable_id=%s, app_message_id=%s, tenant_id=%s', OutboundDeliverable::first()->getKey(), EmailMessage::first()->getKey(), Tenant::current()->getKey())
     );
 });
 

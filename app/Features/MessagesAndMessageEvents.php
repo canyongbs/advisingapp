@@ -34,15 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Notifications\Contracts;
+namespace App\Features;
 
-use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
-use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
-use AdvisingApp\Notification\Models\Contracts\Message;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
-use Illuminate\Notifications\AnonymousNotifiable;
+use App\Support\AbstractFeatureFlag;
 
-interface HasAfterSendHook
+class MessagesAndMessageEvents extends AbstractFeatureFlag
 {
-    public function afterSend(AnonymousNotifiable|CanBeNotified $notifiable, OutboundDeliverable $deliverable, NotificationResultData $result, ?Message $message): void;
+    public function resolve(mixed $scope): mixed
+    {
+        return false;
+    }
 }

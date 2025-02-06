@@ -34,15 +34,44 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Notifications\Contracts;
+namespace AdvisingApp\Notification\Models;
 
-use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
-use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\Contracts\Message;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
-use Illuminate\Notifications\AnonymousNotifiable;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-interface HasAfterSendHook
+/**
+ * @mixin IdeHelperDatabaseMessage
+ */
+class DatabaseMessage extends BaseModel implements Message
 {
-    public function afterSend(AnonymousNotifiable|CanBeNotified $notifiable, OutboundDeliverable $deliverable, NotificationResultData $result, ?Message $message): void;
+    protected $fillable = [
+        'notification_class',
+        'notification_id',
+        'content',
+        'recipient_id',
+        'recipient_type',
+    ];
+
+    protected $casts = [
+        'content' => 'array',
+    ];
+
+    public function related(): MorphTo
+    {
+        return $this->morphTo(
+            name: 'related',
+            type: 'related_type',
+            id: 'related_id',
+        );
+    }
+
+    public function recipient(): MorphTo
+    {
+        return $this->morphTo(
+            name: 'recipient',
+            type: 'recipient_type',
+            id: 'recipient_id',
+        );
+    }
 }

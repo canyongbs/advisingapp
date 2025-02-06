@@ -34,59 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Notifications;
+namespace AdvisingApp\Notification\Tests\Fixtures;
 
-use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
-use AdvisingApp\Notification\Models\Contracts\Message;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
-use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Notification;
-use Throwable;
 
-/**
- * @deprecated Remove after deploying engagements refactor.
- */
-class EngagementSmsNotification extends Notification implements ShouldQueue, HasBeforeSendHook
+class TestDatabaseNotification extends Notification implements ShouldQueue
 {
     use Queueable;
-
-    public function __construct(
-        public Engagement $engagement,
-    ) {}
 
     /**
      * @return array<int, string>
      */
     public function via(object $notifiable): array
     {
-        return ['sms'];
+        return ['database'];
     }
 
-    public function toSms(object $notifiable): TwilioMessage
+    public function toMail(object $notifiable): MailMessage
     {
-        return TwilioMessage::make($notifiable)
-            ->content($this->engagement->getBodyMarkdown());
+        return MailMessage::make()
+            ->subject('Test Subject')
+            ->greeting('Test Greeting')
+            ->content('This is a test email');
     }
 
-    public function failed(?Throwable $exception): void
+    public function toDatabase(object $notifiable): array
     {
-        if (is_null($this->engagement->engagement_batch_id)) {
-            $this->engagement->user?->notify(new EngagementFailedNotification($this->engagement));
-        }
-    }
-
-    public function beforeSend(AnonymousNotifiable|CanBeNotified $notifiable, OutboundDeliverable $deliverable, NotificationChannel $channel, ?Message $message): void
-    {
-        $deliverable->related()->associate($this->engagement);
-
-        if ($message) {
-            $message->related()->associate($this->engagement);
-        }
+        return FilamentNotification::make()
+            ->success()
+            ->title('Test Title')
+            ->body('This is a test.')
+            ->getDatabaseMessage();
     }
 }

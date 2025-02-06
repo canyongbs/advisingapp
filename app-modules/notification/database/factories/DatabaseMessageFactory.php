@@ -34,15 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Notifications\Contracts;
+namespace AdvisingApp\Notification\Database\Factories;
 
-use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
-use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
-use AdvisingApp\Notification\Models\Contracts\Message;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
-use Illuminate\Notifications\AnonymousNotifiable;
+use AdvisingApp\Notification\Models\DatabaseMessage;
+use AdvisingApp\Notification\Tests\Fixtures\TestDatabaseNotification;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-interface HasAfterSendHook
+/**
+ * @extends Factory<DatabaseMessage>
+ */
+class DatabaseMessageFactory extends Factory
 {
-    public function afterSend(AnonymousNotifiable|CanBeNotified $notifiable, OutboundDeliverable $deliverable, NotificationResultData $result, ?Message $message): void;
+    public function definition(): array
+    {
+        return [
+            'notification_class' => TestDatabaseNotification::class,
+        ];
+    }
 }

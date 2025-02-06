@@ -34,15 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Notifications\Contracts;
+namespace AdvisingApp\Notification\Enums;
 
-use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
-use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
-use AdvisingApp\Notification\Models\Contracts\Message;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
-use Illuminate\Notifications\AnonymousNotifiable;
+use Filament\Support\Contracts\HasLabel;
 
-interface HasAfterSendHook
+enum SmsMessageEventType: string implements HasLabel
 {
-    public function afterSend(AnonymousNotifiable|CanBeNotified $notifiable, OutboundDeliverable $deliverable, NotificationResultData $result, ?Message $message): void;
+    // Internal
+    case Dispatched = 'dispatched';
+    case FailedDispatch = 'failed_dispatch';
+    case RateLimited = 'rate_limited';
+    case BlockedByDemoMode = 'blocked_by_demo_mode';
+
+    // External
+    case Canceled = 'canceled';
+    case Sent = 'sent';
+    case Failed = 'failed';
+    case Delivered = 'delivered';
+    case Undelivered = 'undelivered';
+    case Read = 'read';
+
+    public function getLabel(): ?string
+    {
+        return $this->name;
+    }
 }

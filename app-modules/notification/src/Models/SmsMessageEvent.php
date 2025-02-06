@@ -34,15 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Notifications\Contracts;
+namespace AdvisingApp\Notification\Models;
 
-use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
-use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
-use AdvisingApp\Notification\Models\Contracts\Message;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
-use Illuminate\Notifications\AnonymousNotifiable;
+use AdvisingApp\Notification\Enums\SmsMessageEventType;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-interface HasAfterSendHook
+/**
+ * @mixin IdeHelperSmsMessageEvent
+ */
+class SmsMessageEvent extends BaseModel
 {
-    public function afterSend(AnonymousNotifiable|CanBeNotified $notifiable, OutboundDeliverable $deliverable, NotificationResultData $result, ?Message $message): void;
+    // TODO: Create Factory
+
+    protected $fillable = [
+        'type',
+        'payload',
+        'occurred_at',
+    ];
+
+    protected $casts = [
+        'type' => SmsMessageEventType::class,
+        'payload' => 'array',
+        'occurred_at' => 'datetime',
+    ];
+
+    public function message(): BelongsTo
+    {
+        return $this->belongsTo(SmsMessage::class);
+    }
 }
