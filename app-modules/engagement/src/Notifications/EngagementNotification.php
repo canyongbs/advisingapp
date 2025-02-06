@@ -94,13 +94,9 @@ class EngagementNotification extends Notification implements ShouldQueue, HasBef
         }
     }
 
-    public function beforeSend(AnonymousNotifiable|CanBeNotified $notifiable, OutboundDeliverable $deliverable, NotificationChannel $channel, ?Message $message): void
+    public function beforeSend(AnonymousNotifiable|CanBeNotified $notifiable, Message $message, NotificationChannel $channel): void
     {
-        $deliverable->related()->associate($this->engagement);
-
-        if ($message) {
-            $message->related()->associate($this->engagement);
-        }
+        $message->related()->associate($this->engagement);
     }
 
     public function afterSend(AnonymousNotifiable|CanBeNotified $notifiable, OutboundDeliverable $deliverable, NotificationResultData $result, ?Message $message): void

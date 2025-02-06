@@ -37,7 +37,6 @@
 namespace AdvisingApp\Notification\Notifications\Channels;
 
 use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
-use AdvisingApp\Notification\Actions\MakeOutboundDeliverable;
 use AdvisingApp\Notification\DataTransferObjects\EmailChannelResultData;
 use AdvisingApp\Notification\Enums\EmailMessageEventType;
 use AdvisingApp\Notification\Enums\NotificationChannel;
@@ -81,12 +80,9 @@ class MailChannel extends BaseMailChannel
             ])
             : null;
 
-        $deliverable = app(MakeOutboundDeliverable::class)->execute($notification, $notifiable, NotificationChannel::Email);
-
         if ($notification instanceof HasBeforeSendHook) {
             $notification->beforeSend(
                 notifiable: $notifiable,
-                deliverable: $deliverable,
                 message: $emailMessage,
                 channel: NotificationChannel::Email
             );
