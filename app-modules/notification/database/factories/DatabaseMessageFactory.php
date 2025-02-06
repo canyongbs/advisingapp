@@ -49,7 +49,6 @@ class DatabaseMessageFactory extends Factory
     {
         return [
             'notification_class' => TestDatabaseNotification::class,
-            'quota_usage' => 0,
         ];
     }
 }
