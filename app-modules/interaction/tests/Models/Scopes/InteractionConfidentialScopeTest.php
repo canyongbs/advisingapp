@@ -49,78 +49,117 @@ test('Interaction model has applied global scope', function () {
     expect(Interaction::hasGlobalScope(InteractionConfidentialScope::class))->toBeTrue();
 });
 
-test('Interactions model with fetch data count for created user', function () {
+test('Interactions model with fetch data for created user', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
-    $user->givePermissionTo('interaction.view-any');
 
     actingAs($user);
-    Interaction::factory()->count(10)->create([
+    $ownedConfidentialInteractions = Interaction::factory()->count(10)->create([
         'is_confidential' => true,
         'user_id' => $user,
     ]);
 
-    Interaction::factory()->count(10)->create([
+    $privateInteractions = Interaction::factory()->count(10)->create([
         'is_confidential' => true,
     ]);
 
-    Interaction::factory()->count(10)->create([
+    $publicInteractions = Interaction::factory()->count(10)->create([
         'is_confidential' => false,
     ]);
 
-    expect(Interaction::query()->count())->toBe(20);
+    $interactions = Interaction::query()->get();
+
+    expect($interactions)->toHaveCount(20);
+
+    expect($interactions->pluck('id'))
+        ->toContain(...$publicInteractions->pluck('id'))
+        ->toContain(...$ownedConfidentialInteractions->pluck('id'));
+
+    expect($interactions->pluck('id'))->not->toContain(...$privateInteractions->pluck('id'));
+
+    expect($interactions->where('is_confidential', true)->pluck('user_id'))
+        ->not->toContain(...$privateInteractions->pluck('user_id'));
 });
 
-test('Interactions model with fetch data count for team user', function () {
+test('Interactions model with fetch data for team user', function () {
     $teamUser = User::factory()->licensed(LicenseType::cases())->create();
-    $teamUser->givePermissionTo('interaction.view-any');
 
     $team = Team::factory()->hasAttached($teamUser, [], 'users')->create();
 
     actingAs($teamUser);
-    Interaction::factory()->hasAttached($team, [], 'confidentialAccessTeams')->count(10)->create([
+
+    $ownedConfidentialInteractions = Interaction::factory()->hasAttached($team, [], 'confidentialAccessTeams')->count(10)->create([
         'is_confidential' => true,
     ]);
 
-    Interaction::factory()->count(10)->create([
+    $privateInteractions = Interaction::factory()->count(10)->create([
         'is_confidential' => true,
     ]);
 
-    Interaction::factory()->count(10)->create([
+    $publicInteractions = Interaction::factory()->count(10)->create([
         'is_confidential' => false,
     ]);
 
-    expect(Interaction::query()->count())->toBe(20);
+    $interactions = Interaction::query()->get();
+
+    expect($interactions)->toHaveCount(20);
+
+    expect($interactions->pluck('id'))
+        ->toContain(...$publicInteractions->pluck('id'))
+        ->toContain(...$ownedConfidentialInteractions->pluck('id'));
+
+    expect($interactions->pluck('id'))->not->toContain(...$privateInteractions->pluck('id'));
+
+    expect($interactions->where('is_confidential', true)->pluck('user_id'))
+        ->not->toContain(...$privateInteractions->pluck('user_id'));
 });
 
-test('Interactions model with fetch data count for assigned user', function () {
+test('Interactions model with fetch data for assigned user', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
-    $user->givePermissionTo('interaction.view-any');
 
     actingAs($user);
-    Interaction::factory()->hasAttached($user, [], 'confidentialAccessUsers')->count(10)->create([
+
+    $ownedConfidentialInteractions = Interaction::factory()->hasAttached($user, [], 'confidentialAccessUsers')->count(10)->create([
         'is_confidential' => true,
     ]);
 
-    Interaction::factory()->count(10)->create([
+    $privateInteractions = Interaction::factory()->count(10)->create([
         'is_confidential' => true,
     ]);
 
-    Interaction::factory()->count(10)->create([
+    $publicInteractions = Interaction::factory()->count(10)->create([
         'is_confidential' => false,
     ]);
 
-    expect(Interaction::query()->count())->toBe(20);
+    $interactions = Interaction::query()->get();
+
+    expect($interactions)->toHaveCount(20);
+
+    expect($interactions->pluck('id'))
+        ->toContain(...$publicInteractions->pluck('id'))
+        ->toContain(...$ownedConfidentialInteractions->pluck('id'));
+
+    expect($interactions->pluck('id'))->not->toContain(...$privateInteractions->pluck('id'));
+
+    expect($interactions->where('is_confidential', true)->pluck('user_id'))
+        ->not->toContain(...$privateInteractions->pluck('user_id'));
 });
 
-test('Interactions model with fetch data count for superadmin user', function () {
+test('Interactions model with fetch data for superadmin user', function () {
     asSuperAdmin();
-    Interaction::factory()->count(10)->create([
+
+    $privateInteractions = Interaction::factory()->count(10)->create([
         'is_confidential' => true,
     ]);
 
-    Interaction::factory()->count(10)->create([
+    $publicInteractions = Interaction::factory()->count(10)->create([
         'is_confidential' => false,
     ]);
 
-    expect(Interaction::query()->count())->toBe(20);
+    $interactions = Interaction::query()->get();
+
+    expect($interactions)->toHaveCount(20);
+
+    expect($interactions->pluck('id'))
+        ->toContain(...$publicInteractions->pluck('id'))
+        ->toContain(...$privateInteractions->pluck('id'));
 });
