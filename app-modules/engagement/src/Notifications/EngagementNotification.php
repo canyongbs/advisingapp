@@ -42,7 +42,6 @@ use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\Contracts\Message;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
@@ -99,7 +98,7 @@ class EngagementNotification extends Notification implements ShouldQueue, HasBef
         $message->related()->associate($this->engagement);
     }
 
-    public function afterSend(AnonymousNotifiable|CanBeNotified $notifiable, OutboundDeliverable $deliverable, NotificationResultData $result, ?Message $message): void
+    public function afterSend(AnonymousNotifiable|CanBeNotified $notifiable, Message $message, NotificationResultData $result): void
     {
         if (! $this->engagement->engagementBatch) {
             return;
