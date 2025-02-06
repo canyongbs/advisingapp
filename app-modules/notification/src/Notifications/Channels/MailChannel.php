@@ -179,11 +179,11 @@ class MailChannel extends BaseMailChannel
 
                         $emailMessage->events()->create([
                             'type' => (
-                                ($tenantMailConfig?->isDemoModeEnabled ?? false)
-                                && ((! $isSystemNotification) || (! $tenantMailConfig?->isExcludingSystemNotificationsFromDemoMode))
+                                (! $tenantMailConfig?->isDemoModeEnabled ?? false)
+                                || ($isSystemNotification && $tenantMailConfig?->isExcludingSystemNotificationsFromDemoMode)
                             )
-                                ? EmailMessageEventType::BlockedByDemoMode
-                                : EmailMessageEventType::Dispatched,
+                                ? EmailMessageEventType::Dispatched
+                                : EmailMessageEventType::BlockedByDemoMode,
                             'payload' => $result->toArray(),
                             'occurred_at' => now(),
                         ]);
