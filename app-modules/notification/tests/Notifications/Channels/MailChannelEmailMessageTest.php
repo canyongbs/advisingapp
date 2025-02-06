@@ -34,45 +34,31 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\Notification\Enums\EmailMessageEventType;
+use AdvisingApp\Notification\Models\EmailMessage;
 use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Notification\Tests\Fixtures\TestEmailNotification;
 use App\Models\Tenant;
 use App\Models\User;
-use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 
-it('will create an outbound deliverable for the outbound notification', function () {
+it('will create an EmailMessage for the notification', function () {
     $notifiable = User::factory()->create();
 
     $notification = new TestEmailNotification();
 
     $notifiable->notify($notification);
 
-    expect(OutboundDeliverable::count())->toBe(1);
-    expect(OutboundDeliverable::first()->notification_class)->toBe(TestEmailNotification::class);
+    $emailMessages = EmailMessage::all();
+
+    expect($emailMessages->count())->toBe(1);
+    expect($emailMessages->first()->notification_class)->toBe(TestEmailNotification::class);
 });
 
-it('will create an outbound deliverable for each of the channels that the notification specifies', function () {
-    $notifiable = User::factory()->create();
-
-    $notification = new TestMultipleChannelNotification();
-
-    $notifiable->notify($notification);
-
-    expect(OutboundDeliverable::count())->toBe(2);
-    expect(OutboundDeliverable::where('channel', NotificationChannel::Email)->count())->toBe(1);
-    expect(OutboundDeliverable::where('channel', NotificationChannel::Database)->count())->toBe(1);
-});
-
-it('will not send emails in demo mode and mark the outbound deliverable as blocked', function () {
-    expect(OutboundDeliverable::count())->toBe(0);
-
+it('will not send emails in demo mode and record a BlockedByDemoMode event', function () {
     $user = User::factory()->create();
 
     $tenantConfig = Tenant::current()->config;
@@ -81,16 +67,19 @@ it('will not send emails in demo mode and mark the outbound deliverable as block
         'config' => $tenantConfig,
     ]);
 
-    $notification = new TestNotification();
+    $notification = new TestEmailNotification();
     $user->notify($notification);
 
-    expect(OutboundDeliverable::count())->toBe(1);
-    expect(OutboundDeliverable::first()->delivery_status)->toBe(NotificationDeliveryStatus::BlockedByDemoMode);
+    $emailMessages = EmailMessage::query()
+        ->with('events')
+        ->get();
+
+    expect($emailMessages->count())->toBe(1);
+    expect($emailMessages->first()->events->count())->toBe(1);
+    expect($emailMessages->first()->events->first()->type)->toBe(EmailMessageEventType::BlockedByDemoMode);
 });
 
 it('will send system notifications in demo mode', function () {
-    expect(OutboundDeliverable::count())->toBe(0);
-
     $user = User::factory()->create();
 
     $tenantConfig = Tenant::current()->config;
@@ -103,13 +92,16 @@ it('will send system notifications in demo mode', function () {
     $notification = new TestSystemNotification();
     $user->notify($notification);
 
-    expect(OutboundDeliverable::count())->toBe(1);
-    expect(OutboundDeliverable::first()->delivery_status)->not->toBe(NotificationDeliveryStatus::BlockedByDemoMode);
+    $emailMessages = EmailMessage::query()
+        ->with('events')
+        ->get();
+
+    expect($emailMessages->count())->toBe(1);
+    expect($emailMessages->first()->events->count())->toBe(1);
+    expect($emailMessages->first()->events->first()->type)->toBe(EmailMessageEventType::Dispatched);
 });
 
 it('will not send system notifications in demo mode when system notifications are not excluded', function () {
-    expect(OutboundDeliverable::count())->toBe(0);
-
     $user = User::factory()->create();
 
     $tenantConfig = Tenant::current()->config;
@@ -122,60 +114,14 @@ it('will not send system notifications in demo mode when system notifications ar
     $notification = new TestSystemNotification();
     $user->notify($notification);
 
-    expect(OutboundDeliverable::count())->toBe(1);
-    expect(OutboundDeliverable::first()->delivery_status)->toBe(NotificationDeliveryStatus::BlockedByDemoMode);
+    $emailMessages = EmailMessage::query()
+        ->with('events')
+        ->get();
+
+    expect($emailMessages->count())->toBe(1);
+    expect($emailMessages->first()->events->count())->toBe(1);
+    expect($emailMessages->first()->events->first()->type)->toBe(EmailMessageEventType::BlockedByDemoMode);
 });
-
-class TestNotification extends Notification implements ShouldQueue
-{
-    use Queueable;
-
-    /**
-     * @return array<int, string>
-     */
-    public function via(object $notifiable): array
-    {
-        return ['mail'];
-    }
-
-    public function toMail(object $notifiable): MailMessage
-    {
-        return MailMessage::make()
-            ->subject('Test Subject')
-            ->greeting('Test Greeting')
-            ->content('This is a test email');
-    }
-}
-
-class TestMultipleChannelNotification extends Notification implements ShouldQueue
-{
-    use Queueable;
-
-    /**
-     * @return array<int, string>
-     */
-    public function via(object $notifiable): array
-    {
-        return ['mail', 'database'];
-    }
-
-    public function toMail(object $notifiable): MailMessage
-    {
-        return MailMessage::make()
-            ->subject('Test Subject')
-            ->greeting('Test Greeting')
-            ->content('This is a test email');
-    }
-
-    public function toDatabase(object $notifiable): array
-    {
-        return FilamentNotification::make()
-            ->success()
-            ->title('This is a test database notification.')
-            ->body('This is the content of your test database notification')
-            ->getDatabaseMessage();
-    }
-}
 
 #[SystemNotification]
 class TestSystemNotification extends Notification implements ShouldQueue
