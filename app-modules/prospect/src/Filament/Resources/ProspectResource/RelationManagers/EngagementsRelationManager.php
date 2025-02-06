@@ -36,17 +36,15 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers;
 
-use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Pages\CreateEngagement;
+use AdvisingApp\Engagement\Filament\Actions\RelationManagerSendEngagementAction;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use App\Filament\Tables\Columns\IdColumn;
-use Filament\Forms\Form;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Support\Enums\IconPosition;
-use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -60,11 +58,6 @@ class EngagementsRelationManager extends RelationManager
     public static function getTitle(Model $ownerRecord, string $pageClass): string
     {
         return 'Outbound';
-    }
-
-    public function form(Form $form): Form
-    {
-        return (resolve(CreateEngagement::class))->form($form);
     }
 
     public function infolist(Infolist $infolist): Infolist
@@ -118,9 +111,7 @@ class EngagementsRelationManager extends RelationManager
                     ->dateTime(),
             ])
             ->headerActions([
-                CreateAction::make()
-                    ->label('New Email or Text')
-                    ->modalHeading('Create new email or text'),
+                RelationManagerSendEngagementAction::make(),
             ])
             ->actions([
                 ViewAction::make(),

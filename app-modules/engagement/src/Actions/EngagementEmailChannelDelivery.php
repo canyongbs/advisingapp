@@ -38,6 +38,9 @@ namespace AdvisingApp\Engagement\Actions;
 
 use AdvisingApp\Engagement\Notifications\EngagementEmailNotification;
 
+/**
+ * @deprecated Remove after deploying engagements refactor.
+ */
 class EngagementEmailChannelDelivery extends QueuedEngagementDelivery
 {
     public function deliver(): void

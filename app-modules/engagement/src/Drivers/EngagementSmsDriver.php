@@ -40,6 +40,9 @@ use AdvisingApp\Engagement\Actions\EngagementSmsChannelDelivery;
 use AdvisingApp\Engagement\Drivers\Contracts\EngagementDeliverableDriver;
 use AdvisingApp\Engagement\Models\Engagement;
 
+/**
+ * @deprecated Remove after deploying engagements refactor.
+ */
 class EngagementSmsDriver implements EngagementDeliverableDriver
 {
     public function __construct(

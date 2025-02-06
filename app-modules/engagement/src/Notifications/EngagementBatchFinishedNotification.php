@@ -37,6 +37,7 @@
 namespace AdvisingApp\Engagement\Notifications;
 
 use AdvisingApp\Engagement\Models\EngagementBatch;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use App\Models\NotificationSetting;
 use App\Models\User;
@@ -49,18 +50,9 @@ class EngagementBatchFinishedNotification extends Notification implements Should
 {
     use Queueable;
 
-    private string $title;
-
     public function __construct(
         public EngagementBatch $engagementBatch,
-        public int $processedJobs,
-        public int $failedJobs,
-        public string $channel,
-    ) {
-        $this->title = $this->channel === 'email'
-                    ? 'Bulk email request has been processed and emails have been sent successfully.'
-                    : 'Bulk text message request has been processed and text messages have been sent successfully.';
-    }
+    ) {}
 
     /**
      * @return array<int, string>
@@ -75,31 +67,47 @@ class EngagementBatchFinishedNotification extends Notification implements Should
         $message = MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable));
 
-        if ($this->failedJobs > 0) {
+        if ($this->engagementBatch->successful_engagements < $this->engagementBatch->total_engagements) {
             return $message
-                ->subject('Bulk Engagements Finished Processing With Errors.')
-                ->line("{$this->failedJobs} jobs failed out of {$this->processedJobs} total jobs.");
+                ->subject(match ($this->engagementBatch->channel) {
+                    NotificationChannel::Email => 'Bulk email has been processed with failures',
+                    NotificationChannel::Sms => 'Bulk SMS has been processed with failures',
+                    default => 'Bulk engagement has been processed with failures',
+                })
+                ->line(($this->engagementBatch->total_engagements - $this->engagementBatch->successful_engagements) . " engagements failed out of {$this->engagementBatch->total_engagements}.");
         }
 
         return $message
-            ->subject($this->title)
-            ->line("{$this->processedJobs} jobs processed successfully.");
+            ->subject(match ($this->engagementBatch->channel) {
+                NotificationChannel::Email => 'Bulk email has been processed',
+                NotificationChannel::Sms => 'Bulk SMS has been processed',
+                default => 'Bulk engagement has been processed',
+            })
+            ->line("{$this->engagementBatch->total_engagements} engagements sent successfully.");
     }
 
     public function toDatabase(object $notifiable): array
     {
-        if ($this->failedJobs > 0) {
+        if ($this->engagementBatch->successful_engagements < $this->engagementBatch->total_engagements) {
             return FilamentNotification::make()
                 ->warning()
-                ->title('Bulk Engagement processing finished, but some jobs failed')
-                ->body("{$this->failedJobs} jobs failed out of {$this->processedJobs} total jobs.")
+                ->title(match ($this->engagementBatch->channel) {
+                    NotificationChannel::Email => 'Bulk email has been processed with failures',
+                    NotificationChannel::Sms => 'Bulk SMS has been processed with failures',
+                    default => 'Bulk engagement has been processed with failures',
+                })
+                ->body(($this->engagementBatch->total_engagements - $this->engagementBatch->successful_engagements) . " engagements failed out of {$this->engagementBatch->total_engagements}.")
                 ->getDatabaseMessage();
         }
 
         return FilamentNotification::make()
             ->success()
-            ->title($this->title)
-            ->body("{$this->processedJobs} jobs processed successfully.")
+            ->title(match ($this->engagementBatch->channel) {
+                NotificationChannel::Email => 'Bulk email has been processed',
+                NotificationChannel::Sms => 'Bulk SMS has been processed',
+                default => 'Bulk engagement has been processed',
+            })
+            ->body("{$this->engagementBatch->total_engagements} engagements sent successfully.")
             ->getDatabaseMessage();
     }
 

@@ -35,104 +35,40 @@
 */
 
 use AdvisingApp\Engagement\Actions\CreateEngagementBatch;
-use AdvisingApp\Engagement\Actions\EngagementEmailChannelDelivery;
-use AdvisingApp\Engagement\Actions\EngagementSmsChannelDelivery;
-use AdvisingApp\Engagement\DataTransferObjects\EngagementBatchCreationData;
-use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Engagement\Models\EngagementBatch;
-use AdvisingApp\Engagement\Notifications\EngagementBatchFinishedNotification;
-use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\Engagement\Tests\RequestFactories\CreateEngagementBatchRequestFactory;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Models\User;
-use Illuminate\Bus\PendingBatch;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Testing\Fakes\PendingBatchFake;
 
-it('will create a new engagement batch', function () {
-    Queue::fake([EngagementEmailChannelDelivery::class, EngagementSmsChannelDelivery::class]);
-    Notification::fake();
+use function Pest\Laravel\assertDatabaseCount;
 
-    CreateEngagementBatch::dispatch(EngagementBatchCreationData::from([
-        'user' => User::factory()->create(),
-        'records' => Student::factory()->count(1)->create(),
-        'subject' => 'Test Subject',
-        'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Test Body']]]]],
-        'channel' => NotificationChannel::Email->value,
-    ]));
+it('will create an engagement batch', function () {
+    Bus::fake();
 
-    expect(EngagementBatch::count())->toBe(1);
-});
+    assertDatabaseCount(EngagementBatch::class, 0);
 
-it('will create an engagement for every record provided', function () {
-    Queue::fake([EngagementEmailChannelDelivery::class, EngagementSmsChannelDelivery::class]);
-    Notification::fake();
+    $data = CreateEngagementBatchRequestFactory::new()->create();
 
-    $students = Student::factory()->count(3)->create();
+    app(CreateEngagementBatch::class, ['data' => null])->execute(new EngagementCreationData(
+        user: $data['user'],
+        recipient: Student::factory()->count(10)->create(),
+        channel: $data['channel'],
+        subject: $data['subject'],
+        body: $data['body'],
+        scheduledAt: Carbon::parse($data['scheduledAt']),
+    ));
 
-    CreateEngagementBatch::dispatch(EngagementBatchCreationData::from([
-        'user' => User::factory()->create(),
-        'records' => $students,
-        'subject' => 'Test Subject',
-        'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Test Body']]]]],
-        'channel' => NotificationChannel::Email->value,
-    ]));
+    assertDatabaseCount(EngagementBatch::class, 1);
 
-    expect(Engagement::count())->toBe(3);
+    expect(EngagementBatch::first())
+        ->user->is($data['user'])->toBeTrue()
+        ->channel->toBe($data['channel'])
+        ->subject->toBe($data['subject'])
+        ->body->toMatchArray($data['body'])
+        ->scheduled_at->startOfSecond()->eq(Carbon::parse($data['scheduledAt'])->startOfSecond())->toBeTrue();
 
-    $students->each(fn (Student $student) => expect($student->engagements()->count())->toBe(1));
-});
-
-it('will associate the engagement with the batch', function () {
-    Queue::fake([EngagementEmailChannelDelivery::class, EngagementSmsChannelDelivery::class]);
-    Notification::fake();
-
-    CreateEngagementBatch::dispatch(EngagementBatchCreationData::from([
-        'user' => User::factory()->create(),
-        'records' => Student::factory()->count(4)->create(),
-        'subject' => 'Test Subject',
-        'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Test Body']]]]],
-        'channel' => NotificationChannel::Email->value,
-    ]));
-
-    expect(EngagementBatch::first()->engagements()->count())->toBe(4);
-});
-
-it('will dispatch a batch of jobs for each engagement that needs to be delivered', function () {
-    Notification::fake();
-    Bus::fake([EngagementEmailChannelDelivery::class, EngagementSmsChannelDelivery::class]);
-
-    CreateEngagementBatch::dispatch(EngagementBatchCreationData::from([
-        'user' => User::factory()->create(),
-        'records' => Student::factory()->count(5)->create(),
-        'subject' => 'Test Subject',
-        'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Test Body']]]]],
-        'channel' => NotificationChannel::Email->value,
-    ]));
-
-    Bus::assertBatched(function (PendingBatch $batch) {
-        if ($batch->jobs->count() !== 5) {
-            return false;
-        }
-
-        return $batch->jobs->every(function ($job) {
-            return $job instanceof EngagementEmailChannelDelivery;
-        });
-    });
-});
-
-it('will dispatch a notification to the user who initiated the batch engagement when the queue batch has finished processing', function () {
-    Notification::fake();
-
-    $user = User::factory()->create();
-
-    CreateEngagementBatch::dispatch(EngagementBatchCreationData::from([
-        'user' => $user,
-        'records' => Student::factory()->count(1)->create(),
-        'subject' => 'Test Subject',
-        'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Test Body']]]]],
-        'channel' => NotificationChannel::Email->value,
-    ]));
-
-    Notification::assertSentTo($user, EngagementBatchFinishedNotification::class);
+    Bus::assertBatched(fn (PendingBatchFake $batch): bool => $batch->jobs->count() === 10);
 });

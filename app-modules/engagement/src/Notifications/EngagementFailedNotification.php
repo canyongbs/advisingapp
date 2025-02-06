@@ -37,7 +37,6 @@
 namespace AdvisingApp\Engagement\Notifications;
 
 use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use App\Models\NotificationSetting;
@@ -67,26 +66,18 @@ class EngagementFailedNotification extends Notification implements ShouldQueue
     {
         return MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable))
-            ->subject('The following engagement failed to be delivered.')
-            ->line("The engagement with the following contents was unable to be delivered to {$this->engagement->recipient->display_name}.")
+            ->subject('An engagement failed to deliver')
+            ->line("The engagement {$this->engagement->channel->getLabel()} failed to be delivered to {$this->engagement->recipient->display_name}:")
             ->line('Subject: ' . ($this->engagement->subject ?? 'n/a'))
             ->line('Body: ' . $this->engagement->getBody());
     }
 
     public function toDatabase(object $notifiable): array
     {
-        $engagementType = match ($this->engagement->channel) {
-            NotificationChannel::Email => 'Email',
-            NotificationChannel::Sms => 'SMS',
-            default => ''
-        };
-
-        $morph = str($this->engagement->recipient->getMorphClass());
-
         return FilamentNotification::make()
             ->danger()
-            ->title('Engagement Delivery Failed')
-            ->body("Your engagement {$engagementType} failed to be delivered to {$morph} {$this->engagement->recipient->display_name}.")
+            ->title('An engagement failed to deliver')
+            ->body("Your engagement {$this->engagement->channel->getLabel()} failed to be delivered to {$this->engagement->recipient->display_name}.")
             ->getDatabaseMessage();
     }
 

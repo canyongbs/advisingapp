@@ -68,7 +68,7 @@ class DraftTemplateWithAiAction extends Action
             ->label('Draft with AI Assistant')
             ->link()
             ->icon('heroicon-m-pencil')
-            ->modalContent(fn () => view('engagement::filament.resources.draft-template-with-ai-modal-content', [
+            ->modalContent(fn () => view('engagement::filament.actions.draft-template-with-ai-modal-content', [
                 'avatarUrl' => AiAssistant::query()->where('is_default', true)->first()
                     ?->getFirstTemporaryUrl(now()->addHour(), 'avatar', 'avatar-height-250px') ?: Vite::asset('resources/images/canyon-ai-headshot.jpg'),
             ]))

@@ -48,6 +48,9 @@ use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Notification;
 use Throwable;
 
+/**
+ * @deprecated Remove after deploying engagements refactor.
+ */
 class EngagementEmailNotification extends Notification implements ShouldQueue, HasBeforeSendHook
 {
     use Queueable;
