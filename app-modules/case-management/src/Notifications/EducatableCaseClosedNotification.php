@@ -40,7 +40,6 @@ use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\Contracts\Message;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -87,13 +86,9 @@ class EducatableCaseClosedNotification extends Notification implements ShouldQue
             ->line("Your request {$this->case->case_number} for case is now {$status->name}.");
     }
 
-    public function beforeSend(AnonymousNotifiable|CanBeNotified $notifiable, OutboundDeliverable $deliverable, NotificationChannel $channel, ?Message $message): void
+    public function beforeSend(AnonymousNotifiable|CanBeNotified $notifiable, Message $message, NotificationChannel $channel): void
     {
-        $deliverable->related()->associate($this->case);
-
-        if ($message) {
-            $message->related()->associate($this->case);
-        }
+        $message->related()->associate($this->case);
     }
 
     private function resolveNotificationSetting(object $notifiable): ?NotificationSetting

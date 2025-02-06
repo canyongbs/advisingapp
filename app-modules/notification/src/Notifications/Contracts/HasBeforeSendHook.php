@@ -39,10 +39,9 @@ namespace AdvisingApp\Notification\Notifications\Contracts;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\Contracts\Message;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
 use Illuminate\Notifications\AnonymousNotifiable;
 
 interface HasBeforeSendHook
 {
-    public function beforeSend(AnonymousNotifiable|CanBeNotified $notifiable, OutboundDeliverable $deliverable, NotificationChannel $channel, ?Message $message): void;
+    public function beforeSend(AnonymousNotifiable|CanBeNotified $notifiable, Message $message, NotificationChannel $channel): void;
 }
