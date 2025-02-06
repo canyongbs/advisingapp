@@ -41,12 +41,7 @@ use Filament\Support\Contracts\HasLabel;
 enum SmsMessageEventType: string implements HasLabel
 {
     // Internal
-    case Queued = 'queued';
-    case Accepted = 'accepted';
-    case Scheduled = 'scheduled';
-
     case Dispatched = 'dispatched';
-
     case DispatchFailed = 'failed_dispatch';
     case RateLimited = 'rate_limited';
     case BlockedByDemoMode = 'blocked_by_demo_mode';
