@@ -46,11 +46,9 @@ return new class () extends Migration {
             ->where('channel', 'email')
             ->chunkById(100, function (Collection $outboundDeliverables) {
                 $outboundDeliverables->each(function (object $outboundDeliverable) {
-                    $id = Str::orderedUuid();
-
                     DB::table('email_messages')
                         ->insert([
-                            'id' => $id,
+                            'id' => $outboundDeliverable->id,
                             'notification_class' => $outboundDeliverable->notification_class,
                             'external_reference_id' => $outboundDeliverable->external_reference_id,
                             'content' => $outboundDeliverable->content,
@@ -67,7 +65,7 @@ return new class () extends Migration {
                         DB::table('email_message_events')
                             ->insert([
                                 'id' => Str::orderedUuid(),
-                                'email_message_id' => $id,
+                                'email_message_id' => $outboundDeliverable->id,
                                 'type' => 'dispatched',
                                 'payload' => json_encode([]),
                                 'occurred_at' => $outboundDeliverable->created_at,
@@ -78,7 +76,7 @@ return new class () extends Migration {
                         DB::table('email_message_events')
                             ->insert([
                                 'id' => Str::orderedUuid(),
-                                'email_message_id' => $id,
+                                'email_message_id' => $outboundDeliverable->id,
                                 'type' => 'failed_dispatch',
                                 'payload' => json_encode([]),
                                 'occurred_at' => $outboundDeliverable->created_at,
@@ -89,7 +87,7 @@ return new class () extends Migration {
                         DB::table('email_message_events')
                             ->insert([
                                 'id' => Str::orderedUuid(),
-                                'email_message_id' => $id,
+                                'email_message_id' => $outboundDeliverable->id,
                                 'type' => 'rate_limited',
                                 'payload' => json_encode([]),
                                 'occurred_at' => $outboundDeliverable->created_at,
@@ -100,7 +98,7 @@ return new class () extends Migration {
                         DB::table('email_message_events')
                             ->insert([
                                 'id' => Str::orderedUuid(),
-                                'email_message_id' => $id,
+                                'email_message_id' => $outboundDeliverable->id,
                                 'type' => 'blocked_by_demo_mode',
                                 'payload' => json_encode([]),
                                 'occurred_at' => $outboundDeliverable->created_at,
@@ -111,7 +109,7 @@ return new class () extends Migration {
                         DB::table('email_message_events')
                             ->insert([
                                 'id' => Str::orderedUuid(),
-                                'email_message_id' => $id,
+                                'email_message_id' => $outboundDeliverable->id,
                                 'type' => 'dispatched',
                                 'payload' => json_encode([]),
                                 'occurred_at' => $outboundDeliverable->created_at,
@@ -122,7 +120,7 @@ return new class () extends Migration {
                         DB::table('email_message_events')
                             ->insert([
                                 'id' => Str::orderedUuid(),
-                                'email_message_id' => $id,
+                                'email_message_id' => $outboundDeliverable->id,
                                 'type' => 'reject',
                                 'payload' => json_encode([]),
                                 'occurred_at' => $outboundDeliverable->created_at,
@@ -133,7 +131,7 @@ return new class () extends Migration {
                         DB::table('email_message_events')
                             ->insert([
                                 'id' => Str::orderedUuid(),
-                                'email_message_id' => $id,
+                                'email_message_id' => $outboundDeliverable->id,
                                 'type' => 'dispatched',
                                 'payload' => json_encode([]),
                                 'occurred_at' => $outboundDeliverable->created_at,
@@ -144,7 +142,7 @@ return new class () extends Migration {
                         DB::table('email_message_events')
                             ->insert([
                                 'id' => Str::orderedUuid(),
-                                'email_message_id' => $id,
+                                'email_message_id' => $outboundDeliverable->id,
                                 'type' => 'delivery',
                                 'payload' => json_encode([]),
                                 'occurred_at' => $outboundDeliverable->created_at,
@@ -159,11 +157,9 @@ return new class () extends Migration {
             ->where('channel', 'sms')
             ->chunkById(100, function (Collection $outboundDeliverables) {
                 $outboundDeliverables->each(function (object $outboundDeliverable) {
-                    $id = Str::orderedUuid();
-
                     DB::table('sms_messages')
                         ->insert([
-                            'id' => $id,
+                            'id' => $outboundDeliverable->id,
                             'notification_class' => $outboundDeliverable->notification_class,
                             'external_reference_id' => $outboundDeliverable->external_reference_id,
                             'content' => $outboundDeliverable->content,
@@ -180,7 +176,7 @@ return new class () extends Migration {
                         DB::table('sms_message_events')
                             ->insert([
                                 'id' => Str::orderedUuid(),
-                                'sms_message_id' => $id,
+                                'sms_message_id' => $outboundDeliverable->id,
                                 'type' => 'dispatched',
                                 'payload' => json_encode([]),
                                 'occurred_at' => $outboundDeliverable->created_at,
@@ -191,7 +187,7 @@ return new class () extends Migration {
                         DB::table('sms_message_events')
                             ->insert([
                                 'id' => Str::orderedUuid(),
-                                'sms_message_id' => $id,
+                                'sms_message_id' => $outboundDeliverable->id,
                                 'type' => 'failed_dispatch',
                                 'payload' => json_encode([]),
                                 'occurred_at' => $outboundDeliverable->created_at,
@@ -202,7 +198,7 @@ return new class () extends Migration {
                         DB::table('sms_message_events')
                             ->insert([
                                 'id' => Str::orderedUuid(),
-                                'sms_message_id' => $id,
+                                'sms_message_id' => $outboundDeliverable->id,
                                 'type' => 'rate_limited',
                                 'payload' => json_encode([]),
                                 'occurred_at' => $outboundDeliverable->created_at,
@@ -213,7 +209,7 @@ return new class () extends Migration {
                         DB::table('sms_message_events')
                             ->insert([
                                 'id' => Str::orderedUuid(),
-                                'sms_message_id' => $id,
+                                'sms_message_id' => $outboundDeliverable->id,
                                 'type' => 'blocked_by_demo_mode',
                                 'payload' => json_encode([]),
                                 'occurred_at' => $outboundDeliverable->created_at,
@@ -224,7 +220,7 @@ return new class () extends Migration {
                         DB::table('sms_message_events')
                             ->insert([
                                 'id' => Str::orderedUuid(),
-                                'sms_message_id' => $id,
+                                'sms_message_id' => $outboundDeliverable->id,
                                 'type' => 'dispatched',
                                 'payload' => json_encode([]),
                                 'occurred_at' => $outboundDeliverable->created_at,
@@ -235,7 +231,7 @@ return new class () extends Migration {
                         DB::table('sms_message_events')
                             ->insert([
                                 'id' => Str::orderedUuid(),
-                                'sms_message_id' => $id,
+                                'sms_message_id' => $outboundDeliverable->id,
                                 'type' => 'failed',
                                 'payload' => json_encode([]),
                                 'occurred_at' => $outboundDeliverable->created_at,
@@ -246,7 +242,7 @@ return new class () extends Migration {
                         DB::table('sms_message_events')
                             ->insert([
                                 'id' => Str::orderedUuid(),
-                                'sms_message_id' => $id,
+                                'sms_message_id' => $outboundDeliverable->id,
                                 'type' => 'dispatched',
                                 'payload' => json_encode([]),
                                 'occurred_at' => $outboundDeliverable->created_at,
@@ -257,7 +253,7 @@ return new class () extends Migration {
                         DB::table('sms_message_events')
                             ->insert([
                                 'id' => Str::orderedUuid(),
-                                'sms_message_id' => $id,
+                                'sms_message_id' => $outboundDeliverable->id,
                                 'type' => 'delivered',
                                 'payload' => json_encode([]),
                                 'occurred_at' => $outboundDeliverable->created_at,
@@ -272,11 +268,9 @@ return new class () extends Migration {
             ->where('channel', 'database')
             ->chunkById(100, function (Collection $outboundDeliverables) {
                 $outboundDeliverables->each(function (object $outboundDeliverable) {
-                    $id = Str::orderedUuid();
-
                     DB::table('database_messages')
                         ->insert([
-                            'id' => $id,
+                            'id' => $outboundDeliverable->id,
                             'notification_class' => $outboundDeliverable->notification_class,
                             'content' => $outboundDeliverable->content,
                             'related_type' => $outboundDeliverable->related_type,
