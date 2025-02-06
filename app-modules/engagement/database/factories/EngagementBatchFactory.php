@@ -56,6 +56,13 @@ class EngagementBatchFactory extends Factory
         ];
     }
 
+    public function deliverNow(): self
+    {
+        return $this->state([
+            'scheduled_at' => null,
+        ]);
+    }
+
     public function deliverLater(): self
     {
         return $this->state([

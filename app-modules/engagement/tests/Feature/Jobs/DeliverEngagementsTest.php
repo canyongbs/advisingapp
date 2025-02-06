@@ -44,7 +44,6 @@ it('will send engagements that have been scheduled for a past date and have not 
 
     $engagement = Engagement::factory()->create([
         'scheduled_at' => now()->subMinute(),
-        'dispatched_at' => null,
     ]);
 
     dispatch(app(DeliverEngagements::class));
@@ -58,10 +57,7 @@ it('will send engagements that have been scheduled for a past date and have not 
 it('will send engagements that have not been scheduled but have not been dispatched', function () {
     Notification::fake();
 
-    $engagement = Engagement::factory()->create([
-        'scheduled_at' => null,
-        'dispatched_at' => null,
-    ]);
+    $engagement = Engagement::factory()->deliverNow()->create();
 
     dispatch(app(DeliverEngagements::class));
 
@@ -76,7 +72,6 @@ it('will not send engagements that have been scheduled for a future date', funct
 
     $engagement = Engagement::factory()->create([
         'scheduled_at' => now()->addMinute(),
-        'dispatched_at' => null,
     ]);
 
     dispatch(app(DeliverEngagements::class));

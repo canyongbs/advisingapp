@@ -60,10 +60,17 @@ class CreateEngagementRequestFactory extends RequestFactory
         ];
     }
 
+    public function deliverNow(): self
+    {
+        return $this->state([
+            'scheduledAt' => null,
+        ]);
+    }
+
     public function deliverLater(): self
     {
         return $this->state([
-            'scheduled_at' => fake()->dateTimeBetween('+1 day', '+1 week'),
+            'scheduledAt' => fake()->dateTimeBetween('+1 day', '+1 week'),
         ]);
     }
 

@@ -46,9 +46,7 @@ use function Pest\Laravel\assertDatabaseCount;
 it('will create and send an engagement immediately', function () {
     Notification::fake();
 
-    $engagementBatch = EngagementBatch::factory()->create([
-        'scheduled_at' => null,
-    ]);
+    $engagementBatch = EngagementBatch::factory()->deliverNow()->create();
     $recipient = Student::factory()->create();
 
     assertDatabaseCount(Engagement::class, 0);
