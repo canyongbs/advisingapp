@@ -111,7 +111,7 @@ class SmsChannel
 
                 if ($smsMessage) {
                     $smsMessage->events()->create([
-                        'type' => SmsMessageEventType::DispatchFailed,
+                        'type' => SmsMessageEventType::FailedDispatch,
                         'payload' => [
                             'error' => 'System determined recipient cannot receive SMS messages.',
                         ],
@@ -211,7 +211,7 @@ class SmsChannel
 
                     if ($smsMessage) {
                         $smsMessage->events()->create([
-                            'type' => SmsMessageEventType::DispatchFailed,
+                            'type' => SmsMessageEventType::FailedDispatch,
                             'payload' => [
                                 'error' => $result->error,
                             ],
@@ -244,7 +244,7 @@ class SmsChannel
 
             if ($smsMessage) {
                 $smsMessage->events()->create([
-                    'type' => SmsMessageEventType::DispatchFailed,
+                    'type' => SmsMessageEventType::FailedDispatch,
                     'payload' => [],
                     'occurred_at' => now(),
                 ]);

@@ -197,7 +197,7 @@ class MailChannel extends BaseMailChannel
 
                     if ($emailMessage) {
                         $emailMessage->events()->create([
-                            'type' => EmailMessageEventType::DispatchFailed,
+                            'type' => EmailMessageEventType::FailedDispatch,
                             'payload' => $result->toArray(),
                             'occurred_at' => now(),
                         ]);
@@ -232,7 +232,7 @@ class MailChannel extends BaseMailChannel
 
             if ($emailMessage) {
                 $emailMessage->events()->create([
-                    'type' => EmailMessageEventType::DispatchFailed,
+                    'type' => EmailMessageEventType::FailedDispatch,
                     'payload' => [],
                     'occurred_at' => now(),
                 ]);

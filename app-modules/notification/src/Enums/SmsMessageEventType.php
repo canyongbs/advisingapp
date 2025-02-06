@@ -42,7 +42,7 @@ enum SmsMessageEventType: string implements HasLabel
 {
     // Internal
     case Dispatched = 'dispatched';
-    case DispatchFailed = 'failed_dispatch';
+    case FailedDispatch = 'failed_dispatch';
     case RateLimited = 'rate_limited';
     case BlockedByDemoMode = 'blocked_by_demo_mode';
 
