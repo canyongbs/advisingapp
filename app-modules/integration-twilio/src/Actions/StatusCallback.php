@@ -38,7 +38,6 @@ namespace AdvisingApp\IntegrationTwilio\Actions;
 
 use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
 use AdvisingApp\Notification\Actions\UpdateOutboundDeliverableSmsStatus;
-use AdvisingApp\Notification\Events\CouldNotFindOutboundDeliverableFromExternalReference;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -64,7 +63,7 @@ class StatusCallback implements ShouldQueue
             ->first();
 
         if (is_null($outboundDeliverable)) {
-            CouldNotFindOutboundDeliverableFromExternalReference::dispatch($this->data);
+            // TODO: Throw a custom exception
 
             return;
         }

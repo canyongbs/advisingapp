@@ -37,8 +37,8 @@
 namespace AdvisingApp\IntegrationAwsSesEventHandling\Listeners;
 
 use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Exceptions\CouldNotFindEmailMessageFromData;
 use AdvisingApp\Notification\Enums\EmailMessageEventType;
-use AdvisingApp\Notification\Events\CouldNotFindOutboundDeliverableFromExternalReference;
 
 class HandleSesBounceEvent extends HandleSesEvent
 {
@@ -47,8 +47,7 @@ class HandleSesBounceEvent extends HandleSesEvent
         $emailMessage = $this->getEmailMessageFromData($event->data);
 
         if (is_null($emailMessage)) {
-            // TODO: Report a custom exception
-            CouldNotFindOutboundDeliverableFromExternalReference::dispatch($event->data);
+            report(new CouldNotFindEmailMessageFromData($event->data));
 
             return;
         }
