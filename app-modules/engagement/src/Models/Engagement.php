@@ -115,7 +115,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
 
     public static function getTimelineData(Model $forModel): Collection
     {
-        return $forModel->orderedEngagements()->with(['latestOutboundDeliverable', 'batch'])->get();
+        return $forModel->orderedEngagements()->with(['latestMessage', 'batch'])->get();
     }
 
     public function user(): BelongsTo
@@ -176,20 +176,6 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     public function scopeIsNotPartOfABatch(Builder $query): void
     {
         $query->whereNull('engagement_batch_id');
-    }
-
-    public function scopeHasBeenDelivered(Builder $query): void
-    {
-        $query->whereHas('outboundDeliverables', function (Builder $query) {
-            $query->whereNotNull('delivered_at');
-        });
-    }
-
-    public function scopeHasNotBeenDelivered(Builder $query): void
-    {
-        $query->whereDoesntHave('outboundDeliverables', function (Builder $query) {
-            $query->whereNotNull('delivered_at');
-        });
     }
 
     public function scopeSentToStudent(Builder $query): void
