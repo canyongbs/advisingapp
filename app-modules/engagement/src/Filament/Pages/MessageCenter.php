@@ -237,7 +237,7 @@ class MessageCenter extends Page
     {
         $engagementEducatableIds = Engagement::query()
             ->$engagementScope()
-            ->hasBeenDelivered()
+            // TODO: We have removed the old `hasBeenDelivered` check here because we can no longer track the "status" of a message. We need to determine if something else is needed.
             ->tap(function (Builder $query) {
                 $this->applyFilters(query: $query, dateColumn: 'dispatched_at', idColumn: 'recipient_id');
             })

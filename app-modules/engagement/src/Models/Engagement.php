@@ -185,11 +185,6 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         $query->where('recipient_type', resolve(Prospect::class)->getMorphClass());
     }
 
-    public function hasBeenDelivered(): bool
-    {
-        return $this->latestOutboundDeliverable?->hasBeenDelivered() ?? false;
-    }
-
     public function getSubscribable(): ?Subscribable
     {
         return $this->recipient instanceof Subscribable ? $this->recipient : null;
