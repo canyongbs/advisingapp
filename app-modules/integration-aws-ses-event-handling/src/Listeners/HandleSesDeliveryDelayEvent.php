@@ -36,4 +36,27 @@
 
 namespace AdvisingApp\IntegrationAwsSesEventHandling\Listeners;
 
-class HandleSesDeliveryDelayEvent extends HandleSesEvent {}
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesEvent;
+use AdvisingApp\Notification\Enums\EmailMessageEventType;
+use AdvisingApp\Notification\Events\CouldNotFindOutboundDeliverableFromExternalReference;
+
+class HandleSesDeliveryDelayEvent extends HandleSesEvent
+{
+    public function handle(SesEvent $event): void
+    {
+        $emailMessage = $this->getEmailMessageFromData($event->data);
+
+        if (is_null($emailMessage)) {
+            // TODO: Report a custom exception
+            CouldNotFindOutboundDeliverableFromExternalReference::dispatch($event->data);
+
+            return;
+        }
+
+        $emailMessage->events()->create([
+            'type' => EmailMessageEventType::DeliveryDelay,
+            'payload' => $event->data->toArray(),
+            'occurred_at' => $event->data->deliveryDelay->timestamp,
+        ]);
+    }
+}

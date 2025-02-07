@@ -37,6 +37,7 @@
 namespace AdvisingApp\IntegrationAwsSesEventHandling\Providers;
 
 use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesBounceEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesClickEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesDeliveryDelayEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesDeliveryEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesRejectEvent;
@@ -44,6 +45,7 @@ use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesRenderingFailureEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\IntegrationAwsSesEventHandlingPlugin;
 use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\EnsureSesConfigurationSetHeadersArePresent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesBounceEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesClickEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesDeliveryDelayEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesDeliveryEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesRejectEvent;
@@ -98,6 +100,11 @@ class IntegrationAwsSesEventHandlingServiceProvider extends ServiceProvider
         Event::listen(
             SesRenderingFailureEvent::class,
             HandleSesRenderingFailureEvent::class
+        );
+
+        Event::listen(
+            SesClickEvent::class,
+            HandleSesClickEvent::class
         );
     }
 }

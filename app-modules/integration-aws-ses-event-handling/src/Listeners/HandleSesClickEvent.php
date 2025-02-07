@@ -34,45 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Actions;
+namespace AdvisingApp\IntegrationAwsSesEventHandling\Listeners;
 
-use AdvisingApp\IntegrationAwsSesEventHandling\DataTransferObjects\SesEventData;
-use AdvisingApp\Notification\DataTransferObjects\UpdateEmailDeliveryStatusData;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\Middleware\WithoutOverlapping;
-use Illuminate\Queue\SerializesModels;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesEvent;
+use AdvisingApp\Notification\Enums\EmailMessageEventType;
+use AdvisingApp\Notification\Events\CouldNotFindOutboundDeliverableFromExternalReference;
 
-class UpdateOutboundDeliverableEmailStatus implements ShouldQueue
+class HandleSesClickEvent extends HandleSesEvent
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
-    public function __construct(
-        public OutboundDeliverable $deliverable,
-        public SesEventData $data
-    ) {}
-
-    public function handle(): void
+    public function handle(SesEvent $event): void
     {
-        $data = UpdateEmailDeliveryStatusData::from([
-            'data' => $this->data,
+        $emailMessage = $this->getEmailMessageFromData($event->data);
+
+        if (is_null($emailMessage)) {
+            // TODO: Report a custom exception
+            CouldNotFindOutboundDeliverableFromExternalReference::dispatch($event->data);
+
+            return;
+        }
+
+        $emailMessage->events()->create([
+            'type' => EmailMessageEventType::Click,
+            'payload' => $event->data->toArray(),
+            'occurred_at' => $event->data->click->timestamp,
         ]);
-
-        $this->deliverable->driver()->updateDeliveryStatus($data);
-    }
-
-    public function middleware(): array
-    {
-        return [
-            (new WithoutOverlapping($this->deliverable->id))
-                ->releaseAfter(30)
-                ->expireAfter(300),
-        ];
     }
 }

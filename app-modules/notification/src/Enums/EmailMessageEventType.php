@@ -56,6 +56,7 @@ enum EmailMessageEventType: string implements HasLabel
     case Click = 'click';
     case RenderingFailure = 'rendering_failure';
     case Subscription = 'subscription';
+    case DeliveryDelay = 'delivery_delay';
 
     public function getLabel(): ?string
     {
