@@ -37,11 +37,14 @@
 namespace AdvisingApp\Engagement\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Engagement\Observers\EngagementFileObserver;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Prunable;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\MediaLibrary\HasMedia;
@@ -50,6 +53,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 /**
  * @mixin IdeHelperEngagementFile
  */
+#[ObservedBy(EngagementFileObserver::class)]
 class EngagementFile extends BaseModel implements HasMedia, Auditable
 {
     use InteractsWithMedia;
@@ -124,6 +128,15 @@ class EngagementFile extends BaseModel implements HasMedia, Auditable
             'retention_date',
             '<',
             now()->startOfDay(),
+        );
+    }
+
+    public function createdBy(): MorphTo
+    {
+        return $this->morphTo(
+            name: 'createdBy',
+            type: 'created_by_type',
+            id: 'created_by_id',
         );
     }
 }
