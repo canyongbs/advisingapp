@@ -48,6 +48,7 @@ class EmailMessageFactory extends Factory
     public function definition(): array
     {
         return [
+            'content' => 'test',
             'notification_class' => TestEmailNotification::class,
             'quota_usage' => 0,
         ];
