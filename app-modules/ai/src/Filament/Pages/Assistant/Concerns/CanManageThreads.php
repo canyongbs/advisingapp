@@ -79,6 +79,18 @@ trait CanManageThreads
     #[Locked]
     public array $threadsWithoutAFolder = [];
 
+    public function mount(): void
+    {
+        if (request()->thread) {
+            $aiThread = AiThread::where('id', request()->thread)->where('user_id', auth()->id())->first();
+
+            if (! $aiThread) {
+                $this->dispatch('remove-thread-param');
+            }
+            $this->selectThread(collect($aiThread)->toArray());
+        }
+    }
+
     public function mountCanManageThreads(): void
     {
         $this->threadsWithoutAFolder = $this->getThreadsWithoutAFolder();
@@ -460,7 +472,6 @@ trait CanManageThreads
                 if (! $thread) {
                     return;
                 }
-
                 dispatch(new PrepareAiThreadEmailing($thread, $data['targetType'], $data['targetIds'], auth()->user()));
             })
             ->link()

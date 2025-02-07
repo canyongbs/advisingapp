@@ -103,6 +103,9 @@ document.addEventListener('alpine:init', () => {
 
             this.loading.type = null;
             this.loading.identifier = null;
+
+            let url = new URL(window.location);
+            history.pushState({}, '', url.pathname);
         },
         async moveThread(threadId) {
             this.loading.type = 'moveThreadAction';
@@ -151,3 +154,10 @@ document.addEventListener('alpine:init', () => {
         },
     }));
 });
+
+document.addEventListener('livewire:init', () => {
+    Livewire.on('remove-thread-param', (event) => {        
+        let url = new URL(window.location);
+        history.pushState({}, '', url.pathname);
+    });
+ });
