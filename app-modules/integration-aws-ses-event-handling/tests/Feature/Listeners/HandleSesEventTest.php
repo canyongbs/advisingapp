@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\Notification\Enums\EmailMessageEventType;
+use AdvisingApp\Notification\Models\EmailMessage;
 use AdvisingApp\Webhook\Http\Middleware\VerifyAwsSnsRequest;
 use App\Models\Tenant;
 
@@ -47,24 +47,22 @@ beforeEach(function () {
     withoutMiddleware(VerifyAwsSnsRequest::class);
 });
 
-it('correctly handles the incoming SES event', function (string $event, NotificationDeliveryStatus $status, ?string $deliveryResponse) {
+it('correctly handles the incoming SES event', function (string $event, EmailMessageEventType $eventType) {
     // TODO: Change this test to run in a isolated non-tenantized landlord environment
 
-    // Given that we have an outbound deliverable
-    $deliverable = OutboundDeliverable::factory()->create();
+    // Given that we have an email message
+    $emailMessage = EmailMessage::factory()->create();
 
     $tenant = Tenant::current();
 
     // And we receive some sort of SES event when attempting to deliver
     $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
     $messageContent = loadFixtureFromModule('integration-aws-ses-event-handling', $event);
-    data_set($messageContent, 'mail.tags.outbound_deliverable_id.0', $deliverable->id);
+    data_set($messageContent, 'mail.tags.app_message_id.0', $emailMessage->getKey());
     data_set($messageContent, 'mail.tags.tenant_id.0', $tenant->getKey());
     $snsData['Message'] = json_encode($messageContent);
 
-    expect($deliverable->hasBeenDelivered())->toBe(false);
-    expect($deliverable->delivery_status)->toBe(NotificationDeliveryStatus::Processing);
-    expect($deliverable->last_delivery_attempt)->toBeNull();
+    expect($emailMessage->events()->count())->toBe(0);
 
     $response = withHeaders(
         [
@@ -85,46 +83,53 @@ it('correctly handles the incoming SES event', function (string $event, Notifica
 
     $response->assertOk();
 
-    // The outbound deliverable should be appropriately updated based on the event
-    $deliverable->refresh();
+    // The email message should have the apppriate email message event created based on the event
+    $emailMessage->refresh();
 
-    if ($status === NotificationDeliveryStatus::Failed) {
-        expect($deliverable->hasBeenDelivered())->toBe(false);
-    } else {
-        expect($deliverable->hasBeenDelivered())->toBe(true);
-    }
+    expect($emailMessage->events()->count())->toBe(1);
 
-    expect($deliverable->external_status)->toBe($event);
-    expect($deliverable->delivery_status)->toBe($status);
-    expect($deliverable->last_delivery_attempt)->tobeTruthy();
+    $event = $emailMessage->events()->first();
 
-    if (! $deliveryResponse) {
-        expect($deliverable->delivery_response)->toBe($deliveryResponse);
-    }
+    expect($event->type)->toBe($eventType);
 })->with([
     'HandleSesBounceEvent' => [
         'Bounce',
-        NotificationDeliveryStatus::Failed,
-        'The email was not successfully delivered due to a permanent rejection from the recipient mail server.',
+        EmailMessageEventType::Bounce,
+    ],
+    'HandleSesClickEvent' => [
+        'Click',
+        EmailMessageEventType::Click,
+    ],
+    'HandleSesComplaintEvent' => [
+        'Complaint',
+        EmailMessageEventType::Complaint,
     ],
     'HandleSesDeliveryEvent' => [
         'Delivery',
-        NotificationDeliveryStatus::Successful,
-        null,
+        EmailMessageEventType::Delivery,
     ],
     'HandleSesDeliveryDelayEvent' => [
         'DeliveryDelay',
-        NotificationDeliveryStatus::Failed,
-        'The email was not successfully delivered due to a temporary issue.',
+        EmailMessageEventType::DeliveryDelay,
+    ],
+    'HandleSesOpenEvent' => [
+        'Open',
+        EmailMessageEventType::Open,
     ],
     'HandleSesRejectEvent' => [
         'Reject',
-        NotificationDeliveryStatus::Failed,
-        'The email was not attempted to be delivered due to unsafe contents.',
+        EmailMessageEventType::Reject,
     ],
     'HandleSesRenderingFailureEvent' => [
         'RenderingFailure',
-        NotificationDeliveryStatus::Failed,
-        'The email not successfully delivered due to a template rendering error.',
+        EmailMessageEventType::RenderingFailure,
+    ],
+    'HandleSesSendEvent' => [
+        'Send',
+        EmailMessageEventType::Send,
+    ],
+    'HandleSesSubscriptionEvent' => [
+        'Subscription',
+        EmailMessageEventType::Subscription,
     ],
 ]);
