@@ -38,39 +38,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-<<<<<<< HEAD:app-modules/engagement/src/Notifications/EngagementSmsNotification.php
-use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
-use AdvisingApp\Notification\Models\Contracts\Message;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
-use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\AnonymousNotifiable;
-use Illuminate\Notifications\Notification;
-use Throwable;
-
-/**
- * @deprecated Remove after deploying engagements refactor.
- */
-class EngagementSmsNotification extends Notification implements ShouldQueue, HasBeforeSendHook
-{
-    use Queueable;
-
-    public function __construct(
-        public Engagement $engagement,
-    ) {}
-
-    /**
-     * @return array<int, string>
-     */
-    public function via(object $notifiable): array
-=======
 return new class () extends Migration {
     public function up(): void
->>>>>>> 5115ed66a (Clean up engagements refactor):app-modules/engagement/database/migrations/2025_02_05_134045_drop_deliver_at_column_from_engagements_table.php
     {
         Schema::table('engagements', function (Blueprint $table) {
             $table->dropColumn('deliver_at');
@@ -83,24 +52,4 @@ return new class () extends Migration {
             $table->dateTime('deliver_at')->nullable();
         });
     }
-<<<<<<< HEAD:app-modules/engagement/src/Notifications/EngagementSmsNotification.php
-
-    public function failed(?Throwable $exception): void
-    {
-        if (is_null($this->engagement->engagement_batch_id)) {
-            $this->engagement->user?->notify(new EngagementFailedNotification($this->engagement));
-        }
-    }
-
-    public function beforeSend(AnonymousNotifiable|CanBeNotified $notifiable, OutboundDeliverable $deliverable, NotificationChannel $channel, ?Message $message): void
-    {
-        $deliverable->related()->associate($this->engagement);
-
-        if ($message) {
-            $message->related()->associate($this->engagement);
-        }
-    }
-}
-=======
 };
->>>>>>> 5115ed66a (Clean up engagements refactor):app-modules/engagement/database/migrations/2025_02_05_134045_drop_deliver_at_column_from_engagements_table.php
