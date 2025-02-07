@@ -127,6 +127,7 @@ class EngagementsRelationManager extends RelationManager
             ])
             ->bulkActions([
             ])
-            ->defaultSort('created_at', 'desc');
+            ->defaultSort('created_at', 'desc')
+            ->poll('10s');
     }
 }
