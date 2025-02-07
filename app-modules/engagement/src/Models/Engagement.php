@@ -43,7 +43,8 @@ use AdvisingApp\Engagement\Observers\EngagementObserver;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\Notification\Models\EmailMessage;
+use AdvisingApp\Notification\Models\SmsMessage;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
@@ -127,14 +128,30 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         return $this->user();
     }
 
-    public function outboundDeliverables(): MorphMany
+    public function emailMessages(): MorphMany
     {
-        return $this->morphMany(OutboundDeliverable::class, 'related');
+        return $this->morphMany(EmailMessage::class, 'related');
     }
 
-    public function latestOutboundDeliverable(): MorphOne
+    public function smsMessages(): MorphMany
     {
-        return $this->morphOne(OutboundDeliverable::class, 'related')->latestOfMany();
+        return $this->morphMany(SmsMessage::class, 'related');
+    }
+
+    public function messages(): MorphMany
+    {
+        return match ($this->channel) {
+            NotificationChannel::Email => $this->emailMessages(),
+            NotificationChannel::Sms => $this->smsMessages(),
+        };
+    }
+
+    public function latestMessage(): MorphOne
+    {
+        return match ($this->channel) {
+            NotificationChannel::Email => $this->morphOne(EmailMessage::class, 'related')->latestOfMany(),
+            NotificationChannel::Sms => $this->morphOne(SmsMessage::class, 'related')->latestOfMany(),
+        };
     }
 
     public function recipient(): MorphTo
