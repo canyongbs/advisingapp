@@ -50,7 +50,7 @@ use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Interaction\Models\Concerns\HasManyMorphedInteractions;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\Notification\Models\EmailMessage;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
@@ -294,9 +294,9 @@ class CaseModel extends BaseModel implements Auditable, CanTriggerAutoSubscripti
             });
     }
 
-    public function deliverables(): MorphMany
+    public function emailMessages(): MorphMany
     {
-        return $this->morphMany(OutboundDeliverable::class, 'related');
+        return $this->morphMany(EmailMessage::class, 'related');
     }
 
     public function getLatestResponseSeconds(): int
