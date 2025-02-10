@@ -39,13 +39,11 @@ namespace AdvisingApp\Notification\Models;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
-use AdvisingApp\Notification\Observers\OutboundDeliverableObserver;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Timeline\Models\CustomTimeline;
 use AdvisingApp\Timeline\Timelines\OutboundDeliverableTimeline;
 use App\Models\BaseModel;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -54,7 +52,6 @@ use Illuminate\Support\Collection;
 /**
  * @mixin IdeHelperOutboundDeliverable
  */
-#[ObservedBy([OutboundDeliverableObserver::class])]
 class OutboundDeliverable extends BaseModel implements ProvidesATimeline
 {
     use SoftDeletes;
