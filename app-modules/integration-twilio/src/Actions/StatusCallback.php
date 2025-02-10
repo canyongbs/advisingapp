@@ -36,9 +36,10 @@
 
 namespace AdvisingApp\IntegrationTwilio\Actions;
 
+use AdvisingApp\IntegrationAwsSesEventHandling\Exceptions\CouldNotFindSmsMessageFromData;
 use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
-use AdvisingApp\Notification\Actions\UpdateOutboundDeliverableSmsStatus;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\Notification\Enums\SmsMessageEventType;
+use AdvisingApp\Notification\Models\SmsMessage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -58,22 +59,29 @@ class StatusCallback implements ShouldQueue
 
     public function handle(): void
     {
-        $outboundDeliverable = OutboundDeliverable::query()
+        /** @var SmsMessage $smsMessage */
+        $smsMessage = SmsMessage::query()
             ->where('external_reference_id', $this->data->messageSid)
             ->first();
 
-        if (is_null($outboundDeliverable)) {
-            // TODO: Throw a custom exception
+        if (is_null($smsMessage)) {
+            report(new CouldNotFindSmsMessageFromData($this->data));
 
             return;
         }
 
-        // TODO In order to potentially reduce the amount of noise from jobs, we might want to introduce a "screener" that eliminates certain jobs based on their status
-        // And only run the update if it's a status that we want to run some type of update against. For instance, we will receive callbacks for
-        // queued, sending, sent, etc... but we don't actually want/need to do anything during these lifecycle hooks. We only really care about
-        // delivered, undelivered, failed, etc... statuses.
-        // https://canyongbs.atlassian.net/browse/ADVAPP-113
-
-        UpdateOutboundDeliverableSmsStatus::dispatch($outboundDeliverable, $this->data);
+        $smsMessage->events()->create([
+            'type' => match ($this->data->messageStatus) {
+                'queued' => SmsMessageEventType::Queued,
+                'canceled' => SmsMessageEventType::Canceled,
+                'sent' => SmsMessageEventType::Sent,
+                'failed' => SmsMessageEventType::Failed,
+                'delivered' => SmsMessageEventType::Delivered,
+                'undelivered' => SmsMessageEventType::Undelivered,
+                'read' => SmsMessageEventType::Read,
+            },
+            'payload' => $this->data->toArray(),
+            'occurred_at' => now(),
+        ]);
     }
 }

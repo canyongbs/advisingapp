@@ -34,29 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Enums;
+namespace AdvisingApp\IntegrationAwsSesEventHandling\Exceptions;
 
-use Filament\Support\Contracts\HasLabel;
+use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
+use Exception;
 
-enum SmsMessageEventType: string implements HasLabel
+class CouldNotFindSmsMessageFromData extends Exception
 {
-    // Internal
-    case Dispatched = 'dispatched';
-    case FailedDispatch = 'failed_dispatch';
-    case RateLimited = 'rate_limited';
-    case BlockedByDemoMode = 'blocked_by_demo_mode';
+    public function __construct(
+        protected TwilioStatusCallbackData $data,
+    ) {
+        parent::__construct('Could not find an sms message from the given data.');
+    }
 
-    // External
-    case Queued = 'queued';
-    case Canceled = 'canceled';
-    case Sent = 'sent';
-    case Failed = 'failed';
-    case Delivered = 'delivered';
-    case Undelivered = 'undelivered';
-    case Read = 'read';
-
-    public function getLabel(): ?string
+    /**
+     * Get the exception's context information.
+     *
+     * @return array<string, mixed>
+     */
+    public function context(): array
     {
-        return $this->name;
+        return [
+            'event_data' => $this->data->toArray(),
+        ];
     }
 }
