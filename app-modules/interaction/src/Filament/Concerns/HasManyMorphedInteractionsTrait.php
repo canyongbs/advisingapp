@@ -98,6 +98,18 @@ trait HasManyMorphedInteractionsTrait
         return $table
             ->recordTitleAttribute('id')
             ->columns([
+                TextColumn::make('subject')
+                    ->icon(fn ($record) => $record->is_confidential ? 'heroicon-m-lock-closed' : null)
+                    ->tooltip(fn ($record) => $record->is_confidential ? 'Confidential' : null),
+                TextColumn::make('start_datetime')
+                    ->label('Start Time')
+                    ->dateTime(),
+                TextColumn::make('end_datetime')
+                    ->label('End Time')
+                    ->dateTime(),
+                TextColumn::make('created_at')
+                    ->state(fn ($record) => $record->end_datetime ? $record->end_datetime->diffForHumans($record->start_datetime, CarbonInterface::DIFF_ABSOLUTE, true, 6) : '-')
+                    ->label('Duration'),
                 TextColumn::make('initiative.name')
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('driver.name')
@@ -112,18 +124,6 @@ trait HasManyMorphedInteractionsTrait
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('type.name')
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('start_datetime')
-                    ->label('Start Time')
-                    ->dateTime(),
-                TextColumn::make('end_datetime')
-                    ->label('End Time')
-                    ->dateTime(),
-                TextColumn::make('created_at')
-                    ->state(fn ($record) => $record->end_datetime ? $record->end_datetime->diffForHumans($record->start_datetime, CarbonInterface::DIFF_ABSOLUTE, true, 6) : '-')
-                    ->label('Duration'),
-                TextColumn::make('subject')
-                    ->icon(fn ($record) => $record->is_confidential ? 'heroicon-m-lock-closed' : null)
-                    ->tooltip(fn ($record) => $record->is_confidential ? 'Confidential' : null),
             ])
             ->headerActions([
                 CreateAction::make()
