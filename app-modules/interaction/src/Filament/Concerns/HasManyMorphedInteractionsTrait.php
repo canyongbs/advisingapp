@@ -161,7 +161,8 @@ trait HasManyMorphedInteractionsTrait
                             ->modalHeading('Are you sure you wish to delete this interaction?')
                             ->cancelParentActions(),
                     ]),
-                EditAction::make(),
+                EditAction::make()
+                    ->modalHeading('Edit Interaction'),
             ])
             ->emptyStateDescription('Create an interaction to get started');
     }
