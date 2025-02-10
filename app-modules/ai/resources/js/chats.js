@@ -156,8 +156,8 @@ document.addEventListener('alpine:init', () => {
 });
 
 document.addEventListener('livewire:init', () => {
-    Livewire.on('remove-thread-param', (event) => {        
+    Livewire.on('remove-thread-param', (event) => {
         let url = new URL(window.location);
         history.pushState({}, '', url.pathname);
     });
- });
+});
