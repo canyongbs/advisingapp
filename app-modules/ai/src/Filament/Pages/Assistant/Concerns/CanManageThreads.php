@@ -60,6 +60,7 @@ use Filament\Forms\Set;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\Alignment;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Renderless;
@@ -82,12 +83,17 @@ trait CanManageThreads
     public function mount(): void
     {
         if (request()->thread) {
-            $aiThread = AiThread::where('id', request()->thread)->where('user_id', auth()->id())->first();
-
-            if (! $aiThread) {
+            if (! Str::isUuid(request()->thread)) {
                 $this->dispatch('remove-thread-param');
+            } else {
+                $aiThread = AiThread::where('id', request()->thread)->where('user_id', auth()->id())->first()?->toArray();
+
+                if ($aiThread) {
+                    $this->selectThread($aiThread);
+                } else {
+                    $this->dispatch('remove-thread-param');
+                }
             }
-            $this->selectThread(collect($aiThread)->toArray());
         }
     }
 
