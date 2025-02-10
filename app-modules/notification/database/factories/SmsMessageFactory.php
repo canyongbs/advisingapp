@@ -48,6 +48,11 @@ class SmsMessageFactory extends Factory
     public function definition(): array
     {
         return [
+            'content' => json_encode([
+                'recipient_phone_number' => '+1234567890',
+                'content' => 'test',
+                'from_phone_number' => '+0987654321',
+            ]),
             'notification_class' => TestSmsNotification::class,
             'quota_usage' => 0,
         ];

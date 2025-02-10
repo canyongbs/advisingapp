@@ -37,9 +37,6 @@
 namespace AdvisingApp\Notification\Models;
 
 use AdvisingApp\CaseManagement\Models\CaseModel;
-use AdvisingApp\Notification\Drivers\Contracts\OutboundDeliverableDriver;
-use AdvisingApp\Notification\Drivers\EmailDriver;
-use AdvisingApp\Notification\Drivers\SmsDriver;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Observers\OutboundDeliverableObserver;
@@ -134,14 +131,6 @@ class OutboundDeliverable extends BaseModel implements ProvidesATimeline
                 'delivery_response' => $reason,
             ]);
         }
-    }
-
-    public function driver(): OutboundDeliverableDriver
-    {
-        return match ($this->channel) {
-            NotificationChannel::Email => new EmailDriver($this),
-            NotificationChannel::Sms => new SmsDriver($this),
-        };
     }
 
     public function timeline(): CustomTimeline

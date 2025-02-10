@@ -36,27 +36,25 @@
 
 use AdvisingApp\IntegrationTwilio\Actions\StatusCallback;
 use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
-use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\Notification\Enums\SmsMessageEventType;
+use AdvisingApp\Notification\Models\SmsMessage;
 use Illuminate\Http\Request;
 
 use function Tests\loadFixtureFromModule;
 use function Tests\replaceKeyInFixture;
 
-test('it will appropriately update the status of an outbound deliverable based on the payload received', function (string $payloadPath, NotificationDeliveryStatus $expectedStatus) {
-    // Given that we have an outbound deliverable
-    $outboundDeliverable = OutboundDeliverable::factory()
-        ->smsChannel()
+it('will appropriately create a message event based on the payload received', function (string $payloadPath, SmsMessageEventType $expectedEventType) {
+    // Given that we have a sms message
+    /** @var SmsMessage $smsMessage */
+    $smsMessage = SmsMessage::factory()
         ->create([
             'external_reference_id' => '12345',
         ]);
 
-    expect($outboundDeliverable->delivery_status)->toBe(NotificationDeliveryStatus::Processing);
-
     $payload = replaceKeyInFixture(
         fixture: loadFixtureFromModule('integration-twilio', $payloadPath),
         key: 'MessageSid',
-        value: $outboundDeliverable->external_reference_id,
+        value: $smsMessage->external_reference_id,
     );
 
     // When we process the status callback webhook
@@ -64,15 +62,14 @@ test('it will appropriately update the status of an outbound deliverable based o
     $statusCallback = new StatusCallback(TwilioStatusCallbackData::fromRequest($request));
     $statusCallback->handle();
 
-    $outboundDeliverable->refresh();
+    $events = $smsMessage->events()->get();
 
-    // Our outbound deliverable should have been updated appropriately based on the status of the callback
-    expect($outboundDeliverable->delivery_status)->toBe($expectedStatus);
+    // The proper event should have been created for our sms message
+    expect($events->count())->toBe(1);
 
-    if ($expectedStatus === NotificationDeliveryStatus::Failed) {
-        expect($outboundDeliverable->delivery_response)->toBe($payload['ErrorMessage']);
-    }
+    expect($events->first()->type)->toBe($expectedEventType);
 })->with([
-    ['StatusCallback/delivered', NotificationDeliveryStatus::Successful],
-    ['StatusCallback/undelivered', NotificationDeliveryStatus::Failed],
+    ['StatusCallback/delivered', SmsMessageEventType::Delivered],
+    ['StatusCallback/undelivered', SmsMessageEventType::Undelivered],
+    // TODO: Add the rest of the status callback payloads
 ]);
