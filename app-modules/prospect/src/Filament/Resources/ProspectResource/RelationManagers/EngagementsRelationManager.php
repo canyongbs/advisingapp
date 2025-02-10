@@ -38,13 +38,11 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManag
 
 use AdvisingApp\Engagement\Filament\Actions\RelationManagerSendEngagementAction;
 use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Support\Enums\IconPosition;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -80,18 +78,6 @@ class EngagementsRelationManager extends RelationManager
                     ->schema([
                         TextEntry::make('channel')
                             ->label('Channel'),
-                        TextEntry::make('latestOutboundDeliverable.delivery_status')
-                            ->iconPosition(IconPosition::After)
-                            ->icon(fn (?NotificationDeliveryStatus $state): string => $state?->getIconClass() ?? 'heroicon-s-clock')
-                            ->iconColor(fn (?NotificationDeliveryStatus $state): string => $state?->getColor() ?? 'text-yellow-500')
-                            ->label('Status')
-                            ->formatStateUsing(fn (Engagement $engagement): ?string => $engagement->latestOutboundDeliverable?->delivery_status->getMessage()),
-                        TextEntry::make('latestOutboundDeliverable.delivered_at')
-                            ->label('Delivered At')
-                            ->hidden(fn (Engagement $engagement): bool => is_null($engagement->latestOutboundDeliverable?->delivered_at)),
-                        TextEntry::make('latestOutboundDeliverable.delivery_response')
-                            ->label('Error Details')
-                            ->hidden(fn (Engagement $engagement): bool => is_null($engagement->latestOutboundDeliverable?->delivery_response)),
                     ])
                     ->columns(2),
             ]);

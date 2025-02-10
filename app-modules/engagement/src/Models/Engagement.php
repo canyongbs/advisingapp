@@ -115,7 +115,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
 
     public static function getTimelineData(Model $forModel): Collection
     {
-        return $forModel->orderedEngagements()->with(['latestMessage', 'batch'])->get();
+        return $forModel->orderedEngagements()->with(['latestEmailMessage', 'latestSmsMessage', 'batch'])->get();
     }
 
     public function user(): BelongsTo
@@ -130,28 +130,34 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
 
     public function emailMessages(): MorphMany
     {
-        return $this->morphMany(EmailMessage::class, 'related');
+        return $this->morphMany(
+            related: EmailMessage::class,
+            name: 'related',
+            type: 'related_type',
+            id: 'related_id',
+            localKey: 'id',
+        );
+    }
+
+    public function latestEmailMessage(): MorphOne
+    {
+        return $this->morphOne(EmailMessage::class, 'related')->latestOfMany();
     }
 
     public function smsMessages(): MorphMany
     {
-        return $this->morphMany(SmsMessage::class, 'related');
+        return $this->morphMany(
+            related: SmsMessage::class,
+            name: 'related',
+            type: 'related_type',
+            id: 'related_id',
+            localKey: 'id',
+        );
     }
 
-    public function messages(): MorphMany
+    public function latestSmsMessage(): MorphOne
     {
-        return match ($this->channel) {
-            NotificationChannel::Email => $this->emailMessages(),
-            NotificationChannel::Sms => $this->smsMessages(),
-        };
-    }
-
-    public function latestMessage(): MorphOne
-    {
-        return match ($this->channel) {
-            NotificationChannel::Email => $this->morphOne(EmailMessage::class, 'related')->latestOfMany(),
-            NotificationChannel::Sms => $this->morphOne(SmsMessage::class, 'related')->latestOfMany(),
-        };
+        return $this->morphOne(SmsMessage::class, 'related')->latestOfMany();
     }
 
     public function recipient(): MorphTo

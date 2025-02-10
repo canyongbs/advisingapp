@@ -41,10 +41,8 @@ use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Timeline\Models\Timeline;
 use Filament\Infolists\Components\Fieldset as InfolistFieldset;
-use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -91,20 +89,6 @@ class EngagementsRelationManager extends RelationManager
 
                                 return $timelineable->getDeliveryMethod()->getLabel();
                             }),
-                        IconEntry::make('latestOutboundDeliverable.delivery_status')
-                            ->getStateUsing(fn (Timeline $record): ?NotificationDeliveryStatus => $record->timelineable->latestOutboundDeliverable?->delivery_status)
-                            ->icon(fn (NotificationDeliveryStatus $state): string => $state->getIconClass() ?? 'heroicon-s-clock')
-                            ->color(fn (NotificationDeliveryStatus $state): string => $state->getColor() ?? 'text-yellow-500')
-                            ->label('Status')
-                            ->default(NotificationDeliveryStatus::Processing),
-                        TextEntry::make('latestOutboundDeliverable.delivered_at')
-                            ->getStateUsing(fn (Timeline $record): string => $record->timelineable->latestOutboundDeliverable->delivered_at)
-                            ->label('Delivered At')
-                            ->hidden(fn (Timeline $record): bool => is_null($record->timelineable->latestOutboundDeliverable?->delivered_at)),
-                        TextEntry::make('latestOutboundDeliverable.delivery_response')
-                            ->getStateUsing(fn (Timeline $record): string => $record->timelineable->latestOutboundDeliverable->delivery_response)
-                            ->label('Error Details')
-                            ->hidden(fn (Timeline $record): bool => is_null($record->timelineable->latestOutboundDeliverable?->delivery_response)),
                     ])
                     ->columns(),
             ],
