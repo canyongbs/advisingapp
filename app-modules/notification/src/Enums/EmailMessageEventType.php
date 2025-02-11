@@ -60,6 +60,6 @@ enum EmailMessageEventType: string implements HasLabel
 
     public function getLabel(): ?string
     {
-        return $this->name;
+        return str($this->name)->headline();
     }
 }
