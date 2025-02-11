@@ -38,7 +38,6 @@ namespace AdvisingApp\Interaction\Filament\Concerns;
 
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Prospect\Models\Prospect;
-use App\Filament\Tables\Columns\IdColumn;
 use Carbon\CarbonInterface;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\TextEntry;
@@ -49,7 +48,6 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Support\HtmlString;
 
 trait HasManyMorphedInteractionsTrait
 {
@@ -100,39 +98,9 @@ trait HasManyMorphedInteractionsTrait
         return $table
             ->recordTitleAttribute('id')
             ->columns([
-                IdColumn::make(),
-                TextColumn::make('initiative.name')
-                    ->description(
-                        function (Interaction $record) {
-                            if (! $record->is_confidential) {
-                                return null;
-                            }
-
-                            return new HtmlString(
-                                <<<HTML
-                                    <div class="fi-ta-text grid w-full gap-y-1">
-                                        <div class="flex gap-1.5 flex-wrap ">
-                                            <div class="flex w-max" style="">
-                                                <span style="--c-50:var(--primary-50);--c-400:var(--primary-400);--c-600:var(--primary-600);" class="fi-badge flex items-center justify-center gap-x-1 rounded-md text-xs font-medium ring-1 ring-inset px-2 min-w-[theme(spacing.6)] py-1 fi-color-custom bg-custom-50 text-custom-600 ring-custom-600/10 dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30 fi-color-primary">
-                                                    <span class="grid">
-                                                        <span class="truncate">
-                                                            Confidential
-                                                        </span>
-                                                    </span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                HTML
-                            );
-                        }
-                    ),
-                TextColumn::make('driver.name'),
-                TextColumn::make('division.name'),
-                TextColumn::make('outcome.name'),
-                TextColumn::make('relation.name'),
-                TextColumn::make('status.name'),
-                TextColumn::make('type.name'),
+                TextColumn::make('subject')
+                    ->icon(fn ($record) => $record->is_confidential ? 'heroicon-m-lock-closed' : null)
+                    ->tooltip(fn ($record) => $record->is_confidential ? 'Confidential' : null),
                 TextColumn::make('start_datetime')
                     ->label('Start Time')
                     ->dateTime(),
@@ -142,8 +110,20 @@ trait HasManyMorphedInteractionsTrait
                 TextColumn::make('created_at')
                     ->state(fn ($record) => $record->end_datetime ? $record->end_datetime->diffForHumans($record->start_datetime, CarbonInterface::DIFF_ABSOLUTE, true, 6) : '-')
                     ->label('Duration'),
-                TextColumn::make('subject'),
-                TextColumn::make('description'),
+                TextColumn::make('initiative.name')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('driver.name')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('division.name')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('outcome.name')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('relation.name')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('status.name')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('type.name')
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->headerActions([
                 CreateAction::make()
