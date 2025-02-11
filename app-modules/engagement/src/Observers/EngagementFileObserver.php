@@ -46,8 +46,8 @@ class EngagementFileObserver
         $user = auth()->user();
 
         if (EngagementFilesCreatedByFeature::active() && is_null($engagementFile->created_by_id)) {
-            $engagementFile->created_by_id = $user->getKey();
-            $engagementFile->created_by_type = $user->getMorphClass();
+            $engagementFile->created_by_id = $user?->getKey();
+            $engagementFile->created_by_type = $user?->getMorphClass();
         }
     }
 }
