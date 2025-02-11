@@ -42,6 +42,7 @@ use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
+use App\Features\ProspectStudentRefactor;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -54,7 +55,6 @@ class ProspectFactory extends Factory
     {
         $firstName = fake()->firstName();
         $lastName = fake()->lastName();
-        $address3 = fake()->optional()->words(asText: true);
 
         return [
             'status_id' => ProspectStatus::inRandomOrder()->first() ?? ProspectStatus::factory(),
