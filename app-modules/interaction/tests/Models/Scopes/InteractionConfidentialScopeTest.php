@@ -44,7 +44,7 @@ use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
 test('Interaction model has applied global scope', function () {
-    Interaction::factory()->create();
+    Interaction::bootHasGlobalScopes();
 
     expect(Interaction::hasGlobalScope(InteractionConfidentialScope::class))->toBeTrue();
 });
