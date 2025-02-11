@@ -39,6 +39,7 @@ namespace AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Relat
 use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use AdvisingApp\Prospect\Models\Prospect;
+use App\Features\EngagementFilesCreatedByFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -114,6 +115,14 @@ class EngagementFilesRelationManager extends RelationManager
                         'video/mp4' => 'heroicon-o-video-camera',
                         'application/zip' => 'heroicon-o-archive-box'
                     }),
+                TextColumn::make('created_at')
+                    ->label('Date Created')
+                    ->sortable(query: fn ($query, $direction) => $query->orderBy('engagement_files.created_at', $direction))
+                    ->visible(fn (): bool => EngagementFilesCreatedByFeature::active()),
+                TextColumn::make('createdBy.name')
+                    ->label('Created By')
+                    ->sortable(query: fn ($query, $direction) => $query->orderBy('engagement_files.created_by_id', $direction))
+                    ->visible(fn (): bool => EngagementFilesCreatedByFeature::active()),
             ])
             ->headerActions([
                 CreateAction::make()
