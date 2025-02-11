@@ -117,11 +117,11 @@ class EngagementFilesRelationManager extends RelationManager
                     }),
                 TextColumn::make('created_at')
                     ->label('Date Created')
-                    ->sortable()
+                    ->sortable(query: fn ($query, $direction) => $query->orderBy('engagement_files.created_at', $direction))
                     ->visible(fn (): bool => EngagementFilesCreatedByFeature::active()),
                 TextColumn::make('createdBy.name')
                     ->label('Created By')
-                    ->sortable()
+                    ->sortable(query: fn ($query, $direction) => $query->orderBy('engagement_files.created_by_id', $direction))
                     ->visible(fn (): bool => EngagementFilesCreatedByFeature::active()),
             ])
             ->headerActions([
