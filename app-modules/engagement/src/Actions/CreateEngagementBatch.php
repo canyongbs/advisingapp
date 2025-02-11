@@ -54,6 +54,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
+use Throwable;
 
 /**
  * @deprecated After deploying engagements refactor:
@@ -96,7 +97,9 @@ class CreateEngagementBatch implements ShouldQueue
             );
 
             $engagementBatch->save();
+        });
 
+        try {
             $batch = Bus::batch([
                 ...blank($data->scheduledAt) ? [fn () => $engagementBatch->user->notify(new EngagementBatchStartedNotification($engagementBatch))] : [],
                 ...$data->recipient
@@ -118,7 +121,11 @@ class CreateEngagementBatch implements ShouldQueue
 
             $engagementBatch->identifier = $batch->id;
             $engagementBatch->save();
-        });
+        } catch (Throwable $exception) {
+            $engagementBatch->delete();
+
+            throw $exception;
+        }
     }
 
     public function handle(): void
