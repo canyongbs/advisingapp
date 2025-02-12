@@ -39,16 +39,22 @@ namespace AdvisingApp\Notification\Notifications\Channels;
 use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
 use AdvisingApp\Notification\Actions\MakeOutboundDeliverable;
 use AdvisingApp\Notification\DataTransferObjects\EmailChannelResultData;
+use AdvisingApp\Notification\Enums\EmailMessageEventType;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
+use AdvisingApp\Notification\Models\EmailMessage;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
 use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
+use AdvisingApp\Notification\Notifications\Contracts\OnDemandNotification;
+use App\Features\MessagesAndMessageEvents;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Channels\MailChannel as BaseMailChannel;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -60,13 +66,37 @@ class MailChannel extends BaseMailChannel
 {
     public function send($notifiable, Notification $notification): void
     {
+        [$recipientId, $recipientType] = match (true) {
+            $notifiable instanceof Model => [$notifiable->getKey(), $notifiable->getMorphClass()],
+            $notifiable instanceof AnonymousNotifiable && $notification instanceof OnDemandNotification => $notification->identifyRecipient(),
+            default => [null, 'anonymous'],
+        };
+
+        $emailMessage = MessagesAndMessageEvents::active()
+            ? new EmailMessage([
+                'notification_class' => $notification::class,
+                'content' => $notification->toMail($notifiable)->toArray(),
+                'recipient_id' => $recipientId,
+                'recipient_type' => $recipientType,
+            ])
+            : null;
+
         $deliverable = app(MakeOutboundDeliverable::class)->execute($notification, $notifiable, NotificationChannel::Email);
 
         if ($notification instanceof HasBeforeSendHook) {
-            $notification->beforeSend($notifiable, $deliverable, NotificationChannel::Email);
+            $notification->beforeSend(
+                notifiable: $notifiable,
+                deliverable: $deliverable,
+                message: $emailMessage,
+                channel: NotificationChannel::Email
+            );
         }
 
         $deliverable->save();
+
+        if ($emailMessage) {
+            $emailMessage->save();
+        }
 
         $tenant = Tenant::current();
         $tenantMailConfig = $tenant?->config->mail;
@@ -80,7 +110,7 @@ class MailChannel extends BaseMailChannel
                 || ($isSystemNotification && $tenantMailConfig?->isExcludingSystemNotificationsFromDemoMode)
             ) {
                 $message = $notification->toMail($notifiable)
-                    ->withSymfonyMessage(function (Email $message) use ($deliverable, $tenant) {
+                    ->withSymfonyMessage(function (Email $message) use ($deliverable, $tenant, $emailMessage) {
                         $settings = app(SesSettings::class);
 
                         if (filled($settings->configuration_set)) {
@@ -94,11 +124,13 @@ class MailChannel extends BaseMailChannel
                             'X-SES-MESSAGE-TAGS',
                             implode(', ', [
                                 "outbound_deliverable_id={$deliverable->getKey()}",
+                                ...($emailMessage ? ["app_message_id={$emailMessage->getKey()}"] : []),
                                 ...($tenant ? ['tenant_id=' . $tenant->getKey()] : []),
                             ]),
                         );
                     });
 
+                // TODO: Change this to check the $emailMessage instead of the $deliverable
                 $quotaUsage = $isSystemNotification ? 0 : $this->determineQuotaUsage($message, $deliverable);
 
                 throw_if($quotaUsage && (! $this->canSendWithinQuotaLimits($quotaUsage)), new NotificationQuotaExceeded());
@@ -108,6 +140,7 @@ class MailChannel extends BaseMailChannel
                 );
 
                 try {
+                    // TODO: Find a way to get the SES Message ID attached to the deliverable/message. We will probably need to get it through the MessageSent event
                     $sentMessage = $this->mailer->mailer($message->mailer ?? null)->send(
                         $this->buildView($message),
                         array_merge($message->data(), $this->additionalMessageData($notification)),
@@ -140,15 +173,40 @@ class MailChannel extends BaseMailChannel
                             : NotificationDeliveryStatus::Dispatched,
                         'quota_usage' => $quotaUsage,
                     ]);
+
+                    if ($emailMessage) {
+                        $emailMessage->quota_usage = $quotaUsage;
+
+                        $emailMessage->events()->create([
+                            'type' => (
+                                (! $tenantMailConfig?->isDemoModeEnabled ?? false)
+                                || ($isSystemNotification && $tenantMailConfig?->isExcludingSystemNotificationsFromDemoMode)
+                            )
+                                ? EmailMessageEventType::Dispatched
+                                : EmailMessageEventType::BlockedByDemoMode,
+                            'payload' => $result->toArray(),
+                            'occurred_at' => now(),
+                        ]);
+
+                        $emailMessage->save();
+                    }
                 } else {
                     $deliverable->update([
                         'delivery_status' => NotificationDeliveryStatus::DispatchFailed,
                     ]);
+
+                    if ($emailMessage) {
+                        $emailMessage->events()->create([
+                            'type' => EmailMessageEventType::FailedDispatch,
+                            'payload' => $result->toArray(),
+                            'occurred_at' => now(),
+                        ]);
+                    }
                 }
 
                 // Consider dispatching this as a seperate job so that it can be encapsulated to be retried if it fails, but also avoid changing the status of the deliverable if it fails.
                 if ($notification instanceof HasAfterSendHook) {
-                    $notification->afterSend($notifiable, $deliverable, $result);
+                    $notification->afterSend($notifiable, $deliverable, $result, $emailMessage);
                 }
             } catch (Throwable $exception) {
                 report($exception);
@@ -159,10 +217,26 @@ class MailChannel extends BaseMailChannel
             }
         } catch (NotificationQuotaExceeded $exception) {
             $deliverable->update(['delivery_status' => NotificationDeliveryStatus::RateLimited]);
+
+            if ($emailMessage) {
+                $emailMessage->events()->create([
+                    'type' => EmailMessageEventType::RateLimited,
+                    'payload' => [],
+                    'occurred_at' => now(),
+                ]);
+            }
         } catch (Throwable $exception) {
             $deliverable->update([
                 'delivery_status' => NotificationDeliveryStatus::DispatchFailed,
             ]);
+
+            if ($emailMessage) {
+                $emailMessage->events()->create([
+                    'type' => EmailMessageEventType::FailedDispatch,
+                    'payload' => [],
+                    'occurred_at' => now(),
+                ]);
+            }
 
             throw $exception;
         }
@@ -192,6 +266,7 @@ class MailChannel extends BaseMailChannel
 
         $resetWindow = $licenseSettings->data->limits->getResetWindow();
 
+        // TODO: Change this to use the MailMessage model instead of the OutboundDeliverable model
         $currentQuotaUsage = OutboundDeliverable::query()
             ->where('channel', NotificationChannel::Email)
             ->whereBetween('created_at', [$resetWindow['start'], $resetWindow['end']])

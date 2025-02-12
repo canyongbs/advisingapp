@@ -38,7 +38,7 @@ namespace AdvisingApp\Campaign\Filament\Blocks;
 
 use AdvisingApp\Campaign\Filament\Blocks\Actions\DraftCampaignEngagementBlockWithAi;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
-use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Fields\EngagementSmsBodyField;
+use AdvisingApp\Engagement\Filament\Forms\Components\EngagementSmsBodyInput;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use Carbon\CarbonImmutable;
 use Filament\Forms\Components\Actions;
@@ -61,7 +61,7 @@ class EngagementBatchSmsBlock extends CampaignActionBlock
         return [
             Hidden::make($fieldPrefix . 'channel')
                 ->default(NotificationChannel::Sms->value),
-            EngagementSmsBodyField::make(context: 'create', fieldPrefix: $fieldPrefix),
+            EngagementSmsBodyInput::make(context: 'create', fieldPrefix: $fieldPrefix),
             Actions::make([
                 DraftCampaignEngagementBlockWithAi::make()
                     ->channel(NotificationChannel::Sms)

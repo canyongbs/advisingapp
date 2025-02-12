@@ -38,7 +38,7 @@ namespace AdvisingApp\Engagement\Filament\Pages;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\CaseManagement\Models\CaseModel;
-use AdvisingApp\Engagement\Filament\Actions\SendEngagementAction;
+use AdvisingApp\Engagement\Filament\Actions\MessageCenterSendEngagementAction;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -356,7 +356,7 @@ class MessageCenter extends Page
 
     public function createAction(): Action
     {
-        return SendEngagementAction::make()
+        return MessageCenterSendEngagementAction::make()
             ->educatable($this->recordModel)
             ->after(fn () => $this->refreshSelectedEducatable());
     }

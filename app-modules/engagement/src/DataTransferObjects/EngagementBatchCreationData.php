@@ -40,6 +40,9 @@ use App\Models\User;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Data;
 
+/**
+ * @deprecated Remove after deploying engagements refactor.
+ */
 class EngagementBatchCreationData extends Data
 {
     public function __construct(

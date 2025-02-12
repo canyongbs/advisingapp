@@ -47,6 +47,9 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
+/**
+ * @deprecated Remove after deploying engagements refactor.
+ */
 abstract class QueuedEngagementDelivery implements EngagementChannel, ShouldQueue, ShouldBeUnique
 {
     use Batchable;

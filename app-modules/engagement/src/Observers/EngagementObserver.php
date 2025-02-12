@@ -47,13 +47,14 @@ class EngagementObserver
 {
     public function creating(Engagement $engagement): void
     {
-        $user = auth()->user();
-
-        if ($user instanceof User && is_null($engagement->user_id)) {
-            $engagement->user_id = $user->id;
+        if (is_null($engagement->user_id) && auth()->check()) {
+            $engagement->user_id = auth()->id();
         }
     }
 
+    /**
+     * @deprecated Remove after deploying engagements refactor.
+     */
     public function saving(Engagement $engagement): void
     {
         $engagement->deliver_at = $engagement->deliver_at ?? now();

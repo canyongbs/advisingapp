@@ -38,10 +38,11 @@ namespace AdvisingApp\Notification\Notifications\Contracts;
 
 use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
+use AdvisingApp\Notification\Models\Contracts\Message;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use Illuminate\Notifications\AnonymousNotifiable;
 
 interface HasAfterSendHook
 {
-    public function afterSend(AnonymousNotifiable|CanBeNotified $notifiable, OutboundDeliverable $deliverable, NotificationResultData $result): void;
+    public function afterSend(AnonymousNotifiable|CanBeNotified $notifiable, OutboundDeliverable $deliverable, NotificationResultData $result, ?Message $message): void;
 }

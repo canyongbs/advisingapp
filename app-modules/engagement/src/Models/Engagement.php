@@ -93,12 +93,16 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         'recipient_id',
         'recipient_type',
         'deliver_at',
+        'scheduled_at',
+        'dispatched_at',
         'channel',
     ];
 
     protected $casts = [
         'body' => 'array',
         'deliver_at' => 'datetime',
+        'scheduled_at' => 'datetime',
+        'dispatched_at' => 'datetime',
         'channel' => NotificationChannel::class,
     ];
 
@@ -164,8 +168,8 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
 
     public function scopeHasBeenDelivered(Builder $query): void
     {
-        $query->whereDoesntHave('outboundDeliverables', function (Builder $query) {
-            $query->whereNull('delivered_at');
+        $query->whereHas('outboundDeliverables', function (Builder $query) {
+            $query->whereNotNull('delivered_at');
         });
     }
 
@@ -239,6 +243,9 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         };
     }
 
+    /**
+     * @deprecated Remove after deploying engagements refactor.
+     */
     public function driver(): EngagementDeliverableDriver
     {
         return match ($this->channel) {

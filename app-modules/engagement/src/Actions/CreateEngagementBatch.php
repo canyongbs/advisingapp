@@ -37,10 +37,13 @@
 namespace AdvisingApp\Engagement\Actions;
 
 use AdvisingApp\Engagement\DataTransferObjects\EngagementBatchCreationData;
+use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
+use AdvisingApp\Engagement\Jobs\CreateBatchedEngagement;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Engagement\Notifications\EngagementBatchFinishedNotification;
 use AdvisingApp\Engagement\Notifications\EngagementBatchStartedNotification;
+use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Bus\Batch;
@@ -50,7 +53,16 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
+/**
+ * @deprecated After deploying engagements refactor:
+ * - Remove interface
+ * - Remove all traits
+ * - Remove constructor
+ * - Remove `handle()` method, this is an action class and not a job.
+ */
 class CreateEngagementBatch implements ShouldQueue
 {
     use Dispatchable;
@@ -59,8 +71,62 @@ class CreateEngagementBatch implements ShouldQueue
     use SerializesModels;
 
     public function __construct(
-        public EngagementBatchCreationData $data
+        public ?EngagementBatchCreationData $data = null,
     ) {}
+
+    public function execute(EngagementCreationData $data): void
+    {
+        $engagementBatch = new EngagementBatch();
+        $engagementBatch->user()->associate($data->user);
+        $engagementBatch->channel = $data->channel;
+        $engagementBatch->subject = $data->subject;
+        $engagementBatch->scheduled_at = $data->scheduledAt;
+        $engagementBatch->total_engagements = $data->recipient->count();
+        $engagementBatch->processed_engagements = 0;
+        $engagementBatch->successful_engagements = 0;
+
+        DB::transaction(function () use ($engagementBatch, $data) {
+            $engagementBatch->save();
+
+            [$engagementBatch->body] = tiptap_converter()->saveImages(
+                $data->body,
+                disk: 's3-public',
+                record: $engagementBatch,
+                recordAttribute: 'body',
+                newImages: $data->temporaryBodyImages,
+            );
+
+            $engagementBatch->save();
+        });
+
+        try {
+            $batch = Bus::batch([
+                ...blank($data->scheduledAt) ? [fn () => $engagementBatch->user->notify(new EngagementBatchStartedNotification($engagementBatch))] : [],
+                ...$data->recipient
+                    ->map(fn (CanBeNotified $recipient): CreateBatchedEngagement => new CreateBatchedEngagement($engagementBatch, $recipient))
+                    ->all(),
+            ])
+                ->name("Bulk Engagement {$engagementBatch->getKey()}")
+                ->finally(function () use ($engagementBatch) {
+                    if ($engagementBatch->scheduled_at) {
+                        return;
+                    }
+
+                    $engagementBatch->refresh();
+
+                    $engagementBatch->user->notify(new EngagementBatchFinishedNotification($engagementBatch));
+                })
+                ->allowFailures()
+                ->dispatch();
+
+            $engagementBatch->identifier = $batch->id;
+            $engagementBatch->save();
+        } catch (Throwable $exception) {
+            $engagementBatch->delete();
+
+            throw $exception;
+        }
+    }
 
     public function handle(): void
     {
@@ -94,12 +160,12 @@ class CreateEngagementBatch implements ShouldQueue
             return $engagement->driver()->jobForDelivery();
         });
 
-        $engagementBatch->user->notify(new EngagementBatchStartedNotification($engagementBatch, $deliverableJobs->count(), $channel));
+        $engagementBatch->user->notify(new EngagementBatchStartedNotification($engagementBatch));
 
         Bus::batch($deliverableJobs)
             ->name("Process Bulk Engagement {$engagementBatch->id}")
-            ->finally(function (Batch $batchQueue) use ($engagementBatch, $channel) {
-                $engagementBatch->user->notify(new EngagementBatchFinishedNotification($engagementBatch, $batchQueue->totalJobs, $batchQueue->failedJobs, $channel));
+            ->finally(function (Batch $batchQueue) use ($engagementBatch) {
+                $engagementBatch->user->notify(new EngagementBatchFinishedNotification($engagementBatch));
             })
             ->allowFailures()
             ->dispatch();

@@ -38,8 +38,6 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use AdvisingApp\CareTeam\Filament\Actions\ToggleCareTeamBulkAction;
 use AdvisingApp\Engagement\Filament\Actions\BulkEngagementAction;
-use AdvisingApp\Engagement\Filament\Actions\Concerns\ImplementsHasBulkEngagementAction;
-use AdvisingApp\Engagement\Filament\Actions\Contracts\HasBulkEngagementAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeBulkAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeTableAction;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
@@ -75,10 +73,8 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
-class ListProspects extends ListRecords implements HasBulkEngagementAction
+class ListProspects extends ListRecords
 {
-    use ImplementsHasBulkEngagementAction;
-
     protected static string $resource = ProspectResource::class;
 
     public function table(Table $table): Table
