@@ -45,6 +45,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class StudentEmailAddressFactory extends Factory
 {
     private int $maxOrder;
+
     /**
      * Define the model's default state.
      *

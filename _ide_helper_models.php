@@ -1,39 +1,5 @@
 <?php
 
-/*
-<COPYRIGHT>
-
-    Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
-
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
-    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
-
-    Notice:
-
-    - You may not provide the software to third parties as a hosted or managed
-      service, where the service provides users with access to any substantial set of
-      the features or functionality of the software.
-    - You may not move, change, disable, or circumvent the license key functionality
-      in the software, and you may not remove or obscure any functionality in the
-      software that is protected by the license key.
-    - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
-      to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
-      vigorously.
-    - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
-    - Use of this software implies agreement to the license terms and conditions as stated
-      in the Elastic License 2.0.
-
-    For more information or inquiries please visit our website at
-    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
-
-</COPYRIGHT>
-*/
-
 // @formatter:off
 // phpcs:ignoreFile
 /**
@@ -3782,16 +3748,6 @@ namespace AdvisingApp\Notification\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DatabaseMessage newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DatabaseMessage newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DatabaseMessage query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|DatabaseMessage whereContent($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|DatabaseMessage whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|DatabaseMessage whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|DatabaseMessage whereNotificationClass($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|DatabaseMessage whereNotificationId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|DatabaseMessage whereRecipientId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|DatabaseMessage whereRecipientType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|DatabaseMessage whereRelatedId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|DatabaseMessage whereRelatedType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|DatabaseMessage whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -3802,17 +3758,6 @@ namespace AdvisingApp\Notification\Models{
 /**
  * 
  *
- * @property string $id
- * @property string $notification_class
- * @property string|null $external_reference_id
- * @property array<array-key, mixed> $content
- * @property int $quota_usage
- * @property string|null $related_type
- * @property string|null $related_id
- * @property string|null $recipient_id
- * @property string|null $recipient_type
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Notification\Models\EmailMessageEvent> $events
  * @property-read int|null $events_count
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent|null $recipient
@@ -3821,17 +3766,6 @@ namespace AdvisingApp\Notification\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailMessage newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailMessage newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailMessage query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailMessage whereContent($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailMessage whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailMessage whereExternalReferenceId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailMessage whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailMessage whereNotificationClass($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailMessage whereQuotaUsage($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailMessage whereRecipientId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailMessage whereRecipientType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailMessage whereRelatedId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailMessage whereRelatedType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailMessage whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -3842,8 +3776,6 @@ namespace AdvisingApp\Notification\Models{
 /**
  * 
  *
- * @property string $id
- * @property string $email_message_id
  * @property \AdvisingApp\Notification\Enums\EmailMessageEventType $type
  * @property array<array-key, mixed> $payload
  * @property \Illuminate\Support\Carbon $occurred_at
@@ -3853,13 +3785,6 @@ namespace AdvisingApp\Notification\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailMessageEvent newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailMessageEvent newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailMessageEvent query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailMessageEvent whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailMessageEvent whereEmailMessageId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailMessageEvent whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailMessageEvent whereOccurredAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailMessageEvent wherePayload($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailMessageEvent whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailMessageEvent whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -3889,17 +3814,6 @@ namespace AdvisingApp\Notification\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SmsMessage newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SmsMessage newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SmsMessage query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SmsMessage whereContent($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SmsMessage whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SmsMessage whereExternalReferenceId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SmsMessage whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SmsMessage whereNotificationClass($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SmsMessage whereQuotaUsage($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SmsMessage whereRecipientId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SmsMessage whereRecipientType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SmsMessage whereRelatedId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SmsMessage whereRelatedType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SmsMessage whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -3910,8 +3824,6 @@ namespace AdvisingApp\Notification\Models{
 /**
  * 
  *
- * @property string $id
- * @property string $sms_message_id
  * @property \AdvisingApp\Notification\Enums\SmsMessageEventType $type
  * @property array<array-key, mixed> $payload
  * @property \Illuminate\Support\Carbon $occurred_at
@@ -3921,13 +3833,6 @@ namespace AdvisingApp\Notification\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SmsMessageEvent newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SmsMessageEvent newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SmsMessageEvent query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SmsMessageEvent whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SmsMessageEvent whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SmsMessageEvent whereOccurredAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SmsMessageEvent wherePayload($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SmsMessageEvent whereSmsMessageId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SmsMessageEvent whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SmsMessageEvent whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
