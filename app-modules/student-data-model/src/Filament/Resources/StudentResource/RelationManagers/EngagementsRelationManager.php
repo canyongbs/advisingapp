@@ -44,6 +44,7 @@ use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\EmailMessageEvent;
 use AdvisingApp\Notification\Models\SmsMessageEvent;
 use AdvisingApp\Timeline\Models\Timeline;
+use App\Features\MessageEventsDisplay;
 use Filament\Infolists\Components\Fieldset as InfolistFieldset;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Section;
@@ -128,7 +129,7 @@ class EngagementsRelationManager extends RelationManager
                                             ->columns(),
                                     ])
                                     ->contained(false),
-                            ]),
+                            ])->visible(MessageEventsDisplay::active()),
                     ]),
             ],
             EngagementResponse::class => [
