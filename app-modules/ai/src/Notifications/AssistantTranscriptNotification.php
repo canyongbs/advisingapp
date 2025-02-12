@@ -40,6 +40,7 @@ use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
+use AdvisingApp\Notification\Models\Contracts\Message;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
@@ -118,7 +119,7 @@ class AssistantTranscriptNotification extends Notification implements ShouldQueu
         return $message;
     }
 
-    public function afterSend(AnonymousNotifiable|CanBeNotified $notifiable, OutboundDeliverable $deliverable, NotificationResultData $result): void
+    public function afterSend(AnonymousNotifiable|CanBeNotified $notifiable, OutboundDeliverable $deliverable, NotificationResultData $result, ?Message $message): void
     {
         if ($result->success) {
             $this->thread->increment('emailed_count');

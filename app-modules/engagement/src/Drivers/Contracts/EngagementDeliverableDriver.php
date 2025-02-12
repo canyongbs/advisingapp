@@ -38,6 +38,9 @@ namespace AdvisingApp\Engagement\Drivers\Contracts;
 
 use AdvisingApp\Engagement\Actions\QueuedEngagementDelivery;
 
+/**
+ * @deprecated Remove after deploying engagements refactor.
+ */
 interface EngagementDeliverableDriver
 {
     public function jobForDelivery(): QueuedEngagementDelivery;

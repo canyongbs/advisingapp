@@ -38,15 +38,19 @@ namespace AdvisingApp\Engagement\Filament\Actions;
 
 use AdvisingApp\Engagement\Actions\CreateEngagementBatch;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementBatchCreationData;
-use AdvisingApp\Engagement\Filament\Actions\Contracts\HasBulkEngagementAction;
-use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Fields\EngagementSmsBodyField;
+use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
+use AdvisingApp\Engagement\Filament\Forms\Components\EngagementSmsBodyInput;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
+use App\Features\EngagementsFeature;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -55,6 +59,7 @@ use Filament\Tables\Actions\BulkAction;
 use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
@@ -154,35 +159,65 @@ class BulkEngagementAction
                             ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
                             ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
                             ->columnSpanFull(),
-                        EngagementSmsBodyField::make(context: 'create'),
+                        EngagementSmsBodyInput::make(context: 'create'),
                         Actions::make([
-                            DraftWithAiAction::make()
+                            BulkDraftWithAiAction::make()
                                 ->mergeTags($mergeTags),
                         ]),
                     ]),
+                Step::make('Schedule')
+                    ->description('Choose when you would like to send this engagement.')
+                    ->schema([
+                        Toggle::make('send_later')
+                            ->reactive()
+                            ->helperText('By default, this email or text will send as soon as it is created unless you schedule it to send later.'),
+                        DateTimePicker::make('deliver_at')
+                            ->required()
+                            ->visible(fn (Get $get) => $get('send_later')),
+                    ]),
             ])
             ->action(function (Collection $records, array $data, Form $form) {
-                CreateEngagementBatch::dispatch(EngagementBatchCreationData::from([
-                    'user' => auth()->user(),
-                    'records' => $records->filter(function ($record) {
-                        return $record->canRecieveSms();
-                    }),
-                    'channel' => $data['channel'],
-                    'subject' => $data['subject'] ?? null,
-                    'body' => $data['body'] ?? null,
-                    'temporaryBodyImages' => array_map(
-                        fn (TemporaryUploadedFile $file): array => [
-                            'extension' => $file->getClientOriginalExtension(),
-                            'path' => (fn () => $this->path)->call($file),
-                        ],
-                        $form->getFlatFields()['body']->getTemporaryImages(),
-                    ),
-                ]));
+                if (EngagementsFeature::active()) {
+                    $channel = NotificationChannel::parse($data['channel']);
+
+                    app(CreateEngagementBatch::class, ['data' => null])->execute(new EngagementCreationData(
+                        user: auth()->user(),
+                        recipient: ($channel === NotificationChannel::Sms) ? $records->filter(fn (CanBeNotified $record) => $record->canRecieveSms()) : $records,
+                        channel: $channel,
+                        subject: $data['subject'] ?? null,
+                        body: $data['body'] ?? null,
+                        temporaryBodyImages: array_map(
+                            fn (TemporaryUploadedFile $file): array => [
+                                'extension' => $file->getClientOriginalExtension(),
+                                'path' => (fn () => $this->path)->call($file),
+                            ],
+                            $form->getFlatFields()['body']->getTemporaryImages(),
+                        ),
+                        scheduledAt: ($data['send_later'] ?? false) ? Carbon::parse($data['deliver_at'] ?? null) : null,
+                    ));
+                } else {
+                    CreateEngagementBatch::dispatch(EngagementBatchCreationData::from([
+                        'user' => auth()->user(),
+                        'records' => $records->filter(function ($record) {
+                            return $record->canRecieveSms();
+                        }),
+                        'channel' => $data['channel'],
+                        'subject' => $data['subject'] ?? null,
+                        'body' => $data['body'] ?? null,
+                        'temporaryBodyImages' => array_map(
+                            fn (TemporaryUploadedFile $file): array => [
+                                'extension' => $file->getClientOriginalExtension(),
+                                'path' => (fn () => $this->path)->call($file),
+                            ],
+                            $form->getFlatFields()['body']->getTemporaryImages(),
+                        ),
+                    ]));
+                }
             })
             ->modalSubmitActionLabel('Send')
+            ->deselectRecordsAfterCompletion()
             ->modalCloseButton(false)
             ->closeModalByClickingAway(false)
-            ->modalCancelAction(fn (HasBulkEngagementAction $livewire) => $livewire->cancelBulkEngagementAction())
-            ->deselectRecordsAfterCompletion();
+            ->closeModalByEscaping(false);
     }
 }

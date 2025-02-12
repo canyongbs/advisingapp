@@ -37,7 +37,10 @@
 namespace AdvisingApp\Ai\Jobs;
 
 use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Assistant\Filament\Pages\PersonalAssistant;
 use App\Models\User;
+use Filament\Notifications\Actions\Action;
+use Filament\Notifications\Notification;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -96,6 +99,16 @@ class CloneAiThread implements ShouldQueue
 
             $threadReplica->locked_at = null;
             $threadReplica->save();
+
+            Notification::make()
+                ->title('An AI chat has been cloned to you.')
+                ->success()
+                ->actions([
+                    Action::make('view')
+                        ->link()
+                        ->url(PersonalAssistant::getUrl(['thread' => $threadReplica->getKey()])),
+                ])
+                ->sendToDatabase($this->recipient);
 
             DB::commit();
         } catch (Throwable $e) {

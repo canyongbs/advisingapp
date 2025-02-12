@@ -66,7 +66,7 @@ class MessageCenterDraftWithAiAction extends Action
             ->label('Draft with AI Assistant')
             ->link()
             ->icon('heroicon-m-pencil')
-            ->modalContent(fn (MessageCenter $livewire) => view('engagement::filament.manage-related-records.manage-related-engagement-records.draft-with-ai-modal-content', [
+            ->modalContent(fn (MessageCenter $livewire) => view('engagement::filament.actions.draft-with-ai-modal-content', [
                 'recordTitle' => $livewire->recordModel->full_name,
                 'avatarUrl' => AiAssistant::query()->where('is_default', true)->first()
                     ?->getFirstTemporaryUrl(now()->addHour(), 'avatar', 'avatar-height-250px') ?: Vite::asset('resources/images/canyon-ai-headshot.jpg'),

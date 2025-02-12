@@ -41,6 +41,9 @@ use AdvisingApp\Engagement\Notifications\EngagementSmsNotification;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use App\Features\TwilioDemoAutoReplyModeFeature;
 
+/**
+ * @deprecated Remove after deploying engagements refactor.
+ */
 class EngagementSmsChannelDelivery extends QueuedEngagementDelivery
 {
     public function deliver(): void

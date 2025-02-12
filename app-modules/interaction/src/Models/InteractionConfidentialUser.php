@@ -41,6 +41,9 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
+/**
+ * @mixin IdeHelperInteractionConfidentialUser
+ */
 class InteractionConfidentialUser extends Pivot
 {
     use HasFactory;

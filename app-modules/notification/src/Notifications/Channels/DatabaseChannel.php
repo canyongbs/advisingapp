@@ -40,8 +40,13 @@ use AdvisingApp\Notification\Actions\MakeOutboundDeliverable;
 use AdvisingApp\Notification\DataTransferObjects\DatabaseChannelResultData;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
+use AdvisingApp\Notification\Models\DatabaseMessage;
 use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
+use AdvisingApp\Notification\Notifications\Contracts\OnDemandNotification;
+use App\Features\MessagesAndMessageEvents;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Channels\DatabaseChannel as BaseDatabaseChannel;
 use Illuminate\Notifications\Notification;
 use Throwable;
@@ -50,16 +55,36 @@ class DatabaseChannel extends BaseDatabaseChannel
 {
     public function send($notifiable, Notification $notification): void
     {
+        [$recipientId, $recipientType] = match (true) {
+            $notifiable instanceof Model => [$notifiable->getKey(), $notifiable->getMorphClass()],
+            $notifiable instanceof AnonymousNotifiable && $notification instanceof OnDemandNotification => $notification->identifyRecipient(),
+            default => [null, 'anonymous'],
+        };
+
+        $databaseMessage = MessagesAndMessageEvents::active()
+            ? new DatabaseMessage([
+                'notification_class' => $notification::class,
+                'content' => $notification->toDatabase($notifiable),
+                'recipient_id' => $recipientId,
+                'recipient_type' => $recipientType,
+            ])
+            : null;
+
         $deliverable = app(MakeOutboundDeliverable::class)->execute($notification, $notifiable, NotificationChannel::Database);
 
         if ($notification instanceof HasBeforeSendHook) {
-            $notification->beforeSend($notifiable, $deliverable, NotificationChannel::Database);
+            $notification->beforeSend(
+                notifiable: $notifiable,
+                deliverable: $deliverable,
+                message: $databaseMessage,
+                channel: NotificationChannel::Database
+            );
         }
 
         $deliverable->save();
 
         try {
-            parent::send($notifiable, $notification);
+            $notificationModel = parent::send($notifiable, $notification);
 
             $result = new DatabaseChannelResultData(
                 success: true,
@@ -68,9 +93,15 @@ class DatabaseChannel extends BaseDatabaseChannel
             try {
                 $deliverable->markDeliverySuccessful();
 
+                if ($databaseMessage) {
+                    $databaseMessage->notification_id = $notificationModel->getKey();
+
+                    $databaseMessage->save();
+                }
+
                 // Consider dispatching this as a seperate job so that it can be encapsulated to be retried if it fails, but also avoid changing the status of the deliverable if it fails.
                 if ($notification instanceof HasAfterSendHook) {
-                    $notification->afterSend($notifiable, $deliverable, $result);
+                    $notification->afterSend($notifiable, $deliverable, $result, $databaseMessage);
                 }
             } catch (Throwable $exception) {
                 report($exception);

@@ -45,6 +45,9 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
 use Illuminate\Queue\SerializesModels;
 
+/**
+ * @deprecated Remove after deploying engagements refactor.
+ */
 class DeliverEngagements implements ShouldQueue
 {
     use Dispatchable;
