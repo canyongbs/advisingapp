@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationTwilio\Actions;
+namespace AdvisingApp\IntegrationTwilio\Jobs;
 
 use AdvisingApp\Engagement\Actions\CreateEngagementResponse;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementResponseData;

@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\IntegrationTwilio\Actions\StatusCallback;
 use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
+use AdvisingApp\IntegrationTwilio\Jobs\StatusCallback;
 use AdvisingApp\Notification\Enums\SmsMessageEventType;
 use AdvisingApp\Notification\Models\SmsMessage;
 use Illuminate\Http\Request;
