@@ -60,6 +60,7 @@ use Filament\Forms\Set;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\Alignment;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Renderless;
@@ -78,6 +79,23 @@ trait CanManageThreads
 
     #[Locked]
     public array $threadsWithoutAFolder = [];
+
+    public function mount(): void
+    {
+        if (request()->thread) {
+            if (! Str::isUuid(request()->thread)) {
+                $this->dispatch('remove-thread-param');
+            } else {
+                $aiThread = AiThread::where('id', request()->thread)->where('user_id', auth()->id())->first()?->toArray();
+
+                if ($aiThread) {
+                    $this->selectThread($aiThread);
+                } else {
+                    $this->dispatch('remove-thread-param');
+                }
+            }
+        }
+    }
 
     public function mountCanManageThreads(): void
     {
@@ -460,7 +478,6 @@ trait CanManageThreads
                 if (! $thread) {
                     return;
                 }
-
                 dispatch(new PrepareAiThreadEmailing($thread, $data['targetType'], $data['targetIds'], auth()->user()));
             })
             ->link()
