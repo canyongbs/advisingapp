@@ -86,7 +86,7 @@ class ListAiAssistants extends ListRecords
     {
         return [
             CreateAction::make()
-                ->label('Create AI Assistant'),
+                ->label('Create'),
         ];
     }
 }

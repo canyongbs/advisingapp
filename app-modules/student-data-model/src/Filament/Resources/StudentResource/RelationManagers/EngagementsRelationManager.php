@@ -278,7 +278,6 @@ class EngagementsRelationManager extends RelationManager
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->label('New Email or Text')
                     ->modalHeading('Create new email or text')
                     ->authorize(function () {
                         $ownerRecord = $this->getOwnerRecord();

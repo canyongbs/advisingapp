@@ -50,6 +50,8 @@ class ViewEvent extends ViewRecord
 {
     protected static string $resource = EventResource::class;
 
+    protected static ?string $navigationLabel = 'View';
+
     public function infolist(Infolist $infolist): Infolist
     {
         return $infolist
