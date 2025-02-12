@@ -37,6 +37,7 @@
 namespace AdvisingApp\Prospect\Imports;
 
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use App\Features\ProspectStudentRefactor;
