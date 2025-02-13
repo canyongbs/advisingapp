@@ -6,7 +6,9 @@
         "sourceArn": "arn:aws:ses:us-east-1:123456789012:identity/sender@example.com",
         "sendingAccountId": "123456789012",
         "messageId": "EXAMPLEe4bccb684-777bc8de-afa7-4970-92b0-f515137b1497-000000",
-        "destination": ["recipient@example.com"],
+        "destination": [
+            "recipient@example.com"
+        ],
         "headersTruncated": false,
         "headers": [
             {
@@ -35,18 +37,34 @@
             }
         ],
         "commonHeaders": {
-            "from": ["sender@example.com"],
-            "to": ["recipient@example.com"],
+            "from": [
+                "sender@example.com"
+            ],
+            "to": [
+                "recipient@example.com"
+            ],
             "messageId": "EXAMPLEe4bccb684-777bc8de-afa7-4970-92b0-f515137b1497-000000",
             "subject": "Message sent from Amazon SES"
         },
         "tags": {
-            "ses:operation": ["SendEmail"],
-            "ses:configuration-set": ["ConfigSet"],
-            "ses:source-ip": ["192.0.2.0"],
-            "ses:from-domain": ["example.com"],
-            "ses:caller-identity": ["ses_user"],
-            "outbound_deliverable_id": ["xxx"]
+            "ses:operation": [
+                "SendEmail"
+            ],
+            "ses:configuration-set": [
+                "ConfigSet"
+            ],
+            "ses:source-ip": [
+                "192.0.2.0"
+            ],
+            "ses:from-domain": [
+                "example.com"
+            ],
+            "ses:caller-identity": [
+                "ses_user"
+            ],
+            "app_message_id": [
+                "xxx"
+            ]
         }
     },
     "subscription": {

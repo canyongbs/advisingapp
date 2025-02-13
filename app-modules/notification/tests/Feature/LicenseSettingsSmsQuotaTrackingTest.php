@@ -36,8 +36,8 @@
 
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\IntegrationTwilio\Tests\Fixtures\ClientMock;
-use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\Notification\Enums\SmsMessageEventType;
+use AdvisingApp\Notification\Models\SmsMessage;
 use AdvisingApp\Notification\Tests\Fixtures\TestSmsNotification;
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Models\User;
@@ -94,12 +94,15 @@ test('An sms is allowed to be sent if there is available quota and its quota usa
 
     $notifiable->notify($notification);
 
-    $outboundDeliverable = OutboundDeliverable::first();
+    /** @var SmsMessage $smsMessage */
+    $smsMessage = SmsMessage::first();
 
-    expect($outboundDeliverable->quota_usage)
+    expect($smsMessage->quota_usage)
         ->toBe($numSegments)
-        ->and($outboundDeliverable->delivery_status)
-        ->toBe(NotificationDeliveryStatus::Dispatched);
+        ->and($smsMessage->events()->count())
+        ->toBe(1)
+        ->and($smsMessage->events()->first()->type)
+        ->toBe(SmsMessageEventType::Dispatched);
 });
 
 test('An sms is prevented from being sent if there is no available quota', function () {
@@ -150,12 +153,14 @@ test('An sms is prevented from being sent if there is no available quota', funct
 
     $notifiable->notify($notification);
 
-    assertDatabaseCount(OutboundDeliverable::class, 1);
+    assertDatabaseCount(SmsMessage::class, 1);
 
-    $outboundDeliverable = OutboundDeliverable::first();
+    /** @var SmsMessage $smsMessage */
+    $smsMessage = SmsMessage::first();
 
-    expect($outboundDeliverable->quota_usage)->toBe(0)
-        ->and($outboundDeliverable->delivery_status)->toBe(NotificationDeliveryStatus::RateLimited);
+    expect($smsMessage->quota_usage)->toBe(0)
+        ->and($smsMessage->events()->count())->toBe(1)
+        ->and($smsMessage->events()->first()->type)->toBe(SmsMessageEventType::RateLimited);
 });
 
 test('An sms is sent to a user even if there is no available quota', function () {
@@ -206,5 +211,12 @@ test('An sms is sent to a user even if there is no available quota', function ()
 
     $notifiable->notify($notification);
 
-    assertDatabaseCount(OutboundDeliverable::class, 1);
-});
+    assertDatabaseCount(SmsMessage::class, 1);
+
+    /** @var SmsMessage $smsMessage */
+    $smsMessage = SmsMessage::first();
+
+    expect($smsMessage->quota_usage)->toBe(0)
+        ->and($smsMessage->events()->count())->toBe(1)
+        ->and($smsMessage->events()->first()->type)->toBe(SmsMessageEventType::Dispatched);
+})->skip('Currently Users cannot be sent SMS messages, this test will be enabled once the feature is implemented');

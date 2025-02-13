@@ -34,33 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Drivers;
+use App\Features\MessageEventsDisplay;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
-use AdvisingApp\Notification\DataTransferObjects\UpdateEmailDeliveryStatusData;
-use AdvisingApp\Notification\DataTransferObjects\UpdateSmsDeliveryStatusData;
-use AdvisingApp\Notification\Drivers\Contracts\OutboundDeliverableDriver;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
-
-class SmsDriver implements OutboundDeliverableDriver
-{
-    public function __construct(
-        protected OutboundDeliverable $deliverable
-    ) {}
-
-    public function updateDeliveryStatus(UpdateEmailDeliveryStatusData|UpdateSmsDeliveryStatusData $data): void
+return new class () extends Migration {
+    public function up(): void
     {
-        /** @var TwilioStatusCallbackData $updateData */
-        $updateData = $data->data;
-
-        $this->deliverable->update([
-            'external_status' => $updateData->messageStatus ?? null,
-        ]);
-
-        match ($this->deliverable->external_status) {
-            'delivered' => $this->deliverable->markDeliverySuccessful(),
-            'undelivered', 'failed' => $this->deliverable->markDeliveryFailed($updateData->errorMessage ?? null),
-            default => null,
-        };
+        MessageEventsDisplay::activate();
     }
-}
+
+    public function down(): void
+    {
+        MessageEventsDisplay::deactivate();
+    }
+};

@@ -34,34 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Database\Factories;
+namespace AdvisingApp\IntegrationAwsSesEventHandling\Exceptions;
 
-use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
-use AdvisingApp\Notification\Tests\Fixtures\TestEmailNotification;
-use AdvisingApp\Notification\Tests\Fixtures\TestSmsNotification;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\IntegrationAwsSesEventHandling\DataTransferObjects\SesEventData;
+use Exception;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Notification\Models\OutboundDeliverable>
- */
-class OutboundDeliverableFactory extends Factory
+class CouldNotFindEmailMessageFromData extends Exception
 {
-    public function definition(): array
-    {
-        return [
-            'channel' => NotificationChannel::Email,
-            'notification_class' => TestEmailNotification::class,
-            'delivery_status' => NotificationDeliveryStatus::Processing,
-            'quota_usage' => 0,
-        ];
+    public function __construct(
+        protected SesEventData $data,
+    ) {
+        parent::__construct('Could not find an email message from the given data.');
     }
 
-    public function smsChannel(): self
+    /**
+     * Get the exception's context information.
+     *
+     * @return array<string, mixed>
+     */
+    public function context(): array
     {
-        return $this->state(fn () => [
-            'channel' => NotificationChannel::Sms,
-            'notification_class' => TestSmsNotification::class,
-        ]);
+        return [
+            'event_data' => $this->data->toArray(),
+        ];
     }
 }

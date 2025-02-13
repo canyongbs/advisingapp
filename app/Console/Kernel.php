@@ -44,7 +44,6 @@ use AdvisingApp\Campaign\Actions\ExecuteCampaignActions;
 use AdvisingApp\Engagement\Jobs\DeliverEngagements as DeliverEngagementsJob;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use AdvisingApp\Form\Models\FormAuthentication;
-use AdvisingApp\IntegrationTwilio\Jobs\CheckStatusOfOutboundDeliverablesWithoutATerminalStatus;
 use AdvisingApp\MeetingCenter\Console\Commands\RefreshCalendarRefreshTokens;
 use AdvisingApp\MeetingCenter\Jobs\SyncCalendars;
 use App\Models\HealthCheckResultHistoryItem;
@@ -96,17 +95,6 @@ class Kernel extends ConsoleKernel
                         ->monitorName("Dispatch SyncCalendars | Tenant {$tenant->domain}")
                         ->onOneServer()
                         ->withoutOverlapping(15);
-
-                    $schedule->call(function () use ($tenant) {
-                        $tenant->execute(function () {
-                            dispatch(new CheckStatusOfOutboundDeliverablesWithoutATerminalStatus());
-                        });
-                    })
-                        ->daily()
-                        ->name("Dispatch CheckStatusOfOutboundDeliverablesWithoutATerminalStatus | Tenant {$tenant->domain}")
-                        ->monitorName("Dispatch CheckStatusOfOutboundDeliverablesWithoutATerminalStatus | Tenant {$tenant->domain}")
-                        ->onOneServer()
-                        ->withoutOverlapping(720);
 
                     $schedule->call(function () use ($tenant) {
                         $tenant->execute(function () {

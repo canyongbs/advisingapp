@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\IntegrationTwilio\Actions\MessageReceived;
 use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioMessageReceivedData;
+use AdvisingApp\IntegrationTwilio\Jobs\MessageReceived;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Http\Request;
 

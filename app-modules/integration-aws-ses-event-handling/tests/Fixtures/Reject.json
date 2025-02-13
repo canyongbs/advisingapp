@@ -59,7 +59,7 @@
             "ses:caller-identity": [
                 "ses_user"
             ],
-            "outbound_deliverable_id": [
+            "app_message_id": [
                 "xxx"
             ],
             "tenant_id": [

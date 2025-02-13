@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -30,38 +32,16 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
-@php
-    use AdvisingApp\CaseManagement\Models\CaseModel;
-@endphp
+*/
 
-@props(['component', 'record'])
-<div>
-    <div class="flex flex-row justify-between">
-        <x-timeline::timeline.heading>
-            <span class="flex items-center">
-                @php
-                    $related = $record->related;
+namespace App\Features;
 
-                    $title = match ($related::class) {
-                        CaseModel::class => "Auto-response {$record->channel->getLabel()} sent",
-                        default => $record->getKey(),
-                    };
-                @endphp
-                {{ $title }}
-            </span>
-        </x-timeline::timeline.heading>
+use App\Support\AbstractFeatureFlag;
 
-        <div>
-            {{ $viewRecordIcon }}
-        </div>
-    </div>
-
-    <x-timeline::timeline.time>
-        {{ $record->created_at->diffForHumans() }}
-    </x-timeline::timeline.time>
-
-    <x-timeline::timeline.content>
-        {{ $record->content['subject'] }}
-    </x-timeline::timeline.content>
-</div>
+class MessageEventsDisplay extends AbstractFeatureFlag
+{
+    public function resolve(mixed $scope): mixed
+    {
+        return false;
+    }
+}

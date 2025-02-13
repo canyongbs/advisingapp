@@ -34,12 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Drivers\Contracts;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
-use AdvisingApp\Notification\DataTransferObjects\UpdateEmailDeliveryStatusData;
-use AdvisingApp\Notification\DataTransferObjects\UpdateSmsDeliveryStatusData;
+return new class () extends Migration {
+    public function up(): void
+    {
+        DB::table('timelines')
+            ->where('timelineable_type', 'outbound_deliverable')
+            ->delete();
+    }
 
-interface OutboundDeliverableDriver
-{
-    public function updateDeliveryStatus(UpdateEmailDeliveryStatusData|UpdateSmsDeliveryStatusData $data): void;
-}
+    public function down(): void
+    {
+        // There is no way to reverse this
+    }
+};

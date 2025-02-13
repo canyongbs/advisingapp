@@ -34,45 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Actions;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
-use AdvisingApp\Notification\DataTransferObjects\UpdateSmsDeliveryStatusData;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\Middleware\WithoutOverlapping;
-use Illuminate\Queue\SerializesModels;
-
-class UpdateOutboundDeliverableSmsStatus implements ShouldQueue
-{
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
-    public function __construct(
-        public OutboundDeliverable $deliverable,
-        public TwilioStatusCallbackData $data
-    ) {}
-
-    public function handle(): void
+return new class () extends Migration {
+    public function up(): void
     {
-        $data = UpdateSmsDeliveryStatusData::from([
-            'data' => $this->data,
-        ]);
-
-        $this->deliverable->driver()->updateDeliveryStatus($data);
+        Schema::dropIfExists('outbound_deliverables');
     }
 
-    public function middleware(): array
+    public function down(): void
     {
-        return [
-            (new WithoutOverlapping($this->deliverable->id))
-                ->releaseAfter(30)
-                ->expireAfter(300),
-        ];
+        Schema::create('outbound_deliverables', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+
+            $table->string('channel');
+            $table->string('notification_class');
+            $table->string('external_reference_id')->nullable()->unique();
+            $table->string('external_status')->nullable();
+            $table->json('content')->nullable();
+            $table->string('delivery_status')->default('processing');
+            $table->longText('delivery_response')->nullable();
+            $table->integer('quota_usage')->default(0);
+
+            $table->string('related_id')->nullable();
+            $table->string('related_type')->nullable();
+            $table->string('recipient_id')->nullable();
+            $table->string('recipient_type')->nullable();
+
+            $table->timestamp('delivered_at')->nullable();
+            $table->timestamp('last_delivery_attempt')->nullable();
+
+            $table->timestamps();
+            $table->softDeletes();
+        });
     }
-}
+};

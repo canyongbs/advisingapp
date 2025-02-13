@@ -34,33 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Drivers;
+use AdvisingApp\Notification\Models\DatabaseMessage;
+use AdvisingApp\Notification\Tests\Fixtures\TestDatabaseNotification;
+use App\Models\User;
 
-use AdvisingApp\IntegrationAwsSesEventHandling\DataTransferObjects\SesEventData;
-use AdvisingApp\Notification\DataTransferObjects\UpdateEmailDeliveryStatusData;
-use AdvisingApp\Notification\DataTransferObjects\UpdateSmsDeliveryStatusData;
-use AdvisingApp\Notification\Drivers\Contracts\OutboundDeliverableDriver;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
+it('will create an EmailMessage for the notification', function () {
+    $notifiable = User::factory()->create();
 
-class EmailDriver implements OutboundDeliverableDriver
-{
-    public function __construct(
-        protected OutboundDeliverable $deliverable
-    ) {}
+    $notification = new TestDatabaseNotification();
 
-    public function updateDeliveryStatus(UpdateEmailDeliveryStatusData|UpdateSmsDeliveryStatusData $data): void
-    {
-        /** @var SesEventData $updateData */
-        $updateData = $data->data;
+    $notifiable->notify($notification);
 
-        $this->deliverable->update([
-            'external_status' => $updateData->eventType,
-        ]);
+    $databaseMessages = DatabaseMessage::all();
 
-        match ($this->deliverable->external_status) {
-            'Delivery' => $this->deliverable->markDeliverySuccessful(),
-            'Bounce', 'DeliveryDelay', 'Reject', 'RenderingFailure' => $this->deliverable->markDeliveryFailed($updateData->errorMessageFromType() ?? null),
-            default => null,
-        };
-    }
-}
+    expect($databaseMessages->count())->toBe(1);
+    expect($databaseMessages->first()->notification_class)->toBe(TestDatabaseNotification::class);
+});

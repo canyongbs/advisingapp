@@ -34,18 +34,19 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\IntegrationTwilio\Jobs\CheckSmsOutboundDeliverableStatus;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\IntegrationTwilio\Tests\Fixtures\ClientMock;
-use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\Notification\Enums\SmsMessageEventType;
+use AdvisingApp\Notification\Models\SmsMessage;
+use AdvisingApp\Notification\Tests\Fixtures\TestSmsNotification;
+use AdvisingApp\Prospect\Models\Prospect;
 use Twilio\Rest\Api\V2010;
-use Twilio\Rest\Api\V2010\Account\MessageContext;
 use Twilio\Rest\Api\V2010\Account\MessageInstance;
+use Twilio\Rest\Api\V2010\Account\MessageList;
 use Twilio\Rest\Client;
 use Twilio\Rest\MessagingBase;
 
-it('will update the status of an outbound deliverable accordingly', function (string $externalStatus) {
+beforeEach(function () {
     $settings = app()->make(TwilioSettings::class);
 
     $settings->account_sid = 'abc123';
@@ -54,58 +55,47 @@ it('will update the status of an outbound deliverable accordingly', function (st
 
     $settings->save();
 
-    // Given that we have an outbound deliverable with a non terminal status
-    $outboundDeliverable = OutboundDeliverable::factory()->create([
-        'channel' => 'sms',
-        'external_status' => 'queued',
-        'external_reference_id' => 'abc123',
-    ]);
+    $mockMessageList = mock(MessageList::class);
 
-    $originalStatus = $outboundDeliverable->delivery_status;
+    $numSegments = rand(1, 5);
 
-    $clientMock = mock(ClientMock::class)
-        ->shouldAllowMockingProtectedMethods();
-
-    $mockMessageContext = mock(MessageContext::class);
-
-    $clientMock->shouldReceive('messages')
-        ->with('abc123')
-        ->andReturn($mockMessageContext);
-
-    $mockMessageContext->shouldReceive('fetch')->andReturn(
+    $mockMessageList->shouldReceive('create')->andReturn(
         new MessageInstance(
-            new V2010(new MessagingBase(new Client(username: $settings->account_sid, password: $settings->auth_token))),
+            new V2010(new MessagingBase(new Client(
+                username: $settings->account_sid,
+                password: $settings->auth_token,
+            ))),
             [
                 'sid' => 'abc123',
-                'status' => $externalStatus,
+                'status' => 'queued',
                 'from' => '+11231231234',
                 'to' => '+11231231234',
                 'body' => 'test',
-                'num_segments' => 1,
+                'num_segments' => $numSegments,
             ],
             'abc123'
         )
     );
 
-    app()->bind(Client::class, fn () => $clientMock);
+    app()->bind(Client::class, fn () => new ClientMock(
+        messageList: $mockMessageList,
+        username: $settings->account_sid,
+        password: $settings->auth_token,
+    ));
+});
 
-    // And we reach out to Twilio to check on the status of the message because we may have missed a webhook
-    CheckSmsOutboundDeliverableStatus::dispatchSync($outboundDeliverable);
+it('will create an SmsMessage for the notification', function () {
+    $notifiable = Prospect::factory()->create();
 
-    $outboundDeliverable->refresh();
+    $notification = new TestSmsNotification();
 
-    // Our delivery status should be updated based on the status we received from Twilio
-    if ($externalStatus === 'delivered') {
-        expect($outboundDeliverable->delivery_status)->toBe(NotificationDeliveryStatus::Successful);
-    } elseif ($externalStatus === 'undelivered' || $externalStatus === 'failed') {
-        expect($outboundDeliverable->delivery_status)->toBe(NotificationDeliveryStatus::Failed);
-    } else {
-        expect($outboundDeliverable->delivery_status)->toBe($originalStatus);
-    }
-})->with([
-    'queued',
-    'sent',
-    'delivered',
-    'undelivered',
-    'failed',
-]);
+    $notifiable->notify($notification);
+
+    $smsMessages = SmsMessage::all();
+
+    expect($smsMessages->count())->toBe(1);
+    expect($smsMessages->first()->notification_class)->toBe(TestSmsNotification::class);
+    expect($smsMessages->first()->events->first()->type)->toBe(SmsMessageEventType::Dispatched);
+});
+
+// TODO Add more tests for SMS Demo mode etc.

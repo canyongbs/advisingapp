@@ -34,40 +34,45 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationTwilio\Jobs;
+use Database\Migrations\Concerns\CanModifyPermissions;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 
-use AdvisingApp\Notification\Models\OutboundDeliverable;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+return new class () extends Migration {
+    use CanModifyPermissions;
 
-class CheckStatusOfOutboundDeliverablesWithoutATerminalStatus implements ShouldQueue
-{
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
+    private array $permissions = [
+        'outbound_deliverable.*.delete' => 'Outbound Deliverable',
+        'outbound_deliverable.*.force-delete' => 'Outbound Deliverable',
+        'outbound_deliverable.*.restore' => 'Outbound Deliverable',
+        'outbound_deliverable.*.update' => 'Outbound Deliverable',
+        'outbound_deliverable.*.view' => 'Outbound Deliverable',
+        'outbound_deliverable.create' => 'Outbound Deliverable',
+        'outbound_deliverable.view-any' => 'Outbound Deliverable',
+    ];
 
-    public static $OLDER_THAN_HOURS = 24; // 1 day
+    private array $guards = [
+        'web',
+        'api',
+    ];
 
-    public static $NEWER_THAN_HOURS = 168; // 7 days
-
-    public function __construct() {}
-
-    public function handle(): void
+    public function up(): void
     {
-        $terminalStatuses = ['delivered', 'undelivered', 'failed'];
+        collect($this->guards)
+            ->each(fn (string $guard) => $this->deletePermissions(array_keys($this->permissions), $guard));
+    }
 
-        OutboundDeliverable::query()
-            ->where('channel', 'sms')
-            ->whereNotIn('external_status', $terminalStatuses)
-            ->whereNotNull('last_delivery_attempt')
-            ->whereBetween('last_delivery_attempt', [now()->subHours(self::$NEWER_THAN_HOURS), now()->subHours(self::$OLDER_THAN_HOURS)])
-            ->cursor()
-            ->each(function (OutboundDeliverable $deliverable) {
-                CheckSmsOutboundDeliverableStatus::dispatch($deliverable);
+    public function down(): void
+    {
+        collect($this->guards)
+            ->each(function (string $guard) {
+                $permissions = Arr::except($this->permissions, DB::table('permissions')
+                    ->where('guard_name', $guard)
+                    ->pluck('name')
+                    ->all());
+
+                $this->createPermissions($permissions, $guard);
             });
     }
-}
+};

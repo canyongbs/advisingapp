@@ -34,45 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationTwilio\Jobs;
+namespace AdvisingApp\IntegrationAwsSesEventHandling\Listeners;
 
-use AdvisingApp\Notification\Models\OutboundDeliverable;
-use Carbon\Carbon;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use Twilio\Exceptions\TwilioException;
-use Twilio\Rest\Client;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Exceptions\CouldNotFindEmailMessageFromData;
+use AdvisingApp\Notification\Enums\EmailMessageEventType;
 
-class CheckSmsOutboundDeliverableStatus implements ShouldQueue
+class HandleSesSubscriptionEvent extends HandleSesEvent
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
-    public function __construct(
-        public OutboundDeliverable $deliverable,
-    ) {}
-
-    public function handle(Client $twilioClient): void
+    public function handle(SesEvent $event): void
     {
-        try {
-            $messageInstance = $twilioClient->messages($this->deliverable->external_reference_id)->fetch();
+        $emailMessage = $this->getEmailMessageFromData($event->data);
 
-            $this->deliverable->update([
-                'external_status' => $messageInstance->status,
-            ]);
+        if (is_null($emailMessage)) {
+            report(new CouldNotFindEmailMessageFromData($event->data));
 
-            match ($messageInstance->status) {
-                'delivered' => $this->deliverable->markDeliverySuccessful(Carbon::parse($messageInstance->dateSent)),
-                'undelivered', 'failed' => $this->deliverable->markDeliveryFailed($messageInstance->errorMessage ?? 'Message could not successfully be delivered.'),
-                default => null,
-            };
-        } catch (TwilioException $e) {
-            report($e);
+            return;
         }
+
+        $emailMessage->events()->create([
+            'type' => EmailMessageEventType::Subscription,
+            'payload' => $event->data->toArray(),
+            'occurred_at' => $event->data->subscription->timestamp,
+        ]);
     }
 }

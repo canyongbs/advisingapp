@@ -34,14 +34,54 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\DataTransferObjects;
+namespace AdvisingApp\IntegrationTwilio\Jobs;
 
+use AdvisingApp\IntegrationAwsSesEventHandling\Exceptions\CouldNotFindSmsMessageFromData;
 use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
-use Spatie\LaravelData\Data;
+use AdvisingApp\Notification\Enums\SmsMessageEventType;
+use AdvisingApp\Notification\Models\SmsMessage;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
-class UpdateSmsDeliveryStatusData extends Data
+class StatusCallback implements ShouldQueue
 {
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+
     public function __construct(
         public TwilioStatusCallbackData $data
     ) {}
+
+    public function handle(): void
+    {
+        /** @var SmsMessage $smsMessage */
+        $smsMessage = SmsMessage::query()
+            ->where('external_reference_id', $this->data->messageSid)
+            ->first();
+
+        if (is_null($smsMessage)) {
+            report(new CouldNotFindSmsMessageFromData($this->data));
+
+            return;
+        }
+
+        $smsMessage->events()->create([
+            'type' => match ($this->data->messageStatus) {
+                'queued' => SmsMessageEventType::Queued,
+                'canceled' => SmsMessageEventType::Canceled,
+                'sent' => SmsMessageEventType::Sent,
+                'failed' => SmsMessageEventType::Failed,
+                'delivered' => SmsMessageEventType::Delivered,
+                'undelivered' => SmsMessageEventType::Undelivered,
+                'read' => SmsMessageEventType::Read,
+            },
+            'payload' => $this->data->toArray(),
+            'occurred_at' => now(),
+        ]);
+    }
 }

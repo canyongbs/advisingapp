@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\IntegrationTwilio\Actions\MessageReceived;
-use AdvisingApp\IntegrationTwilio\Actions\StatusCallback;
+use AdvisingApp\IntegrationTwilio\Jobs\MessageReceived;
+use AdvisingApp\IntegrationTwilio\Jobs\StatusCallback;
 use Illuminate\Support\Facades\Queue;
 
 use function Pest\Laravel\assertDatabaseHas;

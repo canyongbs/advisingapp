@@ -34,20 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Events;
+namespace AdvisingApp\IntegrationAwsSesEventHandling\Exceptions;
 
 use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
-use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Queue\SerializesModels;
+use Exception;
 
-class CouldNotFindOutboundDeliverableFromExternalReference
+class CouldNotFindSmsMessageFromData extends Exception
 {
-    use Dispatchable;
-    use InteractsWithSockets;
-    use SerializesModels;
-
     public function __construct(
-        public TwilioStatusCallbackData $data
-    ) {}
+        protected TwilioStatusCallbackData $data,
+    ) {
+        parent::__construct('Could not find an sms message from the given data.');
+    }
+
+    /**
+     * Get the exception's context information.
+     *
+     * @return array<string, mixed>
+     */
+    public function context(): array
+    {
+        return [
+            'event_data' => $this->data->toArray(),
+        ];
+    }
 }

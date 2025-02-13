@@ -34,35 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationTwilio\Actions;
+namespace AdvisingApp\IntegrationAwsSesEventHandling\Listeners;
 
-use AdvisingApp\Engagement\Actions\CreateEngagementResponse;
-use AdvisingApp\Engagement\DataTransferObjects\EngagementResponseData;
-use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioMessageReceivedData;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Exceptions\CouldNotFindEmailMessageFromData;
+use AdvisingApp\Notification\Enums\EmailMessageEventType;
 
-class MessageReceived implements ShouldQueue
+class HandleSesOpenEvent extends HandleSesEvent
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
-    public function __construct(
-        public TwilioMessageReceivedData $data
-    ) {}
-
-    public function handle(): void
+    public function handle(SesEvent $event): void
     {
-        $createEngagementResponse = resolve(CreateEngagementResponse::class);
+        $emailMessage = $this->getEmailMessageFromData($event->data);
 
-        $createEngagementResponse(EngagementResponseData::from([
-            'from' => $this->data->from,
-            'body' => $this->data->body,
-        ]));
+        if (is_null($emailMessage)) {
+            report(new CouldNotFindEmailMessageFromData($event->data));
+
+            return;
+        }
+
+        $emailMessage->events()->create([
+            'type' => EmailMessageEventType::Open,
+            'payload' => $event->data->toArray(),
+            'occurred_at' => $event->data->open->timestamp,
+        ]);
     }
 }

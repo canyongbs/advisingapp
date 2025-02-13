@@ -34,14 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+namespace AdvisingApp\IntegrationAwsSesEventHandling\Listeners;
 
-use App\Support\AbstractFeatureFlag;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Exceptions\CouldNotFindEmailMessageFromData;
+use AdvisingApp\Notification\Enums\EmailMessageEventType;
 
-class MessagesAndMessageEvents extends AbstractFeatureFlag
+class HandleSesClickEvent extends HandleSesEvent
 {
-    public function resolve(mixed $scope): mixed
+    public function handle(SesEvent $event): void
     {
-        return false;
+        $emailMessage = $this->getEmailMessageFromData($event->data);
+
+        if (is_null($emailMessage)) {
+            report(new CouldNotFindEmailMessageFromData($event->data));
+
+            return;
+        }
+
+        $emailMessage->events()->create([
+            'type' => EmailMessageEventType::Click,
+            'payload' => $event->data->toArray(),
+            'occurred_at' => $event->data->click->timestamp,
+        ]);
     }
 }

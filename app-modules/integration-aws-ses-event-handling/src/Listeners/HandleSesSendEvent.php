@@ -34,25 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Observers;
+namespace AdvisingApp\IntegrationAwsSesEventHandling\Listeners;
 
-use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
-use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Exceptions\CouldNotFindEmailMessageFromData;
+use AdvisingApp\Notification\Enums\EmailMessageEventType;
 
-class OutboundDeliverableObserver
+class HandleSesSendEvent extends HandleSesEvent
 {
-    public function created(OutboundDeliverable $outboundDeliverable): void
+    public function handle(SesEvent $event): void
     {
-        if ($outboundDeliverable->related && in_array($outboundDeliverable->related::class, $outboundDeliverable->timelineables)) {
-            TimelineableRecordCreated::dispatch($outboundDeliverable, $outboundDeliverable);
-        }
-    }
+        $emailMessage = $this->getEmailMessageFromData($event->data);
 
-    public function deleted(OutboundDeliverable $outboundDeliverable): void
-    {
-        if ($outboundDeliverable->related && in_array($outboundDeliverable->related::class, $outboundDeliverable->timelineables)) {
-            TimelineableRecordDeleted::dispatch($outboundDeliverable, $outboundDeliverable);
+        if (is_null($emailMessage)) {
+            report(new CouldNotFindEmailMessageFromData($event->data));
+
+            return;
         }
+
+        $emailMessage->events()->create([
+            'type' => EmailMessageEventType::Send,
+            'payload' => $event->data->toArray(),
+            'occurred_at' => now(),
+        ]);
     }
 }

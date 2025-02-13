@@ -34,19 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationTwilio\Actions;
+namespace AdvisingApp\IntegrationTwilio\Jobs;
 
-use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
-use AdvisingApp\Notification\Actions\UpdateOutboundDeliverableSmsStatus;
-use AdvisingApp\Notification\Events\CouldNotFindOutboundDeliverableFromExternalReference;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\Engagement\Actions\CreateEngagementResponse;
+use AdvisingApp\Engagement\DataTransferObjects\EngagementResponseData;
+use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioMessageReceivedData;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class StatusCallback implements ShouldQueue
+class MessageReceived implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -54,27 +53,16 @@ class StatusCallback implements ShouldQueue
     use SerializesModels;
 
     public function __construct(
-        public TwilioStatusCallbackData $data
+        public TwilioMessageReceivedData $data
     ) {}
 
     public function handle(): void
     {
-        $outboundDeliverable = OutboundDeliverable::query()
-            ->where('external_reference_id', $this->data->messageSid)
-            ->first();
+        $createEngagementResponse = resolve(CreateEngagementResponse::class);
 
-        if (is_null($outboundDeliverable)) {
-            CouldNotFindOutboundDeliverableFromExternalReference::dispatch($this->data);
-
-            return;
-        }
-
-        // TODO In order to potentially reduce the amount of noise from jobs, we might want to introduce a "screener" that eliminates certain jobs based on their status
-        // And only run the update if it's a status that we want to run some type of update against. For instance, we will receive callbacks for
-        // queued, sending, sent, etc... but we don't actually want/need to do anything during these lifecycle hooks. We only really care about
-        // delivered, undelivered, failed, etc... statuses.
-        // https://canyongbs.atlassian.net/browse/ADVAPP-113
-
-        UpdateOutboundDeliverableSmsStatus::dispatch($outboundDeliverable, $this->data);
+        $createEngagementResponse(EngagementResponseData::from([
+            'from' => $this->data->from,
+            'body' => $this->data->body,
+        ]));
     }
 }

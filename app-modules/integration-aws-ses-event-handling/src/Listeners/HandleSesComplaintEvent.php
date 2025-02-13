@@ -34,39 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Actions;
+namespace AdvisingApp\IntegrationAwsSesEventHandling\Listeners;
 
-use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\Notifications\Contracts\OnDemandNotification;
-use Illuminate\Notifications\AnonymousNotifiable;
-use Illuminate\Notifications\Notification;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Exceptions\CouldNotFindEmailMessageFromData;
+use AdvisingApp\Notification\Enums\EmailMessageEventType;
 
-class MakeOutboundDeliverable
+class HandleSesComplaintEvent extends HandleSesEvent
 {
-    public function execute(Notification $notification, object $notifiable, NotificationChannel $channel): OutboundDeliverable
+    public function handle(SesEvent $event): void
     {
-        $content = match ($channel) {
-            NotificationChannel::Sms => $notification->toSms($notifiable)->toArray(),
-            NotificationChannel::Email => $notification->toMail($notifiable)->toArray(),
-            NotificationChannel::Database => $notification->toDatabase($notifiable),
-        };
+        $emailMessage = $this->getEmailMessageFromData($event->data);
 
-        $recipientId = null;
-        $recipientType = 'anonymous';
+        if (is_null($emailMessage)) {
+            report(new CouldNotFindEmailMessageFromData($event->data));
 
-        if ($notifiable instanceof AnonymousNotifiable && $notification instanceof OnDemandNotification) {
-            [$recipientId, $recipientType] = $notification->identifyRecipient();
+            return;
         }
 
-        return new OutboundDeliverable([
-            'channel' => $channel,
-            'notification_class' => $notification::class,
-            'content' => $content,
-            'recipient_id' => ! $notifiable instanceof AnonymousNotifiable ? $notifiable->getKey() : $recipientId,
-            'recipient_type' => ! $notifiable instanceof AnonymousNotifiable ? $notifiable->getMorphClass() : $recipientType,
-            'delivery_status' => NotificationDeliveryStatus::Processing,
+        $emailMessage->events()->create([
+            'type' => EmailMessageEventType::Complaint,
+            'payload' => $event->data->toArray(),
+            'occurred_at' => $event->data->complaint->timestamp,
         ]);
     }
 }

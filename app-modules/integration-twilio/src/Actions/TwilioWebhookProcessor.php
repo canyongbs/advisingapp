@@ -37,6 +37,8 @@
 namespace AdvisingApp\IntegrationTwilio\Actions;
 
 use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioWebhookData;
+use AdvisingApp\IntegrationTwilio\Jobs\MessageReceived;
+use AdvisingApp\IntegrationTwilio\Jobs\StatusCallback;
 use Illuminate\Http\Response;
 use Twilio\TwiML\MessagingResponse;
 

@@ -62,8 +62,6 @@ class AwsSesInboundWebhookController extends Controller
         $tenant = Tenant::query()->findOrFail(data_get($data->mail->tags, 'tenant_id'))->first();
 
         $tenant->execute(function () use ($data) {
-            // We are currently not handling the "Click", "Complaint", "Open", "Send", or "Subscription" event types
-            // Since we are only looking to identify whether or not email delivery was successful/failed
             match ($data->eventType) {
                 'Bounce' => SesBounceEvent::dispatch($data),
                 'Click' => SesClickEvent::dispatch($data),
