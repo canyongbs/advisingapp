@@ -36,7 +36,7 @@
 
 use AdvisingApp\Webhook\Enums\InboundWebhookSource;
 use AdvisingApp\Webhook\Http\Middleware\HandleAwsSnsRequest;
-use AdvisingApp\Webhook\Models\InboundWebhook;
+use AdvisingApp\Webhook\Models\LandlordInboundWebhook;
 use Illuminate\Http\Request;
 
 use function Tests\loadFixtureFromModule;
@@ -70,7 +70,7 @@ it('will successfully handle a SubscriptionConfirmation request', function () {
     expect($response->getContent())->toBe('')
         ->and($response->getStatusCode())->toBe(200);
 
-    $inboundWebhooks = InboundWebhook::all();
+    $inboundWebhooks = LandlordInboundWebhook::all();
 
     expect($inboundWebhooks)->toHaveCount(1)
         ->and($inboundWebhooks->first()->source)->toBe(InboundWebhookSource::AwsSns)
@@ -108,7 +108,7 @@ it('will successfully handle a UnsubscribeConfirmation request', function () {
     expect($response->getContent())->toBe('')
         ->and($response->getStatusCode())->toBe(200);
 
-    $inboundWebhooks = InboundWebhook::all();
+    $inboundWebhooks = LandlordInboundWebhook::all();
 
     expect($inboundWebhooks)->toHaveCount(1)
         ->and($inboundWebhooks->first()->source)->toBe(InboundWebhookSource::AwsSns)
@@ -143,7 +143,7 @@ it('will throw an error if the type is not expected', function () {
 
     (new HandleAwsSnsRequest())->handle($request, $next);
 
-    $inboundWebhooks = InboundWebhook::all();
+    $inboundWebhooks = LandlordInboundWebhook::all();
 
     expect($inboundWebhooks)->toHaveCount(1)
         ->and($inboundWebhooks->first()->source)->toBe(InboundWebhookSource::AwsSns)
@@ -182,7 +182,7 @@ it('will successfully handle a Notification request', function () {
     expect($response->getContent())->toBe('Made it through.')
         ->and($response->getStatusCode())->toBe(200);
 
-    $inboundWebhooks = InboundWebhook::all();
+    $inboundWebhooks = LandlordInboundWebhook::all();
 
     expect($inboundWebhooks)->toHaveCount(1)
         ->and($inboundWebhooks->first()->source)->toBe(InboundWebhookSource::AwsSns)

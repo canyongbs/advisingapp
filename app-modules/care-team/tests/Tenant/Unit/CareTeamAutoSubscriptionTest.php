@@ -60,9 +60,9 @@ it('can auto subscribe user when adding in care team', function ($educatable) {
 })
     ->with([
         'for Prospect' => [
-            'educatable' => fn () => Prospect::factory()->create(),
+            fn () => Prospect::factory()->create(),
         ],
         'for Student' => [
-            'educatable' => fn () => Student::factory()->create(),
+            fn () => Student::factory()->create(),
         ],
     ]);
