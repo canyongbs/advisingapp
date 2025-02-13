@@ -80,7 +80,7 @@ abstract class TestCase extends BaseTestCase
 
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
-        Tenant::first()->makeCurrent();
+        // Tenant::first()->makeCurrent();
 
         $this->beginDatabaseTransactionOnConnection($this->tenantDatabaseConnectionName());
     }

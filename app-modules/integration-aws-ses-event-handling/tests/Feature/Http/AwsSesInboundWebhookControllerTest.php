@@ -61,7 +61,8 @@ beforeEach(function () {
 it('handles a bounce event', function () {
     $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $tenant = Tenant::current();
+    /** @var Tenant $tenant */
+    $tenant = Tenant::query()->first();
 
     $messageContent = loadFixtureFromModule('integration-aws-ses-event-handling', 'Bounce');
     data_set($messageContent, 'mail.tags.tenant_id.0', $tenant->getKey());
@@ -92,7 +93,8 @@ it('handles a bounce event', function () {
 it('handles a complaint event', function () {
     $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $tenant = Tenant::current();
+    /** @var Tenant $tenant */
+    $tenant = Tenant::query()->first();
 
     $messageContent = loadFixtureFromModule('integration-aws-ses-event-handling', 'Complaint');
     data_set($messageContent, 'mail.tags.tenant_id.0', $tenant->getKey());
@@ -123,7 +125,8 @@ it('handles a complaint event', function () {
 it('handles a delivery event', function () {
     $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $tenant = Tenant::current();
+    /** @var Tenant $tenant */
+    $tenant = Tenant::query()->first();
 
     $messageContent = loadFixtureFromModule('integration-aws-ses-event-handling', 'Delivery');
     data_set($messageContent, 'mail.tags.tenant_id.0', $tenant->getKey());
@@ -154,7 +157,8 @@ it('handles a delivery event', function () {
 it('handles a send event', function () {
     $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $tenant = Tenant::current();
+    /** @var Tenant $tenant */
+    $tenant = Tenant::query()->first();
 
     $messageContent = loadFixtureFromModule('integration-aws-ses-event-handling', 'Send');
     data_set($messageContent, 'mail.tags.tenant_id.0', $tenant->getKey());
@@ -185,7 +189,8 @@ it('handles a send event', function () {
 it('handles a reject event', function () {
     $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $tenant = Tenant::current();
+    /** @var Tenant $tenant */
+    $tenant = Tenant::query()->first();
 
     $messageContent = loadFixtureFromModule('integration-aws-ses-event-handling', 'Reject');
     data_set($messageContent, 'mail.tags.tenant_id.0', $tenant->getKey());
@@ -216,7 +221,8 @@ it('handles a reject event', function () {
 it('handles a open event', function () {
     $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $tenant = Tenant::current();
+    /** @var Tenant $tenant */
+    $tenant = Tenant::query()->first();
 
     $messageContent = loadFixtureFromModule('integration-aws-ses-event-handling', 'Open');
     data_set($messageContent, 'mail.tags.tenant_id.0', $tenant->getKey());
@@ -247,7 +253,8 @@ it('handles a open event', function () {
 it('handles a click event', function () {
     $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $tenant = Tenant::current();
+    /** @var Tenant $tenant */
+    $tenant = Tenant::query()->first();
 
     $messageContent = loadFixtureFromModule('integration-aws-ses-event-handling', 'Click');
     data_set($messageContent, 'mail.tags.tenant_id.0', $tenant->getKey());
@@ -278,7 +285,8 @@ it('handles a click event', function () {
 it('handles a renderingFailure event', function () {
     $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $tenant = Tenant::current();
+    /** @var Tenant $tenant */
+    $tenant = Tenant::query()->first();
 
     $messageContent = loadFixtureFromModule('integration-aws-ses-event-handling', 'RenderingFailure');
     data_set($messageContent, 'mail.tags.tenant_id.0', $tenant->getKey());
@@ -309,7 +317,8 @@ it('handles a renderingFailure event', function () {
 it('handles a DeliveryDelay event', function () {
     $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $tenant = Tenant::current();
+    /** @var Tenant $tenant */
+    $tenant = Tenant::query()->first();
 
     $messageContent = loadFixtureFromModule('integration-aws-ses-event-handling', 'DeliveryDelay');
     data_set($messageContent, 'mail.tags.tenant_id.0', $tenant->getKey());
@@ -340,7 +349,8 @@ it('handles a DeliveryDelay event', function () {
 it('handles a Subscription event', function () {
     $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $tenant = Tenant::current();
+    /** @var Tenant $tenant */
+    $tenant = Tenant::query()->first();
 
     $messageContent = loadFixtureFromModule('integration-aws-ses-event-handling', 'Subscription');
     data_set($messageContent, 'mail.tags.tenant_id.0', $tenant->getKey());
