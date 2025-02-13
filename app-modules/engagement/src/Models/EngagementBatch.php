@@ -39,13 +39,11 @@ namespace AdvisingApp\Engagement\Models;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
 use AdvisingApp\Engagement\Actions\CreateEngagementBatch;
-use AdvisingApp\Engagement\DataTransferObjects\EngagementBatchCreationData;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Engagement\Models\Concerns\HasManyEngagements;
 use AdvisingApp\Engagement\Observers\EngagementBatchObserver;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
-use App\Features\EngagementsFeature;
 use App\Models\BaseModel;
 use App\Models\User;
 use DOMDocument;
@@ -93,28 +91,16 @@ class EngagementBatch extends BaseModel implements ExecutableFromACampaignAction
     public static function executeFromCampaignAction(CampaignAction $action): bool|string
     {
         try {
-            if (EngagementsFeature::active()) {
-                $channel = NotificationChannel::parse($action->data['channel']);
-                $records = $action->campaign->segment->retrieveRecords();
+            $channel = NotificationChannel::parse($action->data['channel']);
+            $records = $action->campaign->segment->retrieveRecords();
 
-                app(CreateEngagementBatch::class, ['data' => null])->execute(new EngagementCreationData(
-                    user: $action->campaign->createdBy,
-                    recipient: ($channel === NotificationChannel::Sms) ? $records->filter(fn (CanBeNotified $record) => $record->canRecieveSms()) : $records,
-                    channel: $channel,
-                    subject: $action->data['subject'] ?? null,
-                    body: $action->data['body'] ?? null,
-                ));
-            } else {
-                CreateEngagementBatch::dispatch(EngagementBatchCreationData::from([
-                    'user' => $action->campaign->createdBy,
-                    'records' => $action->campaign->segment->retrieveRecords()->filter(function ($record) {
-                        return $record->canRecieveSms();
-                    }),
-                    'channel' => $action->data['channel'],
-                    'subject' => $action->data['subject'] ?? null,
-                    'body' => $action->data['body'] ?? null,
-                ]));
-            }
+            app(CreateEngagementBatch::class)->execute(new EngagementCreationData(
+                user: $action->campaign->createdBy,
+                recipient: ($channel === NotificationChannel::Sms) ? $records->filter(fn (CanBeNotified $record) => $record->canRecieveSms()) : $records,
+                channel: $channel,
+                subject: $action->data['subject'] ?? null,
+                body: $action->data['body'] ?? null,
+            ));
 
             return true;
         } catch (Throwable $e) {
