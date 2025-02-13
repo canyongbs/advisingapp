@@ -44,6 +44,7 @@ use AdvisingApp\Engagement\Notifications\EngagementBatchStartedNotification;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class CreateEngagementBatch
 {
@@ -70,7 +71,9 @@ class CreateEngagementBatch
             );
 
             $engagementBatch->save();
+        });
 
+        try {
             $batch = Bus::batch([
                 ...blank($data->scheduledAt) ? [fn () => $engagementBatch->user->notify(new EngagementBatchStartedNotification($engagementBatch))] : [],
                 ...$data->recipient
@@ -92,6 +95,10 @@ class CreateEngagementBatch
 
             $engagementBatch->identifier = $batch->id;
             $engagementBatch->save();
-        });
+        } catch (Throwable $exception) {
+            $engagementBatch->delete();
+
+            throw $exception;
+        }
     }
 }
