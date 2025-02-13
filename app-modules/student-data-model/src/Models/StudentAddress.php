@@ -34,44 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Providers;
+namespace AdvisingApp\StudentDataModel\Models;
 
-use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
-use AdvisingApp\Prospect\Enums\SystemProspectClassification;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Prospect\Models\ProspectAddress;
-use AdvisingApp\Prospect\Models\ProspectEmailAddress;
-use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
-use AdvisingApp\Prospect\Models\ProspectSource;
-use AdvisingApp\Prospect\Models\ProspectStatus;
-use AdvisingApp\Prospect\ProspectPlugin;
-use App\Concerns\ImplementsGraphQL;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class ProspectServiceProvider extends ServiceProvider
+/**
+ * @mixin IdeHelperStudentAddress
+ */
+class StudentAddress extends BaseModel implements Auditable
 {
-    use ImplementsGraphQL;
+    use AuditableTrait;
 
-    public function register(): void
+    protected $fillable = [
+        'sisid',
+        'line_1',
+        'line_2',
+        'line_3',
+        'city',
+        'state',
+        'postal',
+        'country',
+        'type',
+        'order',
+    ];
+
+    public function student(): BelongsTo
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new ProspectPlugin()));
-    }
-
-    public function boot(): void
-    {
-        Relation::morphMap([
-            'prospect' => Prospect::class,
-            'prospect_source' => ProspectSource::class,
-            'prospect_status' => ProspectStatus::class,
-            'prospect_email_address' => ProspectEmailAddress::class,
-            'prospect_address' => ProspectAddress::class,
-            'prospect_phone_number' => ProspectPhoneNumber::class,
-        ]);
-
-        $this->discoverSchema(__DIR__ . '/../../graphql/*');
-        $this->registerEnum(ProspectStatusColorOptions::class);
-        $this->registerEnum(SystemProspectClassification::class);
+        return $this->belongsTo(Student::class, 'sisid', 'sisid');
     }
 }

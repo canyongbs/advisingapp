@@ -34,44 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Providers;
+namespace App\Features;
 
-use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
-use AdvisingApp\Prospect\Enums\SystemProspectClassification;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Prospect\Models\ProspectAddress;
-use AdvisingApp\Prospect\Models\ProspectEmailAddress;
-use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
-use AdvisingApp\Prospect\Models\ProspectSource;
-use AdvisingApp\Prospect\Models\ProspectStatus;
-use AdvisingApp\Prospect\ProspectPlugin;
-use App\Concerns\ImplementsGraphQL;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use App\Support\AbstractFeatureFlag;
 
-class ProspectServiceProvider extends ServiceProvider
+class ProspectStudentRefactor extends AbstractFeatureFlag
 {
-    use ImplementsGraphQL;
-
-    public function register(): void
+    public function resolve(mixed $scope): mixed
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new ProspectPlugin()));
-    }
-
-    public function boot(): void
-    {
-        Relation::morphMap([
-            'prospect' => Prospect::class,
-            'prospect_source' => ProspectSource::class,
-            'prospect_status' => ProspectStatus::class,
-            'prospect_email_address' => ProspectEmailAddress::class,
-            'prospect_address' => ProspectAddress::class,
-            'prospect_phone_number' => ProspectPhoneNumber::class,
-        ]);
-
-        $this->discoverSchema(__DIR__ . '/../../graphql/*');
-        $this->registerEnum(ProspectStatusColorOptions::class);
-        $this->registerEnum(SystemProspectClassification::class);
+        return false;
     }
 }

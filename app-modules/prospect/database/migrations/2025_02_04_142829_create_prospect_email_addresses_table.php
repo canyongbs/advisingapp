@@ -34,44 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Providers;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
-use AdvisingApp\Prospect\Enums\SystemProspectClassification;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Prospect\Models\ProspectAddress;
-use AdvisingApp\Prospect\Models\ProspectEmailAddress;
-use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
-use AdvisingApp\Prospect\Models\ProspectSource;
-use AdvisingApp\Prospect\Models\ProspectStatus;
-use AdvisingApp\Prospect\ProspectPlugin;
-use App\Concerns\ImplementsGraphQL;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
-
-class ProspectServiceProvider extends ServiceProvider
-{
-    use ImplementsGraphQL;
-
-    public function register(): void
+return new class () extends Migration {
+    public function up(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new ProspectPlugin()));
+        Schema::create('prospect_email_addresses', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->foreignUuid('prospect_id')->constrained('prospects')->onDelete('cascade');
+            $table->string('address');
+            $table->string('type')->nullable();
+            $table->integer('order');
+            $table->timestamps();
+
+            $table->index(['prospect_id', 'order']);
+        });
     }
 
-    public function boot(): void
+    public function down(): void
     {
-        Relation::morphMap([
-            'prospect' => Prospect::class,
-            'prospect_source' => ProspectSource::class,
-            'prospect_status' => ProspectStatus::class,
-            'prospect_email_address' => ProspectEmailAddress::class,
-            'prospect_address' => ProspectAddress::class,
-            'prospect_phone_number' => ProspectPhoneNumber::class,
-        ]);
-
-        $this->discoverSchema(__DIR__ . '/../../graphql/*');
-        $this->registerEnum(ProspectStatusColorOptions::class);
-        $this->registerEnum(SystemProspectClassification::class);
+        Schema::dropIfExists('prospect_email_addresses');
     }
-}
+};

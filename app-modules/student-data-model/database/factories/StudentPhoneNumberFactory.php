@@ -34,57 +34,70 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Actions;
+namespace AdvisingApp\StudentDataModel\Database\Factories;
 
-use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\ProspectStudentRefactor;
-use Illuminate\Database\Eloquent\Builder;
+use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class ResolveEducatableFromEmail
+/**
+ * @extends Factory< StudentPhoneNumber>
+ */
+class StudentPhoneNumberFactory extends Factory
 {
-    public function __invoke(?string $email): Student | Prospect | null
+    private int $maxOrder;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
-        if (blank($email)) {
-            return null;
-        }
+        return [
+            'sisid' => Student::factory(),
+            'number' => fake()->phoneNumber(),
+            'ext' => null,
+            'type' => fake()->randomElement(['Home', 'Mobile', 'Work']),
+            'can_recieve_sms' => fake()->boolean(),
+            'order' => $this->getNewOrder(),
+        ];
+    }
 
-        /** @var Student $student */
-        if (ProspectStudentRefactor::active()) {
-            $student = Student::query()
-                ->whereHas('emailAddresses', function (Builder $query) use ($email) {
-                    return $query->where('address', $email);
-                })
-                ->first();
-        } else {
-            $student = Student::query()
-                ->where('email', $email)
-                ->orWhere('email_2', $email)
-                ->first();
-        }
+    public function canNotRecieveSms(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'can_recieve_sms' => false,
+            ];
+        });
+    }
 
-        if ($student) {
-            return $student;
-        }
+    public function canRecieveSms(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'can_recieve_sms' => true,
+            ];
+        });
+    }
 
-        /** @var Prospect $prospect */
-        if (ProspectStudentRefactor::active()) {
-            $prospect = Prospect::query()
-                ->whereHas('emailAddresses', function (Builder $query) use ($email) {
-                    return $query->where('address', $email);
-                })
-                ->first();
-        } else {
-            $prospect = Prospect::query()
-                ->where('email', $email)
-                ->orWhere('email_2', $email)
-                ->first();
-        }
+    public function withExtension(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'ext' => fake()->randomNumber(),
+            ];
+        });
+    }
 
-        if ($prospect) {
-            return $prospect;
-        }
+    public function getNewOrder(): int
+    {
+        return $this->maxOrder = $this->getMaxOrder() + 1;
+    }
 
-        return null;
+    public function getMaxOrder(): int
+    {
+        return $this->maxOrder ??= StudentPhoneNumber::max('order') ?? 0;
     }
 }

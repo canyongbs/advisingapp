@@ -34,44 +34,70 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Providers;
+namespace AdvisingApp\Prospect\Database\Factories;
 
-use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
-use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Prospect\Models\ProspectAddress;
-use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
-use AdvisingApp\Prospect\Models\ProspectSource;
-use AdvisingApp\Prospect\Models\ProspectStatus;
-use AdvisingApp\Prospect\ProspectPlugin;
-use App\Concerns\ImplementsGraphQL;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class ProspectServiceProvider extends ServiceProvider
+/**
+ * @extends Factory<ProspectPhoneNumber>
+ */
+class ProspectPhoneNumberFactory extends Factory
 {
-    use ImplementsGraphQL;
+    private int $maxOrder;
 
-    public function register(): void
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new ProspectPlugin()));
+        return [
+            'prospect_id' => Prospect::factory(),
+            'number' => fake()->phoneNumber(),
+            'ext' => null,
+            'type' => fake()->randomElement(['Home', 'Mobile', 'Work']),
+            'can_recieve_sms' => fake()->boolean(),
+            'order' => fake()->unique()->numberBetween(1, 1000),
+        ];
     }
 
-    public function boot(): void
+    public function canNotRecieveSms(): Factory
     {
-        Relation::morphMap([
-            'prospect' => Prospect::class,
-            'prospect_source' => ProspectSource::class,
-            'prospect_status' => ProspectStatus::class,
-            'prospect_email_address' => ProspectEmailAddress::class,
-            'prospect_address' => ProspectAddress::class,
-            'prospect_phone_number' => ProspectPhoneNumber::class,
-        ]);
+        return $this->state(function (array $attributes) {
+            return [
+                'can_recieve_sms' => false,
+            ];
+        });
+    }
 
-        $this->discoverSchema(__DIR__ . '/../../graphql/*');
-        $this->registerEnum(ProspectStatusColorOptions::class);
-        $this->registerEnum(SystemProspectClassification::class);
+    public function canRecieveSms(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'can_recieve_sms' => true,
+            ];
+        });
+    }
+
+    public function withExtension(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'ext' => fake()->randomNumber(),
+            ];
+        });
+    }
+
+    public function getNewOrder(): int
+    {
+        return $this->maxOrder = $this->getMaxOrder() + 1;
+    }
+
+    public function getMaxOrder(): int
+    {
+        return $this->maxOrder ??= ProspectPhoneNumber::max('order') ?? 0;
     }
 }

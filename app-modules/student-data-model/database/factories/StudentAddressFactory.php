@@ -34,44 +34,47 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Providers;
+namespace AdvisingApp\StudentDataModel\Database\Factories;
 
-use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
-use AdvisingApp\Prospect\Enums\SystemProspectClassification;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Prospect\Models\ProspectAddress;
-use AdvisingApp\Prospect\Models\ProspectEmailAddress;
-use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
-use AdvisingApp\Prospect\Models\ProspectSource;
-use AdvisingApp\Prospect\Models\ProspectStatus;
-use AdvisingApp\Prospect\ProspectPlugin;
-use App\Concerns\ImplementsGraphQL;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\StudentAddress;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class ProspectServiceProvider extends ServiceProvider
+/**
+ * @extends Factory<StudentAddress>
+ */
+class StudentAddressFactory extends Factory
 {
-    use ImplementsGraphQL;
+    private int $maxOrder;
 
-    public function register(): void
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new ProspectPlugin()));
+        return [
+            'sisid' => Student::factory(),
+            'line_1' => fake()->streetAddress(),
+            'line_2' => fake()->optional()->streetAddress(),
+            'line_3' => fake()->optional()->citySuffix(),
+            'city' => fake()->city(),
+            'state' => fake()->state(),
+            'postal' => fake()->postcode(),
+            'country' => fake()->country(),
+            'type' => fake()->randomElement(['Home', 'Dorm', 'Work']),
+            'order' => $this->getNewOrder(),
+        ];
     }
 
-    public function boot(): void
+    public function getNewOrder(): int
     {
-        Relation::morphMap([
-            'prospect' => Prospect::class,
-            'prospect_source' => ProspectSource::class,
-            'prospect_status' => ProspectStatus::class,
-            'prospect_email_address' => ProspectEmailAddress::class,
-            'prospect_address' => ProspectAddress::class,
-            'prospect_phone_number' => ProspectPhoneNumber::class,
-        ]);
+        return $this->maxOrder = $this->getMaxOrder() + 1;
+    }
 
-        $this->discoverSchema(__DIR__ . '/../../graphql/*');
-        $this->registerEnum(ProspectStatusColorOptions::class);
-        $this->registerEnum(SystemProspectClassification::class);
+    public function getMaxOrder(): int
+    {
+        return $this->maxOrder ??= StudentAddress::max('order') ?? 0;
     }
 }

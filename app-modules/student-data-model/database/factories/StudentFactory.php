@@ -37,6 +37,9 @@
 namespace AdvisingApp\StudentDataModel\Database\Factories;
 
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\StudentAddress;
+use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
+use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use Carbon\Carbon;
 use Faker\Provider\en_US\Address;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -91,5 +94,19 @@ class StudentFactory extends Factory
         $attributes['updated_at_source'] = $sourceDate;
 
         return $attributes;
+    }
+
+    public function configure(): static
+    {
+        return $this->afterCreating(function (Student $student) {
+            $email = StudentEmailAddress::factory()->create(['sisid' => $student->getKey()]);
+            $phone = StudentPhoneNumber::factory()->create(['sisid' => $student->getKey()]);
+            $address = StudentAddress::factory()->create(['sisid' => $student->getKey()]);
+            $student->update([
+                'primary_email_id' => $email->getKey(),
+                'primary_phone_id' => $phone->getKey(),
+                'primary_address_id' => $address->getKey(),
+            ]);
+        });
     }
 }
