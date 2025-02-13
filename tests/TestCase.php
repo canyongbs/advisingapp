@@ -79,10 +79,6 @@ abstract class TestCase extends BaseTestCase
         parent::setUp();
 
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
-
-        // Tenant::first()->makeCurrent();
-
-        $this->beginDatabaseTransactionOnConnection($this->tenantDatabaseConnectionName());
     }
 
     public function createLandlordTestingEnvironment(): void
