@@ -38,7 +38,7 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Pages\CreateCaseUpdate;
 use AdvisingApp\CaseManagement\Models\CaseUpdate;
-use AdvisingApp\CaseManagement\Tests\RequestFactories\CreateCaseUpdateRequestFactory;
+use AdvisingApp\CaseManagement\Tests\Tenant\RequestFactories\CreateCaseUpdateRequestFactory;
 use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 use App\Models\User;
 use App\Settings\LicenseSettings;

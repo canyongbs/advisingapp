@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Tests\RequestFactories;
+namespace AdvisingApp\Engagement\Tests\Tenant\RequestFactories;
 
 use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Notification\Enums\NotificationChannel;

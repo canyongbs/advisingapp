@@ -37,7 +37,7 @@
 use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource\Pages\CreateCaseStatus;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
-use AdvisingApp\CaseManagement\Tests\RequestFactories\CreateCaseStatusRequestFactory;
+use AdvisingApp\CaseManagement\Tests\Tenant\RequestFactories\CreateCaseStatusRequestFactory;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;

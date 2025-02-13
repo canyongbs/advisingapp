@@ -38,7 +38,7 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource;
 use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages\EditProspectStatus;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectStatus;
-use AdvisingApp\Prospect\Tests\ProspectStatus\RequestFactories\EditProspectStatusRequestFactory;
+use AdvisingApp\Prospect\Tests\Tenant\ProspectStatus\RequestFactories\EditProspectStatusRequestFactory;
 use App\Models\User;
 use Illuminate\Validation\Rules\Enum;
 

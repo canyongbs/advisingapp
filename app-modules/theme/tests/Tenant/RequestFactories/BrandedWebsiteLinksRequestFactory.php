@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Theme\Tests\RequestFactories;
+namespace AdvisingApp\Theme\Tests\Tenant\RequestFactories;
 
 use App\Models\Tenant;
 use Worksome\RequestFactories\RequestFactory;

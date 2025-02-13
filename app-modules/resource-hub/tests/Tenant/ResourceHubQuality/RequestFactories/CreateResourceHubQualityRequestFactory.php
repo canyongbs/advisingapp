@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Tests\ResourceHubQuality\RequestFactories;
+namespace AdvisingApp\ResourceHub\Tests\Tenant\ResourceHubQuality\RequestFactories;
 
 use Worksome\RequestFactories\RequestFactory;
 

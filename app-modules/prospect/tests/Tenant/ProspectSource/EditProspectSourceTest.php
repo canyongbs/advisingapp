@@ -37,7 +37,7 @@
 use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
-use AdvisingApp\Prospect\Tests\ProspectSource\RequestFactories\EditProspectSourceRequestFactory;
+use AdvisingApp\Prospect\Tests\Tenant\ProspectSource\RequestFactories\EditProspectSourceRequestFactory;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;

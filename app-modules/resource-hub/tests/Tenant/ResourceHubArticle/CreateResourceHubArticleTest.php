@@ -37,7 +37,7 @@
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages\ListResourceHubArticles;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
-use AdvisingApp\ResourceHub\Tests\ResourceHubArticle\RequestFactories\CreateResourceHubArticleRequestFactory;
+use AdvisingApp\ResourceHub\Tests\Tenant\ResourceHubArticle\RequestFactories\CreateResourceHubArticleRequestFactory;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 

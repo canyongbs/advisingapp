@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Tests\RequestFactories;
+namespace AdvisingApp\CaseManagement\Tests\Tenant\RequestFactories;
 
 use AdvisingApp\CaseManagement\Enums\CaseUpdateDirection;
 use AdvisingApp\CaseManagement\Models\CaseModel;

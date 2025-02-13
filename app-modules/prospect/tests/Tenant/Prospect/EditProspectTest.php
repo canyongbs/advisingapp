@@ -41,7 +41,7 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\Disassociat
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\EditProspect;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectStatus;
-use AdvisingApp\Prospect\Tests\Prospect\RequestFactories\EditProspectRequestFactory;
+use AdvisingApp\Prospect\Tests\Tenant\Prospect\RequestFactories\EditProspectRequestFactory;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 

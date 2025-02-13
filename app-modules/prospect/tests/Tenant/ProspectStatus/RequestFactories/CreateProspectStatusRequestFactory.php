@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Tests\ProspectStatus\RequestFactories;
+namespace AdvisingApp\Prospect\Tests\Tenant\ProspectStatus\RequestFactories;
 
 use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;

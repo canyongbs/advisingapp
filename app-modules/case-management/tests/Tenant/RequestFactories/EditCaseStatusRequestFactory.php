@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Tests\RequestFactories;
+namespace AdvisingApp\CaseManagement\Tests\Tenant\RequestFactories;
 
 use AdvisingApp\CaseManagement\Enums\ColumnColorOptions;
 use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;

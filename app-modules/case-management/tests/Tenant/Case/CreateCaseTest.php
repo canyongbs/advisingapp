@@ -38,7 +38,7 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\CreateCase;
 use AdvisingApp\CaseManagement\Models\CaseModel;
-use AdvisingApp\CaseManagement\Tests\RequestFactories\CreateCaseRequestFactory;
+use AdvisingApp\CaseManagement\Tests\Tenant\RequestFactories\CreateCaseRequestFactory;
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Models\User;
 use App\Settings\LicenseSettings;

@@ -37,7 +37,7 @@
 use AdvisingApp\Engagement\Actions\CreateEngagementBatch;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Engagement\Models\EngagementBatch;
-use AdvisingApp\Engagement\Tests\RequestFactories\CreateEngagementBatchRequestFactory;
+use AdvisingApp\Engagement\Tests\Tenant\RequestFactories\CreateEngagementBatchRequestFactory;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Bus;

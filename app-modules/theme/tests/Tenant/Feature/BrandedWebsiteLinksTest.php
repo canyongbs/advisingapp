@@ -37,7 +37,7 @@
 namespace AdvisingApp\Theme\Tests\Feature;
 
 use AdvisingApp\Theme\Settings\ThemeSettings;
-use AdvisingApp\Theme\Tests\RequestFactories\BrandedWebsiteLinksRequestFactory;
+use AdvisingApp\Theme\Tests\Tenant\RequestFactories\BrandedWebsiteLinksRequestFactory;
 use App\Http\Middleware\CheckOlympusKey;
 use App\Models\Tenant;
 

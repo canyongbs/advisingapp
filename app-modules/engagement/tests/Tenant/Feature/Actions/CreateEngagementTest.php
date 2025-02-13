@@ -38,7 +38,7 @@ use AdvisingApp\Engagement\Actions\CreateEngagement;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Notifications\EngagementNotification;
-use AdvisingApp\Engagement\Tests\RequestFactories\CreateEngagementRequestFactory;
+use AdvisingApp\Engagement\Tests\Tenant\RequestFactories\CreateEngagementRequestFactory;
 use Illuminate\Support\Facades\Notification;
 
 use function Pest\Laravel\assertDatabaseCount;

@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Tests\Prospect\RequestFactories;
+namespace AdvisingApp\Prospect\Tests\Tenant\Prospect\RequestFactories;
 
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;

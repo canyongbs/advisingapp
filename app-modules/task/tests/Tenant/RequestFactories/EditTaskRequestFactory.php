@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Task\Tests\RequestFactories;
+namespace AdvisingApp\Task\Tests\Tenant\RequestFactories;
 
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Task\Enums\TaskStatus;
