@@ -42,7 +42,6 @@ use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
-use App\Features\ProspectStudentRefactor;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
