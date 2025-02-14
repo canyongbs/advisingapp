@@ -50,29 +50,23 @@ use App\Multitenancy\DataTransferObjects\TenantMailConfig;
 use App\Multitenancy\DataTransferObjects\TenantMailersConfig;
 use App\Multitenancy\DataTransferObjects\TenantS3FilesystemConfig;
 use App\Multitenancy\DataTransferObjects\TenantSmtpMailerConfig;
-use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Foundation\Testing\DatabaseTransactionsManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Foundation\Testing\Traits\CanConfigureMigrationCommands;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\ParallelTesting;
-use Illuminate\Support\Str;
 use Spatie\Multitenancy\Concerns\UsesMultitenancyConfig;
 use Spatie\Permission\PermissionRegistrar;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
-use Symfony\Component\Process\Process;
 use Tests\Concerns\LoadsFixtures;
 
 abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
-    use RefreshDatabase;
     use CanConfigureMigrationCommands;
     use LoadsFixtures;
     use UsesMultitenancyConfig;
+    use RefreshDatabase;
 
     protected function setUp(): void
     {
@@ -81,7 +75,7 @@ abstract class TestCase extends BaseTestCase
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
     }
 
-    public function createLandlordTestingEnvironment(): void
+    protected function createLandlordTestingEnvironment(): void
     {
         $this->artisan('migrate:fresh', [
             '--database' => $this->landlordDatabaseConnectionName(),
@@ -89,21 +83,27 @@ abstract class TestCase extends BaseTestCase
             ...$this->migrateFreshUsing(),
         ]);
 
+        $tenantDatabase = ParallelTesting::token() ? 'testing_tenant_test_' . ParallelTesting::token() : 'testing_tenant';
+
         $this->createTenant(
             name: 'Test Tenant',
             domain: 'test.advisingapp.local',
-            database: ParallelTesting::token() ? 'testing_tenant_test_' . ParallelTesting::token() : 'testing_tenant',
+            database: $tenantDatabase,
         );
+
+        // TODO: Maybe remove this
+        config([
+            "database.connections.{$this->tenantDatabaseConnectionName()}.database" => $tenantDatabase,
+        ]);
     }
 
-    public function createTenantTestingEnvironment(Tenant $tenant = null): void
+    protected function refreshTenantTestingEnvironment(Tenant $tenant = null): void
     {
         $tenant ??= Tenant::firstOrFail();
 
         $tenant->execute(function () use ($tenant) {
             $this->artisan('migrate:fresh', [
                 '--database' => $this->tenantDatabaseConnectionName(),
-                '--seeder' => 'StudentSeeder',
                 ...$this->migrateFreshUsing(),
             ]);
 
@@ -151,7 +151,7 @@ abstract class TestCase extends BaseTestCase
         });
     }
 
-    public function beginDatabaseTransactionOnConnection(string $name)
+    protected function beginDatabaseTransactionOnConnection(string $name)
     {
         $database = $this->app->make('db');
 
@@ -176,7 +176,7 @@ abstract class TestCase extends BaseTestCase
         });
     }
 
-    public function createTenant(string $name, string $domain, string $database): Tenant
+    protected function createTenant(string $name, string $domain, string $database): Tenant
     {
         return app(CreateTenant::class)(
             $name,
@@ -261,68 +261,5 @@ abstract class TestCase extends BaseTestCase
             ),
             seedTenantDatabase: false
         );
-    }
-
-    protected function refreshTestDatabase()
-    {
-        if (! RefreshDatabaseState::$migrated) {
-            $this->createLandlordTestingEnvironment();
-
-            $this->createTenantTestingEnvironment();
-
-            $this->app[Kernel::class]->setArtisan(null);
-
-            RefreshDatabaseState::$migrated = true;
-        }
-
-        $this->beginDatabaseTransactionOnConnection($this->landlordDatabaseConnectionName());
-    }
-
-    protected function calculateMigrationChecksum(array $paths): string
-    {
-        $finder = Finder::create()
-            ->in($paths)
-            ->name('*.php')
-            ->ignoreDotFiles(true)
-            ->ignoreVCS(true)
-            ->files();
-
-        $migrations = array_map(static function (SplFileInfo $fileInfo) {
-            return [$fileInfo->getMTime(), $fileInfo->getPath()];
-        }, iterator_to_array($finder));
-
-        // Reset the array keys so there is less data
-
-        $migrations = array_values($migrations);
-
-        // Add the current git branch
-
-        $checkBranch = new Process(['git', 'branch', '--show-current']);
-        $checkBranch->run();
-
-        $migrations['gitBranch'] = trim($checkBranch->getOutput());
-
-        // Create a hash
-
-        return hash('sha256', json_encode($migrations, JSON_THROW_ON_ERROR));
-    }
-
-    protected function storeMigrationChecksum(string $connection, string $checksum): void
-    {
-        file_put_contents($this->getMigrationChecksumFile($connection), $checksum);
-    }
-
-    protected function getCachedMigrationChecksum(string $connection): ?string
-    {
-        return rescue(fn () => file_get_contents($this->getMigrationChecksumFile($connection)), null, false);
-    }
-
-    protected function getMigrationChecksumFile(string $connection): string
-    {
-        $database = config("database.connections.{$connection}.database");
-
-        $databaseNameSlug = Str::slug($database);
-
-        return storage_path("app/migration-checksum_{$databaseNameSlug}.txt");
     }
 }
