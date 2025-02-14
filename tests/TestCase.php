@@ -90,11 +90,6 @@ abstract class TestCase extends BaseTestCase
             domain: 'test.advisingapp.local',
             database: $tenantDatabase,
         );
-
-        // TODO: Maybe remove this
-        config([
-            "database.connections.{$this->tenantDatabaseConnectionName()}.database" => $tenantDatabase,
-        ]);
     }
 
     protected function refreshTenantTestingEnvironment(Tenant $tenant = null): void

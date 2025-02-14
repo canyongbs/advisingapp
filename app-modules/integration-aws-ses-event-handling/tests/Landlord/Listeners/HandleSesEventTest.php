@@ -51,7 +51,9 @@ it('correctly handles the incoming SES event', function (string $event, EmailMes
     /** @var Tenant $tenant */
     $tenant = Tenant::query()->first();
 
-    $emailMessage = EmailMessage::factory()->create();
+    $emailMessage = $tenant->execute(function () {
+        return EmailMessage::factory()->create();
+    });
 
     // And we receive some sort of SES event when attempting to deliver
     $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
@@ -61,7 +63,9 @@ it('correctly handles the incoming SES event', function (string $event, EmailMes
     data_set($messageContent, 'mail.tags.tenant_id.0', $tenant->getKey());
     $snsData['Message'] = json_encode($messageContent);
 
-    expect($emailMessage->events()->count())->toBe(0);
+    $tenant->execute(function () use ($emailMessage) {
+        expect($emailMessage->events()->count())->toBe(0);
+    });
 
     $response = withHeaders(
         [
@@ -82,14 +86,16 @@ it('correctly handles the incoming SES event', function (string $event, EmailMes
 
     $response->assertOk();
 
-    // The email message should have the apppriate email message event created based on the event
-    $emailMessage->refresh();
+    $tenant->execute(function () use ($emailMessage, $eventType) {
+        // The email message should have the apppriate email message event created based on the event
+        $emailMessage->refresh();
 
-    expect($emailMessage->events()->count())->toBe(1);
+        expect($emailMessage->events()->count())->toBe(1);
 
-    $event = $emailMessage->events()->first();
+        $event = $emailMessage->events()->first();
 
-    expect($event->type)->toBe($eventType);
+        expect($event->type)->toBe($eventType);
+    });
 })->with([
     'HandleSesBounceEvent' => [
         'Bounce',
