@@ -61,6 +61,8 @@ class CaseObserver
             TriggeredAutoSubscription::dispatch($user, $case);
         }
 
+        $case->respondent->load('primaryEmail', 'primaryPhone', 'primaryAddress');
+
         if ($case->status->classification === SystemCaseClassification::Open) {
             if ($case->respondent->canRecieveEmail()) {
                 $case->respondent->notify(new EducatableCaseOpenedNotification($case));
