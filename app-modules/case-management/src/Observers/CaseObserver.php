@@ -44,6 +44,7 @@ use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Notifications\EducatableCaseClosedNotification;
 use AdvisingApp\CaseManagement\Notifications\EducatableCaseOpenedNotification;
 use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
+use App\Features\ProspectStudentRefactor;
 use App\Models\User;
 
 class CaseObserver
@@ -60,8 +61,6 @@ class CaseObserver
         if ($user instanceof User) {
             TriggeredAutoSubscription::dispatch($user, $case);
         }
-
-        $case->respondent->load('primaryEmail', 'primaryPhone', 'primaryAddress');
 
         if ($case->status->classification === SystemCaseClassification::Open) {
             if ($case->respondent->canRecieveEmail()) {
