@@ -156,7 +156,7 @@ class ListAlerts extends ListRecords
                     ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('order'))
                     ->multiple()
                     ->preload()
-                    ->default([SystemAlertStatusClassification::default()]),
+                    ->default(! is_null(SystemAlertStatusClassification::default()) ? [SystemAlertStatusClassification::default()] : []),
             ])
             ->actions([
                 ViewAction::make(),

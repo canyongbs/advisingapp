@@ -132,14 +132,6 @@ class ListProspects extends ListRecords
                     ->query(fn (Builder $query, array $data) => $this->segmentFilter($query, $data)),
                 Filter::make('subscribed')
                     ->query(fn (Builder $query): Builder => $query->whereRelation('subscriptions.user', 'id', auth()->id())),
-                SelectFilter::make('status_id')
-                    ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('sort'))
-                    ->multiple()
-                    ->preload(),
-                SelectFilter::make('source_id')
-                    ->relationship('source', 'name')
-                    ->multiple()
-                    ->preload(),
                 Filter::make('care_team')
                     ->label('Care Team')
                     ->query(
@@ -149,6 +141,21 @@ class ListProspects extends ListRecords
                                 ->get();
                         }
                     ),
+                SelectFilter::make('alerts')
+                    ->multiple()
+                    ->relationship('alerts.status', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->optionsLimit(20),
+                SelectFilter::make('status_id')
+                    ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('sort'))
+                    ->multiple()
+                    ->preload(),
+                SelectFilter::make('source_id')
+                    ->relationship('source', 'name')
+                    ->multiple()
+                    ->preload(),
+
                 SelectFilter::make('tags')
                     ->label('Tags')
                     ->options(fn (): array => Tag::query()->where('type', TagType::Prospect)->pluck('name', 'id')->toArray())

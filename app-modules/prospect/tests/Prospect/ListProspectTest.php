@@ -34,6 +34,9 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
+use AdvisingApp\Alert\Models\Alert;
+use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
@@ -45,6 +48,7 @@ use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
 // TODO: Write ListProspects page test
 //test('The correct details are displayed on the ListProspects page', function () {});
@@ -161,4 +165,56 @@ it('can filter prospects by `subscribed` prospects', function () {
         ->filterTable('subscribed')
         ->assertCanSeeTableRecords($subscribedProspects)
         ->assertCanNotSeeTableRecords($notSubscribedProspects);
+});
+it('can filter prospect by alerts', function () {
+    asSuperAdmin();
+
+    $activeStatusAlert = AlertStatus::factory()
+        ->state([
+            'name' => 'Active',
+            'classification' => SystemAlertStatusClassification::Active,
+        ])
+        ->create();
+
+    $inprogressStatusAlert = AlertStatus::factory()
+        ->state([
+            'name' => 'InProgress',
+            'classification' => SystemAlertStatusClassification::Active,
+        ])
+        ->create();
+
+    $prospectWithStatusActive = Prospect::factory()->create();
+
+    $prospectWithStatusInprogress = Prospect::factory()->create();
+
+    $activeAlerts = Alert::factory()
+        ->count(3)
+        ->for($prospectWithStatusActive, 'concern')
+        ->state([
+            'status_id' => $activeStatusAlert->getKey(),
+        ])
+        ->create();
+
+    $inProgressAlerts = Alert::factory()
+        ->count(2)
+        ->for($prospectWithStatusInprogress, 'concern')
+        ->state([
+            'status_id' => $inprogressStatusAlert->getKey(),
+        ])
+        ->create();
+
+    $prospectsWithoutAlerts = Prospect::factory()->count(5)->create();
+
+    livewire(ListProspects::class)
+        ->set('tableRecordsPerPage', 10)
+        ->assertCanSeeTableRecords($prospectsWithoutAlerts->merge([$prospectWithStatusActive, $prospectWithStatusInprogress]))
+        ->filterTable('alerts', [$activeStatusAlert, $inprogressStatusAlert])
+        ->assertCanSeeTableRecords([$prospectWithStatusActive, $prospectWithStatusInprogress])
+        ->assertCanNotSeeTableRecords($prospectsWithoutAlerts)
+        ->resetTableFilters()
+        ->filterTable('alerts', [$activeStatusAlert])
+        ->assertCanSeeTableRecords([$prospectWithStatusActive])
+        ->assertCanNotSeeTableRecords($prospectsWithoutAlerts->merge([$prospectWithStatusInprogress]))
+        ->removeTableFilter('alerts')
+        ->assertCanSeeTableRecords($prospectsWithoutAlerts->merge([$prospectWithStatusActive, $prospectWithStatusInprogress]));
 });
