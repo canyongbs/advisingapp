@@ -39,6 +39,8 @@ namespace AdvisingApp\StudentDataModel\Filament\Actions;
 use AdvisingApp\StudentDataModel\Filament\Imports\StudentEnrollmentImporter;
 use AdvisingApp\StudentDataModel\Filament\Imports\StudentImporter;
 use AdvisingApp\StudentDataModel\Filament\Imports\StudentProgramImporter;
+use AdvisingApp\StudentDataModel\Jobs\CreateTemporaryStudentDataImportTables;
+use AdvisingApp\StudentDataModel\Jobs\PersistTemporaryStudentDataImportTables;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -76,6 +78,7 @@ use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use SplTempFileObject;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Throwable;
 
 class ImportStudentDataAction
 {
@@ -227,7 +230,7 @@ class ImportStudentDataAction
             ->importer(StudentImporter::class)
             ->authorize('import', Student::class)
             ->modalHeading('Import student data')
-            ->modalDescription(fn (ImportAction $action): Htmlable => new HtmlString(collect([
+            ->modalDescription(fn (ImportAction $action): Htmlable => new HtmlString('Warning: the new data will override and replace all existing student data in the system. <br><br>' . collect([
                 $action->getModalAction('downloadExample')?->label('Example students')->toHtml(),
                 $action->getModalAction('downloadProgramsExample')?->label('Example programs')->toHtml(),
                 $action->getModalAction('downloadEnrollmentsExample')?->label('Example enrollments')->toHtml(),
@@ -459,6 +462,7 @@ class ImportStudentDataAction
                     });
 
                 Bus::chain([
+                    new CreateTemporaryStudentDataImportTables($import, $programsImport, $enrollmentsImport),
                     $makeImportJobBatch(
                         jobs: $makeImportJobs($csvResults, $import, $columnMap),
                         importer: $importer,
@@ -471,6 +475,7 @@ class ImportStudentDataAction
                         jobs: $makeImportJobs($enrollmentsCsvResults, $enrollmentsImport, $enrollmentsColumnMap),
                         importer: $enrollmentsImporter,
                     )] : []),
+                    new PersistTemporaryStudentDataImportTables($import, $programsImport, $enrollmentsImport),
                 ])
                     ->when(
                         filled($jobQueue),
@@ -480,6 +485,11 @@ class ImportStudentDataAction
                         filled($jobConnection),
                         fn (PendingChain $chain) => $chain->onConnection($jobConnection),
                     )
+                    ->catch(function (Throwable $exception) use ($import) {
+                        DB::raw("drop table if exists import_{$import->getKey()}_students");
+                        DB::raw("drop table if exists import_{$import->getKey()}_programs");
+                        DB::raw("drop table if exists import_{$import->getKey()}_enrollments");
+                    })
                     ->dispatch();
 
                 if (

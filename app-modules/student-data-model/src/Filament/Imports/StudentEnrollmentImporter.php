@@ -66,7 +66,7 @@ class StudentEnrollmentImporter extends Importer
 
     public function resolveRecord(): ?Enrollment
     {
-        return new Enrollment();
+        return (new Enrollment())->setTable("import_{$this->import->getKey()}_enrollments");
     }
 
     public static function getCompletedNotificationBody(Import $import): string
