@@ -339,7 +339,11 @@ class ImportStudentDataAction
 
                 $options = array_merge(
                     $action->getOptions(),
-                    Arr::except($data, ['file', 'columnMap']),
+                    Arr::except($data, [
+                        'file', 'columnMap',
+                        'programsFile', 'programsColumnMap',
+                        'enrollmentsFile', 'enrollmentsColumnMap',
+                    ]),
                 );
 
                 // We do not want to send the loaded user relationship to the queue in job payloads,
@@ -358,15 +362,14 @@ class ImportStudentDataAction
                     /** @var array<array<array<string, string>>> $importChunks */
                     $importChunks = $importChunkIterator->get();
 
-                    return array_map(
-                        fn (array $importChunk): object => app($job, [
+                    return collect($importChunks)
+                        ->map(fn (array $importChunk): object => app($job, [
                             'import' => $import,
                             'rows' => base64_encode(serialize($importChunk)),
                             'columnMap' => $columnMap,
                             'options' => $options,
-                        ]),
-                        $importChunks,
-                    );
+                        ]))
+                        ->all();
                 };
 
                 $columnMap = $data['columnMap'];
