@@ -47,6 +47,7 @@ use AdvisingApp\CaseManagement\Notifications\SendClosedCaseFeedbackNotification;
 use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 use App\Enums\Feature;
 use App\Features\CaseFeedback;
+use App\Features\ProspectStudentRefactor;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 
@@ -65,10 +66,12 @@ class CaseObserver
             TriggeredAutoSubscription::dispatch($user, $case);
         }
 
-        $case->respondent->load('primaryEmail', 'primaryPhone', 'primaryAddress');
-
         if ($case->status->classification === SystemCaseClassification::Open) {
-            if ($case->respondent->primaryEmail) {
+            if (ProspectStudentRefactor::active()) {
+                if ($case->respondent->primaryEmail) {
+                    $case->respondent->notify(new EducatableCaseOpenedNotification($case));
+                }
+            } else {
                 $case->respondent->notify(new EducatableCaseOpenedNotification($case));
             }
         }
