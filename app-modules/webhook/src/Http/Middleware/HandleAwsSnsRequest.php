@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Webhook\Http\Middleware;
 
-use AdvisingApp\Webhook\Actions\StoreInboundWebhook;
 use AdvisingApp\Webhook\DataTransferObjects\SnsMessage;
 use AdvisingApp\Webhook\Enums\InboundWebhookSource;
+use AdvisingApp\Webhook\Models\LandlordInboundWebhook;
 use Closure;
 use Exception;
 use Illuminate\Http\Request;
@@ -50,13 +50,12 @@ class HandleAwsSnsRequest
     {
         $data = SnsMessage::fromRequest($request);
 
-        app(StoreInboundWebhook::class)
-            ->handle(
-                InboundWebhookSource::AwsSns,
-                in_array($data->type, ['SubscriptionConfirmation', 'UnsubscribeConfirmation', 'Notification']) ? $data->type : 'UnknownSnsType',
-                $request->url(),
-                $request->getContent()
-            );
+        LandlordInboundWebhook::create([
+            'source' => InboundWebhookSource::AwsSns,
+            'event' => in_array($data->type, ['SubscriptionConfirmation', 'UnsubscribeConfirmation', 'Notification']) ? $data->type : 'UnknownSnsType',
+            'url' => $request->url(),
+            'payload' => is_array($request->getContent()) ? json_encode($request->getContent()) : $request->getContent(),
+        ]);
 
         if ($data->type === 'SubscriptionConfirmation') {
             if (app()->environment('testing')) {
