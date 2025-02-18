@@ -36,30 +36,27 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Actions;
 
+use AdvisingApp\StudentDataModel\Actions\CleanUpFailedStudentDataImportTables;
+use AdvisingApp\StudentDataModel\Actions\CreateTemporaryStudentDataImportTables;
+use AdvisingApp\StudentDataModel\Actions\FinalizeStudentDataImport;
 use AdvisingApp\StudentDataModel\Filament\Imports\StudentEnrollmentImporter;
 use AdvisingApp\StudentDataModel\Filament\Imports\StudentImporter;
 use AdvisingApp\StudentDataModel\Filament\Imports\StudentProgramImporter;
-use AdvisingApp\StudentDataModel\Jobs\CreateTemporaryStudentDataImportTables;
-use AdvisingApp\StudentDataModel\Jobs\PersistTemporaryStudentDataImportTables;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\Import;
 use Filament\Actions\Action;
 use Filament\Actions\ImportAction;
-use Filament\Actions\Imports\Events\ImportCompleted;
 use Filament\Actions\Imports\Events\ImportStarted;
 use Filament\Actions\Imports\ImportColumn;
-use Filament\Actions\Imports\Importer;
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
-use Filament\Notifications\Actions\Action as NotificationAction;
 use Filament\Notifications\Notification;
 use Filament\Support\ChunkIterator;
 use Illuminate\Bus\PendingBatch;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Foundation\Bus\PendingChain;
 use Illuminate\Support\Arr;
@@ -78,7 +75,6 @@ use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use SplTempFileObject;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Throwable;
 
 class ImportStudentDataAction
 {
@@ -384,16 +380,6 @@ class ImportStudentDataAction
                     options: $options,
                 );
 
-                $programsImporter = $programsImport?->getImporter(
-                    columnMap: $programsColumnMap,
-                    options: $options,
-                );
-
-                $enrollmentsImporter = $enrollmentsImport?->getImporter(
-                    columnMap: $enrollmentsColumnMap,
-                    options: $options,
-                );
-
                 event(new ImportStarted($import, $columnMap, $options));
 
                 if ($programsImport) {
@@ -407,76 +393,18 @@ class ImportStudentDataAction
                 $jobQueue = $importer->getJobQueue();
                 $jobConnection = $importer->getJobConnection();
 
-                $makeImportJobBatch = fn (array $jobs, Importer $importer) => Bus::batch($jobs)
+                app(CreateTemporaryStudentDataImportTables::class)->execute($import, $programsImport, $enrollmentsImport);
+
+                Bus::batch([
+                    ...$makeImportJobs($csvResults, $import, $columnMap),
+                    ...($programsImport ? $makeImportJobs($programsCsvResults, $programsImport, $programsColumnMap) : []),
+                    ...($enrollmentsImport ? $makeImportJobs($enrollmentsCsvResults, $enrollmentsImport, $enrollmentsColumnMap) : []),
+                ])
                     ->allowFailures()
                     ->when(
                         filled($jobBatchName = $importer->getJobBatchName()),
                         fn (PendingBatch $batch) => $batch->name($jobBatchName),
                     )
-                    ->finally(function () use ($columnMap, $import, $jobConnection, $options) {
-                        $import->touch('completed_at');
-
-                        event(new ImportCompleted($import, $columnMap, $options));
-
-                        if (! $import->user instanceof Authenticatable) {
-                            return;
-                        }
-
-                        $failedRowsCount = $import->getFailedRowsCount();
-
-                        Notification::make()
-                            ->title($import->importer::getCompletedNotificationTitle($import))
-                            ->body($import->importer::getCompletedNotificationBody($import))
-                            ->when(
-                                ! $failedRowsCount,
-                                fn (Notification $notification) => $notification->success(),
-                            )
-                            ->when(
-                                $failedRowsCount && ($failedRowsCount < $import->total_rows),
-                                fn (Notification $notification) => $notification->warning(),
-                            )
-                            ->when(
-                                $failedRowsCount === $import->total_rows,
-                                fn (Notification $notification) => $notification->danger(),
-                            )
-                            ->when(
-                                $failedRowsCount,
-                                fn (Notification $notification) => $notification->actions([
-                                    NotificationAction::make('downloadFailedRowsCsv')
-                                        ->label(trans_choice('filament-actions::import.notifications.completed.actions.download_failed_rows_csv.label', $failedRowsCount, [
-                                            'count' => Number::format($failedRowsCount),
-                                        ]))
-                                        ->color('danger')
-                                        ->url(route('filament.imports.failed-rows.download', ['import' => $import], absolute: false), shouldOpenInNewTab: true)
-                                        ->markAsRead(),
-                                ]),
-                            )
-                            ->when(
-                                ($jobConnection === 'sync') ||
-                                    (blank($jobConnection) && (config('queue.default') === 'sync')),
-                                fn (Notification $notification) => $notification
-                                    ->persistent()
-                                    ->send(),
-                                fn (Notification $notification) => $notification->sendToDatabase($import->user, isEventDispatched: true),
-                            );
-                    });
-
-                Bus::chain([
-                    new CreateTemporaryStudentDataImportTables($import, $programsImport, $enrollmentsImport),
-                    $makeImportJobBatch(
-                        jobs: $makeImportJobs($csvResults, $import, $columnMap),
-                        importer: $importer,
-                    ),
-                    ...($programsImport ? [$makeImportJobBatch(
-                        jobs: $makeImportJobs($programsCsvResults, $programsImport, $programsColumnMap),
-                        importer: $programsImporter,
-                    )] : []),
-                    ...($enrollmentsImport ? [$makeImportJobBatch(
-                        jobs: $makeImportJobs($enrollmentsCsvResults, $enrollmentsImport, $enrollmentsColumnMap),
-                        importer: $enrollmentsImporter,
-                    )] : []),
-                    new PersistTemporaryStudentDataImportTables($import, $programsImport, $enrollmentsImport),
-                ])
                     ->when(
                         filled($jobQueue),
                         fn (PendingChain $chain) => $chain->onQueue($jobQueue),
@@ -485,27 +413,19 @@ class ImportStudentDataAction
                         filled($jobConnection),
                         fn (PendingChain $chain) => $chain->onConnection($jobConnection),
                     )
-                    ->catch(function (Throwable $exception) use ($import) {
-                        DB::raw("drop table if exists import_{$import->getKey()}_students");
-                        DB::raw("drop table if exists import_{$import->getKey()}_programs");
-                        DB::raw("drop table if exists import_{$import->getKey()}_enrollments");
-                    })
+                    ->finally(fn () => app(FinalizeStudentDataImport::class)->execute($import, $programsImport, $enrollmentsImport))
+                    ->catch(fn () => app(CleanUpFailedStudentDataImportTables::class)->execute($import, $programsImport, $enrollmentsImport))
                     ->dispatch();
 
-                if (
-                    (filled($jobConnection) && ($jobConnection !== 'sync')) ||
-                    (blank($jobConnection) && (config('queue.default') !== 'sync'))
-                ) {
-                    $totalRows = $import->total_rows + ($programsImport?->total_rows ?? 0) + ($enrollmentsImport?->total_rows ?? 0);
+                $totalRows = $import->total_rows + ($programsImport?->total_rows ?? 0) + ($enrollmentsImport?->total_rows ?? 0);
 
-                    Notification::make()
-                        ->title($action->getSuccessNotificationTitle())
-                        ->body(trans_choice('filament-actions::import.notifications.started.body', $totalRows, [
-                            'count' => Number::format($totalRows),
-                        ]))
-                        ->success()
-                        ->send();
-                }
+                Notification::make()
+                    ->title($action->getSuccessNotificationTitle())
+                    ->body(trans_choice('filament-actions::import.notifications.started.body', $totalRows, [
+                        'count' => Number::format($totalRows),
+                    ]))
+                    ->success()
+                    ->send();
             })
             ->registerModalActions([
                 ...(auth()->user()->can('import', Program::class) ? [
