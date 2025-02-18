@@ -37,7 +37,6 @@
 namespace AdvisingApp\Engagement\Observers;
 
 use AdvisingApp\Engagement\Models\EngagementFile;
-use App\Features\EngagementFilesCreatedByFeature;
 
 class EngagementFileObserver
 {
@@ -45,7 +44,7 @@ class EngagementFileObserver
     {
         $user = auth()->user();
 
-        if (EngagementFilesCreatedByFeature::active() && is_null($engagementFile->created_by_id)) {
+        if (is_null($engagementFile->created_by_id)) {
             $engagementFile->created_by_id = $user?->getKey();
             $engagementFile->created_by_type = $user?->getMorphClass();
         }
