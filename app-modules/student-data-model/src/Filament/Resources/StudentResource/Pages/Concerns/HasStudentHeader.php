@@ -73,8 +73,8 @@ trait HasStudentHeader
             ],
             'breadcrumbs' => $this->getBreadcrumbs(),
             'details' => [
-                ['Student', 'heroicon-m-user'],
-                ...(filled($student->preferred) ? [["Goes by \"{$student->preferred}\"", 'heroicon-m-heart']] : []),
+                ['Student', 'heroicon-m-user', null],
+                ...(filled($student->preferred) ? [["Goes by \"{$student->preferred}\"", 'heroicon-m-heart', null]] : []),
                 ...(
                     ProspectStudentRefactor::active()
                 ? ($student->primaryPhone ? [[$student->primaryPhone->number, 'heroicon-m-phone']] : [])
@@ -85,7 +85,7 @@ trait HasStudentHeader
                     ? ($student->primaryEmail ? [[$student->primaryEmail->address, 'heroicon-m-envelope']] : [])
                     : (filled($student->email) ? [[$student->email, 'heroicon-m-envelope']] : [])
                 ),
-                ...(filled($student->sisid) ? [[$student->sisid, 'heroicon-m-identification']] : []),
+                ...(filled($student->sisid) ? [[$student->sisid, 'heroicon-m-identification', null]] : []),
             ],
             'hasSisSystem' => $sisSettings->is_enabled && $sisSettings->sis_system,
             'educatable' => $student,
