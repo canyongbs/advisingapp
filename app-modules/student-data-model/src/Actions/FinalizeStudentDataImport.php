@@ -45,10 +45,6 @@ use Illuminate\Support\Str;
 
 class FinalizeStudentDataImport
 {
-    public function __construct(
-        protected CleanUpFailedStudentDataImportTables $cleanUpFailedStudentDataImportTables,
-    ) {}
-
     public function execute(
         Import $studentsImport,
         ?Import $programsImport = null,
@@ -64,24 +60,32 @@ class FinalizeStudentDataImport
 
         $totalFailedRowsCount = $studentsImportFailedRowsCount + $programsImportFailedRowsCount + $enrollmentsImportFailedRowsCount;
 
-        // if (! $totalFailedRowsCount) {
-        //     DB::transaction(function () use ($studentsImport, $programsImport, $enrollmentsImport) {
-        //         DB::statement('drop table "students"');
-        //         DB::statement("alter table \"import_{$studentsImport->getKey()}_students\" rename to \"students\"");
+        if (! $totalFailedRowsCount) {
+            DB::transaction(function () use ($studentsImport, $programsImport, $enrollmentsImport) {
+                DB::statement('drop table "students"');
+                DB::statement("alter table \"import_{$studentsImport->getKey()}_students\" rename to \"students\"");
 
-        //         if ($programsImport) {
-        //             DB::statement('drop table "programs"');
-        //             DB::statement("alter table \"import_{$programsImport->getKey()}_programs\" rename to \"programs\"");
-        //         }
+                if ($programsImport) {
+                    DB::statement('drop table "programs"');
+                    DB::statement("alter table \"import_{$programsImport->getKey()}_programs\" rename to \"programs\"");
+                }
 
-        //         if ($enrollmentsImport) {
-        //             DB::statement('drop table "enrollments"');
-        //             DB::statement("alter table \"import_{$enrollmentsImport->getKey()}_enrollments\" rename to \"enrollments\"");
-        //         }
-        //     });
-        // } else {
-        //     $this->cleanUpFailedStudentDataImportTables->execute($studentsImport, $programsImport, $enrollmentsImport);
-        // }
+                if ($enrollmentsImport) {
+                    DB::statement('drop table "enrollments"');
+                    DB::statement("alter table \"import_{$enrollmentsImport->getKey()}_enrollments\" rename to \"enrollments\"");
+                }
+            });
+        } else {
+            DB::statement("drop table if exists import_{$studentsImport->getKey()}_students");
+
+            if ($programsImport) {
+                DB::statement("drop table if exists import_{$programsImport->getKey()}_programs");
+            }
+
+            if ($enrollmentsImport) {
+                DB::statement("drop table if exists import_{$enrollmentsImport->getKey()}_enrollments");
+            }
+        }
 
         if (! $studentsImport->user instanceof Authenticatable) {
             return;

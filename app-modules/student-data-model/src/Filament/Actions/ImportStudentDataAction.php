@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Actions;
 
-use AdvisingApp\StudentDataModel\Actions\CleanUpFailedStudentDataImportTables;
 use AdvisingApp\StudentDataModel\Actions\CreateTemporaryStudentDataImportTables;
 use AdvisingApp\StudentDataModel\Actions\FinalizeStudentDataImport;
 use AdvisingApp\StudentDataModel\Filament\Imports\StudentEnrollmentImporter;
 use AdvisingApp\StudentDataModel\Filament\Imports\StudentImporter;
 use AdvisingApp\StudentDataModel\Filament\Imports\StudentProgramImporter;
+use AdvisingApp\StudentDataModel\Jobs\PrepareStudentDataCsvImport;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -55,7 +55,6 @@ use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
-use Filament\Support\ChunkIterator;
 use Illuminate\Bus\PendingBatch;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Foundation\Bus\PendingChain;
@@ -63,13 +62,10 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\HtmlString;
-use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use League\Csv\ByteSequence;
 use League\Csv\Reader as CsvReader;
-use League\Csv\Statement;
-use League\Csv\TabularDataReader;
 use League\Csv\Writer;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -266,53 +262,11 @@ class ImportStudentDataAction
                 $programsCsvFile = $data['programsFile'] ?? null;
                 $enrollmentsCsvFile = $data['enrollmentsFile'] ?? null;
 
-                $getCsvResults = function (?TemporaryUploadedFile $csvFile) use ($action): ?TabularDataReader {
-                    if (! $csvFile) {
-                        return null;
-                    }
-
-                    $csvStream = $action->getUploadedFileStream($csvFile);
-
-                    if (! $csvStream) {
-                        return null;
-                    }
-
-                    $csvReader = CsvReader::createFromStream($csvStream);
-
-                    if (filled($csvDelimiter = $action->getCsvDelimiter($csvReader))) {
-                        $csvReader->setDelimiter($csvDelimiter);
-                    }
-
-                    $csvReader->setHeaderOffset($action->getHeaderOffset() ?? 0);
-                    $csvResults = Statement::create()->process($csvReader);
-
-                    $totalRows = $csvResults->count();
-                    $maxRows = $action->getMaxRows() ?? $totalRows;
-
-                    if ($maxRows < $totalRows) {
-                        Notification::make()
-                            ->title(__('filament-actions::import.notifications.max_rows.title'))
-                            ->body(trans_choice('filament-actions::import.notifications.max_rows.body', $maxRows, [
-                                'count' => Number::format($maxRows),
-                            ]))
-                            ->danger()
-                            ->send();
-
-                        $action->halt();
-                    }
-
-                    return $csvResults;
-                };
-
-                $csvResults = $getCsvResults($csvFile);
-                $programsCsvResults = $getCsvResults($programsCsvFile);
-                $enrollmentsCsvResults = $getCsvResults($enrollmentsCsvFile);
-
                 $user = auth()->user();
 
-                [$import, $programsImport, $enrollmentsImport] = DB::transaction(function () use ($action, $csvFile, $programsCsvFile, $enrollmentsCsvFile, $csvResults, $programsCsvResults, $enrollmentsCsvResults, $user) {
-                    $makeImport = function (?TabularDataReader $csvResults, ?TemporaryUploadedFile $csvFile, ?string $importer = null) use ($action, $user): ?Import {
-                        if (! $csvResults) {
+                [$import, $programsImport, $enrollmentsImport] = DB::transaction(function () use ($action, $csvFile, $programsCsvFile, $enrollmentsCsvFile, $user) {
+                    $makeImport = function (?TemporaryUploadedFile $csvFile = null, ?string $importer = null) use ($action, $user): ?Import {
+                        if (! $csvFile) {
                             return null;
                         }
 
@@ -321,20 +275,18 @@ class ImportStudentDataAction
                         $import->file_name = $csvFile->getClientOriginalName();
                         $import->file_path = $csvFile->getRealPath();
                         $import->importer = $importer ?? $action->getImporter();
-                        $import->total_rows = $csvResults->count();
+                        $import->total_rows = 0;
                         $import->save();
 
                         return $import;
                     };
 
                     return [
-                        $makeImport($csvResults, $csvFile),
-                        $makeImport($programsCsvResults, $programsCsvFile, StudentProgramImporter::class),
-                        $makeImport($enrollmentsCsvResults, $enrollmentsCsvFile, StudentEnrollmentImporter::class),
+                        $makeImport($csvFile),
+                        $makeImport($programsCsvFile, StudentProgramImporter::class),
+                        $makeImport($enrollmentsCsvFile, StudentEnrollmentImporter::class),
                     ];
                 });
-
-                $job = $action->getJob();
 
                 $options = array_merge(
                     $action->getOptions(),
@@ -350,26 +302,6 @@ class ImportStudentDataAction
                 $import->unsetRelation('user');
                 $programsImport?->unsetRelation('user');
                 $enrollmentsImport?->unsetRelation('user');
-
-                $makeImportJobs = function (?TabularDataReader $csvResults, ?Import $import, ?array $columnMap) use ($action, $job, $options): ?array {
-                    if (! $csvResults) {
-                        return null;
-                    }
-
-                    $importChunkIterator = new ChunkIterator($csvResults->getRecords(), chunkSize: $action->getChunkSize());
-
-                    /** @var array<array<array<string, string>>> $importChunks */
-                    $importChunks = $importChunkIterator->get();
-
-                    return collect($importChunks)
-                        ->map(fn (array $importChunk): object => app($job, [
-                            'import' => $import,
-                            'rows' => base64_encode(serialize($importChunk)),
-                            'columnMap' => $columnMap,
-                            'options' => $options,
-                        ]))
-                        ->all();
-                };
 
                 $columnMap = $data['columnMap'];
                 $programsColumnMap = $data['programsColumnMap'] ?? null;
@@ -396,9 +328,9 @@ class ImportStudentDataAction
                 app(CreateTemporaryStudentDataImportTables::class)->execute($import, $programsImport, $enrollmentsImport);
 
                 Bus::batch([
-                    ...$makeImportJobs($csvResults, $import, $columnMap),
-                    ...($programsImport ? $makeImportJobs($programsCsvResults, $programsImport, $programsColumnMap) : []),
-                    ...($enrollmentsImport ? $makeImportJobs($enrollmentsCsvResults, $enrollmentsImport, $enrollmentsColumnMap) : []),
+                    new PrepareStudentDataCsvImport($import, $columnMap, $options),
+                    ...($programsImport ? [new PrepareStudentDataCsvImport($programsImport, $programsColumnMap, $options)] : []),
+                    ...($enrollmentsImport ? [new PrepareStudentDataCsvImport($enrollmentsImport, $enrollmentsColumnMap, $options)] : []),
                 ])
                     ->allowFailures()
                     ->when(
@@ -414,16 +346,11 @@ class ImportStudentDataAction
                         fn (PendingChain $chain) => $chain->onConnection($jobConnection),
                     )
                     ->finally(fn () => app(FinalizeStudentDataImport::class)->execute($import, $programsImport, $enrollmentsImport))
-                    ->catch(fn () => app(CleanUpFailedStudentDataImportTables::class)->execute($import, $programsImport, $enrollmentsImport))
                     ->dispatch();
 
-                $totalRows = $import->total_rows + ($programsImport?->total_rows ?? 0) + ($enrollmentsImport?->total_rows ?? 0);
-
                 Notification::make()
-                    ->title($action->getSuccessNotificationTitle())
-                    ->body(trans_choice('filament-actions::import.notifications.started.body', $totalRows, [
-                        'count' => Number::format($totalRows),
-                    ]))
+                    ->title('Import started')
+                    ->body('Your import has begun and will be processed in the background.')
                     ->success()
                     ->send();
             })
