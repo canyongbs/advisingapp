@@ -12,14 +12,17 @@
         failOnDeprecation="true"
 >
   <testsuites>
-    <testsuite name="Unit">
-      <directory suffix="Test.php">./tests/Unit</directory>
+    <testsuite name="Landlord">
+        <directory suffix="Test.php">./tests/Landlord</directory>
     </testsuite>
-    <testsuite name="Feature">
-      <directory suffix="Test.php">./tests/Feature</directory>
+    <testsuite name="Tenant">
+        <directory suffix="Test.php">./tests/Tenant</directory>
     </testsuite>
-    <testsuite name="Modules">
-      <directory suffix="Test.php">./app-modules/*/tests</directory>
+    <testsuite name="ModulesLandlord">
+        <directory suffix="Test.php">./app-modules/*/tests/Landlord</directory>
+    </testsuite>
+    <testsuite name="ModulesTenant">
+        <directory suffix="Test.php">./app-modules/*/tests/Tenant</directory>
     </testsuite>
   </testsuites>
   <php>

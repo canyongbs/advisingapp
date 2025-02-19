@@ -37,6 +37,7 @@
 namespace AdvisingApp\Webhook\Providers;
 
 use AdvisingApp\Webhook\Models\InboundWebhook;
+use AdvisingApp\Webhook\Models\LandlordInboundWebhook;
 use AdvisingApp\Webhook\WebhookPlugin;
 use Aws\Sns\MessageValidator;
 use Filament\Panel;
@@ -59,6 +60,7 @@ class WebhookServiceProvider extends ServiceProvider
     {
         Relation::morphMap([
             'inbound_webhook' => InboundWebhook::class,
+            'landlord_inbound_webhook' => LandlordInboundWebhook::class,
         ]);
     }
 }
