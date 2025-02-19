@@ -131,6 +131,11 @@ class PrepareStudentDataCsvImport implements ShouldQueue
         }
     }
 
+    public function getJobQueue(): ?string
+    {
+        return config('queue.import_export_queue');
+    }
+
     protected function detectCsvEncoding(mixed $resource): ?string
     {
         $fileHeader = fgets($resource);

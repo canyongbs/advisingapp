@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace App\Overrides\Filament\Actions\Imports\Jobs;
+namespace App\Overrides\Filament\Actions\Exports\Jobs;
 
 use Carbon\CarbonInterface;
 use Filament\Actions\Exports\Jobs\PrepareCsvExport;

@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace App\Overrides\Filament\Actions\Imports\Jobs;
+namespace App\Overrides\Filament\Actions\Exports\Jobs;
 
 use Carbon\CarbonInterface;
-use Filament\Actions\Imports\Jobs\ImportCsv;
+use Filament\Actions\Exports\Jobs\ExportCsv;
 
-class ImportCsvOverride extends ImportCsv
+class ExportCsvOverride extends ExportCsv
 {
     public int $tries = 2;
 

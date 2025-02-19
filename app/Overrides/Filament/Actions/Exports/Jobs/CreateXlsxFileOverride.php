@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace App\Overrides\Filament\Actions\Imports\Jobs;
+namespace App\Overrides\Filament\Actions\Exports\Jobs;
 
 use Carbon\CarbonInterface;
-use Filament\Actions\Imports\Jobs\ImportCsv;
+use Filament\Actions\Exports\Jobs\CreateXlsxFile;
 
-class ImportCsvOverride extends ImportCsv
+class CreateXlsxFileOverride extends CreateXlsxFile
 {
     public int $tries = 2;
 
@@ -51,13 +51,5 @@ class ImportCsvOverride extends ImportCsv
     public function getJobQueue(): ?string
     {
         return config('queue.import_export_queue');
-    }
-
-    /**
-     * @return array<int, object>
-     */
-    public function middleware(): array
-    {
-        return [];
     }
 }
