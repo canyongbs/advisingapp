@@ -34,44 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Division\Database\Factories;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\Division\Models\Division;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Factories\Factory;
-
-/**
- * @extends Factory<Division>
- */
-class DivisionFactory extends Factory
-{
-    /**
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+return new class extends Migration {
+    public function up(): void
     {
-        return [
-            'name' => fake()->unique()->company(),
-            'code' => fake()->unique()->word(),
-            'description' => fake()->optional()->sentences(asText: true),
-            'is_default' => false,
-        ];
-    }
-
-    public function default(): Factory
-    {
-        return $this->state(function (array $attributes) {
-            return [
-                'is_default' => true,
-            ];
+        Schema::table('divisions', function (Blueprint $table) {
+            $table->dropColumn(['header', 'footer']);
         });
     }
 
-    public function configure(): DivisionFactory|Factory
+    public function down(): void
     {
-        return $this->afterMaking(function (Division $division) {
-            $division->createdBy()->associate(fake()->randomElement([User::inRandomOrder()->first(), null]));
-            $division->lastUpdatedBy()->associate(fake()->randomElement([User::inRandomOrder()->first(), null]));
+        Schema::table('divisions', function (Blueprint $table) {
+            $table->longText('header')->nullable();
+            $table->longText('footer')->nullable();
         });
     }
-}
+};

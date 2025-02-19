@@ -48,7 +48,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
-use FilamentTiptapEditor\TiptapEditor;
 
 class EditDivision extends EditRecord
 {
@@ -71,14 +70,6 @@ class EditDivision extends EditRecord
                     ->string()
                     ->unique(ignoreRecord: true),
                 Textarea::make('description')
-                    ->string()
-                    ->columnSpanFull(),
-                TiptapEditor::make('header')
-                    ->disk('s3-public')
-                    ->string()
-                    ->columnSpanFull(),
-                TiptapEditor::make('footer')
-                    ->disk('s3-public')
                     ->string()
                     ->columnSpanFull(),
                 Select::make('notification_setting_id')

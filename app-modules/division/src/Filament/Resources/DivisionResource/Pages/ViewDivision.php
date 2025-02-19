@@ -90,12 +90,6 @@ class ViewDivision extends ViewRecord
                             ->label('Notification Setting')
                             ->color(fn (Division $record) => $record->notificationSetting?->setting ? 'primary' : null)
                             ->url(fn (Division $record) => $record->notificationSetting?->setting ? NotificationSettingResource::getUrl('edit', ['record' => $record->notificationSetting->setting]) : null),
-                        TextEntry::make('header')
-                            ->columnSpanFull()
-                            ->view('filament.infolists.components.html'),
-                        TextEntry::make('footer')
-                            ->columnSpanFull()
-                            ->view('filament.infolists.components.html'),
                     ])
                     ->columns(),
             ]);
