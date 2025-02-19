@@ -34,49 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Imports;
+namespace App\Overrides\Filament\Actions\Exports\Jobs;
 
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concerns\ImportColumns;
-use AdvisingApp\StudentDataModel\Models\Enrollment;
-use Filament\Actions\Imports\ImportColumn;
-use Filament\Actions\Imports\Importer;
-use Filament\Actions\Imports\Models\Import;
+use Carbon\CarbonInterface;
+use Filament\Actions\Exports\Jobs\CreateXlsxFile;
 
-class StudentEnrollmentImporter extends Importer
+class CreateXlsxFileOverride extends CreateXlsxFile
 {
-    use ImportColumns;
+    public int $tries = 2;
 
-    protected static ?string $model = Enrollment::class;
-
-    public static function getColumns(): array
+    public function retryUntil(): ?CarbonInterface
     {
-        return [
-            ImportColumn::make('sisid')
-                ->label('Student ID')
-                ->requiredMapping()
-                ->example('########')
-                ->rules([
-                    'required',
-                    'string',
-                    'max:255',
-                ]),
-            ...self::getEnrollmentColumns(),
-        ];
+        return null;
     }
 
-    public function resolveRecord(): ?Enrollment
+    public function getJobQueue(): ?string
     {
-        return (new Enrollment())->setTable("import_{$this->import->getKey()}_enrollments");
-    }
-
-    public static function getCompletedNotificationBody(Import $import): string
-    {
-        $body = 'Your enrollment import has completed and ' . number_format($import->successful_rows) . ' ' . str('row')->plural($import->successful_rows) . ' imported.';
-
-        if ($failedRowsCount = $import->getFailedRowsCount()) {
-            $body .= ' ' . number_format($failedRowsCount) . ' ' . str('row')->plural($failedRowsCount) . ' failed to import.';
-        }
-
-        return $body;
+        return config('queue.import_export_queue');
     }
 }

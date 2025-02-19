@@ -34,49 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Imports;
+namespace AdvisingApp\StudentDataModel\Actions;
 
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concerns\ImportColumns;
-use AdvisingApp\StudentDataModel\Models\Enrollment;
-use Filament\Actions\Imports\ImportColumn;
-use Filament\Actions\Imports\Importer;
-use Filament\Actions\Imports\Models\Import;
+use App\Models\Import;
+use Illuminate\Support\Facades\DB;
 
-class StudentEnrollmentImporter extends Importer
+class CreateTemporaryStudentDataImportTables
 {
-    use ImportColumns;
+    public function execute(
+        ?Import $studentsImport,
+        ?Import $programsImport = null,
+        ?Import $enrollmentsImport = null,
+    ): void {
+        DB::transaction(function () use ($studentsImport, $programsImport, $enrollmentsImport) {
+            DB::statement("create table \"import_{$studentsImport->getKey()}_students\" (like \"students\" including all)");
 
-    protected static ?string $model = Enrollment::class;
+            if ($programsImport) {
+                DB::statement("create table \"import_{$programsImport->getKey()}_programs\" (like \"programs\" including all)");
+            }
 
-    public static function getColumns(): array
-    {
-        return [
-            ImportColumn::make('sisid')
-                ->label('Student ID')
-                ->requiredMapping()
-                ->example('########')
-                ->rules([
-                    'required',
-                    'string',
-                    'max:255',
-                ]),
-            ...self::getEnrollmentColumns(),
-        ];
-    }
-
-    public function resolveRecord(): ?Enrollment
-    {
-        return (new Enrollment())->setTable("import_{$this->import->getKey()}_enrollments");
-    }
-
-    public static function getCompletedNotificationBody(Import $import): string
-    {
-        $body = 'Your enrollment import has completed and ' . number_format($import->successful_rows) . ' ' . str('row')->plural($import->successful_rows) . ' imported.';
-
-        if ($failedRowsCount = $import->getFailedRowsCount()) {
-            $body .= ' ' . number_format($failedRowsCount) . ' ' . str('row')->plural($failedRowsCount) . ' failed to import.';
-        }
-
-        return $body;
+            if ($enrollmentsImport) {
+                DB::statement("create table \"import_{$enrollmentsImport->getKey()}_enrollments\" (like \"enrollments\" including all)");
+            }
+        });
     }
 }

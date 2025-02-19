@@ -66,7 +66,7 @@ class StudentProgramImporter extends Importer
 
     public function resolveRecord(): ?Program
     {
-        return new Program();
+        return (new Program())->setTable("import_{$this->import->getKey()}_programs");
     }
 
     public static function getCompletedNotificationBody(Import $import): string

@@ -41,12 +41,18 @@ use AdvisingApp\Prospect\Models\PipelineStage;
 use App\Models\SystemUser;
 use App\Models\Tenant;
 use App\Notifications\ResetPasswordNotification;
+use App\Overrides\Filament\Actions\Exports\Jobs\CreateXlsxFileOverride;
+use App\Overrides\Filament\Actions\Exports\Jobs\ExportCompletionOverride;
+use App\Overrides\Filament\Actions\Exports\Jobs\ExportCsvOverride;
+use App\Overrides\Filament\Actions\Exports\Jobs\PrepareCsvExportOverride;
 use App\Overrides\Filament\Actions\Imports\Jobs\ImportCsvOverride;
-use App\Overrides\Filament\Actions\Imports\Jobs\PrepareCsvExportOverride;
 use App\Overrides\Laravel\PermissionMigrationCreator;
 use App\Overrides\Laravel\StartSession as OverrideStartSession;
 use App\Overrides\LastDragon_ru\LaraASP\GraphQL\SearchBy\Definitions\SearchByDirective as GraphQLSearchByDirectiveOverride;
 use App\Overrides\LastDragon_ru\LaraASP\GraphQL\SearchBy\Types\Condition as GraphQLSearchByTypesConditionOverride;
+use Filament\Actions\Exports\Jobs\CreateXlsxFile;
+use Filament\Actions\Exports\Jobs\ExportCompletion;
+use Filament\Actions\Exports\Jobs\ExportCsv;
 use Filament\Actions\Exports\Jobs\PrepareCsvExport;
 use Filament\Actions\Imports\Jobs\ImportCsv;
 use Filament\Notifications\Auth\ResetPassword;
@@ -81,6 +87,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(GraphQLSearchByDirectiveAlias::class, GraphQLSearchByDirectiveOverride::class);
         $this->app->bind(ImportCsv::class, ImportCsvOverride::class);
         $this->app->bind(PrepareCsvExport::class, PrepareCsvExportOverride::class);
+        $this->app->bind(ExportCsv::class, ExportCsvOverride::class);
+        $this->app->bind(ExportCompletion::class, ExportCompletionOverride::class);
+        $this->app->bind(CreateXlsxFile::class, CreateXlsxFileOverride::class);
         $this->app->bind(ResetPassword::class, ResetPasswordNotification::class);
 
         // Laravel Octane does not register the `ReloadCommand` when the application is not running in the console.

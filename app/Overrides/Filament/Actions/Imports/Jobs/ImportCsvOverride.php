@@ -52,4 +52,12 @@ class ImportCsvOverride extends ImportCsv
     {
         return config('queue.import_export_queue');
     }
+
+    /**
+     * @return array<int, object>
+     */
+    public function middleware(): array
+    {
+        return [];
+    }
 }
