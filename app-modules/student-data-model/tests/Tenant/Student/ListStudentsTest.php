@@ -34,6 +34,9 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
+use AdvisingApp\Alert\Models\Alert;
+use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ListStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
@@ -119,4 +122,59 @@ it('renders the CreateAction based on proper access', function () {
     livewire(ListStudents::class)
         ->assertOk()
         ->assertActionVisible(CreateAction::class);
+});
+
+it('can filter students by alerts', function () {
+    Student::truncate();
+
+    asSuperAdmin();
+
+    $activeStatusAlert = AlertStatus::factory()
+        ->state([
+            'name' => 'Active',
+            'classification' => SystemAlertStatusClassification::Active,
+        ])
+        ->create();
+
+    $inprogressStatusAlert = AlertStatus::factory()
+        ->state([
+            'name' => 'InProgress',
+            'classification' => SystemAlertStatusClassification::Active,
+        ])
+        ->create();
+
+    $studentWithStatusActive = Student::factory()->create();
+
+    $studentWithStatusInprogress = Student::factory()->create();
+
+    $activeAlerts = Alert::factory()
+        ->count(3)
+        ->for($studentWithStatusActive, 'concern')
+        ->state([
+            'status_id' => $activeStatusAlert->getKey(),
+        ])
+        ->create();
+
+    $inProgressAlerts = Alert::factory()
+        ->count(2)
+        ->for($studentWithStatusInprogress, 'concern')
+        ->state([
+            'status_id' => $inprogressStatusAlert->getKey(),
+        ])
+        ->create();
+
+    $studentsWithoutAlerts = Student::factory()->count(5)->create();
+
+    livewire(ListStudents::class)
+        ->set('tableRecordsPerPage', 10)
+        ->assertCanSeeTableRecords($studentsWithoutAlerts->merge([$studentWithStatusActive, $studentWithStatusInprogress]))
+        ->filterTable('alerts', [$activeStatusAlert, $inprogressStatusAlert])
+        ->assertCanSeeTableRecords([$studentWithStatusActive, $studentWithStatusInprogress])
+        ->assertCanNotSeeTableRecords($studentsWithoutAlerts)
+        ->resetTableFilters()
+        ->filterTable('alerts', [$activeStatusAlert])
+        ->assertCanSeeTableRecords([$studentWithStatusActive])
+        ->assertCanNotSeeTableRecords($studentsWithoutAlerts->merge([$studentWithStatusInprogress]))
+        ->removeTableFilter('alerts')
+        ->assertCanSeeTableRecords($studentsWithoutAlerts->merge([$studentWithStatusActive, $studentWithStatusInprogress]));
 });
