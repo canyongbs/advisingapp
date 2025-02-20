@@ -31,8 +31,8 @@
 
 </COPYRIGHT>
 */
-import axios from '@/Globals/Axios.js';
-import { useTokenStore } from '@/Stores/token.js';
+import axios from '../Globals/Axios.js';
+import { useTokenStore } from '../Stores/token.js';
 
 export function consumer() {
     async function get(endpoint, data = null) {

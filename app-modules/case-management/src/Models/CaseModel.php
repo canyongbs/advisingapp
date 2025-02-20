@@ -385,6 +385,11 @@ class CaseModel extends BaseModel implements Auditable, CanTriggerAutoSubscripti
         return $this->status->classification === SystemCaseClassification::Closed;
     }
 
+    public function feedback(): HasOne
+    {
+        return $this->hasOne(CaseFeedback::class, 'case_id');
+    }
+
     protected static function booted(): void
     {
         static::addGlobalScope('licensed', function (Builder $builder) {

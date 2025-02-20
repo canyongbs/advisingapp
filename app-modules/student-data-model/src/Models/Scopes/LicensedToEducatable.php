@@ -51,12 +51,15 @@ class LicensedToEducatable
 
     public function __invoke(Builder $query): void
     {
-        if (! auth()->check()) {
+        /** @var ?Authenticatable $user */
+        $user = auth('api')->user() ?? auth('web')->user();
+
+        if (! $user) {
             return;
         }
 
-        /** @var Authenticatable $user */
-        $user = auth()->user();
+        // /** @var Authenticatable $user */
+        // $user = auth()->user();
 
         $model = $query->getModel();
 

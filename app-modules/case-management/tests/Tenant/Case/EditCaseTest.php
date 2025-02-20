@@ -35,12 +35,18 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\EditCase;
 use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\CaseManagement\Models\CasePriority;
+use AdvisingApp\CaseManagement\Models\CaseStatus;
+use AdvisingApp\CaseManagement\Models\CaseType;
+use AdvisingApp\CaseManagement\Notifications\SendClosedCaseFeedbackNotification;
 use AdvisingApp\CaseManagement\Tests\Tenant\RequestFactories\EditCaseRequestFactory;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Illuminate\Support\Facades\Notification;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
@@ -240,4 +246,66 @@ test('EditCase is gated with proper feature access control', function () {
     expect($case->fresh()->only($request->except('division_id')->keys()->toArray()))
         ->toEqual($request->except('division_id')->toArray())
         ->and($case->fresh()->division->id)->toEqual($request['division_id']);
+});
+
+test('send feedback email if case is closed', function () {
+    Notification::fake();
+
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->caseManagement = true;
+
+    $settings->save();
+
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+
+    $case = CaseModel::factory()->create();
+
+    $user->givePermissionTo('case.view-any');
+    $user->givePermissionTo('case.*.update');
+
+    actingAs($user);
+
+    $request = collect(EditCaseRequestFactory::new([
+        'status_id' => CaseStatus::factory()->create([
+            'classification' => SystemCaseClassification::Closed,
+        ])->id,
+        'priority_id' => CasePriority::factory()->create([
+            'type_id' => CaseType::factory()->create([
+                'has_enabled_feedback_collection' => true,
+                'has_enabled_csat' => true,
+                'has_enabled_nps' => true,
+            ])->id,
+        ])->id,
+    ])->create());
+
+    livewire(EditCase::class, [
+        'record' => $case->getRouteKey(),
+    ])
+        ->fillForm($request->toArray())
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    assertDatabaseHas(
+        CaseModel::class,
+        $request->except(
+            [
+                'division_id',
+                'status_id',
+                'priority',
+            ]
+        )->toArray()
+    );
+
+    $case->refresh();
+
+    Notification::assertSentTo(
+        $case->respondent,
+        SendClosedCaseFeedbackNotification::class
+    );
+
+    Notification::assertNotSentTo(
+        [$user],
+        SendClosedCaseFeedbackNotification::class
+    );
 });

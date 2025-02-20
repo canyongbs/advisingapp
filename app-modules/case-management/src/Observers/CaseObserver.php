@@ -43,8 +43,11 @@ use AdvisingApp\CaseManagement\Exceptions\CaseNumberUpdateAttemptException;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Notifications\EducatableCaseClosedNotification;
 use AdvisingApp\CaseManagement\Notifications\EducatableCaseOpenedNotification;
+use AdvisingApp\CaseManagement\Notifications\SendClosedCaseFeedbackNotification;
 use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
+use App\Enums\Feature;
 use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 
 class CaseObserver
 {
@@ -87,6 +90,16 @@ class CaseObserver
             && $case->status->classification === SystemCaseClassification::Closed
         ) {
             $case->respondent->notify(new EducatableCaseClosedNotification($case));
+        }
+
+        if (
+            // PennantFeature::active('service-request-feedback') &&
+            Gate::check(Feature::CaseManagement->getGateName()) &&
+            $case?->priority?->type?->has_enabled_feedback_collection &&
+            $case?->status?->classification == SystemCaseClassification::Closed &&
+            ! $case?->feedback()->count()
+        ) {
+            $case->respondent->notify(new SendClosedCaseFeedbackNotification($case));
         }
     }
 }
