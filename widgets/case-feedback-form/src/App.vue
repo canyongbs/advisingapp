@@ -100,7 +100,8 @@ const submitForm = async (data, node) => {
             submittedSuccess.value = true;
         })
         .catch((error) => {
-            node.setErrors([error]);
+            const errorMessage = error.response?.data?.message || 'An error occurred. Please try again.';
+            node.setErrors([errorMessage]);
         });
 };
 
@@ -134,11 +135,9 @@ async function getForm() {
 
             feedbackSubmitted.value = response.data.feedback_submitted;
 
-            const { setRequiresAuthentication } = useAuthStore();
+            const { setPortalRequiresAuthentication } = useAuthStore();
 
-            setRequiresAuthentication(response.data.requires_authentication).then(() => {
-                requiresAuthentication.value = response.data.requires_authentication;
-            });
+            setPortalRequiresAuthentication((requiresAuthentication.value = response.data.requires_authentication));
 
             formRounding.value = {
                 none: {
@@ -179,9 +178,8 @@ async function getForm() {
             }[response.data.rounding ?? 'md'];
         })
         .catch((error) => {
-            errorLoading.value = true;
-            console.log(error);
-            // console.error(`Feedback ${error}`);
+            const errorMessage = error.response?.data?.message || 'An error occurred. Please try again.';
+            node.setErrors([errorMessage]);
         });
 }
 
@@ -189,7 +187,6 @@ async function authenticate(formData, node) {
     node.clearErrors();
 
     const { setToken } = useTokenStore();
-    const { setUser } = useAuthStore();
 
     const { isEmbeddedInAdvisingApp } = getAppContext(props.accessUrl);
 
@@ -220,13 +217,12 @@ async function authenticate(formData, node) {
 
                 if (response.data.success === true) {
                     setToken(response.data.token);
-                    setUser(response.data.user);
-
                     userIsAuthenticated.value = true;
                 }
             })
             .catch((error) => {
-                node.setErrors([error]);
+                const errorMessage = error.response?.data?.message || 'An error occurred. Please try again.';
+                node.setErrors([errorMessage]);
             });
 
         return;
@@ -255,7 +251,8 @@ async function authenticate(formData, node) {
             authentication.value.url = response.data.authentication_url;
         })
         .catch((error) => {
-            node.setErrors([error]);
+            const errorMessage = error.response?.data?.message || 'An error occurred. Please try again.';
+            node.setErrors([errorMessage]);
         });
 }
 </script>

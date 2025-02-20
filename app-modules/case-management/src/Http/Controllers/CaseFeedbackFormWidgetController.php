@@ -58,9 +58,9 @@ class CaseFeedbackFormWidgetController extends Controller
         Request $request,
         CaseModel $case,
     ): JsonResponse {
-        $contact = auth('contact')->user();
+        $submitter = auth('sanctum')->user();
 
-        abort_if(is_null($contact), Response::HTTP_UNAUTHORIZED);
+        abort_if(is_null($submitter), Response::HTTP_UNAUTHORIZED);
 
         $validator = Validator::make($request->all(), [
             'csat' => [Rule::requiredIf($case?->priority?->type?->has_enabled_csat), 'between:1,5'],
@@ -79,9 +79,9 @@ class CaseFeedbackFormWidgetController extends Controller
         $feedback = $case->feedback()->make([
             'csat_answer' => $data['csat'] ?? null,
             'nps_answer' => $data['nps'] ?? null,
+            'assignee_type' => $submitter->getMorphClass(),
+            'assignee_id' => $submitter->getKey(),
         ]);
-
-        $feedback->contact()->associate($contact);
 
         $feedback->save();
 
