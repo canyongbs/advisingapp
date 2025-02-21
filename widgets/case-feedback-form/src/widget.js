@@ -31,12 +31,12 @@
 
 </COPYRIGHT>
 */
-import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
-import './widget.css';
-import App from './App.vue';
 import { defaultConfig, plugin } from '@formkit/vue';
-import config from './formkit.config.js';
 import { createPinia } from 'pinia';
+import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
+import App from './App.vue';
+import config from './formkit.config.js';
+import './widget.css';
 
 customElements.define(
     'case-feedback-form-embed',
