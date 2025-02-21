@@ -88,7 +88,8 @@ class CreateDivision extends CreateRecord
                         return "The current default status is '{$currentDefault}', you are replacing it.";
                     })
                     ->hintColor('danger')
-                    ->columnStart(1),
+                    ->columnStart(1)
+                    ->live(),
             ]);
     }
 }
