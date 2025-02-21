@@ -113,7 +113,7 @@ return [
             'url' => env('AWS_S3_URL'),
             'endpoint' => env('AWS_S3_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_S3_USE_PATH_STYLE_ENDPOINT', false),
-            'throw' => false,
+            'throw' => true,
             'root' => env('AWS_S3_ROOT') . '/inbound-email',
             'media_library_visibility' => 'private',
         ],

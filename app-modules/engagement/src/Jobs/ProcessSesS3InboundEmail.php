@@ -3,6 +3,7 @@
 namespace AdvisingApp\Engagement\Jobs;
 
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
+use AdvisingApp\Engagement\Exceptions\SesS3InboundSpamOrVirusDetected;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Features\InboundEmailsUpdates;
@@ -89,6 +90,17 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
         $parser = (new Parser())
             ->setText($content);
 
+        if ($parser->getHeader('X-SES-Spam-Verdict') !== 'PASS' || $parser->getHeader('X-SES-Virus-Verdict') !== 'PASS') {
+            // TODO: Change the throwing errors and catch if this fails to move
+            Storage::disk('s3-inbound-email')->move($this->emailFilePath, '/spam-or-virus-detected/' . $this->emailFilePath);
+
+            report(new SesS3InboundSpamOrVirusDetected($this->emailFilePath, $parser->getHeader('X-SES-Spam-Verdict'), $parser->getHeader('X-SES-Virus-Verdict')));
+
+            return;
+        }
+
+        // Spam and virus check
+
         $matchedTenants = collect($parser->getAddresses('to'))
             ->pluck('address')
             ->map(function (string $address) {
@@ -138,6 +150,7 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
                         });
                     });
 
+                    // Throw an error if file failed to delete?
                     Storage::disk('s3-inbound-email')->delete($this->emailFilePath);
 
                     // If we found students and added records, we can stop here as Student records take final precedence over Prospect records.

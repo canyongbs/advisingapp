@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
+use AdvisingApp\Engagement\Exceptions\SesS3InboundSpamOrVirusDetected;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -98,9 +99,14 @@ class SesS3Test extends Command
 
             $parser->setText($content);
 
-            // Start new
+            if ($parser->getHeader('X-SES-Spam-Verdict') !== 'PASS' || $parser->getHeader('X-SES-Virus-Verdict') !== 'PASS') {
+                // TODO: Change the throwing errors and catch if this fails to move
+                Storage::disk('s3-inbound-email')->move($file, '/spam-or-virus-detected/' . $file);
 
-            // TODO: Check spam and virus status
+                report(new SesS3InboundSpamOrVirusDetected($file, $parser->getHeader('X-SES-Spam-Verdict'), $parser->getHeader('X-SES-Virus-Verdict')));
+
+                return;
+            }
 
             $matchedTenants = collect($parser->getAddresses('to'))
                 ->pluck('address')
