@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\Tenant;
 use Aws\Crypto\KmsMaterialsProviderV2;
 use Aws\Kms\KmsClient;
@@ -112,10 +114,43 @@ class SesS3Test extends Command
                 })
                 ->filter();
 
-            // TODO: Do something here to move the email to a failed folder
+            // TODO: Move the email to a failed folder and throw a custom exceptions saying that a Tenant match could not be found.
             throw_if($matchedTenants->isEmpty(), new Exception('No matching tenants found'));
 
-            var_dump($matchedTenants);
+            $sender = $parser->getAddresses('from')[0]['address'];
+
+            $matchedTenants->each(function (Tenant $tenant) use ($parser, $sender) {
+                $tenant->execute(function () use ($parser, $sender) {
+                    $students = Student::query()
+                        // This will need to be changed when we refactor email into a different table
+                        ->where('email', $sender)
+                        ->get();
+
+                    if ($students->isNotEmpty()) {
+                        $students->each(function (Student $student) use ($parser) {
+                            // Add a record
+                        });
+
+                        // TODO: Delete the email
+
+                        // If we found students and added records, we can stop here as Student records take final precedence over Prospect records.
+                        return;
+                    }
+
+                    $prospects = Prospect::query()
+                        // This will need to be changed when we refactor email into a different table
+                        ->where('email', $sender)
+                        ->get();
+
+                    if ($prospects->isEmpty()) {
+                        // TODO: Move the email to a failed folder and throw a custom exceptions saying that no matching Educatable record could be found.
+                    }
+
+                    $prospects->each(function (Prospect $prospect) use ($parser) {
+                        // Add a record
+                    });
+                });
+            });
         });
     }
 }

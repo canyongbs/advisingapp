@@ -10,8 +10,9 @@ use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use PhpMimeMailParser\Parser;
+use Spatie\Multitenancy\Jobs\NotTenantAware;
 
-class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique
+class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenantAware
 {
     use Queueable;
 
