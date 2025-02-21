@@ -118,7 +118,7 @@ class LegacyAiMessageLogResource extends Resource
                     DeleteBulkAction::make(),
                     ExportBulkAction::make()
                         ->exporter(LegacyAiMessageExporter::class)
-                        ->label('Export Records'),
+                        ->label('Export'),
                 ]),
             ])
             ->defaultSort('sent_at', 'desc');
