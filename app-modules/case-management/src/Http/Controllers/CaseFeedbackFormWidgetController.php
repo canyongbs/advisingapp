@@ -49,7 +49,7 @@ class CaseFeedbackFormWidgetController extends Controller
                 'footer_logo' => Vite::asset('resources/images/canyon-logo-light.svg'),
                 'primary_color' => Color::all()[$portalSettings->resource_hub_portal_primary_color ?? 'blue'],
                 'rounding' => $portalSettings->resource_hub_portal_rounding,
-                'case_title' => $case->title,
+                'case_number' => $case->case_number,
             ],
         );
     }

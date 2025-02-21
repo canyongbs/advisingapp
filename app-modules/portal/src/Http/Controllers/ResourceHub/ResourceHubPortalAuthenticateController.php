@@ -69,8 +69,8 @@ class ResourceHubPortalAuthenticateController extends Controller
         /** @var Student|Prospect $educatable */
         $educatable = $authentication->educatable;
 
-        $guard = $educatable instanceof Student ? 'student' : 'prospect';
-        Auth::guard($guard)->login($educatable);
+        // $guard = $educatable instanceof Student ? 'student' : 'prospect';
+        // Auth::guard($guard)->login($educatable);
 
         $token = $educatable->createToken('resource-hub-portal-access-token', [
             'resource-hub-portal',

@@ -52,7 +52,7 @@ const hasEnabledNps = ref(false);
 const headerLogo = ref('');
 const footerLogo = ref('');
 const appName = ref('');
-const caseTitle = ref('');
+const caseNumber = ref('');
 const authentication = ref({
     code: null,
     email: null,
@@ -131,7 +131,7 @@ async function getForm() {
 
             formSubmissionUrl.value = response.data.submission_url;
 
-            caseTitle.value = response.data.case_title;
+            caseNumber.value = response.data.case_number;
 
             feedbackSubmitted.value = response.data.feedback_submitted;
 
@@ -334,8 +334,8 @@ async function authenticate(formData, node) {
                         </div>
                         <div v-else class="flex flex-col w-full">
                             <div class="mb-4">
-                                Thank you for filling out this brief survey on your case titled:
-                                {{ caseTitle }}
+                                Thank you for filling out this brief survey on your case:
+                                {{ caseNumber }}
                             </div>
 
                             <FormKit type="form" @submit="submitForm">

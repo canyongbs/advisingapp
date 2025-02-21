@@ -58,9 +58,6 @@ class LicensedToEducatable
             return;
         }
 
-        // /** @var Authenticatable $user */
-        // $user = auth()->user();
-
         $model = $query->getModel();
 
         if (

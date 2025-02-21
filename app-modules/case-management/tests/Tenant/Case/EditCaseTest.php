@@ -269,14 +269,14 @@ test('send feedback email if case is closed', function () {
     $request = collect(EditCaseRequestFactory::new([
         'status_id' => CaseStatus::factory()->create([
             'classification' => SystemCaseClassification::Closed,
-        ])->id,
+        ])->getKey(),
         'priority_id' => CasePriority::factory()->create([
             'type_id' => CaseType::factory()->create([
                 'has_enabled_feedback_collection' => true,
                 'has_enabled_csat' => true,
                 'has_enabled_nps' => true,
-            ])->id,
-        ])->id,
+            ])->getKey(),
+        ])->getKey(),
     ])->create());
 
     livewire(EditCase::class, [

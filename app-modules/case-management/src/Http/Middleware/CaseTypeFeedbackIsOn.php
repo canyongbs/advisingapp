@@ -2,7 +2,6 @@
 
 namespace AdvisingApp\CaseManagement\Http\Middleware;
 
-use App\Settings\LicenseSettings;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,10 +17,8 @@ class CaseTypeFeedbackIsOn
     {
         $case = $request->route('case');
 
-        if (app(LicenseSettings::class)->data->addons->caseManagement) {
-            if ($case && $case?->priority?->type?->has_enabled_feedback_collection) {
-                return $next($request);
-            }
+        if ($case && $case?->priority?->type?->has_enabled_feedback_collection) {
+            return $next($request);
         }
 
         return response()->json(['error' => 'Feedback collection is not enabled for this case.'], 403);
