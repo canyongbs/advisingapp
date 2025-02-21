@@ -1,4 +1,4 @@
-/*
+<!--
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -30,45 +30,34 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
-import axios from '../Globals/Axios.js';
-import { useTokenStore } from '../Stores/token.js';
+-->
+<script setup>
+import { defineProps } from 'vue';
 
-export function consumer() {
-    async function get(endpoint, data = null) {
-        const { getToken } = useTokenStore();
+const props = defineProps({
+    logo: {
+        type: String,
+        required: true,
+    },
+});
+</script>
 
-        let token = await getToken();
+<template>
+    <div class="flex w-full flex-col">
+        <div class="mt-4 flex w-full justify-center">
+            <img class="block h-5" :src="logo" alt="Advising App Logo" />
+        </div>
 
-        return await axios
-            .get(endpoint, {
-                headers: { Authorization: `Bearer ${token}` },
-                params: data,
-            })
-            .then((response) => {
-                return response;
-            })
-            .catch((error) => {
-                return Promise.reject(error);
-            });
-    }
+        <div class="flex w-full justify-center pb-4 pt-2">
+            <span class="w-11/12 text-center text-xs lg:w-3/4 xl:w-7/12">
+                © 2016-{{ new Date().getFullYear() }} Canyon GBS LLC. All Rights Reserved. Canyon GBS™ and Advising
+                App™ are trademarks of Canyon GBS LLC. For more information or inquiries, please visit our website at
+                <a class="text-blue-600 underline dark:text-blue-400" href="https://canyongbs.com/"
+                    >https://canyongbs.com/</a
+                >.
+            </span>
+        </div>
+    </div>
+</template>
 
-    async function post(endpoint, data) {
-        const { getToken } = useTokenStore();
-
-        let token = await getToken();
-
-        return await axios
-            .post(endpoint, data, {
-                headers: { Authorization: `Bearer ${token}` },
-            })
-            .then((response) => {
-                return response;
-            })
-            .catch((error) => {
-                return Promise.reject(error);
-            });
-    }
-
-    return { get, post };
-}
+<style scoped></style>

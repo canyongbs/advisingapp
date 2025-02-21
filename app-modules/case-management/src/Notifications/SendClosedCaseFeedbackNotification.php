@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,44 +33,35 @@
 
 </COPYRIGHT>
 */
-import axios from '../Globals/Axios.js';
-import { useTokenStore } from '../Stores/token.js';
 
-export function consumer() {
-    async function get(endpoint, data = null) {
-        const { getToken } = useTokenStore();
+namespace AdvisingApp\CaseManagement\Notifications;
 
-        let token = await getToken();
+use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
-        return await axios
-            .get(endpoint, {
-                headers: { Authorization: `Bearer ${token}` },
-                params: data,
-            })
-            .then((response) => {
-                return response;
-            })
-            .catch((error) => {
-                return Promise.reject(error);
-            });
+class SendClosedCaseFeedbackNotification extends Notification
+{
+    public function __construct(
+        protected CaseModel $case,
+    ) {}
+
+    /**
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
+    {
+        return ['mail'];
     }
 
-    async function post(endpoint, data) {
-        const { getToken } = useTokenStore();
-
-        let token = await getToken();
-
-        return await axios
-            .post(endpoint, data, {
-                headers: { Authorization: `Bearer ${token}` },
-            })
-            .then((response) => {
-                return response;
-            })
-            .catch((error) => {
-                return Promise.reject(error);
-            });
+    public function toMail(object $notifiable): MailMessage
+    {
+        return MailMessage::make()
+            ->subject("Feedback survey for {$this->case->case_number}")
+            ->greeting("Hi {$notifiable->display_name},")
+            ->line('To help us serve you better in the future, we’d love to hear about your experience with our support team.')
+            ->action('Rate Service', route('feedback.case', $this->case->id))
+            ->line('We appreciate your time and we value your feedback!')
+            ->salutation('Thank you.');
     }
-
-    return { get, post };
 }

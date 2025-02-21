@@ -150,6 +150,18 @@ class ViewCase extends ViewRecord
                         ]),
                     ])
                     ->columns(2),
+
+                Section::make('Feedback')
+                    ->visible(fn (CaseModel $record): bool => $record->feedback()->exists())
+                    ->schema([
+                        TextEntry::make('feedback.csat_answer')
+                            ->label('CSAT')
+                            ->badge(),
+                        TextEntry::make('feedback.nps_answer')
+                            ->label('NPS')
+                            ->badge(),
+                    ])
+                    ->columns(),
                 Section::make('Form Submission Details')
                     ->collapsed()
                     ->visible(fn (CaseModel $record): bool => ! is_null($record->caseFormSubmission))

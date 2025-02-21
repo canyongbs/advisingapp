@@ -31,7 +31,7 @@
 
 </COPYRIGHT>
 */
-import { consumer } from '@/Services/Consumer.js';
+import { consumer } from './Consumer.js';
 
 async function determineIfUserIsAuthenticated(endpoint) {
     const { get } = consumer();

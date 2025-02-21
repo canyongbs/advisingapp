@@ -14,7 +14,8 @@
         "build:case-form": "(cd widgets/case-form && vite build)",
         "build:survey": "(cd widgets/survey && vite build)",
         "build:vite": "vite build",
-        "build:widgets": "npm run build:application && npm run build:form && npm run build:survey && npm run build:event-registration && npm run build:case-form",
+        "build:case-feedback-form": "(cd widgets/case-feedback-form && vite build)",
+        "build:widgets": "npm run build:application && npm run build:form && npm run build:survey && npm run build:event-registration && npm run build:case-form && npm run build:case-feedback-form",
         "dev": "vite",
         "dev:application": "(cd widgets/application && vite)",
         "dev:form": "(cd widgets/form && vite)"

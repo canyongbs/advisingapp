@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\CaseManagement\Livewire\RenderCaseFeedbackForm;
 use AdvisingApp\CaseManagement\Livewire\RenderCaseForm;
 use Illuminate\Support\Facades\Route;
 
@@ -44,3 +45,7 @@ Route::middleware('web')
         Route::get('/{caseForm}/respond', RenderCaseForm::class)
             ->name('show');
     });
+
+Route::get('/cases/{case}/feedback/', RenderCaseFeedbackForm::class)
+    ->middleware('web')
+    ->name('feedback.case');

@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,44 +33,37 @@
 
 </COPYRIGHT>
 */
-import axios from '../Globals/Axios.js';
-import { useTokenStore } from '../Stores/token.js';
 
-export function consumer() {
-    async function get(endpoint, data = null) {
-        const { getToken } = useTokenStore();
+namespace AdvisingApp\Form\Actions;
 
-        let token = await getToken();
+use AdvisingApp\CaseManagement\Models\CaseModel;
+use Illuminate\Support\Facades\URL;
 
-        return await axios
-            .get(endpoint, {
-                headers: { Authorization: `Bearer ${token}` },
-                params: data,
-            })
-            .then((response) => {
-                return response;
-            })
-            .catch((error) => {
-                return Promise.reject(error);
-            });
+class GenerateCaseFeedbackFormEmbedCode
+{
+    public function handle(CaseModel $case): string
+    {
+        $scriptUrl = url('js/widgets/case-feedback-form/advising-app-case-feedback-form-widget.js?');
+
+        $formDefinitionUrl = URL::to(
+            URL::signedRoute(
+                name: 'cases.feedback.define',
+                parameters: ['case' => $case],
+                absolute: false,
+            )
+        );
+
+        $portalAccessUrl = route('portal.resource-hub.show');
+
+        $userAuthenticationUrl = route('api.user.auth-check');
+
+        $appUrl = config('app.url');
+
+        $apiUrl = route('api.portal.resource-hub.define');
+
+        return <<<EOD
+        <case-feedback-form-embed url="{$formDefinitionUrl}" user-authentication-url={$userAuthenticationUrl} access-url={$portalAccessUrl} app-url="{$appUrl}" api-url="{$apiUrl}"></case-feedback-form-embed>
+        <script src="{$scriptUrl}"></script>
+        EOD;
     }
-
-    async function post(endpoint, data) {
-        const { getToken } = useTokenStore();
-
-        let token = await getToken();
-
-        return await axios
-            .post(endpoint, data, {
-                headers: { Authorization: `Bearer ${token}` },
-            })
-            .then((response) => {
-                return response;
-            })
-            .catch((error) => {
-                return Promise.reject(error);
-            });
-    }
-
-    return { get, post };
 }

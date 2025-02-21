@@ -75,9 +75,19 @@ class EditCaseType extends EditRecord
                                     ->live(),
                                 Toggle::make('has_enabled_csat')
                                     ->label('CSAT')
+                                    ->live()
+                                    ->validationMessages([
+                                        'accepted' => 'At least one option must be accepted, CSAT or NPS.',
+                                    ])
+                                    ->accepted(fn (Get $get) => ! $get('has_enabled_nps') ? true : false)
                                     ->visible(fn (Get $get) => $get('has_enabled_feedback_collection')),
                                 Toggle::make('has_enabled_nps')
                                     ->label('NPS')
+                                    ->live()
+                                    ->validationMessages([
+                                        'accepted' => 'At least one option must be accepted, CSAT or NPS.',
+                                    ])
+                                    ->accepted(fn (Get $get) => ! $get('has_enabled_csat') ? true : false)
                                     ->visible(fn (Get $get) => $get('has_enabled_feedback_collection')),
                             ]),
                     ]),

@@ -50,6 +50,7 @@ class VerifyCsrfToken extends Middleware
         '/api/applications/*',
         '/api/surveys/*',
         '/api/event-registration/*',
+        '/api/cases/*',
         '/graphql/*',
     ];
 }

@@ -1,4 +1,4 @@
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -30,45 +30,13 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
-import axios from '../Globals/Axios.js';
-import { useTokenStore } from '../Stores/token.js';
+--}}
+@php
+    use AdvisingApp\Form\Actions\GenerateCaseFeedbackFormEmbedCode;
+@endphp
 
-export function consumer() {
-    async function get(endpoint, data = null) {
-        const { getToken } = useTokenStore();
-
-        let token = await getToken();
-
-        return await axios
-            .get(endpoint, {
-                headers: { Authorization: `Bearer ${token}` },
-                params: data,
-            })
-            .then((response) => {
-                return response;
-            })
-            .catch((error) => {
-                return Promise.reject(error);
-            });
-    }
-
-    async function post(endpoint, data) {
-        const { getToken } = useTokenStore();
-
-        let token = await getToken();
-
-        return await axios
-            .post(endpoint, data, {
-                headers: { Authorization: `Bearer ${token}` },
-            })
-            .then((response) => {
-                return response;
-            })
-            .catch((error) => {
-                return Promise.reject(error);
-            });
-    }
-
-    return { get, post };
-}
+<div class="flex items-center justify-center">
+    <div class="w-full max-w-full">
+        {!! resolve(GenerateCaseFeedbackFormEmbedCode::class)->handle($this->case) !!}
+    </div>
+</div>
