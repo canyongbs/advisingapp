@@ -133,9 +133,13 @@ class EngagementsRelationManager extends RelationManager
                     ]),
             ],
             EngagementResponse::class => [
-                TextEntry::make('body')
-                    ->getStateUsing(fn (Timeline $record): HtmlString => $record->timelineable->getBody())
-                    ->columnSpanFull(),
+                Section::make('Body')
+                    ->schema([
+                        TextEntry::make('body')
+                            ->getStateUsing(fn (Timeline $record): HtmlString => $record->timelineable->getBody())
+                            ->label('')
+                            ->columnSpanFull(),
+                    ]),
                 TextEntry::make('sent_at')
                     ->getStateUsing(fn (Timeline $record): string => $record->timelineable->sent_at)
                     ->dateTime('Y-m-d H:i:s'),

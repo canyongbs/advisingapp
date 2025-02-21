@@ -55,6 +55,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 use OwenIt\Auditing\Contracts\Auditable;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
 
 /**
  * @mixin IdeHelperEngagementResponse
@@ -93,7 +95,16 @@ class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeli
 
     public function getBody(): HtmlString
     {
-        return str($this->content)->sanitizeHtml()->toHtmlString();
+        return str(
+            (new HtmlSanitizer(
+                (new HtmlSanitizerConfig())
+                    ->allowSafeElements()
+                    ->forceHttpsUrls()
+                    ->withMaxInputLength(500000)
+            ))
+                ->sanitize($this->content)
+        )
+            ->toHtmlString();
     }
 
     public function sender(): MorphTo

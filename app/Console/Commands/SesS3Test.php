@@ -95,6 +95,10 @@ class SesS3Test extends Command
 
             $parser->setText($content);
 
+            // Start new
+
+            // TODO: Check spam and virus status
+
             $matchedTenants = collect($parser->getAddresses('to'))
                 ->pluck('address')
                 ->map(function (string $address) {
@@ -128,7 +132,14 @@ class SesS3Test extends Command
 
                     if ($students->isNotEmpty()) {
                         $students->each(function (Student $student) use ($parser) {
-                            // Add a record
+                            $student->engagementResponses()
+                                ->create([
+                                    'content' => $parser->getMessageBody('htmlEmbedded'),
+                                    'sent_at' => $parser->getHeader('date'),
+                                    // TODO: Store raw email content
+                                ]);
+
+                            // TODO: Store attachments
                         });
 
                         // TODO: Delete the email
@@ -147,7 +158,14 @@ class SesS3Test extends Command
                     }
 
                     $prospects->each(function (Prospect $prospect) use ($parser) {
-                        // Add a record
+                        $prospect->engagementResponses()
+                            ->create([
+                                'content' => $parser->getMessageBody('htmlEmbedded'),
+                                'sent_at' => $parser->getHeader('date'),
+                                // TODO: Store raw email content
+                            ]);
+
+                        // TODO: Store attachments
                     });
                 });
             });
