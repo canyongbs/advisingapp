@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concerns;
 
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
 use AdvisingApp\StudentDataModel\Actions\DeleteStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;

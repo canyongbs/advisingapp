@@ -254,9 +254,9 @@ class EngagementsRelationManager extends RelationManager
             || auth()->user()->can('viewAny', EngagementResponse::class);
     }
 
-    #[On('openmessagepopup')]
-    public function handleTriggeredEvent()
+    #[On('openengagementaction')]
+    public function handleTriggeredEvent($type, $id)
     {
-        $this->mountTableAction('engage');
+        $this->mountTableAction(name: 'engage', arguments: ['type' => $type, 'id' => $id]);
     }
 }
