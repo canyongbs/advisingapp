@@ -86,7 +86,7 @@ class CaseFeedbackFormWidgetController extends Controller
         $feedback->save();
 
         return response()->json([
-            'message' => 'Service Request feedback submitted successfully.',
+            'message' => 'Case feedback submitted successfully.',
         ]);
     }
 }
