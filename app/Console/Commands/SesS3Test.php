@@ -48,7 +48,7 @@ class SesS3Test extends Command
             );
 
             // TODO: Set the KMS key ID, this is best practice and we will need to store it as an ENV variable
-            $kmsKeyId = '';
+            $kmsKeyId = config('services.kms.ses_s3_key_id');
             $materialsProvider = new KmsMaterialsProviderV2(
                 new KmsClient([
                     'credentials' => [
@@ -65,7 +65,6 @@ class SesS3Test extends Command
             $cipherOptions = [
                 'Cipher' => 'gcm',
                 'KeySize' => 256,
-                // Additional configuration options
             ];
 
             // Needed to suppress warnings from the SDK. SES encrypts using V1 so we need @SecurityProfile to be V2_AND_LEGACY
