@@ -47,7 +47,6 @@ class SesS3Test extends Command
                 ])
             );
 
-            // TODO: Set the KMS key ID, this is best practice and we will need to store it as an ENV variable
             $kmsKeyId = config('services.kms.ses_s3_key_id');
             $materialsProvider = new KmsMaterialsProviderV2(
                 new KmsClient([
