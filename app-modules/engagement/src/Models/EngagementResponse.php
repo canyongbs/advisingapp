@@ -57,6 +57,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
 
@@ -64,10 +66,11 @@ use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
  * @mixin IdeHelperEngagementResponse
  */
 #[ObservedBy([EngagementResponseObserver::class])]
-class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeline, HasDeliveryMethod
+class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeline, HasDeliveryMethod, HasMedia
 {
     use AuditableTrait;
     use SoftDeletes;
+    use InteractsWithMedia;
 
     protected $fillable = [
         'sender_id',
@@ -83,6 +86,11 @@ class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeli
         'sent_at' => 'datetime',
         'type' => EngagementResponseType::class,
     ];
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('attachments');
+    }
 
     public function timelineRecord(): MorphOne
     {

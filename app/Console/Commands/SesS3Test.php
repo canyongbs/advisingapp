@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
+use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\Tenant;
@@ -14,6 +15,7 @@ use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use PhpMimeMailParser\Attachment;
 use PhpMimeMailParser\Parser;
 
 class SesS3Test extends Command
@@ -124,8 +126,8 @@ class SesS3Test extends Command
 
             $sender = $parser->getAddresses('from')[0]['address'];
 
-            $matchedTenants->each(function (Tenant $tenant) use ($parser, $content, $sender) {
-                $tenant->execute(function () use ($parser, $content, $sender) {
+            $matchedTenants->each(function (Tenant $tenant) use ($parser, $content, $sender, $file) {
+                $tenant->execute(function () use ($parser, $content, $sender, $file) {
                     $students = Student::query()
                         // This will need to be changed when we refactor email into a different table
                         ->where('email', $sender)
@@ -133,7 +135,8 @@ class SesS3Test extends Command
 
                     if ($students->isNotEmpty()) {
                         $students->each(function (Student $student) use ($parser, $content) {
-                            $student->engagementResponses()
+                            /** @var EngagementResponse $engagementResponse */
+                            $engagementResponse = $student->engagementResponses()
                                 ->create([
                                     'subject' => $parser->getHeader('subject'),
                                     'content' => $parser->getMessageBody('htmlEmbedded'),
@@ -142,10 +145,13 @@ class SesS3Test extends Command
                                     'raw' => $content,
                                 ]);
 
-                            // TODO: Store attachments
+                            collect($parser->getAttachments())->each(function (Attachment $attachment) use ($engagementResponse) {
+                                $engagementResponse->addMediaFromStream($attachment->getStream())
+                                    ->toMediaCollection('attachments');
+                            });
                         });
 
-                        // TODO: Delete the email
+                        Storage::disk('s3-inbound-email')->delete($file);
 
                         // If we found students and added records, we can stop here as Student records take final precedence over Prospect records.
                         return;
@@ -161,7 +167,8 @@ class SesS3Test extends Command
                     }
 
                     $prospects->each(function (Prospect $prospect) use ($parser, $content) {
-                        $prospect->engagementResponses()
+                        /** @var EngagementResponse $engagementResponse */
+                        $engagementResponse = $prospect->engagementResponses()
                             ->create([
                                 'subject' => $parser->getHeader('subject'),
                                 'content' => $parser->getMessageBody('htmlEmbedded'),
@@ -170,8 +177,16 @@ class SesS3Test extends Command
                                 'raw' => $content,
                             ]);
 
-                        // TODO: Store attachments
+                        collect($parser->getAttachments())->each(function (Attachment $attachment) use ($engagementResponse) {
+                            $engagementResponse->addMediaFromStream($attachment->getStream())
+                                ->setName($attachment->getFilename())
+                                ->setFileName($attachment->getFilename())
+                                ->toMediaCollection('attachments');
+                        });
                     });
+
+                    // Throw an error if file failed to delete?
+                    Storage::disk('s3-inbound-email')->delete($file);
                 });
             });
         });
