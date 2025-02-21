@@ -2,12 +2,16 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Tenant;
 use Aws\Crypto\KmsMaterialsProviderV2;
 use Aws\Kms\KmsClient;
 use Aws\S3\Crypto\S3EncryptionClientV2;
 use Aws\S3\S3Client;
+use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use PhpMimeMailParser\Parser;
 
 class SesS3Test extends Command
 {
@@ -30,9 +34,9 @@ class SesS3Test extends Command
      */
     public function handle()
     {
-        $s3 = Storage::disk('s3');
-        $files = collect($s3->files('inbound-email'))
-            ->filter(fn (string $file) => $file !== 'inbound-email/AMAZON_SES_SETUP_NOTIFICATION');
+        $s3 = Storage::disk('s3-inbound-email');
+        $files = collect($s3->files())
+            ->filter(fn (string $file) => $file !== 'AMAZON_SES_SETUP_NOTIFICATION');
 
         // This is where we would dispatch a Unique job per file to process the email then delete it
 
@@ -60,7 +64,7 @@ class SesS3Test extends Command
             );
 
             $bucket = config('filesystems.disks.s3.bucket');
-            $key = config('filesystems.disks.s3.root') . '/' . $file;
+            $key = config('filesystems.disks.s3-inbound-email.root') . '/' . $file;
             $cipherOptions = [
                 'Cipher' => 'gcm',
                 'KeySize' => 256,
@@ -85,8 +89,33 @@ class SesS3Test extends Command
             // Get the content as a string
             $content = $result['Body']->getContents();
 
-            // Now you can work with the actual content
-            $this->info($content);
+            $parser = new Parser();
+
+            $parser->setText($content);
+
+            $matchedTenants = collect($parser->getAddresses('to'))
+                ->pluck('address')
+                ->map(function (string $address) {
+                    $localPart = filter_var($address, FILTER_VALIDATE_EMAIL) ? explode('@', $address)[0] : null;
+
+                    if ($localPart === null) {
+                        return null;
+                    }
+
+                    return Tenant::query()
+                        ->where(
+                            DB::raw('LOWER(domain)'),
+                            'like',
+                            strtolower("{$localPart}.%")
+                        )
+                        ->first();
+                })
+                ->filter();
+
+            // TODO: Do something here to move the email to a failed folder
+            throw_if($matchedTenants->isEmpty(), new Exception('No matching tenants found'));
+
+            var_dump($matchedTenants);
         });
     }
 }
