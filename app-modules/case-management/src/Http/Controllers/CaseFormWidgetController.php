@@ -130,8 +130,7 @@ class CaseFormWidgetController extends Controller
         ]);
     }
 
-    // public function authenticate(Request $request, CaseForm $caseForm, CaseFormAuthentication $authentication): JsonResponse
-    public function authenticate(Request $request, CaseFormAuthentication $authentication): JsonResponse
+    public function authenticate(Request $request, CaseForm $caseForm, CaseFormAuthentication $authentication): JsonResponse
     {
         if ($authentication->isExpired()) {
             return response()->json([

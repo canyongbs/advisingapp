@@ -2,6 +2,7 @@
 
 namespace AdvisingApp\CaseManagement\Http\Middleware;
 
+use App\Features\CaseFeedback;
 use App\Settings\LicenseSettings;
 use Closure;
 use Illuminate\Http\Request;
@@ -16,7 +17,7 @@ class FeedbackManagementIsOn
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (! app(LicenseSettings::class)->data->addons->caseManagement) {
+        if (! CaseFeedback::active() && ! app(LicenseSettings::class)->data->addons->caseManagement) {
             return response()->json(['error' => 'Feedback Management is not enabled.'], 403);
         }
 
