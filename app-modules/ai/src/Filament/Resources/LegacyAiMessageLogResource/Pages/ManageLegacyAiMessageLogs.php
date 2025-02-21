@@ -51,8 +51,7 @@ class ManageLegacyAiMessageLogs extends ManageRecords
     {
         return [
             ExportAction::make()
-                ->exporter(LegacyAiMessageExporter::class)
-                ->label('Export'),
+                ->exporter(LegacyAiMessageExporter::class),
         ];
     }
 }
