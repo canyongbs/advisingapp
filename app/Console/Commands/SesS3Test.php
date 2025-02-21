@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\Tenant;
@@ -123,20 +124,22 @@ class SesS3Test extends Command
 
             $sender = $parser->getAddresses('from')[0]['address'];
 
-            $matchedTenants->each(function (Tenant $tenant) use ($parser, $sender) {
-                $tenant->execute(function () use ($parser, $sender) {
+            $matchedTenants->each(function (Tenant $tenant) use ($parser, $content, $sender) {
+                $tenant->execute(function () use ($parser, $content, $sender) {
                     $students = Student::query()
                         // This will need to be changed when we refactor email into a different table
                         ->where('email', $sender)
                         ->get();
 
                     if ($students->isNotEmpty()) {
-                        $students->each(function (Student $student) use ($parser) {
+                        $students->each(function (Student $student) use ($parser, $content) {
                             $student->engagementResponses()
                                 ->create([
+                                    'subject' => $parser->getHeader('subject'),
                                     'content' => $parser->getMessageBody('htmlEmbedded'),
                                     'sent_at' => $parser->getHeader('date'),
-                                    // TODO: Store raw email content
+                                    'type' => EngagementResponseType::Email,
+                                    'raw' => $content,
                                 ]);
 
                             // TODO: Store attachments
@@ -157,12 +160,14 @@ class SesS3Test extends Command
                         // TODO: Move the email to a failed folder and throw a custom exceptions saying that no matching Educatable record could be found.
                     }
 
-                    $prospects->each(function (Prospect $prospect) use ($parser) {
+                    $prospects->each(function (Prospect $prospect) use ($parser, $content) {
                         $prospect->engagementResponses()
                             ->create([
+                                'subject' => $parser->getHeader('subject'),
                                 'content' => $parser->getMessageBody('htmlEmbedded'),
                                 'sent_at' => $parser->getHeader('date'),
-                                // TODO: Store raw email content
+                                'type' => EngagementResponseType::Email,
+                                'raw' => $content,
                             ]);
 
                         // TODO: Store attachments

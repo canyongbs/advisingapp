@@ -37,6 +37,7 @@
 namespace AdvisingApp\Engagement\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
 use AdvisingApp\Engagement\Observers\EngagementResponseObserver;
 use AdvisingApp\Notification\Enums\NotificationChannel;
@@ -45,6 +46,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Timeline\Models\Timeline;
 use AdvisingApp\Timeline\Timelines\EngagementResponseTimeline;
+use App\Features\InboundEmailsUpdates;
 use App\Models\BaseModel;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -72,10 +74,14 @@ class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeli
         'sender_type',
         'content',
         'sent_at',
+        'subject',
+        'type',
+        'raw',
     ];
 
     protected $casts = [
         'sent_at' => 'datetime',
+        'type' => EngagementResponseType::class,
     ];
 
     public function timelineRecord(): MorphOne
@@ -128,6 +134,13 @@ class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeli
 
     public function getDeliveryMethod(): NotificationChannel
     {
+        if (InboundEmailsUpdates::active()) {
+            return match ($this->type) {
+                EngagementResponseType::Email => NotificationChannel::Email,
+                EngagementResponseType::Sms => NotificationChannel::Sms,
+            };
+        }
+
         return NotificationChannel::Sms;
     }
 }

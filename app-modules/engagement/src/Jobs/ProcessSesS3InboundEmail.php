@@ -2,6 +2,7 @@
 
 namespace AdvisingApp\Engagement\Jobs;
 
+use App\Features\InboundEmailsUpdates;
 use Aws\Crypto\KmsMaterialsProviderV2;
 use Aws\Kms\KmsClient;
 use Aws\S3\Crypto\S3EncryptionClientV2;
@@ -30,6 +31,10 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
 
     public function handle(): void
     {
+        if (! InboundEmailsUpdates::active()) {
+            return;
+        }
+
         $encryptionClient = new S3EncryptionClientV2(
             new S3Client([
                 'credentials' => [
