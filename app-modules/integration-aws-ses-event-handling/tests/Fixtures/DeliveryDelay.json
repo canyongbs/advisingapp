@@ -14,7 +14,7 @@
             "ses:configuration-set": [
                 "ConfigSet"
             ],
-            "outbound_deliverable_id": [
+            "app_message_id": [
                 "xxx"
             ],
             "tenant_id": [

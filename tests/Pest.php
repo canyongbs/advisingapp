@@ -49,24 +49,11 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Collection;
-use Tests\TestCase;
+use Tests\LandlordTestCase;
+use Tests\TenantTestCase;
 
-uses(TestCase::class)->in('../tests', '../app-modules/*/tests');
-
-/*
-|--------------------------------------------------------------------------
-| Expectations
-|--------------------------------------------------------------------------
-|
-| When you're writing tests, you often need to check that values meet certain conditions. The
-| "expect()" function gives you access to a set of "expectations" methods that you can use
-| to assert different things. Of course, you may extend the Expectation API at any time.
-|
-*/
-
-//expect()->extend('toBeOne', function () {
-//    return $this->toBe(1);
-//});
+uses(TenantTestCase::class)->in('../tests/Tenant', '../app-modules/*/tests/Tenant');
+uses(LandlordTestCase::class)->in('../tests/Landlord', '../app-modules/*/tests/Landlord');
 
 /*
 |--------------------------------------------------------------------------

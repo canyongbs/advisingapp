@@ -245,9 +245,7 @@ class StudentImporter extends Importer
 
     public function resolveRecord(): ?Student
     {
-        return Student::firstOrNew([
-            'sisid' => $this->data['sisid'],
-        ]);
+        return (new Student())->setTable("import_{$this->import->getKey()}_students");
     }
 
     public static function getCompletedNotificationBody(Import $import): string

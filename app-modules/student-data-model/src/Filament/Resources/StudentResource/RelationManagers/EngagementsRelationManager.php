@@ -41,10 +41,15 @@ use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
+use AdvisingApp\Notification\Models\EmailMessageEvent;
+use AdvisingApp\Notification\Models\SmsMessageEvent;
 use AdvisingApp\Timeline\Models\Timeline;
+use App\Features\MessageEventsDisplay;
 use Filament\Infolists\Components\Fieldset as InfolistFieldset;
-use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\Tabs;
+use Filament\Infolists\Components\Tabs\Tab;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -66,47 +71,66 @@ class EngagementsRelationManager extends RelationManager
     {
         return $infolist->schema(fn (Timeline $record) => match ($record->timelineable::class) {
             Engagement::class => [
-                TextEntry::make('user.name')
-                    ->label('Created By')
-                    ->getStateUsing(fn (Timeline $record): string => $record->timelineable->user->name),
-                InfolistFieldset::make('Content')
-                    ->schema([
-                        TextEntry::make('subject')
-                            ->getStateUsing(fn (Timeline $record): ?string => $record->timelineable->subject)
-                            ->hidden(fn ($state): bool => blank($state))
-                            ->columnSpanFull(),
-                        TextEntry::make('body')
-                            ->getStateUsing(fn (Timeline $record): HtmlString => $record->timelineable->getBody())
-                            ->columnSpanFull(),
-                    ]),
-                InfolistFieldset::make('delivery')
-                    ->label('Delivery Information')
+                Tabs::make()
                     ->columnSpanFull()
-                    ->schema([
-                        TextEntry::make('channel')
-                            ->label('Channel')
-                            ->getStateUsing(function (Timeline $record): string {
-                                /** @var HasDeliveryMethod $timelineable */
-                                $timelineable = $record->timelineable;
+                    ->tabs([
+                        Tab::make('Content')
+                            ->schema([
+                                TextEntry::make('user.name')
+                                    ->label('Created By')
+                                    ->getStateUsing(fn (Timeline $record): string => $record->timelineable->user->name),
+                                InfolistFieldset::make('Content')
+                                    ->schema([
+                                        TextEntry::make('subject')
+                                            ->getStateUsing(fn (Timeline $record): ?string => $record->timelineable->subject)
+                                            ->hidden(fn ($state): bool => blank($state))
+                                            ->columnSpanFull(),
+                                        TextEntry::make('body')
+                                            ->getStateUsing(fn (Timeline $record): HtmlString => $record->timelineable->getBody())
+                                            ->columnSpanFull(),
+                                    ]),
+                                InfolistFieldset::make('delivery')
+                                    ->label('Delivery Information')
+                                    ->columnSpanFull()
+                                    ->schema([
+                                        TextEntry::make('channel')
+                                            ->label('Channel')
+                                            ->getStateUsing(function (Timeline $record): string {
+                                                /** @var HasDeliveryMethod $timelineable */
+                                                $timelineable = $record->timelineable;
 
-                                return $timelineable->getDeliveryMethod()->getLabel();
-                            }),
-                        IconEntry::make('latestOutboundDeliverable.delivery_status')
-                            ->getStateUsing(fn (Timeline $record): ?NotificationDeliveryStatus => $record->timelineable->latestOutboundDeliverable?->delivery_status)
-                            ->icon(fn (NotificationDeliveryStatus $state): string => $state->getIconClass() ?? 'heroicon-s-clock')
-                            ->color(fn (NotificationDeliveryStatus $state): string => $state->getColor() ?? 'text-yellow-500')
-                            ->label('Status')
-                            ->default(NotificationDeliveryStatus::Processing),
-                        TextEntry::make('latestOutboundDeliverable.delivered_at')
-                            ->getStateUsing(fn (Timeline $record): string => $record->timelineable->latestOutboundDeliverable->delivered_at)
-                            ->label('Delivered At')
-                            ->hidden(fn (Timeline $record): bool => is_null($record->timelineable->latestOutboundDeliverable?->delivered_at)),
-                        TextEntry::make('latestOutboundDeliverable.delivery_response')
-                            ->getStateUsing(fn (Timeline $record): string => $record->timelineable->latestOutboundDeliverable->delivery_response)
-                            ->label('Error Details')
-                            ->hidden(fn (Timeline $record): bool => is_null($record->timelineable->latestOutboundDeliverable?->delivery_response)),
-                    ])
-                    ->columns(),
+                                                return $timelineable->getDeliveryMethod()->getLabel();
+                                            }),
+                                    ])
+                                    ->columns(),
+                            ]),
+                        Tab::make('Events')
+                            ->schema([
+                                RepeatableEntry::make('message_events')
+                                    ->state(function (Timeline $record) {
+                                        $timelineable = $record->timelineable;
+
+                                        if ($timelineable instanceof Engagement) {
+                                            return match ($timelineable->channel) {
+                                                NotificationChannel::Email => $timelineable->latestEmailMessage->events()->orderBy('occurred_at', 'desc')->get(),
+                                                NotificationChannel::Sms => $timelineable->latestSmsMessage->events()->orderBy('occurred_at', 'desc')->get(),
+                                                default => [],
+                                            };
+                                        }
+                                    })
+                                    ->schema([
+                                        Section::make()
+                                            ->schema([
+                                                TextEntry::make('type')
+                                                    ->getStateUsing(fn (EmailMessageEvent|SmsMessageEvent $record): string => $record->type?->getLabel()),
+                                                TextEntry::make('occured_at')
+                                                    ->getStateUsing(fn (EmailMessageEvent|SmsMessageEvent $record): string => $record->occurred_at->format('Y-m-d H:i:s')),
+                                            ])
+                                            ->columns(),
+                                    ])
+                                    ->contained(false),
+                            ])->visible(MessageEventsDisplay::active()),
+                    ]),
             ],
             EngagementResponse::class => [
                 TextEntry::make('body')

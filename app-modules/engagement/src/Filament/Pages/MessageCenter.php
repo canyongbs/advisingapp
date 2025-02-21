@@ -237,9 +237,9 @@ class MessageCenter extends Page
     {
         $engagementEducatableIds = Engagement::query()
             ->$engagementScope()
-            ->hasBeenDelivered()
+            // TODO: We have removed the old `hasBeenDelivered` check here because we can no longer track the "status" of a message. We need to determine if something else is needed.
             ->tap(function (Builder $query) {
-                $this->applyFilters(query: $query, dateColumn: 'deliver_at', idColumn: 'recipient_id');
+                $this->applyFilters(query: $query, dateColumn: 'dispatched_at', idColumn: 'recipient_id');
             })
             ->pluck('recipient_id')
             ->unique();
@@ -259,7 +259,7 @@ class MessageCenter extends Page
     {
         $latestEngagementsForEducatables = DB::table('engagements')
             ->whereIn('recipient_id', $ids)
-            ->select('recipient_id as educatable_id', DB::raw('MAX(deliver_at) as latest_deliver_at'))
+            ->select('recipient_id as educatable_id', DB::raw('MAX(dispatched_at) as latest_deliver_at'))
             ->groupBy('educatable_id');
 
         $latestEngagementResponsesForEducatables = DB::table('engagement_responses')

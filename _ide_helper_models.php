@@ -2184,9 +2184,9 @@ namespace AdvisingApp\CaseManagement\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseUpdate> $caseUpdates
  * @property-read int|null $case_updates_count
  * @property-read \App\Models\User|null $createdBy
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Notification\Models\OutboundDeliverable> $deliverables
- * @property-read int|null $deliverables_count
  * @property-read \AdvisingApp\Division\Models\Division $division
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Notification\Models\EmailMessage> $emailMessages
+ * @property-read int|null $email_messages_count
  * @property-read \App\Models\TFactory|null $use_factory
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseHistory> $histories
  * @property-read int|null $histories_count
@@ -2595,27 +2595,29 @@ namespace AdvisingApp\Engagement\Models{
  * @property string|null $recipient_type
  * @property string|null $subject
  * @property array<array-key, mixed>|null $body
- * @property \Illuminate\Support\Carbon $deliver_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property \AdvisingApp\Notification\Enums\NotificationChannel $channel
+ * @property \Illuminate\Support\Carbon|null $scheduled_at
+ * @property \Illuminate\Support\Carbon|null $dispatched_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \AdvisingApp\Engagement\Models\EngagementBatch|null $batch
  * @property-read \App\Models\User|null $createdBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Notification\Models\EmailMessage> $emailMessages
+ * @property-read int|null $email_messages_count
  * @property-read \AdvisingApp\Engagement\Models\EngagementBatch|null $engagementBatch
  * @property-read \App\Models\TFactory|null $use_factory
- * @property-read \AdvisingApp\Notification\Models\OutboundDeliverable|null $latestOutboundDeliverable
+ * @property-read \AdvisingApp\Notification\Models\EmailMessage|null $latestEmailMessage
+ * @property-read \AdvisingApp\Notification\Models\SmsMessage|null $latestSmsMessage
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Notification\Models\OutboundDeliverable> $outboundDeliverables
- * @property-read int|null $outbound_deliverables_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Notification\Models\SmsMessage> $smsMessages
+ * @property-read int|null $sms_messages_count
  * @property-read \AdvisingApp\Timeline\Models\Timeline|null $timelineRecord
  * @property-read \App\Models\User|null $user
  * @method static \AdvisingApp\Engagement\Database\Factories\EngagementFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Engagement hasBeenDelivered()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Engagement hasNotBeenDelivered()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Engagement isNotPartOfABatch()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Engagement licensedToEducatable(string $relationship)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Engagement newModelQuery()
@@ -2628,11 +2630,12 @@ namespace AdvisingApp\Engagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Engagement whereChannel($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Engagement whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Engagement whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Engagement whereDeliverAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Engagement whereDispatchedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Engagement whereEngagementBatchId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Engagement whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Engagement whereRecipientId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Engagement whereRecipientType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Engagement whereScheduledAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Engagement whereSubject($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Engagement whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Engagement whereUserId($value)
@@ -2653,6 +2656,13 @@ namespace AdvisingApp\Engagement\Models{
  * @property string $user_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \AdvisingApp\Notification\Enums\NotificationChannel|null $channel
+ * @property string|null $subject
+ * @property array<array-key, mixed>|null $body
+ * @property \Illuminate\Support\Carbon|null $scheduled_at
+ * @property int|null $total_engagements
+ * @property int|null $processed_engagements
+ * @property int|null $successful_engagements
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Engagement\Models\Engagement> $engagements
  * @property-read int|null $engagements_count
  * @property-read \App\Models\TFactory|null $use_factory
@@ -2663,9 +2673,16 @@ namespace AdvisingApp\Engagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementBatch newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementBatch newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementBatch query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementBatch whereBody($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementBatch whereChannel($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementBatch whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementBatch whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementBatch whereIdentifier($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementBatch whereProcessedEngagements($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementBatch whereScheduledAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementBatch whereSubject($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementBatch whereSuccessfulEngagements($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementBatch whereTotalEngagements($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementBatch whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementBatch whereUserId($value)
  * @mixin \Eloquent
@@ -2684,8 +2701,11 @@ namespace AdvisingApp\Engagement\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
+ * @property string|null $created_by_type
+ * @property string|null $created_by_id
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent|null $createdBy
  * @property-read \App\Models\TFactory|null $use_factory
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
@@ -2699,6 +2719,8 @@ namespace AdvisingApp\Engagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementFile newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementFile query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementFile whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementFile whereCreatedById($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementFile whereCreatedByType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementFile whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementFile whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementFile whereId($value)
@@ -3927,62 +3949,6 @@ namespace AdvisingApp\Notification\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperEmailMessageEvent {}
-}
-
-namespace AdvisingApp\Notification\Models{
-/**
- * 
- *
- * @property string $id
- * @property \AdvisingApp\Notification\Enums\NotificationChannel $channel
- * @property string $notification_class
- * @property string|null $external_reference_id
- * @property string|null $external_status
- * @property array<array-key, mixed>|null $content
- * @property \AdvisingApp\Notification\Enums\NotificationDeliveryStatus $delivery_status
- * @property string|null $delivery_response
- * @property int $quota_usage
- * @property string|null $related_id
- * @property string|null $related_type
- * @property string|null $recipient_id
- * @property string|null $recipient_type
- * @property \Illuminate\Support\Carbon|null $delivered_at
- * @property \Illuminate\Support\Carbon|null $last_delivery_attempt
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \App\Models\TFactory|null $use_factory
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent|null $recipient
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent|null $related
- * @method static \AdvisingApp\Notification\Database\Factories\OutboundDeliverableFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OutboundDeliverable newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OutboundDeliverable newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OutboundDeliverable onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OutboundDeliverable query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OutboundDeliverable whereChannel($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OutboundDeliverable whereContent($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OutboundDeliverable whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OutboundDeliverable whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OutboundDeliverable whereDeliveredAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OutboundDeliverable whereDeliveryResponse($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OutboundDeliverable whereDeliveryStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OutboundDeliverable whereExternalReferenceId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OutboundDeliverable whereExternalStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OutboundDeliverable whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OutboundDeliverable whereLastDeliveryAttempt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OutboundDeliverable whereNotificationClass($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OutboundDeliverable whereQuotaUsage($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OutboundDeliverable whereRecipientId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OutboundDeliverable whereRecipientType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OutboundDeliverable whereRelatedId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OutboundDeliverable whereRelatedType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OutboundDeliverable whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OutboundDeliverable withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OutboundDeliverable withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperOutboundDeliverable {}
 }
 
 namespace AdvisingApp\Notification\Models{

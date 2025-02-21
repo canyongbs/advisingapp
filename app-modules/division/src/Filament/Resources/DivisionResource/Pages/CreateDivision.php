@@ -44,7 +44,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
-use FilamentTiptapEditor\TiptapEditor;
 
 class CreateDivision extends CreateRecord
 {
@@ -66,14 +65,6 @@ class CreateDivision extends CreateRecord
                     ->unique(),
                 Textarea::make('description')
                     ->string(),
-                TiptapEditor::make('header')
-                    ->disk('s3-public')
-                    ->string()
-                    ->columnSpanFull(),
-                TiptapEditor::make('footer')
-                    ->disk('s3-public')
-                    ->string()
-                    ->columnSpanFull(),
                 Toggle::make('is_default')
                     ->visible(DivisionIsDefault::active())
                     ->label('Default')

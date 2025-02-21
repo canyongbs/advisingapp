@@ -37,17 +37,27 @@
 namespace AdvisingApp\IntegrationAwsSesEventHandling\Providers;
 
 use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesBounceEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesClickEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesComplaintEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesDeliveryDelayEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesDeliveryEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesOpenEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesRejectEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesRenderingFailureEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesSendEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesSubscriptionEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\IntegrationAwsSesEventHandlingPlugin;
 use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\EnsureSesConfigurationSetHeadersArePresent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesBounceEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesClickEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesComplaintEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesDeliveryDelayEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesDeliveryEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesOpenEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesRejectEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesRenderingFailureEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesSendEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesSubscriptionEvent;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Mail\Events\MessageSending;
@@ -98,6 +108,31 @@ class IntegrationAwsSesEventHandlingServiceProvider extends ServiceProvider
         Event::listen(
             SesRenderingFailureEvent::class,
             HandleSesRenderingFailureEvent::class
+        );
+
+        Event::listen(
+            SesClickEvent::class,
+            HandleSesClickEvent::class
+        );
+
+        Event::listen(
+            SesComplaintEvent::class,
+            HandleSesComplaintEvent::class
+        );
+
+        Event::listen(
+            SesOpenEvent::class,
+            HandleSesOpenEvent::class
+        );
+
+        Event::listen(
+            SesSendEvent::class,
+            HandleSesSendEvent::class
+        );
+
+        Event::listen(
+            SesSubscriptionEvent::class,
+            HandleSesSubscriptionEvent::class
         );
     }
 }

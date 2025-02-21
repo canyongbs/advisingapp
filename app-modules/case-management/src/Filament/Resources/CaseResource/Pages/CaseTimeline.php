@@ -41,7 +41,6 @@ use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\Concerns\Ha
 use AdvisingApp\CaseManagement\Models\CaseAssignment;
 use AdvisingApp\CaseManagement\Models\CaseHistory;
 use AdvisingApp\CaseManagement\Models\CaseUpdate;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Timeline\Filament\Pages\TimelinePage;
 
 class CaseTimeline extends TimelinePage
@@ -60,6 +59,5 @@ class CaseTimeline extends TimelinePage
         CaseUpdate::class,
         CaseAssignment::class,
         CaseHistory::class,
-        OutboundDeliverable::class,
     ];
 }

@@ -64,8 +64,6 @@ class Division extends BaseModel implements Auditable
         'name',
         'code',
         'description',
-        'header',
-        'footer',
         'is_default',
     ];
 

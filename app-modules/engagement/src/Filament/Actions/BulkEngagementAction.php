@@ -37,13 +37,11 @@
 namespace AdvisingApp\Engagement\Filament\Actions;
 
 use AdvisingApp\Engagement\Actions\CreateEngagementBatch;
-use AdvisingApp\Engagement\DataTransferObjects\EngagementBatchCreationData;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Engagement\Filament\Forms\Components\EngagementSmsBodyInput;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
-use App\Features\EngagementsFeature;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
@@ -171,48 +169,29 @@ class BulkEngagementAction
                         Toggle::make('send_later')
                             ->reactive()
                             ->helperText('By default, this email or text will send as soon as it is created unless you schedule it to send later.'),
-                        DateTimePicker::make('deliver_at')
+                        DateTimePicker::make('scheduled_at')
                             ->required()
                             ->visible(fn (Get $get) => $get('send_later')),
                     ]),
             ])
             ->action(function (Collection $records, array $data, Form $form) {
-                if (EngagementsFeature::active()) {
-                    $channel = NotificationChannel::parse($data['channel']);
+                $channel = NotificationChannel::parse($data['channel']);
 
-                    app(CreateEngagementBatch::class, ['data' => null])->execute(new EngagementCreationData(
-                        user: auth()->user(),
-                        recipient: ($channel === NotificationChannel::Sms) ? $records->filter(fn (CanBeNotified $record) => $record->canRecieveSms()) : $records,
-                        channel: $channel,
-                        subject: $data['subject'] ?? null,
-                        body: $data['body'] ?? null,
-                        temporaryBodyImages: array_map(
-                            fn (TemporaryUploadedFile $file): array => [
-                                'extension' => $file->getClientOriginalExtension(),
-                                'path' => (fn () => $this->path)->call($file),
-                            ],
-                            $form->getFlatFields()['body']->getTemporaryImages(),
-                        ),
-                        scheduledAt: ($data['send_later'] ?? false) ? Carbon::parse($data['deliver_at'] ?? null) : null,
-                    ));
-                } else {
-                    CreateEngagementBatch::dispatch(EngagementBatchCreationData::from([
-                        'user' => auth()->user(),
-                        'records' => $records->filter(function ($record) {
-                            return $record->canRecieveSms();
-                        }),
-                        'channel' => $data['channel'],
-                        'subject' => $data['subject'] ?? null,
-                        'body' => $data['body'] ?? null,
-                        'temporaryBodyImages' => array_map(
-                            fn (TemporaryUploadedFile $file): array => [
-                                'extension' => $file->getClientOriginalExtension(),
-                                'path' => (fn () => $this->path)->call($file),
-                            ],
-                            $form->getFlatFields()['body']->getTemporaryImages(),
-                        ),
-                    ]));
-                }
+                app(CreateEngagementBatch::class)->execute(new EngagementCreationData(
+                    user: auth()->user(),
+                    recipient: ($channel === NotificationChannel::Sms) ? $records->filter(fn (CanBeNotified $record) => $record->canRecieveSms()) : $records,
+                    channel: $channel,
+                    subject: $data['subject'] ?? null,
+                    body: $data['body'] ?? null,
+                    temporaryBodyImages: array_map(
+                        fn (TemporaryUploadedFile $file): array => [
+                            'extension' => $file->getClientOriginalExtension(),
+                            'path' => (fn () => $this->path)->call($file),
+                        ],
+                        $form->getFlatFields()['body']->getTemporaryImages(),
+                    ),
+                    scheduledAt: ($data['send_later'] ?? false) ? Carbon::parse($data['scheduled_at'] ?? null) : null,
+                ));
             })
             ->modalSubmitActionLabel('Send')
             ->deselectRecordsAfterCompletion()

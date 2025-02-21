@@ -36,44 +36,18 @@
 
 namespace AdvisingApp\Engagement\Actions;
 
-use AdvisingApp\Engagement\DataTransferObjects\EngagementBatchCreationData;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Engagement\Jobs\CreateBatchedEngagement;
-use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Engagement\Notifications\EngagementBatchFinishedNotification;
 use AdvisingApp\Engagement\Notifications\EngagementBatchStartedNotification;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Bus\Batch;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
-/**
- * @deprecated After deploying engagements refactor:
- * - Remove interface
- * - Remove all traits
- * - Remove constructor
- * - Remove `handle()` method, this is an action class and not a job.
- */
-class CreateEngagementBatch implements ShouldQueue
+class CreateEngagementBatch
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
-    public function __construct(
-        public ?EngagementBatchCreationData $data = null,
-    ) {}
-
     public function execute(EngagementCreationData $data): void
     {
         $engagementBatch = new EngagementBatch();
@@ -126,48 +100,5 @@ class CreateEngagementBatch implements ShouldQueue
 
             throw $exception;
         }
-    }
-
-    public function handle(): void
-    {
-        /** @var EngagementBatch $engagementBatch */
-        $engagementBatch = EngagementBatch::create([
-            'user_id' => $this->data->user->id,
-        ]);
-
-        $channel = $this->data->channel;
-
-        [$body] = tiptap_converter()->saveImages(
-            $this->data->body,
-            disk: 's3-public',
-            record: $engagementBatch,
-            recordAttribute: 'body',
-            newImages: $this->data->temporaryBodyImages,
-        );
-
-        $engagements = $this->data->records->map(function (Student|Prospect $record) use ($body, $engagementBatch) {
-            return $engagementBatch->engagements()->create([
-                'user_id' => $engagementBatch->user_id,
-                'recipient_id' => $record->identifier(),
-                'recipient_type' => $record->getMorphClass(),
-                'body' => $body,
-                'subject' => $this->data->subject,
-                'channel' => $this->data->channel,
-            ]);
-        });
-
-        $deliverableJobs = $engagements->flatten()->map(function (Engagement $engagement) {
-            return $engagement->driver()->jobForDelivery();
-        });
-
-        $engagementBatch->user->notify(new EngagementBatchStartedNotification($engagementBatch));
-
-        Bus::batch($deliverableJobs)
-            ->name("Process Bulk Engagement {$engagementBatch->id}")
-            ->finally(function (Batch $batchQueue) use ($engagementBatch) {
-                $engagementBatch->user->notify(new EngagementBatchFinishedNotification($engagementBatch));
-            })
-            ->allowFailures()
-            ->dispatch();
     }
 }

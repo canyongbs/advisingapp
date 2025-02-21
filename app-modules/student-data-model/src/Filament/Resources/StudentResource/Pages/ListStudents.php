@@ -45,19 +45,13 @@ use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Actions\DeleteStudent;
-use AdvisingApp\StudentDataModel\Filament\Imports\StudentEnrollmentImporter;
-use AdvisingApp\StudentDataModel\Filament\Imports\StudentImporter;
-use AdvisingApp\StudentDataModel\Filament\Imports\StudentProgramImporter;
+use AdvisingApp\StudentDataModel\Filament\Actions\ImportStudentDataAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\StudentDataModel\Models\Enrollment;
-use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\TagType;
 use App\Models\Tag;
 use App\Models\User;
-use Filament\Actions\ActionGroup;
 use Filament\Actions\CreateAction;
-use Filament\Actions\ImportAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Section;
@@ -74,11 +68,9 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
-use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\HtmlString;
 
 class ListStudents extends ListRecords
 {
@@ -128,6 +120,21 @@ class ListStudents extends ListRecords
                     ->query(fn (Builder $query, array $data) => $this->segmentFilter($query, $data)),
                 Filter::make('subscribed')
                     ->query(fn (Builder $query): Builder => $query->whereRelation('subscriptions.user', 'id', auth()->id())),
+                Filter::make('care_team')
+                    ->label('Care Team')
+                    ->query(
+                        function (Builder $query) {
+                            return $query
+                                ->whereRelation('careTeam', 'user_id', '=', auth()->id())
+                                ->get();
+                        }
+                    ),
+                SelectFilter::make('alerts')
+                    ->multiple()
+                    ->relationship('alerts.status', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->optionsLimit(20),
                 TernaryFilter::make('sap')
                     ->label('SAP'),
                 TernaryFilter::make('dual'),
@@ -144,15 +151,7 @@ class ListStudents extends ListRecords
                                 fn (Builder $query, $hold): Builder => $query->where('holds', 'ilike', "%{$hold}%"),
                             );
                     }),
-                Filter::make('care_team')
-                    ->label('Care Team')
-                    ->query(
-                        function (Builder $query) {
-                            return $query
-                                ->whereRelation('careTeam', 'user_id', '=', auth()->id())
-                                ->get();
-                        }
-                    ),
+
                 SelectFilter::make('tags')
                     ->label('Tags')
                     ->options(fn (): array => Tag::query()->where('type', TagType::Student)->pluck('name', 'id')->toArray())
@@ -171,7 +170,8 @@ class ListStudents extends ListRecords
                             });
                         }
                     ),
-                TernaryFilter::make('firstgen'),
+                TernaryFilter::make('firstgen')
+                    ->label('First Generation'),
             ])
             ->actions([
                 ViewAction::make()
@@ -387,21 +387,7 @@ class ListStudents extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            ActionGroup::make([
-                ImportAction::make('importStudents')
-                    ->modalDescription(fn (ImportAction $action): Htmlable => new HtmlString('Import student records from a CSV file. Records with matched SIS IDs will be updated, while new records will be created. <br><br>' . $action->getModalAction('downloadExample')->toHtml()))
-                    ->importer(StudentImporter::class)
-                    ->authorize('import', Student::class),
-                ImportAction::make('importPrograms')
-                    ->importer(StudentProgramImporter::class)
-                    ->authorize('import', Program::class),
-                ImportAction::make('importEnrollments')
-                    ->importer(StudentEnrollmentImporter::class)
-                    ->authorize('import', Enrollment::class),
-            ])
-                ->label('Import')
-                ->icon('')
-                ->button(),
+            ImportStudentDataAction::make(),
             CreateAction::make(),
         ];
     }

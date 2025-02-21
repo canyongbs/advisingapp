@@ -36,26 +36,19 @@
 
 namespace AdvisingApp\IntegrationAwsSesEventHandling\Listeners;
 
+use AdvisingApp\IntegrationAwsSesEventHandling\DataTransferObjects\SesEventData;
 use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesEvent;
-use AdvisingApp\Notification\Actions\UpdateOutboundDeliverableEmailStatus;
-use AdvisingApp\Notification\Events\CouldNotFindOutboundDeliverableFromExternalReference;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\Notification\Models\EmailMessage;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 abstract class HandleSesEvent implements ShouldQueue
 {
-    public function handle(SesEvent $event): void
+    abstract public function handle(SesEvent $event): void;
+
+    protected function getEmailMessageFromData(SesEventData $data): ?EmailMessage
     {
-        $outboundDeliverable = OutboundDeliverable::query()
-            ->where('id', data_get($event->data->mail->tags, 'outbound_deliverable_id'))
+        return EmailMessage::query()
+            ->where('id', data_get($data->mail->tags, 'app_message_id'))
             ->first();
-
-        if (is_null($outboundDeliverable)) {
-            CouldNotFindOutboundDeliverableFromExternalReference::dispatch($event->data);
-
-            return;
-        }
-
-        UpdateOutboundDeliverableEmailStatus::dispatch($outboundDeliverable, $event->data);
     }
 }

@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concerns;
 
+use AdvisingApp\StudentDataModel\Models\Program;
 use Filament\Actions\Imports\ImportColumn;
 
 trait ImportColumns
@@ -44,90 +45,106 @@ trait ImportColumns
     {
         return [
             ImportColumn::make('acad_career')
-                ->requiredMapping()
                 ->label('ACAD career')
                 ->example('CRED')
                 ->rules([
-                    'required',
+                    'nullable',
                     'string',
                     'max:255',
                 ]),
             ImportColumn::make('division')
                 ->example('ABC01')
-                ->requiredMapping()
                 ->example('ABC01')
                 ->rules([
-                    'required',
+                    'nullable',
                     'string',
                     'max:255',
                 ]),
-            ImportColumn::make('acad_plan')
-                ->requiredMapping()
-                ->label('ACAD plan')
-                ->example('1076N')
-                ->rules([
-                    'required',
-                    'string',
-                    'max:255',
-                ]),
+            ImportColumn::make('acad_plan_majors')
+                ->label('ACAD plan majors')
+                ->example('1076N|1077N')
+                ->array('|')
+                ->rules(['array'])
+                ->nestedRecursiveRules(['string', 'max:255'])
+                ->fillRecordUsing(function (Program $record, array $state) {
+                    $acadPlan = $record->acad_plan ?? [];
+
+                    if (! is_array($record->acad_plan)) {
+                        $acadPlan = [];
+                    }
+
+                    $acadPlan['majors'] = $state;
+
+                    $record->acad_plan = $acadPlan;
+                }),
+            ImportColumn::make('acad_plan_minors')
+                ->label('ACAD plan minors')
+                ->example('2076N|2077N')
+                ->array('|')
+                ->rules(['array'])
+                ->nestedRecursiveRules(['string', 'max:255'])
+                ->fillRecordUsing(function (Program $record, array $state) {
+                    $acadPlan = $record->acad_plan ?? [];
+
+                    if (! is_array($record->acad_plan)) {
+                        $acadPlan = [];
+                    }
+
+                    $acadPlan['minors'] = $state;
+
+                    $record->acad_plan = $acadPlan;
+                }),
             ImportColumn::make('prog_status')
-                ->requiredMapping()
                 ->label('PROG status')
                 ->example('AC')
                 ->rules([
-                    'required',
+                    'nullable',
                     'string',
                     'max:255',
                 ]),
             ImportColumn::make('cum_gpa')
-                ->requiredMapping()
                 ->label('Cum GPA')
                 ->numeric()
                 ->example('3.284')
                 ->rules([
-                    'required',
+                    'nullable',
                     'numeric',
                 ]),
             ImportColumn::make('semester')
-                ->requiredMapping()
                 ->example('1234')
                 ->rules([
-                    'required',
+                    'nullable',
                     'string',
                     'max:255',
                 ]),
             ImportColumn::make('descr')
-                ->requiredMapping()
                 ->label('DESCR')
                 ->example('Loream ipsum')
                 ->rules([
-                    'required',
+                    'nullable',
                     'string',
                     'max:255',
                 ]),
             ImportColumn::make('foi')
-                ->requiredMapping()
                 ->label('Field of interest')
                 ->example('Loream ipsum')
                 ->rules([
-                    'required',
+                    'nullable',
                     'string',
                     'max:255',
                 ]),
             ImportColumn::make('change_dt')
-                ->requiredMapping()
                 ->label('Change date')
-                ->example('1986-06-13 08:11:35+00')
+                ->example('1986-06-13 08:11:35')
                 ->rules([
-                    'required',
+                    'nullable',
                     'date',
                 ]),
             ImportColumn::make('declare_dt')
-                ->requiredMapping()
                 ->label('Declare date')
-                ->example('1986-06-13 08:11:35+00')
+                ->example('1986-06-13 08:11:35')
                 ->rules([
-                    'required',
+                    'nullable',
                     'date',
                 ]),
         ];
@@ -178,7 +195,7 @@ trait ImportColumns
                 ]),
             ImportColumn::make('last_upd_dt_stmp')
                 ->label('Last UPD date STMP')
-                ->example('1995-02-11 14:01:12+00')
+                ->example('1995-02-11 14:01:12')
                 ->rules([
                     'nullable',
                     'date',

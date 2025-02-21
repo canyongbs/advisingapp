@@ -54,8 +54,6 @@ class DivisionFactory extends Factory
             'name' => fake()->unique()->company(),
             'code' => fake()->unique()->word(),
             'description' => fake()->optional()->sentences(asText: true),
-            'header' => fake()->words(asText: true),
-            'footer' => fake()->words(asText: true),
             'is_default' => false,
         ];
     }

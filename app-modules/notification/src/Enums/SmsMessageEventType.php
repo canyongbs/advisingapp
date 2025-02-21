@@ -47,6 +47,7 @@ enum SmsMessageEventType: string implements HasLabel
     case BlockedByDemoMode = 'blocked_by_demo_mode';
 
     // External
+    case Queued = 'queued';
     case Canceled = 'canceled';
     case Sent = 'sent';
     case Failed = 'failed';

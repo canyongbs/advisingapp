@@ -52,7 +52,7 @@ enum SystemAlertStatusClassification: string implements HasLabel
         return $this->name;
     }
 
-    public static function default(): AlertStatus
+    public static function default(): ?AlertStatus
     {
         $alertStatus = AlertStatus::where('is_default', true)->first();
 

@@ -62,7 +62,7 @@
             "ses:outgoing-ip": [
                 "192.0.2.0"
             ],
-            "outbound_deliverable_id": [
+            "app_message_id": [
                 "xxx"
             ],
             "tenant_id": [
