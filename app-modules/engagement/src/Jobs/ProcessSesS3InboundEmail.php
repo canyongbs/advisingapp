@@ -159,6 +159,8 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
 
                         Storage::disk('s3-inbound-email')->delete($this->emailFilePath);
 
+                        DB::commit();
+
                         // If we found students and added records, we can stop here as Student records take final precedence over Prospect records.
                         return;
                     }
@@ -193,6 +195,8 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
                     });
 
                     Storage::disk('s3-inbound-email')->delete($this->emailFilePath);
+
+                    DB::commit();
                 });
             });
         } catch (
