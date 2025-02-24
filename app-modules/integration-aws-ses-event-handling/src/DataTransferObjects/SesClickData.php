@@ -45,6 +45,6 @@ class SesClickData extends Data
         public string $timestamp,
         public string $userAgent,
         public string $link,
-        public array $linkTags,
+        public ?array $linkTags,
     ) {}
 }
