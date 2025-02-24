@@ -26,7 +26,8 @@ class CaseFeedbackFormWidgetController extends Controller
         return response()->json(
             [
                 'requires_authentication' => true,
-                'is_authenticated' => (bool) $request->user(),
+                'is_authenticated' => (bool) auth('student')->check() || (bool) auth('prospect')->check(),
+                'guard' => auth('student')->check() ? 'student' : (auth('prospect')->check() ? 'prospect' : null),
                 'authentication_url' => URL::to(
                     URL::signedRoute(
                         name: 'api.portal.resource-hub.request-authentication',
@@ -58,7 +59,7 @@ class CaseFeedbackFormWidgetController extends Controller
         Request $request,
         CaseModel $case,
     ): JsonResponse {
-        $submitter = auth('sanctum')->user();
+        $submitter = $request->user($request->guard);
 
         abort_if(is_null($submitter), Response::HTTP_UNAUTHORIZED);
 

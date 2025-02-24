@@ -57,9 +57,11 @@ Route::prefix('api')
         EnsureResourceHubPortalIsEmbeddableAndAuthorized::class,
     ])
     ->group(function () {
-        Route::middleware(['auth:sanctum', 'abilities:resource-hub-portal'])
+        // Route::middleware(['auth:sanctum', 'abilities:resource-hub-portal'])
+        Route::middleware(['auth:sanctum'])
             ->group(function () {
-                Route::get('/user', fn () => auth()->user())
+                // Route::get('/user', fn () => auth()->user())
+                Route::get('/user', fn () => auth('student')->user() ?? auth('prospect')->user())
                     ->name('user.auth-check');
             });
 
