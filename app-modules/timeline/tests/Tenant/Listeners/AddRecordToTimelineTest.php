@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
 use AdvisingApp\Timeline\Listeners\AddRecordToTimeline;
@@ -53,6 +54,7 @@ it('busts the timeline cache for the associated educatable', function () {
 
     // When we create another timelineable record
     $subsequentResponse = $initialResponse->sender->engagementResponses()->createQuietly([
+        'type' => EngagementResponseType::Sms,
         'content' => 'This is a test response',
         'sent_at' => now(),
     ]);
