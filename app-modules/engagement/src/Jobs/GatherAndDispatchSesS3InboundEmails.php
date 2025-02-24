@@ -3,16 +3,18 @@
 namespace AdvisingApp\Engagement\Jobs;
 
 use App\Features\InboundEmailsUpdates;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Storage;
 use Spatie\Multitenancy\Jobs\NotTenantAware;
 
-class GatherAndDispatchSesS3InboundEmails implements ShouldQueue, NotTenantAware
+class GatherAndDispatchSesS3InboundEmails implements ShouldQueue, NotTenantAware, ShouldBeUnique
 {
     use Queueable;
 
-    public function __construct() {}
+    // Unique for 15 minutes
+    public $uniqueFor = 900;
 
     public function handle(): void
     {

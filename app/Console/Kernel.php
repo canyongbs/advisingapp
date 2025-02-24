@@ -74,8 +74,7 @@ class Kernel extends ConsoleKernel
             ->everyMinute()
             ->name('Gather and Dispatch SES S3 Inbound Emails')
             ->monitorName('Gather and Dispatch SES S3 Inbound Emails')
-            ->onOneServer()
-            ->withoutOverlapping(15);
+            ->onOneServer();
 
         Tenant::query()
             ->tap(new SetupIsComplete())
