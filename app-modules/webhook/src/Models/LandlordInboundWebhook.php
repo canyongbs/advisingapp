@@ -42,6 +42,9 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Multitenancy\Models\Concerns\UsesLandlordConnection;
 
+/**
+ * @mixin IdeHelperLandlordInboundWebhook
+ */
 class LandlordInboundWebhook extends Model
 {
     use HasUuids;
