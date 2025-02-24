@@ -17,7 +17,6 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.2"
-          tools: "composer:2.6.6"
 
       - name: Setup Dependencies
         uses: ./.github/actions/composer-dependency-setup
