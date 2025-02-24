@@ -92,7 +92,7 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
             }
 
             try {
-                $content = $result['Body']->getContents();
+                $content = $result['Body']?->getContents();
             } catch (Throwable $e) {
                 throw new UnableToRetrieveContentFromSesS3EmailPayload($this->emailFilePath, $e);
             }
