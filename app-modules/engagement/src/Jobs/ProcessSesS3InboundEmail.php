@@ -65,29 +65,31 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
             $errorReportingLevel = error_reporting();
             error_reporting(E_ERROR & ~E_WARNING);
 
-            $result = $encryptionClient->getObject([
-                '@KmsAllowDecryptWithAnyCmk' => false,
-                '@SecurityProfile' => 'V2_AND_LEGACY',
-                '@MaterialsProvider' => new KmsMaterialsProviderV2(
-                    new KmsClient([
-                        'credentials' => [
-                            'key' => config('filesystems.disks.s3.key'),
-                            'secret' => config('filesystems.disks.s3.secret'),
-                        ],
-                        'region' => 'us-west-2',
-                    ]),
-                    config('services.kms.ses_s3_key_id')
-                ),
-                '@CipherOptions' => [
-                    'Cipher' => 'gcm',
-                    'KeySize' => 256,
-                ],
-                'Bucket' => config('filesystems.disks.s3.bucket'),
-                'Key' => config('filesystems.disks.s3-inbound-email.root') . '/' . $this->emailFilePath,
-            ]);
-
-            // Reset the error reporting level
-            error_reporting($errorReportingLevel);
+            try {
+                $result = $encryptionClient->getObject([
+                    '@KmsAllowDecryptWithAnyCmk' => false,
+                    '@SecurityProfile' => 'V2_AND_LEGACY',
+                    '@MaterialsProvider' => new KmsMaterialsProviderV2(
+                        new KmsClient([
+                            'credentials' => [
+                                'key' => config('filesystems.disks.s3.key'),
+                                'secret' => config('filesystems.disks.s3.secret'),
+                            ],
+                            'region' => 'us-west-2',
+                        ]),
+                        config('services.kms.ses_s3_key_id')
+                    ),
+                    '@CipherOptions' => [
+                        'Cipher' => 'gcm',
+                        'KeySize' => 256,
+                    ],
+                    'Bucket' => config('filesystems.disks.s3.bucket'),
+                    'Key' => config('filesystems.disks.s3-inbound-email.root') . '/' . $this->emailFilePath,
+                ]);
+            } finally {
+                // Reset the error reporting level
+                error_reporting($errorReportingLevel);
+            }
 
             try {
                 $content = $result['Body']->getContents();
