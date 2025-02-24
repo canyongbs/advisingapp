@@ -38,6 +38,7 @@ namespace AdvisingApp\Engagement\Actions;
 
 use AdvisingApp\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementResponseData;
+use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 
 class CreateEngagementResponse
@@ -52,6 +53,7 @@ class CreateEngagementResponse
 
         if (! is_null($sender)) {
             EngagementResponse::create([
+                'type' => EngagementResponseType::Sms,
                 'sender_id' => $sender->getKey(),
                 'sender_type' => $sender->getMorphClass(),
                 'content' => $data->body,
