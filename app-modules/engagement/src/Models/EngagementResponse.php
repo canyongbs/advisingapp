@@ -108,6 +108,12 @@ class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeli
 
     public function getBody(): HtmlString
     {
+        $content = $this->content;
+
+        if (preg_match('/<body[^>]*>(.*?)<\/body>/is', $content, $matches)) {
+            $content = $matches[1];
+        }
+
         return str(
             (new HtmlSanitizer(
                 (new HtmlSanitizerConfig())
@@ -115,7 +121,7 @@ class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeli
                     ->forceHttpsUrls()
                     ->withMaxInputLength(500000)
             ))
-                ->sanitize($this->content)
+                ->sanitize($content)
         )
             ->toHtmlString();
     }
