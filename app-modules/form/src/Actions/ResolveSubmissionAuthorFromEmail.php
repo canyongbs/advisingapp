@@ -39,7 +39,6 @@ namespace AdvisingApp\Form\Actions;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Features\ProspectStudentRefactor;
-use Illuminate\Database\Eloquent\Builder;
 
 class ResolveSubmissionAuthorFromEmail
 {
