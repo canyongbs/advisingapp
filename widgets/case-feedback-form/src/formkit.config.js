@@ -31,10 +31,10 @@
 
 </COPYRIGHT>
 */
-import { generateClasses } from '@formkit/themes';
 import { genesisIcons } from '@formkit/icons';
-import theme from './FormKit/theme.js';
+import { generateClasses } from '@formkit/themes';
 import inputs from './FormKit/Inputs/index.js';
+import theme from './FormKit/theme.js';
 
 export default {
     icons: {
