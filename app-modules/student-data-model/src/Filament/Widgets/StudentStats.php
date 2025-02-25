@@ -38,6 +38,8 @@ namespace AdvisingApp\StudentDataModel\Filament\Widgets;
 
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Segment\Enums\SegmentModel;
+use AdvisingApp\Segment\Filament\Resources\SegmentResource;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Filament\Widgets\StatsOverviewWidget;
@@ -59,7 +61,8 @@ class StudentStats extends StatsOverviewWidget
                         return Student::count();
                     }),
                 maxPrecision: 2,
-            )),
+            ))
+                ->url(StudentResource::getUrl('index')),
             Stat::make('My Subscriptions', Cache::tags(['students', "user-{$user->getKey()}-student-subscriptions"])
                 ->remember("user-{$user->getKey()}-student-subscriptions-count", now()->addHour(), function () use ($user): int {
                     return $user->studentSubscriptions()->count();
@@ -73,7 +76,8 @@ class StudentStats extends StatsOverviewWidget
             Stat::make('My Population Segments', Cache::tags(["user-{$user->getKey()}-student-segments"])
                 ->remember("user-{$user->getKey()}-student-segments-count", now()->addHour(), function () use ($user): int {
                     return $user->segments()->model(SegmentModel::Student)->count();
-                })),
+                }))
+                ->url(SegmentResource::getUrl('index', ['tableFilters[my_segments][isActive]' => 'true'])),
         ];
     }
 }
