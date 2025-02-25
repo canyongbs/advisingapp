@@ -44,7 +44,6 @@ use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Notifications\EducatableCaseClosedNotification;
 use AdvisingApp\CaseManagement\Notifications\EducatableCaseOpenedNotification;
 use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
-use App\Features\ProspectStudentRefactor;
 use App\Models\User;
 
 class CaseObserver
