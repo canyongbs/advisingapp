@@ -43,16 +43,10 @@ class DeliverFormSubmissionRequestByEmail extends DeliverFormSubmissionRequest
 {
     public function handle(): void
     {
-        if (ProspectStudentRefactor::active()) {
-            if ($this->submission->author->primaryEmail) {
+            if ($this->submission->author->canRecieveEmail()) {
                 $this->submission
                     ->author
                     ->notify(new FormSubmissionRequestNotification($this->submission));
             }
-        } else {
-            $this->submission
-                ->author
-                ->notify(new FormSubmissionRequestNotification($this->submission));
-        }
     }
 }

@@ -66,11 +66,11 @@ class ProspectResource extends Resource
 
     public static function getGlobalSearchEloquentQuery(): Builder
     {
-        if (ProspectStudentRefactor::active()) {
-            return parent::getGlobalSearchEloquentQuery()->with(['emailAddresses:id,address', 'phoneNumbers:id,number']);
+        if (! ProspectStudentRefactor::active()) {
+            return parent::getGlobalSearchEloquentQuery();
         }
 
-        return parent::getGlobalSearchEloquentQuery();
+        return parent::getGlobalSearchEloquentQuery()->with(['emailAddresses:id,address', 'phoneNumbers:id,number']);
     }
 
     public static function modifyGlobalSearchQuery(Builder $query, string $search): void
