@@ -52,9 +52,7 @@ class ResolveEducatableFromEmail
         /** @var Student $student */
         if (ProspectStudentRefactor::active()) {
             $student = Student::query()
-                ->whereHas('emailAddresses', function (Builder $query) use ($email) {
-                    return $query->where('address', $email);
-                })
+                ->whereRelation('emailAddresses', 'address', $email)
                 ->first();
         } else {
             $student = Student::query()
@@ -70,9 +68,7 @@ class ResolveEducatableFromEmail
         /** @var Prospect $prospect */
         if (ProspectStudentRefactor::active()) {
             $prospect = Prospect::query()
-                ->whereHas('emailAddresses', function (Builder $query) use ($email) {
-                    return $query->where('address', $email);
-                })
+                ->whereRelation('emailAddresses', 'address', $email)
                 ->first();
         } else {
             $prospect = Prospect::query()
