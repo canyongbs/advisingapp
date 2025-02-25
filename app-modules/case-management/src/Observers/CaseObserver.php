@@ -46,7 +46,6 @@ use AdvisingApp\CaseManagement\Notifications\EducatableCaseOpenedNotification;
 use AdvisingApp\CaseManagement\Notifications\SendClosedCaseFeedbackNotification;
 use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 use App\Enums\Feature;
-use App\Features\ProspectStudentRefactor;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 
