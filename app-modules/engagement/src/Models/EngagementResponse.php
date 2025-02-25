@@ -46,7 +46,6 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Timeline\Models\Timeline;
 use AdvisingApp\Timeline\Timelines\EngagementResponseTimeline;
-use App\Features\InboundEmailsUpdates;
 use App\Models\BaseModel;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -142,13 +141,9 @@ class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeli
 
     public function getDeliveryMethod(): NotificationChannel
     {
-        if (InboundEmailsUpdates::active()) {
-            return match ($this->type) {
-                EngagementResponseType::Email => NotificationChannel::Email,
-                EngagementResponseType::Sms => NotificationChannel::Sms,
-            };
-        }
-
-        return NotificationChannel::Sms;
+        return match ($this->type) {
+            EngagementResponseType::Email => NotificationChannel::Email,
+            EngagementResponseType::Sms => NotificationChannel::Sms,
+        };
     }
 }
