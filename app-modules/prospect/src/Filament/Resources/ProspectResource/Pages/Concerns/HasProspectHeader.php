@@ -79,12 +79,12 @@ trait HasProspectHeader
                 ...(filled($prospect->preferred) ? [["Goes by \"{$prospect->preferred}\"", 'heroicon-m-heart']] : []),
                 ...(
                     ProspectStudentRefactor::active()
-                      ? (filled($prospect->primaryPhone) ? [[$prospect->primaryPhone->number, 'heroicon-m-phone']] : [])
+                      ? ($prospect->primaryPhone ? [[$prospect->primaryPhone->number, 'heroicon-m-phone']] : [])
                       : (filled($prospect->phone) ? [[$prospect->phone, 'heroicon-m-phone']] : [])
                 ),
                 ...(
                     ProspectStudentRefactor::active()
-                    ? (filled($prospect->primaryEmail) ? [[$prospect->primaryEmail->address, 'heroicon-m-envelope']] : [])
+                    ? ($prospect->primaryEmail ? [[$prospect->primaryEmail->address, 'heroicon-m-envelope']] : [])
                     : (filled($prospect->email) ? [[$prospect->email, 'heroicon-m-envelope']] : [])
                 ),
                 ...(filled($prospect->hsgrad) ? [[$prospect->hsgrad, 'heroicon-m-building-library']] : []),

@@ -77,12 +77,12 @@ trait HasStudentHeader
                 ...(filled($student->preferred) ? [["Goes by \"{$student->preferred}\"", 'heroicon-m-heart']] : []),
                 ...(
                     ProspectStudentRefactor::active()
-                ? (filled($student->primaryPhone) ? [[$student->primaryPhone->number, 'heroicon-m-phone']] : [])
+                ? ($student->primaryPhone ? [[$student->primaryPhone->number, 'heroicon-m-phone']] : [])
                 : (filled($student->phone) ? [[$student->phone, 'heroicon-m-phone']] : [])
                 ),
                 ...(
                     ProspectStudentRefactor::active()
-                    ? (filled($student->primaryEmail) ? [[$student->primaryEmail->address, 'heroicon-m-envelope']] : [])
+                    ? ($student->primaryEmail ? [[$student->primaryEmail->address, 'heroicon-m-envelope']] : [])
                     : (filled($student->email) ? [[$student->email, 'heroicon-m-envelope']] : [])
                 ),
                 ...(filled($student->sisid) ? [[$student->sisid, 'heroicon-m-identification']] : []),
