@@ -70,11 +70,7 @@ class CreateEngagement
             $engagement->save();
 
             if (! $engagement->scheduled_at) {
-                if (ProspectStudentRefactor::active()) {
-                    if ($engagement->recipient->primaryEmail) {
-                        $engagement->recipient->notify(new EngagementNotification($engagement));
-                    }
-                } else {
+                if ($engagement->recipient->canRecieveEmail()) {
                     $engagement->recipient->notify(new EngagementNotification($engagement));
                 }
             }
