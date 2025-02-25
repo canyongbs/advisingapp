@@ -111,8 +111,8 @@ class StudentResource extends Resource
         return array_filter([
             'Student ID' => $record->sisid,
             'Other ID' => $record->otherid,
-            'Email Address' => ProspectStudentRefactor::active() ? $record?->primaryEmail->address : collect([$record->email, $record->email_id])->filter()->implode(', '),
-            'Phone' => ProspectStudentRefactor::active() ? $record?->primaryPhone->number : collect([$record->mobile, $record->phone])->filter()->implode(', '),
+            'Email Address' => ProspectStudentRefactor::active() ? $record->primaryEmail?->address : collect([$record->email, $record->email_id])->filter()->implode(', '),
+            'Phone' => ProspectStudentRefactor::active() ? $record->primaryPhone?->number : collect([$record->mobile, $record->phone])->filter()->implode(', '),
             'Preferred Name' => $record->preferred,
         ], fn (mixed $value): bool => filled($value));
     }
