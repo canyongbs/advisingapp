@@ -365,13 +365,22 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
             ->withTimestamps();
     }
 
-    public function canRecieveSms(): bool
+    public function canRecieveEmail(): bool
     {
-        if (ProspectStudentRefactor::active()) {
-            return $this->primaryPhone && $this->primaryPhone->number && $this->primaryPhone->can_recieve_sms;
+        if (! ProspectStudentRefactor::active()) {
+            return filled($this->email);
         }
 
-        return filled($this->mobile);
+        return $this->primaryEmail && $this->primaryEmail->address;
+    }
+
+    public function canRecieveSms(): bool
+    {
+        if (! ProspectStudentRefactor::active()) {
+            return filled($this->mobile);
+        }
+
+        return $this->primaryPhone && $this->primaryPhone->number && $this->primaryPhone->can_recieve_sms;
     }
 
     public function tags(): MorphToMany
@@ -396,11 +405,11 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
      */
     public function routeNotificationForMail(Notification $notification): array|string|null
     {
-        if (ProspectStudentRefactor::active()) {
-            return $this->primaryEmail?->address;
+        if (! ProspectStudentRefactor::active()) {
+            return $this->email;
         }
 
-        return $this->email;
+        return $this->primaryEmail?->address;
     }
 
     protected static function booted(): void
