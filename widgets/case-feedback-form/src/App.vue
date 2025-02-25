@@ -106,9 +106,6 @@ onMounted(async () => {
         userIsAuthenticated.value = response;
     });
 
-    console.log('User auth url:', props.userAuthenticationUrl);
-    console.log('User is authenticated:', userIsAuthenticated.value);
-
     await getForm().then(() => {
         loading.value = false;
     });

@@ -45,6 +45,7 @@ use AdvisingApp\Portal\Http\Middleware\AuthenticateIfRequiredByPortalDefinition;
 use AdvisingApp\Portal\Http\Middleware\EnsureResourceHubPortalIsEmbeddableAndAuthorized;
 use AdvisingApp\Portal\Http\Middleware\EnsureResourceHubPortalIsEnabled;
 use App\Multitenancy\Http\Middleware\NeedsTenant;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
@@ -57,12 +58,17 @@ Route::prefix('api')
         EnsureResourceHubPortalIsEmbeddableAndAuthorized::class,
     ])
     ->group(function () {
-        // Route::middleware(['auth:sanctum', 'abilities:resource-hub-portal'])
-        Route::middleware(['auth:sanctum'])
+        Route::middleware(['auth:sanctum', 'abilities:resource-hub-portal'])
             ->group(function () {
-                // Route::get('/user', fn () => auth()->user())
-                Route::get('/user', fn () => auth('student')->user() ?? auth('prospect')->user())
-                    ->name('user.auth-check');
+                Route::get('/user', function (Request $request) {
+                    $user = $request->user('student') ?? $request->user('prospect');
+
+                    if (! $user || ! $user->tokenCan('resource-hub-portal')) {
+                        return response()->json(['message' => 'Unauthenticated.'], 401);
+                    }
+
+                    return $user;
+                })->name('user.auth-check');
             });
 
         Route::prefix('portal/resource-hub')

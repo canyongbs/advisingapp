@@ -68,7 +68,7 @@ class ResourceHubPortalAuthenticateController extends Controller
 
         /** @var Student|Prospect $educatable */
         $educatable = $authentication->educatable;
-        // dd($educatable);
+
         $guard = $educatable instanceof Student ? 'student' : 'prospect';
         Auth::guard($guard)->login($educatable);
 
@@ -79,6 +79,7 @@ class ResourceHubPortalAuthenticateController extends Controller
         return response()->json([
             'success' => true,
             'token' => str($token->plainTextToken)->after('|')->toString(),
+            'guard' => $guard,
         ]);
     }
 }
