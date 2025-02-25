@@ -36,8 +36,12 @@
 
 namespace AdvisingApp\Engagement\Filament\Resources\EngagementResponseResource\Actions;
 
+use AdvisingApp\Engagement\Models\EngagementResponse;
 use Filament\Actions\ViewAction;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\Split;
 use Filament\Infolists\Components\TextEntry;
+use Illuminate\Support\HtmlString;
 
 class EngagementResponseViewAction
 {
@@ -45,9 +49,19 @@ class EngagementResponseViewAction
     {
         return ViewAction::make()
             ->infolist([
-                TextEntry::make('content'),
-                TextEntry::make('sent_at')
-                    ->dateTime('Y-m-d H:i:s'),
+                Split::make([
+                    Section::make([
+                        TextEntry::make('subject')
+                            ->getStateUsing(fn (EngagementResponse $record): ?string => $record->subject)
+                            ->hidden(fn ($state): bool => blank($state)),
+                        TextEntry::make('content')
+                            ->getStateUsing(fn (EngagementResponse $record): HtmlString => $record->getBody()),
+                    ]),
+                    Section::make([
+                        TextEntry::make('sent_at')
+                            ->dateTime('Y-m-d H:i:s'),
+                    ])->grow(false),
+                ]),
             ]);
     }
 }
