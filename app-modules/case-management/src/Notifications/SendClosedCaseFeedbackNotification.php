@@ -26,7 +26,7 @@ class SendClosedCaseFeedbackNotification extends Notification
             ->subject("Feedback survey for {$this->case->case_number}")
             ->greeting("Hi {$notifiable->display_name},")
             ->line('To help us serve you better in the future, we’d love to hear about your experience with our support team.')
-            ->action('Rate Service', route('feedback.case', $this->case->id))
+            ->action('Rate Service', route('feedback.case', $this->case->getKey()))
             ->line('We appreciate your time and we value your feedback!')
             ->salutation('Thank you.');
     }
