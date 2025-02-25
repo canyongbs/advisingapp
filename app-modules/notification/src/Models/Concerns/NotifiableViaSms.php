@@ -42,10 +42,10 @@ trait NotifiableViaSms
 {
     public function routeNotificationForSms(): string
     {
-        if (ProspectStudentRefactor::active()) {
-            return $this->primaryPhone?->number;
+        if (! ProspectStudentRefactor::active()) {
+            return $this->mobile;
         }
 
-        return $this->mobile;
+        return $this->primaryPhone?->number;
     }
 }

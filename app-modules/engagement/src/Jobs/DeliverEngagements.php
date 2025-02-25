@@ -73,13 +73,11 @@ class DeliverEngagements implements ShouldQueue
                         return;
                     }
 
-                    if (ProspectStudentRefactor::active()) {
-                        if ($engagement->recipient->primaryEmail) {
-                            $engagement->recipient->notify(new EngagementNotification($engagement));
-                        }
-                    } else {
-                        $engagement->recipient->notify(new EngagementNotification($engagement));
+                    if (! $engagement->recipient->canRecieveEmail()) {
+                        return;
                     }
+
+                    $engagement->recipient->notify(new EngagementNotification($engagement));
                 }),
                 250,
             );
