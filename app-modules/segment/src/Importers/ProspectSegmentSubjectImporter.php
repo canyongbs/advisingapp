@@ -62,9 +62,7 @@ class ProspectSegmentSubjectImporter extends Importer
                             return $query->where('email', $state)->orWhere('email_2', $state);
                         })
                         ->when(ProspectStudentRefactor::active(), function (Builder $query) use ($state) {
-                            return $query->whereHas('emailAddresses', function (Builder $query) use ($state) {
-                                return $query->where('address', $state);
-                            });
+                            return $query->whereRelation('emailAddresses', 'address', $state);
                         })
                         ->first(),
                 )
