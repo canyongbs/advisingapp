@@ -41,7 +41,6 @@ use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Notifications\FormSubmissionAutoReplyNotification;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\ProspectStudentRefactor;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class SendFormSubmissionAutoReplyEmailToSubmitter implements ShouldQueue
