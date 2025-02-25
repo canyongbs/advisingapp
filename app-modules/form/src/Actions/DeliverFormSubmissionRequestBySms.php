@@ -43,18 +43,11 @@ class DeliverFormSubmissionRequestBySms extends DeliverFormSubmissionRequest
 {
     public function handle(): void
     {
-        if (ProspectStudentRefactor::active()) {
-            if ($this->submission->author->primaryPhone) {
+            if ($this->submission->author->canRecieveSms()) {
                 $this
                     ->submission
                     ->author
                     ->notify(new FormSubmissionRequestSmsNotification($this->submission));
             }
-        } else {
-            $this
-                ->submission
-                ->author
-                ->notify(new FormSubmissionRequestSmsNotification($this->submission));
-        }
     }
 }

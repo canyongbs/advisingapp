@@ -62,11 +62,7 @@ class SendFormSubmissionAutoReplyEmailToSubmitter implements ShouldQueue
             return;
         }
 
-        if (ProspectStudentRefactor::active()) {
-            if ($author->primaryEmail) {
-                $author->notify(new FormSubmissionAutoReplyNotification(submission: $event->submission));
-            }
-        } else {
+        if ($author->canRecieveEmail()) {
             $author->notify(new FormSubmissionAutoReplyNotification(submission: $event->submission));
         }
     }
