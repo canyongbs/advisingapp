@@ -335,76 +335,87 @@ async function authenticate(formData, node) {
                 <div v-if="!submittedSuccess">
                     <div
                         v-if="requiresAuthentication && !userIsAuthenticated"
-                        class="max-w-md w-full bg-white rounded ring-1 ring-black/5 shadow-sm px-8 pt-6 pb-4 flex flex-col gap-6 mx-4 mt-4"
+                        class="flex justify-center items-center min-h-screen px-4"
                     >
-                        <h1 class="text-primary-950 text-center text-2xl font-semibold">Login to submit feedback</h1>
+                        <div
+                            class="w-full max-w-md sm:max-w-lg bg-white rounded-lg ring-1 ring-black/5 shadow-md px-6 sm:px-8 py-6 flex flex-col gap-4 sm:gap-6"
+                        >
+                            <h1 class="text-primary-950 text-center text-xl sm:text-2xl font-semibold">
+                                Login to submit feedback
+                            </h1>
 
-                        <FormKit type="form" @submit="authenticate" v-model="authentication">
-                            <FormKit
-                                type="email"
-                                label="Your email address"
-                                name="email"
-                                validation="required|email"
-                                validation-visibility="submit"
-                                :disabled="authentication.isRequested"
-                            />
-
-                            <p v-if="authentication.requestedMessage" class="text-sm">
-                                {{ authentication.requestedMessage }}
-                            </p>
-
-                            <FormKit
-                                type="otp"
-                                digits="6"
-                                label="Authentication code"
-                                name="code"
-                                help="We’ve sent a code to your email address."
-                                validation="required"
-                                validation-visibility="submit"
-                                v-if="authentication.isRequested"
-                            />
-                        </FormKit>
-                    </div>
-
-                    <div v-else class="flex flex-col justify-center min-h-screen">
-                        <img
-                            :src="headerLogo"
-                            :alt="appName"
-                            class="max-h-20 max-w-64 object-scale-down object-left mb-4"
-                        />
-                        <div v-if="errorLoading" class="text-center">
-                            <h1 class="text-3xl font-bold text-red-500">Error Loading the feedback form</h1>
-                            <p class="text-lg text-red-500">Please try again later</p>
-                        </div>
-                        <div v-else class="flex flex-col w-full">
-                            <div class="mb-4">
-                                Thank you for filling out this brief survey on your case:
-                                {{ caseNumber }}
-                            </div>
-
-                            <FormKit type="form" @submit="submitForm">
+                            <FormKit type="form" @submit="authenticate" v-model="authentication">
                                 <FormKit
-                                    validation="required"
-                                    type="rating"
-                                    v-if="hasEnabledCsat"
-                                    name="csat"
-                                    label="How did we do?"
-                                ></FormKit>
+                                    type="email"
+                                    label="Your email address"
+                                    name="email"
+                                    validation="required|email"
+                                    validation-visibility="submit"
+                                    :disabled="authentication.isRequested"
+                                    class="text-sm sm:text-base"
+                                />
+
+                                <p v-if="authentication.requestedMessage" class="text-xs sm:text-sm text-gray-600">
+                                    {{ authentication.requestedMessage }}
+                                </p>
+
                                 <FormKit
+                                    type="otp"
+                                    digits="6"
+                                    label="Authentication code"
+                                    name="code"
+                                    help="We’ve sent a code to your email address."
                                     validation="required"
-                                    type="rating"
-                                    v-if="hasEnabledNps"
-                                    name="nps"
-                                    label="How likely are you to recommend our service to a friend or colleague?"
-                                ></FormKit>
+                                    validation-visibility="submit"
+                                    v-if="authentication.isRequested"
+                                    class="text-sm sm:text-base"
+                                />
                             </FormKit>
                         </div>
+                    </div>
 
-                        <Footer :logo="footerLogo"></Footer>
+                    <div v-else class="h-screen flex flex-col items-center justify-center px-4">
+                        <div class="w-full max-w-md px-4 sm:px-8 pt-6 pb-4 flex flex-col items-start rounded-md">
+                            <img :src="headerLogo" :alt="appName" class="max-h-20 max-w-64 object-scale-down mb-4" />
+
+                            <div v-if="errorLoading" class="text-center sm:text-left">
+                                <h1 class="text-2xl sm:text-3xl font-bold text-red-500">
+                                    Error Loading the feedback form
+                                </h1>
+                                <p class="text-base sm:text-lg text-red-500">Please try again later</p>
+                            </div>
+
+                            <div v-else class="w-full text-left">
+                                <div class="mb-4 text-sm sm:text-base">
+                                    Thank you for filling out this brief survey on your case:
+                                    <span class="whitespace-normal sm:whitespace-nowrap">{{ caseNumber }}</span>
+                                </div>
+
+                                <FormKit type="form" @submit="submitForm">
+                                    <FormKit
+                                        validation="required"
+                                        type="rating"
+                                        v-if="hasEnabledCsat"
+                                        name="csat"
+                                        label="How did we do?"
+                                    />
+                                    <FormKit
+                                        validation="required"
+                                        type="rating"
+                                        v-if="hasEnabledNps"
+                                        name="nps"
+                                        label="How likely are you to recommend our service to a friend or colleague?"
+                                        label-class="whitespace-normal sm:whitespace-nowrap"
+                                    />
+                                </FormKit>
+                            </div>
+                        </div>
+
+                        <Footer :logo="footerLogo" class="w-full mt-4 sm:mt-8" />
                     </div>
                 </div>
-                <div v-if="submittedSuccess">
-                    <h1 class="text-2xl font-bold mt-6 mb-2 text-center">
+                <div v-if="submittedSuccess" class="flex items-center justify-center min-h-screen px-4">
+                    <h1 class="text-lg sm:text-xl text-center text-gray-900">
                         Thank you, your feedback has been received.
                     </h1>
                 </div>
@@ -412,14 +423,10 @@ async function authenticate(formData, node) {
         </div>
 
         <div v-else>
-            <div class="bg-gradient flex flex-col items-center justify-start min-h-screen">
-                <div
-                    class="max-w-md w-full bg-white rounded ring-1 ring-black/5 shadow-sm px-8 pt-6 pb-4 flex flex-col gap-6 mx-4 mt-4"
-                >
-                    <h1 class="text-primary-950 text-center text-2xl font-semibold">
-                        Feedback is already submitted for this case.
-                    </h1>
-                </div>
+            <div class="bg-gradient flex flex-col items-center justify-center min-h-screen px-4">
+                <h1 class="text-lg sm:text-xl text-center text-primary-950">
+                    Feedback is already submitted for this case.
+                </h1>
             </div>
         </div>
     </div>
