@@ -370,7 +370,7 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
             return filled($this->email);
         }
 
-        return $this->primaryEmail && $this->primaryEmail->address;
+        return filled($this->primaryEmail?->address);
     }
 
     public function canRecieveSms(): bool
@@ -379,7 +379,7 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
             return filled($this->mobile);
         }
 
-        return $this->primaryPhone && $this->primaryPhone->number && $this->primaryPhone->can_recieve_sms;
+        return filled($this->primaryPhone?->number) && $this->primaryPhone->can_recieve_sms;
     }
 
     public function tags(): MorphToMany
