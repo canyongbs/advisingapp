@@ -61,15 +61,15 @@ return new class () extends Migration {
                             ];
                         }
 
-                    if (! blank($prospect->email_2)) {
-                        $emails[] = [
-                            'id' => (string) Str::orderedUuid(),
-                            'prospect_id' => $prospect->id,
-                            'address' => $prospect->email_2,
-                            'type' => 'Other',
-                            'order' => 2,
-                        ];
-                    }
+                        if (! blank($prospect->email_2)) {
+                            $emails[] = [
+                                'id' => (string) Str::orderedUuid(),
+                                'prospect_id' => $prospect->id,
+                                'address' => $prospect->email_2,
+                                'type' => 'Other',
+                                'order' => 2,
+                            ];
+                        }
 
                         if (! blank($prospect->mobile)) {
                             $phones[] = [
@@ -82,16 +82,16 @@ return new class () extends Migration {
                             ];
                         }
 
-                    if (! blank($prospect->phone)) {
-                        $phones[] = [
-                            'id' => (string) Str::orderedUuid(),
-                            'prospect_id' => $prospect->id,
-                            'number' => $prospect->phone,
-                            'can_recieve_sms' => false,
-                            'type' => 'Phone',
-                            'order' => 2,
-                        ];
-                    }
+                        if (! blank($prospect->phone)) {
+                            $phones[] = [
+                                'id' => (string) Str::orderedUuid(),
+                                'prospect_id' => $prospect->id,
+                                'number' => $prospect->phone,
+                                'can_recieve_sms' => false,
+                                'type' => 'Phone',
+                                'order' => 2,
+                            ];
+                        }
 
                         if (! blank($prospect->address)) {
                             $addresses[] = [
@@ -112,9 +112,9 @@ return new class () extends Migration {
                         DB::table('prospect_email_addresses')->insert($emails);
                     }
 
-                if (! empty($phones)) {
-                    DB::table('prospect_phone_numbers')->insert($phones);
-                }
+                    if (! empty($phones)) {
+                        DB::table('prospect_phone_numbers')->insert($phones);
+                    }
 
                     if (! empty($addresses)) {
                         DB::table('prospect_addresses')->insert($addresses);
