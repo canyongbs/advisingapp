@@ -60,9 +60,6 @@
                 <p>{{ $record->subject }}</p>
             @endif
             <p class="text-xs text-gray-400 dark:text-gray-500">Content:</p>
-            @php
-                logger()->debug($record->getBody());
-            @endphp
             <div>
                 {!! $record->getBody() !!}
             </div>
