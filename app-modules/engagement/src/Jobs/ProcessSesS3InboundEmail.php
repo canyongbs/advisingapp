@@ -43,7 +43,6 @@ use AdvisingApp\Engagement\Exceptions\UnableToDetectTenantFromSesS3EmailPayload;
 use AdvisingApp\Engagement\Exceptions\UnableToRetrieveContentFromSesS3EmailPayload;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\InboundEmailsUpdates;
 use App\Models\Tenant;
 use Aws\Crypto\KmsMaterialsProviderV2;
 use Aws\Kms\KmsClient;
@@ -77,10 +76,6 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
 
     public function handle(): void
     {
-        if (! InboundEmailsUpdates::active()) {
-            return;
-        }
-
         DB::beginTransaction();
 
         try {

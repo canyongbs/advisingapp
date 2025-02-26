@@ -111,7 +111,7 @@ class EducatableActivityFeedWidget extends Widget implements HasActions, HasForm
                 NotificationChannel::Sms => "Preview: {$record->getBodyMarkdown()}",
                 default => "Subject: {$record->subject}",
             },
-            'engagement_response' => "Preview: {$record->content}",
+            'engagement_response' => 'Preview: ' . str($record->getBody())->stripTags(),
             'task_history' => "Title: {$record->subject?->title}",
             'alert_history' => "{$record->subject?->severity->getLabel()} severity, " . str($record->subject?->description)->limit(200),
         })->limit(110);

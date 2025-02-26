@@ -44,7 +44,6 @@ use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\EmailMessageEvent;
 use AdvisingApp\Notification\Models\SmsMessageEvent;
 use AdvisingApp\Timeline\Models\Timeline;
-use App\Features\InboundEmailsUpdates;
 use Filament\Infolists\Components\Fieldset as InfolistFieldset;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Section;
@@ -138,7 +137,6 @@ class EngagementsRelationManager extends RelationManager
                     Section::make([
                         TextEntry::make('subject')
                             ->getStateUsing(fn (Timeline $record): ?string => $record->timelineable->subject)
-                            ->visible(fn () => InboundEmailsUpdates::active())
                             ->hidden(fn ($state): bool => blank($state))
                             ->columnSpanFull(),
                         TextEntry::make('body')

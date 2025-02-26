@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Engagement\Jobs;
 
-use App\Features\InboundEmailsUpdates;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -52,10 +51,6 @@ class GatherAndDispatchSesS3InboundEmails implements ShouldQueue, NotTenantAware
 
     public function handle(): void
     {
-        if (! InboundEmailsUpdates::active()) {
-            return;
-        }
-
         collect(Storage::disk('s3-inbound-email')->files())
             ->filter(fn (string $file) => $file !== 'AMAZON_SES_SETUP_NOTIFICATION')
             ->each(function (string $file) {
