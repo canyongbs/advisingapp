@@ -79,14 +79,14 @@ trait HasProspectHeader
                 ['Prospect', 'heroicon-m-magnifying-glass-circle',null],
                 ...(filled($prospect->preferred) ? [["Goes by \"{$prospect->preferred}\"", 'heroicon-m-heart',null]] : []),
                 ...(
-                    ProspectStudentRefactor::active()
-                      ? ($prospect->primaryPhone ? [[$prospect->primaryPhone->number, 'heroicon-m-phone']] : [])
-                      : (filled($prospect->phone) ? [[$prospect->phone, 'heroicon-m-phone']] : [])
+                  ProspectStudentRefactor::active()
+                ? (filled($prospect->primaryPhone) ? [[$prospect->primaryPhone->number, 'heroicon-m-phone', !NotificationChannel::tryFrom(NotificationChannel::Sms->value)?->getCaseDisabled() && $prospect->primaryPhone->can_recieve_sms ? "\$dispatch('openengagementaction', { 'type' : '" . NotificationChannel::Sms->value . "', 'id' : '{$prospect?->primaryPhone->getKey()}' })" : null]] : [])
+                : (filled($prospect->phone) ? [[$prospect->phone, 'heroicon-m-phone', null]] : [])
                 ),
                 ...(
-                    ProspectStudentRefactor::active()
-                    ? ($prospect->primaryEmail ? [[$prospect->primaryEmail->address, 'heroicon-m-envelope']] : [])
-                    : (filled($prospect->email) ? [[$prospect->email, 'heroicon-m-envelope']] : [])
+                  ProspectStudentRefactor::active()
+                    ? (filled($prospect->primaryEmail) ? [[$prospect->primaryEmail->address, 'heroicon-m-envelope', "\$dispatch('openengagementaction', { 'type' : '" . NotificationChannel::Email->value . "', 'id': '{$prospect->primaryEmail->getKey()}' })"]] : [])
+                    : (filled($prospect->email) ? [[$prospect->email, 'heroicon-m-envelope', null]] : [])
                 ),
                 ...(filled($prospect->hsgrad) ? [[$prospect->hsgrad, 'heroicon-m-building-library',null]] : []),
             ],
