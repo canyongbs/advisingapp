@@ -34,71 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Models;
+namespace AdvisingApp\Prospect\Models;
 
-use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
-use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Prospect\Models\ProspectEmailAddress;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Notifications\Notifiable;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
- * @mixin IdeHelperEventAttendee
+ * @mixin IdeHelperProspectEmailAddress
  */
-class EventAttendee extends BaseModel implements CanBeNotified
+class ProspectEmailAddress extends BaseModel implements Auditable
 {
-    use Notifiable;
+    use AuditableTrait;
 
     protected $fillable = [
-        'status',
-        'email',
-        'event_id',
+        'prospect_id',
+        'address',
+        'type',
+        'order',
     ];
 
-    protected $casts = [
-        'status' => EventAttendeeStatus::class,
-    ];
-
-    public function event(): BelongsTo
+    public function prospect(): BelongsTo
     {
-        return $this->belongsTo(Event::class, 'event_id');
-    }
-
-    public function submissions(): HasMany
-    {
-        return $this->hasMany(EventRegistrationFormSubmission::class, 'event_attendee_id');
-    }
-
-    public function prospects(): BelongsToMany
-    {
-        return $this->belongsToMany(
-            Prospect::class,
-            ProspectEmailAddress::class,
-            'address',
-            'prospect_id',
-            'email',
-        );
-    }
-
-    public function students(): BelongsToMany
-    {
-        return $this->belongsToMany(
-            Student::class,
-            StudentEmailAddress::class,
-            'address',
-            'sisid',
-            'email',
-        );
-    }
-
-    public function canRecieveSms(): bool
-    {
-        return false;
+        return $this->belongsTo(Prospect::class);
     }
 }

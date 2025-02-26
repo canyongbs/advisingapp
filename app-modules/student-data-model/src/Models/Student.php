@@ -63,6 +63,7 @@ use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
 use AdvisingApp\Timeline\Models\Timeline;
 use App\Enums\TagType;
+use App\Features\ProspectStudentRefactor;
 use App\Models\Authenticatable;
 use App\Models\Scopes\HasLicense;
 use App\Models\Tag;
@@ -78,6 +79,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as BaseAuthenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Notifications\Notification;
 use Laravel\Sanctum\HasApiTokens;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
@@ -144,6 +146,9 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         'lastlmslogin',
         'f_e_term',
         'mr_e_term',
+        'primary_email_id',
+        'primary_phone_id',
+        'primary_address_id',
     ];
 
     protected $casts = [
@@ -324,14 +329,57 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         )->withTimestamps();
     }
 
+    public function addresses(): HasMany
+    {
+        return $this->hasMany(StudentAddress::class, 'sisid', 'sisid');
+    }
+
+    public function emailAddresses(): HasMany
+    {
+        return $this->hasMany(StudentEmailAddress::class, 'sisid', 'sisid');
+    }
+
+    public function phoneNumbers(): HasMany
+    {
+        return $this->hasMany(StudentPhoneNumber::class, 'sisid', 'sisid');
+    }
+
+    public function primaryEmail()
+    {
+        return $this->belongsTo(StudentEmailAddress::class, 'primary_email_id', 'id');
+    }
+
+    public function primaryPhone()
+    {
+        return $this->belongsTo(StudentPhoneNumber::class, 'primary_phone_id', 'id');
+    }
+
+    public function primaryAddress()
+    {
+        return $this->belongsTo(StudentAddress::class, 'primary_address_id', 'id');
+    }
+
     public static function getLabel(): string
     {
         return 'student';
     }
 
+    public function canRecieveEmail(): bool
+    {
+        if (! ProspectStudentRefactor::active()) {
+            return filled($this->email);
+        }
+
+        return filled($this->primaryEmail?->address);
+    }
+
     public function canRecieveSms(): bool
     {
-        return filled($this->mobile);
+        if (! ProspectStudentRefactor::active()) {
+            return filled($this->mobile);
+        }
+
+        return filled($this->primaryPhone?->number) && $this->primaryPhone->can_recieve_sms;
     }
 
     public function tags(): MorphToMany
@@ -347,6 +395,20 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
             ->withPivot(['tag_id'])
             ->withTimestamps()
             ->where('type', TagType::Student);
+    }
+
+    /**
+      * Route notifications for the mail channel.
+      *
+      * @return array<string, string>|string|null
+      */
+    public function routeNotificationForMail(Notification $notification): array|string|null
+    {
+        if (! ProspectStudentRefactor::active()) {
+            return $this->email;
+        }
+
+        return $this->primaryEmail?->address;
     }
 
     protected static function booted(): void
@@ -376,6 +438,24 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     {
         return Attribute::make(
             get: function (mixed $value, array $attributes) {
+                if (ProspectStudentRefactor::active()) {
+                    $address = $this->primaryAddress;
+
+                    if (! $address) {
+                        return null;
+                    }
+
+                    $addressLine = trim("{$address['line_1']} {$address['line_2']} {$address['line_3']}");
+
+                    return trim(sprintf(
+                        '%s %s %s %s',
+                        ! empty($addressLine) ? $addressLine . ',' : '',
+                        ! empty($address['city']) ? $address['city'] . ',' : '',
+                        ! empty($address['state']) ? $address['state'] : '',
+                        ! empty($address['postal']) ? $address['postal'] : '',
+                    ));
+                }
+
                 $addressLine = trim("{$attributes['address']} {$attributes['address2']} {$attributes['address3']}");
 
                 return trim(sprintf(
