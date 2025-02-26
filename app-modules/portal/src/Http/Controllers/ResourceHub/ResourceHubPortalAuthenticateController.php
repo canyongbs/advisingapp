@@ -43,6 +43,7 @@ use App\Http\Controllers\Controller;
 use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class ResourceHubPortalAuthenticateController extends Controller
@@ -68,6 +69,9 @@ class ResourceHubPortalAuthenticateController extends Controller
         /** @var Student|Prospect $educatable */
         $educatable = $authentication->educatable;
 
+        $guard = $educatable instanceof Student ? 'student' : 'prospect';
+        Auth::guard($guard)->login($educatable);
+
         $token = $educatable->createToken('resource-hub-portal-access-token', [
             'resource-hub-portal',
         ]);
@@ -75,6 +79,7 @@ class ResourceHubPortalAuthenticateController extends Controller
         return response()->json([
             'success' => true,
             'token' => str($token->plainTextToken)->after('|')->toString(),
+            'guard' => $guard,
         ]);
     }
 }

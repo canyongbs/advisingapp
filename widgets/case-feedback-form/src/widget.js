@@ -31,44 +31,32 @@
 
 </COPYRIGHT>
 */
-import axios from '../Globals/Axios.js';
-import { useTokenStore } from '../Stores/token.js';
+import { defaultConfig, plugin } from '@formkit/vue';
+import { createPinia } from 'pinia';
+import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
+import App from './App.vue';
+import config from './formkit.config.js';
+import './widget.css';
 
-export function consumer() {
-    async function get(endpoint, data = null) {
-        const { getToken } = useTokenStore();
+customElements.define(
+    'case-feedback-form-embed',
+    defineCustomElement({
+        setup(props) {
+            const app = createApp();
+            const pinia = createPinia();
 
-        let token = await getToken();
+            app.use(pinia);
 
-        return await axios
-            .get(endpoint, {
-                headers: { Authorization: `Bearer ${token}` },
-                params: data,
-            })
-            .then((response) => {
-                return response;
-            })
-            .catch((error) => {
-                return Promise.reject(error);
-            });
-    }
+            app.use(plugin, defaultConfig(config));
 
-    async function post(endpoint, data) {
-        const { getToken } = useTokenStore();
+            app.config.devtools = true;
 
-        let token = await getToken();
+            const inst = getCurrentInstance();
+            Object.assign(inst.appContext, app._context);
+            Object.assign(inst.provides, app._context.provides);
 
-        return await axios
-            .post(endpoint, data, {
-                headers: { Authorization: `Bearer ${token}` },
-            })
-            .then((response) => {
-                return response;
-            })
-            .catch((error) => {
-                return Promise.reject(error);
-            });
-    }
-
-    return { get, post };
-}
+            return () => h(App, props);
+        },
+        props: ['url', 'userAuthenticationUrl', 'accessUrl', 'appUrl', 'apiUrl'],
+    }),
+);

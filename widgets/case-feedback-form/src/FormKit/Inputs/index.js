@@ -31,44 +31,15 @@
 
 </COPYRIGHT>
 */
-import axios from '../Globals/Axios.js';
-import { useTokenStore } from '../Stores/token.js';
+import { createInput } from '@formkit/vue';
+import OneTimePassword from '../../../../form/src/FormKit/Inputs/OneTimePassword.vue';
+import Rating from './Rating.vue';
 
-export function consumer() {
-    async function get(endpoint, data = null) {
-        const { getToken } = useTokenStore();
-
-        let token = await getToken();
-
-        return await axios
-            .get(endpoint, {
-                headers: { Authorization: `Bearer ${token}` },
-                params: data,
-            })
-            .then((response) => {
-                return response;
-            })
-            .catch((error) => {
-                return Promise.reject(error);
-            });
-    }
-
-    async function post(endpoint, data) {
-        const { getToken } = useTokenStore();
-
-        let token = await getToken();
-
-        return await axios
-            .post(endpoint, data, {
-                headers: { Authorization: `Bearer ${token}` },
-            })
-            .then((response) => {
-                return response;
-            })
-            .catch((error) => {
-                return Promise.reject(error);
-            });
-    }
-
-    return { get, post };
-}
+export default {
+    otp: createInput(OneTimePassword, {
+        props: ['digits'],
+    }),
+    rating: createInput(Rating, {
+        props: [],
+    }),
+};

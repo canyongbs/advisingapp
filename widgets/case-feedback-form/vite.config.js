@@ -31,44 +31,28 @@
 
 </COPYRIGHT>
 */
-import axios from '../Globals/Axios.js';
-import { useTokenStore } from '../Stores/token.js';
+import vue from '@vitejs/plugin-vue';
+import { resolve } from 'path';
+import { defineConfig } from 'vite';
 
-export function consumer() {
-    async function get(endpoint, data = null) {
-        const { getToken } = useTokenStore();
-
-        let token = await getToken();
-
-        return await axios
-            .get(endpoint, {
-                headers: { Authorization: `Bearer ${token}` },
-                params: data,
-            })
-            .then((response) => {
-                return response;
-            })
-            .catch((error) => {
-                return Promise.reject(error);
-            });
-    }
-
-    async function post(endpoint, data) {
-        const { getToken } = useTokenStore();
-
-        let token = await getToken();
-
-        return await axios
-            .post(endpoint, data, {
-                headers: { Authorization: `Bearer ${token}` },
-            })
-            .then((response) => {
-                return response;
-            })
-            .catch((error) => {
-                return Promise.reject(error);
-            });
-    }
-
-    return { get, post };
-}
+export default defineConfig({
+    plugins: [vue()],
+    build: {
+        manifest: true,
+        lib: {
+            entry: resolve(__dirname, 'src/widget.js'),
+            name: 'AdvisingAppCaseFeedbackFormWidget',
+            fileName: 'advising-app-case-feedback-form-widget',
+            formats: ['es'],
+        },
+        outDir: resolve(__dirname, '../../public/js/widgets/case-feedback-form'),
+        emptyOutDir: true,
+        sourcemap: true,
+    },
+    resolve: {
+        alias: {
+            '@': resolve(__dirname, 'src'),
+        },
+    },
+    define: { 'process.env.NODE_ENV': '"production"' },
+});

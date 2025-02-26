@@ -65,7 +65,7 @@ class AuthenticatePortalNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return MailMessage::make()
-            ->subject("Your authentication code for {$this->authentication->portal_type->getLabel()}")
+            ->subject(__('Your authentication code for :appname', ['appname' => config('app.name')]))
             ->line("Your code is: {$this->code}.")
             ->line('You should type this code into the portal to authenticate yourself.')
             ->line('For security reasons, the code will expire in 24 hours, but you can always request another.');

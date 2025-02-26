@@ -1,0 +1,118 @@
+/*
+<COPYRIGHT>
+
+    Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
+
+    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
+
+    Notice:
+
+    - You may not provide the software to third parties as a hosted or managed
+      service, where the service provides users with access to any substantial set of
+      the features or functionality of the software.
+    - You may not move, change, disable, or circumvent the license key functionality
+      in the software, and you may not remove or obscure any functionality in the
+      software that is protected by the license key.
+    - You may not alter, remove, or obscure any licensing, copyright, or other notices
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      to applicable law.
+    - Canyon GBS LLC respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
+      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+      vigorously.
+    - The software solution, including services, infrastructure, and code, is offered as a
+      Software as a Service (SaaS) by Canyon GBS LLC.
+    - Use of this software implies agreement to the license terms and conditions as stated
+      in the Elastic License 2.0.
+
+    For more information or inquiries please visit our website at
+    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
+
+</COPYRIGHT>
+*/
+.wizard {
+    @apply bg-gray-100 flex flex-col mb-3 p-1 rounded-lg gap-1 md:overflow-x-auto md:flex-row md:items-center;
+}
+
+.step {
+    @apply text-gray-500 rounded relative flex items-center justify-center px-8 py-3 hover:text-gray-700 hover:cursor-pointer;
+}
+
+[data-step-active="true"] {
+    @apply bg-white text-gray-900;
+}
+
+.step--errors,
+[data-step-valid="true"]:after {
+    @apply absolute text-xs text-white flex flex-col items-center justify-center top-1 end-1 h-4 w-4 rounded z-10;
+}
+
+[data-step-valid="true"]:after {
+    content: "\2713"; /* Check mark for valid step */
+    @apply bg-green-500;
+}
+
+.step--errors {
+    @apply bg-red-500;
+}
+
+.step-nav {
+    @apply flex gap-3 mt-3 items-center justify-between;
+}
+
+.responsive-grid-2 {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-6;
+}
+
+.responsive-grid-3 {
+    @apply grid grid-cols-1 md:grid-cols-3 gap-6;
+}
+
+.responsive-grid-4 {
+    @apply grid grid-cols-1 md:grid-cols-4 gap-6;
+}
+
+.responsive-grid-5 {
+    @apply grid grid-cols-1 md:grid-cols-5 gap-6;
+}
+
+.fixed-grid-2 {
+    @apply grid grid-cols-2 gap-6;
+}
+
+.fixed-grid-3 {
+    @apply grid grid-cols-3 gap-6;
+}
+
+.fixed-grid-4 {
+    @apply grid grid-cols-4 gap-6;
+}
+
+.fixed-grid-5 {
+    @apply grid grid-cols-5 gap-6;
+}
+
+.asymetric-grid-left-thirds,
+.asymetric-grid-right-thirds {
+    @apply grid grid-cols-1 md:grid-cols-3 gap-6;
+}
+
+.asymetric-grid-left-fourths,
+.asymetric-grid-right-fourths {
+    @apply grid grid-cols-1 md:grid-cols-4 gap-6;
+}
+
+.grid-col {
+    @apply col-span-1;
+}
+
+.asymetric-grid-left-thirds > .grid-col:first-child,
+.asymetric-grid-right-thirds > .grid-col:last-child {
+    @apply md:col-span-2;
+}
+
+.asymetric-grid-left-fourths > .grid-col:first-child,
+.asymetric-grid-right-fourths > .grid-col:last-child {
+    @apply md:col-span-3;
+}

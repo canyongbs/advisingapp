@@ -35,7 +35,20 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
 export const useAuthStore = defineStore('auth', () => {
+    const user = ref(null);
     const portalRequiresAuthentication = ref(false);
+
+    async function setUser(userToSet) {
+        user.value = userToSet;
+    }
+
+    async function getUser() {
+        return user.value;
+    }
+
+    async function removeUser() {
+        user.value = null;
+    }
 
     async function setPortalRequiresAuthentication(value) {
         portalRequiresAuthentication.value = value;
@@ -45,5 +58,13 @@ export const useAuthStore = defineStore('auth', () => {
         return portalRequiresAuthentication.value;
     }
 
-    return { portalRequiresAuthentication, setPortalRequiresAuthentication, getPortalRequiresAuthentication };
+    return {
+        user,
+        getUser,
+        setUser,
+        removeUser,
+        portalRequiresAuthentication,
+        setPortalRequiresAuthentication,
+        getPortalRequiresAuthentication,
+    };
 });

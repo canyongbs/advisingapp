@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,44 +33,42 @@
 
 </COPYRIGHT>
 */
-import axios from '../Globals/Axios.js';
-import { useTokenStore } from '../Stores/token.js';
 
-export function consumer() {
-    async function get(endpoint, data = null) {
-        const { getToken } = useTokenStore();
+namespace AdvisingApp\CaseManagement\Models;
 
-        let token = await getToken();
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-        return await axios
-            .get(endpoint, {
-                headers: { Authorization: `Bearer ${token}` },
-                params: data,
-            })
-            .then((response) => {
-                return response;
-            })
-            .catch((error) => {
-                return Promise.reject(error);
-            });
+/**
+ * @property-read Educatable $assignee
+ *
+ * @mixin IdeHelperCaseFeedback
+ */
+class CaseFeedback extends BaseModel
+{
+    use SoftDeletes;
+
+    protected $fillable = [
+        'csat_answer',
+        'nps_answer',
+        'case_id',
+        'assignee_id',
+        'assignee_type',
+    ];
+
+    public function assignee(): MorphTo
+    {
+        return $this->morphTo(
+            name: 'assignee',
+            type: 'assignee_type',
+            id: 'assignee_id',
+        );
     }
 
-    async function post(endpoint, data) {
-        const { getToken } = useTokenStore();
-
-        let token = await getToken();
-
-        return await axios
-            .post(endpoint, data, {
-                headers: { Authorization: `Bearer ${token}` },
-            })
-            .then((response) => {
-                return response;
-            })
-            .catch((error) => {
-                return Promise.reject(error);
-            });
+    public function case(): BelongsTo
+    {
+        return $this->belongsTo(CaseModel::class, 'case_id', 'id');
     }
-
-    return { get, post };
 }

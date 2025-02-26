@@ -34,20 +34,25 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\CaseManagement\Http\Controllers\CaseFeedbackFormWidgetController;
 use AdvisingApp\CaseManagement\Http\Controllers\CaseFormWidgetController;
+use AdvisingApp\CaseManagement\Http\Middleware\CaseTypeFeedbackIsOn;
 use AdvisingApp\CaseManagement\Http\Middleware\EnsureCaseManagementFeatureIsActive;
+use AdvisingApp\CaseManagement\Http\Middleware\FeedbackManagementIsOn;
 use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('api')
     ->middleware([
         'api',
-        EnsureCaseManagementFeatureIsActive::class,
-        EnsureSubmissibleIsEmbeddableAndAuthorized::class . ':caseForm',
     ])
     ->group(function () {
         Route::prefix('case-forms')
             ->name('case-forms.')
+            ->middleware([
+                EnsureCaseManagementFeatureIsActive::class,
+                EnsureSubmissibleIsEmbeddableAndAuthorized::class . ':caseForm',
+            ])
             ->group(function () {
                 Route::get('/{caseForm}', [CaseFormWidgetController::class, 'view'])
                     ->middleware(['signed:relative'])
@@ -60,6 +65,20 @@ Route::prefix('api')
                     ->name('authenticate');
                 Route::post('/{caseForm}/submit', [CaseFormWidgetController::class, 'store'])
                     ->middleware(['signed:relative'])
+                    ->name('submit');
+            });
+
+        Route::prefix('cases/{case}/feedback')
+            ->name('cases.feedback.')
+            ->middleware([
+                FeedbackManagementIsOn::class,
+                CaseTypeFeedbackIsOn::class,
+            ])
+            ->group(function () {
+                Route::get('/', [CaseFeedbackFormWidgetController::class, 'view'])
+                    ->name('define');
+                Route::post('/submit', [CaseFeedbackFormWidgetController::class, 'store'])
+                    ->middleware(['auth:sanctum'])
                     ->name('submit');
             });
     });
