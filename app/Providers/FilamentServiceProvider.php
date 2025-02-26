@@ -205,7 +205,13 @@ class FilamentServiceProvider extends ServiceProvider
             $timezoneLabel = app(DisplaySettings::class)->getTimezoneLabel();
 
             $column
-                ->timezone($timezone)
+                ->timezone(function (TextColumn $column) use ($timezone): ?string {
+                    if (! ($column->isTime() || $column->isDateTime())) {
+                        return null;
+                    }
+
+                    return $timezone;
+                })
                 ->tooltip(function (TextColumn $column) use ($timezoneLabel): ?string {
                     if (! ($column->isTime() || $column->isDateTime())) {
                         return null;
@@ -220,7 +226,13 @@ class FilamentServiceProvider extends ServiceProvider
             $timezoneLabel = app(DisplaySettings::class)->getTimezoneLabel();
 
             $entry
-                ->timezone($timezone)
+                ->timezone(function (TextEntry $column) use ($timezone): ?string {
+                    if (! ($column->isTime() || $column->isDateTime())) {
+                        return null;
+                    }
+
+                    return $timezone;
+                })
                 ->hintIcon(function (TextEntry $entry): ?string {
                     if (! ($entry->isTime() || $entry->isDateTime())) {
                         return null;
