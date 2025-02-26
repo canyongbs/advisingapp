@@ -34,18 +34,39 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Filament\Resources\PermissionResource\Pages;
+use Database\Migrations\Concerns\CanModifyPermissions;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 
-use AdvisingApp\Authorization\Filament\Resources\PermissionResource;
-use Filament\Resources\Pages\ViewRecord;
+return new class () extends Migration {
+    use CanModifyPermissions;
 
-class ViewPermission extends ViewRecord
-{
-    protected static string $resource = PermissionResource::class;
+    private array $permissions = [
+        'permission.view-any' => 'Permission',
+        'permission.*.view' => 'Permission',
+    ];
 
-    protected function getHeaderActions(): array
+    private array $guards = [
+        'web',
+    ];
+
+    public function up(): void
     {
-        return [
-        ];
+        collect($this->guards)
+            ->each(fn (string $guard) => $this->deletePermissions(array_keys($this->permissions), $guard));
     }
-}
+
+    public function down(): void
+    {
+        collect($this->guards)
+            ->each(function (string $guard) {
+                $permissions = Arr::except($this->permissions, DB::table('permissions')
+                    ->where('guard_name', $guard)
+                    ->pluck('name')
+                    ->all());
+
+                $this->createPermissions($permissions, $guard);
+            });
+    }
+};

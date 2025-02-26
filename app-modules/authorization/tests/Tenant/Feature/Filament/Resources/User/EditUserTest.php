@@ -161,8 +161,6 @@ it('allows user which has sass global admin role to assign sass global admin rol
 it('Not allows user which has not sass global admin role to assign sass global admin role to other user', function () {
     $user = User::factory()->create();
     $user->givePermissionTo(
-        'permission.view-any',
-        'permission.*.view',
         'role.view-any',
         'role.*.view',
         'user.view-any',
