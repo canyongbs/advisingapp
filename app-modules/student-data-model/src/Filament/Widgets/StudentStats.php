@@ -37,7 +37,10 @@
 namespace AdvisingApp\StudentDataModel\Filament\Widgets;
 
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
+use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\Segment\Enums\SegmentModel;
+use AdvisingApp\Segment\Filament\Resources\SegmentResource;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Filament\Widgets\StatsOverviewWidget;
@@ -59,21 +62,34 @@ class StudentStats extends StatsOverviewWidget
                         return Student::count();
                     }),
                 maxPrecision: 2,
-            )),
+            ))
+                ->url(StudentResource::getUrl('index')),
             Stat::make('My Subscriptions', Cache::tags(['students', "user-{$user->getKey()}-student-subscriptions"])
                 ->remember("user-{$user->getKey()}-student-subscriptions-count", now()->addHour(), function () use ($user): int {
                     return $user->studentSubscriptions()->count();
-                })),
+                }))
+                ->url(StudentResource::getUrl('index', ['tableFilters[subscribed][isActive]' => 'true'])),
             Stat::make('My Alerts', Cache::tags(['students', "user-{$user->getKey()}-student-alerts"])
                 ->remember("user-{$user->getKey()}-student-alerts-count", now()->addHour(), function () use ($user): int {
                     return $user->studentAlerts()->whereHas('status', function ($query) {
                         $query->where('classification', SystemAlertStatusClassification::Active);
                     })->count();
-                })),
+                }))
+                ->url(StudentResource::getUrl('index', [
+                    'tableFilters' => [
+                        'alerts' => [
+                            'values' => array_values(AlertStatus::pluck('id')->toArray()),
+                        ],
+                        'subscribed' => [
+                            'isActive' => 'true',
+                        ],
+                    ],
+                ])),
             Stat::make('My Population Segments', Cache::tags(["user-{$user->getKey()}-student-segments"])
                 ->remember("user-{$user->getKey()}-student-segments-count", now()->addHour(), function () use ($user): int {
                     return $user->segments()->model(SegmentModel::Student)->count();
-                })),
+                }))
+                ->url(SegmentResource::getUrl('index', ['tableFilters[my_segments][isActive]' => 'true'])),
         ];
     }
 }

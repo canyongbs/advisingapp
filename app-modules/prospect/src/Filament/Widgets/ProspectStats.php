@@ -37,8 +37,11 @@
 namespace AdvisingApp\Prospect\Filament\Widgets;
 
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
+use AdvisingApp\Alert\Models\AlertStatus;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Segment\Enums\SegmentModel;
+use AdvisingApp\Segment\Filament\Resources\SegmentResource;
 use App\Models\User;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -59,21 +62,32 @@ class ProspectStats extends StatsOverviewWidget
                         return Prospect::count();
                     }),
                 maxPrecision: 2,
-            )),
+            ))
+                ->url(ProspectResource::getUrl('index')),
             Stat::make('My Subscriptions', Cache::tags(['prospects', "user-{$user->getKey()}-prospect-subscriptions"])
                 ->remember("user-{$user->getKey()}-prospect-subscriptions-count", now()->addHour(), function () use ($user): int {
                     return $user->prospectSubscriptions()->count();
-                })),
+                }))
+                ->url(ProspectResource::getUrl('index', ['tableFilters[subscribed][isActive]' => 'true'])),
             Stat::make('My Alerts', Cache::tags(['prospects', "user-{$user->getKey()}-prospect-alerts"])
                 ->remember("user-{$user->getKey()}-prospect-alerts-count", now()->addHour(), function () use ($user): int {
                     return $user->prospectAlerts()->whereHas('status', function ($query) {
                         $query->where('classification', SystemAlertStatusClassification::Active);
                     })->count();
-                })),
+                }))
+                ->url(ProspectResource::getUrl('index', ['tableFilters' => [
+                    'alerts' => [
+                        'values' => array_values(AlertStatus::pluck('id')->toArray()),
+                    ],
+                    'subscribed' => [
+                        'isActive' => 'true',
+                    ],
+                ]])),
             Stat::make('My Population Segments', Cache::tags(["user-{$user->getKey()}-prospect-segments"])
                 ->remember("user-{$user->getKey()}-prospect-segments-count", now()->addHour(), function () use ($user): int {
                     return $user->segments()->model(SegmentModel::Prospect)->count();
-                })),
+                }))
+                ->url(SegmentResource::getUrl('index', ['tableFilters[my_segments][isActive]' => 'true'])),
         ];
     }
 }
