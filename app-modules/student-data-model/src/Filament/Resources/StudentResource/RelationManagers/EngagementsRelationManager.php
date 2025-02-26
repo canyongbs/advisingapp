@@ -257,7 +257,7 @@ class EngagementsRelationManager extends RelationManager
     #[On('openengagementaction')]
     public function handleTriggeredEvent($type, $id)
     {
-        if($type == NotificationChannel::Sms->value && NotificationChannel::tryFrom(NotificationChannel::Sms->value)?->getCaseDisabled()){
+        if ($type == NotificationChannel::Sms->value && NotificationChannel::tryFrom(NotificationChannel::Sms->value)?->getCaseDisabled()) {
             return;
         }
 

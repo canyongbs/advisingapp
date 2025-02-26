@@ -54,7 +54,6 @@ use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
-
 class StudentResource extends Resource
 {
     use HasGlobalSearchResultScoring;

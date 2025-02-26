@@ -37,7 +37,6 @@
 namespace AdvisingApp\Form\Actions;
 
 use AdvisingApp\Form\Notifications\FormSubmissionRequestNotification;
-use App\Features\ProspectStudentRefactor;
 
 class DeliverFormSubmissionRequestByEmail extends DeliverFormSubmissionRequest
 {
