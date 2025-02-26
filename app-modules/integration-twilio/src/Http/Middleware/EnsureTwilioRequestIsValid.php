@@ -38,22 +38,36 @@ namespace AdvisingApp\IntegrationTwilio\Http\Middleware;
 
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use Closure;
+use Illuminate\Http\Request;
 use Twilio\Security\RequestValidator;
 
 class EnsureTwilioRequestIsValid
 {
+    /**
+     * @param  Request  $request
+     * @param  Closure  $next
+     *
+     * @return mixed
+     */
     public function handle($request, Closure $next): mixed
     {
-        if (! $request->hasHeader('x-twilio-signature')) {
-            abort(404);
+        if (! $request->hasHeader('X-Twilio-Signature')) {
+            abort(403);
         }
 
         $settings = app(TwilioSettings::class);
 
         $validator = new RequestValidator($settings->auth_token);
 
-        if (! $validator->validate($request->header('x-twilio-signature'), $request->url(), $request->all())) {
-            abort(404);
+        $requestData = $request->toArray();
+
+        // Switch to the body content if this is a JSON request.
+        if (array_key_exists('bodySHA256', $requestData)) {
+            $requestData = $request->getContent();
+        }
+
+        if (! $validator->validate($request->header('X-Twilio-Signature'), $request->fullUrl(), $requestData)) {
+            abort(403);
         }
 
         return $next($request);
