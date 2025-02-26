@@ -44,8 +44,8 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Notifications\Notifiable;
 
 /**
@@ -75,27 +75,25 @@ class EventAttendee extends BaseModel implements CanBeNotified
         return $this->hasMany(EventRegistrationFormSubmission::class, 'event_attendee_id');
     }
 
-    public function prospects(): HasManyThrough
+    public function prospects(): BelongsToMany
     {
-        return $this->hasManyThrough(
+        return $this->belongsToMany(
             Prospect::class,
             ProspectEmailAddress::class,
             'address',
-            'primary_email_id',
+            'prospect_id',
             'email',
-            'id'
         );
     }
 
-    public function students(): HasManyThrough
+    public function students(): BelongsToMany
     {
-        return $this->hasManyThrough(
+        return $this->belongsToMany(
             Student::class,
             StudentEmailAddress::class,
             'address',
-            'primary_email_id',
+            'sisid',
             'email',
-            'id'
         );
     }
 
