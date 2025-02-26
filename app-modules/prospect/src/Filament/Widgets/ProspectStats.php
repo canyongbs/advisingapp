@@ -55,19 +55,6 @@ class ProspectStats extends StatsOverviewWidget
         /** @var User $user */
         $user = auth()->user();
 
-        $alertStatusIds = AlertStatus::pluck('id')->toArray();
-
-        $alertQueryParams = [
-            'tableFilters' => [
-                'alerts' => [
-                    'values' => array_values($alertStatusIds),
-                ],
-                'subscribed' => [
-                    'isActive' => 'true',
-                ],
-            ],
-        ];
-
         return [
             Stat::make('Total Prospects', Number::format(
                 Cache::tags(['prospects'])
@@ -88,7 +75,14 @@ class ProspectStats extends StatsOverviewWidget
                         $query->where('classification', SystemAlertStatusClassification::Active);
                     })->count();
                 }))
-                ->url(ProspectResource::getUrl('index', $alertQueryParams)),
+                ->url(ProspectResource::getUrl('index', ['tableFilters' => [
+                    'alerts' => [
+                        'values' => array_values(AlertStatus::pluck('id')->toArray()),
+                    ],
+                    'subscribed' => [
+                        'isActive' => 'true',
+                    ],
+                ]])),
             Stat::make('My Population Segments', Cache::tags(["user-{$user->getKey()}-prospect-segments"])
                 ->remember("user-{$user->getKey()}-prospect-segments-count", now()->addHour(), function () use ($user): int {
                     return $user->segments()->model(SegmentModel::Prospect)->count();

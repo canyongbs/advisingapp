@@ -55,19 +55,6 @@ class StudentStats extends StatsOverviewWidget
         /** @var User $user */
         $user = auth()->user();
 
-        $alertStatusIds = AlertStatus::pluck('id')->toArray();
-
-        $alertQueryParams = [
-            'tableFilters' => [
-                'alerts' => [
-                    'values' => array_values($alertStatusIds),
-                ],
-                'subscribed' => [
-                    'isActive' => 'true',
-                ],
-            ],
-        ];
-
         return [
             Stat::make('Students', Number::format(
                 Cache::tags(['students'])
@@ -88,7 +75,16 @@ class StudentStats extends StatsOverviewWidget
                         $query->where('classification', SystemAlertStatusClassification::Active);
                     })->count();
                 }))
-                ->url(StudentResource::getUrl('index', $alertQueryParams)),
+                ->url(StudentResource::getUrl('index', [
+                    'tableFilters' => [
+                        'alerts' => [
+                            'values' => array_values(AlertStatus::pluck('id')->toArray()),
+                        ],
+                        'subscribed' => [
+                            'isActive' => 'true',
+                        ],
+                    ],
+                ])),
             Stat::make('My Population Segments', Cache::tags(["user-{$user->getKey()}-student-segments"])
                 ->remember("user-{$user->getKey()}-student-segments-count", now()->addHour(), function () use ($user): int {
                     return $user->segments()->model(SegmentModel::Student)->count();
