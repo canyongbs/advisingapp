@@ -46,7 +46,7 @@ it('will abort the request if the request does not have the necessary header', f
         loadFixtureFromModule('integration-twilio', 'StatusCallback/sent'),
     );
 
-    $response->assertNotFound();
+    $response->assertForbidden();
 });
 
 it('will abort the request if the request cannot be verified to have originated from Twilio', function () {
@@ -61,5 +61,5 @@ it('will abort the request if the request cannot be verified to have originated 
         loadFixtureFromModule('integration-twilio', 'StatusCallback/sent'),
     );
 
-    $response->assertNotFound();
+    $response->assertForbidden();
 });
