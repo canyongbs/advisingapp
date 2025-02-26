@@ -46,6 +46,6 @@ test('there is only the Dashboard item for unlicensed users', function () {
 
     $navigation = Filament::getNavigation();
 
-    assertCount(2, $navigation);
-    assertCount(2, Arr::first($navigation)->getItems());
+    assertCount(1, $navigation);
+    assertCount(1, Arr::first($navigation)->getItems());
 });
