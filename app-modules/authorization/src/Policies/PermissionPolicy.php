@@ -44,18 +44,12 @@ class PermissionPolicy
 {
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        return $authenticatable->canOrElse(
-            abilities: 'permission.view-any',
-            denyResponse: 'You do not have permission to view permissions.'
-        );
+        return Response::allow();
     }
 
     public function view(Authenticatable $authenticatable, Permission $permission): Response
     {
-        return $authenticatable->canOrElse(
-            abilities: ["permission.{$permission->getKey()}.view"],
-            denyResponse: 'You do not have permission to view this permission.'
-        );
+        return Response::allow();
     }
 
     public function create(Authenticatable $authenticatable): Response
