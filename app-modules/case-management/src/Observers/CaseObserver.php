@@ -104,7 +104,9 @@ class CaseObserver
             $case?->status?->classification == SystemCaseClassification::Closed &&
             ! $case?->feedback()->count()
         ) {
-            $case->respondent->notify(new SendClosedCaseFeedbackNotification($case));
+            if ($case->respondent->canRecieveEmail()) {
+                $case->respondent->notify(new SendClosedCaseFeedbackNotification($case));
+            }
         }
     }
 }
