@@ -36,8 +36,10 @@
 
 use AdvisingApp\IntegrationTwilio\Http\Controllers\TwilioInboundWebhookController;
 use AdvisingApp\IntegrationTwilio\Http\Middleware\EnsureTwilioRequestIsValid;
+use App\Http\Middleware\TrimStrings;
 use Illuminate\Support\Facades\Route;
 
 Route::post('inbound/webhook/twilio/{event}', TwilioInboundWebhookController::class)
     ->middleware(EnsureTwilioRequestIsValid::class)
+    ->withoutMiddleware(TrimStrings::class)
     ->name('inbound.webhook.twilio');
