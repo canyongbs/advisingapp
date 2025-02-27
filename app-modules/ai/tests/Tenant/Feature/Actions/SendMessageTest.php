@@ -126,22 +126,19 @@ it('sends a message with a file', function () {
         $streamedContent .= $responseContent;
     }
 
-    $messages = AiMessage::all();
-    $messageFiles = AiMessageFile::all();
-
-    expect($messages->count())
+    expect(AiMessage::count())
         ->toBe(2);
 
-    expect($messageFiles->count())
+    expect(AiMessageFile::count())
         ->toBe(1);
 
-    expect($messages->first())
+    expect(AiMessage::query()->orderBy('id')->first())
         ->content->toBe($content)
         ->thread->getKey()->toBe($thread->getKey())
         ->user->getKey()->toBe(auth()->user()->getKey())
-        ->files->first()->getKey()->toBe($messageFiles->first()->getKey());
+        ->files->first()->getKey()->toBe(AiMessageFile::query()->first()->getKey());
 
-    $response = $messages->last();
+    $response = AiMessage::query()->latest('id')->first();
 
     expect($response)
         ->thread->getKey()->toBe($thread->getKey())
