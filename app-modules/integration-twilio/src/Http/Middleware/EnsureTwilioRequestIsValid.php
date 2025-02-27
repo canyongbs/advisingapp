@@ -39,6 +39,7 @@ namespace AdvisingApp\IntegrationTwilio\Http\Middleware;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Twilio\Security\RequestValidator;
 
 class EnsureTwilioRequestIsValid
@@ -67,6 +68,12 @@ class EnsureTwilioRequestIsValid
         }
 
         if (! $validator->validate($request->header('X-Twilio-Signature'), $request->fullUrl(), $requestData)) {
+            Log::warning('Twilio request could not be verified.', [
+                'signature' => $request->header('X-Twilio-Signature'),
+                'url' => $request->fullUrl(),
+                'data' => $requestData,
+            ]);
+
             abort(403);
         }
 
