@@ -44,8 +44,6 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class ProspectAddressFactory extends Factory
 {
-    private int $maxOrder;
-
     /**
      * Define the model's default state.
      *
@@ -64,15 +62,5 @@ class ProspectAddressFactory extends Factory
             'type' => fake()->randomElement(['Home', 'Dorm', 'Work']),
             'order' => fake()->unique()->numberBetween(1, 1000),
         ];
-    }
-
-    public function getNewOrder(): int
-    {
-        return $this->maxOrder = $this->getMaxOrder() + 1;
-    }
-
-    public function getMaxOrder(): int
-    {
-        return $this->maxOrder ??= ProspectAddress::max('order') ?? 0;
     }
 }
