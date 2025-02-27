@@ -67,10 +67,12 @@ class EnsureTwilioRequestIsValid
             $requestData = $request->getContent();
         }
 
-        if (! $validator->validate($request->header('X-Twilio-Signature'), $request->fullUrl(), $requestData)) {
-            Log::warning('Twilio request could not be verified.', [
+        $url = preg_replace('/^http:/i', 'https:', $request->fullUrl());
+
+        if (! $validator->validate($request->header('X-Twilio-Signature'), $url, $requestData)) {
+            Log::info('Twilio request could not be verified.', [
                 'signature' => $request->header('X-Twilio-Signature'),
-                'url' => $request->fullUrl(),
+                'url' => $url,
                 'data' => $requestData,
             ]);
 
