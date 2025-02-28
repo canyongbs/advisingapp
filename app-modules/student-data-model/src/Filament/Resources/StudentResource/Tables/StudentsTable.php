@@ -64,11 +64,17 @@ class StudentsTable
                 TextColumn::make(Student::displayNameKey())
                     ->label('Name')
                     ->sortable(),
-                TextColumn::make('email')->visible(! ProspectStudentRefactor::active()),
-                TextColumn::make('mobile')->visible(! ProspectStudentRefactor::active()),
-                TextColumn::make('phone')->visible(! ProspectStudentRefactor::active()),
-                TextColumn::make('primaryEmail.address')->label('Email')->visible(ProspectStudentRefactor::active()),
-                TextColumn::make('primaryPhone.number')->label('Phone')->visible(ProspectStudentRefactor::active()),
+                TextColumn::make('email')->hidden(ProspectStudentRefactor::active()),
+                TextColumn::make('mobile')->hidden(ProspectStudentRefactor::active()),
+                TextColumn::make('phone')->hidden(ProspectStudentRefactor::active()),
+                TextColumn::make('primaryEmail.address')
+                    ->label('Email')
+                    ->sortable()
+                    ->visible(ProspectStudentRefactor::active()),
+                TextColumn::make('primaryPhone.number')
+                    ->label('Phone')
+                    ->sortable()
+                    ->visible(ProspectStudentRefactor::active()),
                 TextColumn::make('sisid'),
                 TextColumn::make('otherid'),
             ])
@@ -93,24 +99,23 @@ class StudentsTable
                         TextConstraint::make('otherid')
                             ->label('Other ID')
                             ->icon('heroicon-m-finger-print'),
-                        ...(ProspectStudentRefactor::active()
-                            ?
-                            [
-                                TextConstraint::make('primary_email_id')
-                                    ->label('Email Address')
+                        ...(
+                            ProspectStudentRefactor::active()
+                            ? [
+                                TextConstraint::make('email')
+                                    ->label('Primary Email')
                                     ->relationship('primaryEmail', 'address')
                                     ->icon('heroicon-m-envelope'),
-                                TextConstraint::make('primary_phone_id')
-                                    ->label('Mobile')
+                                TextConstraint::make('phone')
+                                    ->label('Primary Phone')
                                     ->relationship('primaryPhone', 'number')
                                     ->icon('heroicon-m-phone'),
-                                TextConstraint::make('primary_address_id')
-                                    ->label('Address')
+                                TextConstraint::make('address')
+                                    ->label('Primary Address')
                                     ->relationship('primaryAddress', 'line_1')
                                     ->icon('heroicon-m-map-pin'),
                             ]
-                            :
-                            [
+                            : [
                                 TextConstraint::make('email')
                                     ->label('Email Address')
                                     ->icon('heroicon-m-envelope'),
@@ -118,7 +123,8 @@ class StudentsTable
                                     ->icon('heroicon-m-phone'),
                                 TextConstraint::make('address')
                                     ->icon('heroicon-m-map-pin'),
-                            ]),
+                            ]
+                        ),
                         RelationshipConstraint::make('tags')
                             ->label('Tags')
                             ->icon('heroicon-m-rectangle-group')

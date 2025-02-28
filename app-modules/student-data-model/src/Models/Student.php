@@ -361,12 +361,12 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
 
     public function alternativeEmails(): HasMany
     {
-        return $this->emails()->whereKeyNot($this->primary_email_id);
+        return $this->emailAddresses()->whereKeyNot($this->primary_email_id);
     }
 
     public function alternativePhones(): HasMany
     {
-        return $this->phones()->whereKeyNot($this->primary_phone_id);
+        return $this->phoneNumbers()->whereKeyNot($this->primary_phone_id);
     }
 
     public function alternativeAddresses(): HasMany
