@@ -62,14 +62,20 @@ class ProspectsTable
                     ->sortable(),
                 TextColumn::make('email')
                     ->label('Email')
-                    ->visible(! ProspectStudentRefactor::active())
+                    ->hidden(ProspectStudentRefactor::active())
                     ->sortable(),
                 TextColumn::make('mobile')
                     ->label('Mobile')
-                    ->visible(! ProspectStudentRefactor::active())
+                    ->hidden(ProspectStudentRefactor::active())
                     ->sortable(),
-                TextColumn::make('primaryEmail.address')->sortable()->label('Email')->visible(ProspectStudentRefactor::active()),
-                TextColumn::make('primaryPhone.number')->sortable()->label('Mobile')->visible(ProspectStudentRefactor::active()),
+                TextColumn::make('primaryEmail.address')
+                    ->label('Email')
+                    ->sortable()
+                    ->visible(ProspectStudentRefactor::active()),
+                TextColumn::make('primaryPhone.number')
+                    ->label('Phone')
+                    ->sortable()
+                    ->visible(ProspectStudentRefactor::active()),
                 TextColumn::make('status')
                     ->badge()
                     ->state(function (Prospect $record) {
@@ -107,36 +113,34 @@ class ProspectsTable
                             ->icon('heroicon-m-calendar'),
                         ...(
                             ProspectStudentRefactor::active()
-                            ?
-                            [
-                                TextConstraint::make('primary_email_id')
-                                    ->label('Email Address')
-                                    ->relationship('primaryEmail', 'address')
-                                    ->icon('heroicon-m-envelope'),
-                                TextConstraint::make('primary_phone_id')
-                                    ->label('Mobile')
-                                    ->relationship('primaryPhone', 'number')
-                                    ->icon('heroicon-m-phone'),
-                                TextConstraint::make('primary_address_id')
-                                    ->label('Address')
-                                    ->relationship('primaryAddress', 'line_1')
-                                    ->icon('heroicon-m-map-pin'),
-                            ]
-                            :
-                            [
-                                TextConstraint::make('email')
-                                    ->label('Email Address')
-                                    ->icon('heroicon-m-envelope'),
-                                TextConstraint::make('email_2')
-                                    ->label('Email Address 2')
-                                    ->icon('heroicon-m-envelope'),
-                                TextConstraint::make('mobile')
-                                    ->icon('heroicon-m-phone'),
-                                TextConstraint::make('phone')
-                                    ->icon('heroicon-m-phone'),
-                                TextConstraint::make('address')
-                                    ->icon('heroicon-m-map-pin'),
-                            ]
+                                ? [
+                                    TextConstraint::make('email')
+                                        ->label('Primary Email')
+                                        ->relationship('primaryEmail', 'address')
+                                        ->icon('heroicon-m-envelope'),
+                                    TextConstraint::make('phone')
+                                        ->label('Primary Phone')
+                                        ->relationship('primaryPhone', 'number')
+                                        ->icon('heroicon-m-phone'),
+                                    TextConstraint::make('address')
+                                        ->label('Primary Address')
+                                        ->relationship('primaryAddress', 'line_1')
+                                        ->icon('heroicon-m-map-pin'),
+                                ]
+                                : [
+                                    TextConstraint::make('email')
+                                        ->label('Email Address')
+                                        ->icon('heroicon-m-envelope'),
+                                    TextConstraint::make('email_2')
+                                        ->label('Email Address 2')
+                                        ->icon('heroicon-m-envelope'),
+                                    TextConstraint::make('mobile')
+                                        ->icon('heroicon-m-phone'),
+                                    TextConstraint::make('phone')
+                                        ->icon('heroicon-m-phone'),
+                                    TextConstraint::make('address')
+                                        ->icon('heroicon-m-map-pin'),
+                                ]
                         ),
                         RelationshipConstraint::make('tags')
                             ->label('Tags')

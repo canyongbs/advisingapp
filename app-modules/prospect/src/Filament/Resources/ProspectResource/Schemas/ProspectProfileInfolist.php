@@ -59,10 +59,10 @@ class ProspectProfileInfolist
                             TextEntry::make('preferred')
                                 ->label('Preferred Name'),
                             TextEntry::make('phone')
-                                ->visible(! ProspectStudentRefactor::active())
+                                ->hidden(ProspectStudentRefactor::active())
                                 ->placeholder('-'),
-                            TextEntry::make('phoneNumbers.number')
-                                ->label('Phone')
+                            TextEntry::make('alternativePhoneNumbers.number')
+                                ->label('Alternative Phone Numbers')
                                 ->listWithLineBreaks()
                                 ->limitList(3)
                                 ->expandableLimitedList()
@@ -70,10 +70,10 @@ class ProspectProfileInfolist
                                 ->placeholder('-'),
                             TextEntry::make('email_2')
                                 ->label('Alternate Email')
-                                ->visible(! ProspectStudentRefactor::active())
+                                ->hidden(ProspectStudentRefactor::active())
                                 ->placeholder('-'),
-                            TextEntry::make('emailAddresses.address')
-                                ->label('Alternate Email')
+                            TextEntry::make('alternativeEmailAddresses.address')
+                                ->label('Alternate Emails')
                                 ->listWithLineBreaks()
                                 ->limitList(3)
                                 ->expandableLimitedList()
