@@ -34,71 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Models;
+namespace AdvisingApp\StudentDataModel\Models;
 
-use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
-use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Prospect\Models\ProspectEmailAddress;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Notifications\Notifiable;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
- * @mixin IdeHelperEventAttendee
+ * @mixin IdeHelperStudentPhoneNumber
  */
-class EventAttendee extends BaseModel implements CanBeNotified
+class StudentPhoneNumber extends BaseModel implements Auditable
 {
-    use Notifiable;
+    use AuditableTrait;
 
     protected $fillable = [
-        'status',
-        'email',
-        'event_id',
+        'sisid',
+        'number',
+        'ext',
+        'type',
+        'is_mobile',
+        'order',
     ];
 
     protected $casts = [
-        'status' => EventAttendeeStatus::class,
+        'is_mobile' => 'boolean',
     ];
 
-    public function event(): BelongsTo
+    public function student(): BelongsTo
     {
-        return $this->belongsTo(Event::class, 'event_id');
-    }
-
-    public function submissions(): HasMany
-    {
-        return $this->hasMany(EventRegistrationFormSubmission::class, 'event_attendee_id');
-    }
-
-    public function prospects(): BelongsToMany
-    {
-        return $this->belongsToMany(
-            Prospect::class,
-            ProspectEmailAddress::class,
-            'address',
-            'prospect_id',
-            'email',
-        );
-    }
-
-    public function students(): BelongsToMany
-    {
-        return $this->belongsToMany(
-            Student::class,
-            StudentEmailAddress::class,
-            'address',
-            'sisid',
-            'email',
-        );
-    }
-
-    public function canRecieveSms(): bool
-    {
-        return false;
+        return $this->belongsTo(Student::class, 'sisid', 'sisid');
     }
 }

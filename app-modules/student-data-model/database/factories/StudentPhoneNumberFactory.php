@@ -34,71 +34,56 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Models;
+namespace AdvisingApp\StudentDataModel\Database\Factories;
 
-use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
-use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Prospect\Models\ProspectEmailAddress;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Notifications\Notifiable;
+use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @mixin IdeHelperEventAttendee
+ * @extends Factory<StudentPhoneNumber>
  */
-class EventAttendee extends BaseModel implements CanBeNotified
+class StudentPhoneNumberFactory extends Factory
 {
-    use Notifiable;
-
-    protected $fillable = [
-        'status',
-        'email',
-        'event_id',
-    ];
-
-    protected $casts = [
-        'status' => EventAttendeeStatus::class,
-    ];
-
-    public function event(): BelongsTo
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
-        return $this->belongsTo(Event::class, 'event_id');
+        return [
+            'number' => fake()->phoneNumber(),
+            'ext' => null,
+            'type' => fake()->randomElement(['Home', 'Mobile', 'Work']),
+            'can_recieve_sms' => fake()->boolean(),
+            'order' => fake()->unique()->numberBetween(1, 1000),
+        ];
     }
 
-    public function submissions(): HasMany
+    public function canNotRecieveSms(): Factory
     {
-        return $this->hasMany(EventRegistrationFormSubmission::class, 'event_attendee_id');
+        return $this->state(function (array $attributes) {
+            return [
+                'can_recieve_sms' => false,
+            ];
+        });
     }
 
-    public function prospects(): BelongsToMany
+    public function canRecieveSms(): Factory
     {
-        return $this->belongsToMany(
-            Prospect::class,
-            ProspectEmailAddress::class,
-            'address',
-            'prospect_id',
-            'email',
-        );
+        return $this->state(function (array $attributes) {
+            return [
+                'can_recieve_sms' => true,
+            ];
+        });
     }
 
-    public function students(): BelongsToMany
+    public function withExtension(): Factory
     {
-        return $this->belongsToMany(
-            Student::class,
-            StudentEmailAddress::class,
-            'address',
-            'sisid',
-            'email',
-        );
-    }
-
-    public function canRecieveSms(): bool
-    {
-        return false;
+        return $this->state(function (array $attributes) {
+            return [
+                'ext' => fake()->randomNumber(),
+            ];
+        });
     }
 }

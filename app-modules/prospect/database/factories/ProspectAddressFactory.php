@@ -34,44 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Providers;
+namespace AdvisingApp\Prospect\Database\Factories;
 
-use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
-use AdvisingApp\Prospect\Enums\SystemProspectClassification;
-use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectAddress;
-use AdvisingApp\Prospect\Models\ProspectEmailAddress;
-use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
-use AdvisingApp\Prospect\Models\ProspectSource;
-use AdvisingApp\Prospect\Models\ProspectStatus;
-use AdvisingApp\Prospect\ProspectPlugin;
-use App\Concerns\ImplementsGraphQL;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class ProspectServiceProvider extends ServiceProvider
+/**
+ * @extends Factory<ProspectAddress>
+ */
+class ProspectAddressFactory extends Factory
 {
-    use ImplementsGraphQL;
-
-    public function register(): void
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new ProspectPlugin()));
-    }
-
-    public function boot(): void
-    {
-        Relation::morphMap([
-            'prospect' => Prospect::class,
-            'prospect_source' => ProspectSource::class,
-            'prospect_status' => ProspectStatus::class,
-            'prospect_email_address' => ProspectEmailAddress::class,
-            'prospect_address' => ProspectAddress::class,
-            'prospect_phone_number' => ProspectPhoneNumber::class,
-        ]);
-
-        $this->discoverSchema(__DIR__ . '/../../graphql/*');
-        $this->registerEnum(ProspectStatusColorOptions::class);
-        $this->registerEnum(SystemProspectClassification::class);
+        return [
+            'line_1' => fake()->streetAddress(),
+            'line_2' => fake()->optional()->streetAddress(),
+            'line_3' => fake()->optional()->citySuffix(),
+            'city' => fake()->city(),
+            'state' => fake()->state(),
+            'postal' => fake()->postcode(),
+            'country' => fake()->country(),
+            'type' => fake()->randomElement(['Home', 'Dorm', 'Work']),
+            'order' => fake()->unique()->numberBetween(1, 1000),
+        ];
     }
 }
