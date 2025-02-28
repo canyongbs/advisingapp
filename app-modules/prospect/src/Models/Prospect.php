@@ -330,17 +330,17 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
 
     public function primaryEmail(): BelongsTo
     {
-        return $this->belongsTo(ProspectEmailAddress::class, 'primary_email_id', 'id');
+        return $this->belongsTo(ProspectEmailAddress::class, 'primary_email_id');
     }
 
     public function primaryPhone(): BelongsTo
     {
-        return $this->belongsTo(ProspectPhoneNumber::class, 'primary_phone_id', 'id');
+        return $this->belongsTo(ProspectPhoneNumber::class, 'primary_phone_id');
     }
 
     public function primaryAddress(): BelongsTo
     {
-        return $this->belongsTo(ProspectAddress::class, 'primary_address_id', 'id');
+        return $this->belongsTo(ProspectAddress::class, 'primary_address_id');
     }
 
     public static function getLabel(): string
@@ -444,32 +444,32 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
     {
         return Attribute::make(
             get: function (mixed $value, array $attributes) {
-                if (ProspectStudentRefactor::active()) {
-                    $address = $this->primaryAddress;
-
-                    if (! $address) {
-                        return null;
-                    }
-
-                    $addressLine = trim("{$address['line_1']} {$address['line_2']} {$address['line_3']}");
+                if (! ProspectStudentRefactor::active()) {
+                    $addressLine = trim("{$attributes['address']} {$attributes['address2']} {$attributes['address3']}");
 
                     return trim(sprintf(
                         '%s %s %s %s',
                         ! empty($addressLine) ? $addressLine . ',' : '',
-                        ! empty($address['city']) ? $address['city'] . ',' : '',
-                        ! empty($address['state']) ? $address['state'] : '',
-                        ! empty($address['postal']) ? $address['postal'] : '',
+                        ! empty($attributes['city']) ? $attributes['city'] . ',' : '',
+                        ! empty($attributes['state']) ? $attributes['state'] : '',
+                        ! empty($attributes['postal']) ? $attributes['postal'] : '',
                     ));
                 }
 
-                $addressLine = trim("{$attributes['address']} {$attributes['address_2']} {$attributes['address_3']}");
+                $address = $this->primaryAddress;
+
+                if (! $address) {
+                    return null;
+                }
+
+                $addressLine = trim("{$address['line_1']} {$address['line_2']} {$address['line_3']}");
 
                 return trim(sprintf(
                     '%s %s %s %s',
                     ! empty($addressLine) ? $addressLine . ',' : '',
-                    ! empty($attributes['city']) ? $attributes['city'] . ',' : '',
-                    ! empty($attributes['state']) ? $attributes['state'] : '',
-                    ! empty($attributes['postal']) ? $attributes['postal'] : '',
+                    ! empty($address['city']) ? $address['city'] . ',' : '',
+                    ! empty($address['state']) ? $address['state'] : '',
+                    ! empty($address['postal']) ? $address['postal'] : '',
                 ));
             }
         );
