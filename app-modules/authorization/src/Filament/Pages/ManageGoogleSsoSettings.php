@@ -48,48 +48,48 @@ use Filament\Pages\SettingsPage;
 
 class ManageGoogleSsoSettings extends SettingsPage
 {
-    protected static string $settings = GoogleSsoSettings::class;
+  protected static string $settings = GoogleSsoSettings::class;
 
-    protected static ?string $title = 'Google SSO Settings';
+  protected static ?string $title = 'Google SSO Settings';
 
-    protected static ?string $navigationLabel = 'Google SSO';
+  protected static ?string $navigationLabel = 'Google';
 
-    protected static ?int $navigationSort = 20;
+  protected static ?int $navigationSort = 20;
 
-    protected static ?string $navigationGroup = 'Single Sign-On (SSO)';
+  protected static ?string $navigationGroup = 'Single Sign-On (SSO)';
 
-    protected static ?string $cluster = Authentication::class;
+  protected static ?string $cluster = Authentication::class;
 
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
+  public static function canAccess(): bool
+  {
+    /** @var User $user */
+    $user = auth()->user();
 
-        return $user->isSuperAdmin();
-    }
+    return $user->isSuperAdmin();
+  }
 
-    public function form(Form $form): Form
-    {
-        return $form
-            ->columns(1)
-            ->schema([
-                Toggle::make('is_enabled')
-                    ->label('Enabled')
-                    ->live(),
-                Section::make()
-                    ->schema([
-                        TextInput::make('client_id')
-                            ->label('Client ID')
-                            ->string()
-                            ->required(fn (Get $get) => $get('is_enabled'))
-                            ->password()
-                            ->revealable(),
-                        TextInput::make('client_secret')
-                            ->string()
-                            ->required(fn (Get $get) => $get('is_enabled'))
-                            ->password()
-                            ->revealable(),
-                    ])->visible(fn (Get $get) => $get('is_enabled')),
-            ]);
-    }
+  public function form(Form $form): Form
+  {
+    return $form
+      ->columns(1)
+      ->schema([
+        Toggle::make('is_enabled')
+          ->label('Enabled')
+          ->live(),
+        Section::make()
+          ->schema([
+            TextInput::make('client_id')
+              ->label('Client ID')
+              ->string()
+              ->required(fn(Get $get) => $get('is_enabled'))
+              ->password()
+              ->revealable(),
+            TextInput::make('client_secret')
+              ->string()
+              ->required(fn(Get $get) => $get('is_enabled'))
+              ->password()
+              ->revealable(),
+          ])->visible(fn(Get $get) => $get('is_enabled')),
+      ]);
+  }
 }
