@@ -102,7 +102,7 @@ class ListStudents extends ListRecords
                     ->visible(! ProspectStudentRefactor::active())
                     ->sortable(),
                 TextColumn::make('primaryPhone.number')
-                    ->label('Mobile')
+                    ->label('Phone')
                     ->searchable()
                     ->visible(ProspectStudentRefactor::active())
                     ->sortable(),
