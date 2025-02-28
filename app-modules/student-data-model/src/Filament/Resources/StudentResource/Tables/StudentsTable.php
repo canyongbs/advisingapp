@@ -111,8 +111,12 @@ class StudentsTable
                                     ->relationship('primaryPhone', 'number')
                                     ->icon('heroicon-m-phone'),
                                 TextConstraint::make('address')
-                                    ->label('Primary Address')
+                                    ->label('Primary Address line 1')
                                     ->relationship('primaryAddress', 'line_1')
+                                    ->icon('heroicon-m-map-pin'),
+                                TextConstraint::make('address_2')
+                                    ->label('Primary Address line 2')
+                                    ->relationship('primaryAddress', 'line_2')
                                     ->icon('heroicon-m-map-pin'),
                             ]
                             : [
@@ -122,6 +126,8 @@ class StudentsTable
                                 TextConstraint::make('mobile')
                                     ->icon('heroicon-m-phone'),
                                 TextConstraint::make('address')
+                                    ->icon('heroicon-m-map-pin'),
+                                TextConstraint::make('address_2')
                                     ->icon('heroicon-m-map-pin'),
                             ]
                         ),
