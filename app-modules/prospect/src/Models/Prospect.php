@@ -315,17 +315,17 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
 
     public function addresses(): HasMany
     {
-        return $this->hasMany(ProspectAddress::class);
+        return $this->hasMany(ProspectAddress::class)->orderBy('order');
     }
 
     public function emailAddresses(): HasMany
     {
-        return $this->hasMany(ProspectEmailAddress::class);
+        return $this->hasMany(ProspectEmailAddress::class)->orderBy('order');
     }
 
     public function phoneNumbers(): HasMany
     {
-        return $this->hasMany(ProspectPhoneNumber::class);
+        return $this->hasMany(ProspectPhoneNumber::class)->orderBy('order');
     }
 
     public function primaryEmail(): BelongsTo
@@ -341,6 +341,21 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
     public function primaryAddress(): BelongsTo
     {
         return $this->belongsTo(ProspectAddress::class, 'primary_address_id');
+    }
+
+    public function alternativeEmails(): HasMany
+    {
+        return $this->emails()->whereKeyNot($this->primary_email_id);
+    }
+
+    public function alternativePhones(): HasMany
+    {
+        return $this->phones()->whereKeyNot($this->primary_phone_id);
+    }
+
+    public function alternativeAddresses(): HasMany
+    {
+        return $this->addresses()->whereKeyNot($this->primary_address_id);
     }
 
     public static function getLabel(): string

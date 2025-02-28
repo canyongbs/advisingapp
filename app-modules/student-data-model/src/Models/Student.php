@@ -331,17 +331,17 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
 
     public function addresses(): HasMany
     {
-        return $this->hasMany(StudentAddress::class, 'sisid', 'sisid');
+        return $this->hasMany(StudentAddress::class, 'sisid', 'sisid')->orderBy('order');
     }
 
     public function emailAddresses(): HasMany
     {
-        return $this->hasMany(StudentEmailAddress::class, 'sisid', 'sisid');
+        return $this->hasMany(StudentEmailAddress::class, 'sisid', 'sisid')->orderBy('order');
     }
 
     public function phoneNumbers(): HasMany
     {
-        return $this->hasMany(StudentPhoneNumber::class, 'sisid', 'sisid');
+        return $this->hasMany(StudentPhoneNumber::class, 'sisid', 'sisid')->orderBy('order');
     }
 
     public function primaryEmail()
@@ -357,6 +357,21 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     public function primaryAddress()
     {
         return $this->belongsTo(StudentAddress::class, 'primary_address_id');
+    }
+
+    public function alternativeEmails(): HasMany
+    {
+        return $this->emails()->whereKeyNot($this->primary_email_id);
+    }
+
+    public function alternativePhones(): HasMany
+    {
+        return $this->phones()->whereKeyNot($this->primary_phone_id);
+    }
+
+    public function alternativeAddresses(): HasMany
+    {
+        return $this->addresses()->whereKeyNot($this->primary_address_id);
     }
 
     public static function getLabel(): string
