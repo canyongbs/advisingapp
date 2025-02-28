@@ -88,7 +88,7 @@ class ListStudents extends ListRecords
                 TextColumn::make('email')
                     ->label('Email')
                     ->searchable()
-                    ->visible(! ProspectStudentRefactor::active())
+                    ->hidden(ProspectStudentRefactor::active())
                     ->sortable(),
                 TextColumn::make('primaryEmail.address')
                     ->label('Email')
@@ -98,7 +98,7 @@ class ListStudents extends ListRecords
                 TextColumn::make('mobile')
                     ->label('Mobile')
                     ->searchable()
-                    ->visible(! ProspectStudentRefactor::active())
+                    ->hidden(ProspectStudentRefactor::active())
                     ->sortable(),
                 TextColumn::make('primaryPhone.number')
                     ->label('Phone')
@@ -106,7 +106,7 @@ class ListStudents extends ListRecords
                     ->visible(ProspectStudentRefactor::active())
                     ->sortable(),
                 TextColumn::make('phone')
-                    ->visible(! ProspectStudentRefactor::active())
+                    ->hidden(ProspectStudentRefactor::active())
                     ->searchable(),
                 TextColumn::make('sisid')
                     ->label('SIS ID')
