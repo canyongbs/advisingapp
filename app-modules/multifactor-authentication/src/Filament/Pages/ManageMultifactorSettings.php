@@ -37,6 +37,7 @@
 namespace AdvisingApp\MultifactorAuthentication\Filament\Pages;
 
 use AdvisingApp\MultifactorAuthentication\Settings\MultifactorSettings;
+use App\Filament\Clusters\Authentication;
 use App\Models\User;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
@@ -46,11 +47,11 @@ class ManageMultifactorSettings extends SettingsPage
 {
     protected static ?string $navigationLabel = 'Multifactor';
 
-    protected static ?int $navigationSort = 50;
+    protected static ?string $cluster = Authentication::class;
 
     protected static string $settings = MultifactorSettings::class;
 
-    protected static ?string $navigationGroup = 'Global Administration';
+    protected static ?string $navigationGroup = 'Local Authentication';
 
     public static function canAccess(): bool
     {

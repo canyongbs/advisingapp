@@ -34,16 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MultifactorAuthentication\Settings;
+namespace App\Filament\Clusters;
 
-use Spatie\LaravelSettings\Settings;
+use Filament\Clusters\Cluster;
 
-class MultifactorSettings extends Settings
+class Authentication extends Cluster
 {
-    public bool $required = false;
+    protected static ?string $navigationGroup = 'Global Administration';
 
-    public static function group(): string
-    {
-        return 'authentication';
-    }
+    protected static ?int $navigationSort = 50;
 }
