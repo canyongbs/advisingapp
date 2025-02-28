@@ -227,7 +227,7 @@ class FilamentServiceProvider extends ServiceProvider
 
             $entry
                 ->timezone(function (TextEntry $column) use ($timezone): ?string {
-                    if (! ($column->isTime() || $column->isDateTime())) {
+                    if (! $column->isDateTime()) {
                         return null;
                     }
 
