@@ -46,7 +46,6 @@ use AdvisingApp\CaseManagement\Notifications\EducatableCaseOpenedNotification;
 use AdvisingApp\CaseManagement\Notifications\SendClosedCaseFeedbackNotification;
 use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 use App\Enums\Feature;
-use App\Features\CaseFeedback;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 
@@ -94,7 +93,6 @@ class CaseObserver
         }
 
         if (
-            CaseFeedback::active() &&
             Gate::check(Feature::CaseManagement->getGateName()) &&
             $case?->priority?->type?->has_enabled_feedback_collection &&
             $case?->status?->classification == SystemCaseClassification::Closed &&
