@@ -40,7 +40,7 @@ use AdvisingApp\Ai\Actions\ResetAiServiceIdsForModel;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Jobs\ReInitializeAiModel;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
-use App\Filament\Clusters\ProductIntegrations;
+use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Section;
@@ -58,9 +58,9 @@ class ManageAiIntegrationsSettings extends SettingsPage
 
     protected static ?string $navigationLabel = 'Cognitive Services';
 
-    protected static ?int $navigationSort = 100;
+    protected static ?int $navigationSort = 30;
 
-    protected static ?string $cluster = ProductIntegrations::class;
+    protected static ?string $cluster = GlobalArtificialIntelligence::class;
 
     public static function canAccess(): bool
     {

@@ -42,7 +42,7 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::table('forms', function (Blueprint $table) {
-            $table->boolean('generate_prospects')->after('is_authenticated')->default(false);
+            $table->boolean('generate_prospects')->default(false);
         });
     }
 

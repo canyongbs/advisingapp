@@ -101,7 +101,7 @@ trait HasSharedFormConfiguration
                 ->afterStateUpdated(fn (Set $set, $state) => GenerateProspectFeature::active() && ! $state ? $set('generate_prospects', false) : null),
             Toggle::make('generate_prospects')
                 ->label('Generate Prospects')
-                ->helperText('If enabled, a request to submit by an unknown prospect will result prospect generation.')
+                ->helperText('If enabled, a request to submit by an unknown prospect will result in a new prospect being created.')
                 ->hidden(fn (Get $get) => ! $get('is_authenticated'))
                 ->disabled(fn () => ! auth()->user()?->hasLicense(LicenseType::RecruitmentCrm))
                 ->hintIcon(fn () => ! auth()->user()?->hasLicense(LicenseType::RecruitmentCrm) ? 'heroicon-m-lock-closed' : null)

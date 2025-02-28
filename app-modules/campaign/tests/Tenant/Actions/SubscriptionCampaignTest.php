@@ -90,7 +90,7 @@ it('will create the subscription records for subscribables in the segment', func
             return expect(
                 $subscribable->subscriptions()->pluck('user_id')->toArray()
             )
-                ->toBe(
+                ->toEqualCanonicalizing(
                     $removePrior
                         ? $users->pluck('id')->toArray()
                         : [...$priorSubscriptions, ...$users->pluck('id')->toArray()]
