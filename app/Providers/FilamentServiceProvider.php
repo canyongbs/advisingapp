@@ -206,14 +206,14 @@ class FilamentServiceProvider extends ServiceProvider
 
             $column
                 ->timezone(function (TextColumn $column) use ($timezone): ?string {
-                    if (! ($column->isTime() || $column->isDateTime())) {
+                    if (! $column->isDateTime()) {
                         return null;
                     }
 
                     return $timezone;
                 })
                 ->tooltip(function (TextColumn $column) use ($timezoneLabel): ?string {
-                    if (! ($column->isTime() || $column->isDateTime())) {
+                    if (! $column->isDateTime()) {
                         return null;
                     }
 
