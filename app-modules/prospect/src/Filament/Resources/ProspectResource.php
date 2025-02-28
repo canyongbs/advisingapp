@@ -70,7 +70,7 @@ class ProspectResource extends Resource
             return parent::getGlobalSearchEloquentQuery();
         }
 
-        return parent::getGlobalSearchEloquentQuery()->with(['emailAddresses:id,address', 'phoneNumbers:id,number']);
+        return parent::getGlobalSearchEloquentQuery()->with(['emailAddresses:id,address', 'phoneNumbers:id,number', 'primaryEmail:id,address', 'primaryPhone:id,number']);
     }
 
     public static function modifyGlobalSearchQuery(Builder $query, string $search): void
