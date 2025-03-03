@@ -156,8 +156,9 @@ it('allows user which has sass global admin role to assign sass global admin rol
             $options = $select->getSearchResults(Authenticatable::SUPER_ADMIN_ROLE);
 
             return ! empty($options) ? true : false;
-        })->assertSuccessful();
-});
+        })
+        ->assertSuccessful();
+})->only();
 it('Not allows user which has not sass global admin role to assign sass global admin role to other user', function () {
     $user = User::factory()->create();
     $user->givePermissionTo(

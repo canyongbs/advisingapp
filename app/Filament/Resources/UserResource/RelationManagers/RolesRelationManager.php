@@ -81,13 +81,15 @@ class RolesRelationManager extends RelationManager
             ])
             ->headerActions([
                 AttachAction::make()
-                    ->form(fn (): array => [
+                    ->form(fn (AttachAction $action): array => [
+                        // $action->getRecordSelect(),
                         Select::make('recordId')
                             ->hiddenLabel()
                             ->searchable()
                             ->required()
                             ->rule(new ExcludeSuperAdmin())
                             ->preload()
+                            ->getSearchResultsUsing(fn (string $search): array => Role::where('name', 'like', "%{$search}%")->limit(50)->pluck('name', 'id')->toArray())
                             ->options(function () {
                                 /** @var User $user */
                                 $user = $this->getOwnerRecord();
