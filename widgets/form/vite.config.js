@@ -43,6 +43,7 @@ export default defineConfig({
             entry: resolve(__dirname, 'src/widget.js'),
             name: 'AdvisingAppFormWidget',
             fileName: 'advising-app-form-widget',
+            cssFileName: 'style',
             formats: ['es'],
         },
         outDir: resolve(__dirname, '../../public/js/widgets/form'),
