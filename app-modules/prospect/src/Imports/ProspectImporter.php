@@ -46,7 +46,6 @@ use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class ProspectImporter extends Importer
@@ -181,43 +180,5 @@ class ProspectImporter extends Importer
         }
 
         return $body;
-    }
-
-    public function afterCreate(): void
-    {
-        if (! ProspectStudentRefactor::active()) {
-            return;
-        }
-
-        /** @var Prospect $record */
-        $record = $this->record;
-
-        $primaryEmailAddress = $record->emailAddresses()->create([
-            'address' => $this->data['email'],
-            'order' => DB::raw("(SELECT COALESCE(MAX(\"order\"), 0) + 1 FROM prospect_email_addresses WHERE prospect_id = '{$record->id}')"),
-        ]);
-
-        $record->primaryEmailAddress()->associate($primaryEmailAddress);
-
-        if (! blank($this->data['mobile'])) {
-            $primaryMobile = $record->phoneNumbers()->create([
-                'number' => $this->data['mobile'],
-                'order' => DB::raw("(SELECT COALESCE(MAX(\"order\"), 0) + 1 FROM prospect_phone_numbers WHERE prospect_id = '{$record->id}')"),
-            ]);
-
-            $record->primaryPhoneNumber()->associate($primaryMobile);
-        }
-
-        if (! blank($this->data['address']) || ! blank($this->data['address_2'])) {
-            $primaryAddress = $record->addresses()->create([
-                'line_1' => $this->data['address'],
-                'line_2' => $this->data['address_2'],
-                'order' => DB::raw("(SELECT COALESCE(MAX(\"order\"), 0) + 1 FROM prospect_addresses WHERE prospect_id = '{$record->id}')"),
-            ]);
-
-            $record->primaryAddress()->associate($primaryAddress);
-        }
-
-        $record->save();
     }
 }
