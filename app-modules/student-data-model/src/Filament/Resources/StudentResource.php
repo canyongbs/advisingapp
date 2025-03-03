@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources;
 
+use AdvisingApp\Student\Filament\Resources\StudentResource\Pages\CreateStudent;
+use AdvisingApp\Student\Filament\Resources\StudentResource\Pages\EditStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ListStudents;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentAlerts;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentCareTeam;
@@ -68,17 +70,17 @@ class StudentResource extends Resource
 
     public static function getGlobalSearchEloquentQuery(): Builder
     {
-        if (ProspectStudentRefactor::active()) {
-            return parent::getGlobalSearchEloquentQuery()->with(['emailAddresses:id,address', 'phoneNumbers:id,number', 'primaryEmail:id,address', 'primaryPhone:id,number']);
+        if (! ProspectStudentRefactor::active()) {
+            return parent::getGlobalSearchEloquentQuery();
         }
 
-        return parent::getGlobalSearchEloquentQuery();
+        return parent::getGlobalSearchEloquentQuery()->with(['emailAddresses:id,address', 'phoneNumbers:id,number', 'primaryEmailAddress:id,address', 'primaryPhoneNumber:id,number']);
     }
 
     public static function modifyGlobalSearchQuery(Builder $query, string $search): void
     {
         if (ProspectStudentRefactor::active()) {
-            $query->leftJoinRelationship('primaryEmail');
+            $query->leftJoinRelationship('primaryEmailAddress');
         }
 
         static::scoreGlobalSearchResults($query, $search, [
@@ -99,8 +101,8 @@ class StudentResource extends Resource
             'full_name',
             ...(
                 ProspectStudentRefactor::active()
-            ? ['emailAddresses.address', 'phoneNumbers.number']
-            : ['email', 'email_2', 'mobile', 'phone']
+                    ? ['emailAddresses.address', 'phoneNumbers.number']
+                    : ['email', 'email_2', 'mobile', 'phone']
             ),
             'preferred',
         ];
@@ -111,8 +113,8 @@ class StudentResource extends Resource
         return array_filter([
             'Student ID' => $record->sisid,
             'Other ID' => $record->otherid,
-            'Email Address' => ProspectStudentRefactor::active() ? $record->primaryEmail?->address : collect([$record->email, $record->email_id])->filter()->implode(', '),
-            'Phone' => ProspectStudentRefactor::active() ? $record->primaryPhone?->number : collect([$record->mobile, $record->phone])->filter()->implode(', '),
+            'Email Address' => ProspectStudentRefactor::active() ? $record->primaryEmailAddress?->address : collect([$record->email, $record->email_id])->filter()->implode(', '),
+            'Phone' => ProspectStudentRefactor::active() ? $record->primaryPhoneNumber?->number : collect([$record->mobile, $record->phone])->filter()->implode(', '),
             'Preferred Name' => $record->preferred,
         ], fn (mixed $value): bool => filled($value));
     }
@@ -121,6 +123,8 @@ class StudentResource extends Resource
     {
         return [
             'index' => ListStudents::route('/'),
+            'create' => CreateStudent::route('/create'),
+            'edit' => EditStudent::route('/{record}/edit'),
             'view' => ViewStudent::route('/{record}'),
             'activity-feed' => ViewStudentActivityFeed::route('/{record}/activity'),
             'alerts' => ManageStudentAlerts::route('/{record}/alerts'),
@@ -131,6 +135,8 @@ class StudentResource extends Resource
     }
 
     /**
+     * @todo: Remove when the app starts using Filament v3.3.3.
+     *
      * @param  array<string>  $searchAttributes
      */
     protected static function applyGlobalSearchAttributeConstraint(Builder $query, string $search, array $searchAttributes, bool &$isFirst): Builder

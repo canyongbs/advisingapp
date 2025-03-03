@@ -69,7 +69,7 @@ class CreateEngagement
             $engagement->save();
 
             if (! $engagement->scheduled_at) {
-                if ($engagement->recipient->canRecieveEmail()) {
+                if ($engagement->recipient->canReceiveEmail()) {
                     $engagement->recipient->notify(new EngagementNotification($engagement));
                 }
             }

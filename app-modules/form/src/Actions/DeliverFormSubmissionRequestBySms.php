@@ -42,7 +42,7 @@ class DeliverFormSubmissionRequestBySms extends DeliverFormSubmissionRequest
 {
     public function handle(): void
     {
-        if ($this->submission->author->canRecieveSms()) {
+        if ($this->submission->author->canReceiveSms()) {
             $this
                 ->submission
                 ->author
