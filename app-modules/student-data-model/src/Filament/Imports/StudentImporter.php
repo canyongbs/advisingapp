@@ -108,62 +108,64 @@ class StudentImporter extends Importer
                     'nullable',
                     'integer',
                 ]),
-            ImportColumn::make('email')
-                ->example('johnsmith@gmail.com')
-                ->rules([
-                    'nullable',
-                    'email',
-                    'max:255',
-                ]),
-            ImportColumn::make('mobile')
-                ->example('+1 (555) 555-5555')
-                ->rules([
-                    'nullable',
-                    'string',
-                    'max:255',
-                ]),
-            ImportColumn::make('address')
-                ->example('123 Main St.')
-                ->rules([
-                    'nullable',
-                    'string',
-                    'max:255',
-                ]),
-            ImportColumn::make('address2')
-                ->example('Apt. 1')
-                ->rules([
-                    'nullable',
-                    'string',
-                    'max:255',
-                ]),
-            ImportColumn::make('address3')
-                ->example('xyz')
-                ->rules([
-                    'nullable',
-                    'string',
-                    'max:255',
-                ]),
-            ImportColumn::make('city')
-                ->example('Los Angeles')
-                ->rules([
-                    'nullable',
-                    'string',
-                    'max:255',
-                ]),
-            ImportColumn::make('state')
-                ->example('california')
-                ->rules([
-                    'nullable',
-                    'string',
-                    'max:255',
-                ]),
-            ImportColumn::make('postal')
-                ->example('83412')
-                ->rules([
-                    'nullable',
-                    'string',
-                    'max:255',
-                ]),
+            ...(ProspectStudentRefactor::active() ? [] : [
+                ImportColumn::make('email')
+                    ->example('johnsmith@gmail.com')
+                    ->rules([
+                        'nullable',
+                        'email',
+                        'max:255',
+                    ]),
+                ImportColumn::make('mobile')
+                    ->example('+1 (555) 555-5555')
+                    ->rules([
+                        'nullable',
+                        'string',
+                        'max:255',
+                    ]),
+                ImportColumn::make('address')
+                    ->example('123 Main St.')
+                    ->rules([
+                        'nullable',
+                        'string',
+                        'max:255',
+                    ]),
+                ImportColumn::make('address2')
+                    ->example('Apt. 1')
+                    ->rules([
+                        'nullable',
+                        'string',
+                        'max:255',
+                    ]),
+                ImportColumn::make('address3')
+                    ->example('xyz')
+                    ->rules([
+                        'nullable',
+                        'string',
+                        'max:255',
+                    ]),
+                ImportColumn::make('city')
+                    ->example('Los Angeles')
+                    ->rules([
+                        'nullable',
+                        'string',
+                        'max:255',
+                    ]),
+                ImportColumn::make('state')
+                    ->example('california')
+                    ->rules([
+                        'nullable',
+                        'string',
+                        'max:255',
+                    ]),
+                ImportColumn::make('postal')
+                    ->example('83412')
+                    ->rules([
+                        'nullable',
+                        'string',
+                        'max:255',
+                    ]),
+            ]),
             ImportColumn::make('sms_opt_out')
                 ->label('SMS opt out')
                 ->example('false')
@@ -245,49 +247,5 @@ class StudentImporter extends Importer
         }
 
         return $body;
-    }
-
-    public function afterCreate(): void
-    {
-        if (! ProspectStudentRefactor::active()) {
-            return;
-        }
-
-        /** @var Prospect $record */
-        $record = $this->record;
-
-        $primaryEmailAddress = $record->emailAddresses()->create([
-            'address' => $this->data['email'],
-            'order' => DB::raw("(SELECT COALESCE(MAX(\"order\"), 0) + 1 FROM student_email_addresses WHERE sisid = '{$record->id}')"),
-        ]);
-
-        $record->primaryEmailAddress()->associate($primaryEmailAddress);
-
-        if (! blank($this->data['mobile'])) {
-            $primaryMobile = $record->phoneNumbers()->create([
-                'number' => $this->data['mobile'],
-                'type' => 'Mobile',
-                'can_receive_sms' => $this->data['sms_opt_out'],
-                'order' => DB::raw("(SELECT COALESCE(MAX(\"order\"), 0) + 1 FROM student_phone_numbers WHERE sisid = '{$record->id}')"),
-            ]);
-
-            $record->primaryPhoneNumber()->associate($primaryMobile);
-        }
-
-        if (! blank($this->data['address']) || ! blank($this->data['address_2'])) {
-            $primaryAddress = $record->addresses()->create([
-                'line_1' => $this->data['address'],
-                'line_2' => $this->data['address2'],
-                'line_3' => $this->data['address3'],
-                'city' => $this->data['city'],
-                'state' => $this->data['state'],
-                'postal' => $this->data['postal'],
-                'order' => DB::raw("(SELECT COALESCE(MAX(\"order\"), 0) + 1 FROM student_addresses WHERE sisid = '{$record->id}')"),
-            ]);
-
-            $record->primaryAddress()->associate($primaryAddress);
-        }
-
-        $record->save();
     }
 }
