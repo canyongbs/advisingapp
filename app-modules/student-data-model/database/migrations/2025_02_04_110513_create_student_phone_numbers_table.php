@@ -47,7 +47,7 @@ return new class () extends Migration {
             $table->string('number');
             $table->unsignedInteger('ext')->nullable();
             $table->string('type')->nullable();
-            $table->boolean('can_recieve_sms')->default(false);
+            $table->boolean('can_receive_sms')->default(false);
             $table->integer('order');
             $table->timestamps();
             $table->foreign('sisid')->references('sisid')->on('students')->onDelete('cascade');

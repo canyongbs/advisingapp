@@ -100,7 +100,7 @@ test('request-authentication is protected with proper feature access control', f
 
     post(URL::signedRoute(
         name: 'applications.request-authentication',
-        parameters: ['application' => $application, 'email' => $prospect->primaryEmail->address],
+        parameters: ['application' => $application, 'email' => $prospect->primaryEmailAddress->address],
         absolute: false,
     ))
         ->assertForbidden()
@@ -114,7 +114,7 @@ test('request-authentication is protected with proper feature access control', f
 
     post(URL::signedRoute(
         name: 'applications.request-authentication',
-        parameters: ['application' => $application, 'email' => $prospect->primaryEmail->address],
+        parameters: ['application' => $application, 'email' => $prospect->primaryEmailAddress->address],
         absolute: false,
     ))
         ->assertSuccessful();

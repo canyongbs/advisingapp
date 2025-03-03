@@ -328,12 +328,12 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
         return $this->hasMany(ProspectPhoneNumber::class)->orderBy('order');
     }
 
-    public function primaryEmail(): BelongsTo
+    public function primaryEmailAddress(): BelongsTo
     {
         return $this->belongsTo(ProspectEmailAddress::class, 'primary_email_id');
     }
 
-    public function primaryPhone(): BelongsTo
+    public function primaryPhoneNumber(): BelongsTo
     {
         return $this->belongsTo(ProspectPhoneNumber::class, 'primary_phone_id');
     }
@@ -343,17 +343,17 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
         return $this->belongsTo(ProspectAddress::class, 'primary_address_id');
     }
 
-    public function alternativeEmails(): HasMany
+    public function additionalEmailAddresses(): HasMany
     {
         return $this->emailAddresses()->whereKeyNot($this->primary_email_id);
     }
 
-    public function alternativePhones(): HasMany
+    public function additionalPhoneNumbers(): HasMany
     {
         return $this->phoneNumbers()->whereKeyNot($this->primary_phone_id);
     }
 
-    public function alternativeAddresses(): HasMany
+    public function additionalAddresses(): HasMany
     {
         return $this->addresses()->whereKeyNot($this->primary_address_id);
     }
@@ -380,22 +380,22 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
             ->withTimestamps();
     }
 
-    public function canRecieveEmail(): bool
+    public function canReceiveEmail(): bool
     {
         if (! ProspectStudentRefactor::active()) {
             return filled($this->email);
         }
 
-        return filled($this->primaryEmail?->address);
+        return filled($this->primaryEmailAddress?->address);
     }
 
-    public function canRecieveSms(): bool
+    public function canReceiveSms(): bool
     {
         if (! ProspectStudentRefactor::active()) {
             return filled($this->mobile);
         }
 
-        return filled($this->primaryPhone?->number) && $this->primaryPhone->can_recieve_sms;
+        return filled($this->primaryPhoneNumber?->number) && $this->primaryPhoneNumber->can_receive_sms;
     }
 
     public function tags(): MorphToMany
@@ -424,7 +424,7 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
             return $this->email;
         }
 
-        return $this->primaryEmail?->address;
+        return $this->primaryEmailAddress?->address;
     }
 
     protected static function booted(): void
@@ -458,7 +458,7 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
     protected function fullAddress(): Attribute
     {
         return Attribute::make(
-            get: function (mixed $value, array $attributes) {
+            get: function (mixed $value, array $attributes): ?string {
                 if (! ProspectStudentRefactor::active()) {
                     $addressLine = trim("{$attributes['address']} {$attributes['address2']} {$attributes['address3']}");
 
@@ -471,21 +471,7 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
                     ));
                 }
 
-                $address = $this->primaryAddress;
-
-                if (! $address) {
-                    return null;
-                }
-
-                $addressLine = trim("{$address['line_1']} {$address['line_2']} {$address['line_3']}");
-
-                return trim(sprintf(
-                    '%s %s %s %s',
-                    ! empty($addressLine) ? $addressLine . ',' : '',
-                    ! empty($address['city']) ? $address['city'] . ',' : '',
-                    ! empty($address['state']) ? $address['state'] : '',
-                    ! empty($address['postal']) ? $address['postal'] : '',
-                ));
+                return $this->primaryAddress?->full;
             }
         );
     }

@@ -89,7 +89,7 @@ class SmsChannel
         $smsMessage->save();
 
         try {
-            if ((! ($notifiable instanceof CanBeNotified)) || (! $notifiable->canRecieveSms())) {
+            if ((! ($notifiable instanceof CanBeNotified)) || (! $notifiable->canReceiveSms())) {
                 $smsMessage->events()->create([
                     'type' => SmsMessageEventType::FailedDispatch,
                     'payload' => [

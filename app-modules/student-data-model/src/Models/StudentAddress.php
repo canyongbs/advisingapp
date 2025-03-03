@@ -38,6 +38,7 @@ namespace AdvisingApp\StudentDataModel\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use OwenIt\Auditing\Contracts\Auditable;
 
@@ -64,5 +65,22 @@ class StudentAddress extends BaseModel implements Auditable
     public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class, 'sisid', 'sisid');
+    }
+
+    protected function full(): Attribute
+    {
+        return Attribute::make(
+            get: fn (mixed $value, array $attributes): string => collect([
+                $attributes['line_1'],
+                $attributes['line_2'],
+                $attributes['line_3'],
+                $attributes['city'],
+                $attributes['state'],
+                $attributes['postal'],
+                $attributes['country'],
+            ])
+                ->filter(fn (mixed $line): bool => filled($line))
+                ->implode(', ')
+        );
     }
 }

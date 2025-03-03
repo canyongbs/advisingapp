@@ -57,8 +57,8 @@ class EventAttendeeFactory extends Factory
             'status' => fake()->randomElement(EventAttendeeStatus::class),
             'email' => fake()->unique()->randomElement([
                 fn (): string => fake()->email(),
-                fn (): string => Student::query()->inRandomOrder()->first()?->primaryEmail?->address ?? fake()->email(),
-                fn (): string => Prospect::query()->inRandomOrder()->first()?->primaryEmail?->address ?? fake()->email(),
+                fn (): string => Student::query()->inRandomOrder()->first()?->primaryEmailAddress?->address ?? fake()->email(),
+                fn (): string => Prospect::query()->inRandomOrder()->first()?->primaryEmailAddress?->address ?? fake()->email(),
             ])(),
             'event_id' => Event::inRandomOrder()->first() ?? Event::factory()->create(),
         ];

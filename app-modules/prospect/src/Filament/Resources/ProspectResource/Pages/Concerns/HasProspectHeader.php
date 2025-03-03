@@ -46,7 +46,6 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
 use App\Features\ProspectStudentRefactor;
 use App\Settings\DisplaySettings;
-use Filament\Actions\EditAction;
 use Illuminate\Contracts\View\View;
 
 trait HasProspectHeader
@@ -79,12 +78,12 @@ trait HasProspectHeader
                 ...(filled($prospect->preferred) ? [["Goes by \"{$prospect->preferred}\"", 'heroicon-m-heart']] : []),
                 ...(
                     ProspectStudentRefactor::active()
-                      ? ($prospect->primaryPhone ? [[$prospect->primaryPhone->number, 'heroicon-m-phone']] : [])
+                      ? ($prospect->primaryPhoneNumber ? [[$prospect->primaryPhoneNumber->number . (filled($prospect->primaryPhoneNumber->ext) ? " (ext. {$prospect->primaryPhoneNumber->ext})" : '') . (filled($prospect->primaryPhoneNumber->type) ? " ({$prospect->primaryPhoneNumber->type})" : ''), 'heroicon-m-phone']] : [])
                       : (filled($prospect->phone) ? [[$prospect->phone, 'heroicon-m-phone']] : [])
                 ),
                 ...(
                     ProspectStudentRefactor::active()
-                    ? ($prospect->primaryEmail ? [[$prospect->primaryEmail->address, 'heroicon-m-envelope']] : [])
+                    ? ($prospect->primaryEmailAddress ? [[$prospect->primaryEmailAddress->address . (filled($prospect->primaryEmailAddress->type) ? " ({$prospect->primaryEmailAddress->type})" : ''), 'heroicon-m-envelope']] : [])
                     : (filled($prospect->email) ? [[$prospect->email, 'heroicon-m-envelope']] : [])
                 ),
                 ...(filled($prospect->hsgrad) ? [[$prospect->hsgrad, 'heroicon-m-building-library']] : []),
@@ -107,7 +106,6 @@ trait HasProspectHeader
             ProspectTagsAction::make()->visible(fn (): bool => auth()->user()?->can('prospect.*.update')),
             ConvertToStudent::make()->visible(fn (Prospect $record) => ! $record->student()->exists()),
             DisassociateStudent::make()->visible(fn (Prospect $record) => $record->student()->exists()),
-            EditAction::make(),
             SubscribeHeaderAction::make(),
         ];
     }
