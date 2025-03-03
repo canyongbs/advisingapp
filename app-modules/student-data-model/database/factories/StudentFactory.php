@@ -89,8 +89,8 @@ class StudentFactory extends Factory
     public function configure(): static
     {
         return $this->afterCreating(function (Student $student) {
-            $student->primaryEmail()->associate(StudentEmailAddress::factory()->create(['sisid' => $student->getKey(), 'address' => fake()->email()]));
-            $student->primaryPhone()->associate(StudentPhoneNumber::factory()->create(['sisid' => $student->getKey(), 'number' => fake()->numerify('+1 ### ### ####')]));
+            $student->primaryEmailAddress()->associate(StudentEmailAddress::factory()->create(['sisid' => $student->getKey(), 'address' => fake()->email()]));
+            $student->primaryPhoneNumber()->associate(StudentPhoneNumber::factory()->create(['sisid' => $student->getKey(), 'number' => fake()->numerify('+1 ### ### ####')]));
             $student->primaryAddress()->associate(StudentAddress::factory()->create([
                 'sisid' => $student->getKey(),
                 'line_1' => fake()->buildingNumber() . ' ' . fake()->streetName(),

@@ -83,7 +83,7 @@ class CreateBatchedEngagement implements ShouldQueue
                 return;
             }
 
-            if (! $engagement->recipient->canRecieveEmail()) {
+            if (! $engagement->recipient->canReceiveEmail()) {
                 return;
             }
 

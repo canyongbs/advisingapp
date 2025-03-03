@@ -74,7 +74,7 @@ return new class () extends Migration {
                                 'id' => (string) Str::orderedUuid(),
                                 'sisid' => $student->sisid,
                                 'number' => $student->mobile,
-                                'can_recieve_sms' => true,
+                                'can_receive_sms' => true,
                                 'type' => 'Mobile',
                                 'order' => 1,
                             ];
@@ -85,7 +85,7 @@ return new class () extends Migration {
                                 'id' => (string) Str::orderedUuid(),
                                 'sisid' => $student->sisid,
                                 'number' => $student->phone,
-                                'can_recieve_sms' => false,
+                                'can_receive_sms' => false,
                                 'type' => 'Phone',
                                 'order' => 2,
                             ];

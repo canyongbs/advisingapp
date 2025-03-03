@@ -92,7 +92,7 @@ class ListProspects extends ListRecords
                     ->searchable()
                     ->hidden(ProspectStudentRefactor::active())
                     ->sortable(),
-                TextColumn::make('primaryEmail.address')
+                TextColumn::make('primaryEmailAddress.address')
                     ->label('Email')
                     ->searchable()
                     ->visible(ProspectStudentRefactor::active())
@@ -102,7 +102,7 @@ class ListProspects extends ListRecords
                     ->searchable()
                     ->hidden(ProspectStudentRefactor::active())
                     ->sortable(),
-                TextColumn::make('primaryPhone.number')
+                TextColumn::make('primaryPhoneNumber.number')
                     ->label('Phone')
                     ->searchable()
                     ->visible(ProspectStudentRefactor::active())
