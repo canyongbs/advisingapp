@@ -48,7 +48,6 @@ return new class () extends Migration {
             $table->string('type')->nullable();
             $table->integer('order');
             $table->timestamps();
-            $table->foreign('sisid')->references('sisid')->on('students')->onDelete('cascade');
 
             $table->index(['sisid', 'order']);
         });
