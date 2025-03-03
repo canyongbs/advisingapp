@@ -206,18 +206,18 @@ class FilamentServiceProvider extends ServiceProvider
 
             $column
                 ->timezone(function (TextColumn $column) use ($timezone): ?string {
-                    if (! $column->isDateTime()) {
-                        return null;
+                    if ($column->isDateTime()) {
+                        return $timezone;
                     }
 
-                    return $timezone;
+                    return null;
                 })
                 ->tooltip(function (TextColumn $column) use ($timezoneLabel): ?string {
-                    if (! $column->isDateTime()) {
-                        return null;
+                    if ($column->isDateTime()) {
+                        return "This time is set in {$timezoneLabel}.";
                     }
 
-                    return "This time is set in {$timezoneLabel}.";
+                    return null;
                 });
         });
 
@@ -227,25 +227,25 @@ class FilamentServiceProvider extends ServiceProvider
 
             $entry
                 ->timezone(function (TextEntry $column) use ($timezone): ?string {
-                    if (! $column->isDateTime()) {
-                        return null;
+                    if ($column->isDateTime()) {
+                        return $timezone;
                     }
 
-                    return $timezone;
+                    return null;
                 })
                 ->hintIcon(function (TextEntry $entry): ?string {
-                    if (! ($entry->isTime() || $entry->isDateTime())) {
-                        return null;
+                    if ($entry->isDateTime()) {
+                        return 'heroicon-m-clock';
                     }
 
-                    return 'heroicon-m-clock';
+                    return null;
                 })
                 ->hintIconTooltip(function (TextEntry $entry) use ($timezoneLabel): ?string {
-                    if (! ($entry->isTime() || $entry->isDateTime())) {
-                        return null;
+                    if ($entry->isDateTime()) {
+                        return "This time is set in {$timezoneLabel}.";
                     }
 
-                    return "This time is set in {$timezoneLabel}.";
+                    return null;
                 });
         });
 
