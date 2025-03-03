@@ -81,8 +81,7 @@ class RolesRelationManager extends RelationManager
             ])
             ->headerActions([
                 AttachAction::make()
-                    ->form(fn (AttachAction $action): array => [
-                        // $action->getRecordSelect(),
+                    ->form([
                         Select::make('recordId')
                             ->hiddenLabel()
                             ->searchable()
