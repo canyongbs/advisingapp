@@ -218,15 +218,16 @@ class ImportStudentDataAction
             });
 
         return $action
-            ->label('Import')
+            ->label('Sync Records')
             ->importer(StudentImporter::class)
             ->authorize('import', Student::class)
-            ->modalHeading('Import student data')
-            ->modalDescription(fn (ImportAction $action): Htmlable => new HtmlString('Warning: the new data will override and replace all existing student data in the system. <br><br>' . collect([
-                $action->getModalAction('downloadExample')?->label('Example students')->toHtml(),
-                $action->getModalAction('downloadProgramsExample')?->label('Example programs')->toHtml(),
-                $action->getModalAction('downloadEnrollmentsExample')?->label('Example enrollments')->toHtml(),
-            ])->filter()->implode(' &bull; ')))
+            ->modalHeading('Synchronize Students, Programs, and Enrollments')
+            ->modalDescription(fn (ImportAction $action): Htmlable => new HtmlString('WARNING: Record synchronization involves the replacement of all students, programs, and enrollments with the imported extract data. If there are existing student records that are not present in your uploaded files, those records will be removed from the system. The purpose of this tool is to synchronize and match your SIS extract data imported here. <br><br> CSV Extract Examples<br>' . collect([
+                $action->getModalAction('downloadExample')?->label('Students')->toHtml(),
+                $action->getModalAction('downloadProgramsExample')?->label('Programs')->toHtml(),
+                $action->getModalAction('downloadEnrollmentsExample')?->label('Enrollments')->toHtml(),
+            ])->filter()->implode(' | ')))
+            ->modalSubmitActionLabel('Sync Records')
             ->form(fn (ImportAction $action): array => array_merge([
                 $makeFileUpload(),
                 $makeFileUpload(
