@@ -38,7 +38,7 @@ namespace AdvisingApp\Authorization\Filament\Pages;
 
 use AdvisingApp\Authorization\Enums\AzureMatchingProperty;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
-use App\Filament\Clusters\ProductIntegrations;
+use App\Filament\Clusters\Authentication;
 use App\Models\User;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -54,11 +54,13 @@ class ManageAzureSsoSettings extends SettingsPage
 
     protected static ?string $title = 'Azure SSO Settings';
 
-    protected static ?string $navigationLabel = 'Azure SSO';
+    protected static ?string $navigationLabel = 'Azure';
 
-    protected static ?int $navigationSort = 60;
+    protected static ?int $navigationSort = 20;
 
-    protected static ?string $cluster = ProductIntegrations::class;
+    protected static ?string $navigationGroup = 'Single Sign-On (SSO)';
+
+    protected static ?string $cluster = Authentication::class;
 
     public static function canAccess(): bool
     {

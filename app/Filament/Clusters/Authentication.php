@@ -34,41 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MultifactorAuthentication\Filament\Pages;
+namespace App\Filament\Clusters;
 
-use AdvisingApp\MultifactorAuthentication\Settings\MultifactorSettings;
-use App\Filament\Clusters\Authentication;
-use App\Models\User;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Pages\SettingsPage;
+use Filament\Clusters\Cluster;
 
-class ManageMultifactorSettings extends SettingsPage
+class Authentication extends Cluster
 {
-    protected static ?string $navigationLabel = 'Multifactor';
+    protected static ?string $navigationGroup = 'Global Administration';
 
-    protected static ?string $cluster = Authentication::class;
-
-    protected static string $settings = MultifactorSettings::class;
-
-    protected static ?string $navigationGroup = 'Local Authentication';
-
-    protected static ?int $navigationSort = 10;
-
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->isSuperAdmin();
-    }
-
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                Toggle::make('required')
-                    ->helperText('Enforces that multifactor authentication is required for all non-sso users.'),
-            ]);
-    }
+    protected static ?int $navigationSort = 50;
 }
