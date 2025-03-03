@@ -88,13 +88,28 @@ class RolesRelationManager extends RelationManager
                             ->required()
                             ->rule(new ExcludeSuperAdmin())
                             ->preload()
-                            ->getSearchResultsUsing(fn (string $search): array => Role::when(! auth()->user()->isSuperAdmin(), fn (Builder $query) => $query->where('name', '!=', Authenticatable::SUPER_ADMIN_ROLE))->where('name', 'like', "%{$search}%")->limit(50)->pluck('name', 'id')->toArray())
+                            ->getSearchResultsUsing(
+                                fn (string $search): array => Role::query()->when(
+                                    ! auth()->user()->isSuperAdmin(),
+                                    fn (Builder $query) => $query->where('name', '!=', Authenticatable::SUPER_ADMIN_ROLE)
+                                )
+                                    ->where('name', 'like', "%{$search}%")
+                                    ->limit(50)->pluck('name', 'id')
+                                    ->toArray()
+                            )
                             ->options(function () {
                                 /** @var User $user */
                                 $user = $this->getOwnerRecord();
 
-                                return Role::when(! auth()->user()->isSuperAdmin(), fn (Builder $query) => $query->where('name', '!=', Authenticatable::SUPER_ADMIN_ROLE))
-                                    ->when($user->has('roles'), fn (Builder $query) => $query->whereNotIn('id', $user->roles()->pluck('id')->toArray()))
+                                return Role::query()
+                                    ->when(
+                                        ! auth()->user()->isSuperAdmin(),
+                                        fn (Builder $query) => $query->where('name', '!=', Authenticatable::SUPER_ADMIN_ROLE)
+                                    )
+                                    ->when(
+                                        $user->has('roles'),
+                                        fn (Builder $query) => $query->whereNotIn('id', $user->roles()->pluck('id')->toArray())
+                                    )
                                     ->pluck('name', 'id')->toArray();
                             }),
                     ])
