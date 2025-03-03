@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ab240ccd45349b9290a88feefe507456",
+    "content-hash": "abbbc1e7db06b17b4ec9f3876e4b0025",
     "packages": [
         {
             "name": "amphp/amp",
@@ -13781,7 +13781,7 @@
         },
         {
             "name": "spatie/laravel-health",
-            "version": "dev-main",
+            "version": "1.32.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-health.git",
@@ -13826,7 +13826,6 @@
                 "spatie/pest-plugin-test-time": "^1.1.1|^1.1|^2.0|^3.0",
                 "spatie/test-time": "^1.3|^2.0"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -13863,7 +13862,7 @@
                 "spatie"
             ],
             "support": {
-                "source": "https://github.com/spatie/laravel-health/tree/main"
+                "source": "https://github.com/spatie/laravel-health/tree/1.32.4"
             },
             "funding": [
                 {
@@ -19198,16 +19197,16 @@
         },
         {
             "name": "tpetry/laravel-postgresql-enhanced",
-            "version": "2.3.1",
+            "version": "2.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tpetry/laravel-postgresql-enhanced.git",
-                "reference": "ecc575384c4d32b5430e71e5709d4d77239161c7"
+                "reference": "5cef3479b585aeffc9c930bd0264e9ac5d19a1f3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tpetry/laravel-postgresql-enhanced/zipball/ecc575384c4d32b5430e71e5709d4d77239161c7",
-                "reference": "ecc575384c4d32b5430e71e5709d4d77239161c7",
+                "url": "https://api.github.com/repos/tpetry/laravel-postgresql-enhanced/zipball/5cef3479b585aeffc9c930bd0264e9ac5d19a1f3",
+                "reference": "5cef3479b585aeffc9c930bd0264e9ac5d19a1f3",
                 "shasum": ""
             },
             "require": {
@@ -19266,9 +19265,9 @@
             ],
             "support": {
                 "issues": "https://github.com/tpetry/laravel-postgresql-enhanced/issues",
-                "source": "https://github.com/tpetry/laravel-postgresql-enhanced/tree/2.3.1"
+                "source": "https://github.com/tpetry/laravel-postgresql-enhanced/tree/2.3.2"
             },
-            "time": "2025-03-02T11:12:49+00:00"
+            "time": "2025-03-03T15:35:54+00:00"
         },
         {
             "name": "twilio/sdk",
@@ -24680,18 +24679,9 @@
             "time": "2024-04-29T21:42:39+00:00"
         }
     ],
-    "aliases": [
-        {
-            "package": "spatie/laravel-health",
-            "version": "dev-main",
-            "alias": "1.32.4",
-            "alias_normalized": "1.32.4.0"
-        }
-    ],
+    "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "spatie/laravel-health": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
