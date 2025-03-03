@@ -36,9 +36,11 @@
 
 namespace App\Filament\Resources\UserResource\RelationManagers;
 
+use AdvisingApp\Authorization\Models\Role;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Authenticatable;
-use App\Models\User;
+use App\Rules\ExcludeSuperAdmin;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -79,16 +81,22 @@ class RolesRelationManager extends RelationManager
             ])
             ->headerActions([
                 AttachAction::make()
-                    ->recordSelectOptionsQuery(function (Builder $query) {
-                        $query->where('guard_name', 'web');
+                    ->form(fn (): array => [
+                        Select::make('recordId')
+                            ->hiddenLabel()
+                            ->searchable()
+                            ->required()
+                            ->rule(new ExcludeSuperAdmin())
+                            ->preload()
+                            ->options(function () {
+                                /** @var User $user */
+                                $user = $this->getOwnerRecord();
 
-                        /** @var User $user */
-                        $user = auth()->user();
-
-                        if (! $user->isSuperAdmin()) {
-                            $query->where('name', '!=', Authenticatable::SUPER_ADMIN_ROLE);
-                        }
-                    })
+                                return Role::when(! auth()->user()->isSuperAdmin(), fn (Builder $query) => $query->where('name', '!=', Authenticatable::SUPER_ADMIN_ROLE))
+                                    ->when($user->has('roles'), fn (Builder $query) => $query->whereNotIn('id', $user->roles()->pluck('id')->toArray()))
+                                    ->pluck('name', 'id')->toArray();
+                            }),
+                    ])
                     ->multiple()
                     ->preloadRecordSelect(),
             ])
