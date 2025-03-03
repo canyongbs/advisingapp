@@ -56,7 +56,7 @@ class ManageAzureSsoSettings extends SettingsPage
 
     protected static ?string $navigationLabel = 'Azure';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 20;
 
     protected static ?string $navigationGroup = 'Single Sign-On (SSO)';
 

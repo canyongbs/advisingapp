@@ -53,6 +53,8 @@ class ManageMultifactorSettings extends SettingsPage
 
     protected static ?string $navigationGroup = 'Local Authentication';
 
+    protected static ?int $navigationSort = 10;
+
     public static function canAccess(): bool
     {
         /** @var User $user */

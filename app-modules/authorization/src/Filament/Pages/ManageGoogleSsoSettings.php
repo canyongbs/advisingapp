@@ -54,7 +54,7 @@ class ManageGoogleSsoSettings extends SettingsPage
 
     protected static ?string $navigationLabel = 'Google';
 
-    protected static ?int $navigationSort = 20;
+    protected static ?int $navigationSort = 30;
 
     protected static ?string $navigationGroup = 'Single Sign-On (SSO)';
 
