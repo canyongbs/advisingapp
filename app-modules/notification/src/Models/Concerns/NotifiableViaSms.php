@@ -46,6 +46,6 @@ trait NotifiableViaSms
             return $this->mobile;
         }
 
-        return $this->primaryPhone?->number;
+        return $this->primaryPhoneNumber?->number;
     }
 }

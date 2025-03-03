@@ -53,12 +53,12 @@ class ProspectPhoneNumber extends BaseModel implements Auditable
         'number',
         'ext',
         'type',
-        'is_mobile',
+        'can_receive_sms',
         'order',
     ];
 
     protected $casts = [
-        'is_mobile' => 'boolean',
+        'can_receive_sms' => 'boolean',
     ];
 
     public function prospect(): BelongsTo

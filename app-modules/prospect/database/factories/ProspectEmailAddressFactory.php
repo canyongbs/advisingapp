@@ -53,7 +53,7 @@ class ProspectEmailAddressFactory extends Factory
     {
         return [
             'address' => fake()->email(),
-            'type' => fake()->randomElement(['School', 'Personal', 'Work']),
+            'type' => fake()->randomElement(['Personal', 'Work', 'Institutional']),
             'order' => fake()->unique()->numberBetween(1, 1000),
         ];
     }

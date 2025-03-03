@@ -221,7 +221,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
             'student first name' => $this->recipient->getAttribute($this->recipient->displayFirstNameKey()),
             'student last name' => $this->recipient->getAttribute($this->recipient->displayLastNameKey()),
             'student full name' => $this->recipient->getAttribute($this->recipient->displayNameKey()),
-            'student email' => ProspectStudentRefactor::active() ? $this->recipient?->primaryEmail?->address : $this->recipient->getAttribute($this->recipient->displayEmailKey()),
+            'student email' => ProspectStudentRefactor::active() ? $this->recipient?->primaryEmailAddress?->address : $this->recipient->getAttribute($this->recipient->displayEmailKey()),
             'student preferred name' => $this->recipient->getAttribute($this->recipient->displayPreferredNameKey()),
         ];
     }

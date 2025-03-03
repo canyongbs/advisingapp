@@ -65,7 +65,7 @@ class CaseObserver
         }
 
         if ($case->status->classification === SystemCaseClassification::Open) {
-            if ($case->respondent->canRecieveEmail()) {
+            if ($case->respondent->canReceiveEmail()) {
                 $case->respondent->notify(new EducatableCaseOpenedNotification($case));
             }
         }
@@ -91,7 +91,7 @@ class CaseObserver
             $case->wasChanged('status_id')
             && $case->status->classification === SystemCaseClassification::Closed
         ) {
-            if ($case->respondent->canRecieveEmail()) {
+            if ($case->respondent->canReceiveEmail()) {
                 $case->respondent->notify(new EducatableCaseClosedNotification($case));
             }
         }
@@ -102,7 +102,7 @@ class CaseObserver
             $case?->status?->classification == SystemCaseClassification::Closed &&
             ! $case?->feedback()->count()
         ) {
-            if ($case->respondent->canRecieveEmail()) {
+            if ($case->respondent->canReceiveEmail()) {
                 $case->respondent->notify(new SendClosedCaseFeedbackNotification($case));
             }
         }

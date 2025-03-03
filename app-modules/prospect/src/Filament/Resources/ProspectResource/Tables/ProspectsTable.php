@@ -68,11 +68,11 @@ class ProspectsTable
                     ->label('Mobile')
                     ->hidden(ProspectStudentRefactor::active())
                     ->sortable(),
-                TextColumn::make('primaryEmail.address')
+                TextColumn::make('primaryEmailAddress.address')
                     ->label('Email')
                     ->sortable()
                     ->visible(ProspectStudentRefactor::active()),
-                TextColumn::make('primaryPhone.number')
+                TextColumn::make('primaryPhoneNumber.number')
                     ->label('Phone')
                     ->sortable()
                     ->visible(ProspectStudentRefactor::active()),
@@ -116,11 +116,11 @@ class ProspectsTable
                                 ? [
                                     TextConstraint::make('email')
                                         ->label('Primary Email')
-                                        ->relationship('primaryEmail', 'address')
+                                        ->relationship('primaryEmailAddress', 'address')
                                         ->icon('heroicon-m-envelope'),
                                     TextConstraint::make('phone')
                                         ->label('Primary Phone')
-                                        ->relationship('primaryPhone', 'number')
+                                        ->relationship('primaryPhoneNumber', 'number')
                                         ->icon('heroicon-m-phone'),
                                     TextConstraint::make('address')
                                         ->label('Primary Address line 1')

@@ -42,7 +42,7 @@ class DeliverFormSubmissionRequestByEmail extends DeliverFormSubmissionRequest
 {
     public function handle(): void
     {
-        if ($this->submission->author->canRecieveEmail()) {
+        if ($this->submission->author->canReceiveEmail()) {
             $this->submission
                 ->author
                 ->notify(new FormSubmissionRequestNotification($this->submission));

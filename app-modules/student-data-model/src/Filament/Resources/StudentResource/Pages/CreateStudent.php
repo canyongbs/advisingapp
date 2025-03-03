@@ -34,36 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
+namespace AdvisingApp\Student\Filament\Resources\StudentResource\Pages;
 
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Prospect\Models\ProspectSource;
-use AdvisingApp\Prospect\Models\ProspectStatus;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Features\ProspectStudentRefactor;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\Alignment;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 
-class CreateProspect extends CreateRecord
+class CreateStudent extends CreateRecord
 {
-    protected static string $resource = ProspectResource::class;
+    protected static string $resource = StudentResource::class;
 
     public function form(Form $form): Form
     {
@@ -80,7 +76,7 @@ class CreateProspect extends CreateRecord
                 return;
             }
 
-            $set(Prospect::displayNameKey(), "{$firstName} {$lastName}");
+            $set(Student::displayNameKey(), "{$firstName} {$lastName}");
         };
 
         $makeRepeaterItemPrimaryAction = fn (): Action => Action::make('makePrimary')
@@ -103,8 +99,16 @@ class CreateProspect extends CreateRecord
 
         return $form
             ->schema([
-                Section::make('Demographics')
+                Section::make('Personal Information')
                     ->schema([
+                        TextInput::make('sisid')
+                            ->label('Student ID')
+                            ->required()
+                            ->unique('students', 'sisid')
+                            ->maxLength(255),
+                        TextInput::make('otherid')
+                            ->label('Other ID')
+                            ->maxLength(255),
                         TextInput::make('first_name')
                             ->label('First Name')
                             ->required()
@@ -115,7 +119,7 @@ class CreateProspect extends CreateRecord
                             ->required()
                             ->live(onBlur: true)
                             ->afterStateUpdated($generateFullName),
-                        TextInput::make(Prospect::displayNameKey())
+                        TextInput::make(Student::displayNameKey())
                             ->label('Full Name')
                             ->required()
                             ->disabled()
@@ -135,11 +139,9 @@ class CreateProspect extends CreateRecord
                         TextInput::make('hsgrad')
                             ->label('High School Graduation Date')
                             ->nullable()
-                            ->numeric()
-                            ->minValue(1920)
-                            ->maxValue(now()->addYears(25)->year),
+                            ->numeric(),
                     ])
-                    ->columns(2),
+                    ->columns(3),
                 Section::make('Contact Information')
                     ->schema([
                         Repeater::make('emailAddresses')
@@ -265,11 +267,11 @@ class CreateProspect extends CreateRecord
                         TextInput::make('email')
                             ->label('Primary Email')
                             ->email()
-                            ->maxLength(255),
+                            ->unique('students', 'email')
+                            ->required(),
                         TextInput::make('email_2')
                             ->label('Other Email')
-                            ->email()
-                            ->maxLength(255),
+                            ->email(),
                         TextInput::make('mobile')
                             ->label('Mobile')
                             ->string()
@@ -282,11 +284,11 @@ class CreateProspect extends CreateRecord
                             ->label('Address')
                             ->string()
                             ->maxLength(255),
-                        TextInput::make('address_2')
+                        TextInput::make('address2')
                             ->label('Apartment/Unit Number')
                             ->string()
                             ->maxLength(255),
-                        TextInput::make('address_3')
+                        TextInput::make('address3')
                             ->label('Additional Address')
                             ->string()
                             ->maxLength(255),
@@ -303,59 +305,57 @@ class CreateProspect extends CreateRecord
                             ->string()
                             ->maxLength(255),
                     ])
-                    ->columns(2)
+                    ->columns(3)
                     ->hidden(ProspectStudentRefactor::active()),
-                Section::make('Classification')
-                    ->schema([
-                        Select::make('status_id')
-                            ->label('Status')
-                            ->required()
-                            ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('sort'))
-                            ->default(fn () => ProspectStatus::query()
-                                ->orderBy('sort')
-                                ->first()
-                                ?->getKey())
-                            ->exists(
-                                table: (new ProspectStatus())->getTable(),
-                                column: (new ProspectStatus())->getKeyName()
-                            ),
-                        Select::make('source_id')
-                            ->label('Source')
-                            ->required()
-                            ->relationship('source', 'name')
-                            ->default(fn () => ProspectSource::query()->orderBy('name')->first()?->getKey())
-                            ->exists(
-                                table: (new ProspectSource())->getTable(),
-                                column: (new ProspectSource())->getKeyName()
-                            ),
-                        Textarea::make('description')
-                            ->label('Description')
-                            ->columnSpanFull(),
-                    ])
-                    ->columns(2),
                 Section::make('Engagement Restrictions')
                     ->schema([
-                        Radio::make('sms_opt_out')
-                            ->label('SMS Opt Out')
-                            ->default(false)
-                            ->boolean(),
-                        Radio::make('email_bounce')
-                            ->label('Email Bounce')
-                            ->default(false)
-                            ->boolean(),
+                        Toggle::make('sms_opt_out')
+                            ->label('SMS Opt Out'),
+                        Toggle::make('email_bounce')
+                            ->label('Email Bounce'),
+                        Toggle::make('dual')
+                            ->label('Dual'),
+                        Toggle::make('ferpa')
+                            ->label('FERPA'),
+                        Toggle::make('firstgen')
+                            ->label('Firstgen'),
+                        Toggle::make('sap')
+                            ->label('SAP'),
+                        TextInput::make('holds')
+                            ->label('Holds'),
+                        DatePicker::make('dfw')
+                            ->label('DFW')
+                            ->native(false)
+                            ->closeOnDateSelection()
+                            ->format('Y-m-d')
+                            ->displayFormat('Y-m-d'),
+                        TextInput::make('ethnicity')
+                            ->label('Ethnicity'),
+                        DateTimePicker::make('lastlmslogin')
+                            ->label('Last LMS login')
+                            ->native(false)
+                            ->closeOnDateSelection()
+                            ->format('Y-m-d H:i:s')
+                            ->displayFormat('Y-m-d H:i:s'),
+                        TextInput::make('f_e_term')
+                            ->label('First Enrollment Term')
+                            ->maxLength(255),
+                        TextInput::make('mr_e_term')
+                            ->label('Most Recent Enrollment Term')
+                            ->maxLength(255),
                     ])
-                    ->columns(2),
+                    ->columns(3),
             ]);
     }
 
     protected function afterCreate(): void
     {
-        /** Prospect $prospect */
-        $prospect = $this->getRecord();
+        /** Student $student */
+        $student = $this->getRecord();
 
-        $prospect->primaryEmailAddress()->associate($prospect->emailAddresses()->first());
-        $prospect->primaryPhoneNumber()->associate($prospect->phoneNumbers()->first());
-        $prospect->primaryAddress()->associate($prospect->addresses()->first());
-        $prospect->save();
+        $student->primaryEmailAddress()->associate($student->emailAddresses()->first());
+        $student->primaryPhoneNumber()->associate($student->phoneNumbers()->first());
+        $student->primaryAddress()->associate($student->addresses()->first());
+        $student->save();
     }
 }

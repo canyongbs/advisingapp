@@ -36,9 +36,14 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Schemas;
 
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Actions\EditStudentAction;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\StudentAddress;
+use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
+use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use App\Features\ProspectStudentRefactor;
 use App\Infolists\Components\Subsection;
+use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
@@ -56,30 +61,38 @@ class StudentProfileInfolist
                                 ->label('Tags')
                                 ->badge()
                                 ->placeholder('-'),
+                            TextEntry::make('preferred')
+                                ->label('Preferred Name')
+                                ->placeholder('-'),
+                            TextEntry::make('address')
+                                ->state(fn (Student $record): array => collect($record->addresses)
+                                    ->map(fn (StudentAddress $address): string => $address->full . (filled($address->type) ? " ({$address->type})" : ''))
+                                    ->all())
+                                ->listWithLineBreaks()
+                                ->visible(fn (?array $state): bool => ProspectStudentRefactor::active() && filled($state)),
+                            TextEntry::make('otherEmailAddresses')
+                                ->state(fn (Student $record): array => collect($record->additionalEmailAddresses)
+                                    ->map(fn (StudentEmailAddress $email): string => $email->address . (filled($email->type) ? " ({$email->type})" : ''))
+                                    ->all())
+                                ->listWithLineBreaks()
+                                ->visible(fn (?array $state): bool => ProspectStudentRefactor::active() && filled($state)),
+                            TextEntry::make('otherPhoneNumbers')
+                                ->state(fn (Student $record): array => collect($record->additionalPhoneNumbers)
+                                    ->map(fn (StudentPhoneNumber $phone): string => $phone->number . (filled($phone->ext) ? " (ext. {$phone->ext})" : '') . (filled($phone->type) ? " ({$phone->type})" : ''))
+                                    ->all())
+                                ->listWithLineBreaks()
+                                ->visible(fn (?array $state): bool => ProspectStudentRefactor::active() && filled($state)),
                             TextEntry::make('phone')
                                 ->hidden(ProspectStudentRefactor::active())
-                                ->placeholder('-'),
-                            TextEntry::make('alternativePhoneNumbers.number')
-                                ->label('Alternative Phone Numbers')
-                                ->listWithLineBreaks()
-                                ->limitList(3)
-                                ->expandableLimitedList()
-                                ->visible(ProspectStudentRefactor::active())
                                 ->placeholder('-'),
                             TextEntry::make('email_2')
                                 ->label('Alternate Email')
                                 ->hidden(ProspectStudentRefactor::active())
                                 ->placeholder('-'),
-                            TextEntry::make('alternativeEmailAddresses.address')
-                                ->label('Alternate Emails')
-                                ->listWithLineBreaks()
-                                ->limitList(3)
-                                ->expandableLimitedList()
-                                ->visible(ProspectStudentRefactor::active())
-                                ->placeholder('-'),
                             TextEntry::make('full_address')
                                 ->label('Address')
-                                ->placeholder('-'),
+                                ->placeholder('-')
+                                ->hidden(ProspectStudentRefactor::active()),
                         ]),
                         Subsection::make([
                             TextEntry::make('ethnicity')
@@ -103,10 +116,10 @@ class StudentProfileInfolist
                                 ->placeholder('-'),
                         ]),
                     ])
-
                     ->extraAttributes(['class' => 'fi-section-has-subsections'])
                     ->headerActions([
-                        EditStudentAction::make('edit'),
+                        Action::make('edit')
+                            ->url(fn (): string => StudentResource::getUrl('edit', ['record' => $infolist->getRecord()])),
                     ]),
             ]);
     }
