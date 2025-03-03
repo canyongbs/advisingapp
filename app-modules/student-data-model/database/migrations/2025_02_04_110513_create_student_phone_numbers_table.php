@@ -50,7 +50,6 @@ return new class () extends Migration {
             $table->boolean('can_receive_sms')->default(false);
             $table->integer('order');
             $table->timestamps();
-            $table->foreign('sisid')->references('sisid')->on('students')->onDelete('cascade');
 
             $table->index(['sisid', 'order']);
         });
