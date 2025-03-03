@@ -34,71 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Models;
+namespace AdvisingApp\Prospect\Database\Factories;
 
-use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
-use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
-use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectEmailAddress;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @mixin IdeHelperEventAttendee
+ * @extends Factory<ProspectEmailAddress>
  */
-class EventAttendee extends BaseModel implements CanBeNotified
+class ProspectEmailAddressFactory extends Factory
 {
-    use Notifiable;
-
-    protected $fillable = [
-        'status',
-        'email',
-        'event_id',
-    ];
-
-    protected $casts = [
-        'status' => EventAttendeeStatus::class,
-    ];
-
-    public function event(): BelongsTo
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
-        return $this->belongsTo(Event::class, 'event_id');
-    }
-
-    public function submissions(): HasMany
-    {
-        return $this->hasMany(EventRegistrationFormSubmission::class, 'event_attendee_id');
-    }
-
-    public function prospects(): BelongsToMany
-    {
-        return $this->belongsToMany(
-            Prospect::class,
-            ProspectEmailAddress::class,
-            'address',
-            'prospect_id',
-            'email',
-        );
-    }
-
-    public function students(): BelongsToMany
-    {
-        return $this->belongsToMany(
-            Student::class,
-            StudentEmailAddress::class,
-            'address',
-            'sisid',
-            'email',
-        );
-    }
-
-    public function canRecieveSms(): bool
-    {
-        return false;
+        return [
+            'address' => fake()->email(),
+            'type' => fake()->randomElement(['School', 'Personal', 'Work']),
+            'order' => fake()->unique()->numberBetween(1, 1000),
+        ];
     }
 }

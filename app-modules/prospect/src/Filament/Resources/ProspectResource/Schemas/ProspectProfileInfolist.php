@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Schemas;
 
+use App\Features\ProspectStudentRefactor;
 use App\Infolists\Components\Subsection;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\Section;
@@ -58,9 +59,25 @@ class ProspectProfileInfolist
                             TextEntry::make('preferred')
                                 ->label('Preferred Name'),
                             TextEntry::make('phone')
+                                ->hidden(ProspectStudentRefactor::active())
+                                ->placeholder('-'),
+                            TextEntry::make('alternativePhoneNumbers.number')
+                                ->label('Alternative Phone Numbers')
+                                ->listWithLineBreaks()
+                                ->limitList(3)
+                                ->expandableLimitedList()
+                                ->visible(ProspectStudentRefactor::active())
                                 ->placeholder('-'),
                             TextEntry::make('email_2')
                                 ->label('Alternate Email')
+                                ->hidden(ProspectStudentRefactor::active())
+                                ->placeholder('-'),
+                            TextEntry::make('alternativeEmailAddresses.address')
+                                ->label('Alternate Emails')
+                                ->listWithLineBreaks()
+                                ->limitList(3)
+                                ->expandableLimitedList()
+                                ->visible(ProspectStudentRefactor::active())
                                 ->placeholder('-'),
                             TextEntry::make('full_address')
                                 ->label('Address')
