@@ -48,6 +48,7 @@ use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
+use Illuminate\Support\Str;
 
 class ProspectProfileInfolist
 {
@@ -65,19 +66,22 @@ class ProspectProfileInfolist
                             TextEntry::make('preferred')
                                 ->label('Preferred Name')
                                 ->placeholder('-'),
-                            TextEntry::make('address')
+                            TextEntry::make('addresses')
+                                ->label(fn (?array $state): string => Str::plural('Address', count($state ?? [])))
                                 ->state(fn (Prospect $record): array => collect($record->addresses)
                                     ->map(fn (ProspectAddress $address): string => $address->full . (filled($address->type) ? " ({$address->type})" : ''))
                                     ->all())
                                 ->listWithLineBreaks()
                                 ->visible(fn (?array $state): bool => ProspectStudentRefactor::active() && filled($state)),
-                            TextEntry::make('otherEmailAddresses')
+                            TextEntry::make('additionalEmailAddresses')
+                                ->label(fn (?array $state): string => Str::plural('Other email address', count($state ?? [])))
                                 ->state(fn (Prospect $record): array => collect($record->additionalEmailAddresses)
                                     ->map(fn (ProspectEmailAddress $email): string => $email->address . (filled($email->type) ? " ({$email->type})" : ''))
                                     ->all())
                                 ->listWithLineBreaks()
                                 ->visible(fn (?array $state): bool => ProspectStudentRefactor::active() && filled($state)),
-                            TextEntry::make('otherPhoneNumbers')
+                            TextEntry::make('additionalPhoneNumbers')
+                                ->label(fn (?array $state): string => Str::plural('Other phone number', count($state ?? [])))
                                 ->state(fn (Prospect $record): array => collect($record->additionalPhoneNumbers)
                                     ->map(fn (ProspectPhoneNumber $phone): string => $phone->number . (filled($phone->ext) ? " (ext. {$phone->ext})" : '') . (filled($phone->type) ? " ({$phone->type})" : ''))
                                     ->all())
