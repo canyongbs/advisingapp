@@ -37,7 +37,6 @@
 namespace AdvisingApp\Division\Filament\Resources\DivisionResource\Pages;
 
 use AdvisingApp\Division\Filament\Resources\DivisionResource;
-use App\Features\DivisionIsDefault;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
@@ -74,7 +73,6 @@ class ListDivisions extends ListRecords
                     ->sortable(),
                 IconColumn::make('is_default')
                     ->label('Default')
-                    ->visible(DivisionIsDefault::active())
                     ->boolean(),
                 TextColumn::make('notificationSetting.setting.name')
                     ->label('Notification Setting'),
