@@ -37,17 +37,22 @@
 namespace AdvisingApp\StudentDataModel\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\StudentDataModel\Observers\StudentAddressObserver;
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @mixin IdeHelperStudentAddress
  */
+#[ObservedBy([StudentAddressObserver::class])]
 class StudentAddress extends BaseModel implements Auditable
 {
     use AuditableTrait;
+    use HasUuids;
 
     protected $fillable = [
         'sisid',

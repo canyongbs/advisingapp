@@ -232,7 +232,7 @@ class StudentImporter extends Importer
         ];
     }
 
-    public function resolveRecord(): ?Student
+    public function resolveRecord(): Student
     {
         return (new Student())->setTable("import_{$this->import->getKey()}_students");
     }

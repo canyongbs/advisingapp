@@ -60,7 +60,6 @@ class StudentAddressFactory extends Factory
             'postal' => fake()->postcode(),
             'country' => fake()->country(),
             'type' => fake()->randomElement(['Home', 'Institutional', 'Work']),
-            'order' => fake()->unique()->numberBetween(1, 1000),
         ];
     }
 }

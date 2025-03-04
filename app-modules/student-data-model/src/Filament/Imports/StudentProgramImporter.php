@@ -64,7 +64,7 @@ class StudentProgramImporter extends Importer
         ];
     }
 
-    public function resolveRecord(): ?Program
+    public function resolveRecord(): Program
     {
         return (new Program())->setTable("import_{$this->import->getKey()}_programs");
     }
