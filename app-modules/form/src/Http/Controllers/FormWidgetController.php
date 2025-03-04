@@ -50,7 +50,6 @@ use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
-use App\Features\GenerateProspectFeature;
 use App\Http\Controllers\Controller;
 use Closure;
 use Filament\Support\Colors\Color;
@@ -105,7 +104,7 @@ class FormWidgetController extends Controller
         $author = $resolveSubmissionAuthorFromEmail($data['email']);
 
         if (! $author) {
-            if (! GenerateProspectFeature::active() || ! $form->generate_prospects) {
+            if (! $form->generate_prospects) {
                 throw ValidationException::withMessages([
                     'email' => 'A student with that email address could not be found. Please contact your system administrator.',
                 ]);
