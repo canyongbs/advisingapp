@@ -44,7 +44,6 @@ use AdvisingApp\Form\Models\FormField;
 use AdvisingApp\Form\Models\FormStep;
 use AdvisingApp\Form\Rules\IsDomain;
 use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
-use App\Features\GenerateProspectFeature;
 use App\Filament\Forms\Components\ColorSelect;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Repeater;
@@ -98,15 +97,14 @@ trait HasSharedFormConfiguration
                 ->label('Requires authentication')
                 ->helperText('If enabled, only students and prospects can submit this form, and they must verify their email address first.')
                 ->live()
-                ->afterStateUpdated(fn (Set $set, $state) => GenerateProspectFeature::active() && ! $state ? $set('generate_prospects', false) : null),
+                ->afterStateUpdated(fn (Set $set, $state) => ! $state ? $set('generate_prospects', false) : null),
             Toggle::make('generate_prospects')
                 ->label('Generate Prospects')
                 ->helperText('If enabled, a request to submit by an unknown prospect will result in a new prospect being created.')
                 ->hidden(fn (Get $get) => ! $get('is_authenticated'))
                 ->disabled(fn () => ! auth()->user()?->hasLicense(LicenseType::RecruitmentCrm))
                 ->hintIcon(fn () => ! auth()->user()?->hasLicense(LicenseType::RecruitmentCrm) ? 'heroicon-m-lock-closed' : null)
-                ->dehydratedWhenHidden()
-                ->visible(GenerateProspectFeature::active()),
+                ->dehydratedWhenHidden(),
             Toggle::make('is_wizard')
                 ->label('Multi-step form')
                 ->live()
