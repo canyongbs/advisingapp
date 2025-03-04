@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Actions;
 
+use App\Features\ProspectStudentRefactor;
 use App\Models\Import;
 use Filament\Notifications\Actions\Action as NotificationAction;
 use Filament\Notifications\Notification;
@@ -71,12 +72,14 @@ class FinalizeStudentDataImport
 
         if (! $totalFailedRowsCount) {
             DB::transaction(function () use ($studentsImport, $emailAddressesImport, $phoneNumbersImport, $addressesImport, $programsImport, $enrollmentsImport) {
-                DB::table("import_{$studentsImport->getKey()}_students")
-                    ->update([
-                        'primary_email_id' => DB::raw("(SELECT email.id FROM \"import_{$emailAddressesImport->getKey()}_email_addresses\" email WHERE email.sisid = \"import_{$studentsImport->getKey()}_students\".sisid AND email.\"order\" = 1 LIMIT 1)"),
-                        'primary_phone_id' => DB::raw("(SELECT phone.id FROM \"import_{$phoneNumbersImport->getKey()}_phone_numbers\" phone WHERE phone.sisid = \"import_{$studentsImport->getKey()}_students\".sisid AND phone.\"order\" = 1 LIMIT 1)"),
-                        'primary_address_id' => DB::raw("(SELECT address.id FROM \"import_{$addressesImport->getKey()}_addresses\" address WHERE address.sisid = \"import_{$studentsImport->getKey()}_students\".sisid AND address.\"order\" = 1 LIMIT 1)"),
-                    ]);
+                if (ProspectStudentRefactor::active()) {
+                    DB::table("import_{$studentsImport->getKey()}_students")
+                        ->update([
+                            'primary_email_id' => DB::raw("(SELECT email.id FROM \"import_{$emailAddressesImport->getKey()}_email_addresses\" email WHERE email.sisid = \"import_{$studentsImport->getKey()}_students\".sisid AND email.\"order\" = 1 LIMIT 1)"),
+                            'primary_phone_id' => DB::raw("(SELECT phone.id FROM \"import_{$phoneNumbersImport->getKey()}_phone_numbers\" phone WHERE phone.sisid = \"import_{$studentsImport->getKey()}_students\".sisid AND phone.\"order\" = 1 LIMIT 1)"),
+                            'primary_address_id' => DB::raw("(SELECT address.id FROM \"import_{$addressesImport->getKey()}_addresses\" address WHERE address.sisid = \"import_{$studentsImport->getKey()}_students\".sisid AND address.\"order\" = 1 LIMIT 1)"),
+                        ]);
+                }
 
                 DB::statement('drop table "students"');
                 DB::statement("alter table \"import_{$studentsImport->getKey()}_students\" rename to \"students\"");
