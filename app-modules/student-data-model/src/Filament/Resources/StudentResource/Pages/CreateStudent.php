@@ -104,6 +104,7 @@ class CreateStudent extends CreateRecord
                         TextInput::make('sisid')
                             ->label('Student ID')
                             ->required()
+                            ->alphaDash()
                             ->unique('students', 'sisid')
                             ->maxLength(255),
                         TextInput::make('otherid')

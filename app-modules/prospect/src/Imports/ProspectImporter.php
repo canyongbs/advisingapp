@@ -45,7 +45,6 @@ use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 class ProspectImporter extends Importer
@@ -301,9 +300,35 @@ class ProspectImporter extends Importer
         ];
     }
 
-    public function resolveRecord(): ?Model
+    public function resolveRecord(): Prospect
     {
-        return new Prospect();
+        if (! ProspectStudentRefactor::active()) {
+            $email = $this->data['email'];
+            $email2 = $this->data['email_2'] ?? null;
+
+            $emails = [
+                $email,
+                ...filled($email2) ? [$email2] : [],
+            ];
+
+            $prospect = Prospect::query()
+                ->whereIn('email', $emails)
+                ->orWhereIn('email_2', $emails)
+                ->first();
+
+            return $prospect ?? new Prospect([
+                'email' => $email,
+                'email_2' => $email2,
+            ]);
+        }
+
+        return Prospect::query()
+            ->whereHas('emailAddresses', fn (Builder $query) => $query->whereIn('address', collect([
+                $this->data['email_1'] ?? null,
+                $this->data['email_2'] ?? null,
+                $this->data['email_3'] ?? null,
+            ])->filter(filled(...))->all()))
+            ->first() ?? new Prospect();
     }
 
     public function beforeCreate(): void

@@ -56,6 +56,7 @@ class StudentEmailAddressImporter extends Importer
                 ->rules([
                     'required',
                     'string',
+                    'alpha_dash',
                     'max:255',
                 ]),
             ImportColumn::make('address')
