@@ -56,7 +56,6 @@ class ProspectPhoneNumberFactory extends Factory
             'ext' => null,
             'type' => fake()->randomElement(['Mobile', 'Home', 'Work']),
             'can_receive_sms' => fake()->boolean(),
-            'order' => fake()->unique()->numberBetween(1, 1000),
         ];
     }
 

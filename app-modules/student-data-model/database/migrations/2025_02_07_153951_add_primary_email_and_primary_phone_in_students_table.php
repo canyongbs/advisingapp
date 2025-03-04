@@ -42,9 +42,9 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::table('students', function (Blueprint $table) {
-            $table->foreignUuid('primary_email_id')->nullable()->constrained('student_email_addresses')->cascadeOnDelete();
-            $table->foreignUuid('primary_phone_id')->nullable()->constrained('student_phone_numbers')->cascadeOnDelete();
-            $table->foreignUuid('primary_address_id')->nullable()->constrained('student_addresses')->cascadeOnDelete();
+            $table->string('primary_email_id')->nullable();
+            $table->string('primary_phone_id')->nullable();
+            $table->string('primary_address_id')->nullable();
         });
     }
 

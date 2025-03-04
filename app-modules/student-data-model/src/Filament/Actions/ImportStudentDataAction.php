@@ -38,13 +38,17 @@ namespace AdvisingApp\StudentDataModel\Filament\Actions;
 
 use AdvisingApp\StudentDataModel\Actions\CreateTemporaryStudentDataImportTables;
 use AdvisingApp\StudentDataModel\Actions\FinalizeStudentDataImport;
+use AdvisingApp\StudentDataModel\Filament\Imports\StudentAddressImporter;
+use AdvisingApp\StudentDataModel\Filament\Imports\StudentEmailAddressImporter;
 use AdvisingApp\StudentDataModel\Filament\Imports\StudentEnrollmentImporter;
 use AdvisingApp\StudentDataModel\Filament\Imports\StudentImporter;
+use AdvisingApp\StudentDataModel\Filament\Imports\StudentPhoneNumberImporter;
 use AdvisingApp\StudentDataModel\Filament\Imports\StudentProgramImporter;
 use AdvisingApp\StudentDataModel\Jobs\PrepareStudentDataCsvImport;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\ProspectStudentRefactor;
 use App\Models\Import;
 use Filament\Actions\Action;
 use Filament\Actions\ImportAction;
@@ -224,12 +228,40 @@ class ImportStudentDataAction
             ->modalHeading('Synchronize Students, Programs, and Enrollments')
             ->modalDescription(fn (ImportAction $action): Htmlable => new HtmlString('WARNING: Record synchronization involves the replacement of all students, programs, and enrollments with the imported extract data. If there are existing student records that are not present in your uploaded files, those records will be removed from the system. The purpose of this tool is to synchronize and match your SIS extract data imported here. <br><br> CSV Extract Examples<br>' . collect([
                 $action->getModalAction('downloadExample')?->label('Students')->toHtml(),
+                ...(ProspectStudentRefactor::active() ? [
+                    $action->getModalAction('downloadEmailAddressesExample')?->label('Email addresses')->toHtml(),
+                    $action->getModalAction('downloadPhoneNumbersExample')?->label('Phone numbers')->toHtml(),
+                    $action->getModalAction('downloadAddressesExample')?->label('Addresses')->toHtml(),
+                ] : []),
                 $action->getModalAction('downloadProgramsExample')?->label('Programs')->toHtml(),
                 $action->getModalAction('downloadEnrollmentsExample')?->label('Enrollments')->toHtml(),
             ])->filter()->implode(' | ')))
             ->modalSubmitActionLabel('Sync Records')
             ->form(fn (ImportAction $action): array => array_merge([
                 $makeFileUpload(),
+                ...(ProspectStudentRefactor::active() ? [
+                    $makeFileUpload(
+                        name: 'emailAddressesFile',
+                        columnMapStatePath: 'emailAddressesColumnMap',
+                        importer: StudentEmailAddressImporter::class,
+                        isRequired: false,
+                    )
+                        ->placeholder('Upload an email addresses CSV file'),
+                    $makeFileUpload(
+                        name: 'phoneNumbersFile',
+                        columnMapStatePath: 'phoneNumbersColumnMap',
+                        importer: StudentPhoneNumberImporter::class,
+                        isRequired: false,
+                    )
+                        ->placeholder('Upload a phone numbers CSV file'),
+                    $makeFileUpload(
+                        name: 'addressesFile',
+                        columnMapStatePath: 'addressesColumnMap',
+                        importer: StudentAddressImporter::class,
+                        isRequired: false,
+                    )
+                        ->placeholder('Upload an addresses CSV file'),
+                ] : []),
                 $makeFileUpload(
                     name: 'programsFile',
                     columnMapStatePath: 'programsColumnMap',
@@ -247,6 +279,23 @@ class ImportStudentDataAction
                     ->placeholder('Upload a enrollments CSV file')
                     ->visible(fn () => auth()->user()->can('import', Enrollment::class)),
                 $makeColumnMapper()->label('Student columns'),
+                ...(ProspectStudentRefactor::active() ? [
+                    $makeColumnMapper(
+                        name: 'emailAddressesColumnMap',
+                        fileStatePath: 'emailAddressesFile',
+                        importer: StudentEmailAddressImporter::class,
+                    )->label('Email address columns'),
+                    $makeColumnMapper(
+                        name: 'phoneNumbersColumnMap',
+                        fileStatePath: 'phoneNumbersFile',
+                        importer: StudentPhoneNumberImporter::class,
+                    )->label('Phone number columns'),
+                    $makeColumnMapper(
+                        name: 'addressesColumnMap',
+                        fileStatePath: 'addressesFile',
+                        importer: StudentAddressImporter::class,
+                    )->label('Address columns'),
+                ] : []),
                 $makeColumnMapper(
                     name: 'programsColumnMap',
                     fileStatePath: 'programsFile',
@@ -260,12 +309,15 @@ class ImportStudentDataAction
             ], $action->getImporter()::getOptionsFormComponents()))
             ->action(function (ImportAction $action, array $data) {
                 $csvFile = $data['file'];
+                $emailAddressesCsvFile = $data['emailAddressesFile'] ?? null;
+                $phoneNumbersCsvFile = $data['phoneNumbersFile'] ?? null;
+                $addressesCsvFile = $data['addressesFile'] ?? null;
                 $programsCsvFile = $data['programsFile'] ?? null;
                 $enrollmentsCsvFile = $data['enrollmentsFile'] ?? null;
 
                 $user = auth()->user();
 
-                [$import, $programsImport, $enrollmentsImport] = DB::transaction(function () use ($action, $csvFile, $programsCsvFile, $enrollmentsCsvFile, $user) {
+                [$import, $emailAddressesImport, $phoneNumbersImport, $addressesImport, $programsImport, $enrollmentsImport] = DB::transaction(function () use ($action, $csvFile, $emailAddressesCsvFile, $phoneNumbersCsvFile, $addressesCsvFile, $programsCsvFile, $enrollmentsCsvFile, $user) {
                     $makeImport = function (?TemporaryUploadedFile $csvFile = null, ?string $importer = null) use ($action, $user): ?Import {
                         if (! $csvFile) {
                             return null;
@@ -284,6 +336,11 @@ class ImportStudentDataAction
 
                     return [
                         $makeImport($csvFile),
+                        ...(ProspectStudentRefactor::active() ? [
+                            $makeImport($emailAddressesCsvFile, StudentEmailAddressImporter::class),
+                            $makeImport($phoneNumbersCsvFile, StudentPhoneNumberImporter::class),
+                            $makeImport($addressesCsvFile, StudentAddressImporter::class),
+                        ] : [null, null, null]),
                         $makeImport($programsCsvFile, StudentProgramImporter::class),
                         $makeImport($enrollmentsCsvFile, StudentEnrollmentImporter::class),
                     ];
@@ -293,6 +350,9 @@ class ImportStudentDataAction
                     $action->getOptions(),
                     Arr::except($data, [
                         'file', 'columnMap',
+                        'emailAddressesFile', 'emailAddressesColumnMap',
+                        'phoneNumbersFile', 'phoneNumbersColumnMap',
+                        'addressesFile', 'addressesColumnMap',
                         'programsFile', 'programsColumnMap',
                         'enrollmentsFile', 'enrollmentsColumnMap',
                     ]),
@@ -301,10 +361,16 @@ class ImportStudentDataAction
                 // We do not want to send the loaded user relationship to the queue in job payloads,
                 // in case it contains attributes that are not serializable, such as binary columns.
                 $import->unsetRelation('user');
+                $emailAddressesImport?->unsetRelation('user');
+                $phoneNumbersImport?->unsetRelation('user');
+                $addressesImport?->unsetRelation('user');
                 $programsImport?->unsetRelation('user');
                 $enrollmentsImport?->unsetRelation('user');
 
                 $columnMap = $data['columnMap'];
+                $emailAddressesColumnMap = $data['emailAddressesColumnMap'] ?? null;
+                $phoneNumbersColumnMap = $data['phoneNumbersColumnMap'] ?? null;
+                $addressesColumnMap = $data['addressesColumnMap'] ?? null;
                 $programsColumnMap = $data['programsColumnMap'] ?? null;
                 $enrollmentsColumnMap = $data['enrollmentsColumnMap'] ?? null;
 
@@ -314,6 +380,18 @@ class ImportStudentDataAction
                 );
 
                 event(new ImportStarted($import, $columnMap, $options));
+
+                if ($emailAddressesImport) {
+                    event(new ImportStarted($emailAddressesImport, $emailAddressesColumnMap, $options));
+                }
+
+                if ($phoneNumbersImport) {
+                    event(new ImportStarted($phoneNumbersImport, $phoneNumbersColumnMap, $options));
+                }
+
+                if ($addressesImport) {
+                    event(new ImportStarted($addressesImport, $addressesColumnMap, $options));
+                }
 
                 if ($programsImport) {
                     event(new ImportStarted($programsImport, $programsColumnMap, $options));
@@ -326,10 +404,13 @@ class ImportStudentDataAction
                 $jobQueue = $importer->getJobQueue();
                 $jobConnection = $importer->getJobConnection();
 
-                app(CreateTemporaryStudentDataImportTables::class)->execute($import, $programsImport, $enrollmentsImport);
+                app(CreateTemporaryStudentDataImportTables::class)->execute($import, $emailAddressesImport, $phoneNumbersImport, $addressesImport, $programsImport, $enrollmentsImport);
 
                 Bus::batch([
                     new PrepareStudentDataCsvImport($import, $columnMap, $options),
+                    ...($emailAddressesImport ? [new PrepareStudentDataCsvImport($emailAddressesImport, $emailAddressesColumnMap, $options)] : []),
+                    ...($phoneNumbersImport ? [new PrepareStudentDataCsvImport($phoneNumbersImport, $phoneNumbersColumnMap, $options)] : []),
+                    ...($addressesImport ? [new PrepareStudentDataCsvImport($addressesImport, $addressesColumnMap, $options)] : []),
                     ...($programsImport ? [new PrepareStudentDataCsvImport($programsImport, $programsColumnMap, $options)] : []),
                     ...($enrollmentsImport ? [new PrepareStudentDataCsvImport($enrollmentsImport, $enrollmentsColumnMap, $options)] : []),
                 ])
@@ -346,7 +427,7 @@ class ImportStudentDataAction
                         filled($jobConnection),
                         fn (PendingChain $chain) => $chain->onConnection($jobConnection),
                     )
-                    ->finally(fn () => app(FinalizeStudentDataImport::class)->execute($import, $programsImport, $enrollmentsImport))
+                    ->finally(fn () => app(FinalizeStudentDataImport::class)->execute($import, $emailAddressesImport, $phoneNumbersImport, $addressesImport, $programsImport, $enrollmentsImport))
                     ->dispatch();
 
                 Notification::make()
@@ -356,6 +437,9 @@ class ImportStudentDataAction
                     ->send();
             })
             ->registerModalActions([
+                $makeDownloadAction('downloadEmailAddressesExample', StudentEmailAddressImporter::class),
+                $makeDownloadAction('downloadPhoneNumbersExample', StudentPhoneNumberImporter::class),
+                $makeDownloadAction('downloadAddressesExample', StudentAddressImporter::class),
                 ...(auth()->user()->can('import', Program::class) ? [
                     $makeDownloadAction('downloadProgramsExample', StudentProgramImporter::class),
                 ] : []),

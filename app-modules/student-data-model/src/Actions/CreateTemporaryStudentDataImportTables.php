@@ -42,12 +42,27 @@ use Illuminate\Support\Facades\DB;
 class CreateTemporaryStudentDataImportTables
 {
     public function execute(
-        ?Import $studentsImport,
+        Import $studentsImport,
+        ?Import $emailAddressesImport = null,
+        ?Import $phoneNumbersImport = null,
+        ?Import $addressesImport = null,
         ?Import $programsImport = null,
         ?Import $enrollmentsImport = null,
     ): void {
-        DB::transaction(function () use ($studentsImport, $programsImport, $enrollmentsImport) {
+        DB::transaction(function () use ($studentsImport, $emailAddressesImport, $phoneNumbersImport, $addressesImport, $programsImport, $enrollmentsImport) {
             DB::statement("create table \"import_{$studentsImport->getKey()}_students\" (like \"students\" including all)");
+
+            if ($emailAddressesImport) {
+                DB::statement("create table \"import_{$emailAddressesImport->getKey()}_email_addresses\" (like \"student_email_addresses\" including all)");
+            }
+
+            if ($phoneNumbersImport) {
+                DB::statement("create table \"import_{$phoneNumbersImport->getKey()}_phone_numbers\" (like \"student_phone_numbers\" including all)");
+            }
+
+            if ($addressesImport) {
+                DB::statement("create table \"import_{$addressesImport->getKey()}_addresses\" (like \"student_addresses\" including all)");
+            }
 
             if ($programsImport) {
                 DB::statement("create table \"import_{$programsImport->getKey()}_programs\" (like \"programs\" including all)");
