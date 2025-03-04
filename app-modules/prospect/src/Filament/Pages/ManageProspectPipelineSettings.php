@@ -39,7 +39,6 @@ namespace AdvisingApp\Prospect\Filament\Pages;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Settings\ProspectPipelineSettings;
-use App\Features\PipelineFlag;
 use App\Filament\Clusters\ConstituentManagement;
 use App\Models\User;
 use Filament\Forms\Components\Toggle;
@@ -69,7 +68,7 @@ class ManageProspectPipelineSettings extends SettingsPage
             return false;
         }
 
-        return PipelineFlag::active() && $user->can(['product_admin.view-any']);
+        return $user->can(['product_admin.view-any']);
     }
 
     public function form(Form $form): Form

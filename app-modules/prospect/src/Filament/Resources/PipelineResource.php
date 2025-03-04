@@ -43,7 +43,6 @@ use AdvisingApp\Prospect\Filament\Resources\PipelineResource\Pages\ManageEductab
 use AdvisingApp\Prospect\Filament\Resources\PipelineResource\Pages\ViewPipeline;
 use AdvisingApp\Prospect\Models\Pipeline;
 use AdvisingApp\Prospect\Settings\ProspectPipelineSettings;
-use App\Features\PipelineFlag;
 use Filament\Pages\Page;
 use Filament\Resources\Resource;
 
@@ -57,7 +56,7 @@ class PipelineResource extends Resource
 
     public static function canAccess(): bool
     {
-        return parent::canAccess() && PipelineFlag::active() && app(ProspectPipelineSettings::class)->is_enabled;
+        return parent::canAccess() && app(ProspectPipelineSettings::class)->is_enabled;
     }
 
     public static function getRecordSubNavigation(Page $page): array
