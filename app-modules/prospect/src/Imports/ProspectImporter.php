@@ -322,8 +322,6 @@ class ProspectImporter extends Importer
         /** @var Prospect $prospect */
         $prospect = $this->record;
 
-        $emailAddressOrder = 0;
-
         foreach (range(1, 3) as $iteration) {
             if (blank($this->data["email_{$iteration}"] ?? null)) {
                 continue;
@@ -332,13 +330,10 @@ class ProspectImporter extends Importer
             $prospect->emailAddresses()->create([
                 'address' => $this->data["email_{$iteration}"],
                 'type' => $this->data["email_{$iteration}_type"] ?? null,
-                'order' => $emailAddressOrder++,
             ]);
         }
 
         $prospect->primaryEmailAddress()->associate($prospect->emailAddresses()->first());
-
-        $phoneNumberOrder = 0;
 
         foreach (range(1, 3) as $iteration) {
             if (blank($this->data["phone_{$iteration}"] ?? null)) {
@@ -350,13 +345,10 @@ class ProspectImporter extends Importer
                 'ext' => $this->data["phone_{$iteration}_ext"] ?? null,
                 'type' => $this->data["phone_{$iteration}_type"] ?? null,
                 'can_receive_sms' => $this->data["phone_{$iteration}_can_receive_sms"] ?? false,
-                'order' => $phoneNumberOrder++,
             ]);
         }
 
         $prospect->primaryPhoneNumber()->associate($prospect->phoneNumbers()->first());
-
-        $addressOrder = 0;
 
         foreach (range(1, 3) as $iteration) {
             if (
@@ -380,7 +372,6 @@ class ProspectImporter extends Importer
                 'postal' => $this->data["address_{$iteration}_postal"] ?? null,
                 'country' => $this->data["address_{$iteration}_country"] ?? null,
                 'type' => $this->data["address_{$iteration}_type"] ?? null,
-                'order' => $addressOrder++,
             ]);
         }
 
