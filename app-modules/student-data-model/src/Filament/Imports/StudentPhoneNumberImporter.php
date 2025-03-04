@@ -94,13 +94,14 @@ class StudentPhoneNumberImporter extends Importer
                         id,
                         row_number() over (order by \"order\") as new_order
                     from \"{$this->record->getTable()}\"
-                    where id != '{$this->record->getKey()}'
+                    where id != :id
+                    and sisid = :sisid
                 )
                 update \"{$this->record->getTable()}\"
                 set \"order\" = ordered_results.new_order + 1
                 from ordered_results
                 where \"{$this->record->getTable()}\".id = ordered_results.id
-            ");
+            ", ['id' => $this->record->getKey(), 'sisid' => $this->record->sisid]);
         }
     }
 
