@@ -34,7 +34,10 @@
 <header class="flex flex-col gap-8">
     <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div class="flex flex-col gap-3">
-            <x-filament::breadcrumbs class="hidden sm:block" :breadcrumbs="$breadcrumbs" />
+            <x-filament::breadcrumbs
+                class="hidden sm:block"
+                :breadcrumbs="$breadcrumbs"
+            />
 
             <div class="flex flex-col gap-x-6 gap-y-1 md:flex-row">
                 <div
@@ -87,7 +90,10 @@
 
     @if ($backButtonUrl)
         <div>
-            <x-filament::link :href="$backButtonUrl" icon="heroicon-m-arrow-left">
+            <x-filament::link
+                :href="$backButtonUrl"
+                icon="heroicon-m-arrow-left"
+            >
                 {{ $backButtonLabel }}
             </x-filament::link>
         </div>
