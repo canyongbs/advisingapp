@@ -79,9 +79,15 @@ class CreateBatchedEngagement implements ShouldQueue
         DB::transaction(function () use ($engagement) {
             $engagement->save();
 
-            if (! $engagement->scheduled_at) {
-                $engagement->recipient->notifyNow(new EngagementNotification($engagement));
+            if ($engagement->scheduled_at) {
+                return;
             }
+
+            if (! $engagement->recipient->canReceiveEmail()) {
+                return;
+            }
+
+            $engagement->recipient->notifyNow(new EngagementNotification($engagement));
         });
     }
 }

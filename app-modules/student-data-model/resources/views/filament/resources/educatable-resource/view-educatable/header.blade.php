@@ -54,7 +54,7 @@
 
                     <div class="flex flex-col gap-3">
                         <div
-                            class="flex flex-wrap items-center gap-3 text-sm font-medium text-gray-600 dark:text-gray-400 lg:gap-6">
+                            class="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm font-medium text-gray-600 dark:text-gray-400 lg:gap-x-6 lg:gap-y-2">
                             @foreach ($details as [$detailLabel, $detailIcon])
                                 <div class="flex items-center gap-2">
                                     @svg($detailIcon, 'size-5')

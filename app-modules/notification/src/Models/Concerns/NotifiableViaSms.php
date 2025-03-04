@@ -36,10 +36,16 @@
 
 namespace AdvisingApp\Notification\Models\Concerns;
 
+use App\Features\ProspectStudentRefactor;
+
 trait NotifiableViaSms
 {
     public function routeNotificationForSms(): string
     {
-        return $this->mobile;
+        if (! ProspectStudentRefactor::active()) {
+            return $this->mobile;
+        }
+
+        return $this->primaryPhoneNumber?->number;
     }
 }

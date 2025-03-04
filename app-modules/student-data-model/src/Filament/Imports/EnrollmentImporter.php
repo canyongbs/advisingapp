@@ -52,7 +52,7 @@ class EnrollmentImporter extends Importer
         return self::getEnrollmentColumns();
     }
 
-    public function resolveRecord(): ?Enrollment
+    public function resolveRecord(): Enrollment
     {
         $enrollment = new Enrollment();
         $enrollment->student()->associate($this->options['sisid']);
