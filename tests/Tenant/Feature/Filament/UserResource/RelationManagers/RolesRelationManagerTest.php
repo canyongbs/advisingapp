@@ -26,8 +26,13 @@ it('A non-super admin user cannot assign the super admin role.', function () {
         'user.create',
         'user.*.view',
         'user.view-any',
-        'user.*.update'
+        'user.*.update',
+        'user.*.delete',
+        'user.*.restore',
+        'user.*.force-delete',
     );
+
+    $loggedInUser->refresh();
 
     actingAs($loggedInUser);
 
@@ -77,7 +82,12 @@ it('does not display the Saas Global Admin role if the user is not itself a Saas
         'user.*.view',
         'user.create',
         'user.*.update',
+        'user.*.delete',
+        'user.*.restore',
+        'user.*.force-delete',
     );
+
+    $user->refresh();
 
     $second = User::factory()->create();
 
