@@ -95,6 +95,7 @@ class EditStudent extends EditRecord
                     ->schema([
                         TextInput::make('sisid')
                             ->label('Student ID')
+                            ->alphaDash()
                             ->disabled()
                             ->dehydrated(false),
                         TextInput::make('otherid')
