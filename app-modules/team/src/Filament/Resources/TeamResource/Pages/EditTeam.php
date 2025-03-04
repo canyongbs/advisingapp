@@ -38,7 +38,6 @@ namespace AdvisingApp\Team\Filament\Resources\TeamResource\Pages;
 
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Team\Filament\Resources\TeamResource;
-use App\Features\DivisionIsDefault;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
@@ -66,7 +65,6 @@ class EditTeam extends EditRecord
                     ->required()
                     ->string(),
                 Select::make('division_id')
-                    ->visible(DivisionIsDefault::active())
                     ->relationship('division', 'name', modifyQueryUsing: fn (Builder $query) => $query->orderBy('is_default', 'DESC'))
                     ->searchable()
                     ->preload()
