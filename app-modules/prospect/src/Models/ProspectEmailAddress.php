@@ -37,16 +37,21 @@
 namespace AdvisingApp\Prospect\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Prospect\Observers\ProspectEmailAddressObserver;
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @mixin IdeHelperProspectEmailAddress
  */
+#[ObservedBy(ProspectEmailAddressObserver::class)]
 class ProspectEmailAddress extends BaseModel implements Auditable
 {
     use AuditableTrait;
+    use HasUuids;
 
     protected $fillable = [
         'prospect_id',

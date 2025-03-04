@@ -36,17 +36,15 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Imports;
 
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concerns\ImportColumns;
-use AdvisingApp\StudentDataModel\Models\Enrollment;
+use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
+use Illuminate\Support\Facades\DB;
 
-class StudentEnrollmentImporter extends Importer
+class StudentPhoneNumberImporter extends Importer
 {
-    use ImportColumns;
-
-    protected static ?string $model = Enrollment::class;
+    protected static ?string $model = StudentPhoneNumber::class;
 
     public static function getColumns(): array
     {
@@ -60,18 +58,55 @@ class StudentEnrollmentImporter extends Importer
                     'string',
                     'max:255',
                 ]),
-            ...self::getEnrollmentColumns(),
+            ImportColumn::make('number')
+                ->rules(['max:255'])
+                ->example('+1 (777) 777-7777'),
+            ImportColumn::make('ext')
+                ->label('Extension')
+                ->rules(['integer', 'max_digits:8'])
+                ->example('789'),
+            ImportColumn::make('type')
+                ->rules(['max:255'])
+                ->example('Work'),
+            ImportColumn::make('can_receive_sms')
+                ->boolean()
+                ->rules(['boolean'])
+                ->example('false'),
+            ImportColumn::make('is_primary')
+                ->boolean()
+                ->rules(['boolean'])
+                ->example('false')
+                ->fillRecordUsing(fn (StudentPhoneNumber $record, mixed $state) => $record->order = $state ? 1 : null),
         ];
     }
 
-    public function resolveRecord(): Enrollment
+    public function resolveRecord(): StudentPhoneNumber
     {
-        return (new Enrollment())->setTable("import_{$this->import->getKey()}_enrollments");
+        return (new StudentPhoneNumber())->setTable("import_{$this->import->getKey()}_phone_numbers");
+    }
+
+    public function afterCreate(): void
+    {
+        if ($this->data['is_primary'] ?? null) {
+            DB::statement("
+                with ordered_results as (
+                    select 
+                        id,
+                        row_number() over (order by \"order\") as new_order
+                    from \"{$this->record->getTable()}\"
+                    where id != '{$this->record->getKey()}'
+                )
+                update \"{$this->record->getTable()}\"
+                set \"order\" = ordered_results.new_order + 1
+                from ordered_results
+                where \"{$this->record->getTable()}\".id = ordered_results.id
+            ");
+        }
     }
 
     public static function getCompletedNotificationBody(Import $import): string
     {
-        $body = 'Your enrollment import has completed and ' . number_format($import->successful_rows) . ' ' . str('row')->plural($import->successful_rows) . ' imported.';
+        $body = 'Your phone number import has completed and ' . number_format($import->successful_rows) . ' ' . str('row')->plural($import->successful_rows) . ' imported.';
 
         if ($failedRowsCount = $import->getFailedRowsCount()) {
             $body .= ' ' . number_format($failedRowsCount) . ' ' . str('row')->plural($failedRowsCount) . ' failed to import.';

@@ -34,34 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Models;
+namespace AdvisingApp\StudentDataModel\Observers;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\StudentDataModel\Observers\StudentEmailAddressObserver;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
+use Illuminate\Support\Facades\DB;
 
-/**
- * @mixin IdeHelperStudentEmailAddress
- */
-#[ObservedBy([StudentEmailAddressObserver::class])]
-class StudentEmailAddress extends BaseModel implements Auditable
+class StudentPhoneNumberObserver
 {
-    use AuditableTrait;
-    use HasUuids;
-
-    protected $fillable = [
-        'sisid',
-        'address',
-        'type',
-        'order',
-    ];
-
-    public function student(): BelongsTo
+    public function creating(StudentPhoneNumber $studentPhoneNumber): void
     {
-        return $this->belongsTo(Student::class, 'sisid', 'sisid');
+        if ($studentPhoneNumber->order === null) {
+            $studentPhoneNumber->order = DB::raw("(SELECT COALESCE(MAX(\"{$studentPhoneNumber->getTable()}\".order), 0) + 1 FROM \"{$studentPhoneNumber->getTable()}\" WHERE sisid = '{$studentPhoneNumber->sisid}')");
+        }
     }
 }
