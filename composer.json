@@ -53,6 +53,7 @@
         "canyon-gbs/integration-open-ai": "*",
         "canyon-gbs/multifactor-authentication": "*",
         "canyon-gbs/segment": "*",
+        "canyongbs/common": "^1.0",
         "canyongbs/filament-tiptap-editor": "^1.2.0",
         "canyongbs/model-state-machine": "^1.0",
         "cknow/laravel-money": "^8.1",
