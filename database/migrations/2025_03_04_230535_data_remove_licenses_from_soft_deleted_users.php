@@ -37,8 +37,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     public function up(): void
     {
         $users = DB::table('users')->whereNotNull('deleted_at')->get();
@@ -48,6 +47,5 @@ return new class extends Migration
                 DB::table('licenses')->where('user_id', $user->id)->delete();
             }
         }
-
     }
 };
