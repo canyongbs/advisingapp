@@ -1,39 +1,5 @@
 <?php
 
-/*
-<COPYRIGHT>
-
-    Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
-
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
-    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
-
-    Notice:
-
-    - You may not provide the software to third parties as a hosted or managed
-      service, where the service provides users with access to any substantial set of
-      the features or functionality of the software.
-    - You may not move, change, disable, or circumvent the license key functionality
-      in the software, and you may not remove or obscure any functionality in the
-      software that is protected by the license key.
-    - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
-      to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
-      vigorously.
-    - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
-    - Use of this software implies agreement to the license terms and conditions as stated
-      in the Elastic License 2.0.
-
-    For more information or inquiries please visit our website at
-    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
-
-</COPYRIGHT>
-*/
-
 // @formatter:off
 // phpcs:ignoreFile
 /**
@@ -97,7 +63,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \App\Models\Import $import
+ * @property-read \App\Models\Import|null $import
  * @method static \Illuminate\Database\Eloquent\Builder<static>|FailedImportRow newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|FailedImportRow newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|FailedImportRow onlyTrashed()
@@ -1874,6 +1840,42 @@ namespace AdvisingApp\CaseManagement\Models{
 /**
  * 
  *
+ * @property-read Educatable $assignee
+ * @property string $id
+ * @property string $case_id
+ * @property string $assignee_type
+ * @property string $assignee_id
+ * @property int|null $csat_answer
+ * @property int|null $nps_answer
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \AdvisingApp\CaseManagement\Models\CaseModel $case
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseFeedback newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseFeedback newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseFeedback onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseFeedback query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseFeedback whereAssigneeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseFeedback whereAssigneeType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseFeedback whereCaseId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseFeedback whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseFeedback whereCsatAnswer($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseFeedback whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseFeedback whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseFeedback whereNpsAnswer($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseFeedback whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseFeedback withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseFeedback withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperCaseFeedback {}
+}
+
+namespace AdvisingApp\CaseManagement\Models{
+/**
+ * 
+ *
  * @property string $id
  * @property string|null $case_type_id
  * @property string $name
@@ -2140,6 +2142,7 @@ namespace AdvisingApp\CaseManagement\Models{
  * @property-read \AdvisingApp\Division\Models\Division $division
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Notification\Models\EmailMessage> $emailMessages
  * @property-read int|null $email_messages_count
+ * @property-read \AdvisingApp\CaseManagement\Models\CaseFeedback|null $feedback
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseHistory> $histories
  * @property-read int|null $histories_count
  * @property-read \AdvisingApp\CaseManagement\Models\CaseAssignment|null $initialAssignment
@@ -4123,6 +4126,12 @@ namespace AdvisingApp\Prospect\Models{
  * @property string|null $primary_email_id
  * @property string|null $primary_phone_id
  * @property string|null $primary_address_id
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Prospect\Models\ProspectAddress> $additionalAddresses
+ * @property-read int|null $additional_addresses_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Prospect\Models\ProspectEmailAddress> $additionalEmailAddresses
+ * @property-read int|null $additional_email_addresses_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Prospect\Models\ProspectPhoneNumber> $additionalPhoneNumbers
+ * @property-read int|null $additional_phone_numbers_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Prospect\Models\ProspectAddress> $addresses
  * @property-read int|null $addresses_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Alert\Models\Alert> $alerts
@@ -4153,7 +4162,7 @@ namespace AdvisingApp\Prospect\Models{
  * @property-read int|null $event_attendee_records_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Form\Models\FormSubmission> $formSubmissions
  * @property-read int|null $form_submissions_count
- * @property-read mixed $full_address
+ * @property-read string|null $full_address
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $interactions
  * @property-read int|null $interactions_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
@@ -4167,8 +4176,8 @@ namespace AdvisingApp\Prospect\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Prospect\Models\ProspectPhoneNumber> $phoneNumbers
  * @property-read int|null $phone_numbers_count
  * @property-read \AdvisingApp\Prospect\Models\ProspectAddress|null $primaryAddress
- * @property-read \AdvisingApp\Prospect\Models\ProspectEmailAddress|null $primaryEmail
- * @property-read \AdvisingApp\Prospect\Models\ProspectPhoneNumber|null $primaryPhone
+ * @property-read \AdvisingApp\Prospect\Models\ProspectEmailAddress|null $primaryEmailAddress
+ * @property-read \AdvisingApp\Prospect\Models\ProspectPhoneNumber|null $primaryPhoneNumber
  * @property-read \AdvisingApp\Prospect\Models\ProspectSource $source
  * @property-read \AdvisingApp\Prospect\Models\ProspectStatus $status
  * @property-read \AdvisingApp\StudentDataModel\Models\Student|null $student
@@ -4249,6 +4258,7 @@ namespace AdvisingApp\Prospect\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
+ * @property-read string $full
  * @property-read \AdvisingApp\Prospect\Models\Prospect $prospect
  * @method static \AdvisingApp\Prospect\Database\Factories\ProspectAddressFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ProspectAddress newModelQuery()
@@ -4313,7 +4323,7 @@ namespace AdvisingApp\Prospect\Models{
  * @property string $number
  * @property int|null $ext
  * @property string|null $type
- * @property bool $can_recieve_sms
+ * @property bool $can_receive_sms
  * @property int $order
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -4324,7 +4334,7 @@ namespace AdvisingApp\Prospect\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ProspectPhoneNumber newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ProspectPhoneNumber newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ProspectPhoneNumber query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ProspectPhoneNumber whereCanRecieveSms($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProspectPhoneNumber whereCanReceiveSms($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ProspectPhoneNumber whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ProspectPhoneNumber whereExt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ProspectPhoneNumber whereId($value)
@@ -4930,6 +4940,12 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property string|null $primary_email_id
  * @property string|null $primary_phone_id
  * @property string|null $primary_address_id
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\StudentDataModel\Models\StudentAddress> $additionalAddresses
+ * @property-read int|null $additional_addresses_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\StudentDataModel\Models\StudentEmailAddress> $additionalEmailAddresses
+ * @property-read int|null $additional_email_addresses_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\StudentDataModel\Models\StudentPhoneNumber> $additionalPhoneNumbers
+ * @property-read int|null $additional_phone_numbers_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\StudentDataModel\Models\StudentAddress> $addresses
  * @property-read int|null $addresses_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Alert\Models\Alert> $alerts
@@ -4959,7 +4975,7 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property-read int|null $event_attendee_records_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Form\Models\FormSubmission> $formSubmissions
  * @property-read int|null $form_submissions_count
- * @property-read mixed $full_address
+ * @property-read string|null $full_address
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $interactions
  * @property-read int|null $interactions_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
@@ -4973,8 +4989,8 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\StudentDataModel\Models\StudentPhoneNumber> $phoneNumbers
  * @property-read int|null $phone_numbers_count
  * @property-read \AdvisingApp\StudentDataModel\Models\StudentAddress|null $primaryAddress
- * @property-read \AdvisingApp\StudentDataModel\Models\StudentEmailAddress|null $primaryEmail
- * @property-read \AdvisingApp\StudentDataModel\Models\StudentPhoneNumber|null $primaryPhone
+ * @property-read \AdvisingApp\StudentDataModel\Models\StudentEmailAddress|null $primaryEmailAddress
+ * @property-read \AdvisingApp\StudentDataModel\Models\StudentPhoneNumber|null $primaryPhoneNumber
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\StudentDataModel\Models\Program> $programs
  * @property-read int|null $programs_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Prospect\Models\Prospect> $prospects
@@ -5066,7 +5082,8 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \AdvisingApp\StudentDataModel\Models\Student $student
+ * @property-read string $full
+ * @property-read \AdvisingApp\StudentDataModel\Models\Student|null $student
  * @method static \AdvisingApp\StudentDataModel\Database\Factories\StudentAddressFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StudentAddress newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StudentAddress newQuery()
@@ -5103,7 +5120,7 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \AdvisingApp\StudentDataModel\Models\Student $student
+ * @property-read \AdvisingApp\StudentDataModel\Models\Student|null $student
  * @method static \AdvisingApp\StudentDataModel\Database\Factories\StudentEmailAddressFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StudentEmailAddress newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StudentEmailAddress newQuery()
@@ -5130,18 +5147,18 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property string $number
  * @property int|null $ext
  * @property string|null $type
- * @property bool $can_recieve_sms
+ * @property bool $can_receive_sms
  * @property int $order
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \AdvisingApp\StudentDataModel\Models\Student $student
+ * @property-read \AdvisingApp\StudentDataModel\Models\Student|null $student
  * @method static \AdvisingApp\StudentDataModel\Database\Factories\StudentPhoneNumberFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StudentPhoneNumber newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StudentPhoneNumber newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StudentPhoneNumber query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|StudentPhoneNumber whereCanRecieveSms($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StudentPhoneNumber whereCanReceiveSms($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StudentPhoneNumber whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StudentPhoneNumber whereExt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StudentPhoneNumber whereId($value)
@@ -5564,10 +5581,25 @@ namespace AdvisingApp\Webhook\Models{
 /**
  * 
  *
+ * @property string $id
  * @property \AdvisingApp\Webhook\Enums\InboundWebhookSource $source
+ * @property string $event
+ * @property string $url
+ * @property string $payload
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LandlordInboundWebhook newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LandlordInboundWebhook newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LandlordInboundWebhook query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandlordInboundWebhook whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandlordInboundWebhook whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandlordInboundWebhook whereEvent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandlordInboundWebhook whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandlordInboundWebhook wherePayload($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandlordInboundWebhook whereSource($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandlordInboundWebhook whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandlordInboundWebhook whereUrl($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
