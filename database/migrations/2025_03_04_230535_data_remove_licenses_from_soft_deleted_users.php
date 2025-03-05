@@ -41,8 +41,8 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::table('licenses')
-        ->join('users', 'licenses.user_id', '=', 'users.id')
-        ->whereNotNull('users.deleted_at')
-        ->delete();
+            ->join('users', 'licenses.user_id', '=', 'users.id')
+            ->whereNotNull('users.deleted_at')
+            ->delete();
     }
 };
