@@ -170,4 +170,9 @@ class ProspectImporter extends Importer
 
         return $body;
     }
+
+    public function getJobBatchName(): ?string
+    {
+        return "prospect-import-{$this->getImport()->getKey()}";
+    }
 }
