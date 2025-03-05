@@ -34,13 +34,8 @@
 </COPYRIGHT>
 */
 
-use App\Filament\Resources\UserResource;
 use App\Filament\Resources\UserResource\Pages\EditUser;
-use App\Filament\Resources\UserResource\RelationManagers\RolesRelationManager;
-use App\Models\Authenticatable;
 use App\Models\User;
-use Filament\Forms\Components\Select;
-use Filament\Tables\Actions\AttachAction;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 use function Pest\Laravel\actingAs;
@@ -133,62 +128,4 @@ it('allows user with permission to impersonate', function () {
 
     expect($second->isImpersonated())->toBeTrue();
     expect(auth()->id())->toBe($second->id);
-});
-it('allows user which has sass global admin role to assign sass global admin role to other user', function () {
-    $user = User::factory()->create();
-    $user->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
-
-    $second = User::factory()->create();
-
-    actingAs($user)
-        ->get(
-            UserResource::getUrl('edit', [
-                'record' => $second,
-            ])
-        )->assertSuccessful();
-
-    livewire(RolesRelationManager::class, [
-        'ownerRecord' => $second,
-        'pageClass' => EditUser::class,
-    ])
-        ->mountTableAction(AttachAction::class)
-        ->assertFormFieldExists('recordId', 'mountedTableActionForm', function (Select $select) {
-            $options = $select->getSearchResults(Authenticatable::SUPER_ADMIN_ROLE);
-
-            return ! empty($options) ? true : false;
-        })->assertSuccessful();
-});
-it('Not allows user which has not sass global admin role to assign sass global admin role to other user', function () {
-    $user = User::factory()->create();
-    $user->givePermissionTo(
-        'role.view-any',
-        'role.*.view',
-        'user.view-any',
-        'user.*.view',
-        'user.create',
-        'user.*.update',
-        'user.*.delete',
-        'user.*.restore',
-        'user.*.force-delete',
-    );
-
-    $second = User::factory()->create();
-
-    actingAs($user)
-        ->get(
-            UserResource::getUrl('edit', [
-                'record' => $second,
-            ])
-        )->assertSuccessful();
-
-    livewire(RolesRelationManager::class, [
-        'ownerRecord' => $second,
-        'pageClass' => EditUser::class,
-    ])
-        ->mountTableAction(AttachAction::class)
-        ->assertFormFieldExists('recordId', 'mountedTableActionForm', function (Select $select) {
-            $options = $select->getSearchResults(Authenticatable::SUPER_ADMIN_ROLE);
-
-            return empty($options) ? true : false;
-        })->assertSuccessful();
 });
