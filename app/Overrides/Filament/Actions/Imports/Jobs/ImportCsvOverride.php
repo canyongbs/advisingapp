@@ -38,6 +38,7 @@ namespace App\Overrides\Filament\Actions\Imports\Jobs;
 
 use Carbon\CarbonInterface;
 use Filament\Actions\Imports\Jobs\ImportCsv;
+use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
 
 class ImportCsvOverride extends ImportCsv
 {
@@ -58,6 +59,6 @@ class ImportCsvOverride extends ImportCsv
      */
     public function middleware(): array
     {
-        return [];
+        return [new SkipIfBatchCancelled()];
     }
 }

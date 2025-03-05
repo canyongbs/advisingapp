@@ -347,6 +347,12 @@ class ProspectImporter extends Importer
         /** @var Prospect $prospect */
         $prospect = $this->record;
 
+        if (! $prospect->wasRecentlyCreated) {
+            $prospect->emailAddresses()->delete();
+            $prospect->phoneNumbers()->delete();
+            $prospect->addresses()->delete();
+        }
+
         foreach (range(1, 3) as $iteration) {
             if (blank($this->data["email_{$iteration}"] ?? null)) {
                 continue;
@@ -414,5 +420,10 @@ class ProspectImporter extends Importer
         }
 
         return $body;
+    }
+
+    public function getJobBatchName(): ?string
+    {
+        return "prospect-import-{$this->getImport()->getKey()}";
     }
 }
