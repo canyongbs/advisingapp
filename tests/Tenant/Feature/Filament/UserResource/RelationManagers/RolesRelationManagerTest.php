@@ -44,24 +44,29 @@ it('A non-super admin user cannot assign the super admin role.', function () {
     ])
         ->mountTableAction(AttachAction::class)
         ->callTableAction(AttachAction::class, data: ['recordId' => $superAdminRole->getKey()])
-        ->assertHasTableActionErrors(['recordId' => 'The selected role is not allowed.']);
+        ->assertHasTableActionErrors(['recordId' => 'You are not allowed to select the Super Admin role.']);
+
+    $user->refresh();
+
+    expect($user->roles)->not->toContain($superAdminRole);
 });
 
 it('allows user which has sass global admin role to assign sass global admin role to other user', function () {
     $user = User::factory()->create();
-    $user->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
+    $superAdminRole = Role::query()->where('name', Authenticatable::SUPER_ADMIN_ROLE)->firstOrFail();
+    $user->assignRole($superAdminRole);
 
-    $second = User::factory()->create();
+    $secondUser = User::factory()->create();
 
     actingAs($user)
         ->get(
             UserResource::getUrl('edit', [
-                'record' => $second,
+                'record' => $secondUser,
             ])
         )->assertSuccessful();
 
     livewire(RolesRelationManager::class, [
-        'ownerRecord' => $second,
+        'ownerRecord' => $secondUser,
         'pageClass' => EditUser::class,
     ])
         ->mountTableAction(AttachAction::class)
@@ -70,7 +75,11 @@ it('allows user which has sass global admin role to assign sass global admin rol
 
             return ! empty($options) ? true : false;
         })
-        ->assertSuccessful();
+        ->callTableAction(AttachAction::class, data: ['recordId' => $superAdminRole->getKey()]);
+
+    $secondUser->refresh();
+
+    expect($secondUser->roles)->pluck('id')->toContain($superAdminRole->getKey());
 });
 
 it('does not display the Saas Global Admin role if the user is not itself a Saas Global Admin', function () {
@@ -89,17 +98,17 @@ it('does not display the Saas Global Admin role if the user is not itself a Saas
 
     $user->refresh();
 
-    $second = User::factory()->create();
+    $secondUser = User::factory()->create();
 
     actingAs($user)
         ->get(
             UserResource::getUrl('edit', [
-                'record' => $second,
+                'record' => $secondUser,
             ])
         )->assertSuccessful();
 
     livewire(RolesRelationManager::class, [
-        'ownerRecord' => $second,
+        'ownerRecord' => $secondUser,
         'pageClass' => EditUser::class,
     ])
         ->mountTableAction(AttachAction::class)
