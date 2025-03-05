@@ -49,10 +49,6 @@ use AdvisingApp\Prospect\Models\Prospect;
 use App\Features\ProspectStudentRefactor;
 use App\Filament\Resources\Concerns\HasGlobalSearchResultScoring;
 use Filament\Resources\Resource;
-
-use function Filament\Support\generate_search_column_expression;
-
-use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -134,47 +130,5 @@ class ProspectResource extends Resource
             'activity-feed' => ViewProspectActivityFeed::route('/{record}/activity'),
             'care-team' => ManageProspectCareTeam::route('/{record}/care-team'),
         ];
-    }
-
-    /**
-     * @todo: Remove when the app starts using Filament v3.3.3.
-     *
-     * @param  array<string>  $searchAttributes
-     */
-    protected static function applyGlobalSearchAttributeConstraint(Builder $query, string $search, array $searchAttributes, bool &$isFirst): Builder
-    {
-        $query->getModel();
-
-        $isForcedCaseInsensitive = static::isGlobalSearchForcedCaseInsensitive();
-
-        /** @var Connection $databaseConnection */
-        $databaseConnection = $query->getConnection();
-
-        foreach ($searchAttributes as $searchAttribute) {
-            $whereClause = $isFirst ? 'where' : 'orWhere';
-
-            $query->when(
-                str($searchAttribute)->contains('.'),
-                function (Builder $query) use ($databaseConnection, $isForcedCaseInsensitive, $searchAttribute, $search, $whereClause): Builder {
-                    return $query->{"{$whereClause}Has"}(
-                        (string) str($searchAttribute)->beforeLast('.'),
-                        fn (Builder $query) => $query->where(
-                            generate_search_column_expression($query->qualifyColumn((string) str($searchAttribute)->afterLast('.')), $isForcedCaseInsensitive, $databaseConnection),
-                            'like',
-                            "%{$search}%",
-                        ),
-                    );
-                },
-                fn (Builder $query) => $query->{$whereClause}(
-                    generate_search_column_expression($query->qualifyColumn($searchAttribute), $isForcedCaseInsensitive, $databaseConnection),
-                    'like',
-                    "%{$search}%",
-                ),
-            );
-
-            $isFirst = false;
-        }
-
-        return $query;
     }
 }
