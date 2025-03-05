@@ -248,4 +248,9 @@ class StudentImporter extends Importer
 
         return $body;
     }
+
+    public function getJobBatchName(): ?string
+    {
+        return "student-import-{$this->getImport()->getKey()}";
+    }
 }
