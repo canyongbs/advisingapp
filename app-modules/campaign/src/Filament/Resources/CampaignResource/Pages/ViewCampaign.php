@@ -38,7 +38,6 @@ namespace AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages;
 
 use AdvisingApp\Campaign\Filament\Resources\CampaignResource;
 use AdvisingApp\Campaign\Models\Campaign;
-use App\Features\AddCreatedByFeature;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\Section;
@@ -66,8 +65,7 @@ class ViewCampaign extends ViewRecord
                             ->getStateUsing(fn (Campaign $record) => $record->hasBeenExecuted())
                             ->boolean(),
                         TextEntry::make('createdBy.name')
-                            ->label('Created By')
-                            ->visible(fn () => AddCreatedByFeature::active()),
+                            ->label('Created By'),
                     ]),
             ]);
     }
