@@ -37,7 +37,6 @@
 namespace AdvisingApp\IntegrationTwilio\Filament\Pages;
 
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
-use App\Features\TwilioDemoAutoReplyModeFeature;
 use App\Filament\Clusters\ProductIntegrations;
 use App\Models\User;
 use Filament\Forms\Components\Section;
@@ -81,8 +80,7 @@ class ManageTwilioSettings extends SettingsPage
                     ->live(),
                 Toggle::make('is_demo_auto_reply_mode_enabled')
                     ->label('SMS Demo Autoreply')
-                    ->helperText('When enabled, SMS messages will receive an automatic reply.')
-                    ->visible(TwilioDemoAutoReplyModeFeature::active()),
+                    ->helperText('When enabled, SMS messages will receive an automatic reply.'),
                 Section::make()
                     ->schema([
                         TextInput::make('account_sid')
