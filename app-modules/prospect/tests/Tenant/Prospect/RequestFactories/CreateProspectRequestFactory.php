@@ -54,6 +54,32 @@ class CreateProspectRequestFactory extends RequestFactory
             'first_name' => $firstName,
             'last_name' => $lastName,
             'full_name' => "{$firstName} {$lastName}",
+            'emailAddresses' => [
+                0 => [
+                    'address' => $this->faker->email(),
+                    'type' => $this->faker->word(),
+                ],
+            ],
+            'phoneNumbers' => [
+                0 => [
+                    'number' => $this->faker->phoneNumber(),
+                    'ext' => $this->faker->randomNumber(3),
+                    'type' => $this->faker->word(),
+                    'can_receive_sms' => $this->faker->boolean(),
+                ],
+            ],
+            'addresses' => [
+                0 => [
+                    'line_1' => $this->faker->streetAddress(),
+                    'line_2' => $this->faker->streetAddress(),
+                    'line_3' => $this->faker->streetAddress(),
+                    'city' => $this->faker->city(),
+                    'state' => $this->faker->state(),
+                    'postal' => $this->faker->postcode(),
+                    'country' => $this->faker->country(),
+                    'type' => $this->faker->word(),
+                ],
+            ],
             'preferred' => $this->faker->firstName(),
             'description' => $this->faker->paragraph(),
             'sms_opt_out' => $this->faker->boolean(),
