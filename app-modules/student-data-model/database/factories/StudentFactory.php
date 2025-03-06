@@ -89,8 +89,16 @@ class StudentFactory extends Factory
     public function configure(): static
     {
         return $this->afterCreating(function (Student $student) {
-            $student->primaryEmailAddress()->associate(StudentEmailAddress::factory()->create(['sisid' => $student->getKey(), 'address' => fake()->email()]));
-            $student->primaryPhoneNumber()->associate(StudentPhoneNumber::factory()->create(['sisid' => $student->getKey(), 'number' => fake()->numerify('+1 ### ### ####')]));
+            $student->primaryEmailAddress()->associate(StudentEmailAddress::factory()->create([
+                'sisid' => $student->getKey(),
+                'address' => fake()->email(),
+                'order' => 1,
+            ]));
+            $student->primaryPhoneNumber()->associate(StudentPhoneNumber::factory()->create([
+                'sisid' => $student->getKey(),
+                'number' => fake()->numerify('+1 ### ### ####'),
+                'order' => 1,
+            ]));
             $student->primaryAddress()->associate(StudentAddress::factory()->create([
                 'sisid' => $student->getKey(),
                 'line_1' => fake()->buildingNumber() . ' ' . fake()->streetName(),
@@ -99,6 +107,7 @@ class StudentFactory extends Factory
                 'city' => fake()->city(),
                 'state' => Address::stateAbbr(),
                 'postal' => fake()->postcode(),
+                'order' => 1,
             ]));
 
             $student->save();

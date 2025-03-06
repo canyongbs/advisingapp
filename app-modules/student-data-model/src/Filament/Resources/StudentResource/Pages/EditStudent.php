@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Student\Filament\Resources\StudentResource\Pages;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concerns\HasStudentHeader;
