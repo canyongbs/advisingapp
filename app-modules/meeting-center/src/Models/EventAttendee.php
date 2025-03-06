@@ -39,9 +39,12 @@ namespace AdvisingApp\MeetingCenter\Models;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
 
@@ -72,25 +75,29 @@ class EventAttendee extends BaseModel implements CanBeNotified
         return $this->hasMany(EventRegistrationFormSubmission::class, 'event_attendee_id');
     }
 
-    public function prospects(): HasMany
+    public function prospects(): BelongsToMany
     {
-        return $this->hasMany(
-            related: Prospect::class,
-            foreignKey: 'email',
-            localKey: 'email',
+        return $this->belongsToMany(
+            Prospect::class,
+            ProspectEmailAddress::class,
+            'address',
+            'prospect_id',
+            'email',
         );
     }
 
-    public function students(): HasMany
+    public function students(): BelongsToMany
     {
-        return $this->hasMany(
-            related: Student::class,
-            foreignKey: 'email',
-            localKey: 'email',
+        return $this->belongsToMany(
+            Student::class,
+            StudentEmailAddress::class,
+            'address',
+            'sisid',
+            'email',
         );
     }
 
-    public function canRecieveSms(): bool
+    public function canReceiveSms(): bool
     {
         return false;
     }

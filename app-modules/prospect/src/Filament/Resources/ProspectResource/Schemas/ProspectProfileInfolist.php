@@ -36,11 +36,19 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Schemas;
 
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\ProspectAddress;
+use AdvisingApp\Prospect\Models\ProspectEmailAddress;
+use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
+use App\Features\ProspectStudentRefactor;
 use App\Infolists\Components\Subsection;
+use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
+use Illuminate\Support\Str;
 
 class ProspectProfileInfolist
 {
@@ -56,15 +64,40 @@ class ProspectProfileInfolist
                                 ->badge()
                                 ->placeholder('-'),
                             TextEntry::make('preferred')
-                                ->label('Preferred Name'),
+                                ->label('Preferred Name')
+                                ->placeholder('-'),
+                            TextEntry::make('addresses')
+                                ->label(fn (?array $state): string => Str::plural('Address', count($state ?? [])))
+                                ->state(fn (Prospect $record): array => collect($record->addresses)
+                                    ->map(fn (ProspectAddress $address): string => $address->full . (filled($address->type) ? " ({$address->type})" : ''))
+                                    ->all())
+                                ->listWithLineBreaks()
+                                ->visible(fn (?array $state): bool => ProspectStudentRefactor::active() && filled($state)),
+                            TextEntry::make('additionalEmailAddresses')
+                                ->label(fn (?array $state): string => Str::plural('Other email address', count($state ?? [])))
+                                ->state(fn (Prospect $record): array => collect($record->additionalEmailAddresses)
+                                    ->map(fn (ProspectEmailAddress $email): string => $email->address . (filled($email->type) ? " ({$email->type})" : ''))
+                                    ->all())
+                                ->listWithLineBreaks()
+                                ->visible(fn (?array $state): bool => ProspectStudentRefactor::active() && filled($state)),
+                            TextEntry::make('additionalPhoneNumbers')
+                                ->label(fn (?array $state): string => Str::plural('Other phone number', count($state ?? [])))
+                                ->state(fn (Prospect $record): array => collect($record->additionalPhoneNumbers)
+                                    ->map(fn (ProspectPhoneNumber $phone): string => $phone->number . (filled($phone->ext) ? " (ext. {$phone->ext})" : '') . (filled($phone->type) ? " ({$phone->type})" : ''))
+                                    ->all())
+                                ->listWithLineBreaks()
+                                ->visible(fn (?array $state): bool => ProspectStudentRefactor::active() && filled($state)),
                             TextEntry::make('phone')
+                                ->hidden(ProspectStudentRefactor::active())
                                 ->placeholder('-'),
                             TextEntry::make('email_2')
                                 ->label('Alternate Email')
+                                ->hidden(ProspectStudentRefactor::active())
                                 ->placeholder('-'),
                             TextEntry::make('full_address')
                                 ->label('Address')
-                                ->placeholder('-'),
+                                ->placeholder('-')
+                                ->hidden(ProspectStudentRefactor::active()),
                         ]),
                         Subsection::make([
                             TextEntry::make('status.name')
@@ -87,7 +120,11 @@ class ProspectProfileInfolist
                                 ->label('Created By'),
                         ]),
                     ])
-                    ->extraAttributes(['class' => 'fi-section-has-subsections']),
+                    ->extraAttributes(['class' => 'fi-section-has-subsections'])
+                    ->headerActions([
+                        Action::make('edit')
+                            ->url(fn (): string => ProspectResource::getUrl('edit', ['record' => $infolist->getRecord()])),
+                    ]),
             ]);
     }
 }

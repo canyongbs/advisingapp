@@ -519,7 +519,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         $this->teams()->attach($teamId);
     }
 
-    public function canRecieveSms(): bool
+    public function canReceiveSms(): bool
     {
         return false;
     }

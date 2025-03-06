@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources;
 
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\CreateStudent;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\EditStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ListStudents;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentAlerts;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentCareTeam;
@@ -44,6 +46,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Manage
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudentActivityFeed;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\ProspectStudentRefactor;
 use App\Filament\Resources\Concerns\HasGlobalSearchResultScoring;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
@@ -61,18 +64,44 @@ class StudentResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'full_name';
 
+    public static function getGlobalSearchEloquentQuery(): Builder
+    {
+        if (! ProspectStudentRefactor::active()) {
+            return parent::getGlobalSearchEloquentQuery();
+        }
+
+        return parent::getGlobalSearchEloquentQuery()->with(['emailAddresses:id,address', 'phoneNumbers:id,number', 'primaryEmailAddress:id,address', 'primaryPhoneNumber:id,number']);
+    }
+
     public static function modifyGlobalSearchQuery(Builder $query, string $search): void
     {
+        if (ProspectStudentRefactor::active()) {
+            $query->leftJoinRelationship('primaryEmailAddress');
+        }
+
         static::scoreGlobalSearchResults($query, $search, [
             'full_name' => 100,
-            'email' => 75,
-            'email_2' => 75,
+            ...(
+                ProspectStudentRefactor::active()
+              ? ['student_email_addresses.address' => 75]
+              : ['email' => 75, 'email_2' => 75]
+            ),
         ]);
     }
 
     public static function getGloballySearchableAttributes(): array
     {
-        return ['sisid', 'otherid', 'full_name', 'email', 'email_2', 'mobile', 'phone', 'preferred'];
+        return [
+            'sisid',
+            'otherid',
+            'full_name',
+            ...(
+                ProspectStudentRefactor::active()
+                    ? ['emailAddresses.address', 'phoneNumbers.number']
+                    : ['email', 'email_2', 'mobile', 'phone']
+            ),
+            'preferred',
+        ];
     }
 
     public static function getGlobalSearchResultDetails(Model $record): array
@@ -80,9 +109,8 @@ class StudentResource extends Resource
         return array_filter([
             'Student ID' => $record->sisid,
             'Other ID' => $record->otherid,
-            'Email Address' => collect([$record->email, $record->email_id])->filter()->implode(', '),
-            'Mobile' => $record->mobile,
-            'Phone' => $record->phone,
+            'Email Address' => ProspectStudentRefactor::active() ? $record->primaryEmailAddress?->address : collect([$record->email, $record->email_id])->filter()->implode(', '),
+            'Phone' => ProspectStudentRefactor::active() ? $record->primaryPhoneNumber?->number : collect([$record->mobile, $record->phone])->filter()->implode(', '),
             'Preferred Name' => $record->preferred,
         ], fn (mixed $value): bool => filled($value));
     }
@@ -91,6 +119,8 @@ class StudentResource extends Resource
     {
         return [
             'index' => ListStudents::route('/'),
+            'create' => CreateStudent::route('/create'),
+            'edit' => EditStudent::route('/{record}/edit'),
             'view' => ViewStudent::route('/{record}'),
             'activity-feed' => ViewStudentActivityFeed::route('/{record}/activity'),
             'alerts' => ManageStudentAlerts::route('/{record}/alerts'),

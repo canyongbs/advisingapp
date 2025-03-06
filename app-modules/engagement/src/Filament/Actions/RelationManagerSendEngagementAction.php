@@ -85,7 +85,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                     ->label('What would you like to send?')
                     ->options(NotificationChannel::getEngagementOptions())
                     ->default(NotificationChannel::Email->value)
-                    ->disableOptionWhen(fn (RelationManager $livewire, string $value): bool => (($value == (NotificationChannel::Sms->value) && ! $livewire->getOwnerRecord()->canRecieveSms())) || NotificationChannel::tryFrom($value)?->getCaseDisabled())
+                    ->disableOptionWhen(fn (RelationManager $livewire, string $value): bool => (($value == (NotificationChannel::Sms->value) && ! $livewire->getOwnerRecord()->canReceiveSms())) || NotificationChannel::tryFrom($value)?->getCaseDisabled())
                     ->selectablePlaceholder(false)
                     ->live(),
                 Fieldset::make('Content')
@@ -179,7 +179,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                     ]),
             ]))
             ->action(function (array $data, Form $form, RelationManager $livewire) {
-                if ($data['channel'] == NotificationChannel::Sms->value && ! $livewire->getOwnerRecord()->canRecieveSms()) {
+                if ($data['channel'] == NotificationChannel::Sms->value && ! $livewire->getOwnerRecord()->canReceiveSms()) {
                     Notification::make()
                         ->title('Student does not have mobile number.')
                         ->danger()

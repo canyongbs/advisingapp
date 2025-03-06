@@ -53,6 +53,7 @@ use Twilio\Rest\MessagingBase;
 
 test('An sms is allowed to be sent if there is available quota and its quota usage is tracked', function () {
     $notifiable = Prospect::factory()->create();
+    $notifiable->primaryPhoneNumber()->update(['can_receive_sms' => true]);
 
     $notification = new TestSmsNotification();
 
@@ -107,6 +108,7 @@ test('An sms is allowed to be sent if there is available quota and its quota usa
 
 test('An sms is prevented from being sent if there is no available quota', function () {
     $notifiable = Prospect::factory()->create();
+    $notifiable->primaryPhoneNumber()->update(['can_receive_sms' => true]);
 
     $notification = new TestSmsNotification();
 
