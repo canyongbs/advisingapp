@@ -75,8 +75,16 @@ class ProspectFactory extends Factory
     public function configure(): static
     {
         return $this->afterCreating(function (Prospect $prospect) {
-            $prospect->primaryEmailAddress()->associate(ProspectEmailAddress::factory()->create(['prospect_id' => $prospect->getKey(), 'address' => fake()->unique()->email()]));
-            $prospect->primaryPhoneNumber()->associate(ProspectPhoneNumber::factory()->create(['prospect_id' => $prospect->getKey(), 'number' => fake()->numerify('+1 ### ### ####')]));
+            $prospect->primaryEmailAddress()->associate(ProspectEmailAddress::factory()->create([
+                'prospect_id' => $prospect->getKey(),
+                'address' => fake()->unique()->email(),
+                'order' => 1,
+            ]));
+            $prospect->primaryPhoneNumber()->associate(ProspectPhoneNumber::factory()->create([
+                'prospect_id' => $prospect->getKey(),
+                'number' => fake()->numerify('+1 ### ### ####'),
+                'order' => 1,
+            ]));
             $prospect->primaryAddress()->associate(ProspectAddress::factory()->create([
                 'prospect_id' => $prospect->getKey(),
                 'line_1' => fake()->streetAddress(),
@@ -85,6 +93,7 @@ class ProspectFactory extends Factory
                 'city' => fake()->city(),
                 'state' => fake()->stateAbbr(),
                 'postal' => str(fake()->postcode())->before('-')->toString(),
+                'order' => 1,
             ]));
 
             $prospect->save();

@@ -36,8 +36,13 @@
 
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\ProspectAddress;
+use AdvisingApp\Prospect\Models\ProspectEmailAddress;
+use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\Prospect\Tests\Tenant\Prospect\RequestFactories\CreateProspectRequestFactory;
 use App\Models\User;
+use Filament\Forms\Components\Repeater;
+use Illuminate\Support\Arr;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
@@ -74,12 +79,19 @@ test('CreateProspect is gated with proper access control', function () {
         'created_by_id' => $user->id,
     ]));
 
+    $undoRepeaterFake = Repeater::fake();
+
     livewire(ProspectResource\Pages\CreateProspect::class)
         ->fillForm($request->toArray())
         ->call('create')
         ->assertHasNoFormErrors();
 
+    $undoRepeaterFake();
+
     assertCount(1, Prospect::all());
 
-    assertDatabaseHas(Prospect::class, $request->toArray());
+    assertDatabaseHas(Prospect::class, Arr::except($request->toArray(), ['emailAddresses', 'phoneNumbers', 'addresses']));
+    assertDatabaseHas(ProspectEmailAddress::class, Arr::first($request->toArray()['emailAddresses']));
+    assertDatabaseHas(ProspectPhoneNumber::class, Arr::first($request->toArray()['phoneNumbers']));
+    assertDatabaseHas(ProspectAddress::class, Arr::first($request->toArray()['addresses']));
 });

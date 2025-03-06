@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources;
 
-use AdvisingApp\Student\Filament\Resources\StudentResource\Pages\CreateStudent;
-use AdvisingApp\Student\Filament\Resources\StudentResource\Pages\EditStudent;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\CreateStudent;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\EditStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ListStudents;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentAlerts;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentCareTeam;
