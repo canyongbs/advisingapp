@@ -88,7 +88,6 @@ trait CanManageEducatableAlerts
                     ->string(),
                 Select::make('severity')
                     ->options(AlertSeverity::class)
-                    ->selectablePlaceholder(false)
                     ->default(AlertSeverity::default())
                     ->required()
                     ->enum(AlertSeverity::class),
@@ -98,7 +97,6 @@ trait CanManageEducatableAlerts
                 Select::make('status_id')
                     ->label('Status')
                     ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('order'))
-                    ->selectablePlaceholder(false)
                     ->default(fn () => SystemAlertStatusClassification::default()?->getKey())
                     ->required(),
             ]);

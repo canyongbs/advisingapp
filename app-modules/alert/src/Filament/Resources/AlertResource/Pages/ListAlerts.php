@@ -184,7 +184,6 @@ class ListAlerts extends ListRecords
                                 ->string(),
                             Select::make('severity')
                                 ->options(AlertSeverity::class)
-                                ->selectablePlaceholder(false)
                                 ->default(AlertSeverity::default())
                                 ->required()
                                 ->enum(AlertSeverity::class),
@@ -193,7 +192,6 @@ class ListAlerts extends ListRecords
                                 ->string(),
                             Select::make('status_id')
                                 ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('order'))
-                                ->selectablePlaceholder(false)
                                 ->default(SystemAlertStatusClassification::default())
                                 ->required(),
                         ])

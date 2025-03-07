@@ -64,7 +64,6 @@ class ProactiveAlertBlock extends CampaignActionBlock
                 ->string(),
             Select::make($fieldPrefix . 'severity')
                 ->options(AlertSeverity::class)
-                ->selectablePlaceholder(false)
                 ->default(AlertSeverity::default())
                 ->required()
                 ->enum(AlertSeverity::class),
@@ -74,7 +73,6 @@ class ProactiveAlertBlock extends CampaignActionBlock
             Select::make($fieldPrefix . 'status_id')
                 ->label('Status')
                 ->options(AlertStatus::orderBy('order')->pluck('name', 'id'))
-                ->selectablePlaceholder(false)
                 ->default(fn () => SystemAlertStatusClassification::default()?->getKey())
                 ->exists('alert_statuses', 'id')
                 ->required(),

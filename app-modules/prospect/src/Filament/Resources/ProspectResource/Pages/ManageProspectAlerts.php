@@ -120,7 +120,6 @@ class ManageProspectAlerts extends ManageRelatedRecords
                     ->string(),
                 Select::make('severity')
                     ->options(AlertSeverity::class)
-                    ->selectablePlaceholder(false)
                     ->default(AlertSeverity::default())
                     ->required()
                     ->enum(AlertSeverity::class),
@@ -131,7 +130,6 @@ class ManageProspectAlerts extends ManageRelatedRecords
                     ->label('Status')
                     ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('order'))
                     ->default(fn () => SystemAlertStatusClassification::default()?->getKey())
-                    ->selectablePlaceholder(false)
                     ->required(),
             ]);
     }
