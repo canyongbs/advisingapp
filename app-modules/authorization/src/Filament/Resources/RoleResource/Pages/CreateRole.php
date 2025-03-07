@@ -36,8 +36,9 @@
 
 namespace AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages;
 
-use AdvisingApp\Authorization\Filament\Forms\Components\PermissionsMatrix;
 use AdvisingApp\Authorization\Filament\Resources\RoleResource;
+use AdvisingApp\Authorization\Models\PermissionGroup;
+use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -81,7 +82,8 @@ class CreateRole extends CreateRecord
                 PermissionsMatrix::make('permissions')
                     ->columnSpanFull()
                     ->guard(fn (Get $get): string => $get('guard_name'))
-                    ->visible(fn (Get $get): bool => filled($get('guard_name'))),
+                    ->visible(fn (Get $get): bool => filled($get('guard_name')))
+                    ->permissionGroupModel(PermissionGroup::class),
             ]);
     }
 }

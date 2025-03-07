@@ -34,17 +34,15 @@
 </COPYRIGHT>
 */
 
-use App\Features\AddCreatedByFeature;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
 return new class () extends Migration {
     public function up(): void
     {
-        AddCreatedByFeature::activate();
-    }
-
-    public function down(): void
-    {
-        AddCreatedByFeature::deactivate();
+        DB::table('licenses')
+            ->join('users', 'licenses.user_id', '=', 'users.id')
+            ->whereNotNull('users.deleted_at')
+            ->delete();
     }
 };

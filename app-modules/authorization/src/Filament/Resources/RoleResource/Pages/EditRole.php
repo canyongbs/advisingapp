@@ -36,10 +36,11 @@
 
 namespace AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages;
 
-use AdvisingApp\Authorization\Filament\Forms\Components\PermissionsMatrix;
 use AdvisingApp\Authorization\Filament\Resources\RoleResource;
+use AdvisingApp\Authorization\Models\PermissionGroup;
 use AdvisingApp\Authorization\Models\Role;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
+use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
@@ -87,7 +88,8 @@ class EditRole extends EditRecord
                     ->columnSpanFull(),
                 PermissionsMatrix::make('permissions')
                     ->columnSpanFull()
-                    ->guard(fn (Get $get): string => $get('guard_name')),
+                    ->guard(fn (Get $get): string => $get('guard_name'))
+                    ->permissionGroupModel(PermissionGroup::class),
             ]);
     }
 

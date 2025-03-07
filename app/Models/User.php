@@ -68,12 +68,14 @@ use AdvisingApp\Team\Models\Team;
 use AdvisingApp\Team\Models\TeamUser;
 use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
 use App\Filament\Resources\UserResource;
+use App\Observers\UserObserver;
 use App\Support\HasAdvancedFilter;
 use DateTimeInterface;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Panel;
 use Illuminate\Contracts\Translation\HasLocalePreference;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -96,6 +98,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 /**
  * @mixin IdeHelperUser
  */
+#[ObservedBy([UserObserver::class])]
 class User extends Authenticatable implements HasLocalePreference, FilamentUser, Auditable, HasMedia, HasAvatar, CanBeNotified, HasFilamentResource
 {
     use HasFactory;

@@ -36,8 +36,9 @@
 
 namespace AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages;
 
-use AdvisingApp\Authorization\Filament\Forms\Components\PermissionsMatrix;
 use AdvisingApp\Authorization\Filament\Resources\RoleResource;
+use AdvisingApp\Authorization\Models\PermissionGroup;
+use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -70,7 +71,8 @@ class ViewRole extends ViewRecord
                     ->columnSpanFull(),
                 PermissionsMatrix::make('permissions')
                     ->columnSpanFull()
-                    ->guard(fn (Get $get): string => $get('guard_name')),
+                    ->guard(fn (Get $get): string => $get('guard_name'))
+                    ->permissionGroupModel(PermissionGroup::class),
             ]);
     }
 

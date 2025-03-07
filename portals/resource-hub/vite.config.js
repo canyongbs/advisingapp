@@ -43,6 +43,7 @@ export default defineConfig({
             entry: resolve(__dirname, './src/portal.js'),
             name: 'ResourceHubPortal',
             fileName: 'advising-app-resource-hub-portal',
+            cssFileName: 'style',
             formats: ['es'],
         },
         outDir: resolve(__dirname, '../../public/js/portals/resource-hub'),

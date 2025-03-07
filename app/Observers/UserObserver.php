@@ -34,14 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+namespace App\Observers;
 
-use App\Support\AbstractFeatureFlag;
+use App\Models\User;
 
-class TwilioDemoAutoReplyModeFeature extends AbstractFeatureFlag
+class UserObserver
 {
-    public function resolve(mixed $scope): mixed
+    public function deleted(User $user): void
     {
-        return false;
+        $user->licenses->each->forceDelete();
+        $user->syncRoles([]);
     }
 }
