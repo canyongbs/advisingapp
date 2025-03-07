@@ -59,6 +59,7 @@ class ExecuteCampaignActions implements ShouldQueue
     {
         CampaignAction::query()
             ->where('execute_at', '<=', now())
+            ->whereNull('last_execution_attempt_at')
             ->hasNotBeenExecuted()
             ->campaignEnabled()
             ->cursor()

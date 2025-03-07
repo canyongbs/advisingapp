@@ -70,7 +70,7 @@ class CareTeamObserver
 
             $morph = str($educatable->getMorphClass());
 
-            $user->notify(
+            $user->notifyNow(
                 Notification::make()
                     ->success()
                     ->title("You have been added as a care team member to {$morph} {$link}")
