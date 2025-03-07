@@ -113,4 +113,11 @@ class CampaignAction extends BaseModel implements Auditable, HasMedia
     {
         return ! is_null($this->successfully_executed_at);
     }
+
+    public function scopeLastExecutedAttemptNull(Builder $query): void
+    {
+        $query
+            ->whereNull('last_execution_attempt_at')
+            ->whereNull('last_execution_attempt_error');
+    }
 }
