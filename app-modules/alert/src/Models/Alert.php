@@ -134,7 +134,7 @@ class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription, 
                         'concern_id' => $educatable->getKey(),
                         'description' => $action->data['description'],
                         'severity' => $action->data['severity'],
-                        'status_id' => $action->data['status'],
+                        'status_id' => $action->data['status_id'],
                         'suggested_intervention' => $action->data['suggested_intervention'],
                     ]);
                 });
