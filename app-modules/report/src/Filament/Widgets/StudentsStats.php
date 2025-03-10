@@ -41,9 +41,9 @@ use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
+use App\Concerns\Number;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Number;
 
 class StudentsStats extends StatsOverviewReportWidget
 {
@@ -56,11 +56,11 @@ class StudentsStats extends StatsOverviewReportWidget
     protected function getStats(): array
     {
         return [
-            Stat::make('Total Students', Number::format(
+            Stat::make('Total Students', Number::formatStatNumber(
                 Cache::tags([$this->cacheTag])->remember('total-students-count', now()->addHours(24), function (): int {
                     return Student::count();
                 }),
-                maxPrecision: 2,
+                maxPrecision: 2
             )),
             Stat::make('Total Alerts', Number::abbreviate(
                 Cache::tags([$this->cacheTag])->remember('total-student-alerts-count', now()->addHours(24), function (): int {
