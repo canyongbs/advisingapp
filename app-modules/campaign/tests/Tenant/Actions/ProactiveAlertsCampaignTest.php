@@ -81,7 +81,7 @@ it('will create the appropriate records for educatables in the segment', functio
                 'description' => 'This is the description',
                 'severity' => 'low',
                 'suggested_intervention' => 'This is the suggested intervention',
-                'status' => $alertStatus->getKey(),
+                'status_id' => $alertStatus->getKey(),
             ],
         ]);
 
