@@ -42,11 +42,11 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Filament\Resources\SegmentResource;
+use App\Concerns\Number;
 use App\Models\User;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Number;
 
 class ProspectStats extends StatsOverviewWidget
 {
@@ -56,7 +56,7 @@ class ProspectStats extends StatsOverviewWidget
         $user = auth()->user();
 
         return [
-            Stat::make('Total Prospects', Number::format(
+            Stat::make('Total Prospects', Number::formatStatNumber(
                 Cache::tags(['prospects'])
                     ->remember('prospects-count', now()->addHour(), function (): int {
                         return Prospect::count();

@@ -42,11 +42,11 @@ use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Filament\Resources\SegmentResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Concerns\Number;
 use App\Models\User;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Number;
 
 class StudentStats extends StatsOverviewWidget
 {
@@ -56,7 +56,7 @@ class StudentStats extends StatsOverviewWidget
         $user = auth()->user();
 
         return [
-            Stat::make('Students', Number::format(
+            Stat::make('Students', Number::formatStatNumber(
                 Cache::tags(['students'])
                     ->remember('students-count', now()->addHour(), function (): int {
                         return Student::count();
