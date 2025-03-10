@@ -89,20 +89,6 @@ class EngagementsRelationManager extends RelationManager
                                             ->getStateUsing(fn (Timeline $record): HtmlString => $record->timelineable->getBody())
                                             ->columnSpanFull(),
                                     ]),
-                                InfolistFieldset::make('delivery')
-                                    ->label('Delivery Information')
-                                    ->columnSpanFull()
-                                    ->schema([
-                                        TextEntry::make('channel')
-                                            ->label('Channel')
-                                            ->getStateUsing(function (Timeline $record): string {
-                                                /** @var HasDeliveryMethod $timelineable */
-                                                $timelineable = $record->timelineable;
-
-                                                return $timelineable->getDeliveryMethod()->getLabel();
-                                            }),
-                                    ])
-                                    ->columns(),
                             ]),
                         Tab::make('Events')
                             ->schema([
