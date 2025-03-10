@@ -32,4 +32,4 @@
 </COPYRIGHT>
 --}}
 
-<x-footer class="footer mt-4" />
+<x-footer class="mt-4" />
