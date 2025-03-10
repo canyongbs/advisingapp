@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5dbc4b08713a22dba3143e5a2f06314d",
+    "content-hash": "ecbef5ed4e4746fb8d89f07a8fbba681",
     "packages": [
         {
             "name": "amphp/amp",
@@ -2756,16 +2756,16 @@
         },
         {
             "name": "canyongbs/common",
-            "version": "v1.0.0",
+            "version": "1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/canyongbs/common.git",
-                "reference": "5fd504c66b3226740c5d00803279f26df2e81c94"
+                "reference": "53c8223b444860b68efa7afcd3a589e8bc077367"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/canyongbs/common/zipball/5fd504c66b3226740c5d00803279f26df2e81c94",
-                "reference": "5fd504c66b3226740c5d00803279f26df2e81c94",
+                "url": "https://api.github.com/repos/canyongbs/common/zipball/53c8223b444860b68efa7afcd3a589e8bc077367",
+                "reference": "53c8223b444860b68efa7afcd3a589e8bc077367",
                 "shasum": ""
             },
             "require": {
@@ -2800,9 +2800,9 @@
             ],
             "support": {
                 "issues": "https://github.com/canyongbs/common/issues",
-                "source": "https://github.com/canyongbs/common/tree/v1.0.0"
+                "source": "https://github.com/canyongbs/common/tree/1.0.2"
             },
-            "time": "2025-02-24T20:54:42+00:00"
+            "time": "2025-03-10T14:58:47+00:00"
         },
         {
             "name": "canyongbs/filament-tiptap-editor",
@@ -24740,5 +24740,5 @@
         "ext-pdo": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
