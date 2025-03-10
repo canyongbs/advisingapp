@@ -52,17 +52,26 @@
 
             {{ $this->form }}
 
-            <x-filament-panels::form.actions :actions="$this->getCachedFormActions()"
-                :full-width="$this->hasFullWidthFormActions()" />
+            <x-filament-panels::form.actions
+                :actions="$this->getCachedFormActions()"
+                :full-width="$this->hasFullWidthFormActions()"
+            />
             @if (count($this->getSsoFormActions()) > 0)
                 <small class="text-gray-800 dark:text-gray-300">or log in with single sign-on</small>
             @endif
-            <x-filament-panels::form.actions :actions="$this->getSsoFormActions()"
-                :full-width="$this->hasFullWidthFormActions()" />
+            <x-filament-panels::form.actions
+                :actions="$this->getSsoFormActions()"
+                :full-width="$this->hasFullWidthFormActions()"
+            />
         </x-filament-panels::form>
 
         @if ($this->needsMFA && !$this->needsMfaSetup)
-            <x-filament::link class="cursor-pointer" size="sm" wire:click.prevent="toggleUsingRecoveryCodes()" tag="button">
+            <x-filament::link
+                class="cursor-pointer"
+                size="sm"
+                wire:click.prevent="toggleUsingRecoveryCodes()"
+                tag="button"
+            >
                 @if ($this->usingRecoveryCode)
                     Use MFA Code
                 @else
