@@ -80,7 +80,7 @@ class ProspectFactory extends Factory
                 'address' => fake()->unique()->email(),
                 'order' => 1,
             ]));
-            $prospect->primaryPhoneNumber()->associate(ProspectPhoneNumber::factory()->create([
+            $prospect->primaryPhoneNumber()->associate(ProspectPhoneNumber::factory()->canReceiveSms()->create([
                 'prospect_id' => $prospect->getKey(),
                 'number' => fake()->numerify('+1 ### ### ####'),
                 'order' => 1,
