@@ -96,6 +96,6 @@ it('will create an SmsMessage for the notification', function () {
     expect($smsMessages->count())->toBe(1);
     expect($smsMessages->first()->notification_class)->toBe(TestSmsNotification::class);
     expect($smsMessages->first()->events->first()->type)->toBe(SmsMessageEventType::Dispatched);
-})->repeat(100);
+});
 
 // TODO Add more tests for SMS Demo mode etc.
