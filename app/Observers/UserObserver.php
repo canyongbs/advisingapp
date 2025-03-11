@@ -37,6 +37,7 @@
 namespace App\Observers;
 
 use AdvisingApp\MultifactorAuthentication\Settings\LocalPasswordSettings;
+use App\Features\LocalPassword;
 use App\Models\User;
 use Carbon\Carbon;
 
@@ -44,7 +45,7 @@ class UserObserver
 {
     public function saving(User $user): void
     {
-        if ($user->isDirty('password')) {
+        if (LocalPassword::active() && $user->isDirty('password')) {
             $numPreviousPasswords = app(LocalPasswordSettings::class)->getNumPreviousPasswords();
 
             $passwordHistory = $user->password_history ?? [];
