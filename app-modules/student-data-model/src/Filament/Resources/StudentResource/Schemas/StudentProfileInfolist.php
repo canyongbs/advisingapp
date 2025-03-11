@@ -123,7 +123,8 @@ class StudentProfileInfolist
                     ->extraAttributes(['class' => 'fi-section-has-subsections'])
                     ->headerActions([
                         Action::make('edit')
-                            ->url(fn (): string => StudentResource::getUrl('edit', ['record' => $infolist->getRecord()])),
+                            ->url(fn (): string => StudentResource::getUrl('edit', ['record' => $infolist->getRecord()]))
+                            ->visible(auth()->user()->can('update', $infolist->getRecord())),
                     ]),
             ]);
     }
