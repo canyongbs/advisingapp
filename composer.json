@@ -107,7 +107,8 @@
         "talkroute/message-segment-calculator": "^1.0",
         "tapp/filament-timezone-field": "^3.0",
         "tpetry/laravel-postgresql-enhanced": "^2.0",
-        "twilio/sdk": "^8.3.15"
+        "twilio/sdk": "^8.3.15",
+        "ysfkaya/filament-phone-input": "^3.1"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.5",
