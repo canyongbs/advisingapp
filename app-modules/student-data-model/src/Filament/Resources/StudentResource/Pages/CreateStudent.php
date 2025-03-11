@@ -56,6 +56,7 @@ use Filament\Resources\Pages\CreateRecord;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\Alignment;
 use Illuminate\Support\Arr;
+use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 class CreateStudent extends CreateRecord
 {
@@ -180,12 +181,9 @@ class CreateStudent extends CreateRecord
                             ->schema([
                                 Grid::make(['default' => 3])
                                     ->schema([
-                                        TextInput::make(name: 'number')
+                                        PhoneInput::make(name: 'number')
                                             ->label('Number')
-                                            ->tel()
                                             ->required()
-                                            ->placeholder('800‑555‑0100')
-                                            ->maxLength(255)
                                             ->columnSpan(2),
                                         TextInput::make(name: 'ext')
                                             ->label('Extension')

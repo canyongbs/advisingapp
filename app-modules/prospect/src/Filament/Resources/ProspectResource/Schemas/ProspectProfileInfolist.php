@@ -49,6 +49,7 @@ use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Illuminate\Support\Str;
+use Ysfkaya\FilamentPhoneInput\Infolists\PhoneEntry;
 
 class ProspectProfileInfolist
 {
@@ -87,7 +88,7 @@ class ProspectProfileInfolist
                                     ->all())
                                 ->listWithLineBreaks()
                                 ->visible(fn (?array $state): bool => ProspectStudentRefactor::active() && filled($state)),
-                            TextEntry::make('phone')
+                            PhoneEntry::make('phone')
                                 ->hidden(ProspectStudentRefactor::active())
                                 ->placeholder('-'),
                             TextEntry::make('email_2')
