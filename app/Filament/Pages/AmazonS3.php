@@ -162,7 +162,7 @@ class AmazonS3 extends Page implements HasForms
                             ->string()
                             ->nullable()
                             ->maxLength(255),
-                    ]),
+                    ])->visible(app()->environment('local')),
                 Section::make('S3 Public Filesystem Settings')
                     ->columns(2)
                     ->schema([
@@ -213,7 +213,11 @@ class AmazonS3 extends Page implements HasForms
                             ->string()
                             ->nullable()
                             ->maxLength(255),
-                    ]),
+                    ])->visible(app()->environment('local')),
+                Toggle::make('Enabled')
+                    ->default(true)
+                    ->disabled()
+                    ->afterStateHydrated(fn ($state, callable $set) => $set('Enabled', true)),
             ])
             ->statePath('data');
     }
