@@ -42,9 +42,11 @@ class DeliverFormSubmissionRequestBySms extends DeliverFormSubmissionRequest
 {
     public function handle(): void
     {
-        $this
-            ->submission
-            ->author
-            ->notify(new FormSubmissionRequestSmsNotification($this->submission));
+        if ($this->submission->author->canReceiveSms()) {
+            $this
+                ->submission
+                ->author
+                ->notify(new FormSubmissionRequestSmsNotification($this->submission));
+        }
     }
 }

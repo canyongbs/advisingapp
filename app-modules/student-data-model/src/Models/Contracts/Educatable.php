@@ -60,5 +60,5 @@ interface Educatable extends Identifiable, CanBeNotified
 
     public function eventAttendeeRecords(): HasMany;
 
-    public function canRecieveSms(): bool;
+    public function canReceiveSms(): bool;
 }
