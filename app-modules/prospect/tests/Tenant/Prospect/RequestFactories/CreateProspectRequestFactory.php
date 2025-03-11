@@ -62,7 +62,7 @@ class CreateProspectRequestFactory extends RequestFactory
             ],
             'phoneNumbers' => [
                 0 => [
-                    'number' => $this->faker->numerify('+1 ### ### ####'),
+                    'number' => $this->faker->numerify('+1##########'),
                     'ext' => $this->faker->randomNumber(3),
                     'type' => $this->faker->word(),
                     'can_receive_sms' => $this->faker->boolean(),
