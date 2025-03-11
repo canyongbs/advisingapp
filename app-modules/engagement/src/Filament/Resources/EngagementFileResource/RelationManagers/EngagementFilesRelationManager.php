@@ -116,6 +116,7 @@ class EngagementFilesRelationManager extends RelationManager
                     }),
                 TextColumn::make('created_at')
                     ->label('Date Created')
+                    ->dateTime()
                     ->sortable(query: fn ($query, $direction) => $query->orderBy('engagement_files.created_at', $direction)),
                 TextColumn::make('createdBy.name')
                     ->label('Created By')

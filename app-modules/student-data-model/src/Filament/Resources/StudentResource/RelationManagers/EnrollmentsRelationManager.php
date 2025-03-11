@@ -102,9 +102,11 @@ class EnrollmentsRelationManager extends RelationManager
                         ->default('N/A'),
                     TextEntry::make('start_date')
                         ->label('Start Date')
+                        ->dateTime()
                         ->default('N/A'),
                     TextEntry::make('end_date')
                         ->label('End Date')
+                        ->dateTime()
                         ->default('N/A'),
                 ]
             );

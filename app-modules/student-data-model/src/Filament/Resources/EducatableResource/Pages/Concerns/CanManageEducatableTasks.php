@@ -116,6 +116,7 @@ trait CanManageEducatableTasks
                     ->badge(),
                 TextColumn::make('due')
                     ->label('Due Date')
+                    ->dateTime()
                     ->sortable(),
                 TextColumn::make('assignedTo.name')
                     ->label('Assigned To')

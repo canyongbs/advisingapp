@@ -110,6 +110,7 @@ class EngagementsRelationManager extends RelationManager
                                                 TextEntry::make('type')
                                                     ->getStateUsing(fn (EmailMessageEvent|SmsMessageEvent $record): string => $record->type?->getLabel()),
                                                 TextEntry::make('occured_at')
+                                                    ->dateTime()
                                                     ->getStateUsing(fn (EmailMessageEvent|SmsMessageEvent $record): string => $record->occurred_at->format('Y-m-d H:i:s')),
                                             ])
                                             ->columns(),
@@ -131,6 +132,7 @@ class EngagementsRelationManager extends RelationManager
                     ]),
                     Section::make([
                         TextEntry::make('sent_at')
+                            ->dateTime()
                             ->getStateUsing(fn (Timeline $record): string => $record->timelineable->sent_at)
                             ->dateTime('Y-m-d H:i:s'),
                     ])->grow(false),
@@ -173,6 +175,7 @@ class EngagementsRelationManager extends RelationManager
                     }),
                 TextColumn::make('record_sortable_date')
                     ->label('Date')
+                    ->dateTime()
                     ->sortable(),
             ])
             ->headerActions([

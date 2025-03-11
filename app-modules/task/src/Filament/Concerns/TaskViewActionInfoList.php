@@ -82,6 +82,7 @@ trait TaskViewActionInfoList
                             ->badge(),
                         TextEntry::make('due')
                             ->label('Due Date')
+                            ->dateTime()
                             ->default('N/A'),
                         TextEntry::make('createdBy.name')
                             ->label('Created By')

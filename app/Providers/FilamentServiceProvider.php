@@ -49,10 +49,12 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Toggle;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Facades\FilamentView;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\View;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
@@ -183,6 +185,9 @@ class FilamentServiceProvider extends ServiceProvider
                 950 => '#4b0c2f',
             ],
         ]);
+
+        Table::$defaultDateTimeDisplayFormat = 'M j, Y g:ia';
+        Infolist::$defaultDateTimeDisplayFormat = 'M j, Y g:ia';
 
         FilamentView::registerRenderHook(
             'panels::footer',

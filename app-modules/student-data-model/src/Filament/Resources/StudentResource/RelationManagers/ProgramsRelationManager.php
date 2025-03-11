@@ -124,18 +124,22 @@ class ProgramsRelationManager extends RelationManager
                     ->visible($sisSystem?->hasProgramsCumGpa() ?? true),
                 TextEntry::make('declare_dt')
                     ->label('Start Date')
+                    ->dateTime()
                     ->placeholder('-')
                     ->visible($sisSystem?->hasProgramsDeclareDt() ?? true),
                 TextEntry::make('change_dt')
                     ->label('Last Action Date')
+                    ->dateTime()
                     ->placeholder('-')
                     ->visible($sisSystem?->hasProgramsChangeDt() ?? true),
                 TextEntry::make('graduation_dt')
                     ->label('Graduation Date')
+                    ->dateTime()
                     ->placeholder('-')
                     ->visible($sisSystem?->hasProgramsGraduationDt() ?? true),
                 TextEntry::make('conferred_dt')
                     ->label('Conferred Date')
+                    ->dateTime()
                     ->placeholder('-')
                     ->visible($sisSystem?->hasProgramsConferredDt() ?? true),
             ]);
@@ -162,9 +166,11 @@ class ProgramsRelationManager extends RelationManager
                     ->visible($sisSystem?->hasProgramsCumGpa() ?? true),
                 TextColumn::make('declare_dt')
                     ->label('Start Date')
+                    ->dateTime()
                     ->visible($sisSystem?->hasProgramsDeclareDt() ?? true),
                 TextColumn::make('graduation_dt')
                     ->label('Graduation Date')
+                    ->dateTime()
                     ->visible($sisSystem?->hasProgramsGraduationDt() ?? true),
             ])
             ->actions([

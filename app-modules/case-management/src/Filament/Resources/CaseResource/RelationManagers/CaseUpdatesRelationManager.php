@@ -92,8 +92,10 @@ class CaseUpdatesRelationManager extends RelationManager
                     ->icon(fn (CaseUpdateDirection $state): string => $state->getIcon())
                     ->formatStateUsing(fn (CaseUpdateDirection $state): string => $state->getLabel()),
                 TextColumn::make('created_at')
+                    ->dateTime()
                     ->sortable(),
                 TextColumn::make('updated_at')
+                    ->dateTime()
                     ->sortable(),
             ])
             ->defaultSort('created_at', 'desc')
