@@ -66,4 +66,20 @@ return [
     'gpt_4o_mini_api_version' => env('OPEN_AI_GPT_4O_MINI_API_VERSION'),
 
     'gpt_4o_mini_model' => env('OPEN_AI_GPT_4O_MINI_MODEL'),
+
+    'gpt_o1_mini_base_uri' => env('OPEN_AI_GPT_O1_MINI_BASE_URI'),
+
+    'gpt_o1_mini_api_key' => env('OPEN_AI_GPT_O1_MINI_API_KEY'),
+
+    'gpt_o1_mini_api_version' => env('OPEN_AI_GPT_O1_MINI_API_VERSION'),
+
+    'gpt_o1_mini_model' => env('OPEN_AI_GPT_O1_MINI_MODEL'),
+
+    'gpt_o3_mini_base_uri' => env('OPEN_AI_GPT_O3_MINI_BASE_URI'),
+
+    'gpt_o3_mini_api_key' => env('OPEN_AI_GPT_O3_MINI_API_KEY'),
+
+    'gpt_o3_mini_api_version' => env('OPEN_AI_GPT_O3_MINI_API_VERSION'),
+
+    'gpt_o3_mini_model' => env('OPEN_AI_GPT_O3_MINI_MODEL'),
 ];

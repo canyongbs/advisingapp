@@ -134,6 +134,34 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                 TextInput::make('open_ai_gpt_4o_mini_model')
                                     ->label('Model'),
                             ]),
+                        Section::make('GPT o1 mini')
+                            ->collapsible()
+                            ->schema([
+                                TextInput::make('open_ai_gpt_o1_mini_base_uri')
+                                    ->label('Base URI')
+                                    ->placeholder('https://example.openai.azure.com/openai')
+                                    ->url(),
+                                TextInput::make('open_ai_gpt_o1_mini_api_key')
+                                    ->label('API Key')
+                                    ->password()
+                                    ->autocomplete(false),
+                                TextInput::make('open_ai_gpt_o1_mini_model')
+                                    ->label('Model'),
+                            ]),
+                        Section::make('GPT o3 mini')
+                            ->collapsible()
+                            ->schema([
+                                TextInput::make('open_ai_gpt_o3_mini_base_uri')
+                                    ->label('Base URI')
+                                    ->placeholder('https://example.openai.azure.com/openai')
+                                    ->url(),
+                                TextInput::make('open_ai_gpt_o3_mini_api_key')
+                                    ->label('API Key')
+                                    ->password()
+                                    ->autocomplete(false),
+                                TextInput::make('open_ai_gpt_o3_mini_model')
+                                    ->label('Model'),
+                            ]),
                     ]),
             ]);
     }
@@ -166,6 +194,14 @@ class ManageAiIntegrationsSettings extends SettingsPage
                     return false;
                 }
 
+                if ($originalSettings->open_ai_gpt_o1_mini_base_uri !== $newSettings['open_ai_gpt_o1_mini_base_uri']) {
+                    return false;
+                }
+
+                if ($originalSettings->open_ai_gpt_o3_mini_base_uri !== $newSettings['open_ai_gpt_o3_mini_base_uri']) {
+                    return false;
+                }
+
                 return true;
             })
             ->extraModalFooterActions([
@@ -183,6 +219,8 @@ class ManageAiIntegrationsSettings extends SettingsPage
                     ...(($originalSettings->open_ai_gpt_4_base_uri !== $newSettings['open_ai_gpt_4_base_uri']) ? [AiModel::OpenAiGpt4] : []),
                     ...(($originalSettings->open_ai_gpt_4o_base_uri !== $newSettings['open_ai_gpt_4o_base_uri']) ? [AiModel::OpenAiGpt4o] : []),
                     ...(($originalSettings->open_ai_gpt_4o_mini_base_uri !== $newSettings['open_ai_gpt_4o_mini_base_uri']) ? [AiModel::OpenAiGpt4o] : []),
+                    ...(($originalSettings->open_ai_gpt_o1_mini_base_uri !== $newSettings['open_ai_gpt_o1_mini_base_uri']) ? [AiModel::OpenAiGpto1] : []),
+                    ...(($originalSettings->open_ai_gpt_o3_mini_base_uri !== $newSettings['open_ai_gpt_o3_mini_base_uri']) ? [AiModel::OpenAiGpto3] : []),
                 ];
 
                 DB::transaction(function () use ($changedModels, $resetAiServiceIds) {

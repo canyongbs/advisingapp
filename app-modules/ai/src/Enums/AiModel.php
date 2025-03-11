@@ -55,6 +55,10 @@ enum AiModel: string implements HasLabel
 
     case OpenAiGpt4oMini = 'openai_gpt_4o_mini';
 
+    case OpenAiGpto1Mini = 'openai_gpt_o1_mini';
+
+    case OpenAiGpto3Mini = 'openai_gpt_o3_mini';
+
     case OpenAiGptTest = 'openai_gpt_test';
 
     case Test = 'test';
@@ -66,6 +70,8 @@ enum AiModel: string implements HasLabel
             self::OpenAiGpt4 => 'Canyon GPT-4',
             self::OpenAiGpt4o => 'Canyon GPT-4o',
             self::OpenAiGpt4oMini => 'Canyon GPT-4o mini',
+            self::OpenAiGpto1Mini => 'Canyon GPT-o1 mini',
+            self::OpenAiGpto3Mini => 'Canyon GPT-o3 mini',
             self::OpenAiGptTest => 'Canyon GPT Test',
             self::Test => 'Test',
         };
@@ -81,6 +87,8 @@ enum AiModel: string implements HasLabel
             self::OpenAiGpt4 => OpenAiGpt4Service::class,
             self::OpenAiGpt4o => OpenAiGpt4oService::class,
             self::OpenAiGpt4oMini => OpenAiGpt4oMiniService::class,
+            self::OpenAiGpto1Mini => OpenAiGpto1MiniService::class,
+            self::OpenAiGpto3Mini => OpenAiGpto3MiniService::class,
             self::OpenAiGptTest => OpenAiGptTestService::class,
             self::Test => TestAiService::class,
         };
@@ -115,7 +123,7 @@ enum AiModel: string implements HasLabel
     public function isVisibleForApplication(AiApplication $aiApplication): bool
     {
         return match ($this) {
-            self::OpenAiGpt35, self::OpenAiGpt4o, self::OpenAiGpt4oMini => $aiApplication === AiApplication::PersonalAssistant,
+            self::OpenAiGpt35, self::OpenAiGpt4o, self::OpenAiGpt4oMini, self::OpenAiGpto1Mini, self::OpenAiGpto3Mini, => $aiApplication === AiApplication::PersonalAssistant,
             self::OpenAiGpt4 => false,
             self::OpenAiGptTest => false,
             self::Test => true,
@@ -126,7 +134,7 @@ enum AiModel: string implements HasLabel
     {
         // TODO: Not actually sure mini supports files, need to confirm
         return match ($this) {
-            self::OpenAiGpt35, self::OpenAiGpt4, self::OpenAiGpt4o, self::OpenAiGpt4oMini => true,
+            self::OpenAiGpt35, self::OpenAiGpt4, self::OpenAiGpt4o, self::OpenAiGpt4oMini, self::OpenAiGpto1Mini, self::OpenAiGpto3Mini => true,
             default => false,
         };
     }
