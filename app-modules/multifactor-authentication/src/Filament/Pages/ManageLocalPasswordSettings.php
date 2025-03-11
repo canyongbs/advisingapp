@@ -27,6 +27,14 @@ class ManageLocalPasswordSettings extends SettingsPage
 
     protected static ?int $navigationSort = 20;
 
+    public static function canAccess(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->isSuperAdmin();
+    }
+
     public function form(Form $form): Form
     {
         return $form
