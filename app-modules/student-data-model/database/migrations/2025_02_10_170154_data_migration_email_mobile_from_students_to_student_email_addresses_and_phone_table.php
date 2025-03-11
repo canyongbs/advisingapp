@@ -51,15 +51,17 @@ return new class () extends Migration {
                     $addresses = [];
 
                     foreach ($students as $student) {
-                        $emails[] = [
-                            'id' => (string) Str::orderedUuid(),
-                            'sisid' => $student->sisid,
-                            'address' => $student->email,
-                            'type' => 'Personal',
-                            'order' => 1,
-                        ];
+                        if (filled($student->email)) {
+                            $emails[] = [
+                                'id' => (string) Str::orderedUuid(),
+                                'sisid' => $student->sisid,
+                                'address' => $student->email,
+                                'type' => 'Personal',
+                                'order' => 1,
+                            ];
+                        }
 
-                        if (! blank($student->email_2)) {
+                        if (filled($student->email_2)) {
                             $emails[] = [
                                 'id' => (string) Str::orderedUuid(),
                                 'sisid' => $student->sisid,
@@ -69,7 +71,7 @@ return new class () extends Migration {
                             ];
                         }
 
-                        if (! blank($student->mobile)) {
+                        if (filled($student->mobile)) {
                             $phones[] = [
                                 'id' => (string) Str::orderedUuid(),
                                 'sisid' => $student->sisid,
@@ -80,7 +82,7 @@ return new class () extends Migration {
                             ];
                         }
 
-                        if (! blank($student->phone)) {
+                        if (filled($student->phone)) {
                             $phones[] = [
                                 'id' => (string) Str::orderedUuid(),
                                 'sisid' => $student->sisid,
@@ -91,7 +93,7 @@ return new class () extends Migration {
                             ];
                         }
 
-                        if (! blank($student->address)) {
+                        if (filled($student->address)) {
                             $addresses[] = [
                                 'id' => (string) Str::orderedUuid(),
                                 'sisid' => $student->sisid,

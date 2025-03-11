@@ -51,7 +51,7 @@ return new class () extends Migration {
                     $addresses = [];
 
                     foreach ($prospects as $prospect) {
-                        if (! blank($prospect->email)) {
+                        if (filled($prospect->email)) {
                             $emails[] = [
                                 'id' => (string) Str::orderedUuid(),
                                 'prospect_id' => $prospect->id,
@@ -61,7 +61,7 @@ return new class () extends Migration {
                             ];
                         }
 
-                        if (! blank($prospect->email_2)) {
+                        if (filled($prospect->email_2)) {
                             $emails[] = [
                                 'id' => (string) Str::orderedUuid(),
                                 'prospect_id' => $prospect->id,
@@ -71,7 +71,7 @@ return new class () extends Migration {
                             ];
                         }
 
-                        if (! blank($prospect->mobile)) {
+                        if (filled($prospect->mobile)) {
                             $phones[] = [
                                 'id' => (string) Str::orderedUuid(),
                                 'prospect_id' => $prospect->id,
@@ -82,7 +82,7 @@ return new class () extends Migration {
                             ];
                         }
 
-                        if (! blank($prospect->phone)) {
+                        if (filled($prospect->phone)) {
                             $phones[] = [
                                 'id' => (string) Str::orderedUuid(),
                                 'prospect_id' => $prospect->id,
@@ -93,7 +93,7 @@ return new class () extends Migration {
                             ];
                         }
 
-                        if (! blank($prospect->address)) {
+                        if (filled($prospect->address)) {
                             $addresses[] = [
                                 'id' => (string) Str::orderedUuid(),
                                 'prospect_id' => $prospect->id,
