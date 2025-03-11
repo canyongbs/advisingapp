@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ecbef5ed4e4746fb8d89f07a8fbba681",
+    "content-hash": "cb57280490222fb95dfc291d53e2f5d2",
     "packages": [
         {
             "name": "amphp/amp",
@@ -23843,16 +23843,16 @@
         },
         {
             "name": "spatie/laravel-ray",
-            "version": "1.40.0",
+            "version": "1.39.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-ray.git",
-                "reference": "3bcca8c64cd6d45c903f20cb0a548e2143ffdf84"
+                "reference": "0d890fa2cd2c0b6175cf54c56b9321d81047571d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-ray/zipball/3bcca8c64cd6d45c903f20cb0a548e2143ffdf84",
-                "reference": "3bcca8c64cd6d45c903f20cb0a548e2143ffdf84",
+                "url": "https://api.github.com/repos/spatie/laravel-ray/zipball/0d890fa2cd2c0b6175cf54c56b9321d81047571d",
+                "reference": "0d890fa2cd2c0b6175cf54c56b9321d81047571d",
                 "shasum": ""
             },
             "require": {
@@ -23915,7 +23915,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/laravel-ray/issues",
-                "source": "https://github.com/spatie/laravel-ray/tree/1.40.0"
+                "source": "https://github.com/spatie/laravel-ray/tree/1.39.1"
             },
             "funding": [
                 {
@@ -23927,7 +23927,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2025-03-08T10:58:11+00:00"
+            "time": "2025-02-05T08:16:15+00:00"
         },
         {
             "name": "spatie/macroable",
