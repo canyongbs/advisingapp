@@ -40,6 +40,7 @@ use AdvisingApp\Ai\Actions\ResetAiServiceIdsForModel;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Jobs\ReInitializeAiModel;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use App\Features\O1MiniAndO3MiniFeature;
 use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -147,7 +148,8 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->autocomplete(false),
                                 TextInput::make('open_ai_gpt_o1_mini_model')
                                     ->label('Model'),
-                            ]),
+                            ])
+                            ->visible(O1MiniAndO3MiniFeature::active()),
                         Section::make('GPT o3 mini')
                             ->collapsible()
                             ->schema([
@@ -161,7 +163,8 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->autocomplete(false),
                                 TextInput::make('open_ai_gpt_o3_mini_model')
                                     ->label('Model'),
-                            ]),
+                            ])
+                            ->visible(O1MiniAndO3MiniFeature::active()),
                     ]),
             ]);
     }
