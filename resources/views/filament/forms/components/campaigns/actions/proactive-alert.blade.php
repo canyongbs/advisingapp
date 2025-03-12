@@ -35,8 +35,14 @@
     use AdvisingApp\Campaign\Settings\CampaignSettings;
     use Carbon\Carbon;
     use AdvisingApp\Alert\Models\AlertStatus;
+    use Filament\Notifications\Notification;
 
-    $alertStatus = AlertStatus::findOrFail($action['status_id']);
+    $alertStatus = AlertStatus::find($action['status_id']);
+
+    if (!$alertStatus) {
+        return null;
+    }
+
 @endphp
 
 <x-filament::fieldset>
