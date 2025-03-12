@@ -32,20 +32,8 @@
 </COPYRIGHT>
 --}}
 
-@php
-    use AdvisingApp\MultifactorAuthentication\Livewire\MultifactorAuthenticationManagement;
-@endphp
-
 <div class="flex w-full flex-col items-center justify-center gap-8 lg:flex-row">
     <div class="w-full lg:w-1/2 lg:pr-8">
-        @if (filament()->hasRegistration())
-            <x-slot name="subheading">
-                {{ __('filament-panels::pages/auth/login.actions.register.before') }}
-
-                {{ $this->registerAction }}
-            </x-slot>
-        @endif
-
         <x-filament-panels::form wire:submit="authenticate">
             @if ($this->needsMfaSetup)
                 <h3 class="flex items-center gap-2 text-lg font-medium">
@@ -76,6 +64,7 @@
                 :full-width="$this->hasFullWidthFormActions()"
             />
         </x-filament-panels::form>
+
         @if ($this->needsMFA && !$this->needsMfaSetup)
             <x-filament::link
                 class="cursor-pointer"
@@ -96,5 +85,4 @@
         <x-filament-panels::login-version-card :themeChangelogUrl="$themeChangelogUrl" />
         <x-filament-panels::login-resource-portal-card :productResourcehubUrl="$productResourcehubUrl" />
     </div>
-
 </div>
