@@ -81,33 +81,33 @@ class EnrollmentsRelationManager extends RelationManager
                         ->label('Earned'),
                     TextEntry::make('section')
                         ->label('Section')
-                        ->default('N/A'),
+                        ->placeholder('N/A'),
                     TextEntry::make('name')
                         ->label('Name')
-                        ->default('N/A'),
+                        ->placeholder('N/A'),
                     TextEntry::make('department')
                         ->label('Department')
-                        ->default('N/A'),
+                        ->placeholder('N/A'),
                     TextEntry::make('faculty_name')
                         ->label('Faculty Name')
-                        ->default('N/A'),
+                        ->placeholder('N/A'),
                     TextEntry::make('faculty_email')
                         ->label('Faculty Email')
-                        ->default('N/A'),
+                        ->placeholder('N/A'),
                     TextEntry::make('semester_code')
                         ->label('Semester Code')
-                        ->default('N/A'),
+                        ->placeholder('N/A'),
                     TextEntry::make('semester_name')
                         ->label('Semester Name')
-                        ->default('N/A'),
+                        ->placeholder('N/A'),
                     TextEntry::make('start_date')
                         ->label('Start Date')
                         ->dateTime()
-                        ->default('N/A'),
+                        ->placeholder('N/A'),
                     TextEntry::make('end_date')
                         ->label('End Date')
                         ->dateTime()
-                        ->default('N/A'),
+                        ->placeholder('N/A'),
                 ]
             );
     }
