@@ -39,7 +39,7 @@
 
     $alertStatus = AlertStatus::find($action['status_id']);
 
-    if(!$alertStatus) {
+    if (!$alertStatus) {
         return null;
     }
 
