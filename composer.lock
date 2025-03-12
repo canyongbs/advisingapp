@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ecbef5ed4e4746fb8d89f07a8fbba681",
+    "content-hash": "cb57280490222fb95dfc291d53e2f5d2",
     "packages": [
         {
             "name": "amphp/amp",
@@ -936,25 +936,25 @@
         },
         {
             "name": "aws/aws-php-sns-message-validator",
-            "version": "1.9.1",
+            "version": "1.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-php-sns-message-validator.git",
-                "reference": "80850e8d93fb57889ce609e113895dd2f1d7eed6"
+                "reference": "d92d199179cbbf4d99601d4f23f61b9b8cc5da28"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-php-sns-message-validator/zipball/80850e8d93fb57889ce609e113895dd2f1d7eed6",
-                "reference": "80850e8d93fb57889ce609e113895dd2f1d7eed6",
+                "url": "https://api.github.com/repos/aws/aws-php-sns-message-validator/zipball/d92d199179cbbf4d99601d4f23f61b9b8cc5da28",
+                "reference": "d92d199179cbbf4d99601d4f23f61b9b8cc5da28",
                 "shasum": ""
             },
             "require": {
                 "ext-openssl": "*",
-                "php": ">=7.2.5",
-                "psr/http-message": "^1.0 || ^2.0"
+                "php": ">=8.1",
+                "psr/http-message": "^2.0"
             },
             "require-dev": {
-                "guzzlehttp/psr7": "^1.9.1 || ^2.4.5",
+                "guzzlehttp/psr7": "^2.4.5",
                 "phpunit/phpunit": "^5.6.3 || ^8.5 || ^9.5",
                 "squizlabs/php_codesniffer": "^2.3",
                 "yoast/phpunit-polyfills": "^1.0"
@@ -989,22 +989,22 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sns-message-validator/issues",
-                "source": "https://github.com/aws/aws-php-sns-message-validator/tree/1.9.1"
+                "source": "https://github.com/aws/aws-php-sns-message-validator/tree/1.10.0"
             },
-            "time": "2025-02-25T22:19:51+00:00"
+            "time": "2025-03-05T22:22:58+00:00"
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.341.0",
+            "version": "3.342.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "8b82bdb43b202fd8c596a096ddcc9915f59f780a"
+                "reference": "ef66e0fdba9e7f786a7b1e522f847d76d0320e89"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/8b82bdb43b202fd8c596a096ddcc9915f59f780a",
-                "reference": "8b82bdb43b202fd8c596a096ddcc9915f59f780a",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/ef66e0fdba9e7f786a7b1e522f847d76d0320e89",
+                "reference": "ef66e0fdba9e7f786a7b1e522f847d76d0320e89",
                 "shasum": ""
             },
             "require": {
@@ -1086,9 +1086,9 @@
             "support": {
                 "forum": "https://github.com/aws/aws-sdk-php/discussions",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.341.0"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.342.2"
             },
-            "time": "2025-03-04T19:13:46+00:00"
+            "time": "2025-03-07T19:12:43+00:00"
         },
         {
             "name": "bacon/bacon-qr-code",
@@ -2890,16 +2890,16 @@
         },
         {
             "name": "canyongbs/model-state-machine",
-            "version": "1.0.2",
+            "version": "1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/canyongbs/model-state-machine.git",
-                "reference": "48f384efd60a43f408c288629538ce395917af27"
+                "reference": "f7df58abd28ee37168d627799cae248904a8d85a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/canyongbs/model-state-machine/zipball/48f384efd60a43f408c288629538ce395917af27",
-                "reference": "48f384efd60a43f408c288629538ce395917af27",
+                "url": "https://api.github.com/repos/canyongbs/model-state-machine/zipball/f7df58abd28ee37168d627799cae248904a8d85a",
+                "reference": "f7df58abd28ee37168d627799cae248904a8d85a",
                 "shasum": ""
             },
             "require": {
@@ -2958,9 +2958,9 @@
             ],
             "support": {
                 "issues": "https://github.com/canyongbs/model-state-machine/issues",
-                "source": "https://github.com/canyongbs/model-state-machine/tree/1.0.2"
+                "source": "https://github.com/canyongbs/model-state-machine/tree/1.0.3"
             },
-            "time": "2025-01-15T16:29:05+00:00"
+            "time": "2025-03-07T13:58:37+00:00"
         },
         {
             "name": "carbonphp/carbon-doctrine-types",
@@ -3033,29 +3033,29 @@
         },
         {
             "name": "cknow/laravel-money",
-            "version": "v8.3.1",
+            "version": "v8.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cknow/laravel-money.git",
-                "reference": "fdca65e8ce9a3be4d81c828ebebc671fa1cc7440"
+                "reference": "07f1ddc82bb5c80a4e44120bc0bff1b3442cfd7c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cknow/laravel-money/zipball/fdca65e8ce9a3be4d81c828ebebc671fa1cc7440",
-                "reference": "fdca65e8ce9a3be4d81c828ebebc671fa1cc7440",
+                "url": "https://api.github.com/repos/cknow/laravel-money/zipball/07f1ddc82bb5c80a4e44120bc0bff1b3442cfd7c",
+                "reference": "07f1ddc82bb5c80a4e44120bc0bff1b3442cfd7c",
                 "shasum": ""
             },
             "require": {
                 "ext-intl": "*",
                 "ext-json": "*",
-                "illuminate/support": "^9.0|^10.0|^11.0",
-                "illuminate/view": "^9.0|^10.0|^11.0",
+                "illuminate/support": "^9.0|^10.0|^11.0|^12.0",
+                "illuminate/view": "^9.0|^10.0|^11.0|^12.0",
                 "moneyphp/money": "^4.6",
                 "php": "^8.1"
             },
             "require-dev": {
                 "graham-campbell/testbench": "^6.1",
-                "illuminate/filesystem": "^9.0|^10.0|^11.0",
+                "illuminate/filesystem": "^9.0|^10.0|^11.0|^12.0",
                 "mockery/mockery": "^1.6",
                 "phpunit/phpunit": "^10.5"
             },
@@ -3094,22 +3094,22 @@
             ],
             "support": {
                 "issues": "https://github.com/cknow/laravel-money/issues",
-                "source": "https://github.com/cknow/laravel-money/tree/v8.3.1"
+                "source": "https://github.com/cknow/laravel-money/tree/v8.4.0"
             },
-            "time": "2025-01-03T13:25:38+00:00"
+            "time": "2025-03-08T12:27:37+00:00"
         },
         {
             "name": "composer/ca-bundle",
-            "version": "1.5.5",
+            "version": "1.5.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/ca-bundle.git",
-                "reference": "08c50d5ec4c6ced7d0271d2862dec8c1033283e6"
+                "reference": "f65c239c970e7f072f067ab78646e9f0b2935175"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/08c50d5ec4c6ced7d0271d2862dec8c1033283e6",
-                "reference": "08c50d5ec4c6ced7d0271d2862dec8c1033283e6",
+                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/f65c239c970e7f072f067ab78646e9f0b2935175",
+                "reference": "f65c239c970e7f072f067ab78646e9f0b2935175",
                 "shasum": ""
             },
             "require": {
@@ -3156,7 +3156,7 @@
             "support": {
                 "irc": "irc://irc.freenode.org/composer",
                 "issues": "https://github.com/composer/ca-bundle/issues",
-                "source": "https://github.com/composer/ca-bundle/tree/1.5.5"
+                "source": "https://github.com/composer/ca-bundle/tree/1.5.6"
             },
             "funding": [
                 {
@@ -3172,7 +3172,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-01-08T16:17:16+00:00"
+            "time": "2025-03-06T14:30:56+00:00"
         },
         {
             "name": "composer/class-map-generator",
@@ -12602,16 +12602,16 @@
         },
         {
             "name": "saade/filament-fullcalendar",
-            "version": "v3.2.3",
+            "version": "v3.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/saade/filament-fullcalendar.git",
-                "reference": "218643a1c10c07ec073992b40845ccfcf977bb6e"
+                "reference": "9dcfba69748312b5aeb5dd0281c899ffe050339c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/saade/filament-fullcalendar/zipball/218643a1c10c07ec073992b40845ccfcf977bb6e",
-                "reference": "218643a1c10c07ec073992b40845ccfcf977bb6e",
+                "url": "https://api.github.com/repos/saade/filament-fullcalendar/zipball/9dcfba69748312b5aeb5dd0281c899ffe050339c",
+                "reference": "9dcfba69748312b5aeb5dd0281c899ffe050339c",
                 "shasum": ""
             },
             "require": {
@@ -12664,7 +12664,7 @@
             ],
             "support": {
                 "issues": "https://github.com/saade/filament-fullcalendar/issues",
-                "source": "https://github.com/saade/filament-fullcalendar/tree/v3.2.3"
+                "source": "https://github.com/saade/filament-fullcalendar/tree/v3.2.4"
             },
             "funding": [
                 {
@@ -12672,7 +12672,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-02-19T17:19:23+00:00"
+            "time": "2025-03-10T16:44:00+00:00"
         },
         {
             "name": "scrivo/highlight.php",
@@ -13831,16 +13831,16 @@
         },
         {
             "name": "spatie/laravel-health",
-            "version": "1.32.4",
+            "version": "1.32.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-health.git",
-                "reference": "6510025255c04fa2bd37c2a6611095c5129b53c2"
+                "reference": "afd55006d1ffe312b1e81cd0b6417f6a5226ae82"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-health/zipball/6510025255c04fa2bd37c2a6611095c5129b53c2",
-                "reference": "6510025255c04fa2bd37c2a6611095c5129b53c2",
+                "url": "https://api.github.com/repos/spatie/laravel-health/zipball/afd55006d1ffe312b1e81cd0b6417f6a5226ae82",
+                "reference": "afd55006d1ffe312b1e81cd0b6417f6a5226ae82",
                 "shasum": ""
             },
             "require": {
@@ -13912,7 +13912,7 @@
                 "spatie"
             ],
             "support": {
-                "source": "https://github.com/spatie/laravel-health/tree/1.32.4"
+                "source": "https://github.com/spatie/laravel-health/tree/1.32.5"
             },
             "funding": [
                 {
@@ -13920,7 +13920,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-03-03T08:40:12+00:00"
+            "time": "2025-03-08T12:16:07+00:00"
         },
         {
             "name": "spatie/laravel-medialibrary",
@@ -19247,16 +19247,16 @@
         },
         {
             "name": "tpetry/laravel-postgresql-enhanced",
-            "version": "2.3.2",
+            "version": "2.3.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tpetry/laravel-postgresql-enhanced.git",
-                "reference": "5cef3479b585aeffc9c930bd0264e9ac5d19a1f3"
+                "reference": "a242704496e1cff76193a552128940bfa59d1466"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tpetry/laravel-postgresql-enhanced/zipball/5cef3479b585aeffc9c930bd0264e9ac5d19a1f3",
-                "reference": "5cef3479b585aeffc9c930bd0264e9ac5d19a1f3",
+                "url": "https://api.github.com/repos/tpetry/laravel-postgresql-enhanced/zipball/a242704496e1cff76193a552128940bfa59d1466",
+                "reference": "a242704496e1cff76193a552128940bfa59d1466",
                 "shasum": ""
             },
             "require": {
@@ -19315,9 +19315,9 @@
             ],
             "support": {
                 "issues": "https://github.com/tpetry/laravel-postgresql-enhanced/issues",
-                "source": "https://github.com/tpetry/laravel-postgresql-enhanced/tree/2.3.2"
+                "source": "https://github.com/tpetry/laravel-postgresql-enhanced/tree/2.3.4"
             },
-            "time": "2025-03-03T15:35:54+00:00"
+            "time": "2025-03-06T10:30:15+00:00"
         },
         {
             "name": "twilio/sdk",
@@ -20217,16 +20217,16 @@
         },
         {
             "name": "friendsofphp/php-cs-fixer",
-            "version": "v3.70.2",
+            "version": "v3.71.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer.git",
-                "reference": "1ca468270efbb75ce0c7566a79cca8ea2888584d"
+                "reference": "3825ffdc69501e1c9230291b79f036a0c0d8749d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/1ca468270efbb75ce0c7566a79cca8ea2888584d",
-                "reference": "1ca468270efbb75ce0c7566a79cca8ea2888584d",
+                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/3825ffdc69501e1c9230291b79f036a0c0d8749d",
+                "reference": "3825ffdc69501e1c9230291b79f036a0c0d8749d",
                 "shasum": ""
             },
             "require": {
@@ -20308,7 +20308,7 @@
             ],
             "support": {
                 "issues": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/issues",
-                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.70.2"
+                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.71.0"
             },
             "funding": [
                 {
@@ -20316,7 +20316,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-03-03T21:07:23+00:00"
+            "time": "2025-03-07T23:06:56+00:00"
         },
         {
             "name": "hamcrest/hamcrest-php",
@@ -21558,16 +21558,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.12.20",
+            "version": "1.12.21",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "3240b1972042c7f73cf1045e879ea5bd5f761bb7"
+                "reference": "14276fdef70575106a3392a4ed553c06a984df28"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/3240b1972042c7f73cf1045e879ea5bd5f761bb7",
-                "reference": "3240b1972042c7f73cf1045e879ea5bd5f761bb7",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/14276fdef70575106a3392a4ed553c06a984df28",
+                "reference": "14276fdef70575106a3392a4ed553c06a984df28",
                 "shasum": ""
             },
             "require": {
@@ -21612,7 +21612,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-03-05T13:37:43+00:00"
+            "time": "2025-03-09T09:24:50+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",

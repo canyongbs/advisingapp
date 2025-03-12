@@ -55,13 +55,14 @@ class ProspectReportStats extends StatsOverviewReportWidget
 
     protected function getStats(): array
     {
+        $prospectsCount = Cache::tags([$this->cacheTag])->remember('prospects-count', now()->addHours(24), function (): int {
+            return Prospect::count();
+        });
+
         return [
-            Stat::make('Total Prospects', Number::format(
-                Cache::tags([$this->cacheTag])->remember('prospects-count', now()->addHours(24), function (): int {
-                    return Prospect::count();
-                }),
-                maxPrecision: 2,
-            )),
+            Stat::make('Total Prospects', ($prospectsCount > 9999999)
+                ? Number::abbreviate($prospectsCount, maxPrecision: 2)
+                : Number::format($prospectsCount, maxPrecision: 2)),
             Stat::make('Total Alerts', Number::abbreviate(
                 Cache::tags([$this->cacheTag])->remember('prospect-alerts-count', now()->addHours(24), function (): int {
                     return Alert::whereHasMorph('concern', Prospect::class)->count();

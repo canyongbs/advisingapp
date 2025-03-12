@@ -55,14 +55,18 @@ class ProspectStats extends StatsOverviewWidget
         /** @var User $user */
         $user = auth()->user();
 
+        $prospectsCount = Cache::tags(['prospects'])
+            ->remember('prospects-count', now()->addHour(), function (): int {
+                return Prospect::count();
+            });
+
         return [
-            Stat::make('Total Prospects', Number::format(
-                Cache::tags(['prospects'])
-                    ->remember('prospects-count', now()->addHour(), function (): int {
-                        return Prospect::count();
-                    }),
-                maxPrecision: 2,
-            ))
+            Stat::make(
+                'Total Prospects',
+                ($prospectsCount > 9999999)
+                    ? Number::abbreviate($prospectsCount, maxPrecision: 2)
+                    : Number::format($prospectsCount, maxPrecision: 2)
+            )
                 ->url(ProspectResource::getUrl('index')),
             Stat::make('My Subscriptions', Cache::tags(['prospects', "user-{$user->getKey()}-prospect-subscriptions"])
                 ->remember("user-{$user->getKey()}-prospect-subscriptions-count", now()->addHour(), function () use ($user): int {
