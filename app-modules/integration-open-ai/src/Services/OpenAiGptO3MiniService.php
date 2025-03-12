@@ -36,13 +36,12 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Services;
 
-use OpenAI;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessageFile;
-use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
-use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService;
 use AdvisingApp\Ai\Services\Contracts\AiServiceLifecycleHooks;
+use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use AdvisingApp\IntegrationOpenAi\Services\Concerns\UploadsFiles;
+use OpenAI;
 
 class OpenAiGptO3MiniService extends BaseOpenAiService implements AiServiceLifecycleHooks
 {
