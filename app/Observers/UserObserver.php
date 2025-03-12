@@ -36,7 +36,7 @@
 
 namespace App\Observers;
 
-use AdvisingApp\MultifactorAuthentication\Settings\LocalPasswordSettings;
+use AdvisingApp\Authorization\Settings\LocalPasswordSettings;
 use App\Features\LocalPassword;
 use App\Models\User;
 use Carbon\Carbon;

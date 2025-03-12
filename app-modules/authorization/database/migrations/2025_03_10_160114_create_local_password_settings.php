@@ -13,7 +13,7 @@ return new class () extends SettingsMigration {
         $this->migrator->add('local-password.minSpecialCharacters', 1);
         $this->migrator->add('local-password.numPreviousPasswords', 5);
         $this->migrator->add('local-password.maxPasswordAge', null);
-        $this->migrator->add('local-password.blacklistCommonPasswords', false);
+        $this->migrator->add('local-password.blacklistCommonPasswords', true);
     }
 
     public function down(): void

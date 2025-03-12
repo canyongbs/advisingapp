@@ -120,6 +120,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'remember_token',
         'password',
         'password_history',
+        'password_last_updated_at',
     ];
 
     protected $casts = [
