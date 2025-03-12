@@ -76,14 +76,14 @@ class FinalizeStudentDataImport
                 }
             });
         } else {
-            DB::statement("drop table if exists import_{$studentsImport->getKey()}_students");
+            DB::statement("drop table if exists \"import_{$studentsImport->getKey()}_students\"");
 
             if ($programsImport) {
-                DB::statement("drop table if exists import_{$programsImport->getKey()}_programs");
+                DB::statement("drop table if exists \"import_{$programsImport->getKey()}_programs\"");
             }
 
             if ($enrollmentsImport) {
-                DB::statement("drop table if exists import_{$enrollmentsImport->getKey()}_enrollments");
+                DB::statement("drop table if exists \"import_{$enrollmentsImport->getKey()}_enrollments\"");
             }
         }
 
