@@ -34,52 +34,17 @@
 </COPYRIGHT>
 */
 
-return [
-    'gpt_35_base_uri' => env('OPEN_AI_GPT_35_BASE_URI'),
+use App\Features\O1MiniAndO3MiniFeature;
+use Illuminate\Database\Migrations\Migration;
 
-    'gpt_35_api_key' => env('OPEN_AI_GPT_35_API_KEY'),
+return new class () extends Migration {
+    public function up(): void
+    {
+        O1MiniAndO3MiniFeature::activate();
+    }
 
-    'gpt_35_api_version' => env('OPEN_AI_GPT_35_API_VERSION'),
-
-    'gpt_35_model' => env('OPEN_AI_GPT_35_MODEL'),
-
-    'gpt_4_base_uri' => env('OPEN_AI_GPT_4_BASE_URI'),
-
-    'gpt_4_api_key' => env('OPEN_AI_GPT_4_API_KEY'),
-
-    'gpt_4_api_version' => env('OPEN_AI_GPT_4_API_VERSION'),
-
-    'gpt_4_model' => env('OPEN_AI_GPT_4_MODEL'),
-
-    'gpt_4o_base_uri' => env('OPEN_AI_GPT_4O_BASE_URI'),
-
-    'gpt_4o_api_key' => env('OPEN_AI_GPT_4O_API_KEY'),
-
-    'gpt_4o_api_version' => env('OPEN_AI_GPT_4O_API_VERSION'),
-
-    'gpt_4o_model' => env('OPEN_AI_GPT_4O_MODEL'),
-
-    'gpt_4o_mini_base_uri' => env('OPEN_AI_GPT_4O_MINI_BASE_URI'),
-
-    'gpt_4o_mini_api_key' => env('OPEN_AI_GPT_4O_MINI_API_KEY'),
-
-    'gpt_4o_mini_api_version' => env('OPEN_AI_GPT_4O_MINI_API_VERSION'),
-
-    'gpt_4o_mini_model' => env('OPEN_AI_GPT_4O_MINI_MODEL'),
-
-    'gpt_o1_mini_base_uri' => env('OPEN_AI_GPT_O1_MINI_BASE_URI'),
-
-    'gpt_o1_mini_api_key' => env('OPEN_AI_GPT_O1_MINI_API_KEY'),
-
-    'gpt_o1_mini_api_version' => env('OPEN_AI_GPT_O1_MINI_API_VERSION'),
-
-    'gpt_o1_mini_model' => env('OPEN_AI_GPT_O1_MINI_MODEL'),
-
-    'gpt_o3_mini_base_uri' => env('OPEN_AI_GPT_O3_MINI_BASE_URI'),
-
-    'gpt_o3_mini_api_key' => env('OPEN_AI_GPT_O3_MINI_API_KEY'),
-
-    'gpt_o3_mini_api_version' => env('OPEN_AI_GPT_O3_MINI_API_VERSION'),
-
-    'gpt_o3_mini_model' => env('OPEN_AI_GPT_O3_MINI_MODEL'),
-];
+    public function down(): void
+    {
+        O1MiniAndO3MiniFeature::deactivate();
+    }
+};

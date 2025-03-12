@@ -90,7 +90,7 @@ class AiAssistantForm
                     ->options(
                         fn (Get $get): array => filled(AiApplication::parse($get('application')))
                             ? collect(AiApplication::parse($get('application'))
-                                ->getModels())
+                                ->getCustomAssistantModels())
                                 ->mapWithKeys(fn (AiModel $model): array => [$model->value => $model->getLabel()])
                                 ->all()
                             : []
@@ -103,7 +103,7 @@ class AiAssistantForm
                                 Rule::enum(AiModel::class)
                                     ->only(
                                         AiApplication::parse($get('application'))
-                                            ->getModels()
+                                            ->getCustomAssistantModels()
                                     ),
                             ]
                             : []

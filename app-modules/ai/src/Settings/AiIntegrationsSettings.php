@@ -64,6 +64,18 @@ class AiIntegrationsSettings extends Settings
 
     public ?string $open_ai_gpt_4o_mini_model = null;
 
+    public ?string $open_ai_gpt_o1_mini_base_uri = null;
+
+    public ?string $open_ai_gpt_o1_mini_api_key = null;
+
+    public ?string $open_ai_gpt_o1_mini_model = null;
+
+    public ?string $open_ai_gpt_o3_mini_base_uri = null;
+
+    public ?string $open_ai_gpt_o3_mini_api_key = null;
+
+    public ?string $open_ai_gpt_o3_mini_model = null;
+
     public static function group(): string
     {
         return 'ai';
@@ -84,6 +96,12 @@ class AiIntegrationsSettings extends Settings
             'open_ai_gpt_4o_mini_base_uri',
             'open_ai_gpt_4o_mini_api_key',
             'open_ai_gpt_4o_mini_model',
+            'open_ai_gpt_o1_mini_base_uri',
+            'open_ai_gpt_o1_mini_api_key',
+            'open_ai_gpt_o1_mini_model',
+            'open_ai_gpt_o3_mini_base_uri',
+            'open_ai_gpt_o3_mini_api_key',
+            'open_ai_gpt_o3_mini_model',
         ];
     }
 }

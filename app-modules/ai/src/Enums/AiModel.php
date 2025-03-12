@@ -42,6 +42,8 @@ use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt35Service;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4oMiniService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4oService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4Service;
+use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptO1MiniService;
+use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptO3MiniService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptTestService;
 use Filament\Support\Contracts\HasLabel;
 
@@ -55,6 +57,10 @@ enum AiModel: string implements HasLabel
 
     case OpenAiGpt4oMini = 'openai_gpt_4o_mini';
 
+    case OpenAiGptO1Mini = 'openai_gpt_o1_mini';
+
+    case OpenAiGptO3Mini = 'openai_gpt_o3_mini';
+
     case OpenAiGptTest = 'openai_gpt_test';
 
     case Test = 'test';
@@ -66,6 +72,8 @@ enum AiModel: string implements HasLabel
             self::OpenAiGpt4 => 'Canyon GPT-4',
             self::OpenAiGpt4o => 'Canyon GPT-4o',
             self::OpenAiGpt4oMini => 'Canyon GPT-4o mini',
+            self::OpenAiGptO1Mini => 'Canyon GPT-o1 mini',
+            self::OpenAiGptO3Mini => 'Canyon GPT-o3 mini',
             self::OpenAiGptTest => 'Canyon GPT Test',
             self::Test => 'Test',
         };
@@ -81,6 +89,8 @@ enum AiModel: string implements HasLabel
             self::OpenAiGpt4 => OpenAiGpt4Service::class,
             self::OpenAiGpt4o => OpenAiGpt4oService::class,
             self::OpenAiGpt4oMini => OpenAiGpt4oMiniService::class,
+            self::OpenAiGptO1Mini => OpenAiGptO1MiniService::class,
+            self::OpenAiGptO3Mini => OpenAiGptO3MiniService::class,
             self::OpenAiGptTest => OpenAiGptTestService::class,
             self::Test => TestAiService::class,
         };
@@ -115,7 +125,7 @@ enum AiModel: string implements HasLabel
     public function isVisibleForApplication(AiApplication $aiApplication): bool
     {
         return match ($this) {
-            self::OpenAiGpt35, self::OpenAiGpt4o, self::OpenAiGpt4oMini => $aiApplication === AiApplication::PersonalAssistant,
+            self::OpenAiGpt35, self::OpenAiGpt4o, self::OpenAiGpt4oMini, self::OpenAiGptO1Mini, self::OpenAiGptO3Mini, => $aiApplication === AiApplication::PersonalAssistant,
             self::OpenAiGpt4 => false,
             self::OpenAiGptTest => false,
             self::Test => true,
@@ -126,7 +136,7 @@ enum AiModel: string implements HasLabel
     {
         // TODO: Not actually sure mini supports files, need to confirm
         return match ($this) {
-            self::OpenAiGpt35, self::OpenAiGpt4, self::OpenAiGpt4o, self::OpenAiGpt4oMini => true,
+            self::OpenAiGpt35, self::OpenAiGpt4, self::OpenAiGpt4o, self::OpenAiGpt4oMini, self::OpenAiGptO1Mini, self::OpenAiGptO3Mini => true,
             default => false,
         };
     }
