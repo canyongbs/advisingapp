@@ -55,7 +55,7 @@ class ProspectReportStats extends StatsOverviewReportWidget
 
     protected function getStats(): array
     {
-        $prospectsCount = Cache::tags([$this->cacheTag])->remember('total-prospects-count', now()->addHours(24), function (): int {
+        $prospectsCount = Cache::tags([$this->cacheTag])->remember('prospects-count', now()->addHours(24), function (): int {
             return Prospect::count();
         });
 
