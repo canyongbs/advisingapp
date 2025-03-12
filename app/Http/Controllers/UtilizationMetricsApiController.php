@@ -46,6 +46,8 @@ use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
 use AdvisingApp\MeetingCenter\Models\Event;
+use AdvisingApp\Notification\Models\EmailMessage;
+use AdvisingApp\Notification\Models\SmsMessage;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Models\TrackedEventCount;
@@ -56,6 +58,7 @@ use AdvisingApp\Survey\Models\Survey;
 use AdvisingApp\Survey\Models\SurveySubmission;
 use AdvisingApp\Task\Models\Task;
 use App\Models\User;
+use App\Settings\LicenseSettings;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -64,6 +67,18 @@ class UtilizationMetricsApiController extends Controller
 {
     public function __invoke(Request $request): JsonResponse
     {
+        $licenseSettings = app(LicenseSettings::class);
+
+        $resetWindow = $licenseSettings->data->limits->getResetWindow();
+
+        $currentQuotaUsageOfSms = SmsMessage::query()
+            ->whereBetween('created_at', [$resetWindow['start'], $resetWindow['end']])
+            ->sum('quota_usage');
+
+        $currentQuotaUsageOfEmail = EmailMessage::query()
+            ->whereBetween('created_at', [$resetWindow['start'], $resetWindow['end']])
+            ->sum('quota_usage');
+
         try {
             return response()->json([
                 'data' => [
@@ -88,13 +103,15 @@ class UtilizationMetricsApiController extends Controller
                     'forms_submitted' => FormSubmission::count(),
                     'surveys_created' => Survey::count(),
                     'surveys_submitted' => SurveySubmission::count(),
+                    'emails' => $currentQuotaUsageOfEmail . '/' . $licenseSettings->data->limits->emails,
+                    'text_messages' => $currentQuotaUsageOfSms . '/' . $licenseSettings->data->limits->sms,
+                    'messages_reset' => $licenseSettings->data->limits->resetDate,
                 ],
             ], 200);
         } catch (Exception $e) {
             report($e);
 
-            return response()->json([
-            ], 500);
+            return response()->json([], 500);
         }
     }
 }
