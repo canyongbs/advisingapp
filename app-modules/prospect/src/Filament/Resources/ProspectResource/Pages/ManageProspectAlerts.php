@@ -107,7 +107,9 @@ class ManageProspectAlerts extends ManageRelatedRecords
                 TextEntry::make('suggested_intervention'),
                 TextEntry::make('status.name'),
                 TextEntry::make('createdBy.name')->label('Created By')->default('N/A'),
-                TextEntry::make('created_at')->label('Created Date'),
+                TextEntry::make('created_at')
+                    ->label('Created Date')
+                    ->dateTime(),
             ]);
     }
 
@@ -147,6 +149,7 @@ class ManageProspectAlerts extends ManageRelatedRecords
                 TextColumn::make('status.name')
                     ->sortable(),
                 TextColumn::make('created_at')
+                    ->dateTime()
                     ->sortable(),
             ])
             ->filters([

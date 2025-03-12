@@ -220,8 +220,8 @@ class FilamentServiceProvider extends ServiceProvider
 
                     return null;
                 })
-                ->tooltip(function (TextColumn $column) use ($timezoneLabel): ?string {
-                    if ($column->isDateTime()) {
+                ->tooltip(function (TextColumn $column, $state) use ($timezoneLabel): ?string {
+                    if ($column->isDateTime() && ! blank($state)) {
                         return "This time is set in {$timezoneLabel}.";
                     }
 
@@ -241,15 +241,15 @@ class FilamentServiceProvider extends ServiceProvider
 
                     return null;
                 })
-                ->hintIcon(function (TextEntry $entry): ?string {
-                    if ($entry->isDateTime()) {
+                ->hintIcon(function (TextEntry $entry, $state): ?string {
+                    if ($entry->isDateTime() && ! blank($state)) {
                         return 'heroicon-m-clock';
                     }
 
                     return null;
                 })
-                ->hintIconTooltip(function (TextEntry $entry) use ($timezoneLabel): ?string {
-                    if ($entry->isDateTime()) {
+                ->hintIconTooltip(function (TextEntry $entry, $state) use ($timezoneLabel): ?string {
+                    if ($entry->isDateTime() && ! blank($state)) {
                         return "This time is set in {$timezoneLabel}.";
                     }
 
