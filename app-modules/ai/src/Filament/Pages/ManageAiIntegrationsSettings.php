@@ -219,8 +219,8 @@ class ManageAiIntegrationsSettings extends SettingsPage
                     ...(($originalSettings->open_ai_gpt_4_base_uri !== $newSettings['open_ai_gpt_4_base_uri']) ? [AiModel::OpenAiGpt4] : []),
                     ...(($originalSettings->open_ai_gpt_4o_base_uri !== $newSettings['open_ai_gpt_4o_base_uri']) ? [AiModel::OpenAiGpt4o] : []),
                     ...(($originalSettings->open_ai_gpt_4o_mini_base_uri !== $newSettings['open_ai_gpt_4o_mini_base_uri']) ? [AiModel::OpenAiGpt4o] : []),
-                    ...(($originalSettings->open_ai_gpt_o1_mini_base_uri !== $newSettings['open_ai_gpt_o1_mini_base_uri']) ? [AiModel::OpenAiGpto1] : []),
-                    ...(($originalSettings->open_ai_gpt_o3_mini_base_uri !== $newSettings['open_ai_gpt_o3_mini_base_uri']) ? [AiModel::OpenAiGpto3] : []),
+                    ...(($originalSettings->open_ai_gpt_o1_mini_base_uri !== $newSettings['open_ai_gpt_o1_mini_base_uri']) ? [AiModel::OpenAiGptO1Mini] : []),
+                    ...(($originalSettings->open_ai_gpt_o3_mini_base_uri !== $newSettings['open_ai_gpt_o3_mini_base_uri']) ? [AiModel::OpenAiGptO3Mini] : []),
                 ];
 
                 DB::transaction(function () use ($changedModels, $resetAiServiceIds) {
