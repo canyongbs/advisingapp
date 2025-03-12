@@ -39,8 +39,6 @@ namespace AdvisingApp\MeetingCenter\Database\Factories;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -55,11 +53,7 @@ class EventAttendeeFactory extends Factory
     {
         return [
             'status' => fake()->randomElement(EventAttendeeStatus::class),
-            'email' => fake()->unique()->randomElement([
-                fake()->email(),
-                Student::factory()->create()->value('email'),
-                Prospect::factory()->create()->value('email'),
-            ]),
+            'email' => fake()->unique()->email(),
             'event_id' => Event::inRandomOrder()->first() ?? Event::factory()->create(),
         ];
     }

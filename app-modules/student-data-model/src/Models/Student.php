@@ -63,6 +63,7 @@ use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
 use AdvisingApp\Timeline\Models\Timeline;
 use App\Enums\TagType;
+use App\Features\ProspectStudentRefactor;
 use App\Models\Authenticatable;
 use App\Models\Scopes\HasLicense;
 use App\Models\Tag;
@@ -78,6 +79,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as BaseAuthenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Notifications\Notification;
 use Laravel\Sanctum\HasApiTokens;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
@@ -144,6 +146,9 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         'lastlmslogin',
         'f_e_term',
         'mr_e_term',
+        'primary_email_id',
+        'primary_phone_id',
+        'primary_address_id',
     ];
 
     protected $casts = [
@@ -324,14 +329,72 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         )->withTimestamps();
     }
 
+    public function addresses(): HasMany
+    {
+        return $this->hasMany(StudentAddress::class, 'sisid', 'sisid')->orderBy('order');
+    }
+
+    public function emailAddresses(): HasMany
+    {
+        return $this->hasMany(StudentEmailAddress::class, 'sisid', 'sisid')->orderBy('order');
+    }
+
+    public function phoneNumbers(): HasMany
+    {
+        return $this->hasMany(StudentPhoneNumber::class, 'sisid', 'sisid')->orderBy('order');
+    }
+
+    public function primaryEmailAddress()
+    {
+        return $this->belongsTo(StudentEmailAddress::class, 'primary_email_id');
+    }
+
+    public function primaryPhoneNumber()
+    {
+        return $this->belongsTo(StudentPhoneNumber::class, 'primary_phone_id');
+    }
+
+    public function primaryAddress()
+    {
+        return $this->belongsTo(StudentAddress::class, 'primary_address_id');
+    }
+
+    public function additionalEmailAddresses(): HasMany
+    {
+        return $this->emailAddresses()->whereKeyNot($this->primary_email_id);
+    }
+
+    public function additionalPhoneNumbers(): HasMany
+    {
+        return $this->phoneNumbers()->whereKeyNot($this->primary_phone_id);
+    }
+
+    public function additionalAddresses(): HasMany
+    {
+        return $this->addresses()->whereKeyNot($this->primary_address_id);
+    }
+
     public static function getLabel(): string
     {
         return 'student';
     }
 
-    public function canRecieveSms(): bool
+    public function canReceiveEmail(): bool
     {
-        return filled($this->mobile);
+        if (! ProspectStudentRefactor::active()) {
+            return filled($this->email);
+        }
+
+        return filled($this->primaryEmailAddress?->address);
+    }
+
+    public function canReceiveSms(): bool
+    {
+        if (! ProspectStudentRefactor::active()) {
+            return filled($this->mobile);
+        }
+
+        return filled($this->primaryPhoneNumber?->number) && $this->primaryPhoneNumber->can_receive_sms;
     }
 
     public function tags(): MorphToMany
@@ -347,6 +410,20 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
             ->withPivot(['tag_id'])
             ->withTimestamps()
             ->where('type', TagType::Student);
+    }
+
+    /**
+      * Route notifications for the mail channel.
+      *
+      * @return array<string, string>|string|null
+      */
+    public function routeNotificationForMail(Notification $notification): array|string|null
+    {
+        if (! ProspectStudentRefactor::active()) {
+            return $this->email;
+        }
+
+        return $this->primaryEmailAddress?->address;
     }
 
     protected static function booted(): void
@@ -375,16 +452,20 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     protected function fullAddress(): Attribute
     {
         return Attribute::make(
-            get: function (mixed $value, array $attributes) {
-                $addressLine = trim("{$attributes['address']} {$attributes['address2']} {$attributes['address3']}");
+            get: function (mixed $value, array $attributes): ?string {
+                if (! ProspectStudentRefactor::active()) {
+                    $addressLine = trim("{$attributes['address']} {$attributes['address2']} {$attributes['address3']}");
 
-                return trim(sprintf(
-                    '%s %s %s %s',
-                    ! empty($addressLine) ? $addressLine . ',' : '',
-                    ! empty($attributes['city']) ? $attributes['city'] . ',' : '',
-                    ! empty($attributes['state']) ? $attributes['state'] : '',
-                    ! empty($attributes['postal']) ? $attributes['postal'] : '',
-                ));
+                    return trim(sprintf(
+                        '%s %s %s %s',
+                        ! empty($addressLine) ? $addressLine . ',' : '',
+                        ! empty($attributes['city']) ? $attributes['city'] . ',' : '',
+                        ! empty($attributes['state']) ? $attributes['state'] : '',
+                        ! empty($attributes['postal']) ? $attributes['postal'] : '',
+                    ));
+                }
+
+                return $this->primaryAddress?->full;
             }
         );
     }

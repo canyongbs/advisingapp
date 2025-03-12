@@ -38,6 +38,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Tables
 
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\ProspectStudentRefactor;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
@@ -63,9 +64,17 @@ class StudentsTable
                 TextColumn::make(Student::displayNameKey())
                     ->label('Name')
                     ->sortable(),
-                TextColumn::make('email'),
-                TextColumn::make('mobile'),
-                TextColumn::make('phone'),
+                TextColumn::make('email')->hidden(ProspectStudentRefactor::active()),
+                TextColumn::make('mobile')->hidden(ProspectStudentRefactor::active()),
+                TextColumn::make('phone')->hidden(ProspectStudentRefactor::active()),
+                TextColumn::make('primaryEmailAddress.address')
+                    ->label('Email')
+                    ->sortable()
+                    ->visible(ProspectStudentRefactor::active()),
+                TextColumn::make('primaryPhoneNumber.number')
+                    ->label('Phone')
+                    ->sortable()
+                    ->visible(ProspectStudentRefactor::active()),
                 TextColumn::make('sisid'),
                 TextColumn::make('otherid'),
             ])
@@ -90,13 +99,38 @@ class StudentsTable
                         TextConstraint::make('otherid')
                             ->label('Other ID')
                             ->icon('heroicon-m-finger-print'),
-                        TextConstraint::make('email')
-                            ->label('Email Address')
-                            ->icon('heroicon-m-envelope'),
-                        TextConstraint::make('mobile')
-                            ->icon('heroicon-m-phone'),
-                        TextConstraint::make('address')
-                            ->icon('heroicon-m-map-pin'),
+                        ...(
+                            ProspectStudentRefactor::active()
+                            ? [
+                                TextConstraint::make('email')
+                                    ->label('Primary Email')
+                                    ->relationship('primaryEmailAddress', 'address')
+                                    ->icon('heroicon-m-envelope'),
+                                TextConstraint::make('phone')
+                                    ->label('Primary Phone')
+                                    ->relationship('primaryPhoneNumber', 'number')
+                                    ->icon('heroicon-m-phone'),
+                                TextConstraint::make('address')
+                                    ->label('Primary Address line 1')
+                                    ->relationship('primaryAddress', 'line_1')
+                                    ->icon('heroicon-m-map-pin'),
+                                TextConstraint::make('address_2')
+                                    ->label('Primary Address line 2')
+                                    ->relationship('primaryAddress', 'line_2')
+                                    ->icon('heroicon-m-map-pin'),
+                            ]
+                            : [
+                                TextConstraint::make('email')
+                                    ->label('Email Address')
+                                    ->icon('heroicon-m-envelope'),
+                                TextConstraint::make('mobile')
+                                    ->icon('heroicon-m-phone'),
+                                TextConstraint::make('address')
+                                    ->icon('heroicon-m-map-pin'),
+                                TextConstraint::make('address_2')
+                                    ->icon('heroicon-m-map-pin'),
+                            ]
+                        ),
                         RelationshipConstraint::make('tags')
                             ->label('Tags')
                             ->icon('heroicon-m-rectangle-group')

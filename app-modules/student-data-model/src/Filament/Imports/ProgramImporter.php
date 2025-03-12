@@ -52,7 +52,7 @@ class ProgramImporter extends Importer
         return self::getProgramColumns();
     }
 
-    public function resolveRecord(): ?Program
+    public function resolveRecord(): Program
     {
         $program = new Program();
         $program->student()->associate($this->options['sisid']);

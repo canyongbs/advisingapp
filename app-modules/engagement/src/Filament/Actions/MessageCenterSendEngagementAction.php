@@ -80,7 +80,7 @@ class MessageCenterSendEngagementAction extends Action
                     ->label('What would you like to send?')
                     ->options(NotificationChannel::getEngagementOptions())
                     ->default(NotificationChannel::Email->value)
-                    ->disableOptionWhen(fn (string $value): bool => (($value == (NotificationChannel::Sms->value) && ! $this->getEducatable()->canRecieveSms())) || NotificationChannel::tryFrom($value)?->getCaseDisabled())
+                    ->disableOptionWhen(fn (string $value): bool => (($value == (NotificationChannel::Sms->value) && ! $this->getEducatable()->canReceiveSms())) || NotificationChannel::tryFrom($value)?->getCaseDisabled())
                     ->selectablePlaceholder(false)
                     ->live(),
                 Fieldset::make('Content')
@@ -174,7 +174,7 @@ class MessageCenterSendEngagementAction extends Action
                     ]),
             ])
             ->action(function (array $data, Form $form) {
-                if ($data['channel'] == NotificationChannel::Sms->value && ! $this->getEducatable()->canRecieveSms()) {
+                if ($data['channel'] == NotificationChannel::Sms->value && ! $this->getEducatable()->canReceiveSms()) {
                     Notification::make()
                         ->title(ucfirst($this->getEducatable()->getLabel()) . ' does not have mobile number.')
                         ->danger()

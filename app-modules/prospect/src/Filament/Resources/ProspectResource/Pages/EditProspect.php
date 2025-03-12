@@ -40,27 +40,39 @@ use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ConvertToStudent;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\DisassociateStudent;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\Concerns\HasProspectHeader;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
+use App\Features\ProspectStudentRefactor;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\ComponentContainer;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Support\Enums\ActionSize;
+use Filament\Support\Enums\Alignment;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
+use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 class EditProspect extends EditRecord
 {
     use ProspectHolisticViewPage;
     use EditPageRedirection;
+    use HasProspectHeader;
 
     protected static string $resource = ProspectResource::class;
 
@@ -69,6 +81,24 @@ class EditProspect extends EditRecord
 
     public function form(Form $form): Form
     {
+        $makeRepeaterItemPrimaryAction = fn (): Action => Action::make('makePrimary')
+            ->tooltip('Make primary')
+            ->icon('heroicon-m-star')
+            ->iconButton()
+            ->size(ActionSize::Small)
+            ->color('primary')
+            ->action(function (array $arguments, Repeater $component): void {
+                $items = $component->getState();
+                $primaryItem = $items[$arguments['item']];
+                unset($items[$arguments['item']]);
+
+                $component->state([
+                    $arguments['item'] => $primaryItem,
+                    ...$items,
+                ]);
+            })
+            ->visible(fn (array $arguments, Repeater $component): bool => array_key_first($component->getState()) !== $arguments['item']);
+
         return $form
             ->schema([
                 Section::make('Demographics')
@@ -76,21 +106,17 @@ class EditProspect extends EditRecord
                         TextInput::make('first_name')
                             ->label('First Name')
                             ->required()
-                            ->string()
                             ->maxLength(255),
                         TextInput::make('last_name')
                             ->label('Last Name')
                             ->required()
-                            ->string()
                             ->maxLength(255),
                         TextInput::make(Prospect::displayNameKey())
                             ->label('Full Name')
                             ->required()
-                            ->string()
                             ->maxLength(255),
                         TextInput::make('preferred')
                             ->label('Preferred Name')
-                            ->string()
                             ->maxLength(255),
                         // TODO: Display this based on system configurable data format
                         DatePicker::make('birthdate')
@@ -108,6 +134,123 @@ class EditProspect extends EditRecord
                             ->maxValue(now()->addYears(25)->year),
                     ])
                     ->columns(2),
+                Section::make('Contact Information')
+                    ->schema([
+                        Repeater::make('emailAddresses')
+                            ->relationship()
+                            ->schema([
+                                TextInput::make(name: 'address')
+                                    ->label('Address')
+                                    ->email()
+                                    ->required()
+                                    ->placeholder('example@gmail.com')
+                                    ->maxLength(255)
+                                    ->columnSpan(['lg' => 2]),
+                                TextInput::make('type')
+                                    ->label('Type')
+                                    ->maxLength(255)
+                                    ->placeholder('Personal')
+                                    ->default('Personal')
+                                    ->datalist([
+                                        'Personal',
+                                        'Work',
+                                        'Institutional',
+                                    ]),
+                            ])
+                            ->orderColumn('order')
+                            ->itemLabel(fn (Repeater $component, ComponentContainer $container): ?string => (Arr::first($component->getChildComponentContainers())->getStatePath() === $container->getStatePath()) ? 'Primary email address' : 'Additional email address')
+                            ->extraItemActions([
+                                $makeRepeaterItemPrimaryAction(),
+                            ])
+                            ->columns(3)
+                            ->hiddenLabel()
+                            ->addActionLabel('Add email address')
+                            ->addActionAlignment(Alignment::Start),
+                        Repeater::make('phoneNumbers')
+                            ->relationship()
+                            ->schema([
+                                Grid::make(['default' => 3])
+                                    ->schema([
+                                        PhoneInput::make(name: 'number')
+                                            ->label('Number')
+                                            ->required()
+                                            ->columnSpan(2),
+                                        TextInput::make(name: 'ext')
+                                            ->label('Extension')
+                                            ->integer()
+                                            ->maxLength(8),
+                                    ])
+                                    ->columnSpan(['lg' => 2]),
+                                TextInput::make('type')
+                                    ->label('Type')
+                                    ->maxLength(255)
+                                    ->placeholder('Mobile')
+                                    ->default('Mobile')
+                                    ->datalist([
+                                        'Mobile',
+                                        'Home',
+                                        'Work',
+                                    ]),
+                                Checkbox::make('can_receive_sms')
+                                    ->label('Can receive SMS messages')
+                                    ->columnSpanFull()
+                                    ->default(true),
+                            ])
+                            ->orderColumn('order')
+                            ->itemLabel(fn (Repeater $component, ComponentContainer $container): ?string => (Arr::first($component->getChildComponentContainers())->getStatePath() === $container->getStatePath()) ? 'Primary phone number' : 'Additional phone number')
+                            ->extraItemActions([
+                                $makeRepeaterItemPrimaryAction(),
+                            ])
+                            ->columns(3)
+                            ->hiddenLabel()
+                            ->addActionLabel('Add phone number')
+                            ->addActionAlignment(Alignment::Start),
+                        Repeater::make('addresses')
+                            ->relationship()
+                            ->schema([
+                                TextInput::make('line_1')
+                                    ->label('Line 1')
+                                    ->maxLength(255),
+                                TextInput::make('line_2')
+                                    ->label('Line 2')
+                                    ->maxLength(255),
+                                TextInput::make('line_3')
+                                    ->label('Line 3')
+                                    ->maxLength(255),
+                                TextInput::make('city')
+                                    ->label('City')
+                                    ->maxLength(255),
+                                TextInput::make('state')
+                                    ->label('State')
+                                    ->maxLength(255),
+                                TextInput::make('postal')
+                                    ->label('Postal code')
+                                    ->maxLength(255),
+                                TextInput::make('country')
+                                    ->label('Country')
+                                    ->maxLength(255),
+                                TextInput::make('type')
+                                    ->label('Type')
+                                    ->maxLength(255)
+                                    ->placeholder('Home')
+                                    ->default('Home')
+                                    ->datalist([
+                                        'Home',
+                                        'Institutional',
+                                        'Work',
+                                    ]),
+                            ])
+                            ->orderColumn('order')
+                            ->itemLabel(fn (Repeater $component, ComponentContainer $container): ?string => (Arr::first($component->getChildComponentContainers())->getStatePath() === $container->getStatePath()) ? 'Primary address' : 'Additional address')
+                            ->extraItemActions([
+                                $makeRepeaterItemPrimaryAction(),
+                            ])
+                            ->columns(3)
+                            ->hiddenLabel()
+                            ->addActionLabel('Add address')
+                            ->addActionAlignment(Alignment::Start),
+                    ])
+                    ->visible(ProspectStudentRefactor::active()),
                 Section::make('Contact Information')
                     ->schema([
                         TextInput::make('email')
@@ -151,7 +294,8 @@ class EditProspect extends EditRecord
                             ->string()
                             ->maxLength(255),
                     ])
-                    ->columns(2),
+                    ->columns(2)
+                    ->hidden(ProspectStudentRefactor::active()),
                 Section::make('Classification')
                     ->schema([
                         Select::make('status_id')
@@ -172,7 +316,6 @@ class EditProspect extends EditRecord
                             ),
                         Textarea::make('description')
                             ->label('Description')
-                            ->string()
                             ->columnSpanFull(),
                     ])
                     ->columns(2),
@@ -210,5 +353,16 @@ class EditProspect extends EditRecord
             ViewAction::make(),
             DeleteAction::make(),
         ];
+    }
+
+    protected function afterSave(): void
+    {
+        /** Prospect $prospect */
+        $prospect = $this->getRecord();
+
+        $prospect->primaryEmailAddress()->associate($prospect->emailAddresses()->first());
+        $prospect->primaryPhoneNumber()->associate($prospect->phoneNumbers()->first());
+        $prospect->primaryAddress()->associate($prospect->addresses()->first());
+        $prospect->save();
     }
 }
