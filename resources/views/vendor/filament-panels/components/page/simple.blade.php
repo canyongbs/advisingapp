@@ -31,13 +31,19 @@
 
 </COPYRIGHT>
 --}}
+@php
+    use Filament\Support\Facades\FilamentView;
+    use Filament\Tables\Contracts\HasTable;
+    use Filament\View\PanelsRenderHook;
+@endphp
+
 @props([
     'heading' => null,
     'subheading' => null,
 ])
 
 <div {{ $attributes->class(['fi-simple-page w-full max-w-lg']) }}>
-    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIMPLE_PAGE_START, scopes: $this->getRenderHookScopes()) }}
+    {{ FilamentView::renderHook(PanelsRenderHook::SIMPLE_PAGE_START, scopes: $this->getRenderHookScopes()) }}
 
     <section class="grid auto-cols-fr gap-y-6">
         <x-filament-panels::header.simple
@@ -49,9 +55,9 @@
         {{ $slot }}
     </section>
 
-    @if (! $this instanceof \Filament\Tables\Contracts\HasTable)
+    @if (! $this instanceof HasTable)
         <x-filament-actions::modals />
     @endif
 
-    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIMPLE_PAGE_END, scopes: $this->getRenderHookScopes()) }}
+    {{ FilamentView::renderHook(PanelsRenderHook::SIMPLE_PAGE_END, scopes: $this->getRenderHookScopes()) }}
 </div>
