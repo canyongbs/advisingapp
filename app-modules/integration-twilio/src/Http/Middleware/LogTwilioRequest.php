@@ -34,30 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationTwilio\Http\Controllers;
+namespace AdvisingApp\IntegrationTwilio\Http\Middleware;
 
-use AdvisingApp\IntegrationTwilio\Actions\TwilioWebhookProcessor;
-use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioMessageReceivedData;
-use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
-use AdvisingApp\Webhook\Exceptions\UnknownInboundWebhookEvent;
-use App\Http\Controllers\Controller;
+use AdvisingApp\Webhook\Actions\StoreInboundWebhook;
+use AdvisingApp\Webhook\Enums\InboundWebhookSource;
+use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Twilio\TwiML\MessagingResponse;
+use Symfony\Component\HttpFoundation\Response;
 
-class TwilioInboundWebhookController extends Controller
+class LogTwilioRequest
 {
-    public function __invoke(Request $request, string $event): MessagingResponse|Response
+    public function __construct(
+        protected StoreInboundWebhook $storeInboundWebhook
+    ) {}
+
+    public function handle(Request $request, Closure $next): Response
     {
-        TwilioWebhookProcessor::dispatchToHandler(
-            event: $event,
-            data: match ($event) {
-                'message_received' => TwilioMessageReceivedData::fromRequest($request),
-                'status_callback' => TwilioStatusCallbackData::fromRequest($request),
-                default => throw new UnknownInboundWebhookEvent()
-            }
+        $this->storeInboundWebhook->handle(
+            source: InboundWebhookSource::Twilio,
+            event: $request->route('event'),
+            url: $request->url(),
+            payload: is_array($request->getContent()) ? json_encode($request->getContent()) : $request->getContent()
         );
 
-        return TwilioWebhookProcessor::generateResponse($event);
+        return $next($request);
     }
 }
