@@ -42,11 +42,11 @@ use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Filament\Resources\SegmentResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Concerns\Number;
 use App\Models\User;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Number;
 
 class StudentStats extends StatsOverviewWidget
 {
@@ -55,14 +55,18 @@ class StudentStats extends StatsOverviewWidget
         /** @var User $user */
         $user = auth()->user();
 
+        $studentsCount = Cache::tags(['students'])
+            ->remember('students-count', now()->addHour(), function (): int {
+                return Student::count();
+            });
+
         return [
-            Stat::make('Students', Number::formatStatNumber(
-                Cache::tags(['students'])
-                    ->remember('students-count', now()->addHour(), function (): int {
-                        return Student::count();
-                    }),
-                maxPrecision: 2,
-            ))
+            Stat::make(
+                'Students',
+                ($studentsCount > 9999999)
+                    ? Number::abbreviate($studentsCount, maxPrecision: 2)
+                    : Number::format($studentsCount, maxPrecision: 2)
+            )
                 ->url(StudentResource::getUrl('index')),
             Stat::make('My Subscriptions', Cache::tags(['students', "user-{$user->getKey()}-student-subscriptions"])
                 ->remember("user-{$user->getKey()}-student-subscriptions-count", now()->addHour(), function () use ($user): int {
