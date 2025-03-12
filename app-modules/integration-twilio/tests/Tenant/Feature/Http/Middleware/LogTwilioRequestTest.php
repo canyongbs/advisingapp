@@ -34,30 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationTwilio\Http\Controllers;
-
-use AdvisingApp\IntegrationTwilio\Actions\TwilioWebhookProcessor;
-use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioMessageReceivedData;
-use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
-use AdvisingApp\Webhook\Exceptions\UnknownInboundWebhookEvent;
-use App\Http\Controllers\Controller;
+use AdvisingApp\IntegrationTwilio\Http\Middleware\LogTwilioRequest;
+use AdvisingApp\Webhook\Actions\StoreInboundWebhook;
+use AdvisingApp\Webhook\Enums\InboundWebhookSource;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Twilio\TwiML\MessagingResponse;
+use Illuminate\Routing\Route;
 
-class TwilioInboundWebhookController extends Controller
-{
-    public function __invoke(Request $request, string $event): MessagingResponse|Response
-    {
-        TwilioWebhookProcessor::dispatchToHandler(
-            event: $event,
-            data: match ($event) {
-                'message_received' => TwilioMessageReceivedData::fromRequest($request),
-                'status_callback' => TwilioStatusCallbackData::fromRequest($request),
-                default => throw new UnknownInboundWebhookEvent()
-            }
-        );
+use function Pest\Laravel\assertDatabaseCount;
+use function Pest\Laravel\assertDatabaseHas;
 
-        return TwilioWebhookProcessor::generateResponse($event);
-    }
-}
+it('will create an inbound webhook with the correct source and event the twilio webhook', function (string $event) {
+    $request = new Request(server: ['REQUEST_URI' => "testing/{$event}"]);
+
+    $request->setRouteResolver(function () use ($request) {
+        return (new Route('GET', 'testing/{event}', []))->bind($request);
+    });
+
+    $middleware = new LogTwilioRequest(app(StoreInboundWebhook::class));
+
+    $middleware->handle($request, function ($request) {
+        return response()->json();
+    });
+
+    assertDatabaseCount('inbound_webhooks', 1);
+
+    assertDatabaseHas('inbound_webhooks', [
+        'source' => InboundWebhookSource::Twilio->value,
+        'event' => $event,
+        'url' => $request->url(),
+        'payload' => $request->getContent(),
+    ]);
+})->with([
+    'message_received',
+    'status_callback',
+]);

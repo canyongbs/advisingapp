@@ -38,52 +38,31 @@ use AdvisingApp\IntegrationTwilio\Jobs\MessageReceived;
 use AdvisingApp\IntegrationTwilio\Jobs\StatusCallback;
 use Illuminate\Support\Facades\Queue;
 
-use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Laravel\assertDatabaseMissing;
 use function Pest\Laravel\post;
 use function Pest\Laravel\withoutMiddleware;
 use function Tests\loadFixtureFromModule;
 
-it('will create an inbound webhook with the correct source and event for a MessageReceived webhook', function () {
-    Queue::fake([MessageReceived::class]);
+it('will dispatch the correct job for in inbound twilio webhook', function ($job, $event, $payload) {
+    Queue::fake();
     withoutMiddleware();
 
     $response = post(
-        route('inbound.webhook.twilio', 'message_received'),
-        loadFixtureFromModule('integration-twilio', 'MessageReceived/payload'),
+        route('inbound.webhook.twilio', $event),
+        loadFixtureFromModule('integration-twilio', $payload),
     );
 
     $response->assertOk();
 
-    assertDatabaseHas('inbound_webhooks', [
-        'source' => 'twilio',
-        'event' => 'message_received',
-    ]);
-
-    assertDatabaseMissing('inbound_webhooks', [
-        'source' => 'twilio',
-        'event' => 'status_callback',
-    ]);
-});
-
-it('will create an inbound webhook with the correct source and event for a StatusCallback webhook', function () {
-    Queue::fake([StatusCallback::class]);
-    withoutMiddleware();
-
-    $response = post(
-        route('inbound.webhook.twilio', 'status_callback'),
-        loadFixtureFromModule('integration-twilio', 'StatusCallback/sent'),
-    );
-
-    $response->assertOk();
-
-    assertDatabaseHas('inbound_webhooks', [
-        'source' => 'twilio',
-        'event' => 'status_callback',
-    ]);
-
-    assertDatabaseMissing('inbound_webhooks', [
-        'source' => 'twilio',
-        'event' => 'message_received',
-    ]);
-});
+    Queue::assertPushed($job);
+})->with([
+    'message_received' => [
+        MessageReceived::class,
+        'message_received',
+        'MessageReceived/payload',
+    ],
+    'status_callback' => [
+        StatusCallback::class,
+        'status_callback',
+        'StatusCallback/sent',
+    ],
+]);
