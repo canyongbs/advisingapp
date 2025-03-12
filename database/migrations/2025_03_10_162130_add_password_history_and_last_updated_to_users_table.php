@@ -34,37 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace App\Observers;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\Authorization\Settings\LocalPasswordSettings;
-use App\Features\LocalPassword;
-use App\Models\User;
-use Carbon\Carbon;
-
-class UserObserver
-{
-    public function saving(User $user): void
+return new class () extends Migration {
+    public function up(): void
     {
-        if (LocalPassword::active() && $user->isDirty('password')) {
-            $numPreviousPasswords = app(LocalPasswordSettings::class)->getNumPreviousPasswords();
-
-            $passwordHistory = $user->password_history ?? [];
-
-            $oldPassword = $user->getOriginal('password');
-
-            if (! blank($oldPassword)) {
-                $passwordHistory[] = $oldPassword;
-            }
-
-            $user->password_history = array_slice($passwordHistory, -$numPreviousPasswords);
-
-            $user->password_last_updated_at = Carbon::now();
-        }
+        Schema::table('users', function (Blueprint $table) {
+            $table->jsonb('password_history')->nullable();
+            $table->timestamp('password_last_updated_at')->useCurrent();
+        });
     }
 
-    public function deleted(User $user): void
+    public function down(): void
     {
-        $user->licenses->each->forceDelete();
-        $user->syncRoles([]);
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn(['password_history', 'password_last_updated_at']);
+        });
     }
-}
+};

@@ -34,37 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace App\Observers;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use AdvisingApp\Authorization\Settings\LocalPasswordSettings;
-use App\Features\LocalPassword;
-use App\Models\User;
-use Carbon\Carbon;
-
-class UserObserver
-{
-    public function saving(User $user): void
+return new class () extends SettingsMigration {
+    public function up(): void
     {
-        if (LocalPassword::active() && $user->isDirty('password')) {
-            $numPreviousPasswords = app(LocalPasswordSettings::class)->getNumPreviousPasswords();
-
-            $passwordHistory = $user->password_history ?? [];
-
-            $oldPassword = $user->getOriginal('password');
-
-            if (! blank($oldPassword)) {
-                $passwordHistory[] = $oldPassword;
-            }
-
-            $user->password_history = array_slice($passwordHistory, -$numPreviousPasswords);
-
-            $user->password_last_updated_at = Carbon::now();
-        }
+        $this->migrator->add('local-password.minPasswordLength', 8);
+        $this->migrator->add('local-password.maxPasswordLength', 64);
+        $this->migrator->add('local-password.minUppercaseLetters', 1);
+        $this->migrator->add('local-password.minLowercaseLetters', 1);
+        $this->migrator->add('local-password.minDigits', 1);
+        $this->migrator->add('local-password.minSpecialCharacters', 1);
+        $this->migrator->add('local-password.numPreviousPasswords', 5);
+        $this->migrator->add('local-password.maxPasswordAge', null);
+        $this->migrator->add('local-password.blacklistCommonPasswords', true);
     }
 
-    public function deleted(User $user): void
+    public function down(): void
     {
-        $user->licenses->each->forceDelete();
-        $user->syncRoles([]);
+        $this->migrator->delete('local-password.minPasswordLength');
+        $this->migrator->delete('local-password.maxPasswordLength');
+        $this->migrator->delete('local-password.minUppercaseLetters');
+        $this->migrator->delete('local-password.minLowercaseLetters');
+        $this->migrator->delete('local-password.minDigits');
+        $this->migrator->delete('local-password.minSpecialCharacters');
+        $this->migrator->delete('local-password.numPreviousPasswords');
+        $this->migrator->delete('local-password.maxPasswordAge');
+        $this->migrator->delete('local-password.blacklistCommonPasswords');
     }
-}
+};

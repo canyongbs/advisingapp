@@ -34,37 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace App\Observers;
-
-use AdvisingApp\Authorization\Settings\LocalPasswordSettings;
 use App\Features\LocalPassword;
-use App\Models\User;
-use Carbon\Carbon;
+use Illuminate\Database\Migrations\Migration;
 
-class UserObserver
-{
-    public function saving(User $user): void
+return new class () extends Migration {
+    public function up(): void
     {
-        if (LocalPassword::active() && $user->isDirty('password')) {
-            $numPreviousPasswords = app(LocalPasswordSettings::class)->getNumPreviousPasswords();
-
-            $passwordHistory = $user->password_history ?? [];
-
-            $oldPassword = $user->getOriginal('password');
-
-            if (! blank($oldPassword)) {
-                $passwordHistory[] = $oldPassword;
-            }
-
-            $user->password_history = array_slice($passwordHistory, -$numPreviousPasswords);
-
-            $user->password_last_updated_at = Carbon::now();
-        }
+        LocalPassword::activate();
     }
 
-    public function deleted(User $user): void
+    public function down(): void
     {
-        $user->licenses->each->forceDelete();
-        $user->syncRoles([]);
+        LocalPassword::deactivate();
     }
-}
+};

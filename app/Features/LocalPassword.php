@@ -34,37 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace App\Observers;
+namespace App\Features;
 
-use AdvisingApp\Authorization\Settings\LocalPasswordSettings;
-use App\Features\LocalPassword;
-use App\Models\User;
-use Carbon\Carbon;
+use App\Support\AbstractFeatureFlag;
 
-class UserObserver
+class LocalPassword extends AbstractFeatureFlag
 {
-    public function saving(User $user): void
+    public function resolve(mixed $scope): mixed
     {
-        if (LocalPassword::active() && $user->isDirty('password')) {
-            $numPreviousPasswords = app(LocalPasswordSettings::class)->getNumPreviousPasswords();
-
-            $passwordHistory = $user->password_history ?? [];
-
-            $oldPassword = $user->getOriginal('password');
-
-            if (! blank($oldPassword)) {
-                $passwordHistory[] = $oldPassword;
-            }
-
-            $user->password_history = array_slice($passwordHistory, -$numPreviousPasswords);
-
-            $user->password_last_updated_at = Carbon::now();
-        }
-    }
-
-    public function deleted(User $user): void
-    {
-        $user->licenses->each->forceDelete();
-        $user->syncRoles([]);
+        return false;
     }
 }

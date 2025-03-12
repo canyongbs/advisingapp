@@ -119,6 +119,8 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     protected $hidden = [
         'remember_token',
         'password',
+        'password_history',
+        'password_last_updated_at',
     ];
 
     protected $casts = [
@@ -144,6 +146,8 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'last_chat_ping_at' => 'immutable_datetime',
         'first_login_at' => 'datetime',
         'last_logged_in_at' => 'datetime',
+        'password_history' => 'array',
+        'password_last_updated_at' => 'datetime',
     ];
 
     protected $fillable = [
@@ -181,6 +185,8 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'is_branding_bar_dismissed',
         'first_login_at',
         'last_logged_in_at',
+        'password_history',
+        'password_last_updated_at',
     ];
 
     public $orderable = [
