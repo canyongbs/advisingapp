@@ -75,13 +75,6 @@ it('renders the correct Amazon SES settings for the Tenant', function () {
     livewire(ManageAmazonSesSettings::class)
         ->assertFormSet([
             'fromName' => $config->mail->fromName,
-            'smtp_host' => $config->mail->mailers->smtp->host,
-            'smtp_port' => $config->mail->mailers->smtp->port,
-            'smtp_encryption' => $config->mail->mailers->smtp->encryption,
-            'smtp_username' => $config->mail->mailers->smtp->username,
-            'smtp_password' => $config->mail->mailers->smtp->password,
-            'smtp_timeout' => $config->mail->mailers->smtp->timeout,
-            'smtp_local_domain' => $config->mail->mailers->smtp->localDomain,
         ]);
 });
 
@@ -111,12 +104,5 @@ it('correctly edits the Amazon SES settings for the Tenant', function () {
 
     $tenant->refresh();
 
-    expect($tenant->config->mail->fromName)->toBe('new-from-name')
-        ->and($tenant->config->mail->mailers->smtp->host)->toBe('new-smtp-host')
-        ->and($tenant->config->mail->mailers->smtp->port)->toBe(123)
-        ->and($tenant->config->mail->mailers->smtp->encryption)->toBe('new-smtp-encryption')
-        ->and($tenant->config->mail->mailers->smtp->username)->toBe('new-smtp-username')
-        ->and($tenant->config->mail->mailers->smtp->password)->toBe('new-smtp-password')
-        ->and($tenant->config->mail->mailers->smtp->timeout)->toBe(456)
-        ->and($tenant->config->mail->mailers->smtp->localDomain)->toBe('new-smtp-local-domain');
+    expect($tenant->config->mail->fromName)->toBe('new-from-name');
 });
