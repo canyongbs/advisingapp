@@ -81,6 +81,7 @@ class ManageProspectSubscriptions extends ManageRelatedRecords
                     ->url(fn ($record) => UserResource::getUrl('view', ['record' => $record]))
                     ->color('primary'),
                 TextColumn::make('pivot.created_at')
+                    ->dateTime()
                     ->label('Subscribed At'),
             ])
             ->headerActions([

@@ -86,6 +86,7 @@ class ApplicationSubmissionsRelationManager extends RelationManager
                             ->orderBy('application_submission_states.name', $direction);
                     }),
                 TextColumn::make('created_at')
+                    ->dateTime()
                     ->sortable(),
             ])
             ->actions([

@@ -49,10 +49,12 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Toggle;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Facades\FilamentView;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\View;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
@@ -184,6 +186,9 @@ class FilamentServiceProvider extends ServiceProvider
             ],
         ]);
 
+        Table::$defaultDateTimeDisplayFormat = 'M j, Y g:ia';
+        Infolist::$defaultDateTimeDisplayFormat = 'M j, Y g:ia';
+
         FilamentView::registerRenderHook(
             'panels::footer',
             fn (): View => view('filament.footer'),
@@ -215,8 +220,8 @@ class FilamentServiceProvider extends ServiceProvider
 
                     return null;
                 })
-                ->tooltip(function (TextColumn $column) use ($timezoneLabel): ?string {
-                    if ($column->isDateTime()) {
+                ->tooltip(function (TextColumn $column, $state) use ($timezoneLabel): ?string {
+                    if ($column->isDateTime() && ! blank($state)) {
                         return "This time is set in {$timezoneLabel}.";
                     }
 
@@ -236,15 +241,15 @@ class FilamentServiceProvider extends ServiceProvider
 
                     return null;
                 })
-                ->hintIcon(function (TextEntry $entry): ?string {
-                    if ($entry->isDateTime()) {
+                ->hintIcon(function (TextEntry $entry, $state): ?string {
+                    if ($entry->isDateTime() && ! blank($state)) {
                         return 'heroicon-m-clock';
                     }
 
                     return null;
                 })
-                ->hintIconTooltip(function (TextEntry $entry) use ($timezoneLabel): ?string {
-                    if ($entry->isDateTime()) {
+                ->hintIconTooltip(function (TextEntry $entry, $state) use ($timezoneLabel): ?string {
+                    if ($entry->isDateTime() && ! blank($state)) {
                         return "This time is set in {$timezoneLabel}.";
                     }
 
