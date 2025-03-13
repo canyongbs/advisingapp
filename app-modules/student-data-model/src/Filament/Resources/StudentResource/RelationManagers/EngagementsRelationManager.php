@@ -133,8 +133,7 @@ class EngagementsRelationManager extends RelationManager
                     Section::make([
                         TextEntry::make('sent_at')
                             ->dateTime()
-                            ->getStateUsing(fn (Timeline $record): string => $record->timelineable->sent_at)
-                            ->dateTime('Y-m-d H:i:s'),
+                            ->getStateUsing(fn (Timeline $record): string => $record->timelineable->sent_at),
                     ])->grow(false),
                 ])
                     ->from('md')
