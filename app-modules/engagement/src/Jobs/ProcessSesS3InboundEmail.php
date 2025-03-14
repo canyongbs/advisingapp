@@ -166,8 +166,7 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
             $matchedTenants->each(function (Tenant $tenant) use ($parser, $content, $sender) {
                 $tenant->execute(function () use ($parser, $content, $sender) {
                     $students = Student::query()
-                        // This will need to be changed when we refactor email into a different table
-                        ->where('email', $sender)
+                        ->whereRelation('emailAddresses', 'address', $sender)
                         ->get();
 
                     if ($students->isNotEmpty()) {
@@ -197,8 +196,7 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
                     }
 
                     $prospects = Prospect::query()
-                        // This will need to be changed when we refactor email into a different table
-                        ->where('email', $sender)
+                        ->whereRelation('emailAddresses', 'address', $sender)
                         ->get();
 
                     throw_if(
