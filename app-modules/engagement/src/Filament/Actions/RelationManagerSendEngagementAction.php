@@ -105,6 +105,11 @@ class RelationManagerSendEngagementAction extends CreateAction
                                 'student full name',
                                 'student email',
                                 'student preferred name',
+                                'user first name',
+                                'user full name',
+                                'user job title',
+                                'user email',
+                                'user phone number',
                             ])
                             ->profile('email')
                             ->required()
@@ -160,7 +165,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                                     );
                                 }))
                             ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
-                            ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
+                            ->helperText('You can insert student or your information by typing {{ and choosing a merge value to insert.')
                             ->columnSpanFull(),
                         EngagementSmsBodyInput::make(context: 'create', form: $form),
                         Actions::make([
