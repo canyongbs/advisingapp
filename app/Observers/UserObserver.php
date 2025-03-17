@@ -42,28 +42,28 @@ use Carbon\Carbon;
 
 class UserObserver
 {
-  public function saving(User $user): void
-  {
-    if ($user->isDirty('password')) {
-      $numPreviousPasswords = app(LocalPasswordSettings::class)->getNumPreviousPasswords();
+    public function saving(User $user): void
+    {
+        if ($user->isDirty('password')) {
+            $numPreviousPasswords = app(LocalPasswordSettings::class)->getNumPreviousPasswords();
 
-      $passwordHistory = $user->password_history ?? [];
+            $passwordHistory = $user->password_history ?? [];
 
-      $oldPassword = $user->getOriginal('password');
+            $oldPassword = $user->getOriginal('password');
 
-      if (! blank($oldPassword)) {
-        $passwordHistory[] = $oldPassword;
-      }
+            if (! blank($oldPassword)) {
+                $passwordHistory[] = $oldPassword;
+            }
 
-      $user->password_history = array_slice($passwordHistory, -$numPreviousPasswords);
+            $user->password_history = array_slice($passwordHistory, -$numPreviousPasswords);
 
-      $user->password_last_updated_at = Carbon::now();
+            $user->password_last_updated_at = Carbon::now();
+        }
     }
-  }
 
-  public function deleted(User $user): void
-  {
-    $user->licenses->each->forceDelete();
-    $user->syncRoles([]);
-  }
+    public function deleted(User $user): void
+    {
+        $user->licenses->each->forceDelete();
+        $user->syncRoles([]);
+    }
 }
