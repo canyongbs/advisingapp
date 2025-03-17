@@ -34,14 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Schema;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 
-use App\Support\AbstractFeatureFlag;
-
-class ProspectStudentRefactor extends AbstractFeatureFlag
-{
-    public function resolve(mixed $scope): mixed
+return new class () extends Migration {
+    public function up(): void
     {
-        return false;
+        Schema::table('prospects', function (Blueprint $table) {
+            $table->dropColumn('email');
+            $table->dropColumn('email_2');
+            $table->dropColumn('mobile');
+            $table->dropColumn('phone');
+            $table->dropColumn('address');
+            $table->dropColumn('address_2');
+            $table->dropColumn('address_3');
+            $table->dropColumn('city');
+            $table->dropColumn('state');
+            $table->dropColumn('postal');
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('prospects', function (Blueprint $table) {
+            $table->string('email')->nullable();
+            $table->string('email_2')->nullable();
+            $table->string('mobile')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('address')->nullable();
+            $table->string('address_2')->nullable();
+            $table->string('address_3')->nullable();
+            $table->string('city')->nullable();
+            $table->string('state')->nullable();
+            $table->string('postal')->nullable();
+        });
+    }
+};

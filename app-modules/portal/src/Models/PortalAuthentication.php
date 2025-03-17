@@ -46,7 +46,6 @@ use Illuminate\Support\Carbon;
 
 /**
  * @property Carbon|null $created_at
- *
  * @mixin IdeHelperPortalAuthentication
  */
 #[NoPermissions]

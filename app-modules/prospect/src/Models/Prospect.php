@@ -63,7 +63,6 @@ use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
 use AdvisingApp\Timeline\Models\Timeline;
 use App\Enums\TagType;
-use App\Features\ProspectStudentRefactor;
 use App\Models\Authenticatable;
 use App\Models\Scopes\HasLicense;
 use App\Models\Tag;
@@ -92,7 +91,6 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 /**
  * @property string $display_name
- *
  * @mixin IdeHelperProspect
  */
 #[ObservedBy([ProspectObserver::class])]
@@ -382,19 +380,11 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
 
     public function canReceiveEmail(): bool
     {
-        if (! ProspectStudentRefactor::active()) {
-            return filled($this->email);
-        }
-
         return filled($this->primaryEmailAddress?->address);
     }
 
     public function canReceiveSms(): bool
     {
-        if (! ProspectStudentRefactor::active()) {
-            return filled($this->mobile);
-        }
-
         return filled($this->primaryPhoneNumber?->number) && $this->primaryPhoneNumber->can_receive_sms;
     }
 
@@ -420,10 +410,6 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
      */
     public function routeNotificationForMail(Notification $notification): array|string|null
     {
-        if (! ProspectStudentRefactor::active()) {
-            return $this->email;
-        }
-
         return $this->primaryEmailAddress?->address;
     }
 
@@ -459,18 +445,6 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
     {
         return Attribute::make(
             get: function (mixed $value, array $attributes): ?string {
-                if (! ProspectStudentRefactor::active()) {
-                    $addressLine = trim("{$attributes['address']} {$attributes['address2']} {$attributes['address3']}");
-
-                    return trim(sprintf(
-                        '%s %s %s %s',
-                        ! empty($addressLine) ? $addressLine . ',' : '',
-                        ! empty($attributes['city']) ? $attributes['city'] . ',' : '',
-                        ! empty($attributes['state']) ? $attributes['state'] : '',
-                        ! empty($attributes['postal']) ? $attributes['postal'] : '',
-                    ));
-                }
-
                 return $this->primaryAddress?->full;
             }
         );

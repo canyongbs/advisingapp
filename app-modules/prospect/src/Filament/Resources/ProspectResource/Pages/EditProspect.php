@@ -44,7 +44,6 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\Concerns\HasP
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
-use App\Features\ProspectStudentRefactor;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
 use Filament\Actions\DeleteAction;
@@ -249,53 +248,7 @@ class EditProspect extends EditRecord
                             ->hiddenLabel()
                             ->addActionLabel('Add address')
                             ->addActionAlignment(Alignment::Start),
-                    ])
-                    ->visible(ProspectStudentRefactor::active()),
-                Section::make('Contact Information')
-                    ->schema([
-                        TextInput::make('email')
-                            ->label('Primary Email')
-                            ->email()
-                            ->maxLength(255),
-                        TextInput::make('email_2')
-                            ->label('Other Email')
-                            ->email()
-                            ->maxLength(255),
-                        TextInput::make('mobile')
-                            ->label('Mobile')
-                            ->string()
-                            ->maxLength(255),
-                        TextInput::make('phone')
-                            ->label('Other Phone')
-                            ->string()
-                            ->maxLength(255),
-                        TextInput::make('address')
-                            ->label('Address')
-                            ->string()
-                            ->maxLength(255),
-                        TextInput::make('address_2')
-                            ->label('Apartment/Unit Number')
-                            ->string()
-                            ->maxLength(255),
-                        TextInput::make('address_3')
-                            ->label('Additional Address')
-                            ->string()
-                            ->maxLength(255),
-                        TextInput::make('city')
-                            ->label('City')
-                            ->string()
-                            ->maxLength(255),
-                        TextInput::make('state')
-                            ->label('State')
-                            ->string()
-                            ->maxLength(255),
-                        TextInput::make('postal')
-                            ->label('Postal')
-                            ->string()
-                            ->maxLength(255),
-                    ])
-                    ->columns(2)
-                    ->hidden(ProspectStudentRefactor::active()),
+                    ]),
                 Section::make('Classification')
                     ->schema([
                         Select::make('status_id')

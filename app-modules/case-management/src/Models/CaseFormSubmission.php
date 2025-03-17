@@ -52,7 +52,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @property Student|Prospect|null $author
- *
  * @mixin IdeHelperCaseFormSubmission
  */
 #[ObservedBy([CaseFormSubmissionObserver::class])]

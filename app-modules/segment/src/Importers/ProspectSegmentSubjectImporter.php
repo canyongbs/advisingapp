@@ -38,11 +38,9 @@ namespace AdvisingApp\Segment\Importers;
 
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Segment\Models\SegmentSubject;
-use App\Features\ProspectStudentRefactor;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
@@ -58,12 +56,7 @@ class ProspectSegmentSubjectImporter extends Importer
                 ->rules(['required', 'email'])
                 ->relationship(
                     resolveUsing: fn (mixed $state) => Prospect::query()
-                        ->when(! ProspectStudentRefactor::active(), function (Builder $query) use ($state) {
-                            return $query->where('email', $state)->orWhere('email_2', $state);
-                        })
-                        ->when(ProspectStudentRefactor::active(), function (Builder $query) use ($state) {
-                            return $query->whereRelation('emailAddresses', 'address', $state);
-                        })
+                        ->whereRelation('emailAddresses', 'address', $state)
                         ->first(),
                 )
                 ->requiredMapping(),

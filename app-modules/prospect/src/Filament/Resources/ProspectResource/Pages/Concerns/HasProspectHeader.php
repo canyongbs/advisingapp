@@ -44,7 +44,6 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ProspectTag
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspect;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
-use App\Features\ProspectStudentRefactor;
 use App\Settings\DisplaySettings;
 use Illuminate\Contracts\View\View;
 
@@ -76,16 +75,8 @@ trait HasProspectHeader
             'details' => [
                 ['Prospect', 'heroicon-m-magnifying-glass-circle'],
                 ...(filled($prospect->preferred) ? [["Goes by \"{$prospect->preferred}\"", 'heroicon-m-heart']] : []),
-                ...(
-                    ProspectStudentRefactor::active()
-                      ? ($prospect->primaryPhoneNumber ? [[$prospect->primaryPhoneNumber->number . (filled($prospect->primaryPhoneNumber->ext) ? " (ext. {$prospect->primaryPhoneNumber->ext})" : '') . (filled($prospect->primaryPhoneNumber->type) ? " ({$prospect->primaryPhoneNumber->type})" : ''), 'heroicon-m-phone']] : [])
-                      : (filled($prospect->phone) ? [[$prospect->phone, 'heroicon-m-phone']] : [])
-                ),
-                ...(
-                    ProspectStudentRefactor::active()
-                    ? ($prospect->primaryEmailAddress ? [[$prospect->primaryEmailAddress->address . (filled($prospect->primaryEmailAddress->type) ? " ({$prospect->primaryEmailAddress->type})" : ''), 'heroicon-m-envelope']] : [])
-                    : (filled($prospect->email) ? [[$prospect->email, 'heroicon-m-envelope']] : [])
-                ),
+                ...($prospect->primaryPhoneNumber ? [[$prospect->primaryPhoneNumber->number . (filled($prospect->primaryPhoneNumber->ext) ? " (ext. {$prospect->primaryPhoneNumber->ext})" : '') . (filled($prospect->primaryPhoneNumber->type) ? " ({$prospect->primaryPhoneNumber->type})" : ''), 'heroicon-m-phone']] : []),
+                ...($prospect->primaryEmailAddress ? [[$prospect->primaryEmailAddress->address . (filled($prospect->primaryEmailAddress->type) ? " ({$prospect->primaryEmailAddress->type})" : ''), 'heroicon-m-envelope']] : []),
                 ...(filled($prospect->hsgrad) ? [[$prospect->hsgrad, 'heroicon-m-building-library']] : []),
             ],
             'hasSisSystem' => $sisSettings->is_enabled && $sisSettings->sis_system,
