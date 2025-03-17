@@ -88,6 +88,7 @@ class SwitchTenantDatabasesTask implements SwitchTenantTask
         config([
             'database.default' => $this->tenantConnectionName,
             'queue.failed.database' => $this->tenantConnectionName,
+            'queue.batching.database' => $this->tenantConnectionName,
         ]);
 
         // Octane will have an old `db` instance in the Model::$resolver.
@@ -111,6 +112,7 @@ class SwitchTenantDatabasesTask implements SwitchTenantTask
         config([
             'database.default' => 'landlord',
             'queue.failed.database' => 'landlord',
+            'queue.batching.database' => 'landlord',
         ]);
 
         // Octane will have an old `db` instance in the Model::$resolver.
