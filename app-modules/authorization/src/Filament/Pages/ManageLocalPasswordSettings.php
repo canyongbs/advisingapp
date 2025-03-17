@@ -37,7 +37,6 @@
 namespace AdvisingApp\Authorization\Filament\Pages;
 
 use AdvisingApp\Authorization\Settings\LocalPasswordSettings;
-use App\Features\LocalPassword;
 use App\Filament\Clusters\Authentication;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -61,7 +60,7 @@ class ManageLocalPasswordSettings extends SettingsPage
         /** @var User $user */
         $user = auth()->user();
 
-        return LocalPassword::active() && $user->isSuperAdmin();
+        return $user->isSuperAdmin();
     }
 
     public function form(Form $form): Form

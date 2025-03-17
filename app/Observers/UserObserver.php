@@ -37,7 +37,6 @@
 namespace App\Observers;
 
 use AdvisingApp\Authorization\Settings\LocalPasswordSettings;
-use App\Features\LocalPassword;
 use App\Models\User;
 use Carbon\Carbon;
 
@@ -45,7 +44,7 @@ class UserObserver
 {
     public function saving(User $user): void
     {
-        if (LocalPassword::active() && $user->isDirty('password')) {
+        if ($user->isDirty('password')) {
             $numPreviousPasswords = app(LocalPasswordSettings::class)->getNumPreviousPasswords();
 
             $passwordHistory = $user->password_history ?? [];
