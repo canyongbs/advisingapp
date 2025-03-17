@@ -38,6 +38,7 @@ namespace App\Filament\Pages;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\MeetingCenter\Managers\CalendarManager;
+use App\Features\EmailSignature;
 use App\Models\User;
 use App\Settings\CollegeBrandingSettings;
 use App\Settings\DisplaySettings;
@@ -66,6 +67,8 @@ use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Exceptions\Halt;
+use FilamentTiptapEditor\Enums\TiptapOutput;
+use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
@@ -304,6 +307,22 @@ class EditProfile extends Page
                         Section::make('Days')
                             ->schema($this->getHoursForDays('office_hours'))
                             ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
+                    ]),
+                Section::make('Email Signature')
+                    ->aside()
+                    ->visible(EmailSignature::active() && $hasCrmLicense)
+                    ->schema([
+                        Toggle::make('is_signature_enabled')
+                            ->label('Enable Email Signature')
+                            ->live(),
+                        TiptapEditor::make('signature')
+                            ->profile('signature')
+                            ->extraInputAttributes(['style' => 'min-height: 12rem;'])
+                            ->output(TiptapOutput::Json)
+                            ->required(fn (Get $get) => $get('is_signature_enabled'))
+                            ->visibility('public')
+                            ->disk('s3')
+                            ->visible(fn (Get $get) => $get('is_signature_enabled')),
                     ]),
                 Section::make('Out of Office')
                     ->aside()
