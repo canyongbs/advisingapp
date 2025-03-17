@@ -49,6 +49,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * @property Student|Prospect|null $author
+ *
  * @mixin IdeHelperSurveySubmission
  */
 class SurveySubmission extends Submission

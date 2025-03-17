@@ -88,6 +88,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 /**
  * @property string $display_name
  * @property string $mobile
+ *
  * @mixin IdeHelperStudent
  */
 class Student extends BaseAuthenticatable implements Auditable, Subscribable, Educatable, HasFilamentResource, CanBeNotified

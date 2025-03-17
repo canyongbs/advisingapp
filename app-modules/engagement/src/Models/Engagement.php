@@ -72,6 +72,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @property-read Educatable $recipient
+ *
  * @mixin IdeHelperEngagement
  */
 #[ObservedBy([EngagementObserver::class])]

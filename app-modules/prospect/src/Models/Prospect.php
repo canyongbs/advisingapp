@@ -91,6 +91,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 /**
  * @property string $display_name
+ *
  * @mixin IdeHelperProspect
  */
 #[ObservedBy([ProspectObserver::class])]

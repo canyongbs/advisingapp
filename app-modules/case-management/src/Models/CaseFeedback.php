@@ -43,6 +43,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property-read Educatable $assignee
+ *
  * @mixin IdeHelperCaseFeedback
  */
 class CaseFeedback extends BaseModel

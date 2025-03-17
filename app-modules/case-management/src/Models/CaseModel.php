@@ -79,6 +79,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 /**
  * @property-read Student|Prospect $respondent
+ *
  * @mixin IdeHelperCaseModel
  */
 #[ObservedBy([CaseObserver::class])]

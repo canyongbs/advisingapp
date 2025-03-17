@@ -50,6 +50,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * @property Student|Prospect|null $author
+ *
  * @mixin IdeHelperFormSubmission
  */
 #[ObservedBy([FormSubmissionObserver::class])]

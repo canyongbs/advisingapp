@@ -69,6 +69,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @property-read Student|Prospect $concern
+ *
  * @mixin IdeHelperTask
  */
 #[ObservedBy([TaskObserver::class])]
