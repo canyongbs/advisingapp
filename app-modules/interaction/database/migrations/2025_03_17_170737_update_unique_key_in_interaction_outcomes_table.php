@@ -44,11 +44,12 @@ return new class () extends Migration {
     {
         Schema::table('interaction_outcomes', function (Blueprint $table) {
             $table->dropUnique(['is_default', 'deleted_at']);
+
             DB::statement('
-            CREATE UNIQUE INDEX interaction_outcomes_is_default_unique 
-            ON interaction_outcomes (is_default) 
-            WHERE is_default = true AND deleted_at IS NULL;
-        ');
+              CREATE UNIQUE INDEX interaction_outcomes_is_default_unique 
+              ON interaction_outcomes (is_default) 
+              WHERE is_default = true AND deleted_at IS NULL;
+          ');
         });
     }
 
@@ -56,6 +57,7 @@ return new class () extends Migration {
     {
         Schema::table('interaction_outcomes', function (Blueprint $table) {
             DB::statement('DROP INDEX IF EXISTS interaction_outcomes_is_default_unique;');
+
             $table->unique(['is_default', 'deleted_at']);
         });
     }
