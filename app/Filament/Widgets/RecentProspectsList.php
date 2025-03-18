@@ -72,8 +72,10 @@ class RecentProspectsList extends BaseWidget
                 IdColumn::make(),
                 TextColumn::make(Prospect::displayNameKey())
                     ->label('Name'),
-                TextColumn::make('email'),
-                TextColumn::make('mobile')
+                TextColumn::make('primaryEmailAddress.address')
+                    ->label('Email'),
+                TextColumn::make('primaryPhoneNumber.number')
+                    ->label('Phone')
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('status')
                     ->badge()

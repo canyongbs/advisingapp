@@ -62,14 +62,6 @@ class ProspectExporter extends Exporter
             static::notDefault($type::make('preferred')
                 ->label('Preferred Name')),
             static::notDefault($type::make('description')),
-            $type::make('email'),
-            static::notDefault($type::make('email_2')
-                ->label('Email 2')),
-            static::notDefault($type::make('mobile')),
-            $type::make('phone'),
-            static::notDefault($type::make('address')),
-            $type::make('address_2')
-                ->label('Address 2'),
             static::notDefault($type::make('birthdate')),
             static::notDefault($type::make('hsgrad')
                 ->label('High School Grad')),

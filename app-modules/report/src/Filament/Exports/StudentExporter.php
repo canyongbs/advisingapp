@@ -68,20 +68,6 @@ class StudentExporter extends Exporter
                 ->label('Full Name')),
             static::notDefault($type::make('preferred')
                 ->label('Preferred Name')),
-            $type::make('email')
-                ->label('Email Address'),
-            static::notDefault($type::make('email_2')
-                ->label('Email Address 2')),
-            static::notDefault($type::make('mobile')),
-            $type::make('phone'),
-            static::notDefault($type::make('address')),
-            static::notDefault($type::make('address2')
-                ->label('Address 2')),
-            static::notDefault($type::make('address3')
-                ->label('Address 3')),
-            static::notDefault($type::make('city')),
-            static::notDefault($type::make('state')),
-            static::notDefault($type::make('postal')),
             static::notDefault($type::make('birthdate')),
             static::notDefault($type::make('hsgrad')
                 ->label('High School Graduation')),
