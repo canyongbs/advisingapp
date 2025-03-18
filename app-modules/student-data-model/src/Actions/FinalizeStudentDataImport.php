@@ -113,15 +113,15 @@ class FinalizeStudentDataImport
             DB::statement("drop table if exists \"import_{$studentsImport->getKey()}_students\"");
 
             if ($emailAddressesImport) {
-                DB::statement("drop table if exists import_{$emailAddressesImport->getKey()}_email_addresses");
+                DB::statement("drop table if exists \"import_{$emailAddressesImport->getKey()}_email_addresses\"");
             }
 
             if ($phoneNumbersImport) {
-                DB::statement("drop table if exists import_{$phoneNumbersImport->getKey()}_phone_numbers");
+                DB::statement("drop table if exists \"import_{$phoneNumbersImport->getKey()}_phone_numbers\"");
             }
 
             if ($addressesImport) {
-                DB::statement("drop table if exists import_{$addressesImport->getKey()}_addresses");
+                DB::statement("drop table if exists \"import_{$addressesImport->getKey()}_addresses\"");
             }
 
             if ($programsImport) {
