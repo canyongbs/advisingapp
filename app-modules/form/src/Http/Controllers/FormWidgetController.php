@@ -306,14 +306,14 @@ class FormWidgetController extends Controller
             $emailAddress = $prospect->emailAddresses()->make([
                 'address' => $data['email'],
             ]);
-            $prospect->primaryEmail()->associate($emailAddress);
+            $prospect->primaryEmailAddress()->associate($emailAddress);
 
             $phoneNumber = $prospect->phoneNumbers()->make([
                 'number' => $data['mobile'],
                 'type' => 'Mobile',
                 'can_receive_sms' => true,
             ]);
-            $prospect->primaryPhone()->associate($phoneNumber);
+            $prospect->primaryPhoneNumber()->associate($phoneNumber);
 
             $address = $prospect->addresses()->make([
                 'line_1' => $data['address'],

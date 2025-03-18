@@ -61,7 +61,7 @@ it('will create an engagement response when a message is received', function () 
     $studentPhoneNumber = $student->phoneNumbers()->create([
         'number' => $request->all()['From'],
     ]);
-    $student->primaryPhone()->associate($studentPhoneNumber)->save();
+    $student->primaryPhoneNumber()->associate($studentPhoneNumber)->save();
 
     $messageReceived = new MessageReceived(TwilioMessageReceivedData::fromRequest($request));
 
