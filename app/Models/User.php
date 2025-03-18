@@ -419,7 +419,6 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             ->singleFile();
 
         $this->addMediaCollection('signature')
-            ->singleFile()
             ->acceptsMimeTypes([
                 'image/png',
                 'image/jpeg',
