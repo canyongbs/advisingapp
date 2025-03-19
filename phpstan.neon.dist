@@ -22,3 +22,6 @@ parameters:
 
     ignoreErrors:
         - '#Call to an undefined static method Illuminate\\Support\\Facades\\Queue::pushed\(\)#'
+        -
+            identifier: larastan.noEnvCallsOutsideOfConfig
+            path: app-modules/*/config/*
