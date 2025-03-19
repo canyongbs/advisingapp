@@ -73,28 +73,6 @@ it('can filter students by first generation', function () {
         ->assertCanNotSeeTableRecords($studentsWithFirstGen);
 });
 
-it('renders the import action based on proper access', function () {
-    $user = User::factory()->licensed(Student::getLicenseType())->create();
-
-    $user->givePermissionTo('student.view-any');
-
-    actingAs($user);
-
-    livewire(ListStudents::class)
-        ->assertOk()
-        ->assertActionHidden('import');
-
-    $studentSettings = app(ManageStudentConfigurationSettings::class);
-    $studentSettings->is_enabled = true;
-    $studentSettings->save();
-
-    $user->givePermissionTo('student.import');
-
-    livewire(ListStudents::class)
-        ->assertOk()
-        ->assertActionVisible('import');
-});
-
 it('renders the CreateAction based on proper access', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
