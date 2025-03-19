@@ -106,6 +106,7 @@
         "stechstudio/filament-impersonate": "^3.5",
         "talkroute/message-segment-calculator": "^1.0",
         "tapp/filament-timezone-field": "^3.0",
+        "theiconic/name-parser": "^1.2",
         "tpetry/laravel-postgresql-enhanced": "^2.0",
         "twilio/sdk": "^8.3.15",
         "ysfkaya/filament-phone-input": "^3.1"

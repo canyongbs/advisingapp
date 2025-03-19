@@ -38,7 +38,6 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\ProspectStudentRefactor;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
@@ -259,53 +258,7 @@ class CreateStudent extends CreateRecord
                             ->hiddenLabel()
                             ->addActionLabel('Add address')
                             ->addActionAlignment(Alignment::Start),
-                    ])
-                    ->visible(ProspectStudentRefactor::active()),
-                Section::make('Contact Information')
-                    ->schema([
-                        TextInput::make('email')
-                            ->label('Primary Email')
-                            ->email()
-                            ->unique('students', 'email')
-                            ->required(),
-                        TextInput::make('email_2')
-                            ->label('Other Email')
-                            ->email(),
-                        TextInput::make('mobile')
-                            ->label('Mobile')
-                            ->string()
-                            ->maxLength(255),
-                        TextInput::make('phone')
-                            ->label('Other Phone')
-                            ->string()
-                            ->maxLength(255),
-                        TextInput::make('address')
-                            ->label('Address')
-                            ->string()
-                            ->maxLength(255),
-                        TextInput::make('address2')
-                            ->label('Apartment/Unit Number')
-                            ->string()
-                            ->maxLength(255),
-                        TextInput::make('address3')
-                            ->label('Additional Address')
-                            ->string()
-                            ->maxLength(255),
-                        TextInput::make('city')
-                            ->label('City')
-                            ->string()
-                            ->maxLength(255),
-                        TextInput::make('state')
-                            ->label('State')
-                            ->string()
-                            ->maxLength(255),
-                        TextInput::make('postal')
-                            ->label('Postal')
-                            ->string()
-                            ->maxLength(255),
-                    ])
-                    ->columns(3)
-                    ->hidden(ProspectStudentRefactor::active()),
+                    ]),
                 Section::make('Engagement Restrictions')
                     ->schema([
                         Toggle::make('sms_opt_out')

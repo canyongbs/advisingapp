@@ -34,30 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Actions;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Schema;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 
-use AdvisingApp\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Support\Facades\Log;
-
-class FindEngagementResponseSender implements EngagementResponseSenderFinder
-{
-    public function find(string $phoneNumber): Student|Prospect|null
+return new class () extends Migration {
+    public function up(): void
     {
-        // Student currently takes priority, but determine if we potentially want to store this response
-        // For *all* potential matches instead of just a singular result.
-        if (! is_null($student = Student::whereRelation('phoneNumbers', 'number', $phoneNumber)->first())) {
-            return $student;
-        }
-
-        if (! is_null($prospect = Prospect::whereRelation('phoneNumbers', 'number', $phoneNumber)->first())) {
-            return $prospect;
-        }
-
-        // TODO Perhaps send a notification to an admin, but don't need to throw an exception.
-        Log::error("Could not find a Student or Prospect with the given phone number: {$phoneNumber}");
-
-        return null;
+        Schema::table('prospects', function (Blueprint $table) {
+            $table->dropColumn('email');
+            $table->dropColumn('email_2');
+            $table->dropColumn('mobile');
+            $table->dropColumn('phone');
+            $table->dropColumn('address');
+            $table->dropColumn('address_2');
+            $table->dropColumn('address_3');
+            $table->dropColumn('city');
+            $table->dropColumn('state');
+            $table->dropColumn('postal');
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('prospects', function (Blueprint $table) {
+            $table->string('email')->nullable();
+            $table->string('email_2')->nullable();
+            $table->string('mobile')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('address')->nullable();
+            $table->string('address_2')->nullable();
+            $table->string('address_3')->nullable();
+            $table->string('city')->nullable();
+            $table->string('state')->nullable();
+            $table->string('postal')->nullable();
+        });
+    }
+};

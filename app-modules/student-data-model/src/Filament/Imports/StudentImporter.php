@@ -37,7 +37,6 @@
 namespace AdvisingApp\StudentDataModel\Filament\Imports;
 
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\ProspectStudentRefactor;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
@@ -108,64 +107,6 @@ class StudentImporter extends Importer
                     'nullable',
                     'integer',
                 ]),
-            ...(ProspectStudentRefactor::active() ? [] : [
-                ImportColumn::make('email')
-                    ->example('johnsmith@gmail.com')
-                    ->rules([
-                        'nullable',
-                        'email',
-                        'max:255',
-                    ]),
-                ImportColumn::make('mobile')
-                    ->example('+1 (555) 555-5555')
-                    ->rules([
-                        'nullable',
-                        'string',
-                        'max:255',
-                    ]),
-                ImportColumn::make('address')
-                    ->example('123 Main St.')
-                    ->rules([
-                        'nullable',
-                        'string',
-                        'max:255',
-                    ]),
-                ImportColumn::make('address2')
-                    ->example('Apt. 1')
-                    ->rules([
-                        'nullable',
-                        'string',
-                        'max:255',
-                    ]),
-                ImportColumn::make('address3')
-                    ->example('xyz')
-                    ->rules([
-                        'nullable',
-                        'string',
-                        'max:255',
-                    ]),
-                ImportColumn::make('city')
-                    ->example('Los Angeles')
-                    ->rules([
-                        'nullable',
-                        'string',
-                        'max:255',
-                    ]),
-                ImportColumn::make('state')
-                    ->example('california')
-                    ->rules([
-                        'nullable',
-                        'string',
-                        'max:255',
-                    ]),
-                ImportColumn::make('postal')
-                    ->example('83412')
-                    ->rules([
-                        'nullable',
-                        'string',
-                        'max:255',
-                    ]),
-            ]),
             ImportColumn::make('sms_opt_out')
                 ->label('SMS opt out')
                 ->example('false')

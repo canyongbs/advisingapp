@@ -275,29 +275,60 @@ class FormWidgetController extends Controller
     {
         $data = $request->validated();
 
-        $prospect = Prospect::query()
-            ->make([
-                ...$data,
-                'full_name' => "{$data['first_name']} {$data['last_name']}",
+        $prospect = DB::transaction(function () use ($data): Prospect {
+            $prospect = Prospect::query()
+                ->make([
+                    'first_name' => $data['first_name'],
+                    'last_name' => $data['last_name'],
+                    'preferred' => $data['preferred'],
+                    'full_name' => "{$data['first_name']} {$data['last_name']}",
+                    'birthdate' => $data['birthdate'],
+                ]);
+
+            $status = ProspectStatus::query()
+                ->where('classification', SystemProspectClassification::New)
+                ->first();
+
+            if ($status) {
+                $prospect->status()->associate($status);
+            }
+
+            $source = ProspectSource::query()
+                ->where('name', 'Advising App')
+                ->first();
+
+            if ($source) {
+                $prospect->source()->associate($source);
+            }
+
+            $prospect->save();
+
+            $emailAddress = $prospect->emailAddresses()->make([
+                'address' => $data['email'],
             ]);
+            $prospect->primaryEmailAddress()->associate($emailAddress);
 
-        $status = ProspectStatus::query()
-            ->where('classification', SystemProspectClassification::New)
-            ->first();
+            $phoneNumber = $prospect->phoneNumbers()->make([
+                'number' => $data['mobile'],
+                'type' => 'Mobile',
+                'can_receive_sms' => true,
+            ]);
+            $prospect->primaryPhoneNumber()->associate($phoneNumber);
 
-        if ($status) {
-            $prospect->status()->associate($status);
-        }
+            $address = $prospect->addresses()->make([
+                'line_1' => $data['address'],
+                'line_2' => $data['address_2'],
+                'city' => $data['city'],
+                'state' => $data['state'],
+                'postal' => $data['postal'],
+                'type' => 'Home',
+            ]);
+            $prospect->primaryAddress()->associate($address);
 
-        $source = ProspectSource::query()
-            ->where('name', 'Advising App')
-            ->first();
+            $prospect->save();
 
-        if ($source) {
-            $prospect->source()->associate($source);
-        }
-
-        $prospect->save();
+            return $prospect;
+        });
 
         $code = random_int(100000, 999999);
 

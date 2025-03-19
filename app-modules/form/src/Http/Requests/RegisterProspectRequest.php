@@ -58,7 +58,7 @@ class RegisterProspectRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['email', 'string', 'required', Rule::unique('prospects', 'email')],
+            'email' => ['email', 'string', 'required', Rule::unique('prospect_email_addresses', 'address')],
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
             'preferred' => ['required', 'string', 'max:255'],

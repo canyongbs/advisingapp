@@ -34,30 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Actions;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Support\Facades\Log;
-
-class FindEngagementResponseSender implements EngagementResponseSenderFinder
-{
-    public function find(string $phoneNumber): Student|Prospect|null
+return new class () extends Migration {
+    public function up(): void
     {
-        // Student currently takes priority, but determine if we potentially want to store this response
-        // For *all* potential matches instead of just a singular result.
-        if (! is_null($student = Student::whereRelation('phoneNumbers', 'number', $phoneNumber)->first())) {
-            return $student;
-        }
+        Schema::table('interaction_outcomes', function (Blueprint $table) {
+            $table->dropUnique(['is_default', 'deleted_at']);
 
-        if (! is_null($prospect = Prospect::whereRelation('phoneNumbers', 'number', $phoneNumber)->first())) {
-            return $prospect;
-        }
-
-        // TODO Perhaps send a notification to an admin, but don't need to throw an exception.
-        Log::error("Could not find a Student or Prospect with the given phone number: {$phoneNumber}");
-
-        return null;
+            DB::statement('
+              CREATE UNIQUE INDEX interaction_outcomes_is_default_unique 
+              ON interaction_outcomes (is_default) 
+              WHERE is_default = true AND deleted_at IS NULL;
+          ');
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('interaction_outcomes', function (Blueprint $table) {
+            DB::statement('DROP INDEX IF EXISTS interaction_outcomes_is_default_unique;');
+
+            $table->unique(['is_default', 'deleted_at']);
+        });
+    }
+};

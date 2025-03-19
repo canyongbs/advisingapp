@@ -77,6 +77,7 @@ return [
         'simple' => ['heading', 'hr', 'bullet-list', 'ordered-list', 'checked-list', '|', 'bold', 'italic', 'lead', 'small', '|', 'link', 'media'],
         'minimal' => ['bold', 'italic', 'link', 'bullet-list', 'ordered-list'],
         'email' => ['bold', 'italic', 'small', 'link', 'color', '|', 'heading', 'bullet-list', 'ordered-list', 'hr', 'media', '|', 'clear-formatting'],
+        'signature' => ['bold', 'italic', 'strike', 'underline', 'lead', 'small', 'color', 'align-left', 'align-center', 'align-right', 'media', 'link', 'clear-formatting'],
         'sms' => [],
     ],
 

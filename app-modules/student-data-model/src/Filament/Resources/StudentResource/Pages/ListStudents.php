@@ -50,7 +50,6 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
 use App\Enums\TagType;
-use App\Features\ProspectStudentRefactor;
 use App\Models\Tag;
 use App\Models\User;
 use Filament\Actions\CreateAction;
@@ -81,29 +80,14 @@ class ListStudents extends ListRecords
                     ->label('Name')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('email')
-                    ->label('Email')
-                    ->searchable()
-                    ->hidden(ProspectStudentRefactor::active())
-                    ->sortable(),
                 TextColumn::make('primaryEmailAddress.address')
                     ->label('Email')
                     ->searchable()
-                    ->visible(ProspectStudentRefactor::active())
-                    ->sortable(),
-                TextColumn::make('mobile')
-                    ->label('Mobile')
-                    ->searchable()
-                    ->hidden(ProspectStudentRefactor::active())
                     ->sortable(),
                 TextColumn::make('primaryPhoneNumber.number')
                     ->label('Phone')
                     ->searchable()
-                    ->visible(ProspectStudentRefactor::active())
                     ->sortable(),
-                TextColumn::make('phone')
-                    ->hidden(ProspectStudentRefactor::active())
-                    ->searchable(),
                 TextColumn::make('sisid')
                     ->label('SIS ID')
                     ->searchable(),

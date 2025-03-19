@@ -97,7 +97,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \App\Models\Import|null $import
+ * @property-read \App\Models\Import $import
  * @method static \Illuminate\Database\Eloquent\Builder<static>|FailedImportRow newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|FailedImportRow newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|FailedImportRow onlyTrashed()
@@ -560,6 +560,8 @@ namespace App\Models{
  * @property bool $is_branding_bar_dismissed
  * @property \Illuminate\Support\Carbon|null $first_login_at
  * @property \Illuminate\Support\Carbon|null $last_logged_in_at
+ * @property array<array-key, mixed>|null $password_history
+ * @property \Illuminate\Support\Carbon $password_last_updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\AiAssistantUpvote> $aiAssistantUpvotes
  * @property-read int|null $ai_assistant_upvotes_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\AiThreadFolder> $aiThreadFolders
@@ -669,6 +671,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereOutOfOfficeIsEnabled($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereOutOfOfficeStartsAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePassword($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePasswordHistory($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePasswordLastUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePhoneNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePronounsId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePublicProfileSlug($value)
@@ -4138,18 +4142,8 @@ namespace AdvisingApp\Prospect\Models{
  * @property string $full_name
  * @property string|null $preferred
  * @property string|null $description
- * @property string|null $email
- * @property string|null $email_2
- * @property string|null $mobile
  * @property bool $sms_opt_out
  * @property bool $email_bounce
- * @property string|null $phone
- * @property string|null $address
- * @property string|null $address_2
- * @property string|null $address_3
- * @property string|null $city
- * @property string|null $state
- * @property string|null $postal
  * @property \Illuminate\Support\Carbon|null $birthdate
  * @property string|null $hsgrad
  * @property string|null $created_by_id
@@ -4235,33 +4229,23 @@ namespace AdvisingApp\Prospect\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Prospect newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Prospect onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Prospect query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Prospect whereAddress($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Prospect whereAddress2($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Prospect whereAddress3($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Prospect whereBirthdate($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Prospect whereCity($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Prospect whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Prospect whereCreatedById($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Prospect whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Prospect whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Prospect whereEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Prospect whereEmail2($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Prospect whereEmailBounce($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Prospect whereFirstName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Prospect whereFullName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Prospect whereHsgrad($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Prospect whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Prospect whereLastName($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Prospect whereMobile($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Prospect wherePhone($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Prospect wherePostal($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Prospect wherePreferred($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Prospect wherePrimaryAddressId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Prospect wherePrimaryEmailId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Prospect wherePrimaryPhoneId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Prospect whereSmsOptOut($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Prospect whereSourceId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Prospect whereState($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Prospect whereStatusId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Prospect whereStudentId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Prospect whereUpdatedAt($value)
@@ -4943,17 +4927,8 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property string|null $last
  * @property string|null $full_name
  * @property string|null $preferred
- * @property string|null $email
- * @property string|null $email_2
  * @property bool $sms_opt_out
  * @property bool $email_bounce
- * @property string|null $phone
- * @property string|null $address
- * @property string|null $address2
- * @property string|null $address3
- * @property string|null $city
- * @property string|null $state
- * @property string|null $postal
  * @property \Illuminate\Support\Carbon|null $birthdate
  * @property int|null $hsgrad
  * @property bool $dual
@@ -5051,18 +5026,12 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereAddress($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereAddress2($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereAddress3($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereBirthdate($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereCity($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereCreatedAtSource($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereDfw($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereDual($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereEmail2($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereEmailBounce($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereEthnicity($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereFETerm($value)
@@ -5074,11 +5043,8 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereHsgrad($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereLast($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereLastlmslogin($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereMobile($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereMrETerm($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereOtherid($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Student wherePhone($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Student wherePostal($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student wherePreferred($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student wherePrimaryAddressId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student wherePrimaryEmailId($value)
@@ -5086,7 +5052,6 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereSap($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereSisid($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereSmsOptOut($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereState($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereUpdatedAtSource($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student withTrashed()

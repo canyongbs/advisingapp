@@ -34,30 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Actions;
+namespace App\Features;
 
-use AdvisingApp\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Support\Facades\Log;
+use App\Support\AbstractFeatureFlag;
 
-class FindEngagementResponseSender implements EngagementResponseSenderFinder
+class EmailSignature extends AbstractFeatureFlag
 {
-    public function find(string $phoneNumber): Student|Prospect|null
+    public function resolve(mixed $scope): mixed
     {
-        // Student currently takes priority, but determine if we potentially want to store this response
-        // For *all* potential matches instead of just a singular result.
-        if (! is_null($student = Student::whereRelation('phoneNumbers', 'number', $phoneNumber)->first())) {
-            return $student;
-        }
-
-        if (! is_null($prospect = Prospect::whereRelation('phoneNumbers', 'number', $phoneNumber)->first())) {
-            return $prospect;
-        }
-
-        // TODO Perhaps send a notification to an admin, but don't need to throw an exception.
-        Log::error("Could not find a Student or Prospect with the given phone number: {$phoneNumber}");
-
-        return null;
+        return false;
     }
 }
