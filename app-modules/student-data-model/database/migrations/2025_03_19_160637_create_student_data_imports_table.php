@@ -34,38 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Actions;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\StudentDataModel\Models\StudentDataImport;
-use Illuminate\Support\Facades\DB;
-
-class CreateTemporaryStudentDataImportTables
-{
-    public function execute(
-        StudentDataImport $import,
-    ): void {
-        DB::transaction(function () use ($import) {
-            DB::statement("create table \"import_{$import->studentsImport->getKey()}_students\" (like \"students\" including all)");
-
-            if ($import->emailAddressesImport) {
-                DB::statement("create table \"import_{$import->emailAddressesImport->getKey()}_email_addresses\" (like \"student_email_addresses\" including all)");
-            }
-
-            if ($import->phoneNumbersImport) {
-                DB::statement("create table \"import_{$import->phoneNumbersImport->getKey()}_phone_numbers\" (like \"student_phone_numbers\" including all)");
-            }
-
-            if ($import->addressesImport) {
-                DB::statement("create table \"import_{$import->addressesImport->getKey()}_addresses\" (like \"student_addresses\" including all)");
-            }
-
-            if ($import->programsImport) {
-                DB::statement("create table \"import_{$import->programsImport->getKey()}_programs\" (like \"programs\" including all)");
-            }
-
-            if ($import->enrollmentsImport) {
-                DB::statement("create table \"import_{$import->enrollmentsImport->getKey()}_enrollments\" (like \"enrollments\" including all)");
-            }
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::create('student_data_imports', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->foreignUuid('user_id')->constrained();
+            $table->foreignUuid('students_import_id')->constrained('imports')->cascadeOnDelete();
+            $table->foreignUuid('email_addresses_import_id')->nullable()->constrained('imports')->nullOnDelete();
+            $table->foreignUuid('phone_numbers_import_id')->nullable()->constrained('imports')->nullOnDelete();
+            $table->foreignUuid('addresses_import_id')->nullable()->constrained('imports')->nullOnDelete();
+            $table->foreignUuid('programs_import_id')->nullable()->constrained('imports')->nullOnDelete();
+            $table->foreignUuid('enrollments_import_id')->nullable()->constrained('imports')->nullOnDelete();
+            $table->string('job_batch_id')->nullable();
+            $table->timestamp('started_at')->nullable();
+            $table->timestamp('completed_at')->nullable();
+            $table->timestamp('canceled_at')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
-}
+
+    public function down(): void
+    {
+        Schema::dropIfExists('student_data_imports');
+    }
+};

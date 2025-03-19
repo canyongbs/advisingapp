@@ -34,38 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Actions;
+namespace AdvisingApp\StudentDataModel\Filament\Pages;
 
-use AdvisingApp\StudentDataModel\Models\StudentDataImport;
-use Illuminate\Support\Facades\DB;
+use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
+use App\Features\StudentDataImportTrackingFeature;
+use Filament\Pages\Page;
 
-class CreateTemporaryStudentDataImportTables
+class ManageStudentSyncs extends Page
 {
-    public function execute(
-        StudentDataImport $import,
-    ): void {
-        DB::transaction(function () use ($import) {
-            DB::statement("create table \"import_{$import->studentsImport->getKey()}_students\" (like \"students\" including all)");
+    protected static ?string $navigationLabel = 'Sync History';
 
-            if ($import->emailAddressesImport) {
-                DB::statement("create table \"import_{$import->emailAddressesImport->getKey()}_email_addresses\" (like \"student_email_addresses\" including all)");
-            }
+    protected static ?string $title = 'Records Sync';
 
-            if ($import->phoneNumbersImport) {
-                DB::statement("create table \"import_{$import->phoneNumbersImport->getKey()}_phone_numbers\" (like \"student_phone_numbers\" including all)");
-            }
+    protected static ?int $navigationSort = 30;
 
-            if ($import->addressesImport) {
-                DB::statement("create table \"import_{$import->addressesImport->getKey()}_addresses\" (like \"student_addresses\" including all)");
-            }
+    protected static ?string $navigationGroup = 'Retention CRM';
 
-            if ($import->programsImport) {
-                DB::statement("create table \"import_{$import->programsImport->getKey()}_programs\" (like \"programs\" including all)");
-            }
+    protected static string $view = 'student-data-model::filament.pages.manage-student-syncs';
 
-            if ($import->enrollmentsImport) {
-                DB::statement("create table \"import_{$import->enrollmentsImport->getKey()}_enrollments\" (like \"enrollments\" including all)");
-            }
-        });
+    public static function canAccess(): bool
+    {
+        if (! StudentDataImportTrackingFeature::active()) {
+            return false;
+        }
+
+        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
+            return false;
+        }
+
+        if (! auth()->user()->can('record_sync.view-any')) {
+            return false;
+        }
+
+        return parent::canAccess();
     }
 }

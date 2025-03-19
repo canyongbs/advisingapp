@@ -34,38 +34,66 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Actions;
+namespace AdvisingApp\StudentDataModel\DataTransferObjects;
 
-use AdvisingApp\StudentDataModel\Models\StudentDataImport;
-use Illuminate\Support\Facades\DB;
+use Spatie\LaravelData\Data;
 
-class CreateTemporaryStudentDataImportTables
+class StudentDataImportProgress extends Data
 {
-    public function execute(
-        StudentDataImport $import,
-    ): void {
-        DB::transaction(function () use ($import) {
-            DB::statement("create table \"import_{$import->studentsImport->getKey()}_students\" (like \"students\" including all)");
+    public function __construct(
+        public int $processed,
+        public int $total,
+        public int $successful,
+        public string $failedRowsCsvUrl,
+    ) {}
 
-            if ($import->emailAddressesImport) {
-                DB::statement("create table \"import_{$import->emailAddressesImport->getKey()}_email_addresses\" (like \"student_email_addresses\" including all)");
-            }
+    public function getSuccessfulPercentage(): float
+    {
+        if ($this->total <= 0) {
+            return 0;
+        }
 
-            if ($import->phoneNumbersImport) {
-                DB::statement("create table \"import_{$import->phoneNumbersImport->getKey()}_phone_numbers\" (like \"student_phone_numbers\" including all)");
-            }
+        $percentage = ($this->successful / $this->total) * 100;
 
-            if ($import->addressesImport) {
-                DB::statement("create table \"import_{$import->addressesImport->getKey()}_addresses\" (like \"student_addresses\" including all)");
-            }
+        if ($percentage > 100) {
+            return 100;
+        }
 
-            if ($import->programsImport) {
-                DB::statement("create table \"import_{$import->programsImport->getKey()}_programs\" (like \"programs\" including all)");
-            }
+        return $percentage;
+    }
 
-            if ($import->enrollmentsImport) {
-                DB::statement("create table \"import_{$import->enrollmentsImport->getKey()}_enrollments\" (like \"enrollments\" including all)");
-            }
-        });
+    public function getFailed(): int
+    {
+        return $this->processed - $this->successful;
+    }
+
+    public function getFailedPercentage(): float
+    {
+        if ($this->total <= 0) {
+            return 0;
+        }
+
+        $percentage = (($this->processed - $this->successful) / $this->total) * 100;
+
+        if ($percentage > 100) {
+            return 100;
+        }
+
+        return $percentage;
+    }
+
+    public function getPercentage(): float
+    {
+        if ($this->total <= 0) {
+            return 0;
+        }
+
+        $percentage = ($this->processed / $this->total) * 100;
+
+        if ($percentage > 100) {
+            return 100;
+        }
+
+        return $percentage;
     }
 }

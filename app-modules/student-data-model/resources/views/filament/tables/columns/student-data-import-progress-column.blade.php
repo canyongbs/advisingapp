@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -32,40 +30,39 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+<div class="flex items-start gap-3 px-3 py-4">
+    @if ($progress = $getState())
+        <div class="grid gap-1">
+            <div
+                class="flex h-6 w-56 items-center overflow-hidden rounded bg-gray-50 shadow-sm ring-1 ring-gray-950/10 dark:bg-gray-950 dark:ring-white/20">
+                <div
+                    class="h-full bg-success-400 dark:bg-success-600"
+                    style="width: {{ $progress->getSuccessfulPercentage() }}%"
+                ></div>
+                <div
+                    class="h-full bg-danger-400 dark:bg-danger-600"
+                    style="width: {{ $progress->getFailedPercentage() }}%"
+                >
+                </div>
+            </div>
 
-namespace AdvisingApp\StudentDataModel\Actions;
+            <p class="whitespace-normal text-xs text-gray-500 dark:text-gray-400">
+                {{ number_format($progress->successful) }} of {{ number_format($progress->total) }} synced
+                @if ($failed = $progress->getFailed())
+                    & {{ number_format($failed) }} <x-filament::link
+                        :href="$progress->failedRowsCsvUrl"
+                        target="_blank"
+                        size="xs"
+                    >failed</x-filament::link>
+                @endif
+            </p>
+        </div>
 
-use AdvisingApp\StudentDataModel\Models\StudentDataImport;
-use Illuminate\Support\Facades\DB;
-
-class CreateTemporaryStudentDataImportTables
-{
-    public function execute(
-        StudentDataImport $import,
-    ): void {
-        DB::transaction(function () use ($import) {
-            DB::statement("create table \"import_{$import->studentsImport->getKey()}_students\" (like \"students\" including all)");
-
-            if ($import->emailAddressesImport) {
-                DB::statement("create table \"import_{$import->emailAddressesImport->getKey()}_email_addresses\" (like \"student_email_addresses\" including all)");
-            }
-
-            if ($import->phoneNumbersImport) {
-                DB::statement("create table \"import_{$import->phoneNumbersImport->getKey()}_phone_numbers\" (like \"student_phone_numbers\" including all)");
-            }
-
-            if ($import->addressesImport) {
-                DB::statement("create table \"import_{$import->addressesImport->getKey()}_addresses\" (like \"student_addresses\" including all)");
-            }
-
-            if ($import->programsImport) {
-                DB::statement("create table \"import_{$import->programsImport->getKey()}_programs\" (like \"programs\" including all)");
-            }
-
-            if ($import->enrollmentsImport) {
-                DB::statement("create table \"import_{$import->enrollmentsImport->getKey()}_enrollments\" (like \"enrollments\" including all)");
-            }
-        });
-    }
-}
+        <div>
+            <div class="mt-0.5 w-16 text-sm">
+                {{ round($progress->getPercentage(), precision: 1) }}%
+            </div>
+        </div>
+    @endif
+</div>

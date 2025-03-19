@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Actions;
 
+use AdvisingApp\StudentDataModel\Actions\CompleteStudentDataImport;
 use AdvisingApp\StudentDataModel\Actions\CreateTemporaryStudentDataImportTables;
-use AdvisingApp\StudentDataModel\Actions\FinalizeStudentDataImport;
 use AdvisingApp\StudentDataModel\Filament\Imports\StudentAddressImporter;
 use AdvisingApp\StudentDataModel\Filament\Imports\StudentEmailAddressImporter;
 use AdvisingApp\StudentDataModel\Filament\Imports\StudentEnrollmentImporter;
@@ -48,9 +48,9 @@ use AdvisingApp\StudentDataModel\Jobs\PrepareStudentDataCsvImport;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\StudentDataImport;
 use App\Models\Import;
 use Filament\Actions\Action;
-use Filament\Actions\ImportAction;
 use Filament\Actions\Imports\Events\ImportStarted;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Forms;
@@ -58,6 +58,7 @@ use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
+use Filament\Tables\Actions\ImportAction;
 use Illuminate\Bus\PendingBatch;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Foundation\Bus\PendingChain;
@@ -310,7 +311,7 @@ class ImportStudentDataAction
 
                 $user = auth()->user();
 
-                [$import, $emailAddressesImport, $phoneNumbersImport, $addressesImport, $programsImport, $enrollmentsImport] = DB::transaction(function () use ($action, $csvFile, $emailAddressesCsvFile, $phoneNumbersCsvFile, $addressesCsvFile, $programsCsvFile, $enrollmentsCsvFile, $user) {
+                [$studentsImport, $emailAddressesImport, $phoneNumbersImport, $addressesImport, $programsImport, $enrollmentsImport] = DB::transaction(function () use ($action, $csvFile, $emailAddressesCsvFile, $phoneNumbersCsvFile, $addressesCsvFile, $programsCsvFile, $enrollmentsCsvFile, $user) {
                     $makeImport = function (?TemporaryUploadedFile $csvFile = null, ?string $importer = null) use ($action, $user): ?Import {
                         if (! $csvFile) {
                             return null;
@@ -337,6 +338,16 @@ class ImportStudentDataAction
                     ];
                 });
 
+                $import = new StudentDataImport();
+                $import->user()->associate(auth()->user());
+                $import->studentsImport()->associate($studentsImport);
+                $import->emailAddressesImport()->associate($emailAddressesImport);
+                $import->phoneNumbersImport()->associate($phoneNumbersImport);
+                $import->addressesImport()->associate($addressesImport);
+                $import->programsImport()->associate($programsImport);
+                $import->enrollmentsImport()->associate($enrollmentsImport);
+                $import->save();
+
                 $options = array_merge(
                     $action->getOptions(),
                     Arr::except($data, [
@@ -351,7 +362,7 @@ class ImportStudentDataAction
 
                 // We do not want to send the loaded user relationship to the queue in job payloads,
                 // in case it contains attributes that are not serializable, such as binary columns.
-                $import->unsetRelation('user');
+                $studentsImport->unsetRelation('user');
                 $emailAddressesImport?->unsetRelation('user');
                 $phoneNumbersImport?->unsetRelation('user');
                 $addressesImport?->unsetRelation('user');
@@ -365,12 +376,12 @@ class ImportStudentDataAction
                 $programsColumnMap = $data['programsColumnMap'] ?? null;
                 $enrollmentsColumnMap = $data['enrollmentsColumnMap'] ?? null;
 
-                $importer = $import->getImporter(
+                $importer = $studentsImport->getImporter(
                     columnMap: $columnMap,
                     options: $options,
                 );
 
-                event(new ImportStarted($import, $columnMap, $options));
+                event(new ImportStarted($studentsImport, $columnMap, $options));
 
                 if ($emailAddressesImport) {
                     event(new ImportStarted($emailAddressesImport, $emailAddressesColumnMap, $options));
@@ -395,15 +406,15 @@ class ImportStudentDataAction
                 $jobQueue = $importer->getJobQueue();
                 $jobConnection = $importer->getJobConnection();
 
-                app(CreateTemporaryStudentDataImportTables::class)->execute($import, $emailAddressesImport, $phoneNumbersImport, $addressesImport, $programsImport, $enrollmentsImport);
+                app(CreateTemporaryStudentDataImportTables::class)->execute($import);
 
-                Bus::batch([
-                    new PrepareStudentDataCsvImport($import, $columnMap, $options),
-                    ...($emailAddressesImport ? [new PrepareStudentDataCsvImport($emailAddressesImport, $emailAddressesColumnMap, $options)] : []),
-                    ...($phoneNumbersImport ? [new PrepareStudentDataCsvImport($phoneNumbersImport, $phoneNumbersColumnMap, $options)] : []),
-                    ...($addressesImport ? [new PrepareStudentDataCsvImport($addressesImport, $addressesColumnMap, $options)] : []),
-                    ...($programsImport ? [new PrepareStudentDataCsvImport($programsImport, $programsColumnMap, $options)] : []),
-                    ...($enrollmentsImport ? [new PrepareStudentDataCsvImport($enrollmentsImport, $enrollmentsColumnMap, $options)] : []),
+                $batch = Bus::batch([
+                    new PrepareStudentDataCsvImport($studentsImport, $columnMap, $options, $import),
+                    ...($emailAddressesImport ? [new PrepareStudentDataCsvImport($emailAddressesImport, $emailAddressesColumnMap, $options, $import)] : []),
+                    ...($phoneNumbersImport ? [new PrepareStudentDataCsvImport($phoneNumbersImport, $phoneNumbersColumnMap, $options, $import)] : []),
+                    ...($addressesImport ? [new PrepareStudentDataCsvImport($addressesImport, $addressesColumnMap, $options, $import)] : []),
+                    ...($programsImport ? [new PrepareStudentDataCsvImport($programsImport, $programsColumnMap, $options, $import)] : []),
+                    ...($enrollmentsImport ? [new PrepareStudentDataCsvImport($enrollmentsImport, $enrollmentsColumnMap, $options, $import)] : []),
                 ])
                     ->allowFailures()
                     ->when(
@@ -418,8 +429,11 @@ class ImportStudentDataAction
                         filled($jobConnection),
                         fn (PendingChain $chain) => $chain->onConnection($jobConnection),
                     )
-                    ->finally(fn () => app(FinalizeStudentDataImport::class)->execute($import, $emailAddressesImport, $phoneNumbersImport, $addressesImport, $programsImport, $enrollmentsImport))
+                    ->finally(fn () => app(CompleteStudentDataImport::class)->execute($import))
                     ->dispatch();
+
+                $import->job_batch_id = $batch->id;
+                $import->save();
 
                 Notification::make()
                     ->title('Import started')
@@ -437,6 +451,7 @@ class ImportStudentDataAction
                 ...(auth()->user()->can('import', Enrollment::class) ? [
                     $makeDownloadAction('downloadEnrollmentsExample', StudentEnrollmentImporter::class),
                 ] : []),
-            ]);
+            ])
+            ->visible(auth()->user()->can('record_sync.create'));
     }
 }

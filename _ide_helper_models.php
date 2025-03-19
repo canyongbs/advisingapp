@@ -562,6 +562,8 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $last_logged_in_at
  * @property array<array-key, mixed>|null $password_history
  * @property \Illuminate\Support\Carbon $password_last_updated_at
+ * @property bool $is_signature_enabled
+ * @property string|null $signature
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\AiAssistantUpvote> $aiAssistantUpvotes
  * @property-read int|null $ai_assistant_upvotes_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\AiThreadFolder> $aiThreadFolders
@@ -657,6 +659,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereIsEmailVisibleOnProfile($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereIsExternal($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereIsPhoneNumberVisibleOnProfile($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereIsSignatureEnabled($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereJobTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereLastChatPingAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereLastLoggedInAt($value)
@@ -677,6 +680,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePronounsId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePublicProfileSlug($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRememberToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereSignature($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereTimezone($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
@@ -5104,6 +5108,56 @@ namespace AdvisingApp\StudentDataModel\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperStudentAddress {}
+}
+
+namespace AdvisingApp\StudentDataModel\Models{
+/**
+ * 
+ *
+ * @property string $id
+ * @property string $user_id
+ * @property string $students_import_id
+ * @property string|null $email_addresses_import_id
+ * @property string|null $phone_numbers_import_id
+ * @property string|null $addresses_import_id
+ * @property string|null $programs_import_id
+ * @property string|null $enrollments_import_id
+ * @property string|null $job_batch_id
+ * @property string|null $started_at
+ * @property \Carbon\CarbonImmutable|null $completed_at
+ * @property \Carbon\CarbonImmutable|null $canceled_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \App\Models\Import|null $addressesImport
+ * @property-read \App\Models\Import|null $emailAddressesImport
+ * @property-read \App\Models\Import|null $enrollmentsImport
+ * @property-read \App\Models\Import|null $phoneNumbersImport
+ * @property-read \App\Models\Import|null $programsImport
+ * @property-read \App\Models\Import $studentsImport
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StudentDataImport newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StudentDataImport newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StudentDataImport query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StudentDataImport whereAddressesImportId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StudentDataImport whereCanceledAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StudentDataImport whereCompletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StudentDataImport whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StudentDataImport whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StudentDataImport whereEmailAddressesImportId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StudentDataImport whereEnrollmentsImportId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StudentDataImport whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StudentDataImport whereJobBatchId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StudentDataImport wherePhoneNumbersImportId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StudentDataImport whereProgramsImportId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StudentDataImport whereStartedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StudentDataImport whereStudentsImportId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StudentDataImport whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StudentDataImport whereUserId($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperStudentDataImport {}
 }
 
 namespace AdvisingApp\StudentDataModel\Models{
