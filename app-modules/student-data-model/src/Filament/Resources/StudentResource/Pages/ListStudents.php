@@ -45,10 +45,8 @@ use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Actions\DeleteStudent;
-use AdvisingApp\StudentDataModel\Filament\Actions\ImportStudentDataAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
 use App\Enums\TagType;
 use App\Models\Tag;
 use App\Models\User;
@@ -252,8 +250,6 @@ class ListStudents extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            ImportStudentDataAction::make()
-                ->visible(fn () => ! app(StudentInformationSystemSettings::class)->is_enabled),
             CreateAction::make(),
         ];
     }

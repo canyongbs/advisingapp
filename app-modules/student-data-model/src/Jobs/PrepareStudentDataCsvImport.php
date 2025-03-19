@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\StudentDataModel\Jobs;
 
+use AdvisingApp\StudentDataModel\Models\StudentDataImport;
+use App\Features\StudentDataImportTrackingFeature;
 use App\Models\Import;
 use Filament\Actions\Imports\Jobs\ImportCsv;
 use Filament\Support\ChunkIterator;
@@ -74,10 +76,30 @@ class PrepareStudentDataCsvImport implements ShouldQueue
         protected Import $import,
         protected array $columnMap,
         protected array $options = [],
+        protected ?StudentDataImport $studentDataImport = null,
     ) {}
 
     public function handle(): void
     {
+        /** @todo: Remove when cleaning up ADVAPP-1244 */
+        if (StudentDataImportTrackingFeature::active()) {
+            $this->studentDataImport ??= StudentDataImport::find()
+                ->where('students_import_id', $this->import->getKey())
+                ->orWhere('email_addresses_import_id', $this->import->getKey())
+                ->orWhere('phone_numbers_import_id', $this->import->getKey())
+                ->orWhere('addresses_import_id', $this->import->getKey())
+                ->orWhere('programs_import_id', $this->import->getKey())
+                ->orWhere('enrollments_import_id', $this->import->getKey())
+                ->first();
+        }
+
+        if ($this->studentDataImport) {
+            /** @endtodo */
+            $this->studentDataImport->started_at ??= now();
+            $this->studentDataImport->save();
+            /** @todo: Remove when cleaning up ADVAPP-1244 */
+        }
+        /** @endtodo */
         $batch = $this->batch();
 
         /** @var AwsS3V3Adapter $s3Adapter */

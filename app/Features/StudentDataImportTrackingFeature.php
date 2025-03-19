@@ -34,38 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Actions;
+namespace App\Features;
 
-use AdvisingApp\StudentDataModel\Models\StudentDataImport;
-use Illuminate\Support\Facades\DB;
+use App\Support\AbstractFeatureFlag;
 
-class CreateTemporaryStudentDataImportTables
+class StudentDataImportTrackingFeature extends AbstractFeatureFlag
 {
-    public function execute(
-        StudentDataImport $import,
-    ): void {
-        DB::transaction(function () use ($import) {
-            DB::statement("create table \"import_{$import->studentsImport->getKey()}_students\" (like \"students\" including all)");
-
-            if ($import->emailAddressesImport) {
-                DB::statement("create table \"import_{$import->emailAddressesImport->getKey()}_email_addresses\" (like \"student_email_addresses\" including all)");
-            }
-
-            if ($import->phoneNumbersImport) {
-                DB::statement("create table \"import_{$import->phoneNumbersImport->getKey()}_phone_numbers\" (like \"student_phone_numbers\" including all)");
-            }
-
-            if ($import->addressesImport) {
-                DB::statement("create table \"import_{$import->addressesImport->getKey()}_addresses\" (like \"student_addresses\" including all)");
-            }
-
-            if ($import->programsImport) {
-                DB::statement("create table \"import_{$import->programsImport->getKey()}_programs\" (like \"programs\" including all)");
-            }
-
-            if ($import->enrollmentsImport) {
-                DB::statement("create table \"import_{$import->enrollmentsImport->getKey()}_enrollments\" (like \"enrollments\" including all)");
-            }
-        });
+    public function resolve(mixed $scope): mixed
+    {
+        return false;
     }
 }

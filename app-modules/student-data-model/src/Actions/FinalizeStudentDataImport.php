@@ -43,6 +43,9 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
+/**
+ * @todo Remove when cleaning up ADVAPP-1244
+ */
 class FinalizeStudentDataImport
 {
     public function execute(
