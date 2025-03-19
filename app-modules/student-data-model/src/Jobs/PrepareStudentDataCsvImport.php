@@ -83,7 +83,7 @@ class PrepareStudentDataCsvImport implements ShouldQueue
     {
         /** @todo: Remove when cleaning up ADVAPP-1244 */
         if (StudentDataImportTrackingFeature::active()) {
-            $this->studentDataImport ??= StudentDataImport::find()
+            $this->studentDataImport ??= StudentDataImport::query()
                 ->where('students_import_id', $this->import->getKey())
                 ->orWhere('email_addresses_import_id', $this->import->getKey())
                 ->orWhere('phone_numbers_import_id', $this->import->getKey())
