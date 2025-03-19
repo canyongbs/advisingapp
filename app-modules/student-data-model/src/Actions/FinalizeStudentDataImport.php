@@ -76,9 +76,9 @@ class FinalizeStudentDataImport
             DB::transaction(function () use ($studentsImport, $emailAddressesImport, $phoneNumbersImport, $addressesImport, $programsImport, $enrollmentsImport) {
                 DB::table("import_{$studentsImport->getKey()}_students")
                     ->update([
-                        'primary_email_id' => DB::raw("(SELECT email.id FROM \"import_{$emailAddressesImport->getKey()}_email_addresses\" email WHERE email.sisid = \"import_{$studentsImport->getKey()}_students\".sisid AND email.\"order\" = 1 LIMIT 1)"),
-                        'primary_phone_id' => DB::raw("(SELECT phone.id FROM \"import_{$phoneNumbersImport->getKey()}_phone_numbers\" phone WHERE phone.sisid = \"import_{$studentsImport->getKey()}_students\".sisid AND phone.\"order\" = 1 LIMIT 1)"),
-                        'primary_address_id' => DB::raw("(SELECT address.id FROM \"import_{$addressesImport->getKey()}_addresses\" address WHERE address.sisid = \"import_{$studentsImport->getKey()}_students\".sisid AND address.\"order\" = 1 LIMIT 1)"),
+                        'primary_email_id' => $emailAddressesImport ? DB::raw("(SELECT email.id FROM \"import_{$emailAddressesImport->getKey()}_email_addresses\" email WHERE email.sisid = \"import_{$studentsImport->getKey()}_students\".sisid AND email.\"order\" = 1 LIMIT 1)") : null,
+                        'primary_phone_id' => $phoneNumbersImport ? DB::raw("(SELECT phone.id FROM \"import_{$phoneNumbersImport->getKey()}_phone_numbers\" phone WHERE phone.sisid = \"import_{$studentsImport->getKey()}_students\".sisid AND phone.\"order\" = 1 LIMIT 1)") : null,
+                        'primary_address_id' => $addressesImport ? DB::raw("(SELECT address.id FROM \"import_{$addressesImport->getKey()}_addresses\" address WHERE address.sisid = \"import_{$studentsImport->getKey()}_students\".sisid AND address.\"order\" = 1 LIMIT 1)") : null,
                     ]);
 
                 DB::statement('drop table "students"');
