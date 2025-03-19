@@ -320,8 +320,7 @@ class EditProfile extends Page
                             ->extraInputAttributes(['style' => 'min-height: 12rem;'])
                             ->output(TiptapOutput::Json)
                             ->required(fn (Get $get) => $get('is_signature_enabled'))
-                            ->visibility('public')
-                            ->disk('s3')
+                            ->disk('s3-public')
                             ->visible(fn (Get $get) => $get('is_signature_enabled')),
                     ]),
                 Section::make('Out of Office')

@@ -148,6 +148,8 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'last_logged_in_at' => 'datetime',
         'password_history' => 'array',
         'password_last_updated_at' => 'datetime',
+        'is_signature_enabled' => 'boolean',
+        'signature' => 'array',
     ];
 
     protected $fillable = [

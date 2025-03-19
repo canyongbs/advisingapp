@@ -59,6 +59,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\CreateAction;
+use FilamentTiptapEditor\Enums\TiptapOutput;
 use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
@@ -173,6 +174,26 @@ class RelationManagerSendEngagementAction extends CreateAction
                                 ->mergeTags($mergeTags),
                         ]),
                     ]),
+                Fieldset::make('Email signature')
+                    ->schema([
+                        Toggle::make('is_signature_enabled')
+                            ->label('Include signature')
+                            ->helperText('You may configure your email signature in Profile Settings by selecting your avatar in the upper right portion of the screen.')
+                            ->live(),
+                        TiptapEditor::make('signature')
+                            ->profile('signature')
+                            ->extraInputAttributes(['style' => 'min-height: 12rem;'])
+                            ->output(TiptapOutput::Json)
+                            ->required(fn (Get $get) => $get('is_signature_enabled'))
+                            ->disk('s3-public')
+                            ->visible(fn (Get $get) => $get('is_signature_enabled'))
+                            ->default(auth()->user()->signature)
+                            // By default, the TipTap editor will attempt to save relationships to media items, but these will instead be saved as part of the main body content.
+                            ->saveRelationshipsUsing(null),
+                    ])
+                    ->visible(auth()->user()->is_signature_enabled)
+                    ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
+                    ->columns(1),
                 Fieldset::make('Send your email or text')
                     ->schema([
                         Toggle::make('send_later')
@@ -193,19 +214,36 @@ class RelationManagerSendEngagementAction extends CreateAction
                     $this->halt();
                 }
 
+                $data['body'] ??= ['type' => 'doc', 'content' => []];
+                $data['body']['content'] = [
+                    ...($data['body']['content'] ?? []),
+                    ...($data['signature']['content'] ?? []),
+                ];
+
+                $formFields = $form->getFlatFields();
+
                 $engagement = app(CreateEngagement::class)->execute(new EngagementCreationData(
                     user: auth()->user(),
                     recipient: $livewire->getOwnerRecord(),
                     channel: NotificationChannel::parse($data['channel']),
                     subject: $data['subject'] ?? null,
                     body: $data['body'] ?? null,
-                    temporaryBodyImages: array_map(
-                        fn (TemporaryUploadedFile $file): array => [
-                            'extension' => $file->getClientOriginalExtension(),
-                            'path' => (fn () => $this->path)->call($file),
-                        ],
-                        $form->getFlatFields()['body']->getTemporaryImages(),
-                    ),
+                    temporaryBodyImages: [
+                        ...array_map(
+                            fn (TemporaryUploadedFile $file): array => [
+                                'extension' => $file->getClientOriginalExtension(),
+                                'path' => (fn () => $this->path)->call($file),
+                            ],
+                            $formFields['body']->getTemporaryImages(),
+                        ),
+                        ...(($formFields['signature'] ?? null) ? array_map(
+                            fn (TemporaryUploadedFile $file): array => [
+                                'extension' => $file->getClientOriginalExtension(),
+                                'path' => (fn () => $this->path)->call($file),
+                            ],
+                            $formFields['signature']->getTemporaryImages(),
+                        ) : []),
+                    ],
                     scheduledAt: ($data['send_later'] ?? false) ? Carbon::parse($data['scheduled_at'] ?? null) : null,
                 ));
 
