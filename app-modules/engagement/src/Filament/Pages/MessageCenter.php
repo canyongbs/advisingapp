@@ -387,9 +387,8 @@ class MessageCenter extends Page
                     $query->whereRaw('lower(full_name) like ?', ['%' . Str::lower($search) . '%'])
                         ->orWhere('sisid', 'like', "%{$search}%")
                         ->orWhere('otherid', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%")
-                        ->orWhere('mobile', 'like', "%{$search}%")
-                        ->orWhere('phone', 'like', "%{$search}%");
+                        ->orWhereRelation('emailAddresses', 'address', 'like', "%{$search}%")
+                        ->orWhereRelation('phoneNumbers', 'number', 'like', "%{$search}%");
                 })
                 ->joinSub($studentLatestActivity, 'latest_activity', function ($join) {
                     $join->on('students.sisid', '=', 'latest_activity.educatable_id');

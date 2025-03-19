@@ -57,9 +57,11 @@ it('will not create an engagement response when it cannot find an associated mes
 it('will create an engagement response when a message is received', function () {
     $request = Request::create('/', 'POST', loadFixtureFromModule('integration-twilio', 'MessageReceived/payload'));
 
-    $student = Student::factory()->create([
-        'mobile' => $request->all()['From'],
+    $student = Student::factory()->create();
+    $studentPhoneNumber = $student->phoneNumbers()->create([
+        'number' => $request->all()['From'],
     ]);
+    $student->primaryPhoneNumber()->associate($studentPhoneNumber)->save();
 
     $messageReceived = new MessageReceived(TwilioMessageReceivedData::fromRequest($request));
 

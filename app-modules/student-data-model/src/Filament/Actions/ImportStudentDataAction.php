@@ -48,7 +48,6 @@ use AdvisingApp\StudentDataModel\Jobs\PrepareStudentDataCsvImport;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\ProspectStudentRefactor;
 use App\Models\Import;
 use Filament\Actions\Action;
 use Filament\Actions\ImportAction;
@@ -228,40 +227,36 @@ class ImportStudentDataAction
             ->modalHeading('Synchronize Students, Programs, and Enrollments')
             ->modalDescription(fn (ImportAction $action): Htmlable => new HtmlString('WARNING: Record synchronization involves the replacement of all students, programs, and enrollments with the imported extract data. If there are existing student records that are not present in your uploaded files, those records will be removed from the system. The purpose of this tool is to synchronize and match your SIS extract data imported here. <br><br> CSV Extract Examples<br>' . collect([
                 $action->getModalAction('downloadExample')?->label('Students')->toHtml(),
-                ...(ProspectStudentRefactor::active() ? [
-                    $action->getModalAction('downloadEmailAddressesExample')?->label('Email addresses')->toHtml(),
-                    $action->getModalAction('downloadPhoneNumbersExample')?->label('Phone numbers')->toHtml(),
-                    $action->getModalAction('downloadAddressesExample')?->label('Addresses')->toHtml(),
-                ] : []),
+                $action->getModalAction('downloadEmailAddressesExample')?->label('Email addresses')->toHtml(),
+                $action->getModalAction('downloadPhoneNumbersExample')?->label('Phone numbers')->toHtml(),
+                $action->getModalAction('downloadAddressesExample')?->label('Addresses')->toHtml(),
                 $action->getModalAction('downloadProgramsExample')?->label('Programs')->toHtml(),
                 $action->getModalAction('downloadEnrollmentsExample')?->label('Enrollments')->toHtml(),
             ])->filter()->implode(' | ')))
             ->modalSubmitActionLabel('Sync Records')
             ->form(fn (ImportAction $action): array => array_merge([
                 $makeFileUpload(),
-                ...(ProspectStudentRefactor::active() ? [
-                    $makeFileUpload(
-                        name: 'emailAddressesFile',
-                        columnMapStatePath: 'emailAddressesColumnMap',
-                        importer: StudentEmailAddressImporter::class,
-                        isRequired: false,
-                    )
-                        ->placeholder('Upload an email addresses CSV file'),
-                    $makeFileUpload(
-                        name: 'phoneNumbersFile',
-                        columnMapStatePath: 'phoneNumbersColumnMap',
-                        importer: StudentPhoneNumberImporter::class,
-                        isRequired: false,
-                    )
-                        ->placeholder('Upload a phone numbers CSV file'),
-                    $makeFileUpload(
-                        name: 'addressesFile',
-                        columnMapStatePath: 'addressesColumnMap',
-                        importer: StudentAddressImporter::class,
-                        isRequired: false,
-                    )
-                        ->placeholder('Upload an addresses CSV file'),
-                ] : []),
+                $makeFileUpload(
+                    name: 'emailAddressesFile',
+                    columnMapStatePath: 'emailAddressesColumnMap',
+                    importer: StudentEmailAddressImporter::class,
+                    isRequired: false,
+                )
+                    ->placeholder('Upload an email addresses CSV file'),
+                $makeFileUpload(
+                    name: 'phoneNumbersFile',
+                    columnMapStatePath: 'phoneNumbersColumnMap',
+                    importer: StudentPhoneNumberImporter::class,
+                    isRequired: false,
+                )
+                    ->placeholder('Upload a phone numbers CSV file'),
+                $makeFileUpload(
+                    name: 'addressesFile',
+                    columnMapStatePath: 'addressesColumnMap',
+                    importer: StudentAddressImporter::class,
+                    isRequired: false,
+                )
+                    ->placeholder('Upload an addresses CSV file'),
                 $makeFileUpload(
                     name: 'programsFile',
                     columnMapStatePath: 'programsColumnMap',
@@ -279,23 +274,21 @@ class ImportStudentDataAction
                     ->placeholder('Upload a enrollments CSV file')
                     ->visible(fn () => auth()->user()->can('import', Enrollment::class)),
                 $makeColumnMapper()->label('Student columns'),
-                ...(ProspectStudentRefactor::active() ? [
-                    $makeColumnMapper(
-                        name: 'emailAddressesColumnMap',
-                        fileStatePath: 'emailAddressesFile',
-                        importer: StudentEmailAddressImporter::class,
-                    )->label('Email address columns'),
-                    $makeColumnMapper(
-                        name: 'phoneNumbersColumnMap',
-                        fileStatePath: 'phoneNumbersFile',
-                        importer: StudentPhoneNumberImporter::class,
-                    )->label('Phone number columns'),
-                    $makeColumnMapper(
-                        name: 'addressesColumnMap',
-                        fileStatePath: 'addressesFile',
-                        importer: StudentAddressImporter::class,
-                    )->label('Address columns'),
-                ] : []),
+                $makeColumnMapper(
+                    name: 'emailAddressesColumnMap',
+                    fileStatePath: 'emailAddressesFile',
+                    importer: StudentEmailAddressImporter::class,
+                )->label('Email address columns'),
+                $makeColumnMapper(
+                    name: 'phoneNumbersColumnMap',
+                    fileStatePath: 'phoneNumbersFile',
+                    importer: StudentPhoneNumberImporter::class,
+                )->label('Phone number columns'),
+                $makeColumnMapper(
+                    name: 'addressesColumnMap',
+                    fileStatePath: 'addressesFile',
+                    importer: StudentAddressImporter::class,
+                )->label('Address columns'),
                 $makeColumnMapper(
                     name: 'programsColumnMap',
                     fileStatePath: 'programsFile',
@@ -336,11 +329,9 @@ class ImportStudentDataAction
 
                     return [
                         $makeImport($csvFile),
-                        ...(ProspectStudentRefactor::active() ? [
-                            $makeImport($emailAddressesCsvFile, StudentEmailAddressImporter::class),
-                            $makeImport($phoneNumbersCsvFile, StudentPhoneNumberImporter::class),
-                            $makeImport($addressesCsvFile, StudentAddressImporter::class),
-                        ] : [null, null, null]),
+                        $makeImport($emailAddressesCsvFile, StudentEmailAddressImporter::class),
+                        $makeImport($phoneNumbersCsvFile, StudentPhoneNumberImporter::class),
+                        $makeImport($addressesCsvFile, StudentAddressImporter::class),
                         $makeImport($programsCsvFile, StudentProgramImporter::class),
                         $makeImport($enrollmentsCsvFile, StudentEnrollmentImporter::class),
                     ];

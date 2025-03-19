@@ -43,7 +43,6 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Actions\Stud
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Actions\SyncStudentSisAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
-use App\Features\ProspectStudentRefactor;
 use App\Settings\DisplaySettings;
 use Filament\Actions\DeleteAction;
 use Illuminate\Contracts\View\View;
@@ -75,16 +74,8 @@ trait HasStudentHeader
             'details' => [
                 ['Student', 'heroicon-m-user'],
                 ...(filled($student->preferred) ? [["Goes by \"{$student->preferred}\"", 'heroicon-m-heart']] : []),
-                ...(
-                    ProspectStudentRefactor::active()
-                ? ($student->primaryPhoneNumber ? [[$student->primaryPhoneNumber->number . (filled($student->primaryPhoneNumber->ext) ? " (ext. {$student->primaryPhoneNumber->ext})" : '') . (filled($student->primaryPhoneNumber->type) ? " ({$student->primaryPhoneNumber->type})" : ''), 'heroicon-m-phone']] : [])
-                : (filled($student->phone) ? [[$student->phone, 'heroicon-m-phone']] : [])
-                ),
-                ...(
-                    ProspectStudentRefactor::active()
-                    ? ($student->primaryEmailAddress ? [[$student->primaryEmailAddress->address . (filled($student->primaryEmailAddress->type) ? " ({$student->primaryEmailAddress->type})" : ''), 'heroicon-m-envelope']] : [])
-                    : (filled($student->email) ? [[$student->email, 'heroicon-m-envelope']] : [])
-                ),
+                ...($student->primaryPhoneNumber ? [[$student->primaryPhoneNumber->number . (filled($student->primaryPhoneNumber->ext) ? " (ext. {$student->primaryPhoneNumber->ext})" : '') . (filled($student->primaryPhoneNumber->type) ? " ({$student->primaryPhoneNumber->type})" : ''), 'heroicon-m-phone']] : []),
+                ...($student->primaryEmailAddress ? [[$student->primaryEmailAddress->address . (filled($student->primaryEmailAddress->type) ? " ({$student->primaryEmailAddress->type})" : ''), 'heroicon-m-envelope']] : []),
                 ...(filled($student->sisid) ? [[$student->sisid, 'heroicon-m-identification']] : []),
             ],
             'hasSisSystem' => $sisSettings->is_enabled && $sisSettings->sis_system,

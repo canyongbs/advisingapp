@@ -97,7 +97,7 @@ class TaskImporter extends Importer
                             ->when(
                                 str($identifier)->isUuid(),
                                 fn (Builder $query) => $query->whereKey($identifier),
-                                fn (Builder $query) => $query->where('email', $identifier),
+                                fn (Builder $query) => $query->whereRelation('primaryEmailAddress', 'address', $identifier),
                             )
                             ->first();
 

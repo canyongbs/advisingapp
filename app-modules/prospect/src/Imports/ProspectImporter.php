@@ -39,7 +39,6 @@ namespace AdvisingApp\Prospect\Imports;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
-use App\Features\ProspectStudentRefactor;
 use App\Models\User;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
@@ -96,193 +95,180 @@ class ProspectImporter extends Importer
                 ->example(fn (): ?string => ProspectSource::query()->value('name')),
             ImportColumn::make('description')
                 ->example('A description of the prospect.'),
-            ...(ProspectStudentRefactor::active() ? [
-                ImportColumn::make('email_1')
-                    ->rules(['max:255', 'email'])
-                    ->example('johnsmith@gmail.com')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('email_1_type')
-                    ->rules(['max:255'])
-                    ->example('Personal')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('email_2')
-                    ->rules(['max:255', 'email'])
-                    ->example('janesmith@gmail.com')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('email_2_type')
-                    ->rules(['max:255'])
-                    ->example('Institutional')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('email_3')
-                    ->rules(['max:255', 'email'])
-                    ->example('joesmith@gmail.com')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('email_3_type')
-                    ->rules(['max:255'])
-                    ->example('Work')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('phone_1')
-                    ->rules(['max:255'])
-                    ->example('+1 (555) 555-5555')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('phone_1_ext')
-                    ->label('Phone 1 extension')
-                    ->rules(['integer', 'max_digits:8'])
-                    ->example('123')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('phone_1_type')
-                    ->rules(['max:255'])
-                    ->example('Mobile')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('phone_1_can_receive_sms')
-                    ->boolean()
-                    ->rules(['boolean'])
-                    ->example('true')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('phone_2')
-                    ->rules(['max:255'])
-                    ->example('+1 (666) 666-6666')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('phone_2_ext')
-                    ->label('Phone 2 extension')
-                    ->rules(['integer', 'max_digits:8'])
-                    ->example('456')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('phone_2_type')
-                    ->rules(['max:255'])
-                    ->example('Home')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('phone_2_can_receive_sms')
-                    ->boolean()
-                    ->rules(['boolean'])
-                    ->example('false')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('phone_3')
-                    ->rules(['max:255'])
-                    ->example('+1 (777) 777-7777')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('phone_3_ext')
-                    ->label('Phone 3 extension')
-                    ->rules(['integer', 'max_digits:8'])
-                    ->example('789')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('phone_3_type')
-                    ->rules(['max:255'])
-                    ->example('Work')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('phone_3_can_receive_sms')
-                    ->boolean()
-                    ->rules(['boolean'])
-                    ->example('false')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('address_1_line_1')
-                    ->rules(['max:255'])
-                    ->example('123 Main St.')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('address_1_line_2')
-                    ->rules(['max:255'])
-                    ->example('Apt. 1')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('address_1_line_3')
-                    ->rules(['max:255'])
-                    ->example('Suite 1')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('address_1_city')
-                    ->rules(['max:255'])
-                    ->example('Springfield')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('address_1_state')
-                    ->rules(['max:255'])
-                    ->example('IL')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('address_1_postal')
-                    ->rules(['max:255'])
-                    ->example('62701')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('address_1_country')
-                    ->rules(['max:255'])
-                    ->example('US')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('address_1_type')
-                    ->rules(['max:255'])
-                    ->example('Home')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('address_2_line_1')
-                    ->rules(['max:255'])
-                    ->example('456 Main St.')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('address_2_line_2')
-                    ->rules(['max:255'])
-                    ->example('Apt. 2')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('address_2_line_3')
-                    ->rules(['max:255'])
-                    ->example('Suite 2')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('address_2_city')
-                    ->rules(['max:255'])
-                    ->example('Springfield')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('address_2_state')
-                    ->rules(['max:255'])
-                    ->example('IL')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('address_2_postal')
-                    ->rules(['max:255'])
-                    ->example('62701')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('address_2_country')
-                    ->rules(['max:255'])
-                    ->example('US')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('address_2_type')
-                    ->rules(['max:255'])
-                    ->example('Work')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('address_3_line_1')
-                    ->rules(['max:255'])
-                    ->example('789 Main St.')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('address_3_line_2')
-                    ->rules(['max:255'])
-                    ->example('Apt. 3')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('address_3_line_3')
-                    ->rules(['max:255'])
-                    ->example('Suite 3')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('address_3_city')
-                    ->rules(['max:255'])
-                    ->example('Springfield')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('address_3_state')
-                    ->rules(['max:255'])
-                    ->example('IL')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('address_3_postal')
-                    ->rules(['max:255'])
-                    ->example('62701')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('address_3_country')
-                    ->rules(['max:255'])
-                    ->example('US')
-                    ->fillRecordUsing(fn () => null),
-                ImportColumn::make('address_3_type')
-                    ->rules(['max:255'])
-                    ->example('Other')
-                    ->fillRecordUsing(fn () => null),
-            ] : [
-                ImportColumn::make('email')
-                    ->rules(['required', 'email'])
-                    ->requiredMapping()
-                    ->example('johnsmith@gmail.com'),
-                ImportColumn::make('mobile')
-                    ->example('+1 (555) 555-5555'),
-                ImportColumn::make('address')
-                    ->example('123 Main St.'),
-                ImportColumn::make('address_2')
-                    ->example('Apt. 1'),
-            ]),
+            ImportColumn::make('email_1')
+                ->rules(['max:255', 'email'])
+                ->example('johnsmith@gmail.com')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('email_1_type')
+                ->rules(['max:255'])
+                ->example('Personal')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('email_2')
+                ->rules(['max:255', 'email'])
+                ->example('janesmith@gmail.com')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('email_2_type')
+                ->rules(['max:255'])
+                ->example('Institutional')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('email_3')
+                ->rules(['max:255', 'email'])
+                ->example('joesmith@gmail.com')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('email_3_type')
+                ->rules(['max:255'])
+                ->example('Work')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('phone_1')
+                ->rules(['max:255'])
+                ->example('+1 (555) 555-5555')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('phone_1_ext')
+                ->label('Phone 1 extension')
+                ->rules(['integer', 'max_digits:8'])
+                ->example('123')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('phone_1_type')
+                ->rules(['max:255'])
+                ->example('Mobile')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('phone_1_can_receive_sms')
+                ->boolean()
+                ->rules(['boolean'])
+                ->example('true')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('phone_2')
+                ->rules(['max:255'])
+                ->example('+1 (666) 666-6666')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('phone_2_ext')
+                ->label('Phone 2 extension')
+                ->rules(['integer', 'max_digits:8'])
+                ->example('456')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('phone_2_type')
+                ->rules(['max:255'])
+                ->example('Home')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('phone_2_can_receive_sms')
+                ->boolean()
+                ->rules(['boolean'])
+                ->example('false')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('phone_3')
+                ->rules(['max:255'])
+                ->example('+1 (777) 777-7777')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('phone_3_ext')
+                ->label('Phone 3 extension')
+                ->rules(['integer', 'max_digits:8'])
+                ->example('789')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('phone_3_type')
+                ->rules(['max:255'])
+                ->example('Work')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('phone_3_can_receive_sms')
+                ->boolean()
+                ->rules(['boolean'])
+                ->example('false')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('address_1_line_1')
+                ->rules(['max:255'])
+                ->example('123 Main St.')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('address_1_line_2')
+                ->rules(['max:255'])
+                ->example('Apt. 1')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('address_1_line_3')
+                ->rules(['max:255'])
+                ->example('Suite 1')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('address_1_city')
+                ->rules(['max:255'])
+                ->example('Springfield')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('address_1_state')
+                ->rules(['max:255'])
+                ->example('IL')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('address_1_postal')
+                ->rules(['max:255'])
+                ->example('62701')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('address_1_country')
+                ->rules(['max:255'])
+                ->example('US')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('address_1_type')
+                ->rules(['max:255'])
+                ->example('Home')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('address_2_line_1')
+                ->rules(['max:255'])
+                ->example('456 Main St.')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('address_2_line_2')
+                ->rules(['max:255'])
+                ->example('Apt. 2')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('address_2_line_3')
+                ->rules(['max:255'])
+                ->example('Suite 2')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('address_2_city')
+                ->rules(['max:255'])
+                ->example('Springfield')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('address_2_state')
+                ->rules(['max:255'])
+                ->example('IL')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('address_2_postal')
+                ->rules(['max:255'])
+                ->example('62701')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('address_2_country')
+                ->rules(['max:255'])
+                ->example('US')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('address_2_type')
+                ->rules(['max:255'])
+                ->example('Work')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('address_3_line_1')
+                ->rules(['max:255'])
+                ->example('789 Main St.')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('address_3_line_2')
+                ->rules(['max:255'])
+                ->example('Apt. 3')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('address_3_line_3')
+                ->rules(['max:255'])
+                ->example('Suite 3')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('address_3_city')
+                ->rules(['max:255'])
+                ->example('Springfield')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('address_3_state')
+                ->rules(['max:255'])
+                ->example('IL')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('address_3_postal')
+                ->rules(['max:255'])
+                ->example('62701')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('address_3_country')
+                ->rules(['max:255'])
+                ->example('US')
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('address_3_type')
+                ->rules(['max:255'])
+                ->example('Other')
+                ->fillRecordUsing(fn () => null),
             ImportColumn::make('sms_opt_out')
                 ->label('SMS opt out')
                 ->boolean()
@@ -302,26 +288,6 @@ class ProspectImporter extends Importer
 
     public function resolveRecord(): Prospect
     {
-        if (! ProspectStudentRefactor::active()) {
-            $email = $this->data['email'];
-            $email2 = $this->data['email_2'] ?? null;
-
-            $emails = [
-                $email,
-                ...filled($email2) ? [$email2] : [],
-            ];
-
-            $prospect = Prospect::query()
-                ->whereIn('email', $emails)
-                ->orWhereIn('email_2', $emails)
-                ->first();
-
-            return $prospect ?? new Prospect([
-                'email' => $email,
-                'email_2' => $email2,
-            ]);
-        }
-
         return Prospect::query()
             ->whereHas('emailAddresses', fn (Builder $query) => $query->whereIn('address', collect([
                 $this->data['email_1'] ?? null,

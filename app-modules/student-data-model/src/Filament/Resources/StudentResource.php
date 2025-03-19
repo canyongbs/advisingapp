@@ -46,7 +46,6 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Manage
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudentActivityFeed;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\ProspectStudentRefactor;
 use App\Filament\Resources\Concerns\HasGlobalSearchResultScoring;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
@@ -66,26 +65,16 @@ class StudentResource extends Resource
 
     public static function getGlobalSearchEloquentQuery(): Builder
     {
-        if (! ProspectStudentRefactor::active()) {
-            return parent::getGlobalSearchEloquentQuery();
-        }
-
         return parent::getGlobalSearchEloquentQuery()->with(['emailAddresses:id,address', 'phoneNumbers:id,number', 'primaryEmailAddress:id,address', 'primaryPhoneNumber:id,number']);
     }
 
     public static function modifyGlobalSearchQuery(Builder $query, string $search): void
     {
-        if (ProspectStudentRefactor::active()) {
-            $query->leftJoinRelationship('primaryEmailAddress');
-        }
+        $query->leftJoinRelationship('primaryEmailAddress');
 
         static::scoreGlobalSearchResults($query, $search, [
             'full_name' => 100,
-            ...(
-                ProspectStudentRefactor::active()
-              ? ['student_email_addresses.address' => 75]
-              : ['email' => 75, 'email_2' => 75]
-            ),
+            'student_email_addresses.address' => 75,
         ]);
     }
 
@@ -95,11 +84,8 @@ class StudentResource extends Resource
             'sisid',
             'otherid',
             'full_name',
-            ...(
-                ProspectStudentRefactor::active()
-                    ? ['emailAddresses.address', 'phoneNumbers.number']
-                    : ['email', 'email_2', 'mobile', 'phone']
-            ),
+            'emailAddresses.address',
+            'phoneNumbers.number',
             'preferred',
         ];
     }
@@ -109,8 +95,8 @@ class StudentResource extends Resource
         return array_filter([
             'Student ID' => $record->sisid,
             'Other ID' => $record->otherid,
-            'Email Address' => ProspectStudentRefactor::active() ? $record->primaryEmailAddress?->address : collect([$record->email, $record->email_id])->filter()->implode(', '),
-            'Phone' => ProspectStudentRefactor::active() ? $record->primaryPhoneNumber?->number : collect([$record->mobile, $record->phone])->filter()->implode(', '),
+            'Email Address' => $record->primaryEmailAddress?->address,
+            'Phone' => $record->primaryPhoneNumber?->number,
             'Preferred Name' => $record->preferred,
         ], fn (mixed $value): bool => filled($value));
     }
