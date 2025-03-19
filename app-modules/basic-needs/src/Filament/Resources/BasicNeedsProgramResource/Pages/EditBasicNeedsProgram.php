@@ -45,6 +45,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
+use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 class EditBasicNeedsProgram extends EditRecord
 {
@@ -81,7 +82,7 @@ class EditBasicNeedsProgram extends EditRecord
                     ->maxLength(255)
                     ->string()
                     ->email(),
-                TextInput::make('contact_phone')
+                PhoneInput::make('contact_phone')
                     ->label('Contact Phone')
                     ->maxLength(255)
                     ->string(),

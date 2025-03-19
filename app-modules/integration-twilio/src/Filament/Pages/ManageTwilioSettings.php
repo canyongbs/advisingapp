@@ -45,6 +45,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Pages\SettingsPage;
+use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 class ManageTwilioSettings extends SettingsPage
 {
@@ -94,8 +95,7 @@ class ManageTwilioSettings extends SettingsPage
                             ->required()
                             ->password()
                             ->revealable(),
-                        TextInput::make('from_number')
-                            ->string()
+                        PhoneInput::make('from_number')
                             ->required(),
                     ])
                     ->visible(fn (Get $get) => $get('is_enabled') && ! $get('is_demo_mode_enabled')),
