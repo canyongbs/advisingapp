@@ -187,6 +187,8 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'last_logged_in_at',
         'password_history',
         'password_last_updated_at',
+        'is_signature_enabled',
+        'signature',
     ];
 
     public $orderable = [
@@ -415,6 +417,15 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     {
         $this->addMediaCollection('avatar')
             ->singleFile();
+
+        $this->addMediaCollection('signature')
+            ->acceptsMimeTypes([
+                'image/png',
+                'image/jpeg',
+                'image/webp',
+                'image/jpg',
+                'image/svg+xml',
+            ]);
     }
 
     public function registerMediaConversions(Media $media = null): void
