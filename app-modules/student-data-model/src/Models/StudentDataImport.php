@@ -8,6 +8,9 @@ use App\Models\Import;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @mixin IdeHelperStudentDataImport
+ */
 class StudentDataImport extends BaseModel
 {
     public $fillable = [
