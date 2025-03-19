@@ -31,21 +31,31 @@
 
 </COPYRIGHT>
 --}}
-<div class="px-3 py-4 flex items-start gap-3">
+<div class="flex items-start gap-3 px-3 py-4">
     @if ($progress = $getState())
         <div class="grid gap-1">
             <div
-                class="flex items-center w-56 h-6 rounded overflow-hidden shadow-sm ring-1 ring-gray-950/10 dark:ring-white/20 bg-gray-50 dark:bg-gray-950">
-                <div class="bg-success-400 dark:bg-success-600 h-full"
-                    style="width: {{ $progress->getSuccessfulPercentage() }}%"></div>
-                <div class="bg-danger-400 dark:bg-danger-600 h-full" style="width: {{ $progress->getFailedPercentage() }}%">
+                class="flex h-6 w-56 items-center overflow-hidden rounded bg-gray-50 shadow-sm ring-1 ring-gray-950/10 dark:bg-gray-950 dark:ring-white/20">
+                <div
+                    class="h-full bg-success-400 dark:bg-success-600"
+                    style="width: {{ $progress->getSuccessfulPercentage() }}%"
+                ></div>
+                <div
+                    class="h-full bg-danger-400 dark:bg-danger-600"
+                    style="width: {{ $progress->getFailedPercentage() }}%"
+                >
                 </div>
             </div>
 
-            <p class="text-xs text-gray-500 dark:text-gray-400 whitespace-normal">
+            <p class="whitespace-normal text-xs text-gray-500 dark:text-gray-400">
                 {{ number_format($progress->successful) }} of {{ number_format($progress->total) }} synced
-                @if ($failed = $progress->getFailed()) & {{ number_format($failed) }} <x-filament::link
-                :href="$progress->failedRowsCsvUrl" target="_blank" size="xs">failed</x-filament::link> @endif
+                @if ($failed = $progress->getFailed())
+                    & {{ number_format($failed) }} <x-filament::link
+                        :href="$progress->failedRowsCsvUrl"
+                        target="_blank"
+                        size="xs"
+                    >failed</x-filament::link>
+                @endif
             </p>
         </div>
 
