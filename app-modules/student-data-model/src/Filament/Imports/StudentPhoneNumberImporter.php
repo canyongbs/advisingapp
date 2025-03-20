@@ -60,7 +60,7 @@ class StudentPhoneNumberImporter extends Importer
                     'max:255',
                 ]),
             ImportColumn::make('number')
-                ->rules(['max:255', 'phone:E164'])
+                ->rules(['phone:E164'])
                 ->example('+1 (777) 777-7777'),
             ImportColumn::make('ext')
                 ->label('Extension')
