@@ -83,9 +83,7 @@ class EditBasicNeedsProgram extends EditRecord
                     ->string()
                     ->email(),
                 PhoneInput::make('contact_phone')
-                    ->label('Contact Phone')
-                    ->maxLength(255)
-                    ->string(),
+                    ->label('Contact Phone'),
                 TextInput::make('location')
                     ->label('Location')
                     ->maxLength(255)

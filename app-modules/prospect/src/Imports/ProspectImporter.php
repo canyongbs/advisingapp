@@ -120,7 +120,7 @@ class ProspectImporter extends Importer
                 ->example('Work')
                 ->fillRecordUsing(fn () => null),
             ImportColumn::make('phone_1')
-                ->rules(['max:255', 'phone:E164'])
+                ->rules(['phone:E164'])
                 ->example('+1 (555) 555-5555')
                 ->fillRecordUsing(fn () => null),
             ImportColumn::make('phone_1_ext')
@@ -138,7 +138,7 @@ class ProspectImporter extends Importer
                 ->example('true')
                 ->fillRecordUsing(fn () => null),
             ImportColumn::make('phone_2')
-                ->rules(['max:255', 'phone:E164'])
+                ->rules(['phone:E164'])
                 ->example('+1 (666) 666-6666')
                 ->fillRecordUsing(fn () => null),
             ImportColumn::make('phone_2_ext')
@@ -156,7 +156,7 @@ class ProspectImporter extends Importer
                 ->example('false')
                 ->fillRecordUsing(fn () => null),
             ImportColumn::make('phone_3')
-                ->rules(['max:255', 'phone:E164'])
+                ->rules(['phone:E164'])
                 ->example('+1 (777) 777-7777')
                 ->fillRecordUsing(fn () => null),
             ImportColumn::make('phone_3_ext')

@@ -45,10 +45,10 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class BasicNeedsProgramFactory extends Factory
 {
     /**
-    * Define the model's default state.
-    *
-    * @return array<string, mixed>
-    */
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
     public function definition(): array
     {
         return [
@@ -57,7 +57,7 @@ class BasicNeedsProgramFactory extends Factory
             'basic_needs_category_id' => BasicNeedsCategory::factory(),
             'contact_person' => fake()->name(),
             'contact_email' => fake()->email(),
-            'contact_phone' => fake()->numerify('+1 ### ### ####'),
+            'contact_phone' => fake()->e164PhoneNumber(),
             'location' => fake()->city(),
             'availability' => fake()->realText(255),
             'eligibility_criteria' => fake()->realText(255),
