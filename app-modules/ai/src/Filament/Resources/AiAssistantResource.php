@@ -48,11 +48,11 @@ class AiAssistantResource extends Resource
 
     protected static ?string $navigationGroup = 'Artificial Intelligence';
 
-    protected static ?string $navigationLabel = 'Assistant Library';
+    protected static ?string $navigationLabel = 'Custom Advisors';
 
-    protected static ?string $modelLabel = 'AI assistant';
+    protected static ?string $modelLabel = 'Custom Advisor';
 
-    protected static ?int $navigationSort = 30;
+    protected static ?int $navigationSort = 20;
 
     public static function getPages(): array
     {
