@@ -230,8 +230,7 @@ RUN echo "source $NVM_DIR/nvm.sh \
     && nvm use default \
     && npm install -g npm@$NPM_VERSION" | bash
 
-COPY ./docker/crontab /etc/cron.d/laravel-scheduler
-RUN chmod 0644 /etc/cron.d/laravel-scheduler
+COPY --chmod=644 ./docker/cron.d/ /etc/cron.d/
 COPY --chmod=755 ./docker/scheduler/s6-overlay/ /etc/s6-overlay/
 COPY --chmod=755 ./docker/s6-overlay-shared/ /etc/s6-overlay/
 
