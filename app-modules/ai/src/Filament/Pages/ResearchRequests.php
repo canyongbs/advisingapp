@@ -34,32 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Filament\Resources;
+namespace AdvisingApp\Ai\Filament\Pages;
 
-use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Pages\CreateAiAssistant;
-use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Pages\EditAiAssistant;
-use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Pages\ListAiAssistants;
-use AdvisingApp\Ai\Models\AiAssistant;
-use Filament\Resources\Resource;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use Filament\Pages\Page;
 
-class AiAssistantResource extends Resource
+class ResearchRequests extends Page
 {
-    protected static ?string $model = AiAssistant::class;
-
     protected static ?string $navigationGroup = 'Artificial Intelligence';
 
-    protected static ?string $navigationLabel = 'Assistant Library';
+    protected static ?int $navigationSort = 30;
 
-    protected static ?string $modelLabel = 'AI assistant';
+    protected static string $view = 'filament.pages.coming-soon';
 
-    protected static ?int $navigationSort = 40;
-
-    public static function getPages(): array
+    public static function canAccess(): bool
     {
-        return [
-            'index' => ListAiAssistants::route('/'),
-            'create' => CreateAiAssistant::route('/create'),
-            'edit' => EditAiAssistant::route('/{record}/edit'),
-        ];
+        /** @var User $user */
+        $user = auth()->user();
+
+        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
+            return false;
+        }
+
+        return $user->isSuperAdmin();
     }
 }
