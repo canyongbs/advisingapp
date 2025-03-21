@@ -52,7 +52,7 @@ class AiAssistantResource extends Resource
 
     protected static ?string $modelLabel = 'AI assistant';
 
-    protected static ?int $navigationSort = 30;
+    protected static ?int $navigationSort = 40;
 
     public static function getPages(): array
     {
