@@ -38,12 +38,11 @@ namespace AdvisingApp\Notification\Notifications\Channels;
 
 use AdvisingApp\Notification\DataTransferObjects\DatabaseChannelResultData;
 use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\DatabaseMessage;
 use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
-use AdvisingApp\Notification\Notifications\Contracts\OnDemandNotification;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Channels\DatabaseChannel as BaseDatabaseChannel;
 use Illuminate\Notifications\Notification;
 use Throwable;
@@ -52,10 +51,9 @@ class DatabaseChannel extends BaseDatabaseChannel
 {
     public function send($notifiable, Notification $notification): void
     {
+        /** @var CanBeNotified $notifiable */
         [$recipientId, $recipientType] = match (true) {
             $notifiable instanceof Model => [$notifiable->getKey(), $notifiable->getMorphClass()],
-            $notifiable instanceof AnonymousNotifiable && $notification instanceof OnDemandNotification => $notification->identifyRecipient(),
-            default => [null, 'anonymous'],
         };
 
         $databaseMessage = new DatabaseMessage([

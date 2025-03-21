@@ -47,6 +47,7 @@ use AdvisingApp\Notification\Models\EmailMessage;
 use AdvisingApp\Notification\Models\EmailMessageEvent;
 use AdvisingApp\Notification\Models\SmsMessage;
 use AdvisingApp\Notification\Models\SmsMessageEvent;
+use AdvisingApp\Notification\Models\StoredAnonymousNotifiable;
 use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\Notification\Notifications\ChannelManager;
 use AdvisingApp\Notification\Notifications\Channels\DatabaseChannel;
@@ -82,6 +83,7 @@ class NotificationServiceProvider extends ServiceProvider
             'sms_message' => SmsMessage::class,
             'sms_message_event' => SmsMessageEvent::class,
             'database_message' => DatabaseMessage::class,
+            'stored_anonymous_notifiable' => StoredAnonymousNotifiable::class,
         ]);
 
         $this->registerEvents();

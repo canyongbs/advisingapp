@@ -34,48 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\Notifications;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
-use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
-use AdvisingApp\Notification\Notifications\Contracts\OnDemandNotification;
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use AdvisingApp\Portal\Models\PortalAuthentication;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Notification;
-
-#[SystemNotification]
-class AuthenticatePortalNotification extends Notification implements ShouldQueue, OnDemandNotification
-{
-    use Queueable;
-
-    public function __construct(
-        public PortalAuthentication $authentication,
-        public int $code,
-    ) {}
-
-    /**
-     * @return array<int, string>
-     */
-    public function via(object $notifiable): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return ['mail'];
+        DB::table('email_messages')
+            ->where('recipient_type', 'anonymous')
+            ->delete();
     }
 
-    public function toMail(object $notifiable): MailMessage
+    public function down(): void
     {
-        return MailMessage::make()
-            ->subject(__('Your authentication code for :appname', ['appname' => config('app.name')]))
-            ->line("Your code is: {$this->code}.")
-            ->line('You should type this code into the portal to authenticate yourself.')
-            ->line('For security reasons, the code will expire in 24 hours, but you can always request another.');
+        // There is no way to undo this operation
     }
-
-    public function identifyRecipient(?object $notifiable = null): array
-    {
-        return [
-            $this->authentication->educatable->getKey(),
-            $this->authentication->educatable->getMorphClass(),
-        ];
-    }
-}
+};

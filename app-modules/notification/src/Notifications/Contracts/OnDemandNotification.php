@@ -38,5 +38,5 @@ namespace AdvisingApp\Notification\Notifications\Contracts;
 
 interface OnDemandNotification
 {
-    public function identifyRecipient(): array;
+    public function identifyRecipient(?object $notifiable = null): array;
 }
