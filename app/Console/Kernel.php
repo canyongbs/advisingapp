@@ -71,7 +71,6 @@ class Kernel extends ConsoleKernel
 
         $schedule->job(new GatherAndDispatchSesS3InboundEmails())
             ->everyMinute()
-            ->name('Gather and Dispatch SES S3 Inbound Emails')
             ->monitorName('Gather and Dispatch SES S3 Inbound Emails');
 
         Tenant::query()
@@ -85,7 +84,6 @@ class Kernel extends ConsoleKernel
                         });
                     })
                         ->everyMinute()
-                        ->name("Dispatch DeliverEngagements | Tenant {$tenant->domain}")
                         ->monitorName("Dispatch DeliverEngagements | Tenant {$tenant->domain}")
                         ->withoutOverlapping(15);
 
@@ -95,7 +93,6 @@ class Kernel extends ConsoleKernel
                         });
                     })
                         ->everyMinute()
-                        ->name("Dispatch SyncCalendars | Tenant {$tenant->domain}")
                         ->monitorName("Dispatch SyncCalendars | Tenant {$tenant->domain}")
                         ->withoutOverlapping(15);
 
@@ -105,25 +102,21 @@ class Kernel extends ConsoleKernel
                         });
                     })
                         ->everyMinute()
-                        ->name("Dispatch ExecuteCampaignActions | Tenant {$tenant->domain}")
                         ->monitorName("Dispatch ExecuteCampaignActions | Tenant {$tenant->domain}")
                         ->withoutOverlapping(15);
 
                     $schedule->command("tenants:artisan \"cache:prune-stale-tags\" --tenant={$tenant->id}")
                         ->hourly()
-                        ->name("Prune Stale Cache Tags | Tenant {$tenant->domain}")
                         ->monitorName("Prune Stale Cache Tags | Tenant {$tenant->domain}")
                         ->withoutOverlapping(15);
 
                     $schedule->command("tenants:artisan \"health:queue-check-heartbeat\" --tenant={$tenant->id}")
                         ->everyMinute()
-                        ->name("Queue Check Heartbeat | Tenant {$tenant->domain}")
                         ->monitorName("Queue Check Heartbeat | Tenant {$tenant->domain}")
                         ->withoutOverlapping(15);
 
                     $schedule->command("ai:delete-unsaved-ai-threads --tenant={$tenant->id}")
                         ->daily()
-                        ->name("Delete Unsaved AI Threads | Tenant {$tenant->domain}")
                         ->monitorName("Delete Unsaved AI Threads | Tenant {$tenant->domain}")
                         ->withoutOverlapping(720);
 
@@ -141,7 +134,6 @@ class Kernel extends ConsoleKernel
 
                     $schedule->command("tenants:artisan \"model:prune --model={$modelsToPrune}\" --tenant={$tenant->id}")
                         ->daily()
-                        ->name("Prune Models | Tenant {$tenant->domain}")
                         ->monitorName("Prune Models | Tenant {$tenant->domain}")
                         ->withoutOverlapping(720);
 
@@ -152,19 +144,16 @@ class Kernel extends ConsoleKernel
                         ]
                     )
                         ->daily()
-                        ->name("Refresh Calendar Refresh Tokens | Tenant {$tenant->domain}")
                         ->monitorName("Refresh Calendar Refresh Tokens | Tenant {$tenant->domain}")
                         ->withoutOverlapping(720);
 
                     $schedule->command("tenants:artisan \"health:check\" --tenant={$tenant->id}")
                         ->everyMinute()
-                        ->name("Health Check | Tenant {$tenant->domain}")
                         ->monitorName("Health Check | Tenant {$tenant->domain}")
                         ->withoutOverlapping(15);
 
                     $schedule->command("tenants:artisan \"health:schedule-check-heartbeat\" --tenant={$tenant->id}")
                         ->everyMinute()
-                        ->name("Schedule Check Heartbeat | Tenant {$tenant->domain}")
                         ->monitorName("Schedule Check Heartbeat | Tenant {$tenant->domain}")
                         ->withoutOverlapping(15);
                 } catch (Throwable $th) {
