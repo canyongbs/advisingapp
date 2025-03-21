@@ -82,7 +82,7 @@ class ProspectFactory extends Factory
             ]));
             $prospect->primaryPhoneNumber()->associate(ProspectPhoneNumber::factory()->canReceiveSms()->create([
                 'prospect_id' => $prospect->getKey(),
-                'number' => fake()->numerify('+1 ### ### ####'),
+                'number' => fake()->e164PhoneNumber(),
                 'order' => 1,
             ]));
             $prospect->primaryAddress()->associate(ProspectAddress::factory()->create([
