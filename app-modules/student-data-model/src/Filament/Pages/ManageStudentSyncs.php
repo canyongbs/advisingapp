@@ -37,7 +37,6 @@
 namespace AdvisingApp\StudentDataModel\Filament\Pages;
 
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
-use App\Features\StudentDataImportTrackingFeature;
 use Filament\Pages\Page;
 
 class ManageStudentSyncs extends Page
@@ -54,10 +53,6 @@ class ManageStudentSyncs extends Page
 
     public static function canAccess(): bool
     {
-        if (! StudentDataImportTrackingFeature::active()) {
-            return false;
-        }
-
         if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
             return false;
         }
