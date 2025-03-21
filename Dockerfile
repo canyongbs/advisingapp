@@ -233,6 +233,12 @@ RUN echo "source $NVM_DIR/nvm.sh \
 COPY --chmod=755 ./docker/scheduler/s6-overlay/ /etc/s6-overlay/
 COPY --chmod=755 ./docker/s6-overlay-shared/ /etc/s6-overlay/
 
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+    cron \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
+
 ENTRYPOINT ["/init"]
 
 FROM scheduler-base AS scheduler-development
