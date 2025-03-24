@@ -36,26 +36,25 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use AdvisingApp\StudentDataModel\Models\Student;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
-use Filament\Widgets\TableWidget as BaseWidget;
+use Filament\Widgets\ChartWidget;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 
-class MostEngagedStudentsTable extends BaseWidget
+abstract class PieChartReportWidget extends ChartWidget
 {
+    #[Locked]
     public string $cacheTag;
 
     protected static ?string $pollingInterval = null;
 
+    protected static ?string $maxHeight = '200px';
+
     protected static bool $isLazy = false;
 
-    protected static ?string $heading = 'Most Actively Engaged Students';
-
-    protected int | string | array $columnSpan = 'full';
-
-    public function mount(string $cacheTag)
+    public function mount($cacheTag = null): void
     {
+        parent::mount();
+
         $this->cacheTag = $cacheTag;
     }
 
@@ -65,24 +64,8 @@ class MostEngagedStudentsTable extends BaseWidget
         $this->dispatch('$refresh');
     }
 
-    public function table(Table $table): Table
+    protected function getType(): string
     {
-        return $table
-            ->query(
-                Student::with('primaryEmailAddress:id,address')
-                    ->select('sisid', 'full_name', 'primary_email_id')
-                    ->withCount('engagements')
-                    ->orderBy('engagements_count', 'desc')
-                    ->limit(10)
-            )
-            ->paginated(false)
-            ->columns([
-                TextColumn::make('full_name')
-                    ->label('Name'),
-                TextColumn::make('primaryEmailAddress.address')
-                    ->label('Email'),
-                TextColumn::make('engagements_count')
-                    ->label('Engagements'),
-            ]);
+        return 'line';
     }
 }
