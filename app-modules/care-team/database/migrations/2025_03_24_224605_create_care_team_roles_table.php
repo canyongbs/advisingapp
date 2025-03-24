@@ -34,13 +34,12 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     public function up(): void
     {
         Schema::create('care_team_roles', function (Blueprint $table) {
