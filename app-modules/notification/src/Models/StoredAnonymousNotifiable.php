@@ -34,48 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\Notifications;
+namespace AdvisingApp\Notification\Models;
 
-use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
-use AdvisingApp\Notification\Notifications\Contracts\OnDemandNotification;
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use AdvisingApp\Portal\Models\PortalAuthentication;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Notification;
+use AdvisingApp\Notification\Enums\NotificationChannel;
+use App\Models\BaseModel;
 
-#[SystemNotification]
-class AuthenticatePortalNotification extends Notification implements ShouldQueue, OnDemandNotification
+class StoredAnonymousNotifiable extends BaseModel
 {
-    use Queueable;
+    protected $fillable = [
+        'type',
+        'route',
+    ];
 
-    public function __construct(
-        public PortalAuthentication $authentication,
-        public int $code,
-    ) {}
-
-    /**
-     * @return array<int, string>
-     */
-    public function via(object $notifiable): array
-    {
-        return ['mail'];
-    }
-
-    public function toMail(object $notifiable): MailMessage
-    {
-        return MailMessage::make()
-            ->subject(__('Your authentication code for :appname', ['appname' => config('app.name')]))
-            ->line("Your code is: {$this->code}.")
-            ->line('You should type this code into the portal to authenticate yourself.')
-            ->line('For security reasons, the code will expire in 24 hours, but you can always request another.');
-    }
-
-    public function identifyRecipient(?object $notifiable = null): array
-    {
-        return [
-            $this->authentication->educatable->getKey(),
-            $this->authentication->educatable->getMorphClass(),
-        ];
-    }
+    protected $casts = [
+        'type' => NotificationChannel::class,
+    ];
 }
