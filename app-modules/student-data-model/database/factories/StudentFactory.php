@@ -96,7 +96,7 @@ class StudentFactory extends Factory
             ]));
             $student->primaryPhoneNumber()->associate(StudentPhoneNumber::factory()->canReceiveSms()->create([
                 'sisid' => $student->getKey(),
-                'number' => fake()->numerify('+1 ### ### ####'),
+                'number' => fake()->e164PhoneNumber(),
                 'order' => 1,
             ]));
             $student->primaryAddress()->associate(StudentAddress::factory()->create([

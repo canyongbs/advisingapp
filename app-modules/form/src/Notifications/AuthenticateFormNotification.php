@@ -71,7 +71,7 @@ class AuthenticateFormNotification extends Notification implements ShouldQueue, 
             ->line('For security reasons, the code will expire in 24 hours, but you can always request another.');
     }
 
-    public function identifyRecipient(): array
+    public function identifyRecipient(?object $notifiable = null): array
     {
         return [
             $this->submissibleAuthentication->author->getKey(),

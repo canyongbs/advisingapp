@@ -34,33 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Pages;
+use App\Features\StoreAnonymousNotifiableInformationFeature;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
-use Filament\Pages\Page;
-
-class ManageStudentSyncs extends Page
-{
-    protected static ?string $navigationLabel = 'Sync History';
-
-    protected static ?string $title = 'Records Sync';
-
-    protected static ?int $navigationSort = 30;
-
-    protected static ?string $navigationGroup = 'Retention CRM';
-
-    protected static string $view = 'student-data-model::filament.pages.manage-student-syncs';
-
-    public static function canAccess(): bool
+return new class () extends Migration {
+    public function up(): void
     {
-        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
-            return false;
-        }
-
-        if (! auth()->user()->can('record_sync.view-any')) {
-            return false;
-        }
-
-        return parent::canAccess();
+        StoreAnonymousNotifiableInformationFeature::activate();
     }
-}
+
+    public function down(): void
+    {
+        StoreAnonymousNotifiableInformationFeature::deactivate();
+    }
+};

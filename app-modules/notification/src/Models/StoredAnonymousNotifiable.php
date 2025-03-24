@@ -34,14 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+namespace AdvisingApp\Notification\Models;
 
-use App\Support\AbstractFeatureFlag;
+use AdvisingApp\Notification\Enums\NotificationChannel;
+use App\Models\BaseModel;
 
-class StudentDataImportTrackingFeature extends AbstractFeatureFlag
+class StoredAnonymousNotifiable extends BaseModel
 {
-    public function resolve(mixed $scope): mixed
-    {
-        return false;
-    }
+    protected $fillable = [
+        'type',
+        'route',
+    ];
+
+    protected $casts = [
+        'type' => NotificationChannel::class,
+    ];
 }

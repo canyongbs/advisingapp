@@ -74,6 +74,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Tapp\FilamentTimezoneField\Forms\Components\TimezoneSelect;
+use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 /**
  * @property Form $form
@@ -202,9 +203,8 @@ class EditProfile extends Page
                             ->label('Show Bio on profile')
                             ->visible($hasCrmLicense)
                             ->live(),
-                        TextInput::make('phone_number')
+                        PhoneInput::make('phone_number')
                             ->label('Contact phone number')
-                            ->integer()
                             ->hint(fn (Get $get): string => $get('is_phone_number_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
                         Checkbox::make('is_phone_number_visible_on_profile')
                             ->label('Show phone number on profile')

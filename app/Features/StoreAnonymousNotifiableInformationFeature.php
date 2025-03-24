@@ -34,33 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Pages;
+namespace App\Features;
 
-use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
-use Filament\Pages\Page;
+use App\Support\AbstractFeatureFlag;
 
-class ManageStudentSyncs extends Page
+class StoreAnonymousNotifiableInformationFeature extends AbstractFeatureFlag
 {
-    protected static ?string $navigationLabel = 'Sync History';
-
-    protected static ?string $title = 'Records Sync';
-
-    protected static ?int $navigationSort = 30;
-
-    protected static ?string $navigationGroup = 'Retention CRM';
-
-    protected static string $view = 'student-data-model::filament.pages.manage-student-syncs';
-
-    public static function canAccess(): bool
+    public function resolve(mixed $scope): mixed
     {
-        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
-            return false;
-        }
-
-        if (! auth()->user()->can('record_sync.view-any')) {
-            return false;
-        }
-
-        return parent::canAccess();
+        return false;
     }
 }
