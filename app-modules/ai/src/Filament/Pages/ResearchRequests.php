@@ -37,6 +37,7 @@
 namespace AdvisingApp\Ai\Filament\Pages;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Models\User;
 use Filament\Pages\Page;
 
 class ResearchRequests extends Page
@@ -56,6 +57,6 @@ class ResearchRequests extends Page
             return false;
         }
 
-        return $user->isSuperAdmin();
+        return $user->can(['assistant.view-any', 'assistant.*.view']);
     }
 }
