@@ -38,7 +38,6 @@ namespace AdvisingApp\CareTeam\Policies;
 
 use AdvisingApp\CareTeam\Models\CareTeamRole;
 use App\Models\Authenticatable;
-use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
 class CareTeamRolePolicy
