@@ -80,6 +80,9 @@ class PrepareStudentDataCsvImport implements ShouldQueue
 
     public function handle(): void
     {
+        $this->studentDataImport->started_at ??= now();
+        $this->studentDataImport->save();
+
         $batch = $this->batch();
 
         /** @var AwsS3V3Adapter $s3Adapter */
