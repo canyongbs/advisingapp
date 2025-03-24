@@ -34,32 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Filament\Resources;
+namespace AdvisingApp\Ai\Filament\Pages;
 
-use AdvisingApp\Ai\Filament\Resources\PromptResource\Pages\CreatePrompt;
-use AdvisingApp\Ai\Filament\Resources\PromptResource\Pages\EditPrompt;
-use AdvisingApp\Ai\Filament\Resources\PromptResource\Pages\ListPrompts;
-use AdvisingApp\Ai\Filament\Resources\PromptResource\Pages\ViewPrompt;
-use AdvisingApp\Ai\Models\Prompt;
-use Filament\Resources\Resource;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Models\User;
+use Filament\Pages\Page;
 
-class PromptResource extends Resource
+class ResearchRequests extends Page
 {
-    protected static ?string $model = Prompt::class;
-
     protected static ?string $navigationGroup = 'Artificial Intelligence';
 
-    protected static ?string $navigationLabel = 'Prompt Library';
+    protected static ?int $navigationSort = 30;
 
-    protected static ?int $navigationSort = 40;
+    protected static string $view = 'filament.pages.coming-soon';
 
-    public static function getPages(): array
+    public static function canAccess(): bool
     {
-        return [
-            'index' => ListPrompts::route('/'),
-            'create' => CreatePrompt::route('/create'),
-            'view' => ViewPrompt::route('/{record}'),
-            'edit' => EditPrompt::route('/{record}/edit'),
-        ];
+        /** @var User $user */
+        $user = auth()->user();
+
+        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
+            return false;
+        }
+
+        return $user->can(['assistant.view-any', 'assistant.*.view']);
     }
 }
