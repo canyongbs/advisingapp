@@ -60,6 +60,10 @@ class PersonalAssistant extends Page
 
     protected static ?string $navigationGroup = 'Artificial Intelligence';
 
+    protected static ?string $navigationLabel = 'Institutional Advisor';
+
+    protected static ?string $modelLabel = 'Institutional Advisor';
+
     protected static ?int $navigationSort = 10;
 
     public static function canAccess(): bool
