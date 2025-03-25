@@ -563,7 +563,7 @@ namespace App\Models{
  * @property array<array-key, mixed>|null $password_history
  * @property \Illuminate\Support\Carbon $password_last_updated_at
  * @property bool $is_signature_enabled
- * @property string|null $signature
+ * @property array<array-key, mixed>|null $signature
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\AiAssistantUpvote> $aiAssistantUpvotes
  * @property-read int|null $ai_assistant_upvotes_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\AiThreadFolder> $aiThreadFolders
@@ -3977,6 +3977,20 @@ namespace AdvisingApp\Notification\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperSmsMessageEvent {}
+}
+
+namespace AdvisingApp\Notification\Models{
+/**
+ * 
+ *
+ * @property \AdvisingApp\Notification\Enums\NotificationChannel $type
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StoredAnonymousNotifiable newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StoredAnonymousNotifiable newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StoredAnonymousNotifiable query()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperStoredAnonymousNotifiable {}
 }
 
 namespace AdvisingApp\Notification\Models{

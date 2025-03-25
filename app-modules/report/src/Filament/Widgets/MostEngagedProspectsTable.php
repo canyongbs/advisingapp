@@ -69,7 +69,8 @@ class MostEngagedProspectsTable extends BaseWidget
     {
         return $table
             ->query(
-                Prospect::select('id', 'full_name', 'email', 'status_id', 'created_by_id', 'created_at')
+                Prospect::select('id', 'full_name', 'primary_email_id', 'status_id', 'created_by_id', 'created_at')
+                    ->with('primaryEmailAddress:id,address')
                     ->with(['status', 'createdBy:id,name'])
                     ->withCount('engagements')
                     ->orderBy('engagements_count', 'desc')
@@ -79,7 +80,8 @@ class MostEngagedProspectsTable extends BaseWidget
             ->columns([
                 TextColumn::make('full_name')
                     ->label('Name'),
-                TextColumn::make('email'),
+                TextColumn::make('primaryEmailAddress.address')
+                    ->label('Email'),
                 TextColumn::make('status.name')
                     ->badge()
                     ->color(fn (Prospect $record) => $record->status->color->value),

@@ -34,55 +34,45 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Filament\Widgets;
+namespace AdvisingApp\Report\Filament\Pages;
 
-use AdvisingApp\StudentDataModel\Models\Student;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
-use Filament\Widgets\TableWidget as BaseWidget;
-use Livewire\Attributes\On;
+use AdvisingApp\Report\Abstract\StudentReport;
+use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
+use AdvisingApp\Report\Filament\Widgets\StudentDeliverableTable;
+use AdvisingApp\Report\Filament\Widgets\StudentEmailOptInOptOutPieChart;
+use AdvisingApp\Report\Filament\Widgets\StudentSmsOptInOptOutPieChart;
+use App\Filament\Clusters\ReportLibrary;
 
-class MostEngagedStudentsTable extends BaseWidget
+class StudentDeliverabilityReport extends StudentReport
 {
-    public string $cacheTag;
+    protected static ?string $title = 'Deliverability';
 
-    protected static ?string $pollingInterval = null;
+    protected static ?string $cluster = ReportLibrary::class;
 
-    protected static bool $isLazy = false;
+    protected static string $routePath = 'student-deliverability-report';
 
-    protected static ?string $heading = 'Most Actively Engaged Students';
+    protected static ?string $navigationGroup = 'Students';
 
-    protected int | string | array $columnSpan = 'full';
+    protected $cacheTag = 'report-student-deliverability';
 
-    public function mount(string $cacheTag)
+    protected static ?int $navigationSort = 5;
+
+    public function getColumns(): int | string | array
     {
-        $this->cacheTag = $cacheTag;
+        return [
+            'sm' => 12,
+            'md' => 12,
+            'lg' => 12,
+        ];
     }
 
-    #[On('refresh-widgets')]
-    public function refreshWidget()
+    public function getWidgets(): array
     {
-        $this->dispatch('$refresh');
-    }
-
-    public function table(Table $table): Table
-    {
-        return $table
-            ->query(
-                Student::with('primaryEmailAddress:id,address')
-                    ->select('sisid', 'full_name', 'primary_email_id')
-                    ->withCount('engagements')
-                    ->orderBy('engagements_count', 'desc')
-                    ->limit(10)
-            )
-            ->paginated(false)
-            ->columns([
-                TextColumn::make('full_name')
-                    ->label('Name'),
-                TextColumn::make('primaryEmailAddress.address')
-                    ->label('Email'),
-                TextColumn::make('engagements_count')
-                    ->label('Engagements'),
-            ]);
+        return [
+            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
+            StudentEmailOptInOptOutPieChart::make(['cacheTag' => $this->cacheTag]),
+            StudentSmsOptInOptOutPieChart::make(['cacheTag' => $this->cacheTag]),
+            StudentDeliverableTable::make(['cacheTag' => $this->cacheTag]),
+        ];
     }
 }

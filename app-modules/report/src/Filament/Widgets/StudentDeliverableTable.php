@@ -37,12 +37,13 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\StudentDataModel\Models\Student;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Livewire\Attributes\On;
 
-class MostEngagedStudentsTable extends BaseWidget
+class StudentDeliverableTable extends BaseWidget
 {
     public string $cacheTag;
 
@@ -50,7 +51,7 @@ class MostEngagedStudentsTable extends BaseWidget
 
     protected static bool $isLazy = false;
 
-    protected static ?string $heading = 'Most Actively Engaged Students';
+    protected static ?string $heading = 'Student Communication Preferences';
 
     protected int | string | array $columnSpan = 'full';
 
@@ -69,20 +70,19 @@ class MostEngagedStudentsTable extends BaseWidget
     {
         return $table
             ->query(
-                Student::with('primaryEmailAddress:id,address')
-                    ->select('sisid', 'full_name', 'primary_email_id')
-                    ->withCount('engagements')
-                    ->orderBy('engagements_count', 'desc')
-                    ->limit(10)
+                Student::select('sisid', 'full_name', 'email_bounce', 'sms_opt_out')
+                    ->where('sms_opt_out', true)
+                    ->orWhere('email_bounce', true)
             )
-            ->paginated(false)
             ->columns([
                 TextColumn::make('full_name')
                     ->label('Name'),
-                TextColumn::make('primaryEmailAddress.address')
-                    ->label('Email'),
-                TextColumn::make('engagements_count')
-                    ->label('Engagements'),
+                IconColumn::make('email_bounce')
+                    ->label('Email Opt Out')
+                    ->boolean(),
+                IconColumn::make('sms_opt_out')
+                    ->label('SMS Opt Out')
+                    ->boolean(),
             ]);
     }
 }
