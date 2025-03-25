@@ -52,10 +52,10 @@
         </div>
     </div>
 
-    @if((!blank($record->dispatched_at)))
-    <time class="mb-2 block text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
-        Sent {{ $record->dispatched_at->diffForHumans() }}
-    </time>
+    @if (!blank($record->dispatched_at))
+        <time class="mb-2 block text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
+            Sent {{ $record->dispatched_at->diffForHumans() }}
+        </time>
     @endif
 
     <div
