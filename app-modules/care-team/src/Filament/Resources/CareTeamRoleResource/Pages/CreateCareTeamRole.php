@@ -37,7 +37,6 @@
 namespace AdvisingApp\CareTeam\Filament\Resources\CareTeamRoleResource\Pages;
 
 use AdvisingApp\CareTeam\Filament\Resources\CareTeamRoleResource;
-use AdvisingApp\CareTeam\Models\CareTeamRole;
 use App\Enums\CareTeamRoleType;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -59,16 +58,15 @@ class CreateCareTeamRole extends CreateRecord
                     ->string()
                     ->unique(),
                 Select::make('type')
-                  ->options(CareTeamRoleType::class)
-                  ->required(),
+                    ->options(CareTeamRoleType::class)
+                    ->required(),
             ]);
     }
 
     protected function mutateFormDataBeforeCreate(array $data): array
-{
-    $data['is_default'] = false;
+    {
+        $data['is_default'] = false;
 
-    return $data;
-}
-
+        return $data;
+    }
 }
