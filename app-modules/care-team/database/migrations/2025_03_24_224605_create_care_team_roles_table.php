@@ -49,7 +49,7 @@ return new class () extends Migration {
             $table->string('type');
             $table->boolean('is_default');
 
-            $table->uniqueIndex(['type', 'is_default'])->where(fn (Builder $condition) => $condition->whereNull('deleted_at')->where('is_default', true));
+            $table->uniqueIndex(['type', 'is_default'])->where(fn (Builder $condition) => $condition->whereNull('deleted_at')->where('is_default', 'true'));
 
             $table->timestamps();
             $table->softDeletes();
