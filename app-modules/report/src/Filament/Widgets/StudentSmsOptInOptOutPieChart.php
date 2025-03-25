@@ -43,7 +43,7 @@ use Illuminate\Support\Facades\Cache;
 
 class StudentSmsOptInOptOutPieChart extends PieChartReportWidget
 {
-    protected static ?string $heading = 'Students Text';
+    protected static ?string $heading = 'Student SMS';
 
     protected int | string | array $columnSpan = [
         'sm' => 12,
