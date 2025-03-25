@@ -12,6 +12,12 @@ class StudentEmailOptInOptOutPieChart extends PieChartReportWidget
 {
     protected static ?string $heading = 'Students Email Address';
 
+    protected int | string | array $columnSpan = [
+        'sm' => 12,
+        'md' => 6,
+        'lg' => 6,
+    ];
+
     protected static ?string $maxHeight = '240px';
 
     public function render(): View
@@ -34,7 +40,7 @@ class StudentEmailOptInOptOutPieChart extends PieChartReportWidget
         });
 
         $emailOptOutPercentage = Cache::tags([$this->cacheTag])->remember('email_opt_out_percentage', now()->addHours(24), function () use ($totalStudents): float {
-            return $totalStudents > 0 ? number_format(Student::where('email_bounce', true)->count() / $totalStudents * 100,2) : 0;
+            return $totalStudents > 0 ? number_format(Student::where('email_bounce', true)->count() / $totalStudents * 100, 2) : 0;
         });
 
         return [

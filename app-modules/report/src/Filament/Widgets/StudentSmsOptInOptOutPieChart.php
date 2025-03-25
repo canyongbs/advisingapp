@@ -11,6 +11,12 @@ class StudentSmsOptInOptOutPieChart extends PieChartReportWidget
 {
     protected static ?string $heading = 'Students Text';
 
+    protected int | string | array $columnSpan = [
+        'sm' => 12,
+        'md' => 6,
+        'lg' => 6,
+    ];
+
     protected static ?string $maxHeight = '240px';
 
     public function render(): View

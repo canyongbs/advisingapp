@@ -26,9 +26,9 @@ class StudentDeliverabilityReport extends StudentReport
     public function getColumns(): int | string | array
     {
         return [
-            'sm' => 2,
-            'md' => 2,
-            'lg' => 2,
+            'sm' => 12,
+            'md' => 12,
+            'lg' => 12,
         ];
     }
 
