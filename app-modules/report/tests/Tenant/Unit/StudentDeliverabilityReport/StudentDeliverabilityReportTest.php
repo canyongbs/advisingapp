@@ -8,8 +8,8 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use function Pest\Livewire\livewire;
 
 it('ensures the pie chart reflects the correct student email opt-in and opt-out stats', function () {
-    $pieData = new StudentEmailOptInOptOutPieChart();
-    $pieData->cacheTag = 'student_email_opt_in_out';
+    $pieChart = new StudentEmailOptInOptOutPieChart();
+    $pieChart->cacheTag = 'student_email_opt_in_out';
 
     $emailOptOutStudents = Student::factory()->count(3)->create([
         'email_bounce' => true,
@@ -30,8 +30,8 @@ it('ensures the pie chart reflects the correct student email opt-in and opt-out 
 });
 
 it('ensures the pie chart reflects the correct student text opt-in and opt-out stats', function () {
-    $pieData = new StudentSmsOptInOptOutPieChart();
-    $pieData->cacheTag = 'student_text_opt_in_out';
+    $pieChart = new StudentSmsOptInOptOutPieChart();
+    $pieChart->cacheTag = 'student_text_opt_in_out';
 
     $textOptOutStudents = Student::factory()->count(5)->create([
         'sms_opt_out' => true,
