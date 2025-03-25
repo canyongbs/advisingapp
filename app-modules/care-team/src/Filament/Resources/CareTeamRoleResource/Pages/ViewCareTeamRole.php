@@ -37,10 +37,6 @@
 namespace AdvisingApp\CareTeam\Filament\Resources\CareTeamRoleResource\Pages;
 
 use AdvisingApp\CareTeam\Filament\Resources\CareTeamRoleResource;
-use AdvisingApp\Division\Filament\Resources\DivisionResource;
-use AdvisingApp\Division\Models\Division;
-use App\Filament\Resources\NotificationSettingResource;
-use App\Filament\Resources\UserResource;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\IconEntry;

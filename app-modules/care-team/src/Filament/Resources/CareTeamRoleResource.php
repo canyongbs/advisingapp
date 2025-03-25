@@ -54,10 +54,10 @@ class CareTeamRoleResource extends Resource
     public static function getPages(): array
     {
         return [
-             'index' => ListCareTeamRoles::route('/'),
-             'create' => CreateCareTeamRole::route('/create'),
-             'view' => ViewCareTeamRole::route('/{record}'),
-             'edit' => EditCareTeamRole::route('/{record}/edit'),
+            'index' => ListCareTeamRoles::route('/'),
+            'create' => CreateCareTeamRole::route('/create'),
+            'view' => ViewCareTeamRole::route('/{record}'),
+            'edit' => EditCareTeamRole::route('/{record}/edit'),
         ];
     }
 }
