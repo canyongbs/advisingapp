@@ -11,19 +11,19 @@ it('ensures the pie chart reflects the correct student email opt-in and opt-out 
     $pieChart = new StudentEmailOptInOptOutPieChart();
     $pieChart->cacheTag = 'student_email_opt_in_out';
 
-    $emailOptOutStudents = Student::factory()->count(3)->create([
+    $emailOptOutStudents = Student::factory()->count(10)->create([
         'email_bounce' => true,
     ]);
-    $emailOptInStudents = Student::factory()->count(5)->create([
+    $emailOptInStudents = Student::factory()->count(4)->create([
         'email_bounce' => false,
     ]);
 
     $totalstudents = Student::count();
 
-    $optOutStudents = $emailOptOutStudents->count() / $totalstudents * 100;
-    $optInStudents = $emailOptInStudents->count() / $totalstudents * 100;
+    $optOutStudents = number_format($emailOptOutStudents->count() / $totalstudents * 100, 2);
+    $optInStudents = number_format($emailOptInStudents->count() / $totalstudents * 100, 2);
 
-    $stats = $pieData->getData()['datasets'][0]['data'];
+    $stats = $pieChart->getData()['datasets'][0]['data'];
 
     expect($optOutStudents)->toEqual($stats[1]);
     expect($optInStudents)->toEqual($stats[0]);
@@ -40,7 +40,7 @@ it('ensures the pie chart reflects the correct student text opt-in and opt-out s
         'sms_opt_out' => false,
     ]);
 
-    $stats = $pieData->getData()['datasets'][0]['data'];
+    $stats = $pieChart->getData()['datasets'][0]['data'];
 
     expect($textOptInStudents)->count()->toEqual($stats[0]);
     expect($textOptOutStudents)->count()->toEqual($stats[1]);
