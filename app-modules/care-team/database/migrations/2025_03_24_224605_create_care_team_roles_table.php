@@ -47,7 +47,7 @@ return new class () extends Migration {
 
             $table->string('name');
             $table->string('type');
-            $table->boolean('is_default');
+            $table->boolean('is_default')->default(false);
 
             $table->uniqueIndex(['type', 'is_default'])->where(fn (Builder $condition) => $condition->whereNull('deleted_at')->where('is_default', 'true'));
 

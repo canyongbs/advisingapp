@@ -34,29 +34,48 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CareTeam\Models;
+namespace AdvisingApp\CareTeam\Filament\Resources\CareTeamRoleResource\Pages;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use App\Enums\CareTeamRoleType;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\CareTeam\Filament\Resources\CareTeamRoleResource;
+use AdvisingApp\Division\Filament\Resources\DivisionResource;
+use AdvisingApp\Division\Models\Division;
+use App\Filament\Resources\NotificationSettingResource;
+use App\Filament\Resources\UserResource;
+use Filament\Actions\EditAction;
+use Filament\Infolists\Components\Grid;
+use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Pages\ViewRecord;
 
-class CareTeamRole extends BaseModel implements Auditable
+class ViewCareTeamRole extends ViewRecord
 {
-    use HasFactory;
-    use SoftDeletes;
-    use AuditableTrait;
+    protected static string $resource = CareTeamRoleResource::class;
 
-    protected $fillable = [
-        'name',
-        'type',
-        'is_default',
-    ];
+    public function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Section::make()
+                    ->schema([
+                        Grid::make()
+                            ->schema([
+                                TextEntry::make('name'),
+                                TextEntry::make('type'),
+                                IconEntry::make('is_default')
+                                    ->label('Default'),
+                            ])
+                            ->columns(3),
+                    ])
+                    ->columns(),
+            ]);
+    }
 
-    protected $casts = [
-        'type' => CareTeamRoleType::class,
-        'is_default' => 'boolean',
-    ];
+    protected function getHeaderActions(): array
+    {
+        return [
+            EditAction::make(),
+        ];
+    }
 }

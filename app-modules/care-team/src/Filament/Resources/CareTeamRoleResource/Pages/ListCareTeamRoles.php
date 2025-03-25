@@ -34,29 +34,54 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CareTeam\Models;
+namespace AdvisingApp\CareTeam\Filament\Resources\CareTeamRoleResource\Pages;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use App\Enums\CareTeamRoleType;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\CareTeam\Filament\Resources\CareTeamRoleResource;
+use App\Filament\Tables\Columns\IdColumn;
+use Filament\Actions\CreateAction;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
-class CareTeamRole extends BaseModel implements Auditable
+class ListCareTeamRoles extends ListRecords
 {
-    use HasFactory;
-    use SoftDeletes;
-    use AuditableTrait;
+    protected static string $resource = CareTeamRoleResource::class;
 
-    protected $fillable = [
-        'name',
-        'type',
-        'is_default',
-    ];
+    public function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                IdColumn::make(),
+                TextColumn::make('name')
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('type')
+                    ->sortable()
+                    ->searchable(),
+                IconColumn::make('is_default')
+                    ->label('Default')
+                    ->boolean(),
+            ])
+            ->actions([
+                ViewAction::make(),
+                EditAction::make(),
+            ])
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
 
-    protected $casts = [
-        'type' => CareTeamRoleType::class,
-        'is_default' => 'boolean',
-    ];
+    protected function getHeaderActions(): array
+    {
+        return [
+            CreateAction::make(),
+        ];
+    }
 }
