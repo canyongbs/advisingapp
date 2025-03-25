@@ -10,7 +10,7 @@ class StudentSmsOptInOptOutPieChart extends PieChartReportWidget
 {
     protected static ?string $heading = 'Students Text';
 
-    protected function getData(): array
+    public function getData(): array
     {
         $smsOptOutCount = Cache::tags([$this->cacheTag])->remember('sms_opt_out_count', now()->addHours(24), function (): int {
             return Student::where('sms_opt_out', true)->count();

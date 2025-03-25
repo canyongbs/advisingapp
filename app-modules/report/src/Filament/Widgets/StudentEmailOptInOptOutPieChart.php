@@ -11,7 +11,7 @@ class StudentEmailOptInOptOutPieChart extends PieChartReportWidget
 {
     protected static ?string $heading = 'Students Email Address';
 
-    protected function getData(): array
+    public function getData(): array
     {
         $totalStudents = Student::count();
 
