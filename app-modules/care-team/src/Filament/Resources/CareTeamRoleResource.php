@@ -34,29 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CareTeam\Models;
+namespace AdvisingApp\CareTeam\Filament\Resources;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use App\Enums\CareTeamRoleType;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\CareTeam\Filament\Resources\CareTeamRoleResource\Pages\CreateCareTeamRole;
+use AdvisingApp\CareTeam\Filament\Resources\CareTeamRoleResource\Pages\EditCareTeamRole;
+use AdvisingApp\CareTeam\Filament\Resources\CareTeamRoleResource\Pages\ListCareTeamRoles;
+use AdvisingApp\CareTeam\Filament\Resources\CareTeamRoleResource\Pages\ViewCareTeamRole;
+use AdvisingApp\CareTeam\Models\CareTeamRole;
+use Filament\Resources\Resource;
 
-class CareTeamRole extends BaseModel implements Auditable
+class CareTeamRoleResource extends Resource
 {
-    use HasFactory;
-    use SoftDeletes;
-    use AuditableTrait;
+    protected static ?string $model = CareTeamRole::class;
 
-    protected $fillable = [
-        'name',
-        'type',
-        'is_default',
-    ];
+    protected static ?string $navigationGroup = 'Product Administration';
 
-    protected $casts = [
-        'type' => CareTeamRoleType::class,
-        'is_default' => 'boolean',
-    ];
+    protected static ?int $navigationSort = 120;
+
+    public static function getPages(): array
+    {
+        return [
+             'index' => ListCareTeamRoles::route('/'),
+             'create' => CreateCareTeamRole::route('/create'),
+             'view' => ViewCareTeamRole::route('/{record}'),
+             'edit' => EditCareTeamRole::route('/{record}/edit'),
+        ];
+    }
 }

@@ -34,29 +34,41 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CareTeam\Models;
+namespace AdvisingApp\CareTeam\Filament\Resources\CareTeamRoleResource\Pages;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\CareTeam\Filament\Resources\CareTeamRoleResource;
+use AdvisingApp\CareTeam\Models\CareTeamRole;
 use App\Enums\CareTeamRoleType;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Resources\Pages\CreateRecord;
 
-class CareTeamRole extends BaseModel implements Auditable
+class CreateCareTeamRole extends CreateRecord
 {
-    use HasFactory;
-    use SoftDeletes;
-    use AuditableTrait;
+    protected static string $resource = CareTeamRoleResource::class;
 
-    protected $fillable = [
-        'name',
-        'type',
-        'is_default',
-    ];
+    protected ?bool $hasDatabaseTransactions = true;
 
-    protected $casts = [
-        'type' => CareTeamRoleType::class,
-        'is_default' => 'boolean',
-    ];
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                TextInput::make('name')
+                    ->required()
+                    ->string()
+                    ->unique(),
+                Select::make('type')
+                  ->options(CareTeamRoleType::class)
+                  ->required(),
+            ]);
+    }
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+{
+    $data['is_default'] = false;
+
+    return $data;
+}
+
 }

@@ -34,29 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CareTeam\Models;
+namespace AdvisingApp\CareTeam\Filament\Resources\CareTeamRoleResource\Pages;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use App\Enums\CareTeamRoleType;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\CareTeam\Filament\Resources\CareTeamRoleResource;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
+use Filament\Actions\DeleteAction;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Resources\Pages\EditRecord;
 
-class CareTeamRole extends BaseModel implements Auditable
+class EditCareTeamRole extends EditRecord
 {
-    use HasFactory;
-    use SoftDeletes;
-    use AuditableTrait;
+    use EditPageRedirection;
 
-    protected $fillable = [
-        'name',
-        'type',
-        'is_default',
-    ];
+    protected static string $resource = CareTeamRoleResource::class;
 
-    protected $casts = [
-        'type' => CareTeamRoleType::class,
-        'is_default' => 'boolean',
-    ];
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                TextInput::make('name')
+                    ->required()
+                    ->string()
+                    ->unique(ignoreRecord: true),
+            ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            DeleteAction::make(),
+        ];
+    }
 }
