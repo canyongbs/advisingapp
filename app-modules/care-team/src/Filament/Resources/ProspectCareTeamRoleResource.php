@@ -42,6 +42,7 @@ use AdvisingApp\CareTeam\Filament\Resources\ProspectCareTeamRoleResource\Pages\L
 use AdvisingApp\CareTeam\Filament\Resources\ProspectCareTeamRoleResource\Pages\ViewProspectCareTeamRole;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
 use App\Enums\CareTeamRoleType;
+use App\Features\CareTeamRoleFeature;
 use App\Filament\Clusters\ConstituentManagement;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
@@ -59,6 +60,11 @@ class ProspectCareTeamRoleResource extends Resource
     protected static ?string $breadcrumb = 'Prospect Care Team Roles';
 
     protected static ?int $navigationSort = 60;
+
+    public static function canAccess(): bool
+    {
+        return CareTeamRoleFeature::active();
+    }
 
     public static function getEloquentQuery(): Builder
     {
