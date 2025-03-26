@@ -52,37 +52,37 @@ class CreateStudentCareTeamRole extends CreateRecord
 
     public function form(Form $form): Form
     {
-      return $form
-        ->schema([
-          TextInput::make('name')
-              ->required()
-              ->string(),
-          Toggle::make('is_default')
-              ->label('Default')
-              ->hint(function (?CareTeamRole $record, $state): ?string {
-                if ($record?->is_default) {
-                    return null;
-                }
-      
-                if (! $state) {
-                    return null;
-                }
-      
-                $currentDefault = CareTeamRole::query()
-                    ->where('is_default', true)
-                    ->where('type', CareTeamRoleType::Student)
-                    ->value('name');
-      
-                if (blank($currentDefault)) {
-                    return null;
-                }
-      
-                return "The current default care team role is '{$currentDefault}', you are replacing it.";
-              })
-              ->hintColor('danger')
-              ->columnStart(1)
-              ->live(),
-        ]);
+        return $form
+            ->schema([
+                TextInput::make('name')
+                    ->required()
+                    ->string(),
+                Toggle::make('is_default')
+                    ->label('Default')
+                    ->hint(function (?CareTeamRole $record, $state): ?string {
+                        if ($record?->is_default) {
+                            return null;
+                        }
+
+                        if (! $state) {
+                            return null;
+                        }
+
+                        $currentDefault = CareTeamRole::query()
+                            ->where('is_default', true)
+                            ->where('type', CareTeamRoleType::Student)
+                            ->value('name');
+
+                        if (blank($currentDefault)) {
+                            return null;
+                        }
+
+                        return "The current default care team role is '{$currentDefault}', you are replacing it.";
+                    })
+                    ->hintColor('danger')
+                    ->columnStart(1)
+                    ->live(),
+            ]);
     }
 
     protected function beforeCreate(): void
@@ -100,8 +100,7 @@ class CreateStudentCareTeamRole extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['type'] = CareTeamRoleType::Student;
-    
+
         return $data;
     }
-
 }

@@ -62,16 +62,16 @@ class ProspectCareTeamRoleResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-      return parent::getEloquentQuery()->where('type', CareTeamRoleType::Prospect);
+        return parent::getEloquentQuery()->where('type', CareTeamRoleType::Prospect);
     }
 
     public static function getPages(): array
     {
         return [
-             'index' => ListProspectCareTeamRoles::route('/'),
-             'create' => CreateProspectCareTeamRole::route('/create'),
-             'view' => ViewProspectCareTeamRole::route('/{record}'),
-             'edit' => EditProspectCareTeamRole::route('/{record}/edit'),
+            'index' => ListProspectCareTeamRoles::route('/'),
+            'create' => CreateProspectCareTeamRole::route('/create'),
+            'view' => ViewProspectCareTeamRole::route('/{record}'),
+            'edit' => EditProspectCareTeamRole::route('/{record}/edit'),
         ];
     }
 }
