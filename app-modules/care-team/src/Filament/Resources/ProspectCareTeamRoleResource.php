@@ -34,36 +34,44 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CareTeam\Filament\Resources\CareTeamRoleResource\Pages;
+namespace AdvisingApp\CareTeam\Filament\Resources;
 
-use AdvisingApp\CareTeam\Filament\Resources\CareTeamRoleResource;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
-use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Resources\Pages\EditRecord;
+use AdvisingApp\CareTeam\Filament\Resources\ProspectCareTeamRoleResource\Pages\CreateProspectCareTeamRole;
+use AdvisingApp\CareTeam\Filament\Resources\ProspectCareTeamRoleResource\Pages\EditProspectCareTeamRole;
+use AdvisingApp\CareTeam\Filament\Resources\ProspectCareTeamRoleResource\Pages\ListProspectCareTeamRoles;
+use AdvisingApp\CareTeam\Filament\Resources\ProspectCareTeamRoleResource\Pages\ViewProspectCareTeamRole;
+use AdvisingApp\CareTeam\Models\CareTeamRole;
+use App\Enums\CareTeamRoleType;
+use App\Filament\Clusters\ConstituentManagement;
+use Filament\Resources\Resource;
+use Illuminate\Database\Eloquent\Builder;
 
-class EditCareTeamRole extends EditRecord
+class ProspectCareTeamRoleResource extends Resource
 {
-    use EditPageRedirection;
+    protected static ?string $model = CareTeamRole::class;
 
-    protected static string $resource = CareTeamRoleResource::class;
+    protected static ?string $navigationLabel = 'Care Team Roles';
 
-    public function form(Form $form): Form
+    protected static ?string $cluster = ConstituentManagement::class;
+
+    protected static ?string $navigationGroup = 'Prospects';
+
+    protected static ?string $breadcrumb = 'Prospect Care Team Roles';
+
+    protected static ?int $navigationSort = 60;
+
+    public static function getEloquentQuery(): Builder
     {
-        return $form
-            ->schema([
-                TextInput::make('name')
-                    ->required()
-                    ->string()
-                    ->unique(ignoreRecord: true),
-            ]);
+      return parent::getEloquentQuery()->where('type', CareTeamRoleType::Prospect);
     }
 
-    protected function getHeaderActions(): array
+    public static function getPages(): array
     {
         return [
-            DeleteAction::make(),
+             'index' => ListProspectCareTeamRoles::route('/'),
+             'create' => CreateProspectCareTeamRole::route('/create'),
+             'view' => ViewProspectCareTeamRole::route('/{record}'),
+             'edit' => EditProspectCareTeamRole::route('/{record}/edit'),
         ];
     }
 }

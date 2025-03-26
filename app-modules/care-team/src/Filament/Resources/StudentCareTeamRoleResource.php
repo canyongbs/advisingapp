@@ -34,54 +34,44 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CareTeam\Filament\Resources\CareTeamRoleResource\Pages;
+namespace AdvisingApp\CareTeam\Filament\Resources;
 
-use AdvisingApp\CareTeam\Filament\Resources\CareTeamRoleResource;
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Actions\CreateAction;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
+use AdvisingApp\CareTeam\Filament\Resources\StudentCareTeamRoleResource\Pages\CreateStudentCareTeamRole;
+use AdvisingApp\CareTeam\Filament\Resources\StudentCareTeamRoleResource\Pages\EditStudentCareTeamRole;
+use AdvisingApp\CareTeam\Filament\Resources\StudentCareTeamRoleResource\Pages\ListStudentCareTeamRoles;
+use AdvisingApp\CareTeam\Filament\Resources\StudentCareTeamRoleResource\Pages\ViewStudentCareTeamRole;
+use AdvisingApp\CareTeam\Models\CareTeamRole;
+use App\Enums\CareTeamRoleType;
+use App\Filament\Clusters\ConstituentManagement;
+use Filament\Resources\Resource;
+use Illuminate\Database\Eloquent\Builder;
 
-class ListCareTeamRoles extends ListRecords
+class StudentCareTeamRoleResource extends Resource
 {
-    protected static string $resource = CareTeamRoleResource::class;
+    protected static ?string $model = CareTeamRole::class;
 
-    public function table(Table $table): Table
+    protected static ?string $navigationLabel = 'Care Team Roles';
+
+    protected static ?string $cluster = ConstituentManagement::class;
+
+    protected static ?string $navigationGroup = 'Students';
+
+    protected static ?string $breadcrumb = 'Student Care Team Roles';
+
+    protected static ?int $navigationSort = 60;
+
+    public static function getEloquentQuery(): Builder
     {
-        return $table
-            ->columns([
-                IdColumn::make(),
-                TextColumn::make('name')
-                    ->sortable()
-                    ->searchable(),
-                TextColumn::make('type')
-                    ->sortable()
-                    ->searchable(),
-                IconColumn::make('is_default')
-                    ->label('Default')
-                    ->boolean(),
-            ])
-            ->actions([
-                ViewAction::make(),
-                EditAction::make(),
-            ])
-            ->bulkActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ]);
+      return parent::getEloquentQuery()->where('type', CareTeamRoleType::Student);
     }
 
-    protected function getHeaderActions(): array
+    public static function getPages(): array
     {
         return [
-            CreateAction::make(),
+             'index' => ListStudentCareTeamRoles::route('/'),
+             'create' => CreateStudentCareTeamRole::route('/create'),
+             'view' => ViewStudentCareTeamRole::route('/{record}'),
+             'edit' => EditStudentCareTeamRole::route('/{record}/edit'),
         ];
     }
 }
