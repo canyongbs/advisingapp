@@ -42,6 +42,7 @@ use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
 use AdvisingApp\CareTeam\Models\CareTeam;
+use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
 use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagements;
