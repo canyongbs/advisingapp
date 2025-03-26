@@ -44,6 +44,7 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Models\License;
 use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\CareTeam\Models\CareTeam;
+use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
 use AdvisingApp\CaseManagement\Models\CaseAssignment;
 use AdvisingApp\Consent\Models\Concerns\CanConsent;
@@ -332,12 +333,32 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             ->withTimestamps();
     }
 
+    public function prospectCareTeamRoles(): BelongsToMany
+    {
+        return $this->belongsToMany(CareTeamRole::class, 'care_team_roles_prospects_users');
+    }
+
+    public function studentCareTeamRoles(): BelongsToMany
+    {
+        return $this->belongsToMany(CareTeamRole::class, 'care_team_roles_students_users');
+    }
+
     /**
      * @return HasMany<CareTeam, $this>
      */
     public function careTeams(): HasMany
     {
         return $this->hasMany(CareTeam::class);
+    }
+
+    public function careTeamRoleProspects(): BelongsToMany
+    {
+        return $this->belongsToMany(Prospect::class, 'care_team_roles_prospects_users');
+    }
+
+    public function careTeamRoleStudents(): BelongsToMany
+    {
+        return $this->belongsToMany(Student::class, 'care_team_roles_students_users');
     }
 
     public function permissionsFromRoles(): HasManyDeep
