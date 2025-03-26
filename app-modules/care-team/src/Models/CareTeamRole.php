@@ -42,6 +42,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\CareTeamRoleType;
 use App\Models\BaseModel;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -52,6 +53,7 @@ class CareTeamRole extends BaseModel implements Auditable
     use HasFactory;
     use SoftDeletes;
     use AuditableTrait;
+    use HasUuids;
 
     protected $fillable = [
         'name',
