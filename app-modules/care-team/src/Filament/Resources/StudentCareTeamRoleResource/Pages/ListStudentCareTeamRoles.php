@@ -63,9 +63,9 @@ class ListStudentCareTeamRoles extends ListRecords
                     ->searchable(),
                 ToggleColumn::make('is_default')
                     ->label('Default')
-                    ->beforeStateUpdated(fn (CareTeamRole $record) =>
-                      CareTeamRole::where('id', '!=', $record->id)
-                        ->update(['is_default' => false])
+                    ->beforeStateUpdated(
+                        fn (CareTeamRole $record) => CareTeamRole::where('id', '!=', $record->id)
+                            ->update(['is_default' => false])
                     ),
             ])
             ->actions([

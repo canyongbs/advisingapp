@@ -62,16 +62,16 @@ class StudentCareTeamRoleResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-      return parent::getEloquentQuery()->where('type', CareTeamRoleType::Student);
+        return parent::getEloquentQuery()->where('type', CareTeamRoleType::Student);
     }
 
     public static function getPages(): array
     {
         return [
-             'index' => ListStudentCareTeamRoles::route('/'),
-             'create' => CreateStudentCareTeamRole::route('/create'),
-             'view' => ViewStudentCareTeamRole::route('/{record}'),
-             'edit' => EditStudentCareTeamRole::route('/{record}/edit'),
+            'index' => ListStudentCareTeamRoles::route('/'),
+            'create' => CreateStudentCareTeamRole::route('/create'),
+            'view' => ViewStudentCareTeamRole::route('/{record}'),
+            'edit' => EditStudentCareTeamRole::route('/{record}/edit'),
         ];
     }
 }

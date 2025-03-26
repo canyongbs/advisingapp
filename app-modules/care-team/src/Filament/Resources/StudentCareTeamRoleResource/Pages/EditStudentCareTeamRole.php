@@ -61,27 +61,27 @@ class EditStudentCareTeamRole extends EditRecord
                     ->string()
                     ->unique(ignoreRecord: true),
                 Toggle::make('is_default')
-                  ->label('Default')
-                  ->hint(function (?CareTeamRole $record, $state): ?string {
-                    if ($record?->is_default) {
-                      return null;
-                    }
+                    ->label('Default')
+                    ->hint(function (?CareTeamRole $record, $state): ?string {
+                        if ($record?->is_default) {
+                            return null;
+                        }
 
-                    if (! $state) {
-                      return null;
-                    }
+                        if (! $state) {
+                            return null;
+                        }
 
-                    $currentDefault = CareTeamRole::query()
-                      ->where('is_default', true)
-                      ->where('type', CareTeamRoleType::Prospect)
-                      ->value('name');
-                    
-                    if (blank($currentDefault)) {
-                      return null;
-                    }
+                        $currentDefault = CareTeamRole::query()
+                            ->where('is_default', true)
+                            ->where('type', CareTeamRoleType::Prospect)
+                            ->value('name');
 
-                    return "The current default care team role is '{$currentDefault}', you are replacing it.";
-                  })
+                        if (blank($currentDefault)) {
+                            return null;
+                        }
+
+                        return "The current default care team role is '{$currentDefault}', you are replacing it.";
+                    })
                     ->hintColor('danger')
                     ->columnStart(1)
                     ->live(),
