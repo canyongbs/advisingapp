@@ -72,6 +72,9 @@ trait CanManageEducatableCareTeam
                     ->url(fn ($record) => UserResource::getUrl('view', ['record' => $record]))
                     ->color('primary'),
                 TextColumn::make('job_title'),
+                TextColumn::make('care_team_roles.name')
+                    ->label('Role')
+                    ->badge(),
             ])
             ->headerActions([
                 AttachAction::make()

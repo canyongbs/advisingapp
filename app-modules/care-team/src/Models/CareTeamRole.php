@@ -37,9 +37,13 @@
 namespace AdvisingApp\CareTeam\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\CareTeamRoleType;
 use App\Models\BaseModel;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
@@ -59,4 +63,24 @@ class CareTeamRole extends BaseModel implements Auditable
         'type' => CareTeamRoleType::class,
         'is_default' => 'boolean',
     ];
+
+    public function prospects(): BelongsToMany
+    {
+      return $this->belongsToMany(Prospect::class, 'care_team_roles_prospects_users');
+    }
+ 
+    public function students(): BelongsToMany
+    {
+      return $this->belongsToMany(Student::class, 'care_team_roles_students_users');
+    }
+
+    public function prospectUsers(): BelongsToMany
+    {
+      return $this->belongsToMany(User::class, 'care_team_roles_prospects_users');
+    }
+
+    public function studentUsers(): BelongsToMany
+    {
+      return $this->belongsToMany(User::class, 'care_team_roles_students_users');
+    }
 }
