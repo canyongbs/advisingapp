@@ -78,6 +78,11 @@ class ListRoles extends ListRecords
                     ->searchable(),
                 TextColumn::make('guard_name')
                     ->searchable(),
+                TextColumn::make('users_count')
+                    ->label('Users')
+                    ->counts('users')
+                    ->numeric()
+                    ->sortable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
