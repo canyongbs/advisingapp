@@ -34,47 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Filament\Pages;
+namespace AdvisingApp\Report\Filament\Widgets;
 
-use AdvisingApp\Ai\Enums\AiApplication;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageConsent;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageFolders;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManagePromptLibrary;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageThreads;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanUploadFiles;
-use AdvisingApp\Authorization\Enums\LicenseType;
-use App\Models\User;
-use Filament\Pages\Page;
+use Filament\Widgets\ChartWidget;
+use Livewire\Attributes\Locked;
+use Livewire\Attributes\On;
 
-class PersonalAssistant extends Page
+abstract class PieChartReportWidget extends ChartWidget
 {
-    use CanManageConsent;
-    use CanManageFolders;
-    use CanManagePromptLibrary;
-    use CanManageThreads;
-    use CanUploadFiles;
+    #[Locked]
+    public string $cacheTag;
 
-    public const APPLICATION = AiApplication::PersonalAssistant;
+    protected static ?string $pollingInterval = null;
 
-    protected static string $view = 'assistant::filament.pages.personal-assistant';
+    protected static ?string $maxHeight = '200px';
 
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
+    protected static bool $isLazy = false;
 
-    protected static ?string $navigationLabel = 'Institutional Advisor';
-
-    protected static ?string $modelLabel = 'Institutional Advisor';
-
-    protected static ?int $navigationSort = 10;
-
-    public static function canAccess(): bool
+    public function mount($cacheTag = null): void
     {
-        /** @var User $user */
-        $user = auth()->user();
+        parent::mount();
 
-        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
-            return false;
-        }
+        $this->cacheTag = $cacheTag;
+    }
 
-        return $user->can(['assistant.view-any', 'assistant.*.view']);
+    #[On('refresh-widgets')]
+    public function refreshWidget()
+    {
+        $this->dispatch('$refresh');
+    }
+
+    protected function getType(): string
+    {
+        return 'line';
     }
 }

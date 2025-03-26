@@ -34,37 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Filament\Pages;
+namespace AdvisingApp\Ai\Filament\Pages;
 
-use AdvisingApp\Ai\Enums\AiApplication;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageConsent;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageFolders;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManagePromptLibrary;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageThreads;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanUploadFiles;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use Filament\Pages\Page;
 
-class PersonalAssistant extends Page
+class ResearchRequests extends Page
 {
-    use CanManageConsent;
-    use CanManageFolders;
-    use CanManagePromptLibrary;
-    use CanManageThreads;
-    use CanUploadFiles;
-
-    public const APPLICATION = AiApplication::PersonalAssistant;
-
-    protected static string $view = 'assistant::filament.pages.personal-assistant';
-
     protected static ?string $navigationGroup = 'Artificial Intelligence';
 
-    protected static ?string $navigationLabel = 'Institutional Advisor';
+    protected static ?int $navigationSort = 30;
 
-    protected static ?string $modelLabel = 'Institutional Advisor';
-
-    protected static ?int $navigationSort = 10;
+    protected static string $view = 'filament.pages.coming-soon';
 
     public static function canAccess(): bool
     {

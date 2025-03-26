@@ -34,47 +34,45 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Filament\Pages;
+namespace AdvisingApp\Report\Filament\Pages;
 
-use AdvisingApp\Ai\Enums\AiApplication;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageConsent;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageFolders;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManagePromptLibrary;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageThreads;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanUploadFiles;
-use AdvisingApp\Authorization\Enums\LicenseType;
-use App\Models\User;
-use Filament\Pages\Page;
+use AdvisingApp\Report\Abstract\StudentReport;
+use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
+use AdvisingApp\Report\Filament\Widgets\StudentDeliverableTable;
+use AdvisingApp\Report\Filament\Widgets\StudentEmailOptInOptOutPieChart;
+use AdvisingApp\Report\Filament\Widgets\StudentSmsOptInOptOutPieChart;
+use App\Filament\Clusters\ReportLibrary;
 
-class PersonalAssistant extends Page
+class StudentDeliverabilityReport extends StudentReport
 {
-    use CanManageConsent;
-    use CanManageFolders;
-    use CanManagePromptLibrary;
-    use CanManageThreads;
-    use CanUploadFiles;
+    protected static ?string $title = 'Deliverability';
 
-    public const APPLICATION = AiApplication::PersonalAssistant;
+    protected static ?string $cluster = ReportLibrary::class;
 
-    protected static string $view = 'assistant::filament.pages.personal-assistant';
+    protected static string $routePath = 'student-deliverability-report';
 
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
+    protected static ?string $navigationGroup = 'Students';
 
-    protected static ?string $navigationLabel = 'Institutional Advisor';
+    protected $cacheTag = 'report-student-deliverability';
 
-    protected static ?string $modelLabel = 'Institutional Advisor';
+    protected static ?int $navigationSort = 5;
 
-    protected static ?int $navigationSort = 10;
-
-    public static function canAccess(): bool
+    public function getColumns(): int | string | array
     {
-        /** @var User $user */
-        $user = auth()->user();
+        return [
+            'sm' => 12,
+            'md' => 12,
+            'lg' => 12,
+        ];
+    }
 
-        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
-            return false;
-        }
-
-        return $user->can(['assistant.view-any', 'assistant.*.view']);
+    public function getWidgets(): array
+    {
+        return [
+            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
+            StudentEmailOptInOptOutPieChart::make(['cacheTag' => $this->cacheTag]),
+            StudentSmsOptInOptOutPieChart::make(['cacheTag' => $this->cacheTag]),
+            StudentDeliverableTable::make(['cacheTag' => $this->cacheTag]),
+        ];
     }
 }

@@ -73,6 +73,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
@@ -345,7 +346,7 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         return $this->hasMany(StudentPhoneNumber::class, 'sisid', 'sisid')->orderBy('order');
     }
 
-    public function primaryEmailAddress()
+    public function primaryEmailAddress(): BelongsTo
     {
         return $this->belongsTo(StudentEmailAddress::class, 'primary_email_id');
     }

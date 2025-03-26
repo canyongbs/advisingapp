@@ -34,47 +34,55 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Filament\Pages;
+namespace AdvisingApp\Report\Filament\Widgets;
 
-use AdvisingApp\Ai\Enums\AiApplication;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageConsent;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageFolders;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManagePromptLibrary;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageThreads;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanUploadFiles;
-use AdvisingApp\Authorization\Enums\LicenseType;
-use App\Models\User;
-use Filament\Pages\Page;
+use AdvisingApp\StudentDataModel\Models\Student;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Filament\Widgets\TableWidget as BaseWidget;
+use Livewire\Attributes\On;
 
-class PersonalAssistant extends Page
+class StudentDeliverableTable extends BaseWidget
 {
-    use CanManageConsent;
-    use CanManageFolders;
-    use CanManagePromptLibrary;
-    use CanManageThreads;
-    use CanUploadFiles;
+    public string $cacheTag;
 
-    public const APPLICATION = AiApplication::PersonalAssistant;
+    protected static ?string $pollingInterval = null;
 
-    protected static string $view = 'assistant::filament.pages.personal-assistant';
+    protected static bool $isLazy = false;
 
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
+    protected static ?string $heading = 'Student Communication Preferences';
 
-    protected static ?string $navigationLabel = 'Institutional Advisor';
+    protected int | string | array $columnSpan = 'full';
 
-    protected static ?string $modelLabel = 'Institutional Advisor';
-
-    protected static ?int $navigationSort = 10;
-
-    public static function canAccess(): bool
+    public function mount(string $cacheTag)
     {
-        /** @var User $user */
-        $user = auth()->user();
+        $this->cacheTag = $cacheTag;
+    }
 
-        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
-            return false;
-        }
+    #[On('refresh-widgets')]
+    public function refreshWidget()
+    {
+        $this->dispatch('$refresh');
+    }
 
-        return $user->can(['assistant.view-any', 'assistant.*.view']);
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(
+                Student::select('sisid', 'full_name', 'email_bounce', 'sms_opt_out')
+                    ->where('sms_opt_out', true)
+                    ->orWhere('email_bounce', true)
+            )
+            ->columns([
+                TextColumn::make('full_name')
+                    ->label('Name'),
+                IconColumn::make('email_bounce')
+                    ->label('Email Opt Out')
+                    ->boolean(),
+                IconColumn::make('sms_opt_out')
+                    ->label('SMS Opt Out')
+                    ->boolean(),
+            ]);
     }
 }

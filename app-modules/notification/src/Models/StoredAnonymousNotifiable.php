@@ -39,6 +39,9 @@ namespace AdvisingApp\Notification\Models;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use App\Models\BaseModel;
 
+/**
+ * @mixin IdeHelperStoredAnonymousNotifiable
+ */
 class StoredAnonymousNotifiable extends BaseModel
 {
     protected $fillable = [

@@ -69,7 +69,8 @@ class MostEngagedStudentsTable extends BaseWidget
     {
         return $table
             ->query(
-                Student::select('sisid', 'full_name', 'email')
+                Student::with('primaryEmailAddress:id,address')
+                    ->select('sisid', 'full_name', 'primary_email_id')
                     ->withCount('engagements')
                     ->orderBy('engagements_count', 'desc')
                     ->limit(10)
@@ -78,7 +79,8 @@ class MostEngagedStudentsTable extends BaseWidget
             ->columns([
                 TextColumn::make('full_name')
                     ->label('Name'),
-                TextColumn::make('email'),
+                TextColumn::make('primaryEmailAddress.address')
+                    ->label('Email'),
                 TextColumn::make('engagements_count')
                     ->label('Engagements'),
             ]);
