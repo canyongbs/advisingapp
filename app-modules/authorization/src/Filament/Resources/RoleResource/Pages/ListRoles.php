@@ -42,6 +42,7 @@ use App\Models\Authenticatable;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -89,6 +90,7 @@ class ListRoles extends ListRecords
             ])
             ->actions([
                 ViewAction::make(),
+                DeleteAction::make(),
             ]);
     }
 
