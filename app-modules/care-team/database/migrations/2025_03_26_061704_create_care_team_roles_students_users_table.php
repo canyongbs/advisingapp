@@ -42,10 +42,12 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::create('care_team_roles_students_users', function (Blueprint $table) {
-            $table->foreignId('care_team_role_id')->constrained('care_team_roles')->cascadeOnDelete();
-            $table->foreignId('student_id')->constrained('students')->cascadeOnDelete();
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            $table->primary(['care_team_role_id', 'student_id', 'user_id']);
+            $table->foreignUuid('care_team_role_id')->constrained('care_team_roles')->cascadeOnDelete();
+            $table->string('sisid')->constrained('students')->cascadeOnDelete();
+            $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
+            
+            $table->primary(['care_team_role_id', 'sisid', 'user_id']);
+            
             $table->timestamps();
             $table->softDeletes();
         });
