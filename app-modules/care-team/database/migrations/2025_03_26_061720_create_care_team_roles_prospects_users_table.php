@@ -45,9 +45,9 @@ return new class () extends Migration {
             $table->foreignUuid('care_team_role_id')->constrained('care_team_roles')->cascadeOnDelete();
             $table->foreignUuid('prospect_id')->constrained('prospects')->cascadeOnDelete();
             $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
-            
+
             $table->primary(['care_team_role_id', 'prospect_id', 'user_id']);
-            
+
             $table->timestamps();
             $table->softDeletes();
         });
