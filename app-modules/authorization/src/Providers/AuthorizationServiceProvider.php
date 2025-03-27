@@ -60,7 +60,7 @@ class AuthorizationServiceProvider extends ServiceProvider
             return new LogoutController();
         });
 
-        app('config')->set('permission', require base_path('app-modules/authorization/config/permission.php'));
+        $this->mergeConfigFrom(__DIR__ . '/../../config/permission.php', 'permission');
     }
 
     public function boot(): void
