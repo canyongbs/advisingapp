@@ -50,7 +50,6 @@ use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentDataImport;
 use App\Models\Import;
-use Filament\Actions\Action;
 use Filament\Actions\Imports\Events\ImportStarted;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Forms;
@@ -58,6 +57,7 @@ use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ImportAction;
 use Illuminate\Bus\PendingBatch;
 use Illuminate\Contracts\Support\Htmlable;
@@ -123,14 +123,12 @@ class ImportStudentDataAction
                 );
 
                 $set($columnMapStatePath, array_reduce(($importer ?? $action->getImporter())::getColumns(), function (array $carry, ImportColumn $column) use ($lowercaseCsvColumnKeys, $lowercaseCsvColumnValues) {
-                    $carry[$column->getName()] = $lowercaseCsvColumnKeys[
-                    Arr::first(
+                    $carry[$column->getName()] = $lowercaseCsvColumnKeys[Arr::first(
                         array_intersect(
                             $lowercaseCsvColumnValues,
                             $column->getGuesses(),
                         ),
-                    )
-                    ] ?? null;
+                    )] ?? null;
 
                     return $carry;
                 }, []));
@@ -351,12 +349,18 @@ class ImportStudentDataAction
                 $options = array_merge(
                     $action->getOptions(),
                     Arr::except($data, [
-                        'file', 'columnMap',
-                        'emailAddressesFile', 'emailAddressesColumnMap',
-                        'phoneNumbersFile', 'phoneNumbersColumnMap',
-                        'addressesFile', 'addressesColumnMap',
-                        'programsFile', 'programsColumnMap',
-                        'enrollmentsFile', 'enrollmentsColumnMap',
+                        'file',
+                        'columnMap',
+                        'emailAddressesFile',
+                        'emailAddressesColumnMap',
+                        'phoneNumbersFile',
+                        'phoneNumbersColumnMap',
+                        'addressesFile',
+                        'addressesColumnMap',
+                        'programsFile',
+                        'programsColumnMap',
+                        'enrollmentsFile',
+                        'enrollmentsColumnMap',
                     ]),
                 );
 
