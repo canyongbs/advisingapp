@@ -37,6 +37,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Spatie\Multitenancy\Models\Concerns\UsesLandlordConnection;
 use Spatie\ScheduleMonitor\Models\MonitoredScheduledTask as BaseMonitoredScheduledTask;
 
 /**
@@ -45,4 +46,5 @@ use Spatie\ScheduleMonitor\Models\MonitoredScheduledTask as BaseMonitoredSchedul
 class MonitoredScheduledTask extends BaseMonitoredScheduledTask
 {
     use HasUuids;
+    use UsesLandlordConnection;
 }
