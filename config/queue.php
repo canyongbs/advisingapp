@@ -147,4 +147,6 @@ return [
     'outbound_communication_queue' => env('OUTBOUND_COMMUNICATION_QUEUE', env('SQS_QUEUE', 'default')),
 
     'import_export_queue' => env('IMPORT_EXPORT_QUEUE', env('SQS_QUEUE', 'default')),
+
+    'meeting_center_queue' => env('MEETING_CENTER_QUEUE', env('SQS_QUEUE', 'default')),
 ];

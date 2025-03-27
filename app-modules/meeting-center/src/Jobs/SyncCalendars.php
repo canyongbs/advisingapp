@@ -54,7 +54,7 @@ class SyncCalendars implements ShouldQueue
 
     public function __construct()
     {
-        $this->onQueue(config('meeting-center.queue'));
+        $this->onQueue(config('queue.meeting_center_queue'));
     }
 
     public function handle(): void
