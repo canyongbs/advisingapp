@@ -69,28 +69,32 @@ class CareTeamRole extends BaseModel implements Auditable
     public function prospects(): BelongsToMany
     {
         return $this
-            ->belongsToMany(Prospect::class)
-            ->using(CareTeamRoleProspectUser::class);
+            ->belongsToMany(Prospect::class, 'care_team_role_prospect_user', 'prospect_id', 'care_team_role_id')
+            ->using(CareTeamRoleProspectUser::class)
+            ->withPivot(['user_id']);
     }
 
     public function students(): BelongsToMany
     {
         return $this
-            ->belongsToMany(Student::class)
-            ->using(CareTeamRoleStudentUser::class);
+            ->belongsToMany(Student::class, 'care_team_role_student_user', 'sisid', 'care_team_role_id')
+            ->using(CareTeamRoleStudentUser::class)
+            ->withPivot(['user_id']);
     }
 
     public function prospectUsers(): BelongsToMany
     {
         return $this
-            ->belongsToMany(User::class)
-            ->using(CareTeamRoleProspectUser::class);
+            ->belongsToMany(User::class, 'care_team_role_prospect_user', 'user_id', 'care_team_role_id')
+            ->using(CareTeamRoleProspectUser::class)
+            ->withPivot(['prospect_id']);
     }
 
     public function studentUsers(): BelongsToMany
     {
         return $this
-            ->belongsToMany(User::class)
-            ->using(CareTeamRoleStudentUser::class);
+            ->belongsToMany(User::class, 'care_team_role_student_user', 'user_id', 'care_team_role_id')
+            ->using(CareTeamRoleStudentUser::class)
+            ->withPivot(['sisid']);
     }
 }
