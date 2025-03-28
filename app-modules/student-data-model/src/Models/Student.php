@@ -188,15 +188,15 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     public function careTeamRoles(): BelongsToMany
     {
         return $this
-        ->belongsToMany(CareTeamRole::class)
-        ->using(CareTeamRoleStudentUser::class);
+            ->belongsToMany(CareTeamRole::class)
+            ->using(CareTeamRoleStudentUser::class);
     }
 
     public function careTeamRoleUsers(): BelongsToMany
     {
         return $this
-        ->belongsToMany(User::class)
-        ->using(CareTeamRoleStudentUser::class);
+            ->belongsToMany(User::class)
+            ->using(CareTeamRoleStudentUser::class);
     }
 
     /**

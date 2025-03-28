@@ -338,15 +338,15 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function prospectCareTeamRoles(): BelongsToMany
     {
         return $this
-        ->belongsToMany(CareTeamRole::class)
-        ->using(CareTeamRoleProspectUser::class);
+            ->belongsToMany(CareTeamRole::class)
+            ->using(CareTeamRoleProspectUser::class);
     }
 
     public function studentCareTeamRoles(): BelongsToMany
     {
         return $this
-        ->belongsToMany(CareTeamRole::class)
-        ->using(CareTeamRoleStudentUser::class);
+            ->belongsToMany(CareTeamRole::class)
+            ->using(CareTeamRoleStudentUser::class);
     }
 
     /**
@@ -360,15 +360,15 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function careTeamRoleProspects(): BelongsToMany
     {
         return $this
-        ->belongsToMany(Prospect::class)
-        ->using(CareTeamRoleProspectUser::class);
+            ->belongsToMany(Prospect::class)
+            ->using(CareTeamRoleProspectUser::class);
     }
 
     public function careTeamRoleStudents(): BelongsToMany
     {
         return $this
-        ->belongsToMany(Student::class)
-        ->using(CareTeamRoleStudentUser::class);
+            ->belongsToMany(Student::class)
+            ->using(CareTeamRoleStudentUser::class);
     }
 
     public function permissionsFromRoles(): HasManyDeep
