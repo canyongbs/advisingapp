@@ -43,6 +43,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\QueryBuilder;
 use Filament\Tables\Filters\QueryBuilder\Constraints\BooleanConstraint;
+use Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
+use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint;
 use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsRelatedToOperator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
@@ -149,6 +151,17 @@ class ProspectsTable
                                     ->multiple()
                                     ->preload(),
                             ),
+                        Constraint::make('subscribed')
+                            ->icon('heroicon-m-bell')
+                            ->operators([
+                                Operator::make('subscribed')
+                                    ->label(fn (bool $isInverse): string => $isInverse ? 'Not subscribed' : 'Subscribed')
+                                    ->summary(fn (bool $isInverse): string => $isInverse ? 'You are not subscribed' : 'You are subscribed')
+                                    ->baseQuery(fn (Builder $query, bool $isInverse) => $query->{$isInverse ? 'whereDoesntHave' : 'whereHas'}(
+                                        'subscriptions.user',
+                                        fn (Builder $query) => $query->whereKey(auth()->user()),
+                                    )),
+                            ]),
                     ])
                     ->constraintPickerColumns([
                         'md' => 2,
