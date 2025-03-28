@@ -70,5 +70,4 @@ class CareTeamRole extends BaseModel implements Auditable
         return $this->hasMany(CareTeam::class)
             ->withPivot(['user_id', 'educatable_id']);
     }
-
 }
