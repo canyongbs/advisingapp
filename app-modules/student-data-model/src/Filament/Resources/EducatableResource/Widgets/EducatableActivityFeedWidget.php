@@ -121,7 +121,7 @@ class EducatableActivityFeedWidget extends Widget implements HasActions, HasForm
     {
         return match ($record->getMorphClass()) {
             'interaction', 'engagement' => $record->user,
-            'task_history', 'alert_history' => $record->subject->createdBy,
+            'task_history', 'alert_history' => $record->subject?->createdBy,
             default => null,
         };
     }
