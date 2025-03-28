@@ -38,7 +38,6 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Pag
 
 use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
-use AdvisingApp\CareTeam\Models\CareTeamRoleStudentUser;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\CareTeamRoleType;
 use App\Filament\Resources\UserResource;
@@ -52,7 +51,6 @@ use Filament\Tables\Actions\DetachAction;
 use Filament\Tables\Actions\DetachBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 
 trait CanManageEducatableCareTeam
 {
@@ -96,11 +94,11 @@ trait CanManageEducatableCareTeam
                             ->label('User')
                             ->searchable()
                             ->required()
-                            ->options(User::query()->tap(new HasLicense(Student::getLicenseType()))->pluck('name','id')),
+                            ->options(User::query()->tap(new HasLicense(Student::getLicenseType()))->pluck('name', 'id')),
                         Select::make('careTeamRoleId')
                             ->label('Role')
                             ->searchable()
-                            ->options(CareTeamRole::where('type', CareTeamRoleType::Student)->pluck('name','id'))
+                            ->options(CareTeamRole::where('type', CareTeamRoleType::Student)->pluck('name', 'id'))
                             ->relationship('careTeamRoles', 'id'),
                     ])
                     ->successNotificationTitle(function (array $data) {
