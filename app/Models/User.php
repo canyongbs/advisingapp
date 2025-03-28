@@ -338,15 +338,17 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function prospectCareTeamRoles(): BelongsToMany
     {
         return $this
-            ->belongsToMany(CareTeamRole::class)
-            ->using(CareTeamRoleProspectUser::class);
+            ->belongsToMany(CareTeamRole::class, 'care_team_role_prospect_user', 'care_team_role_id', 'user_id')
+            ->using(CareTeamRoleProspectUser::class)
+            ->withPivot(['prospect_id']);
     }
 
     public function studentCareTeamRoles(): BelongsToMany
     {
         return $this
-            ->belongsToMany(CareTeamRole::class)
-            ->using(CareTeamRoleStudentUser::class);
+            ->belongsToMany(CareTeamRole::class, 'care_team_role_student_user', 'care_team_role_id', 'user_id')
+            ->using(CareTeamRoleStudentUser::class)
+            ->withPivot(['sisid']);
     }
 
     /**
@@ -360,15 +362,17 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function careTeamRoleProspects(): BelongsToMany
     {
         return $this
-            ->belongsToMany(Prospect::class)
-            ->using(CareTeamRoleProspectUser::class);
+            ->belongsToMany(Prospect::class, 'care_team_role_prospect_user', 'prospect_id', 'user_id')
+            ->using(CareTeamRoleProspectUser::class)
+            ->withPivot(['care_team_role_id']);
     }
 
     public function careTeamRoleStudents(): BelongsToMany
     {
         return $this
-            ->belongsToMany(Student::class)
-            ->using(CareTeamRoleStudentUser::class);
+            ->belongsToMany(Student::class, 'care_team_role_student_user', 'sisid', 'user_id')
+            ->using(CareTeamRoleStudentUser::class)
+            ->withPivot(['care_team_role_id']);
     }
 
     public function permissionsFromRoles(): HasManyDeep
