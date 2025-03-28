@@ -78,6 +78,11 @@ class StudentResource extends Resource
         ]);
     }
 
+    public static function getGlobalSearchResultUrl(Model $record): string
+    {
+        return StudentResource::getUrl('view', ['record' => $record]);
+    }
+
     public static function getGloballySearchableAttributes(): array
     {
         return [

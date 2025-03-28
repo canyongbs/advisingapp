@@ -44,6 +44,7 @@ use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\ViewEvent;
 use AdvisingApp\MeetingCenter\Models\Event;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
+use Illuminate\Database\Eloquent\Model;
 
 class EventResource extends Resource
 {
@@ -68,6 +69,11 @@ class EventResource extends Resource
             EditEvent::class,
             ManageEventAttendees::class,
         ]);
+    }
+
+    public static function getGlobalSearchResultUrl(Model $record): string
+    {
+        return EventResource::getUrl('view', ['record' => $record]);
     }
 
     public static function getPages(): array
