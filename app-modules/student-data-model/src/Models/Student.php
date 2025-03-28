@@ -43,6 +43,7 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
 use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
+use AdvisingApp\CareTeam\Models\CareTeamRoleStudentUser;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
 use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagements;
@@ -186,12 +187,16 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
 
     public function careTeamRoles(): BelongsToMany
     {
-        return $this->belongsToMany(CareTeamRole::class, 'care_team_roles_students_users');
+        return $this
+        ->belongsToMany(CareTeamRole::class)
+        ->using(CareTeamRoleStudentUser::class);
     }
 
     public function careTeamRoleUsers(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'care_team_roles_students_users');
+        return $this
+        ->belongsToMany(User::class)
+        ->using(CareTeamRoleStudentUser::class);
     }
 
     /**

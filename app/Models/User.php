@@ -45,6 +45,8 @@ use AdvisingApp\Authorization\Models\License;
 use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
+use AdvisingApp\CareTeam\Models\CareTeamRoleProspectUser;
+use AdvisingApp\CareTeam\Models\CareTeamRoleStudentUser;
 use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
 use AdvisingApp\CaseManagement\Models\CaseAssignment;
 use AdvisingApp\Consent\Models\Concerns\CanConsent;
@@ -335,12 +337,16 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
 
     public function prospectCareTeamRoles(): BelongsToMany
     {
-        return $this->belongsToMany(CareTeamRole::class, 'care_team_roles_prospects_users');
+        return $this
+        ->belongsToMany(CareTeamRole::class)
+        ->using(CareTeamRoleProspectUser::class);
     }
 
     public function studentCareTeamRoles(): BelongsToMany
     {
-        return $this->belongsToMany(CareTeamRole::class, 'care_team_roles_students_users');
+        return $this
+        ->belongsToMany(CareTeamRole::class)
+        ->using(CareTeamRoleStudentUser::class);
     }
 
     /**
@@ -353,12 +359,16 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
 
     public function careTeamRoleProspects(): BelongsToMany
     {
-        return $this->belongsToMany(Prospect::class, 'care_team_roles_prospects_users');
+        return $this
+        ->belongsToMany(Prospect::class)
+        ->using(CareTeamRoleProspectUser::class);
     }
 
     public function careTeamRoleStudents(): BelongsToMany
     {
-        return $this->belongsToMany(Student::class, 'care_team_roles_students_users');
+        return $this
+        ->belongsToMany(Student::class)
+        ->using(CareTeamRoleStudentUser::class);
     }
 
     public function permissionsFromRoles(): HasManyDeep

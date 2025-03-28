@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('care_team_roles_prospects_users', function (Blueprint $table) {
+        Schema::create('care_team_role_prospect_user', function (Blueprint $table) {
             $table->foreignUuid('care_team_role_id')->constrained('care_team_roles')->cascadeOnDelete();
             $table->foreignUuid('prospect_id')->constrained('prospects')->cascadeOnDelete();
             $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
@@ -49,12 +49,11 @@ return new class () extends Migration {
             $table->primary(['care_team_role_id', 'prospect_id', 'user_id']);
 
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('care_team_roles_prospects_users');
+        Schema::dropIfExists('care_team_role_prospect_user');
     }
 };
