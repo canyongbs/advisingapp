@@ -464,15 +464,17 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
     public function careTeamRoles(): BelongsToMany
     {
         return $this
-            ->belongsToMany(CareTeamRole::class)
-            ->using(CareTeamRoleProspectUser::class);
+            ->belongsToMany(CareTeamRole::class, 'care_team_role_prospect_user', 'care_team_role_id', 'prospect_id')
+            ->using(CareTeamRoleProspectUser::class)
+            ->withPivot(['user_id']);
     }
 
     public function careTeamRoleUsers(): BelongsToMany
     {
         return $this
-            ->belongsToMany(User::class)
-            ->using(CareTeamRoleProspectUser::class);
+            ->belongsToMany(User::class, 'care_team_role_prospect_user', 'user_id', 'prospect_id')
+            ->using(CareTeamRoleProspectUser::class)
+            ->withPivot(['care_team_role_id']);
     }
 
     /**
