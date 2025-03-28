@@ -47,7 +47,6 @@ use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
 use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\OnDemandNotification;
-use App\Features\StoreAnonymousNotifiableInformationFeature;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Settings\LicenseSettings;
@@ -67,15 +66,13 @@ class MailChannel extends BaseMailChannel
         [$recipientId, $recipientType] = match (true) {
             $notifiable instanceof Model => [$notifiable->getKey(), $notifiable->getMorphClass()],
             $notifiable instanceof AnonymousNotifiable && $notification instanceof OnDemandNotification => $notification->identifyRecipient($notifiable),
-            default => StoreAnonymousNotifiableInformationFeature::active()
-                ? [
-                    StoredAnonymousNotifiable::query()->createOrFirst([
-                        'type' => NotificationChannel::Email,
-                        'route' => $notifiable->routeNotificationFor('mail', $notification),
-                    ])->getKey(),
-                    (new StoredAnonymousNotifiable())->getMorphClass(),
-                ]
-                : [null, 'anonymous'],
+            default => [
+                StoredAnonymousNotifiable::query()->createOrFirst([
+                    'type' => NotificationChannel::Email,
+                    'route' => $notifiable->routeNotificationFor('mail', $notification),
+                ])->getKey(),
+                (new StoredAnonymousNotifiable())->getMorphClass(),
+            ],
         };
 
         $emailMessage = new EmailMessage([
