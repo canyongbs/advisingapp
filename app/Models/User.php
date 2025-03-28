@@ -45,6 +45,8 @@ use AdvisingApp\Authorization\Models\License;
 use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
+use AdvisingApp\CareTeam\Models\CareTeamRoleProspectUser;
+use AdvisingApp\CareTeam\Models\CareTeamRoleStudentUser;
 use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
 use AdvisingApp\CaseManagement\Models\CaseAssignment;
 use AdvisingApp\Consent\Models\Concerns\CanConsent;

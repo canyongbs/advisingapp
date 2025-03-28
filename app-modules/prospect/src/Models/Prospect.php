@@ -43,6 +43,7 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
 use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
+use AdvisingApp\CareTeam\Models\CareTeamRoleProspectUser;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
 use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagements;
@@ -462,12 +463,16 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
 
     public function careTeamRoles(): BelongsToMany
     {
-        return $this->belongsToMany(CareTeamRole::class, 'care_team_roles_prospects_users');
+        return $this
+        ->belongsToMany(CareTeamRole::class)
+        ->using(CareTeamRoleProspectUser::class);
     }
 
     public function careTeamRoleUsers(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'care_team_roles_prospects_users');
+        return $this
+        ->belongsToMany(User::class)
+        ->using(CareTeamRoleProspectUser::class);
     }
 
     /**
