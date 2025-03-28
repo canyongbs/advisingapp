@@ -82,9 +82,9 @@ class HealthServiceProvider extends ServiceProvider
                 ->timeout(2),
             QueueCheck::new(),
             RedisCheck::new(),
-            ScheduleCheck::new()
-                ->heartbeatMaxAgeInMinutes(2),
-            ScheduleMonitorCheck::new(),
+            // ScheduleCheck::new()
+            //     ->heartbeatMaxAgeInMinutes(2),
+            // ScheduleMonitorCheck::new(),
         ]);
     }
 }
