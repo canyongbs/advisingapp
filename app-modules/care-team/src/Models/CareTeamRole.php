@@ -68,21 +68,30 @@ class CareTeamRole extends BaseModel implements Auditable
 
     public function prospects(): BelongsToMany
     {
-        return $this->belongsToMany(Prospect::class, 'care_team_roles_prospects_users');
+        return $this
+        ->belongsToMany(Prospect::class)
+        ->using(CareTeamRoleProspectUser::class);
     }
 
     public function students(): BelongsToMany
     {
-        return $this->belongsToMany(Student::class, 'care_team_roles_students_users');
+        return $this
+        ->belongsToMany(Student::class)
+        ->using(CareTeamRoleStudentUser::class);
     }
 
     public function prospectUsers(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'care_team_roles_prospects_users');
+      return $this
+      ->belongsToMany(User::class)
+      ->using(CareTeamRoleProspectUser::class);
     }
 
     public function studentUsers(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'care_team_roles_students_users');
+      return $this
+      ->belongsToMany(User::class)
+      ->using(CareTeamRoleStudentUser::class);
     }
+
 }
