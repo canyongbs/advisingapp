@@ -40,12 +40,15 @@
 @endphp
 
 @if ($managers)
-    <div x-data="{ activeTab: @js(array_key_first($managers)) }" x-on:send-email.window="activeTab = 'messages'"
-        x-on:send-sms.window="activeTab = 'messages'" {{ $attributes->class(['flex flex-col gap-3']) }}>
+    <div
+        x-data="{ activeTab: @js(array_key_first($managers)) }"
+        x-on:send-email.window="activeTab = 'messages'"
+        x-on:send-sms.window="activeTab = 'messages'"
+        {{ $attributes->class(['flex flex-col gap-3']) }}
+    >
         <x-filament::tabs>
             @foreach ($managers as $managerKey => $manager)
-                <x-filament::tabs.item :alpine-active="'activeTab === ' . Js::from($managerKey)"
-                    :x-on:click="'activeTab = ' . Js::from($managerKey)">
+                <x-filament::tabs.item :alpine-active="'activeTab === ' . Js::from($managerKey)" :x-on:click="'activeTab = ' . Js::from($managerKey)">
                     {{ $manager::getTitle($this->getRecord(), static::class) }}
                 </x-filament::tabs.item>
             @endforeach
@@ -58,11 +61,11 @@
                     [
                         'ownerRecord' => $this->getRecord(),
                         'pageClass' => static::class,
-                        'lazy' => ($loop->first || ($managerKey === 'messages')) ? false : 'on-load',
+                        'lazy' => $loop->first || $managerKey === 'messages' ? false : 'on-load',
                     ],
                     key('relation-manager-' . $managerKey)
                 )
-                            </div>
-        @endforeach
             </div>
+        @endforeach
+    </div>
 @endif
