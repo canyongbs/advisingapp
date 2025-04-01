@@ -47,6 +47,7 @@ use App\Filament\Resources\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Scopes\HasLicense;
 use App\Models\User;
+use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Select;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables\Actions\AttachAction;
@@ -98,6 +99,9 @@ class ManageProspectCareTeam extends ManageRelatedRecords
                     ->modalSubmitActionLabel('Add')
                     ->attachAnother(false)
                     ->color('primary')
+                    ->mountUsing(fn (ComponentContainer $form) => $form->fill([
+                        'care_team_role_id' => CareTeamRoleType::prospectDefault(),
+                    ]))
                     ->form([
                         Select::make('recordId')
                             ->label('User')
@@ -106,9 +110,8 @@ class ManageProspectCareTeam extends ManageRelatedRecords
                             ->options(User::query()->tap(new HasLicense(Prospect::getLicenseType()))->pluck('name', 'id')),
                         Select::make('care_team_role_id')
                             ->label('Role')
-                            ->searchable()
-                            ->options(CareTeamRole::where('type', CareTeamRoleType::Prospect)->pluck('name', 'id'))
                             ->relationship('careTeamRoles', 'name', fn (Builder $query) => $query->where('type', CareTeamRoleType::Prospect))
+                            ->searchable()
                             ->model(CareTeam::class)
                             ->visible(CareTeamRole::where('type', CareTeamRoleType::Prospect)->count() > 0 && CareTeamRoleFeature::active()),
                     ])
