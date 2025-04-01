@@ -37,11 +37,8 @@
 namespace AdvisingApp\CareTeam\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\CareTeamRoleType;
 use App\Models\BaseModel;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -66,35 +63,9 @@ class CareTeamRole extends BaseModel implements Auditable
         'is_default' => 'boolean',
     ];
 
-    public function prospects(): BelongsToMany
+    public function careTeams(): BelongsToMany
     {
-        return $this
-            ->belongsToMany(Prospect::class, 'care_team_role_prospect_user', 'prospect_id', 'care_team_role_id')
-            ->using(CareTeamRoleProspectUser::class)
-            ->withPivot(['user_id']);
-    }
-
-    public function students(): BelongsToMany
-    {
-        return $this
-            ->belongsToMany(Student::class, 'care_team_role_student_user', 'sisid', 'care_team_role_id')
-            ->using(CareTeamRoleStudentUser::class)
-            ->withPivot(['user_id']);
-    }
-
-    public function prospectUsers(): BelongsToMany
-    {
-        return $this
-            ->belongsToMany(User::class, 'care_team_role_prospect_user', 'user_id', 'care_team_role_id')
-            ->using(CareTeamRoleProspectUser::class)
-            ->withPivot(['prospect_id']);
-    }
-
-    public function studentUsers(): BelongsToMany
-    {
-        return $this
-            ->belongsToMany(User::class, 'care_team_role_student_user', 'user_id', 'care_team_role_id')
-            ->using(CareTeamRoleStudentUser::class)
-            ->withPivot(['sisid']);
+        return $this->belongsToMany(CareTeam::class)
+          ->withPivot(['user_id', 'educatable_id']);
     }
 }
