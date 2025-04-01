@@ -51,6 +51,7 @@ use Filament\Tables\Actions\DetachAction;
 use Filament\Tables\Actions\DetachBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 trait CanManageEducatableCareTeam
 {
@@ -97,9 +98,9 @@ trait CanManageEducatableCareTeam
                             ->options(User::query()->tap(new HasLicense(Student::getLicenseType()))->pluck('name', 'id')),
                         Select::make('care_team_role_id')
                             ->label('Role')
-                            //->searchable()
+                            ->searchable()
                             ->options(CareTeamRole::where('type', CareTeamRoleType::Student)->pluck('name', 'id'))
-                            ->relationship('careTeamRoles', 'name')
+                            ->relationship('careTeamRoles', 'name', fn (Builder $query) => $query->where('type', CareTeamRoleType::Student))
                             ->model(CareTeam::class),
                     ])
                     ->successNotificationTitle(function (array $data) {
