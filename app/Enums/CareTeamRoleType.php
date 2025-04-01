@@ -36,6 +36,7 @@
 
 namespace App\Enums;
 
+use AdvisingApp\CareTeam\Models\CareTeamRole;
 use Filament\Support\Contracts\HasLabel;
 
 enum CareTeamRoleType: string implements HasLabel
@@ -46,5 +47,19 @@ enum CareTeamRoleType: string implements HasLabel
     public function getLabel(): string
     {
         return $this->name;
+    }
+
+    public static function prospectDefault(): ?CareTeamRole
+    {
+      $careTeamRole = CareTeamRole::where('type', CareTeamRoleType::Prospect)->where('is_default', true)->first();
+
+      return $careTeamRole;
+    }
+
+    public static function studentDefault(): ?CareTeamRole
+    {
+      $careTeamRole = CareTeamRole::where('type', CareTeamRoleType::Student)->where('is_default', true)->first();
+
+      return $careTeamRole;
     }
 }
