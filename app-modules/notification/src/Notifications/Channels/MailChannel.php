@@ -47,6 +47,7 @@ use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
 use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\OnDemandNotification;
+use App\Features\RoutedEngagements;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Settings\LicenseSettings;
@@ -80,6 +81,7 @@ class MailChannel extends BaseMailChannel
             'content' => $notification->toMail($notifiable)->toArray(),
             'recipient_id' => $recipientId,
             'recipient_type' => $recipientType,
+            ...(RoutedEngagements::active() ? ['recipient_address' => $recipientAddress] : []),
         ]);
 
         if ($notification instanceof HasBeforeSendHook) {

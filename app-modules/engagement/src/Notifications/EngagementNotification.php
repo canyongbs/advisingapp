@@ -75,6 +75,7 @@ class EngagementNotification extends Notification implements ShouldQueue, HasBef
     public function toMail(object $notifiable): MailMessage
     {
         return MailMessage::make()
+            ->to($this->engagement->recipient_route)
             ->subject($this->engagement->subject)
             ->greeting("Hello {$this->engagement->recipient->display_name}!")
             ->content($this->engagement->getBody());
@@ -83,6 +84,7 @@ class EngagementNotification extends Notification implements ShouldQueue, HasBef
     public function toSms(object $notifiable): TwilioMessage
     {
         return TwilioMessage::make($notifiable)
+            ->to($this->engagement->recipient_route)
             ->content($this->engagement->getBodyMarkdown());
     }
 

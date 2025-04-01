@@ -81,6 +81,9 @@ class RelationManagerSendEngagementAction extends CreateAction
 
                 return auth()->user()->can('create', [Engagement::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
             })
+            ->mountUsing(function (array $arguments, RelationManager $livewire) {
+                $livewire->dispatch('engage-action-finished-loading');
+            })
             ->form(fn (Form $form) => $form->schema([
                 Select::make('channel')
                     ->label('What would you like to send?')

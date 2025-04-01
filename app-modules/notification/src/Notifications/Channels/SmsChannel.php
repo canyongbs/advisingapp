@@ -41,12 +41,12 @@ use AdvisingApp\Notification\DataTransferObjects\SmsChannelResultData;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Enums\SmsMessageEventType;
 use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
-use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\SmsMessage;
 use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\OnDemandNotification;
 use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
+use App\Features\RoutedEngagements;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Illuminate\Database\Eloquent\Model;
@@ -71,11 +71,16 @@ class SmsChannel
             default => [null, 'anonymous'],
         };
 
+        $message = $notification->toSms($notifiable);
+
+        $recipientNumber = $message->getRecipientPhoneNumber($notification);
+
         $smsMessage = new SmsMessage([
             'notification_class' => $notification::class,
-            'content' => $notification->toSms($notifiable)->toArray(),
+            'content' => $message->toArray($notification),
             'recipient_id' => $recipientId,
             'recipient_type' => $recipientType,
+            ...(RoutedEngagements::active() ? ['recipient_number' => $recipientNumber] : []),
         ]);
 
         if ($notification instanceof HasBeforeSendHook) {
@@ -89,7 +94,7 @@ class SmsChannel
         $smsMessage->save();
 
         try {
-            if ((! ($notifiable instanceof CanBeNotified)) || (! $notifiable->canReceiveSms())) {
+            if (blank($recipientNumber)) {
                 $smsMessage->events()->create([
                     'type' => SmsMessageEventType::FailedDispatch,
                     'payload' => [
@@ -100,8 +105,6 @@ class SmsChannel
 
                 return;
             }
-
-            $message = $notification->toSms($notifiable);
 
             $twilioSettings = app(TwilioSettings::class);
 
@@ -127,8 +130,8 @@ class SmsChannel
 
                 try {
                     $message = $client->messages->create(
-                        config('local_development.twilio.to_number') ?: $message->getRecipientPhoneNumber(),
-                        $messageContent
+                        config('local_development.twilio.to_number') ?: $recipientNumber,
+                        $messageContent,
                     );
 
                     $result->success = true;
@@ -145,7 +148,7 @@ class SmsChannel
                             'sid' => Str::random(),
                             'status' => 'delivered',
                             'from' => $message->getFrom(),
-                            'to' => $message->getRecipientPhoneNumber(),
+                            'to' => $recipientNumber,
                             'body' => $message->getContent(),
                             'num_segments' => 1,
                         ],

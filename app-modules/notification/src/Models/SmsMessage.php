@@ -53,6 +53,7 @@ class SmsMessage extends BaseModel implements Message
         'quota_usage',
         'recipient_id',
         'recipient_type',
+        'recipient_number',
     ];
 
     protected $casts = [

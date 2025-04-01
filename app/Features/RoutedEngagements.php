@@ -34,52 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Models;
+namespace App\Features;
 
-use AdvisingApp\Notification\Models\Contracts\Message;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
+use App\Support\AbstractFeatureFlag;
 
-/**
- * @mixin IdeHelperEmailMessage
- */
-class EmailMessage extends BaseModel implements Message
+class RoutedEngagements extends AbstractFeatureFlag
 {
-    protected $fillable = [
-        'notification_class',
-        'external_reference_id',
-        'content',
-        'quota_usage',
-        'recipient_id',
-        'recipient_type',
-        'recipient_address',
-    ];
-
-    protected $casts = [
-        'content' => 'array',
-    ];
-
-    public function related(): MorphTo
+    public function resolve(mixed $scope): mixed
     {
-        return $this->morphTo(
-            name: 'related',
-            type: 'related_type',
-            id: 'related_id',
-        );
-    }
-
-    public function recipient(): MorphTo
-    {
-        return $this->morphTo(
-            name: 'recipient',
-            type: 'recipient_type',
-            id: 'recipient_id',
-        );
-    }
-
-    public function events(): HasMany
-    {
-        return $this->hasMany(EmailMessageEvent::class);
+        return false;
     }
 }

@@ -41,11 +41,9 @@
     use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ApplicationSubmissionsRelationManager;
     use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementFilesRelationManager;
     use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementsRelationManager;
-    use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EnrollmentsRelationManager;
     use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EventsRelationManager;
     use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\FormSubmissionsRelationManager;
     use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\InteractionsRelationManager;
-    use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ProgramsRelationManager;
     use AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers\CasesRelationManager;
 @endphp
 
