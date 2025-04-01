@@ -36,9 +36,12 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
+use AdvisingApp\CareTeam\Models\CareTeam;
+use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
+use App\Enums\CareTeamRoleType;
 use App\Filament\Resources\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Scopes\HasLicense;
@@ -94,13 +97,19 @@ class ManageProspectCareTeam extends ManageRelatedRecords
                     ->modalSubmitActionLabel('Add')
                     ->attachAnother(false)
                     ->color('primary')
-                    ->recordSelect(
-                        fn (Select $select) => $select->placeholder('Select Users'),
-                    )
-                    ->multiple()
-                    ->recordSelectOptionsQuery(
-                        fn (Builder $query) => $query->tap(new HasLicense(Prospect::getLicenseType())),
-                    )
+                    ->form([
+                        Select::make('recordId')
+                            ->label('User')
+                            ->searchable()
+                            ->required()
+                            ->options(User::query()->tap(new HasLicense(Prospect::getLicenseType()))->pluck('name', 'id')),
+                        Select::make('care_team_role_id')
+                            ->label('Role')
+                            ->searchable()
+                            ->options(CareTeamRole::where('type', CareTeamRoleType::Prospect)->pluck('name', 'id'))
+                            ->relationship('careTeamRoles', 'name', fn (Builder $query) => $query->where('type', CareTeamRoleType::Prospect))
+                            ->model(CareTeam::class),
+                    ])
                     ->successNotificationTitle(function (array $data) {
                         /** @var Prospect $prospect */
                         $prospect = $this->getOwnerRecord();
