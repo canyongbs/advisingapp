@@ -328,8 +328,8 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             table: 'care_teams'
         )
             ->using(CareTeam::class)
-            ->withPivot('id')
-            ->withTimestamps();
+            ->withTimestamps()
+            ->withPivot(['id', 'care_team_role_id']);
     }
 
     /**
