@@ -42,6 +42,7 @@ use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Enums\CareTeamRoleType;
+use App\Features\CareTeamRoleFeature;
 use App\Filament\Resources\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Scopes\HasLicense;
@@ -108,7 +109,8 @@ class ManageProspectCareTeam extends ManageRelatedRecords
                             ->searchable()
                             ->options(CareTeamRole::where('type', CareTeamRoleType::Prospect)->pluck('name', 'id'))
                             ->relationship('careTeamRoles', 'name', fn (Builder $query) => $query->where('type', CareTeamRoleType::Prospect))
-                            ->model(CareTeam::class),
+                            ->model(CareTeam::class)
+                            ->visible(CareTeamRole::where('type', CareTeamRoleType::Prospect)->count() > 0 && CareTeamRoleFeature::active()),
                     ])
                     ->successNotificationTitle(function (array $data) {
                         /** @var Prospect $prospect */
