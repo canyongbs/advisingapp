@@ -40,6 +40,7 @@ use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\CareTeamRoleType;
+use App\Features\CareTeamRoleFeature;
 use App\Filament\Resources\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Scopes\HasLicense;
@@ -101,7 +102,8 @@ trait CanManageEducatableCareTeam
                             ->searchable()
                             ->options(CareTeamRole::where('type', CareTeamRoleType::Student)->pluck('name', 'id'))
                             ->relationship('careTeamRoles', 'name', fn (Builder $query) => $query->where('type', CareTeamRoleType::Student))
-                            ->model(CareTeam::class),
+                            ->model(CareTeam::class)
+                            ->visible(CareTeamRole::where('type', CareTeamRoleType::Student)->count() > 0 && CareTeamRoleFeature::active()),
                     ])
                     ->successNotificationTitle(function (array $data) {
                         /** @var Student $student */
