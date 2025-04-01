@@ -44,9 +44,6 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Models\License;
 use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\CareTeam\Models\CareTeam;
-use AdvisingApp\CareTeam\Models\CareTeamRole;
-use AdvisingApp\CareTeam\Models\CareTeamRoleProspectUser;
-use AdvisingApp\CareTeam\Models\CareTeamRoleStudentUser;
 use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
 use AdvisingApp\CaseManagement\Models\CaseAssignment;
 use AdvisingApp\Consent\Models\Concerns\CanConsent;
@@ -335,44 +332,12 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             ->withTimestamps();
     }
 
-    public function prospectCareTeamRoles(): BelongsToMany
-    {
-        return $this
-            ->belongsToMany(CareTeamRole::class, 'care_team_role_prospect_user', 'care_team_role_id', 'user_id')
-            ->using(CareTeamRoleProspectUser::class)
-            ->withPivot(['prospect_id']);
-    }
-
-    public function studentCareTeamRoles(): BelongsToMany
-    {
-        return $this
-            ->belongsToMany(CareTeamRole::class, 'care_team_role_student_user', 'care_team_role_id', 'user_id')
-            ->using(CareTeamRoleStudentUser::class)
-            ->withPivot(['sisid']);
-    }
-
     /**
      * @return HasMany<CareTeam, $this>
      */
     public function careTeams(): HasMany
     {
         return $this->hasMany(CareTeam::class);
-    }
-
-    public function careTeamRoleProspects(): BelongsToMany
-    {
-        return $this
-            ->belongsToMany(Prospect::class, 'care_team_role_prospect_user', 'prospect_id', 'user_id')
-            ->using(CareTeamRoleProspectUser::class)
-            ->withPivot(['care_team_role_id']);
-    }
-
-    public function careTeamRoleStudents(): BelongsToMany
-    {
-        return $this
-            ->belongsToMany(Student::class, 'care_team_role_student_user', 'sisid', 'user_id')
-            ->using(CareTeamRoleStudentUser::class)
-            ->withPivot(['care_team_role_id']);
     }
 
     public function permissionsFromRoles(): HasManyDeep

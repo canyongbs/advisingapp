@@ -42,8 +42,6 @@ use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
 use AdvisingApp\CareTeam\Models\CareTeam;
-use AdvisingApp\CareTeam\Models\CareTeamRole;
-use AdvisingApp\CareTeam\Models\CareTeamRoleProspectUser;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
 use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagements;
@@ -78,7 +76,6 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
@@ -459,22 +456,6 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
             ->withPivot(['tag_id'])
             ->withTimestamps()
             ->where('type', TagType::Prospect);
-    }
-
-    public function careTeamRoles(): BelongsToMany
-    {
-        return $this
-            ->belongsToMany(CareTeamRole::class, 'care_team_role_prospect_user', 'care_team_role_id', 'prospect_id')
-            ->using(CareTeamRoleProspectUser::class)
-            ->withPivot(['user_id']);
-    }
-
-    public function careTeamRoleUsers(): BelongsToMany
-    {
-        return $this
-            ->belongsToMany(User::class, 'care_team_role_prospect_user', 'user_id', 'prospect_id')
-            ->using(CareTeamRoleProspectUser::class)
-            ->withPivot(['care_team_role_id']);
     }
 
     /**

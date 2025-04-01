@@ -47,6 +47,7 @@ use Exception;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\DB;
@@ -62,6 +63,12 @@ class CareTeam extends MorphPivot implements ExecutableFromACampaignAction, CanT
     public $timestamps = true;
 
     protected $table = 'care_teams';
+
+    public function careTeamRoles(): BelongsToMany
+    {
+        return $this->belongsToMany(CareTeamRole::class, 'care_teams', 'care_team_role_id', 'id')
+          ->withPivot(['user_id', 'educatable_id']);
+    }
 
     /** @return MorphTo<Educatable> */
     public function educatable(): MorphTo
