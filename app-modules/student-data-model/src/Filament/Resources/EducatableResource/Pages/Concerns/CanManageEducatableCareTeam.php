@@ -95,7 +95,7 @@ trait CanManageEducatableCareTeam
                             ->searchable()
                             ->required()
                             ->options(User::query()->tap(new HasLicense(Student::getLicenseType()))->pluck('name', 'id')),
-                        Select::make('careTeamRoleId')
+                        Select::make('care_team_role_id')
                             ->label('Role')
                             //->searchable()
                             ->options(CareTeamRole::where('type', CareTeamRoleType::Student)->pluck('name', 'id'))

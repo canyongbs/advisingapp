@@ -241,16 +241,9 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
             table: 'care_teams',
         )
             ->using(CareTeam::class)
-            ->withPivot('id')
+            ->withPivot(['id', 'care_team_role_id'])
             ->withTimestamps()
             ->tap(new HasLicense($this->getLicenseType()));
-    }
-
-    public function careTeamUsers(): BelongsToMany
-    {
-        return $this
-            ->belongsToMany(User::class, 'care_teams', 'user_id', 'educatable_id')
-            ->withPivot(['care_team_role_id']);
     }
 
     public function subscribedUsers(): MorphToMany
