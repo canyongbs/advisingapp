@@ -51,15 +51,15 @@ enum CareTeamRoleType: string implements HasLabel
 
     public static function prospectDefault(): ?CareTeamRole
     {
-      $careTeamRole = CareTeamRole::where('type', CareTeamRoleType::Prospect)->where('is_default', true)->first();
+        $careTeamRole = CareTeamRole::where('type', CareTeamRoleType::Prospect)->where('is_default', true)->first();
 
-      return $careTeamRole;
+        return $careTeamRole;
     }
 
     public static function studentDefault(): ?CareTeamRole
     {
-      $careTeamRole = CareTeamRole::where('type', CareTeamRoleType::Student)->where('is_default', true)->first();
+        $careTeamRole = CareTeamRole::where('type', CareTeamRoleType::Student)->where('is_default', true)->first();
 
-      return $careTeamRole;
+        return $careTeamRole;
     }
 }
