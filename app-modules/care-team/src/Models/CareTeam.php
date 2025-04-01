@@ -67,7 +67,7 @@ class CareTeam extends MorphPivot implements ExecutableFromACampaignAction, CanT
     public function careTeamRoles(): BelongsToMany
     {
         return $this->belongsToMany(CareTeamRole::class, 'care_teams', 'care_team_role_id', 'id')
-          ->withPivot(['user_id', 'educatable_id']);
+            ->withPivot(['user_id', 'educatable_id']);
     }
 
     /** @return MorphTo<Educatable> */

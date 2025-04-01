@@ -66,6 +66,6 @@ class CareTeamRole extends BaseModel implements Auditable
     public function careTeams(): BelongsToMany
     {
         return $this->belongsToMany(CareTeam::class)
-          ->withPivot(['user_id', 'educatable_id']);
+            ->withPivot(['user_id', 'educatable_id']);
     }
 }
