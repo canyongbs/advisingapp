@@ -89,7 +89,7 @@ class RelationManagerSendEngagementAction extends CreateAction
             ->mountUsing(function (array $arguments, Form $form, RelationManager $livewire) {
                 $livewire->dispatch('engage-action-finished-loading');
 
-                if (filled($arguments['route'])) {
+                if (filled($arguments['route'] ?? null)) {
                     $form->fill([
                         'channel' => $arguments['channel'] ?? 'email',
                         'recipient_route_id' => $arguments['route'],
