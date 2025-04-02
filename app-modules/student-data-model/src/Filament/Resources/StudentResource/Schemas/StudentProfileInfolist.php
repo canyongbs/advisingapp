@@ -46,6 +46,7 @@ use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Str;
 
 class StudentProfileInfolist

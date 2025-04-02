@@ -71,13 +71,13 @@ class EngagementsRelationManager extends RelationManager
     #[On('send-email')]
     public function mountSendEmailMessageAction(string $emailAddressKey): void
     {
-        $this->mountTableAction('engage', arguments: ['emailAddressKey' => $emailAddressKey]);
+        $this->mountTableAction('engage', arguments: ['channel' => 'email', 'route' => $emailAddressKey]);
     }
 
     #[On('send-sms')]
     public function mountSendSmsMessageAction(string $phoneNumberKey): void
     {
-        $this->mountTableAction('engage', arguments: ['phoneNumberKey' => $phoneNumberKey]);
+        $this->mountTableAction('engage', arguments: ['channel' => 'sms', 'route' => $phoneNumberKey]);
     }
 
     public function infolist(Infolist $infolist): Infolist

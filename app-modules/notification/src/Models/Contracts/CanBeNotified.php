@@ -50,5 +50,7 @@ interface CanBeNotified
 
     public function unreadNotifications();
 
+    public function canReceiveEmail(): bool;
+
     public function canReceiveSms(): bool;
 }

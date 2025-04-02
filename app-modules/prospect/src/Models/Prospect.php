@@ -399,7 +399,7 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
      *
      * @return array<string, string>|string|null
      */
-    public function routeNotificationForMail(Notification $notification): array|string|null
+    public function routeNotificationForMail(Notification $notification): ?string
     {
         return $this->primaryEmailAddress?->address;
     }

@@ -42,6 +42,7 @@ use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Enums\SmsMessageEventType;
 use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
 use AdvisingApp\Notification\Models\SmsMessage;
+use AdvisingApp\Notification\Models\StoredAnonymousNotifiable;
 use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\OnDemandNotification;
@@ -49,6 +50,7 @@ use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
 use App\Features\RoutedEngagements;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Notification;
@@ -68,16 +70,26 @@ class SmsChannel
         [$recipientId, $recipientType] = match (true) {
             $notifiable instanceof Model => [$notifiable->getKey(), $notifiable->getMorphClass()],
             $notifiable instanceof AnonymousNotifiable && $notification instanceof OnDemandNotification => $notification->identifyRecipient(),
-            default => [null, 'anonymous'],
+            default => [
+                StoredAnonymousNotifiable::query()->createOrFirst([
+                    'type' => NotificationChannel::Sms,
+                    'route' => $notifiable->routeNotificationFor('sms', $notification),
+                ])->getKey(),
+                (new StoredAnonymousNotifiable())->getMorphClass(),
+            ],
         };
 
         $message = $notification->toSms($notifiable);
 
-        $recipientNumber = $message->getRecipientPhoneNumber($notification);
+        if (! ($message instanceof TwilioMessage)) {
+            throw new Exception('The notification\'s mail message must be an instance of [' . TwilioMessage::class . '].');
+        }
+
+        $recipientNumber = $message->getRecipientPhoneNumber() ?? $notifiable->routeNotificationFor('sms', $notification);
 
         $smsMessage = new SmsMessage([
             'notification_class' => $notification::class,
-            'content' => $message->toArray($notification),
+            'content' => $message->toArray(),
             'recipient_id' => $recipientId,
             'recipient_type' => $recipientType,
             ...(RoutedEngagements::active() ? ['recipient_number' => $recipientNumber] : []),

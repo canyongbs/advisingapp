@@ -101,4 +101,9 @@ class EventAttendee extends BaseModel implements CanBeNotified
     {
         return false;
     }
+
+    public function canReceiveEmail(): bool
+    {
+        return true;
+    }
 }

@@ -524,7 +524,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return "{$context}. When you respond please use this information about me to tailor your response. You should refer to me by my name and remember what my name and job title are, using it in your responses when appropriate.";
     }
 
-    public function routeNotificationForSms(): string
+    public function routeNotificationForSms(): ?string
     {
         return $this->phone_number;
     }
@@ -541,6 +541,11 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function canReceiveSms(): bool
     {
         return false;
+    }
+
+    public function canReceiveEmail(): bool
+    {
+        return true;
     }
 
     protected function serializeDate(DateTimeInterface $date): string

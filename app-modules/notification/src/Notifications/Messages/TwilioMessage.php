@@ -37,8 +37,6 @@
 namespace AdvisingApp\Notification\Notifications\Messages;
 
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
-use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
-use Illuminate\Notifications\Notification;
 
 class TwilioMessage
 {
@@ -71,17 +69,9 @@ class TwilioMessage
         return $this;
     }
 
-    public function getRecipientPhoneNumber(Notification $notification): ?string
+    public function getRecipientPhoneNumber(): ?string
     {
-        if (filled($this->recipientPhoneNumber)) {
-            return $this->recipientPhoneNumber;
-        }
-
-        if ((! ($this->notifiable instanceof CanBeNotified)) || (! $this->notifiable->canReceiveSms())) {
-            return null;
-        }
-
-        return this->notifiable->routeNotificationForSms($notification);
+        return $this->recipientPhoneNumber;
     }
 
     public function content(string $content): self
@@ -108,10 +98,10 @@ class TwilioMessage
         return $this->from;
     }
 
-    public function toArray(Notification $notification): array
+    public function toArray(): array
     {
         return [
-            'recipient_phone_number' => $this->getRecipientPhoneNumber($notification),
+            'recipient_phone_number' => $this->getRecipientPhoneNumber(),
             'content' => $this->getContent(),
             'from' => $this->getFrom(),
         ];

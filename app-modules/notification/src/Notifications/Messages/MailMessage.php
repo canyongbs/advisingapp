@@ -37,12 +37,11 @@
 namespace AdvisingApp\Notification\Notifications\Messages;
 
 use App\Models\NotificationSetting;
-use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage as BaseMailMessage;
 
 class MailMessage extends BaseMailMessage
 {
-    protected ?string $recipientEmailAddress = null
+    protected ?string $recipientEmailAddress = null;
 
     public static function make(): static
     {
@@ -56,9 +55,9 @@ class MailMessage extends BaseMailMessage
         return $this;
     }
 
-    public function getRecipientEmailAddress(Notification $notification): string
+    public function getRecipientEmailAddress(): ?string
     {
-        return $this->recipientEmailAddress ?? $this->notifiable->routeNotificationForMail($notification);
+        return $this->recipientEmailAddress;
     }
 
     public function content(string $content): static
@@ -88,10 +87,10 @@ class MailMessage extends BaseMailMessage
         return $this;
     }
 
-    public function toArray(Notification $notification): array
+    public function toArray(): array
     {
         return [
-            'recipient_email_address' => $this->getRecipientEmailAddress($notification),
+            'recipient_email_address' => $this->getRecipientEmailAddress(),
             'level' => $this->level,
             'subject' => $this->subject,
             'greeting' => $this->greeting,

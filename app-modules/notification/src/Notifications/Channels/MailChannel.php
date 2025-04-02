@@ -51,10 +51,11 @@ use App\Features\RoutedEngagements;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Channels\MailChannel as BaseMailChannel;
-use Illuminate\Notifications\Messages\MailMessage;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use ReflectionClass;
 use Symfony\Component\Mime\Email;
@@ -76,12 +77,18 @@ class MailChannel extends BaseMailChannel
             ],
         };
 
+        $message = $notification->toMail($notifiable);
+
+        if (! ($message instanceof MailMessage)) {
+            throw new Exception('The notification\'s mail message must be an instance of [' . MailMessage::class . '].');
+        }
+
         $emailMessage = new EmailMessage([
             'notification_class' => $notification::class,
-            'content' => $notification->toMail($notifiable)->toArray(),
+            'content' => $message->toArray(),
             'recipient_id' => $recipientId,
             'recipient_type' => $recipientType,
-            ...(RoutedEngagements::active() ? ['recipient_address' => $recipientAddress] : []),
+            ...(RoutedEngagements::active() ? ['recipient_address' => $message->getRecipientEmailAddress() ?? $notifiable->routeNotificationFor('mail', $notification)] : []),
         ]);
 
         if ($notification instanceof HasBeforeSendHook) {
@@ -105,25 +112,24 @@ class MailChannel extends BaseMailChannel
                 (! ($tenantMailConfig?->isDemoModeEnabled ?? false))
                 || ($isSystemNotification && $tenantMailConfig?->isExcludingSystemNotificationsFromDemoMode)
             ) {
-                $message = $notification->toMail($notifiable)
-                    ->withSymfonyMessage(function (Email $message) use ($tenant, $emailMessage) {
-                        $settings = app(SesSettings::class);
+                $message->withSymfonyMessage(function (Email $message) use ($tenant, $emailMessage) {
+                    $settings = app(SesSettings::class);
 
-                        if (filled($settings->configuration_set)) {
-                            $message->getHeaders()->addTextHeader(
-                                'X-SES-CONFIGURATION-SET',
-                                $settings->configuration_set
-                            );
-                        }
-
+                    if (filled($settings->configuration_set)) {
                         $message->getHeaders()->addTextHeader(
-                            'X-SES-MESSAGE-TAGS',
-                            implode(', ', [
-                                "app_message_id={$emailMessage->getKey()}",
-                                ...($tenant ? ['tenant_id=' . $tenant->getKey()] : []),
-                            ]),
+                            'X-SES-CONFIGURATION-SET',
+                            $settings->configuration_set
                         );
-                    });
+                    }
+
+                    $message->getHeaders()->addTextHeader(
+                        'X-SES-MESSAGE-TAGS',
+                        implode(', ', [
+                            "app_message_id={$emailMessage->getKey()}",
+                            ...($tenant ? ['tenant_id=' . $tenant->getKey()] : []),
+                        ]),
+                    );
+                });
 
                 $quotaUsage = $isSystemNotification ? 0 : $this->determineQuotaUsage($message, $emailMessage);
 
@@ -235,5 +241,18 @@ class MailChannel extends BaseMailChannel
             ->sum('quota_usage');
 
         return ($currentQuotaUsage + $usage) <= $licenseSettings->data->limits->emails;
+    }
+
+    protected function getRecipients($notifiable, $notification, $message)
+    {
+        if (! ($message instanceof MailMessage)) {
+            throw new Exception('The notification\'s mail message must be an instance of [' . MailMessage::class . '].');
+        }
+
+        if ($address = ($message->getRecipientEmailAddress() ?? $notifiable->routeNotificationFor('mail', $notification))) {
+            return [$address];
+        }
+
+        return parent::getRecipients($notifiable, $notification, $message);
     }
 }
