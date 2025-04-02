@@ -1,6 +1,7 @@
 includes:
     - ./vendor/larastan/larastan/extension.neon
     - ./vendor/tpetry/laravel-postgresql-enhanced/phpstan-extension.neon
+    - ./phpstan-baseline.php
 
 parameters:
 
@@ -18,10 +19,13 @@ parameters:
         - ./_ide_helper_models.php
 
     # Level 9 is the highest level
-    level: 1
+    level: 6
 
     ignoreErrors:
-        - '#Call to an undefined static method Illuminate\\Support\\Facades\\Queue::pushed\(\)#'
+        - 
+            message: '#Call to an undefined static method Illuminate\\Support\\Facades\\Queue::pushed\(\)#'
+            reportUnmatched: false
         -
             identifier: larastan.noEnvCallsOutsideOfConfig
             path: app-modules/*/config/*
+            reportUnmatched: false
