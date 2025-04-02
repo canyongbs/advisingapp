@@ -53,5 +53,6 @@ class EngagementCreationData extends Data
         public ?array $body = null,
         public array $temporaryBodyImages = [],
         public ?CarbonInterface $scheduledAt = null,
+        public ?string $recipientRoute = null,
     ) {}
 }

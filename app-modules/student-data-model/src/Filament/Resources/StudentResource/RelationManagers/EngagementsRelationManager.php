@@ -60,12 +60,25 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
+use Livewire\Attributes\On;
 
 class EngagementsRelationManager extends RelationManager
 {
     protected static string $relationship = 'timeline';
 
     protected static ?string $title = 'Messages';
+
+    #[On('send-email')]
+    public function mountSendEmailMessageAction(string $emailAddressKey): void
+    {
+        $this->mountTableAction('engage', arguments: ['channel' => 'email', 'route' => $emailAddressKey]);
+    }
+
+    #[On('send-sms')]
+    public function mountSendSmsMessageAction(string $phoneNumberKey): void
+    {
+        $this->mountTableAction('engage', arguments: ['channel' => 'sms', 'route' => $phoneNumberKey]);
+    }
 
     public function infolist(Infolist $infolist): Infolist
     {

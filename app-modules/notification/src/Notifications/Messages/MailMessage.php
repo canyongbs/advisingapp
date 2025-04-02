@@ -41,9 +41,23 @@ use Illuminate\Notifications\Messages\MailMessage as BaseMailMessage;
 
 class MailMessage extends BaseMailMessage
 {
+    protected ?string $recipientEmailAddress = null;
+
     public static function make(): static
     {
         return app(static::class);
+    }
+
+    public function to(?string $recipientEmailAddress): self
+    {
+        $this->recipientEmailAddress = $recipientEmailAddress;
+
+        return $this;
+    }
+
+    public function getRecipientEmailAddress(): ?string
+    {
+        return $this->recipientEmailAddress;
     }
 
     public function content(string $content): static
@@ -76,6 +90,7 @@ class MailMessage extends BaseMailMessage
     public function toArray(): array
     {
         return [
+            'recipient_email_address' => $this->getRecipientEmailAddress(),
             'level' => $this->level,
             'subject' => $this->subject,
             'greeting' => $this->greeting,

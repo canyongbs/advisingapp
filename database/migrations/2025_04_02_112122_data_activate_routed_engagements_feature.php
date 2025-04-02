@@ -34,12 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Models\Concerns;
+use App\Features\RoutedEngagements;
+use Illuminate\Database\Migrations\Migration;
 
-trait NotifiableViaSms
-{
-    public function routeNotificationForSms(): ?string
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->primaryPhoneNumber?->number;
+        RoutedEngagements::activate();
     }
-}
+
+    public function down(): void
+    {
+        RoutedEngagements::deactivate();
+    }
+};

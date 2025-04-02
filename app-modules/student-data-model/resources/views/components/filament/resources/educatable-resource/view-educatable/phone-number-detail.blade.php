@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -32,14 +30,31 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+<button
+    class="flex items-center gap-2"
+    type="button"
+    x-data="{ isLoading: false }"
+    x-on:engage-action-finished-loading.window="isLoading = false"
+    x-on:click="isLoading = true; $dispatch('send-sms', { phoneNumberKey: @js($phoneNumber->getKey()) })"
+    x-tooltip.raw="Click to send an SMS"
+    @disabled(!$phoneNumber->can_receive_sms)
+>
+    @svg('heroicon-m-phone', 'size-5', ['x-show' => '! isLoading'])
 
-namespace AdvisingApp\Notification\Models\Concerns;
+    <x-filament::loading-indicator
+        class="size-5"
+        x-show="isLoading"
+        x-cloak
+    />
 
-trait NotifiableViaSms
-{
-    public function routeNotificationForSms(): ?string
-    {
-        return $this->primaryPhoneNumber?->number;
-    }
-}
+    {{ $phoneNumber->number }}
+
+    @if (filled($phoneNumber->ext))
+        (ext. {{ $phoneNumber->ext }})
+    @endif
+
+    @if (filled($phoneNumber->type))
+        ({{ $phoneNumber->type }})
+    @endif
+</button>

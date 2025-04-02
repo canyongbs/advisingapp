@@ -399,7 +399,7 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
       *
       * @return array<string, string>|string|null
       */
-    public function routeNotificationForMail(Notification $notification): array|string|null
+    public function routeNotificationForMail(Notification $notification): ?string
     {
         return $this->primaryEmailAddress?->address;
     }

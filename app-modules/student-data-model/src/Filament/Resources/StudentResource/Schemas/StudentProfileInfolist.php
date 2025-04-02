@@ -46,6 +46,7 @@ use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Str;
 
 class StudentProfileInfolist
@@ -73,16 +74,18 @@ class StudentProfileInfolist
                                 ->visible(fn (?array $state): bool => filled($state)),
                             TextEntry::make('additionalEmailAddresses')
                                 ->label(fn (?array $state): string => Str::plural('Other email address', count($state ?? [])))
-                                ->state(fn (Student $record): array => collect($record->additionalEmailAddresses)
-                                    ->map(fn (StudentEmailAddress $email): string => $email->address . (filled($email->type) ? " ({$email->type})" : ''))
-                                    ->all())
+                                ->state(fn (Student $record): array => array_map(
+                                    fn (StudentEmailAddress $emailAddress): View => view('student-data-model::components.filament.resources.educatable-resource.view-educatable.email-address-detail', ['emailAddress' => $emailAddress]),
+                                    $record->additionalEmailAddresses->all(),
+                                ))
                                 ->listWithLineBreaks()
                                 ->visible(fn (?array $state): bool => filled($state)),
                             TextEntry::make('additionalPhoneNumbers')
                                 ->label(fn (?array $state): string => Str::plural('Other phone number', count($state ?? [])))
-                                ->state(fn (Student $record): array => collect($record->additionalPhoneNumbers)
-                                    ->map(fn (StudentPhoneNumber $phone): string => $phone->number . (filled($phone->ext) ? " (ext. {$phone->ext})" : '') . (filled($phone->type) ? " ({$phone->type})" : ''))
-                                    ->all())
+                                ->state(fn (Student $record): array => array_map(
+                                    fn (StudentPhoneNumber $phoneNumber): View => view('student-data-model::components.filament.resources.educatable-resource.view-educatable.phone-number-detail', ['phoneNumber' => $phoneNumber]),
+                                    $record->additionalPhoneNumbers->all(),
+                                ))
                                 ->listWithLineBreaks()
                                 ->visible(fn (?array $state): bool => filled($state)),
                         ]),

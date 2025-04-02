@@ -75,8 +75,8 @@ trait HasProspectHeader
             'details' => [
                 ['Prospect', 'heroicon-m-magnifying-glass-circle'],
                 ...(filled($prospect->preferred) ? [["Goes by \"{$prospect->preferred}\"", 'heroicon-m-heart']] : []),
-                ...($prospect->primaryPhoneNumber ? [[$prospect->primaryPhoneNumber->number . (filled($prospect->primaryPhoneNumber->ext) ? " (ext. {$prospect->primaryPhoneNumber->ext})" : '') . (filled($prospect->primaryPhoneNumber->type) ? " ({$prospect->primaryPhoneNumber->type})" : ''), 'heroicon-m-phone']] : []),
-                ...($prospect->primaryEmailAddress ? [[$prospect->primaryEmailAddress->address . (filled($prospect->primaryEmailAddress->type) ? " ({$prospect->primaryEmailAddress->type})" : ''), 'heroicon-m-envelope']] : []),
+                ...($prospect->primaryPhoneNumber ? [[$prospect->primaryPhoneNumber, null]] : []),
+                ...($prospect->primaryEmailAddress ? [[$prospect->primaryEmailAddress, null]] : []),
                 ...(filled($prospect->hsgrad) ? [[$prospect->hsgrad, 'heroicon-m-building-library']] : []),
             ],
             'hasSisSystem' => $sisSettings->is_enabled && $sisSettings->sis_system,

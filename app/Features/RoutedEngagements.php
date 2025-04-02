@@ -34,12 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Models\Concerns;
+namespace App\Features;
 
-trait NotifiableViaSms
+use App\Support\AbstractFeatureFlag;
+
+class RoutedEngagements extends AbstractFeatureFlag
 {
-    public function routeNotificationForSms(): ?string
+    public function resolve(mixed $scope): mixed
     {
-        return $this->primaryPhoneNumber?->number;
+        return false;
     }
 }

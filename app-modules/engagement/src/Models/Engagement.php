@@ -91,6 +91,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         'body',
         'recipient_id',
         'recipient_type',
+        'recipient_route',
         'scheduled_at',
         'dispatched_at',
         'channel',

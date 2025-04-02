@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -32,14 +30,26 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+<button
+    class="flex items-center gap-2"
+    type="button"
+    x-data="{ isLoading: false }"
+    x-on:engage-action-finished-loading.window="isLoading = false"
+    x-on:click="isLoading = true; $dispatch('send-email', { emailAddressKey: @js($emailAddress->getKey()) })"
+    x-tooltip.raw="Click to send an email"
+>
+    @svg('heroicon-m-envelope', 'size-5', ['x-show' => '! isLoading'])
 
-namespace AdvisingApp\Notification\Models\Concerns;
+    <x-filament::loading-indicator
+        class="size-5"
+        x-show="isLoading"
+        x-cloak
+    />
 
-trait NotifiableViaSms
-{
-    public function routeNotificationForSms(): ?string
-    {
-        return $this->primaryPhoneNumber?->number;
-    }
-}
+    {{ $emailAddress->address }}
+
+    @if (filled($emailAddress->type))
+        ({{ $emailAddress->type }})
+    @endif
+</button>

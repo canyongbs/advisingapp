@@ -43,19 +43,24 @@ use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\ProspectEmailAddress;
+use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
+use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
+use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
+use App\Features\RoutedEngagements;
 use Filament\Actions\StaticAction;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action as FormComponentAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\CreateAction;
@@ -81,14 +86,70 @@ class RelationManagerSendEngagementAction extends CreateAction
 
                 return auth()->user()->can('create', [Engagement::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
             })
-            ->form(fn (Form $form) => $form->schema([
-                Select::make('channel')
-                    ->label('What would you like to send?')
-                    ->options(NotificationChannel::getEngagementOptions())
-                    ->default(NotificationChannel::Email->value)
-                    ->disableOptionWhen(fn (RelationManager $livewire, string $value): bool => (($value == (NotificationChannel::Sms->value) && ! $livewire->getOwnerRecord()->canReceiveSms())) || NotificationChannel::tryFrom($value)?->getCaseDisabled())
-                    ->selectablePlaceholder(false)
-                    ->live(),
+            ->mountUsing(function (array $arguments, Form $form, RelationManager $livewire) {
+                $livewire->dispatch('engage-action-finished-loading');
+
+                if (filled($arguments['route'] ?? null)) {
+                    $form->fill([
+                        'channel' => $arguments['channel'] ?? 'email',
+                        'recipient_route_id' => $arguments['route'],
+                        'signature' => auth()->user()->signature,
+                    ]);
+                } else {
+                    $form->fill();
+                }
+            })
+            ->form(fn (Form $form, RelationManager $livewire) => $form->schema([
+                Grid::make(2)
+                    ->schema([
+                        Select::make('channel')
+                            ->label('What would you like to send?')
+                            ->options(NotificationChannel::getEngagementOptions())
+                            ->default(NotificationChannel::Email->value)
+                            ->disableOptionWhen(fn (RelationManager $livewire, string $value): bool => (($value == (NotificationChannel::Sms->value) && (! $livewire->getOwnerRecord()->phoneNumbers()->where('can_receive_sms', true)->exists()))) || NotificationChannel::tryFrom($value)?->getCaseDisabled())
+                            ->selectablePlaceholder(false)
+                            ->live()
+                            ->afterStateUpdated(function (mixed $state, RelationManager $livewire, Set $set) {
+                                $channel = NotificationChannel::parse($state);
+
+                                $route = match ($channel) {
+                                    NotificationChannel::Email => $livewire->getOwnerRecord()->primaryEmailAddress?->getKey(),
+                                    NotificationChannel::Sms => $livewire->getOwnerRecord()->primaryPhoneNumber()
+                                        ->where('can_receive_sms', true)
+                                        ->first()?->getKey(),
+                                } ?? match ($channel) {
+                                    NotificationChannel::Email => $livewire->getOwnerRecord()->emailAddresses()
+                                        ->first()?->getKey(),
+                                    NotificationChannel::Sms => $livewire->getOwnerRecord()->phoneNumbers()
+                                        ->where('can_receive_sms', true)
+                                        ->first()?->getKey(),
+                                };
+
+                                $set('recipient_route_id', $route);
+                            }),
+                        Select::make('recipient_route_id')
+                            ->label(fn (Get $get): string => match (NotificationChannel::parse($get('channel'))) {
+                                NotificationChannel::Email => 'Email address',
+                                NotificationChannel::Sms => 'Phone number',
+                            })
+                            ->options(fn (Get $get): array => match (NotificationChannel::parse($get('channel'))) {
+                                NotificationChannel::Email => $livewire->getOwnerRecord()->emailAddresses
+                                    ->mapWithKeys(fn (StudentEmailAddress | ProspectEmailAddress $emailAddress): array => [
+                                        $emailAddress->getKey() => $emailAddress->address . (filled($emailAddress->type) ? " ({$emailAddress->type})" : ''),
+                                    ])
+                                    ->all(),
+                                NotificationChannel::Sms => $livewire->getOwnerRecord()->phoneNumbers()
+                                    ->where('can_receive_sms', true)
+                                    ->get()
+                                    ->mapWithKeys(fn (StudentPhoneNumber | ProspectPhoneNumber $phoneNumber): array => [
+                                        $phoneNumber->getKey() => $phoneNumber->number . (filled($phoneNumber->ext) ? " (ext. {$phoneNumber->ext})" : '') . (filled($phoneNumber->type) ? " ({$phoneNumber->type})" : ''),
+                                    ])
+                                    ->all(),
+                            })
+                            ->default(fn (): ?string => $livewire->getOwnerRecord()->primaryEmailAddress?->getKey())
+                            ->visible(RoutedEngagements::active())
+                            ->required(),
+                    ]),
                 Fieldset::make('Content')
                     ->schema([
                         TextInput::make('subject')
@@ -205,14 +266,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                     ]),
             ]))
             ->action(function (array $data, Form $form, RelationManager $livewire) {
-                if ($data['channel'] == NotificationChannel::Sms->value && ! $livewire->getOwnerRecord()->canReceiveSms()) {
-                    Notification::make()
-                        ->title('Student does not have mobile number.')
-                        ->danger()
-                        ->send();
-
-                    $this->halt();
-                }
+                $recipient = $livewire->getOwnerRecord();
 
                 $data['body'] ??= ['type' => 'doc', 'content' => []];
                 $data['body']['content'] = [
@@ -222,10 +276,18 @@ class RelationManagerSendEngagementAction extends CreateAction
 
                 $formFields = $form->getFlatFields();
 
+                $channel = NotificationChannel::parse($data['channel']);
+
+                $recipientRoute = match ($channel) {
+                    NotificationChannel::Email => $recipient->emailAddresses()->find($data['recipient_route_id'] ?? null)?->address,
+                    NotificationChannel::Sms => $recipient->phoneNumbers()->find($data['recipient_route_id'] ?? null)?->number,
+                    default => null,
+                };
+
                 $engagement = app(CreateEngagement::class)->execute(new EngagementCreationData(
                     user: auth()->user(),
-                    recipient: $livewire->getOwnerRecord(),
-                    channel: NotificationChannel::parse($data['channel']),
+                    recipient: $recipient,
+                    channel: $channel,
                     subject: $data['subject'] ?? null,
                     body: $data['body'] ?? null,
                     temporaryBodyImages: [
@@ -245,6 +307,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                         ) : []),
                     ],
                     scheduledAt: ($data['send_later'] ?? false) ? Carbon::parse($data['scheduled_at'] ?? null) : null,
+                    recipientRoute: $recipientRoute,
                 ));
 
                 $form->model($engagement)->saveRelationships();

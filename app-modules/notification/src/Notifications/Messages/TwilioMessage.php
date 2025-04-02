@@ -62,16 +62,16 @@ class TwilioMessage
         ]);
     }
 
-    public function to(string $recipientPhoneNumber): self
+    public function to(?string $recipientPhoneNumber): self
     {
         $this->recipientPhoneNumber = $recipientPhoneNumber;
 
         return $this;
     }
 
-    public function getRecipientPhoneNumber(): string
+    public function getRecipientPhoneNumber(): ?string
     {
-        return $this->recipientPhoneNumber ?? $this->notifiable->routeNotificationForSms();
+        return $this->recipientPhoneNumber;
     }
 
     public function content(string $content): self

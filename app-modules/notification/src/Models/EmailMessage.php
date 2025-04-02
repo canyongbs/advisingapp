@@ -53,6 +53,7 @@ class EmailMessage extends BaseModel implements Message
         'quota_usage',
         'recipient_id',
         'recipient_type',
+        'recipient_address',
     ];
 
     protected $casts = [

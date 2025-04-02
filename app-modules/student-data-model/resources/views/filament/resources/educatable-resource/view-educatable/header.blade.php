@@ -31,6 +31,13 @@
 
 </COPYRIGHT>
 --}}
+@php
+    use AdvisingApp\Prospect\Models\ProspectEmailAddress;
+    use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
+    use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
+    use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
+@endphp
+
 <header class="flex flex-col gap-8">
     <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div class="flex flex-col gap-3">
@@ -55,12 +62,24 @@
                     <div class="flex flex-col gap-3">
                         <div
                             class="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm font-medium text-gray-600 dark:text-gray-400 lg:gap-x-6 lg:gap-y-2">
-                            @foreach ($details as [$detailLabel, $detailIcon])
-                                <div class="flex items-center gap-2">
-                                    @svg($detailIcon, 'size-5')
+                            @foreach ($details as [$detail, $detailIcon])
+                                @if ($detail instanceof StudentPhoneNumber || $detail instanceof ProspectPhoneNumber)
+                                    @include(
+                                        'student-data-model::components.filament.resources.educatable-resource.view-educatable.phone-number-detail',
+                                        ['phoneNumber' => $detail]
+                                    )
+                                @elseif ($detail instanceof StudentEmailAddress || $detail instanceof ProspectEmailAddress)
+                                    @include(
+                                        'student-data-model::components.filament.resources.educatable-resource.view-educatable.email-address-detail',
+                                        ['emailAddress' => $detail]
+                                    )
+                                @else
+                                    <div class="flex items-center gap-2">
+                                        @svg($detailIcon, 'size-5')
 
-                                    {{ $detailLabel }}
-                                </div>
+                                        {{ $detail }}
+                                    </div>
+                                @endif
                             @endforeach
                         </div>
 
