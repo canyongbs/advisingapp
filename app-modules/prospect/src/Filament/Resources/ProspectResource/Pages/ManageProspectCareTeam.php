@@ -86,6 +86,10 @@ class ManageProspectCareTeam extends ManageRelatedRecords
                     ->url(fn ($record) => UserResource::getUrl('view', ['record' => $record]))
                     ->color('primary'),
                 TextColumn::make('job_title'),
+                TextColumn::make('role')
+                    ->getStateUsing(fn (User $record) => CareTeamRole::where('id', $record->careTeams()->where('educatable_type', CareTeamRoleType::Prospect)->first()->care_team_role_id)->pluck('name'))
+                    ->badge()
+                    ->visible(CareTeamRole::where('type', CareTeamRoleType::Prospect)->count() > 0 && CareTeamRoleFeature::active()),
             ])
             ->headerActions([
                 AttachAction::make()
@@ -100,7 +104,7 @@ class ManageProspectCareTeam extends ManageRelatedRecords
                     ->attachAnother(false)
                     ->color('primary')
                     ->mountUsing(fn (ComponentContainer $form) => $form->fill([
-                        'care_team_role_id' => CareTeamRoleType::prospectDefault(),
+                        'care_team_role_id' => CareTeamRoleType::prospectDefault()?->id,
                     ]))
                     ->form([
                         Select::make('recordId')
@@ -119,10 +123,7 @@ class ManageProspectCareTeam extends ManageRelatedRecords
                         /** @var Prospect $prospect */
                         $prospect = $this->getOwnerRecord();
 
-                        if (count($data['recordId']) > 1) {
-                            return count($data['recordId']) . " users were added to {$prospect->display_name}'s Care Team";
-                        }
-                        $record = User::find($data['recordId'][0]);
+                        $record = User::find($data['recordId']);
 
                         return "{$record->name} was added to {$prospect->display_name}'s Care Team";
                     }),
