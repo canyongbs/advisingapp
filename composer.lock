@@ -2806,16 +2806,16 @@
         },
         {
             "name": "canyongbs/filament-tiptap-editor",
-            "version": "1.2.0",
+            "version": "1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/canyongbs/filament-tiptap-editor.git",
-                "reference": "a24f32ba6e0e97bb70003abd0009cf176a8df6f1"
+                "reference": "d93400d65a27909e9f3ce20c3e3d2febd678606c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/canyongbs/filament-tiptap-editor/zipball/a24f32ba6e0e97bb70003abd0009cf176a8df6f1",
-                "reference": "a24f32ba6e0e97bb70003abd0009cf176a8df6f1",
+                "url": "https://api.github.com/repos/canyongbs/filament-tiptap-editor/zipball/d93400d65a27909e9f3ce20c3e3d2febd678606c",
+                "reference": "d93400d65a27909e9f3ce20c3e3d2febd678606c",
                 "shasum": ""
             },
             "require": {
@@ -2878,7 +2878,7 @@
             ],
             "support": {
                 "issues": "https://github.com/canyongbs/filament-tiptap-editor/issues",
-                "source": "https://github.com/canyongbs/filament-tiptap-editor/tree/1.2.0"
+                "source": "https://github.com/canyongbs/filament-tiptap-editor/tree/1.2.1"
             },
             "funding": [
                 {
@@ -2886,7 +2886,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-02-13T23:08:16+00:00"
+            "time": "2025-04-02T16:59:26+00:00"
         },
         {
             "name": "canyongbs/model-state-machine",
