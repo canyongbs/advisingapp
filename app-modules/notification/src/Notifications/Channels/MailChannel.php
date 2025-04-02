@@ -47,6 +47,7 @@ use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
 use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\OnDemandNotification;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use App\Features\RoutedEngagements;
 use App\Models\Tenant;
 use App\Models\User;
@@ -55,7 +56,6 @@ use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Channels\MailChannel as BaseMailChannel;
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use ReflectionClass;
 use Symfony\Component\Mime\Email;
@@ -83,12 +83,14 @@ class MailChannel extends BaseMailChannel
             throw new Exception('The notification\'s mail message must be an instance of [' . MailMessage::class . '].');
         }
 
+        $recipientAddress = $message->getRecipientEmailAddress() ?? $notifiable->routeNotificationFor('mail', $notification);
+
         $emailMessage = new EmailMessage([
             'notification_class' => $notification::class,
             'content' => $message->toArray(),
             'recipient_id' => $recipientId,
             'recipient_type' => $recipientType,
-            ...(RoutedEngagements::active() ? ['recipient_address' => $message->getRecipientEmailAddress() ?? $notifiable->routeNotificationFor('mail', $notification)] : []),
+            ...(RoutedEngagements::active() ? ['recipient_address' => is_array($recipientAddress) ? null : $recipientAddress] : []),
         ]);
 
         if ($notification instanceof HasBeforeSendHook) {
@@ -249,7 +251,7 @@ class MailChannel extends BaseMailChannel
             throw new Exception('The notification\'s mail message must be an instance of [' . MailMessage::class . '].');
         }
 
-        if ($address = ($message->getRecipientEmailAddress() ?? $notifiable->routeNotificationFor('mail', $notification))) {
+        if (is_string($address = ($message->getRecipientEmailAddress() ?? $notifiable->routeNotificationFor('mail', $notification)))) {
             return [$address];
         }
 

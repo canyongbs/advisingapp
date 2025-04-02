@@ -92,7 +92,7 @@ class SmsChannel
             'content' => $message->toArray(),
             'recipient_id' => $recipientId,
             'recipient_type' => $recipientType,
-            ...(RoutedEngagements::active() ? ['recipient_number' => $recipientNumber] : []),
+            ...(RoutedEngagements::active() ? ['recipient_number' => is_array($recipientNumber) ? null : $recipientNumber] : []),
         ]);
 
         if ($notification instanceof HasBeforeSendHook) {
