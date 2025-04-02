@@ -76,9 +76,11 @@ trait CanManageEducatableCareTeam
                     ->url(fn ($record) => UserResource::getUrl('view', ['record' => $record]))
                     ->color('primary'),
                 TextColumn::make('job_title'),
-                TextColumn::make('care_team_roles.name')
+                TextColumn::make('role')
                     ->label('Role')
-                    ->badge(),
+                    ->getStateUsing(fn (User $record) => CareTeamRole::where('id', $record->careTeams()->where('educatable_type', CareTeamRoleType::Student)->first()->care_team_role_id)->pluck('name'))
+                    ->badge()
+                    ->visible(CareTeamRole::where('type', CareTeamRoleType::Student)->count() > 0 && CareTeamRoleFeature::active()),
             ])
             ->headerActions([
                 AttachAction::make()
@@ -93,7 +95,7 @@ trait CanManageEducatableCareTeam
                     ->attachAnother(false)
                     ->color('primary')
                     ->mountUsing(fn (ComponentContainer $form) => $form->fill([
-                        'care_team_role_id' => CareTeamRoleType::studentDefault(),
+                        'care_team_role_id' => CareTeamRoleType::studentDefault()?->id,
                     ]))
                     ->form([
                         Select::make('recordId')
