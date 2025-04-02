@@ -70,7 +70,7 @@
         "itsgoingd/clockwork": "^5.2",
         "kirschbaum-development/eloquent-power-joins": "^3.5",
         "laravel/framework": "^11.0",
-        "laravel/octane": "^2.5",
+        "laravel/octane": "^2.8.3",
         "laravel/pennant": "^1.10",
         "laravel/sanctum": "^4.0",
         "laravel/socialite": "^5.15",
