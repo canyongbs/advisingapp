@@ -278,5 +278,20 @@ jobs:
       - name: Setup Dependencies
         uses: ./.github/actions/composer-dependency-setup
 
+      - name: "Restore result cache"
+        uses: actions/cache/restore@v4
+        with:
+          path: tmp
+          key: "phpstan-result-cache-${{ github.run_id }}"
+          restore-keys: |
+            phpstan-result-cache-
+
       - name: Linting
-        run: composer lint
+        run: ./vendor/bin/phpstan analyse --configuration phpstan.neon.ci --no-progress
+
+      - name: "Save result cache"
+        uses: actions/cache/save@v4
+        if: ${{ !cancelled() }}
+        with:
+          path: tmp
+          key: "phpstan-result-cache-${{ github.run_id }}"
