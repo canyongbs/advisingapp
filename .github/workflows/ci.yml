@@ -121,7 +121,7 @@ jobs:
   test:
     strategy:
       matrix:
-        testsuite: ['Landlord', 'Tenant']
+        testsuite: [Landlord, Tenant]
 
     runs-on: ubuntu-22.04
 
