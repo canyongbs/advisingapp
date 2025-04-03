@@ -192,11 +192,23 @@ jobs:
       - name: Generate key
         run: php artisan key:generate
 
-      - name: Clear Config
-        run: php artisan optimize:clear
+      - name: Cache Modular Modules
+        run: php artisan modules:cache --env=testing
 
-      - name: Directory Permissions
-        run: chmod -R 777 storage bootstrap/cache
+      - name: Cache Routes
+        run: php artisan route:cache --env=testing
+
+      - name: Cache Views
+        run: php artisan view:cache --env=testing
+
+      - name: Cache Events
+        run: php artisan event:cache --env=testing
+
+      - name: Cache Icons
+        run: php artisan icons:cache --env=testing
+
+      - name: Cache Filament Components
+        run: php artisan filament:cache-components --env=testing
 
       - name: Check route integrity
         run: php artisan route:list
