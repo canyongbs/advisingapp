@@ -31,6 +31,9 @@
 
 </COPYRIGHT>
 --}}
+@php
+    use AdvisingApp\Alert\Enums\AlertSeverity;
+@endphp
 <x-filament-widgets::widget>
     <x-filament::section class="h-full">
         <x-slot name="heading">
@@ -54,7 +57,14 @@
         @if ($severityCounts = $this->getSeverityCounts())
             <dl class="flex flex-wrap gap-3">
                 @foreach ($severityCounts as $severity => $count)
-                    <div class="flex min-w-24 flex-col items-center rounded-lg bg-gray-950/5 p-3 dark:bg-gray-950">
+                @php
+                    $filteredUrl = $this->getFilteredUrl(['severity' => ['value' => AlertSeverity::valueFromLabel($severity)]]);
+                @endphp
+                     <x-filament::link
+                     tag="a"
+                     :href="$filteredUrl"
+                 >
+                    <div class="flex min-w-24 flex-col items-center rounded-lg bg-gray-950/5 p-3 dark:bg-gray-950 transition hover:bg-gray-200 dark:hover:bg-gray-800">
                         <dd class="text-3xl font-semibold">
                             {{ $count }}
                         </dd>
@@ -63,6 +73,7 @@
                             {{ $severity }}
                         </dt>
                     </div>
+                </x-filament::link>
                 @endforeach
             </dl>
         @else

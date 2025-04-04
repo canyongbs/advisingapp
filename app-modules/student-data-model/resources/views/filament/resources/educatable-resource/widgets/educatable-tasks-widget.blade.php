@@ -31,6 +31,9 @@
 
 </COPYRIGHT>
 --}}
+@php
+    use AdvisingApp\Task\Enums\TaskStatus;
+@endphp
 <x-filament-widgets::widget>
     <x-filament::section class="h-full">
         <x-slot name="heading">
@@ -50,7 +53,14 @@
         @if ($statusCounts = $this->getStatusCounts())
             <dl class="flex flex-wrap gap-3">
                 @foreach ($statusCounts as $status => $count)
-                    <div class="flex min-w-24 flex-col items-center rounded-lg bg-gray-950/5 p-3 dark:bg-gray-950">
+                @php
+                $filteredUrl = $this->getFilteredUrl(['status' => ['values' => [TaskStatus::valueFromLabel($status)]]]);
+            @endphp
+                 <x-filament::link
+                 tag="a"
+                 :href="$filteredUrl"
+             >
+                    <div class="flex min-w-24 flex-col items-center rounded-lg bg-gray-950/5 p-3 dark:bg-gray-950 transition hover:bg-gray-200 dark:hover:bg-gray-800">
                         <dd class="text-3xl font-semibold">
                             {{ $count }}
                         </dd>
@@ -59,6 +69,7 @@
                             {{ $status }}
                         </dt>
                     </div>
+                    </x-filament::link>
                 @endforeach
             </dl>
         @else

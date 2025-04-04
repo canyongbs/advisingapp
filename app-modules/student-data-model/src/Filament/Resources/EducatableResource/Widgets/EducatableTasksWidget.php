@@ -53,6 +53,9 @@ class EducatableTasksWidget extends Widget
     #[Locked]
     public string $manageUrl;
 
+    #[Locked]
+    public string $resource;
+
     public static function canView(): bool
     {
         return auth()->user()->can('viewAny', Task::class);
@@ -71,5 +74,10 @@ class EducatableTasksWidget extends Widget
             ->mapWithKeys(fn (TaskStatus $taskStatus): array => [$taskStatus->getLabel() => $counts[$taskStatus->value] ?? 0])
             ->filter()
             ->all();
+    }
+
+    protected function getFilteredUrl(array $filters): string
+    {
+        return $this->resource::getUrl('tasks', ['record' => $this->educatable, 'tableFilters' => $filters]);
     }
 }

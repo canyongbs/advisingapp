@@ -71,4 +71,11 @@ enum TaskStatus: string implements HasColor, HasLabel
     {
         return str($this->value)->headline()->toString();
     }
+
+    public static function valueFromLabel(string $label): ?string
+    {
+        return collect(self::cases())
+            ->first(fn (self $case) => $case->getLabel() === $label)
+            ?->value;
+    }
 }
