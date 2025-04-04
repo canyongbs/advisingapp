@@ -119,13 +119,21 @@
 
     @script
         <script>
-            Livewire.hook('request', ({ fail }) => {
-                fail(({ status, content, preventDefault }) => {
+            Livewire.hook('request', ({
+                fail
+            }) => {
+                fail(({
+                    status,
+                    content,
+                    preventDefault
+                }) => {
                     preventDefault();
 
                     new FilamentNotification()
                         .title('Error while loading page')
-                        .body('There was an error rendering some information on the holistic prospect profile page. We are tracking this error on the back end and will work on getting this fixed.')
+                        .body(
+                            'There was an error rendering some information on the holistic prospect profile page. We are tracking this error on the back end and will work on getting this fixed.'
+                            )
                         .danger()
                         .send()
                 })
