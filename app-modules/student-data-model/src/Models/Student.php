@@ -379,6 +379,9 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         return filled($this->primaryPhoneNumber?->number) && $this->primaryPhoneNumber->can_receive_sms;
     }
 
+    /**
+     * @return MorphToMany<Tag>
+     */
     public function tags(): MorphToMany
     {
         return $this->morphToMany(
