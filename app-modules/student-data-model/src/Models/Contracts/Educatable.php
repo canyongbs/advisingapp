@@ -38,8 +38,6 @@ namespace AdvisingApp\StudentDataModel\Models\Contracts;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\Tag;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
