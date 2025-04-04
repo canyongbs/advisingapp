@@ -8,25 +8,10 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-deps:
-    runs-on: ubuntu-22.04
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: "8.2"
-          extensions: mailparse
-
-      - name: Setup Dependencies
-        uses: ./.github/actions/composer-dependency-setup
   enforce-copyright:
     runs-on: ubuntu-22.04
 
     timeout-minutes: 10
-
-    needs: [build-deps]
 
     steps:
       - name: Checkout code | Internal
@@ -65,12 +50,13 @@ jobs:
 
     timeout-minutes: 10
 
-    needs: [build-deps, enforce-copyright]
+    needs: [enforce-copyright]
 
     steps:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.2"
+          coverage: none
           extensions: mailparse
 
       - name: Checkout code | Internal
@@ -100,6 +86,14 @@ jobs:
           restore-keys: |
             ${{ runner.OS }}-${{ github.repository }}-phpcsfixer-
 
+      - name: Cache Prettier
+        uses: actions/cache@v4
+        with:
+          path: ./node_modules/.cache/prettier/.prettier-cache
+          key: ${{ runner.OS }}-${{ github.repository }}-prettier-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.OS }}-${{ github.repository }}-prettier-
+
       - name: Run Formatters
         run: composer format
 
@@ -119,6 +113,10 @@ jobs:
           fail-if-changed: "true"
 
   test:
+    strategy:
+      matrix:
+        testsuite: [Landlord, Tenant]
+
     runs-on: ubuntu-22.04
 
     env:
@@ -131,7 +129,7 @@ jobs:
 
     timeout-minutes: 15
 
-    needs: [build-deps, enforce-copyright, fix-code-style]
+    needs: [enforce-copyright, fix-code-style]
 
     services:
       postgres:
@@ -167,6 +165,7 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.2"
+          coverage: none
           extensions: gd, gmp, redis, mailparse
 
       - uses: actions/checkout@v4
@@ -192,17 +191,29 @@ jobs:
       - name: Generate key
         run: php artisan key:generate
 
-      - name: Clear Config
-        run: php artisan optimize:clear
+      - name: Cache Modular Modules
+        run: php artisan modules:cache --env=testing
 
-      - name: Directory Permissions
-        run: chmod -R 777 storage bootstrap/cache
+      - name: Cache Routes
+        run: php artisan route:cache --env=testing
+
+      - name: Cache Views
+        run: php artisan view:cache --env=testing
+
+      - name: Cache Events
+        run: php artisan event:cache --env=testing
+
+      - name: Cache Icons
+        run: php artisan icons:cache --env=testing
+
+      - name: Cache Filament Components
+        run: php artisan filament:cache-components --env=testing
 
       - name: Check route integrity
         run: php artisan route:list
 
       - name: Execute tests (Unit and Feature tests) via PHPUnit
-        run: php artisan test --configuration phpunit-ci.xml --parallel
+        run: php artisan test --configuration phpunit-ci.xml --parallel --testsuite=${{ matrix.testsuite }}
 
   lint:
     runs-on: ubuntu-22.04
@@ -217,7 +228,7 @@ jobs:
 
     timeout-minutes: 15
 
-    needs: [build-deps, enforce-copyright, fix-code-style]
+    needs: [enforce-copyright, fix-code-style]
 
     services:
       postgres:
@@ -253,6 +264,7 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.2"
+          coverage: none
           extensions: gd, gmp, redis, mailparse
 
       - uses: actions/checkout@v4
@@ -266,5 +278,20 @@ jobs:
       - name: Setup Dependencies
         uses: ./.github/actions/composer-dependency-setup
 
+      - name: "Restore result cache"
+        uses: actions/cache/restore@v4
+        with:
+          path: tmp
+          key: "phpstan-result-cache-${{ github.run_id }}"
+          restore-keys: |
+            phpstan-result-cache-
+
       - name: Linting
-        run: composer lint
+        run: ./vendor/bin/phpstan analyse --configuration phpstan-ci.neon --no-progress
+
+      - name: "Save result cache"
+        uses: actions/cache/save@v4
+        if: ${{ !cancelled() }}
+        with:
+          path: tmp
+          key: "phpstan-result-cache-${{ github.run_id }}"
