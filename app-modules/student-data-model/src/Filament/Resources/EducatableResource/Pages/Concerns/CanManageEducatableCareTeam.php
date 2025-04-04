@@ -76,9 +76,8 @@ trait CanManageEducatableCareTeam
                     ->url(fn ($record) => UserResource::getUrl('view', ['record' => $record]))
                     ->color('primary'),
                 TextColumn::make('job_title'),
-                TextColumn::make('role')
+                TextColumn::make('careTeams.studentCareTeamRole.name')
                     ->label('Role')
-                    ->getStateUsing(fn (User $record) => CareTeamRole::where('id', $record->careTeams()->where('educatable_type', CareTeamRoleType::Student)->first()->care_team_role_id)->pluck('name'))
                     ->badge()
                     ->visible(CareTeamRole::where('type', CareTeamRoleType::Student)->count() > 0 && CareTeamRoleFeature::active()),
             ])
@@ -105,7 +104,7 @@ trait CanManageEducatableCareTeam
                             ->options(User::query()->tap(new HasLicense(Student::getLicenseType()))->pluck('name', 'id')),
                         Select::make('care_team_role_id')
                             ->label('Role')
-                            ->relationship('careTeamRoles', 'name', fn (Builder $query) => $query->where('type', CareTeamRoleType::Student))
+                            ->relationship('careTeamRole', 'name', fn (Builder $query) => $query->where('type', CareTeamRoleType::Student))
                             ->searchable()
                             ->model(CareTeam::class)
                             ->visible(CareTeamRole::where('type', CareTeamRoleType::Student)->count() > 0 && CareTeamRoleFeature::active()),

@@ -41,7 +41,7 @@ use App\Enums\CareTeamRoleType;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
@@ -63,9 +63,9 @@ class CareTeamRole extends BaseModel implements Auditable
         'is_default' => 'boolean',
     ];
 
-    public function careTeams(): BelongsToMany
+    public function careTeams(): HasMany
     {
-        return $this->belongsToMany(CareTeam::class)
+        return $this->hasMany(CareTeam::class)
             ->withPivot(['user_id', 'educatable_id']);
     }
 }
