@@ -71,12 +71,12 @@ class CareTeam extends MorphPivot implements ExecutableFromACampaignAction, CanT
 
     public function prospectCareTeamRole(): BelongsTo
     {
-      return $this->careTeamRole()->where('type', CareTeamRoleType::Prospect);
+        return $this->careTeamRole()->where('type', CareTeamRoleType::Prospect);
     }
-    
+
     public function studentCareTeamRole(): BelongsTo
     {
-      return $this->careTeamRole()->where('type', CareTeamRoleType::Student);
+        return $this->careTeamRole()->where('type', CareTeamRoleType::Student);
     }
 
     /** @return MorphTo<Educatable> */
