@@ -42,6 +42,7 @@ use AdvisingApp\CareTeam\Observers\CareTeamObserver;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use App\Enums\CareTeamRoleType;
 use App\Models\User;
 use Exception;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -64,6 +65,21 @@ class CareTeam extends MorphPivot implements ExecutableFromACampaignAction, CanT
     public $timestamps = true;
 
     protected $table = 'care_teams';
+
+    public function careTeamRole(): BelongsTo
+    {
+        return $this->belongsTo(CareTeamRole::class, 'care_team_role_id', 'id');
+    }
+
+    public function prospectCareTeamRole(): BelongsTo
+    {
+        return $this->careTeamRole()->where('type', CareTeamRoleType::Prospect);
+    }
+
+    public function studentCareTeamRole(): BelongsTo
+    {
+        return $this->careTeamRole()->where('type', CareTeamRoleType::Student);
+    }
 
     /** @return MorphTo<Educatable> */
     public function educatable(): MorphTo
