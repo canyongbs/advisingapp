@@ -8,26 +8,10 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-deps:
-    runs-on: ubuntu-22.04
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: "8.2"
-          coverage: none
-          extensions: mailparse
-
-      - name: Setup Dependencies
-        uses: ./.github/actions/composer-dependency-setup
   enforce-copyright:
     runs-on: ubuntu-22.04
 
     timeout-minutes: 10
-
-    needs: [build-deps]
 
     steps:
       - name: Checkout code | Internal
@@ -66,7 +50,7 @@ jobs:
 
     timeout-minutes: 10
 
-    needs: [build-deps, enforce-copyright]
+    needs: [enforce-copyright]
 
     steps:
       - uses: shivammathur/setup-php@v2
@@ -145,7 +129,7 @@ jobs:
 
     timeout-minutes: 15
 
-    needs: [build-deps, enforce-copyright, fix-code-style]
+    needs: [enforce-copyright, fix-code-style]
 
     services:
       postgres:
@@ -244,7 +228,7 @@ jobs:
 
     timeout-minutes: 15
 
-    needs: [build-deps, enforce-copyright, fix-code-style]
+    needs: [enforce-copyright, fix-code-style]
 
     services:
       postgres:
