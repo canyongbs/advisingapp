@@ -380,7 +380,7 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     }
 
     /**
-     * @return MorphToMany<Tag>
+     * @return MorphToMany
      */
     public function tags(): MorphToMany
     {
