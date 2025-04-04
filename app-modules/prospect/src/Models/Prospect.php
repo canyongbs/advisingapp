@@ -379,6 +379,9 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
         return filled($this->primaryPhoneNumber?->number) && $this->primaryPhoneNumber->can_receive_sms;
     }
 
+    /**
+     * @return MorphToMany<Tag>
+     */
     public function tags(): MorphToMany
     {
         return $this->morphToMany(
@@ -428,7 +431,7 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
     protected function displayName(): Attribute
     {
         return Attribute::make(
-            get: fn (?string $value, array $attributes) => $attributes[$this->displayNameKey()],
+            get: fn(?string $value, array $attributes) => $attributes[$this->displayNameKey()],
         );
     }
 
