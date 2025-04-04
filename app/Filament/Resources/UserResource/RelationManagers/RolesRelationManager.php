@@ -92,7 +92,7 @@ class RolesRelationManager extends RelationManager
                             ->getSearchResultsUsing(
                                 fn (string $search): array => Role::query()->when(
                                     ! auth()->user()->isSuperAdmin(),
-                                    fn (Builder $query) => $query->whereRaw('LOWER(name) != ?', [strtolower(Authenticatable::SUPER_ADMIN_ROLE)])
+                                    fn (Builder $query) => $query->where('name', '!=', Authenticatable::SUPER_ADMIN_ROLE)
                                 )
                                     ->whereRaw('lower(name) like ?', ['%' . Str::lower($search) . '%'])
                                     ->limit(50)->pluck('name', 'id')
