@@ -102,6 +102,14 @@ jobs:
           restore-keys: |
             ${{ runner.OS }}-${{ github.repository }}-phpcsfixer-
 
+      - name: Cache Prettier
+        uses: actions/cache@v4
+        with:
+          path: ./node_modules/.cache/prettier/.prettier-cache
+          key: ${{ runner.OS }}-${{ github.repository }}-prettier-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.OS }}-${{ github.repository }}-prettier-
+
       - name: Run Formatters
         run: composer format
 
