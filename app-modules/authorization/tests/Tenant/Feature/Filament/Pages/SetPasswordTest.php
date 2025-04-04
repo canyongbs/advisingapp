@@ -52,7 +52,7 @@ it('sets the user\'s password', function () {
 
     livewire(SetPassword::class)
         ->fillForm([
-            'password' => $password = Str::random(),
+            'password' => $password = (Str::random() . 'aaAA11!!'),
             'passwordConfirmation' => $password,
         ])
         ->call('save')
