@@ -431,7 +431,7 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
     protected function displayName(): Attribute
     {
         return Attribute::make(
-            get: fn(?string $value, array $attributes) => $attributes[$this->displayNameKey()],
+            get: fn (?string $value, array $attributes) => $attributes[$this->displayNameKey()],
         );
     }
 
