@@ -51,6 +51,7 @@ use Filament\Tables\Actions\DetachBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 
 class RolesRelationManager extends RelationManager
 {
@@ -91,9 +92,9 @@ class RolesRelationManager extends RelationManager
                             ->getSearchResultsUsing(
                                 fn (string $search): array => Role::query()->when(
                                     ! auth()->user()->isSuperAdmin(),
-                                    fn (Builder $query) => $query->where('name', '!=', Authenticatable::SUPER_ADMIN_ROLE)
+                                    fn (Builder $query) => $query->whereRaw('LOWER(name) != ?', [strtolower(Authenticatable::SUPER_ADMIN_ROLE)])
                                 )
-                                    ->where('name', 'like', "%{$search}%")
+                                    ->whereRaw('lower(name) like ?', ['%' . Str::lower($search) . '%'])
                                     ->limit(50)->pluck('name', 'id')
                                     ->toArray()
                             )
