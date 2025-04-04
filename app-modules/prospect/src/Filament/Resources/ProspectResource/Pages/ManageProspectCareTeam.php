@@ -86,8 +86,8 @@ class ManageProspectCareTeam extends ManageRelatedRecords
                     ->url(fn ($record) => UserResource::getUrl('view', ['record' => $record]))
                     ->color('primary'),
                 TextColumn::make('job_title'),
-                TextColumn::make('role')
-                    ->getStateUsing(fn (User $record) => CareTeamRole::where('id', $record->careTeams()->where('educatable_type', CareTeamRoleType::Prospect)->first()->care_team_role_id)->pluck('name'))
+                TextColumn::make('careTeams.prospectCareTeamRole.name')
+                    ->label('Role')
                     ->badge()
                     ->visible(CareTeamRole::where('type', CareTeamRoleType::Prospect)->count() > 0 && CareTeamRoleFeature::active()),
             ])
@@ -114,7 +114,7 @@ class ManageProspectCareTeam extends ManageRelatedRecords
                             ->options(User::query()->tap(new HasLicense(Prospect::getLicenseType()))->pluck('name', 'id')),
                         Select::make('care_team_role_id')
                             ->label('Role')
-                            ->relationship('careTeamRoles', 'name', fn (Builder $query) => $query->where('type', CareTeamRoleType::Prospect))
+                            ->relationship('careTeamRole', 'name', fn (Builder $query) => $query->where('type', CareTeamRoleType::Prospect))
                             ->searchable()
                             ->model(CareTeam::class)
                             ->visible(CareTeamRole::where('type', CareTeamRoleType::Prospect)->count() > 0 && CareTeamRoleFeature::active()),

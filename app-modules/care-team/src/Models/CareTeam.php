@@ -42,12 +42,12 @@ use AdvisingApp\CareTeam\Observers\CareTeamObserver;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use App\Enums\CareTeamRoleType;
 use App\Models\User;
 use Exception;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\DB;
@@ -64,10 +64,19 @@ class CareTeam extends MorphPivot implements ExecutableFromACampaignAction, CanT
 
     protected $table = 'care_teams';
 
-    public function careTeamRoles(): BelongsToMany
+    public function careTeamRole(): BelongsTo
     {
-        return $this->belongsToMany(CareTeamRole::class, 'care_teams', 'care_team_role_id', 'id')
-            ->withPivot(['user_id', 'educatable_id']);
+        return $this->belongsTo(CareTeamRole::class, 'care_team_role_id', 'id');
+    }
+
+    public function prospectCareTeamRole(): BelongsTo
+    {
+      return $this->careTeamRole()->where('type', CareTeamRoleType::Prospect);
+    }
+    
+    public function studentCareTeamRole(): BelongsTo
+    {
+      return $this->careTeamRole()->where('type', CareTeamRoleType::Student);
     }
 
     /** @return MorphTo<Educatable> */
