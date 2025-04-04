@@ -69,5 +69,4 @@ interface Educatable extends Identifiable, CanBeNotified
      * @return MorphToMany<Tag,covariant Student|Prospect>
      */
     public function tags(): MorphToMany;
-
 }
