@@ -78,6 +78,7 @@
                     @livewire(EducatableAlertsWidget::class, [
                         'educatable' => $this->getRecord(),
                         'manageUrl' => ProspectResource::getUrl('manage-alerts', ['record' => $this->getRecord()]),
+                        'resource' => ProspectResource::class,
                     ])
                 @endif
 
@@ -85,6 +86,7 @@
                     @livewire(EducatableTasksWidget::class, [
                         'educatable' => $this->getRecord(),
                         'manageUrl' => ProspectResource::getUrl('manage-tasks', ['record' => $this->getRecord()]),
+                        'resource' => ProspectResource::class,
                     ])
                 @endif
             </div>

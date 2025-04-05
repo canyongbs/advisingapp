@@ -55,4 +55,11 @@ enum AlertSeverity: string implements HasLabel
     {
         return AlertSeverity::Low;
     }
+
+    public static function valueFromLabel(string $label): ?string
+    {
+        return collect(self::cases())
+            ->first(fn (self $case) => $case->getLabel() === $label)
+            ?->value;
+    }
 }

@@ -55,6 +55,9 @@ class EducatableAlertsWidget extends Widget
     #[Locked]
     public string $manageUrl;
 
+    #[Locked]
+    public string $resource;
+
     public static function canView(): bool
     {
         return auth()->user()->can('viewAny', Alert::class);
@@ -82,5 +85,10 @@ class EducatableAlertsWidget extends Widget
             ->mapWithKeys(fn (AlertSeverity $alertSeverity): array => [$alertSeverity->getLabel() => $counts[$alertSeverity->value] ?? 0])
             ->filter()
             ->all();
+    }
+
+    protected function getFilteredUrl(array $filters): string
+    {
+        return $this->resource::getUrl('alerts', ['record' => $this->educatable, 'tableFilters' => $filters]);
     }
 }
