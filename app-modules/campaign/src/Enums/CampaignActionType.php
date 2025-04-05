@@ -45,6 +45,7 @@ use AdvisingApp\Campaign\Filament\Blocks\EventBlock;
 use AdvisingApp\Campaign\Filament\Blocks\InteractionBlock;
 use AdvisingApp\Campaign\Filament\Blocks\ProactiveAlertBlock;
 use AdvisingApp\Campaign\Filament\Blocks\SubscriptionBlock;
+use AdvisingApp\Campaign\Filament\Blocks\TagsBlock;
 use AdvisingApp\Campaign\Filament\Blocks\TaskBlock;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\CareTeam\Models\CareTeam;
@@ -54,6 +55,7 @@ use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\Task\Models\Task;
+use App\Models\Tag;
 use App\Settings\LicenseSettings;
 use Filament\Support\Contracts\HasLabel;
 
@@ -77,6 +79,8 @@ enum CampaignActionType: string implements HasLabel
 
     case Event = 'event';
 
+    case Tags = 'tags';
+
     public static function blocks(): array
     {
         $blocks = [
@@ -96,6 +100,8 @@ enum CampaignActionType: string implements HasLabel
         if (app(LicenseSettings::class)->data->addons->eventManagement) {
             $blocks[] = EventBlock::make();
         }
+
+        $blocks[] = TagsBlock::make();
 
         return $blocks;
     }
@@ -124,6 +130,7 @@ enum CampaignActionType: string implements HasLabel
             CampaignActionType::Task => Task::class,
             CampaignActionType::Subscription => Subscription::class,
             CampaignActionType::Event => Event::class,
+            CampaignActionType::Tags => TagsBlock::class,
         };
     }
 
@@ -139,6 +146,7 @@ enum CampaignActionType: string implements HasLabel
             CampaignActionType::Task => TaskBlock::make(),
             CampaignActionType::Subscription => SubscriptionBlock::make(),
             CampaignActionType::Event => EventBlock::make(),
+            CampaignActionType::Tags => TagsBlock::make(),
         };
 
         return $block->editFields();
@@ -156,6 +164,7 @@ enum CampaignActionType: string implements HasLabel
             CampaignActionType::Task => 'filament.forms.components.campaigns.actions.task',
             CampaignActionType::Subscription => 'filament.forms.components.campaigns.actions.subscription',
             CampaignActionType::Event => 'filament.forms.components.campaigns.actions.event',
+            CampaignActionType::Tags => 'filament.forms.components.campaigns.actions.tags',
         };
     }
 
@@ -171,6 +180,7 @@ enum CampaignActionType: string implements HasLabel
             CampaignActionType::Task => Task::executeFromCampaignAction($action),
             CampaignActionType::Subscription => Subscription::executeFromCampaignAction($action),
             CampaignActionType::Event => Event::executeFromCampaignAction($action),
+            CampaignActionType::Tags => Tag::executeFromCampaignAction($action),
         };
     }
 }

@@ -379,6 +379,9 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
         return filled($this->primaryPhoneNumber?->number) && $this->primaryPhoneNumber->can_receive_sms;
     }
 
+    /**
+     * @return MorphToMany
+     */
     public function tags(): MorphToMany
     {
         return $this->morphToMany(
