@@ -34,25 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Console\Commands;
+namespace AdvisingApp\Prospect\Jobs;
 
-use AdvisingApp\Prospect\Jobs\PruneEducatablePipelineStagesForPipeline;
+use AdvisingApp\Prospect\Models\EducatablePipelineStage;
 use AdvisingApp\Prospect\Models\Pipeline;
-use Illuminate\Console\Command;
-use Spatie\Multitenancy\Commands\Concerns\TenantAware;
+use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
+use Illuminate\Bus\Batchable;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
-class PruneEducatablePipelineStages extends Command
+class PruneEducatablePipelineStagesForPipeline implements ShouldQueue
 {
-    use TenantAware;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+    use Batchable;
 
-    protected $signature = 'prospect:prune-eductable-pipeline-stages {--tenant=*}';
-
-    protected $description = 'Deletes `EducatablePipelineStage` records that associate an educatable with a pipeline they no longer belong to.';
+    public function __construct(
+        protected Pipeline $pipeline,
+    ) {}
 
     public function handle(): void
     {
-        Pipeline::query()
-            ->whereHas('educatablePipelineStages')
-            ->eachById(fn (Pipeline $pipeline) => dispatch(new PruneEducatablePipelineStagesForPipeline($pipeline)));
+        EducatablePipelineStage::query()
+            ->whereBelongsTo($this->pipeline)
+            ->whereDoesntHaveMorph(
+                'educatable',
+                $this->pipeline->segment->model->class(),
+                fn (Builder $query) => app(TranslateSegmentFilters::class)->applyFilterToQuery($this->pipeline->segment, $query),
+            )
+            ->delete();
     }
 }

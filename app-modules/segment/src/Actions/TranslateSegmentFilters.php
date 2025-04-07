@@ -36,8 +36,10 @@
 
 namespace AdvisingApp\Segment\Actions;
 
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Segment\Filament\Resources\SegmentResource\Pages\GetSegmentQuery;
 use AdvisingApp\Segment\Models\Segment;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Builder;
 
 use function Livewire\trigger;
@@ -59,5 +61,27 @@ class TranslateSegmentFilters
         // Extract the filtered table query from the fake Livewire component,
         // which already respects both dynamic and static populations.
         return $page->getFilteredTableQuery();
+    }
+
+    /**
+     * @param Builder<Student|Prospect> $query
+     *
+     * @return Builder<Student|Prospect>
+     */
+    public function applyFilterToQuery(Segment | string $segment, Builder $query): Builder
+    {
+        // Create a fake Livewire component to replicate the table on the EditSegment page.
+        $page = app('livewire')->new(GetSegmentQuery::class);
+
+        if ($segment instanceof Segment) {
+            $segment = $segment->getKey();
+        }
+
+        // Mount the fake Livewire component with the desired segment.
+        trigger('mount', $page, [$segment], null, null);
+
+        // Extract the filtered table query from the fake Livewire component,
+        // which already respects both dynamic and static populations.
+        return $page->filterTableQuery($query);
     }
 }
