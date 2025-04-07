@@ -36,12 +36,13 @@
 
 namespace AdvisingApp\StudentDataModel\Models\Contracts;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use App\Models\Tag;
+use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Collection;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 
 /**
  * @property-read Collection $careTeam
@@ -64,7 +65,7 @@ interface Educatable extends Identifiable, CanBeNotified
     public function canReceiveSms(): bool;
 
     /**
-     * @return MorphToMany<Tag>
+     * @return MorphToMany<Tag,Prospect|Student>
      */
     public function tags(): MorphToMany;
 }
