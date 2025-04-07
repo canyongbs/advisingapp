@@ -41,6 +41,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
+use Illuminate\Database\Eloquent\Model;
 use Livewire\Attributes\On;
 
 class StudentDeliverableTable extends BaseWidget
@@ -78,11 +79,17 @@ class StudentDeliverableTable extends BaseWidget
                 TextColumn::make('full_name')
                     ->label('Name'),
                 IconColumn::make('email_bounce')
-                    ->label('Email Opt Out')
-                    ->boolean(),
+                    ->label('Email Eligibility')
+                    ->boolean()
+                    ->getStateUsing(function (Model $record): float {
+                        return !$record->email_bounce;
+                    }),
                 IconColumn::make('sms_opt_out')
-                    ->label('SMS Opt Out')
-                    ->boolean(),
+                    ->label('SMS Eligibility')
+                    ->boolean()
+                    ->getStateUsing(function (Model $record): float {
+                        return !$record->sms_opt_out;
+                    }),
             ]);
     }
 }
