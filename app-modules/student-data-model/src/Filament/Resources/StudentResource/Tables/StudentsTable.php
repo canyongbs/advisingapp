@@ -141,6 +141,17 @@ class StudentsTable
                                         fn (Builder $query) => $query->whereKey(auth()->user()),
                                     )),
                             ]),
+                        Constraint::make('careTeam')
+                            ->icon('heroicon-m-user-group')
+                            ->operators([
+                                Operator::make('subscribed')
+                                    ->label(fn (bool $isInverse): string => $isInverse ? 'Not my care team' : 'My care team')
+                                    ->summary(fn (bool $isInverse): string => $isInverse ? 'You are not in my care team' : 'You are in my care team'),
+                                // ->baseQuery(fn(Builder $query, bool $isInverse) => $query->{$isInverse ? 'whereDoesntHave' : 'whereHas'}(
+                                //     'subscriptions.user',
+                                //     fn(Builder $query) => $query->whereKey(auth()->user()),
+                                // )),
+                            ]),
                         RelationshipConstraint::make('programs')
                             ->multiple()
                             ->label('Number of Programs')
