@@ -44,6 +44,7 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Models\License;
 use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\CareTeam\Models\CareTeam;
+use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
 use AdvisingApp\CaseManagement\Models\CaseAssignment;
 use AdvisingApp\Consent\Models\Concerns\CanConsent;
@@ -338,6 +339,13 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function careTeams(): HasMany
     {
         return $this->hasMany(CareTeam::class);
+    }
+
+    public function getCareTeamRoleFor(string $educatableId): ?CareTeamRole
+    {
+        $careTeam = $this->careTeams->where('educatable_id', $educatableId)->first();
+
+        return CareTeamRole::where('id', $careTeam->care_team_role_id)->first();
     }
 
     public function permissionsFromRoles(): HasManyDeep
