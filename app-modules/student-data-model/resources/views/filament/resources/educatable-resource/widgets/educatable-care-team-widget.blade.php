@@ -76,11 +76,14 @@
                     @endif
                 </div>
 
-                <div class="grid flex-1 gap-y-0.5">
-                    @if (CareTeamRoleFeature::active())
-                        <p class="font-medium text-gray-950 dark:text-white">
+                <div class="grid gap-y-0.5">
+                    @if (filled($careTeamUser->careTeamRole) && CareTeamRoleFeature::active())
+                        <span 
+                            class="rounded-md text-xs ring-1 ring-inset px-2 py-1 bg-custom-50 text-custom-600 ring-custom-600/10 dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30"
+                            style="--c-50: var(--primary-50);--c-400: var(--primary-400);--c-600: var(--primary-600);"
+                        >
                             {{ $careTeamUser->careTeamRole?->name }}
-                        </p>
+                        </span>
                     @endif
                 </div>
             </div>
