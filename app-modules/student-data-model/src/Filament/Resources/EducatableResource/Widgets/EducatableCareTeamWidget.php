@@ -65,12 +65,12 @@ class EducatableCareTeamWidget extends Widget
             ->get()
             ->map(function (User $user) {
                 match ($this->educatable->getLabel()) {
-                  'prospect' => $user->careTeamRole = $user->getCareTeamRoleFor($this->educatable->id),
-                  'student' => $user->careTeamRole = $user->getCareTeamRoleFor($this->educatable->sisid),
-                };                
+                    'prospect' => $user->careTeamRole = $user->getCareTeamRoleFor($this->educatable->id),
+                    'student' => $user->careTeamRole = $user->getCareTeamRoleFor($this->educatable->sisid),
+                };
 
                 return $user;
-              })
+            })
             ->all();
     }
 }

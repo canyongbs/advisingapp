@@ -75,7 +75,7 @@
                         </p>
                     @endif
                 </div>
-                
+
                 <div class="grid flex-1 gap-y-0.5">
                     @if (CareTeamRoleFeature::active())
                         <p class="font-medium text-gray-950 dark:text-white">
