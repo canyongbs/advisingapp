@@ -51,7 +51,7 @@ use Filament\Tables\Actions\DetachBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Str;
+use Illuminate\Database\Query\Expression;
 
 class RolesRelationManager extends RelationManager
 {
@@ -94,7 +94,7 @@ class RolesRelationManager extends RelationManager
                                     ! auth()->user()->isSuperAdmin(),
                                     fn (Builder $query) => $query->where('name', '!=', Authenticatable::SUPER_ADMIN_ROLE)
                                 )
-                                    ->whereRaw('lower(name) like ?', ['%' . Str::lower($search) . '%'])
+                                    ->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')
                                     ->limit(50)->pluck('name', 'id')
                                     ->toArray()
                             )
