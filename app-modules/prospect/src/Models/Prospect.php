@@ -380,7 +380,7 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
     }
 
     /**
-     * @return MorphToMany
+     * @return MorphToMany<Tag, $this>
      */
     public function tags(): MorphToMany
     {
