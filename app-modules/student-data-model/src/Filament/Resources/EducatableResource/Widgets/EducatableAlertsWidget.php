@@ -87,6 +87,7 @@ class EducatableAlertsWidget extends Widget
             ->all();
     }
 
+    /** @param array<string, mixed> $filters */
     protected function getFilteredUrl(array $filters): string
     {
         return $this->resource::getUrl('alerts', ['record' => $this->educatable, 'tableFilters' => $filters]);
