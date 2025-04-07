@@ -36,8 +36,11 @@
 
 namespace AdvisingApp\Engagement\Notifications;
 
+use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementBatch;
+use AdvisingApp\Engagement\Models\EngagementResponse;
+use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
@@ -48,6 +51,7 @@ use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\DB;
@@ -102,6 +106,22 @@ class EngagementNotification extends Notification implements ShouldQueue, HasBef
 
     public function afterSend(AnonymousNotifiable|CanBeNotified $notifiable, Message $message, NotificationResultData $result): void
     {
+        $twilioSettings = app(TwilioSettings::class);
+
+        if (
+            $this->engagement->channel === NotificationChannel::Sms
+            && $twilioSettings->is_demo_mode_enabled && $twilioSettings->is_demo_auto_reply_mode_enabled
+            && $this->engagement->recipient instanceof Model
+        ) {
+            EngagementResponse::create([
+                'type' => EngagementResponseType::Sms,
+                'sender_id' => $this->engagement->recipient->getKey(),
+                'sender_type' => $this->engagement->recipient->getMorphClass(),
+                'content' => 'Thank you for your message. Will get back to you shortly.',
+                'sent_at' => now()->addSeconds(2),
+            ]);
+        }
+
         if (! $this->engagement->engagementBatch) {
             return;
         }
