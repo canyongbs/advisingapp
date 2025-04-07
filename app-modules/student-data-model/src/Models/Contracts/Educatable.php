@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\StudentDataModel\Models\Contracts;
 
-use App\Models\Tag;
-use AdvisingApp\Prospect\Models\Prospect;
-use Illuminate\Database\Eloquent\Collection;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
+use AdvisingApp\Prospect\Models\Prospect;
+use App\Models\Tag;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 
 /**
  * @property-read Collection $careTeam
