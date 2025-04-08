@@ -82,14 +82,14 @@
                 @if (EducatableAlertsWidget::canView())
                     @livewire(EducatableAlertsWidget::class, [
                         'educatable' => $this->getRecord(),
-                        'manageUrl' => StudentResource::getUrl('alerts', ['record' => $this->getRecord()]),
+                        'resource' => StudentResource::class,
                     ])
                 @endif
 
                 @if (EducatableTasksWidget::canView())
                     @livewire(EducatableTasksWidget::class, [
                         'educatable' => $this->getRecord(),
-                        'manageUrl' => StudentResource::getUrl('tasks', ['record' => $this->getRecord()]),
+                        'resource' => StudentResource::class,
                     ])
                 @endif
             </div>

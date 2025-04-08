@@ -64,7 +64,7 @@ class AlertCreatedNotification extends Notification
         $name = $concern->{$concern->displayNameKey()};
 
         [$target, $targetRoute] = match ($concern::class) {
-            Prospect::class => [ProspectResource::class, 'manage-alerts'],
+            Prospect::class => [ProspectResource::class, 'alerts'],
             Student::class => [StudentResource::class, 'view'],
         };
 
