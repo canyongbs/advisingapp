@@ -52,15 +52,10 @@ it('ensures the pie chart reflects the correct student email opt-in and opt-out 
         'email_bounce' => false,
     ]);
 
-    $totalstudents = Student::count();
-
-    $optOutStudents = number_format($emailOptOutStudents->count() / $totalstudents * 100, 2);
-    $optInStudents = number_format($emailOptInStudents->count() / $totalstudents * 100, 2);
-
     $stats = $pieChart->getData()['datasets'][0]['data'];
 
-    expect($optOutStudents)->toEqual($stats[1]);
-    expect($optInStudents)->toEqual($stats[0]);
+    expect($emailOptOutStudents->count())->toEqual($stats[1]);
+    expect($emailOptInStudents->count())->toEqual($stats[0]);
 });
 
 it('ensures the pie chart reflects the correct student text opt-in and opt-out stats', function () {
@@ -76,8 +71,8 @@ it('ensures the pie chart reflects the correct student text opt-in and opt-out s
 
     $stats = $pieChart->getData()['datasets'][0]['data'];
 
-    expect($textOptInStudents)->count()->toEqual($stats[0]);
-    expect($textOptOutStudents)->count()->toEqual($stats[1]);
+    expect($textOptInStudents->count())->toEqual($stats[0]);
+    expect($textOptOutStudents->count())->toEqual($stats[1]);
 });
 
 it('ensure displays correct student records based on email and sms preferences', function () {

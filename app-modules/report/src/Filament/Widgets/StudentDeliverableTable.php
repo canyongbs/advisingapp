@@ -80,15 +80,11 @@ class StudentDeliverableTable extends BaseWidget
                 IconColumn::make('email_bounce')
                     ->label('Email Eligibility')
                     ->boolean()
-                    ->getStateUsing(function (Student $record): bool {
-                        return ! $record->email_bounce;
-                    }),
+                    ->getStateUsing(fn (Student $record): bool => ! $record->email_bounce),
                 IconColumn::make('sms_opt_out')
                     ->label('SMS Eligibility')
                     ->boolean()
-                    ->getStateUsing(function (Student $record): bool {
-                        return ! $record->sms_opt_out;
-                    }),
+                    ->getStateUsing(fn (Student $record): bool => ! $record->sms_opt_out),
             ]);
     }
 }
