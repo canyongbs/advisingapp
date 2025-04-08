@@ -34,28 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Database\Factories;
+namespace AdvisingApp\Prospect\Jobs;
 
+use AdvisingApp\Prospect\Models\EducatablePipelineStage;
 use AdvisingApp\Prospect\Models\Pipeline;
-use AdvisingApp\Prospect\Models\PipelineStage;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
+use Illuminate\Bus\Batchable;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
-/**
- * @extends PipelineStage>
- */
-class PipelineStageFactory extends Factory
+class PruneEducatablePipelineStagesForPipeline implements ShouldQueue
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+    use Batchable;
+
+    public function __construct(
+        protected Pipeline $pipeline,
+    ) {}
+
+    public function handle(): void
     {
-        return [
-            'name' => fake()->word(),
-            'pipeline_id' => Pipeline::factory(),
-            'order' => fake()->numberBetween(1, 5),
-        ];
+        EducatablePipelineStage::query()
+            ->whereBelongsTo($this->pipeline)
+            ->whereDoesntHaveMorph(
+                'educatable',
+                $this->pipeline->segment->model->class(),
+                fn (Builder $query) => app(TranslateSegmentFilters::class)->applyFilterToQuery($this->pipeline->segment, $query),
+            )
+            ->delete();
     }
 }
