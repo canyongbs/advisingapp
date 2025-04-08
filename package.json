@@ -54,7 +54,7 @@
         "@twilio/conversations": "^2.5.0",
         "@vitejs/plugin-vue": "^5.0.4",
         "alpinejs": "^3.13.2",
-        "axios": "^1.8.2",
+        "axios": "1.8.3",
         "chokidar": "^3.6.0",
         "cross-env": "^7.0.3",
         "dompurify": "^3.2.4",
