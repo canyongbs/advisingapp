@@ -36,11 +36,10 @@
 
 namespace AdvisingApp\Segment\Actions;
 
-use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Segment\Filament\Resources\SegmentResource\Pages\GetSegmentQuery;
 use AdvisingApp\Segment\Models\Segment;
-use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 use function Livewire\trigger;
 
@@ -64,9 +63,9 @@ class TranslateSegmentFilters
     }
 
     /**
-     * @param Builder<Student|Prospect> $query
+     * @param Builder<Model> $query
      *
-     * @return Builder<Student|Prospect>
+     * @return Builder<Model>
      */
     public function applyFilterToQuery(Segment | string $segment, Builder $query): Builder
     {

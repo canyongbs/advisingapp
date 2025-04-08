@@ -49,6 +49,7 @@ use function Pest\Laravel\assertDatabaseMissing;
 it('deletes educatable pipeline stages for prospects outside a segment', function () {
     $prospect = Prospect::factory()->create();
 
+    /** @var Segment $segment */
     $segment = Segment::factory()->create([
         'model' => SegmentModel::Prospect,
         'type' => SegmentType::Dynamic,
@@ -69,10 +70,12 @@ it('deletes educatable pipeline stages for prospects outside a segment', functio
         ],
     ]);
 
+    /** @var Pipeline $pipeline */
     $pipeline = Pipeline::factory()
         ->for($segment)
         ->create();
 
+    /** @var PipelineStage $pipelineStage */
     $pipelineStage = PipelineStage::factory()
         ->for($pipeline)
         ->create();
@@ -96,6 +99,7 @@ it('deletes educatable pipeline stages for prospects outside a segment', functio
 it('does not delete educatable pipeline stages for prospects inside a segment', function () {
     $prospect = Prospect::factory()->create();
 
+    /** @var Segment $segment */
     $segment = Segment::factory()->create([
         'model' => SegmentModel::Prospect,
         'type' => SegmentType::Dynamic,
@@ -116,10 +120,12 @@ it('does not delete educatable pipeline stages for prospects inside a segment', 
         ],
     ]);
 
+    /** @var Pipeline $pipeline */
     $pipeline = Pipeline::factory()
         ->for($segment)
         ->create();
 
+    /** @var PipelineStage $pipelineStage */
     $pipelineStage = PipelineStage::factory()
         ->for($pipeline)
         ->create();
