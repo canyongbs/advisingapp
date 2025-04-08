@@ -56,8 +56,8 @@ RUN apt-get update \
 
 FROM web-serversideup AS web-base
 
-ENV NVM_VERSION v0.40.1
-ENV NODE_VERSION 23.4.0
+ENV NVM_VERSION v0.40.2
+ENV NODE_VERSION 23.11.0
 ENV NPM_VERSION ^11.0.0
 ENV NVM_DIR /usr/local/nvm
 RUN mkdir "$NVM_DIR"
