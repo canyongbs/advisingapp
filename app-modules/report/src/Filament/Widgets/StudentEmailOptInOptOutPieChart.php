@@ -38,7 +38,6 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Support\Colors\Color;
-use Filament\Support\RawJs;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Cache;
 
@@ -95,6 +94,9 @@ class StudentEmailOptInOptOutPieChart extends PieChartReportWidget
         return "rgb({$color})";
     }
 
+    /**
+     * @return array<string, mixed>
+    */
     protected function getOptions(): array
     {
         return [
