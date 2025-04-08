@@ -38,6 +38,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Wid
 
 use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use App\Enums\CareTeamRoleType;
 use App\Models\User;
 use Filament\Widgets\Widget;
 use Illuminate\Database\Eloquent\Model;
@@ -64,9 +65,9 @@ class EducatableCareTeamWidget extends Widget
             ->orderBy('care_teams.created_at')
             ->get()
             ->map(function (User $user) {
-                match ($this->educatable->getLabel()) {
-                    'prospect' => $user->careTeamRole = $user->getCareTeamRoleFor($this->educatable->id),
-                    'student' => $user->careTeamRole = $user->getCareTeamRoleFor($this->educatable->sisid),
+                match ($this->educatable->getLabel()) { 
+                    CareTeamRoleType::Prospect->value => $user->careTeamRole = $user->getCareTeamRoleFor($this->educatable->id),
+                    CareTeamRoleType::Student->value => $user->careTeamRole = $user->getCareTeamRoleFor($this->educatable->sisid),
                 };
 
                 return $user;
