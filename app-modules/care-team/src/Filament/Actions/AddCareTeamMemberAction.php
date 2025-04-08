@@ -49,7 +49,6 @@ use Filament\Forms\Components\Select;
 use Filament\Tables\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Log;
 
 class AddCareTeamMemberAction
 {
@@ -80,7 +79,7 @@ class AddCareTeamMemberAction
                     ->searchable()
                     ->model(CareTeam::class)
                     ->visible(CareTeamRole::where('type', CareTeamRoleType::Student)->count() > 0 && CareTeamRoleFeature::active()),
-          ])
+            ])
             ->action(function (Collection $records, array $data) {
                 return $records
                     ->each(function (Educatable $record) use ($data) {
