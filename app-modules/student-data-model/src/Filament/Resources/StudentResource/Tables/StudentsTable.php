@@ -144,13 +144,13 @@ class StudentsTable
                         Constraint::make('careTeam')
                             ->icon('heroicon-m-user-group')
                             ->operators([
-                                Operator::make('subscribed')
+                                Operator::make('careTeam')
                                     ->label(fn (bool $isInverse): string => $isInverse ? 'Not my care team' : 'My care team')
-                                    ->summary(fn (bool $isInverse): string => $isInverse ? 'You are not in my care team' : 'You are in my care team'),
-                                // ->baseQuery(fn(Builder $query, bool $isInverse) => $query->{$isInverse ? 'whereDoesntHave' : 'whereHas'}(
-                                //     'subscriptions.user',
-                                //     fn(Builder $query) => $query->whereKey(auth()->user()),
-                                // )),
+                                    ->summary('Care team')
+                                    ->baseQuery(fn (Builder $query, bool $isInverse) => $query->{$isInverse ? 'whereDoesntHave' : 'whereHas'}(
+                                        'careTeam',
+                                        fn (Builder $query) => $query->whereKey(auth()->user()),
+                                    )),
                             ]),
                         RelationshipConstraint::make('programs')
                             ->multiple()
