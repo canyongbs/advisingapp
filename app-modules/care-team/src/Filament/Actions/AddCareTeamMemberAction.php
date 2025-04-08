@@ -55,61 +55,60 @@ class AddCareTeamMemberAction
 {
     public static function make(CareTeamRoleType $context)
     {
-      return BulkAction::make('addCareTeamMember')
-        ->label('Add Care Team Member')
-        ->icon('heroicon-s-user-group')
-        ->fillForm(fn (Collection $records): array => [
-          'records' => $records,
-          'care_team_role_id' => match ($context) {
-            CareTeamRoleType::Student => CareTeamRoleType::studentDefault()?->id,
-            CareTeamRoleType::Prospect => CareTeamRoleType::prospectDefault()?->id,
-          },
-        ])
-        ->form([
-          Select::make('recordId')
-              ->label('User')
-              ->searchable()
-              ->required()
-              ->options(User::query()->tap(new HasLicense(match($context) {
-                  CareTeamRoleType::Student => Student::getLicenseType(),
-                  CareTeamRoleType::Prospect => Prospect::getLicenseType(),
-              }))->pluck('name', 'id')),
-          Select::make('care_team_role_id')
-              ->label('Role')
-              ->relationship('careTeamRole', 'name', fn (Builder $query) => $query->where('type', CareTeamRoleType::Student))
-              ->searchable()
-              ->model(CareTeam::class)
-              ->visible(CareTeamRole::where('type', CareTeamRoleType::Student)->count() > 0 && CareTeamRoleFeature::active()),
-        ])
-        ->action(function (Collection $records, array $data) {
-          return $records
-                  ->each(function (Educatable $record) use ($data) {
-                    /** @var User $user */
-                    $user = User::find($data['recordId']);
+        return BulkAction::make('addCareTeamMember')
+            ->label('Add Care Team Member')
+            ->icon('heroicon-s-user-group')
+            ->fillForm(fn (Collection $records): array => [
+                'records' => $records,
+                'care_team_role_id' => match ($context) {
+                    CareTeamRoleType::Student => CareTeamRoleType::studentDefault()?->id,
+                    CareTeamRoleType::Prospect => CareTeamRoleType::prospectDefault()?->id,
+                },
+            ])
+            ->form([
+                Select::make('recordId')
+                    ->label('User')
+                    ->searchable()
+                    ->required()
+                    ->options(User::query()->tap(new HasLicense(match ($context) {
+                        CareTeamRoleType::Student => Student::getLicenseType(),
+                        CareTeamRoleType::Prospect => Prospect::getLicenseType(),
+                    }))->pluck('name', 'id')),
+                Select::make('care_team_role_id')
+                    ->label('Role')
+                    ->relationship('careTeamRole', 'name', fn (Builder $query) => $query->where('type', CareTeamRoleType::Student))
+                    ->searchable()
+                    ->model(CareTeam::class)
+                    ->visible(CareTeamRole::where('type', CareTeamRoleType::Student)->count() > 0 && CareTeamRoleFeature::active()),
+          ])
+            ->action(function (Collection $records, array $data) {
+                return $records
+                    ->each(function (Educatable $record) use ($data) {
+                        /** @var User $user */
+                        $user = User::find($data['recordId']);
 
-                    if ($record->careTeam()->where('user_id', $user->id)->doesntExist()) {
-                        $record->careTeam()->attach($user); 
-                    }
-                });
-        })
-        ->after(function (Collection $records, array $data) {
-          return $records
-                  ->each(function (Educatable $record) use ($data) {
-                    /** @var User $user */
-                    $user = User::find($data['recordId']);
+                        if ($record->careTeam()->where('user_id', $user->id)->doesntExist()) {
+                            $record->careTeam()->attach($user);
+                        }
+                    });
+            })
+            ->after(function (Collection $records, array $data) {
+                return $records
+                    ->each(function (Educatable $record) use ($data) {
+                        /** @var User $user */
+                        $user = User::find($data['recordId']);
 
-                    $careTeamRole = CareTeamRole::find($data['care_team_role_id']);
+                        $careTeamRole = CareTeamRole::find($data['care_team_role_id']);
 
-                    //$record->careTeam->where('user_id', $user->id)->first()->attach($careTeamRole);
+                        //$record->careTeam->where('user_id', $user->id)->first()->attach($careTeamRole);
 
-                    if ($record->careTeam()->where('user_id', $user->id)->where('care_team_role_id', $careTeamRole->id)->doesntExist()) {
-                        Log::error(CareTeam::where('user_id', $user->id)->where('educatable_id', $record->id)->get());
-                        Log::error($record->careTeam()->where('user_id', $user->id)->get());
-                        Log::error($user->careTeams->where('educatable_id', $record->id)->first());
-                    }
-                  });
-        })
-        ->deselectRecordsAfterCompletion();
- 
+                        if ($record->careTeam()->where('user_id', $user->id)->where('care_team_role_id', $careTeamRole->id)->doesntExist()) {
+                            Log::error(CareTeam::where('user_id', $user->id)->where('educatable_id', $record->id)->get());
+                            Log::error($record->careTeam()->where('user_id', $user->id)->get());
+                            Log::error($user->careTeams->where('educatable_id', $record->id)->first());
+                        }
+                    });
+            })
+            ->deselectRecordsAfterCompletion();
     }
 }
