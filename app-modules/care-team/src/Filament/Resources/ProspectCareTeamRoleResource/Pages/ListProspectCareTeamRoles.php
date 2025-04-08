@@ -38,6 +38,7 @@ namespace AdvisingApp\CareTeam\Filament\Resources\ProspectCareTeamRoleResource\P
 
 use AdvisingApp\CareTeam\Filament\Resources\ProspectCareTeamRoleResource;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
+use App\Enums\CareTeamRoleType;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
@@ -64,7 +65,8 @@ class ListProspectCareTeamRoles extends ListRecords
                 ToggleColumn::make('is_default')
                     ->label('Default')
                     ->beforeStateUpdated(
-                        fn (CareTeamRole $record) => CareTeamRole::where('id', '!==', $record->id)
+                        fn (CareTeamRole $record) => CareTeamRole::where('id', '!=', $record->id)
+                            ->where('type', CareTeamRoleType::Prospect)
                             ->update(['is_default' => false])
                     ),
             ])

@@ -75,10 +75,16 @@ class AddCareTeamMemberAction
                     }))->pluck('name', 'id')),
                 Select::make('care_team_role_id')
                     ->label('Role')
-                    ->relationship('careTeamRole', 'name', fn (Builder $query) => $query->where('type', CareTeamRoleType::Student))
+                    ->relationship('careTeamRole', 'name', fn (Builder $query) => $query->where('type', match ($context) {
+                        CareTeamRoleType::Student => CareTeamRoleType::Student,
+                        CareTeamRoleType::Prospect => CareTeamRoleType::Prospect,
+                    }))
                     ->searchable()
                     ->model(CareTeam::class)
-                    ->visible(CareTeamRole::where('type', CareTeamRoleType::Student)->count() > 0 && CareTeamRoleFeature::active()),
+                    ->visible(CareTeamRole::where('type', match ($context) {
+                        CareTeamRoleType::Student => CareTeamRoleType::Student,
+                        CareTeamRoleType::Prospect => CareTeamRoleType::Prospect,
+                    })->count() > 0 && CareTeamRoleFeature::active()),
             ])
             ->action(function (Collection $records, array $data) {
                 return $records

@@ -38,6 +38,7 @@ namespace AdvisingApp\CareTeam\Filament\Resources\StudentCareTeamRoleResource\Pa
 
 use AdvisingApp\CareTeam\Filament\Resources\StudentCareTeamRoleResource;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
+use App\Enums\CareTeamRoleType;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
@@ -65,6 +66,7 @@ class ListStudentCareTeamRoles extends ListRecords
                     ->label('Default')
                     ->beforeStateUpdated(
                         fn (CareTeamRole $record) => CareTeamRole::where('id', '!=', $record->id)
+                            ->where('type', CareTeamRoleType::Student)
                             ->update(['is_default' => false])
                     ),
             ])
