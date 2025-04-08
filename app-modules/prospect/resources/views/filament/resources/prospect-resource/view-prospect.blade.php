@@ -77,7 +77,6 @@
                 @if (EducatableAlertsWidget::canView())
                     @livewire(EducatableAlertsWidget::class, [
                         'educatable' => $this->getRecord(),
-                        'manageUrl' => ProspectResource::getUrl('alerts', ['record' => $this->getRecord()]),
                         'resource' => ProspectResource::class,
                     ])
                 @endif
@@ -85,7 +84,6 @@
                 @if (EducatableTasksWidget::canView())
                     @livewire(EducatableTasksWidget::class, [
                         'educatable' => $this->getRecord(),
-                        'manageUrl' => ProspectResource::getUrl('tasks', ['record' => $this->getRecord()]),
                         'resource' => ProspectResource::class,
                     ])
                 @endif

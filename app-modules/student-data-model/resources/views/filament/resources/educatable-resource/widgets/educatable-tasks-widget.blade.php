@@ -44,7 +44,7 @@
             <x-filament::button
                 color="gray"
                 tag="a"
-                :href="$manageUrl"
+                :href="$this->getTasksUrl()"
             >
                 Manage
             </x-filament::button>
@@ -54,7 +54,7 @@
             <dl class="flex flex-wrap gap-3">
                 @foreach ($statusCounts as $status => $count)
                     @php
-                        $filteredUrl = $this->getFilteredUrl(['status' => ['values' => [TaskStatus::valueFromLabel($status)]]]);
+                        $filteredUrl = $this->getTasksUrl(['status' => ['values' => [$status]]]);
                     @endphp
                     <a href="{{ $filteredUrl }}">
                         <div
@@ -64,7 +64,7 @@
                             </dd>
 
                             <dt class="text-sm font-medium text-gray-600 dark:text-gray-400">
-                                {{ $status }}
+                                {{ TaskStatus::from($status)->getLabel() }}
                             </dt>
                         </div>
                     </a>

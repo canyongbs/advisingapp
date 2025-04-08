@@ -48,7 +48,7 @@
             <x-filament::button
                 color="gray"
                 tag="a"
-                :href="$manageUrl"
+                :href="$this->getAlertsUrl()"
             >
                 Manage
             </x-filament::button>
@@ -58,7 +58,7 @@
             <dl class="flex flex-wrap gap-3">
                 @foreach ($severityCounts as $severity => $count)
                     @php
-                        $filteredUrl = $this->getFilteredUrl(['severity' => ['value' => AlertSeverity::valueFromLabel($severity)]]);
+                        $filteredUrl = $this->getAlertsUrl(['severity' => ['value' => $severity]]);
                     @endphp
                     <a href="{{ $filteredUrl }}">
                         <div
@@ -68,7 +68,7 @@
                             </dd>
 
                             <dt class="text-sm font-medium text-gray-600 dark:text-gray-400">
-                                {{ $severity }}
+                                {{ AlertSeverity::from($severity)->getLabel() }}
                             </dt>
                         </div>
                     </a>
