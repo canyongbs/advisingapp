@@ -81,8 +81,8 @@ class StudentSmsOptInOptOutPieChart extends PieChartReportWidget
                     'label' => 'My First Dataset',
                     'data' => [$smsOptInCount, $smsOptOutCount],
                     'backgroundColor' => [
-                        $this->getRgbString(Color::Emerald[500]),
-                        $this->getRgbString(Color::Red[500]),
+                        $this->getRgbString(Color::Orange[500]),
+                        $this->getRgbString(Color::Blue[500]),
                     ],
                     'hoverOffset' => 4,
                 ],

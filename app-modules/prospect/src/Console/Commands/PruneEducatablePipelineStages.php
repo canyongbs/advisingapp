@@ -34,28 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Database\Factories;
+namespace AdvisingApp\Prospect\Console\Commands;
 
+use AdvisingApp\Prospect\Jobs\PruneEducatablePipelineStagesForPipeline;
 use AdvisingApp\Prospect\Models\Pipeline;
-use AdvisingApp\Prospect\Models\PipelineStage;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Console\Command;
+use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 
-/**
- * @extends PipelineStage>
- */
-class PipelineStageFactory extends Factory
+class PruneEducatablePipelineStages extends Command
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+    use TenantAware;
+
+    protected $signature = 'prospect:prune-eductable-pipeline-stages {--tenant=*}';
+
+    protected $description = 'Deletes `EducatablePipelineStage` records that associate an educatable with a pipeline they no longer belong to.';
+
+    public function handle(): void
     {
-        return [
-            'name' => fake()->word(),
-            'pipeline_id' => Pipeline::factory(),
-            'order' => fake()->numberBetween(1, 5),
-        ];
+        Pipeline::query()
+            ->whereHas('educatablePipelineStages')
+            ->eachById(fn (Pipeline $pipeline) => dispatch(new PruneEducatablePipelineStagesForPipeline($pipeline)));
     }
 }

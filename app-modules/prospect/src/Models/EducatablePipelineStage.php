@@ -56,7 +56,7 @@ class EducatablePipelineStage extends MorphPivot
 
     public function stage(): BelongsTo
     {
-        return $this->belongsTo(PipelineStage::class);
+        return $this->belongsTo(PipelineStage::class, 'pipeline_stage_id');
     }
 
     public function pipeline(): BelongsTo
