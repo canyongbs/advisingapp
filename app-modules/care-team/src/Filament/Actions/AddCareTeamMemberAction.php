@@ -88,24 +88,7 @@ class AddCareTeamMemberAction
                         $user = User::find($data['recordId']);
 
                         if ($record->careTeam()->where('user_id', $user->id)->doesntExist()) {
-                            $record->careTeam()->attach($user);
-                        }
-                    });
-            })
-            ->after(function (Collection $records, array $data) {
-                return $records
-                    ->each(function (Educatable $record) use ($data) {
-                        /** @var User $user */
-                        $user = User::find($data['recordId']);
-
-                        $careTeamRole = CareTeamRole::find($data['care_team_role_id']);
-
-                        //$record->careTeam->where('user_id', $user->id)->first()->attach($careTeamRole);
-
-                        if ($record->careTeam()->where('user_id', $user->id)->where('care_team_role_id', $careTeamRole->id)->doesntExist()) {
-                            Log::error(CareTeam::where('user_id', $user->id)->where('educatable_id', $record->id)->get());
-                            Log::error($record->careTeam()->where('user_id', $user->id)->get());
-                            Log::error($user->careTeams->where('educatable_id', $record->id)->first());
+                            $record->careTeam()->attach($user, ['care_team_role_id' => $data['care_team_role_id']]);
                         }
                     });
             })
