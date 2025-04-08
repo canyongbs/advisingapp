@@ -95,9 +95,13 @@ class ViewCase extends ViewRecord
                         TextEntry::make('respondent')
                             ->label('Related To')
                             ->color('primary')
-                            ->state(function (CaseModel $record): string {
-                                /** @var Student|Prospect $respondent */
+                            ->state(function (CaseModel $record): string|null {
+                                /** @var Student|Prospect|null $respondent */
                                 $respondent = $record->respondent;
+
+                                if ($respondent === null) {
+                                    return null;
+                                }
 
                                 return match ($respondent::class) {
                                     Student::class => "{$respondent->{Student::displayNameKey()}} (Student)",
@@ -105,8 +109,12 @@ class ViewCase extends ViewRecord
                                 };
                             })
                             ->url(function (CaseModel $record) {
-                                /** @var Student|Prospect $respondent */
+                                /** @var Student|Prospect|null $respondent */
                                 $respondent = $record->respondent;
+
+                                if ($respondent === null) {
+                                    return null;
+                                }
 
                                 return match ($respondent::class) {
                                     Student::class => StudentResource::getUrl('view', ['record' => $respondent->sisid]),

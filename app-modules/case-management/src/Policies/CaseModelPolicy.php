@@ -72,7 +72,10 @@ class CaseModelPolicy
 
     public function view(Authenticatable $authenticatable, CaseModel $case): Response
     {
-        if (! $authenticatable->hasLicense($case->respondent->getLicenseType())) {
+        /** @var Student|Prospect|null $respondent */
+        $respondent = $case->respondent;
+
+        if ($respondent !== null && ! $authenticatable->hasLicense($respondent->getLicenseType())) {
             return Response::deny('You do not have permission to view this case.');
         }
 
@@ -92,7 +95,10 @@ class CaseModelPolicy
 
     public function update(Authenticatable $authenticatable, CaseModel $case): Response
     {
-        if (! $authenticatable->hasLicense($case->respondent->getLicenseType())) {
+        /** @var Student|Prospect|null $respondent */
+        $respondent = $case->respondent;
+
+        if ($respondent !== null && ! $authenticatable->hasLicense($respondent->getLicenseType())) {
             return Response::deny('You do not have permission to update this case.');
         }
 
@@ -104,7 +110,10 @@ class CaseModelPolicy
 
     public function delete(Authenticatable $authenticatable, CaseModel $case): Response
     {
-        if (! $authenticatable->hasLicense($case->respondent->getLicenseType())) {
+        /** @var Student|Prospect|null $respondent */
+        $respondent = $case->respondent;
+
+        if ($respondent !== null && ! $authenticatable->hasLicense($respondent->getLicenseType())) {
             return Response::deny('You do not have permission to delete this case.');
         }
 
@@ -116,7 +125,10 @@ class CaseModelPolicy
 
     public function restore(Authenticatable $authenticatable, CaseModel $case): Response
     {
-        if (! $authenticatable->hasLicense($case->respondent->getLicenseType())) {
+        /** @var Student|Prospect|null $respondent */
+        $respondent = $case->respondent;
+
+        if ($respondent !== null && ! $authenticatable->hasLicense($respondent->getLicenseType())) {
             return Response::deny('You do not have permission to restore this case.');
         }
 
@@ -128,7 +140,10 @@ class CaseModelPolicy
 
     public function forceDelete(Authenticatable $authenticatable, CaseModel $case): Response
     {
-        if (! $authenticatable->hasLicense($case->respondent->getLicenseType())) {
+        /** @var Student|Prospect|null $respondent */
+        $respondent = $case->respondent;
+
+        if ($respondent !== null && ! $authenticatable->hasLicense($respondent->getLicenseType())) {
             return Response::deny('You do not have permission to permanently delete this case.');
         }
 
