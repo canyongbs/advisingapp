@@ -56,77 +56,12 @@ class ConfigurePasswordValidation implements SwitchTenantTask
             return Password::min($settings->getMinPasswordLength())
                 ->max($settings->getMaxPasswordLength())
                 ->rules([
-                    function (string $attribute, mixed $value, Closure $fail) use ($settings) {
-                        if (preg_match_all('/[A-Z]/', $value) < $settings->getMinUppercaseLetters()) {
-                            $fail("The :attribute should contain at least {$settings->getMinUppercaseLetters()} uppercase " . Str::plural('letter', $settings->getMinUppercaseLetters()) . '.');
-                        }
-                    },
-                    function (string $attribute, mixed $value, Closure $fail) use ($settings) {
-                        if (preg_match_all('/[a-z]/', $value) < $settings->getMinLowercaseLetters()) {
-                            $fail("The :attribute should contain at least {$settings->getMinLowercaseLetters()} lowercase " . Str::plural('letter', $settings->getMinLowercaseLetters()) . '.');
-                        }
-                    },
-                    function (string $attribute, mixed $value, Closure $fail) use ($settings) {
-                        if (preg_match_all('/[0-9]/', $value) < $settings->getMinDigits()) {
-                            $fail("The :attribute should contain at least {$settings->getMinDigits()} " . Str::plural('digit', $settings->getMinDigits()) . '.');
-                        }
-                    },
-                    function (string $attribute, mixed $value, Closure $fail) use ($settings) {
-                        if (preg_match_all('/[^A-Za-z0-9]/', $value) < $settings->getMinSpecialCharacters()) {
-                            $fail("The :attribute should contain at least {$settings->getMinSpecialCharacters()} special " . Str::plural('character', $settings->getMinSpecialCharacters()) . '.');
-                        }
-                    },
-                    function (string $attribute, mixed $value, Closure $fail) use ($settings) {
-                        $userToCheck = auth()->user();
-
-                        if (! ($userToCheck instanceof User)) {
-                            throw new Exception('User not found.');
-                        }
-
-                        if (filled($userToCheck->password) && Hash::check($value, $userToCheck->password)) {
-                            $fail('The new :attribute must be different from one you have used before.');
-
-                            return;
-                        }
-
-                        $numPreviousPasswords = $settings->getNumPreviousPasswords();
-
-                        if (! $numPreviousPasswords) {
-                            return;
-                        }
-
-                        $passwordHistory = $userToCheck->password_history ?? [];
-                        $passwordHistory = array_slice($passwordHistory, -$numPreviousPasswords);
-
-                        foreach ($passwordHistory as $oldPassword) {
-                            if (Hash::check($value, $oldPassword)) {
-                                $fail('The new :attribute must be different from one you have used before.');
-
-                                return;
-                            }
-                        }
-                    },
-                    function (string $attribute, mixed $value, Closure $fail) use ($settings) {
-                        if (! $settings->shouldBlacklistCommonPasswords()) {
-                            return;
-                        }
-
-                        $file = fopen(resource_path('text/common-passwords.txt'), 'r');
-
-                        if ($file === false) {
-                            throw new Exception('Could not open the file of common passwords.');
-                        }
-
-                        while (($commonPassword = fgets($file)) !== false) {
-                            if (Str::lower(trim($commonPassword)) === Str::lower(trim($value))) {
-                                fclose($file);
-
-                                $fail('The :attribute is too common. Please choose a different password.');
-
-                                return;
-                            }
-                        }
-                    },
+                    $this->validateUppercaseLetters(...),
+                    $this->validateLowercaseLetters(...),
+                    $this->validateDigits(...),
+                    $this->validateSpecialCharacters(...),
+                    $this->validatePreviousPasswords(...),
+                    $this->validateCommonPasswords(...),
                 ]);
         });
     }
@@ -134,5 +69,100 @@ class ConfigurePasswordValidation implements SwitchTenantTask
     public function forgetCurrent(): void
     {
         Password::defaults(Password::min(8));
+    }
+
+    protected function validateUppercaseLetters(string $attribute, mixed $value, Closure $fail): void
+    {
+        $settings = app(LocalPasswordSettings::class);
+
+        if (preg_match_all('/[A-Z]/', $value) < $settings->getMinUppercaseLetters()) {
+            $fail("The :attribute should contain at least {$settings->getMinUppercaseLetters()} uppercase " . Str::plural('letter', $settings->getMinUppercaseLetters()) . '.');
+        }
+    }
+
+    protected function validateLowercaseLetters(string $attribute, mixed $value, Closure $fail): void
+    {
+        $settings = app(LocalPasswordSettings::class);
+
+        if (preg_match_all('/[a-z]/', $value) < $settings->getMinLowercaseLetters()) {
+            $fail("The :attribute should contain at least {$settings->getMinLowercaseLetters()} lowercase " . Str::plural('letter', $settings->getMinLowercaseLetters()) . '.');
+        }
+    }
+
+    protected function validateDigits(string $attribute, mixed $value, Closure $fail): void
+    {
+        $settings = app(LocalPasswordSettings::class);
+
+        if (preg_match_all('/[0-9]/', $value) < $settings->getMinDigits()) {
+            $fail("The :attribute should contain at least {$settings->getMinDigits()} " . Str::plural('digit', $settings->getMinDigits()) . '.');
+        }
+    }
+
+    protected function validateSpecialCharacters(string $attribute, mixed $value, Closure $fail): void
+    {
+        $settings = app(LocalPasswordSettings::class);
+
+        if (preg_match_all('/[^A-Za-z0-9]/', $value) < $settings->getMinSpecialCharacters()) {
+            $fail("The :attribute should contain at least {$settings->getMinSpecialCharacters()} special " . Str::plural('character', $settings->getMinSpecialCharacters()) . '.');
+        }
+    }
+
+    protected function validatePreviousPasswords(string $attribute, mixed $value, Closure $fail): void
+    {
+        $settings = app(LocalPasswordSettings::class);
+
+        $userToCheck = auth()->user();
+
+        if (! ($userToCheck instanceof User)) {
+            throw new Exception('User not found.');
+        }
+
+        if (filled($userToCheck->password) && Hash::check($value, $userToCheck->password)) {
+            $fail('The new :attribute must be different from one you have used before.');
+
+            return;
+        }
+
+        $numPreviousPasswords = $settings->getNumPreviousPasswords();
+
+        if (! $numPreviousPasswords) {
+            return;
+        }
+
+        $passwordHistory = $userToCheck->password_history ?? [];
+        $passwordHistory = array_slice($passwordHistory, -$numPreviousPasswords);
+
+        foreach ($passwordHistory as $oldPassword) {
+            if (Hash::check($value, $oldPassword)) {
+                $fail('The new :attribute must be different from one you have used before.');
+
+                return;
+            }
+        }
+    }
+
+    protected function validateCommonPasswords(string $attribute, mixed $value, Closure $fail): void
+    {
+        $settings = app(LocalPasswordSettings::class);
+
+        if (! $settings->shouldBlacklistCommonPasswords()) {
+            return;
+        }
+
+        $file = fopen(resource_path('text/common-passwords.txt'), 'r');
+
+        if ($file === false) {
+            throw new Exception('Could not open the file of common passwords.');
+        }
+
+        while (($commonPassword = fgets($file)) !== false) {
+            if (Str::lower(trim($commonPassword)) === Str::lower(trim($value))) {
+                fclose($file);
+
+                $fail('The :attribute is too common. Please choose a different password.');
+
+                return;
+            }
+        }
     }
 }
