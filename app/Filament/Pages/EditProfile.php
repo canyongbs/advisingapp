@@ -91,6 +91,7 @@ class EditProfile extends Page
 
     protected static bool $shouldRegisterNavigation = false;
 
+    /** @var array<string, mixed> $data */
     public ?array $data = [];
 
     public function form(Form $form): Form
@@ -229,12 +230,12 @@ class EditProfile extends Page
                             ->live(),
                         Placeholder::make('division')
                             ->content($user->teams->first()?->division?->name)
-                            ->hidden(! $user->teams?->first()?->division()->exists())
+                            ->hidden(! $user->teams->first()?->division()->exists())
                             ->hint(fn (Get $get): string => $get('is_division_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
                         //TODO: Right now this is not passed to the frontend
                         Checkbox::make('is_division_visible_on_profile')
                             ->label('Show Division on profile')
-                            ->hidden(! $user->teams?->first()?->division()->exists())
+                            ->hidden(! $user->teams->first()?->division()->exists())
                             ->live(),
                     ]),
                 Section::make('Account Information')
@@ -277,7 +278,7 @@ class EditProfile extends Page
                     ->description('Disconnect your external accounts.')
                     ->aside()
                     ->schema($connectedAccounts->toArray())
-                    ->visible($connectedAccounts->count()),
+                    ->visible(fn () => $connectedAccounts->count() > 0),
                 Section::make('Working Hours')
                     ->aside()
                     ->visible($hasCrmLicense)
@@ -575,6 +576,9 @@ class EditProfile extends Page
         return false;
     }
 
+    /**
+     * @return array<string, Grid>
+     */
     private function getHoursForDays(string $key): array
     {
         return collect([

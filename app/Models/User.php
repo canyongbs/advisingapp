@@ -359,7 +359,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return $this->hasManyDeepFromRelations($this->caseAssignments(), (new CaseAssignment())->case());
     }
 
-    public function getIsAdminAttribute()
+    public function getIsAdminAttribute(): bool
     {
         return $this->roles()->where('name', Authenticatable::SUPER_ADMIN_ROLE)->exists();
     }
@@ -588,7 +588,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return $this->phone_number;
     }
 
-    public function assignTeam($teamId)
+    public function assignTeam(int|string $teamId): void
     {
         // Remove the current team if exists
         $this->teams()->detach();
