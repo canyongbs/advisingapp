@@ -46,7 +46,7 @@
         <div class="flex flex-col pb-3">
             <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Users to be assigned to the care team</dt>
             <dd class="text-sm font-semibold">
-                {{ collect($action['user_ids'])->map(fn(string $userId): User => User::findOrFail($userId))->implode('name', ', ') }}
+                {{ collect($action['careTeam'])->map(fn(array $careTeam): ?User => User::find($careTeam['user_id']))->implode('name', ', ') }}
             </dd>
         </div>
         <div class="flex flex-col pb-3">

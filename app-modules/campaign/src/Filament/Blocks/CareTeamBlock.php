@@ -37,11 +37,15 @@
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
 use AdvisingApp\Campaign\Settings\CampaignSettings;
+use AdvisingApp\CareTeam\Models\CareTeam;
+use App\Enums\CareTeamRoleType;
 use App\Models\User;
 use Carbon\CarbonImmutable;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
+use Illuminate\Database\Eloquent\Builder;
 
 class CareTeamBlock extends CampaignActionBlock
 {
@@ -57,14 +61,24 @@ class CareTeamBlock extends CampaignActionBlock
     public function generateFields(string $fieldPrefix = ''): array
     {
         return [
-            Select::make($fieldPrefix . 'user_ids')
-                ->label('Who should be assigned to the care team?')
-                ->options(User::all()->pluck('name', 'id'))
-                ->multiple()
-                ->searchable()
-                ->default([auth()->user()->id])
-                ->required()
-                ->exists('users', 'id'),
+            Repeater::make('careTeam')
+              ->label('Who should be assigned to the care team?')
+              ->schema([
+                Select::make($fieldPrefix . 'user_id')
+                  ->label('User')
+                  ->options(User::all()->pluck('name', 'id'))
+                  ->searchable()
+                  ->required()
+                  ->exists('users', 'id'),
+                Select::make('care_team_role_id')
+                  ->label('Role')
+                  ->relationship('careTeamRole', 'name', fn (Builder $query) => $query->where('type', CareTeamRoleType::Student))
+                  ->searchable()
+                  ->model(CareTeam::class),
+              ])
+              ->addActionLabel('Add User')
+              ->reorderable(false),
+              
             Toggle::make($fieldPrefix . 'remove_prior')
                 ->label('Remove all prior care team assignments?')
                 ->default(false)
