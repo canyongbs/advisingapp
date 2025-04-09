@@ -37,6 +37,7 @@
 namespace AdvisingApp\Application\Database\Factories;
 
 use AdvisingApp\Application\Models\Application;
+use AdvisingApp\Application\Models\ApplicationAuthentication;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -44,7 +45,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Hash;
 
 /**
- * @extends Factory<Application>
+ * @extends Factory<ApplicationAuthentication>
  */
 class ApplicationAuthenticationFactory extends Factory
 {
@@ -67,7 +68,7 @@ class ApplicationAuthenticationFactory extends Factory
 
                 return $sender->getKey();
             },
-            'code' => Hash::make(random_int(100000, 999999)),
+            'code' => Hash::make((string) random_int(100000, 999999)),
             'application_id' => Application::factory(),
         ];
     }

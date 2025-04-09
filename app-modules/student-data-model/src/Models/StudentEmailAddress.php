@@ -60,6 +60,9 @@ class StudentEmailAddress extends BaseModel implements Auditable
         'order',
     ];
 
+    /**
+     * @return BelongsTo<Student, $this>
+     */
     public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class, 'sisid', 'sisid');

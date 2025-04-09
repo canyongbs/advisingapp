@@ -65,11 +65,17 @@ class NotificationSetting extends BaseModel implements HasMedia
             ->singleFile();
     }
 
+    /**
+     * @return HasMany<NotificationSettingPivot, $this>
+     */
     public function settings(): HasMany
     {
         return $this->hasMany(NotificationSettingPivot::class);
     }
 
+    /**
+     * @return MorphToMany<Division, $this>
+     */
     public function divisions(): MorphToMany
     {
         return $this->morphedByMany(

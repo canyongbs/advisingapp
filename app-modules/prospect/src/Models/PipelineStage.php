@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Prospect\Models;
 
+use AdvisingApp\Prospect\Database\Factories\PipelineStageFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -47,7 +48,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class PipelineStage extends Model
 {
+    /** @use HasFactory<PipelineStageFactory> */
     use HasFactory;
+
     use HasUuids;
 
     protected $fillable = [
@@ -56,11 +59,17 @@ class PipelineStage extends Model
         'order',
     ];
 
+    /**
+     * @return BelongsTo<Pipeline, $this>
+     */
     public function pipeline(): BelongsTo
     {
         return $this->belongsTo(Pipeline::class);
     }
 
+    /**
+     * @return HasMany<EducatablePipelineStage, $this>
+     */
     public function educatables(): HasMany
     {
         return $this->hasMany(EducatablePipelineStage::class, 'pipeline_stage_id');

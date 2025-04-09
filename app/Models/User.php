@@ -70,6 +70,7 @@ use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
 use App\Filament\Resources\UserResource;
 use App\Observers\UserObserver;
 use App\Support\HasAdvancedFilter;
+use Database\Factories\UserFactory;
 use DateTimeInterface;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
@@ -101,7 +102,9 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 #[ObservedBy([UserObserver::class])]
 class User extends Authenticatable implements HasLocalePreference, FilamentUser, Auditable, HasMedia, HasAvatar, CanBeNotified, HasFilamentResource
 {
+    /** @use HasFactory<UserFactory> */
     use HasFactory;
+
     use HasAdvancedFilter;
     use Notifiable;
     use SoftDeletes;
@@ -193,6 +196,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'signature',
     ];
 
+    /** @var array<int, string> */
     public $orderable = [
         'id',
         'emplid',
@@ -202,6 +206,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'locale',
     ];
 
+    /** @var array<int, string> */
     public $filterable = [
         'id',
         'emplid',
@@ -217,6 +222,9 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return $this->default_assistant_chat_folders_created;
     }
 
+    /**
+     * @return BelongsToMany<TwilioConversation, $this>
+     */
     public function conversations(): BelongsToMany
     {
         return $this->belongsToMany(TwilioConversation::class, 'twilio_conversation_user', 'user_id', 'conversation_sid')
@@ -236,21 +244,33 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             ->using(TwilioConversationUser::class);
     }
 
+    /**
+     * @return HasMany<Segment, $this>
+     */
     public function segments(): HasMany
     {
         return $this->hasMany(Segment::class);
     }
 
+    /**
+     * @return HasMany<License, $this>
+     */
     public function licenses(): HasMany
     {
         return $this->hasMany(License::class, 'user_id');
     }
 
+    /**
+     * @return HasMany<Subscription, $this>
+     */
     public function subscriptions(): HasMany
     {
         return $this->hasMany(Subscription::class);
     }
 
+    /**
+     * @return MorphToMany<Prospect, $this>
+     */
     public function prospectSubscriptions(): MorphToMany
     {
         return $this->morphedByMany(
@@ -263,6 +283,9 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             ->withTimestamps();
     }
 
+    /**
+     * @return MorphToMany<Student, $this>
+     */
     public function studentSubscriptions(): MorphToMany
     {
         return $this->morphedByMany(
@@ -309,6 +332,9 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             ->withTimestamps();
     }
 
+    /**
+     * @return HasMany<CareTeam, $this>
+     */
     public function careTeams(): HasMany
     {
         return $this->hasMany(CareTeam::class);
@@ -319,6 +345,9 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return $this->hasManyDeepFromRelations($this->roles(), (new Role())->permissions());
     }
 
+    /**
+     * @return HasMany<CaseAssignment, $this>
+     */
     public function caseAssignments(): HasMany
     {
         return $this->hasMany(CaseAssignment::class)
@@ -340,11 +369,17 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return $this->whereHas('roles', fn ($q) => $q->where('title', 'Admin'));
     }
 
+    /**
+     * @return BelongsTo<Pronouns, $this>
+     */
     public function pronouns(): BelongsTo
     {
         return $this->belongsTo(Pronouns::class);
     }
 
+    /**
+     * @return HasMany<Task, $this>
+     */
     public function assignedTasks(): HasMany
     {
         return $this->hasMany(Task::class, 'assigned_to');
@@ -355,26 +390,41 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return $this->locale;
     }
 
+    /**
+     * @return HasMany<AiThread, $this>
+     */
     public function aiThreads(): HasMany
     {
         return $this->hasMany(AiThread::class);
     }
 
+    /**
+     * @return HasMany<AiThreadFolder, $this>
+     */
     public function aiThreadFolders(): HasMany
     {
         return $this->hasMany(AiThreadFolder::class);
     }
 
+    /**
+     * @return HasMany<AiAssistantUpvote, $this>
+     */
     public function aiAssistantUpvotes(): HasMany
     {
         return $this->hasMany(AiAssistantUpvote::class);
     }
 
+    /**
+     * @return HasMany<CalendarEvent, $this>
+     */
     public function events(): HasMany
     {
         return $this->hasMany(CalendarEvent::class);
     }
 
+    /**
+     * @return BelongsToMany<Team, $this>
+     */
     public function teams(): BelongsToMany
     {
         return $this
@@ -383,17 +433,26 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             ->withTimestamps();
     }
 
+    /**
+     * @return HasOne<Calendar, $this>
+     */
     public function calendar(): HasOne
     {
         return $this->hasOne(Calendar::class);
     }
 
+    /**
+     * @return MorphMany<TrackedEvent, $this>
+     */
     public function logins(): MorphMany
     {
         return $this->morphMany(TrackedEvent::class, 'related_to')
             ->where('type', TrackedEventType::UserLogin);
     }
 
+    /**
+    * @return MorphMany<TrackedEventCount, $this>
+    */
     public function loginsCount(): MorphMany
     {
         return $this->morphMany(TrackedEventCount::class, 'related_to')

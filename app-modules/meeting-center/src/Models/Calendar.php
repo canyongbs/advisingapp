@@ -62,11 +62,17 @@ class Calendar extends BaseModel
         'oauth_token_expires_at' => 'datetime',
     ];
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return HasMany<CalendarEvent, $this>
+     */
     public function events(): HasMany
     {
         return $this->hasMany(CalendarEvent::class);

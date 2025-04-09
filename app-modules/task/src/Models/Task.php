@@ -46,6 +46,7 @@ use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Task\Database\Factories\TaskFactory;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Histories\TaskHistory;
 use AdvisingApp\Task\Observers\TaskObserver;
@@ -76,7 +77,10 @@ use OwenIt\Auditing\Contracts\Auditable;
 class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription, ExecutableFromACampaignAction, HasHistory
 {
     use BelongsToEducatable;
+
+    /** @use HasFactory<TaskFactory> */
     use HasFactory;
+
     use HasUuids;
     use AuditableTrait;
     use SoftDeletes;
@@ -126,16 +130,25 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription, E
         return $this->morphTo();
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function assignedTo(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assigned_to');
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
     }
 
+    /**
+     * @return MorphMany<TaskHistory, $this>
+     */
     public function histories(): MorphMany
     {
         return $this->morphMany(TaskHistory::class, 'subject');

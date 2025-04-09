@@ -53,12 +53,18 @@ class ApplicationSubmission extends Submission
 {
     use HasRelationBasedStateMachine;
 
+    /**
+     * @return BelongsTo<Application, $this>
+     */
     public function submissible(): BelongsTo
     {
         return $this
             ->belongsTo(Application::class, 'application_id');
     }
 
+    /**
+     * @return BelongsToMany<ApplicationField, $this>
+     */
     public function fields(): BelongsToMany
     {
         return $this
@@ -71,6 +77,9 @@ class ApplicationSubmission extends Submission
             ->withPivot(['id', 'response']);
     }
 
+    /**
+     * @return BelongsTo<ApplicationSubmissionState, $this>
+     */
     public function state(): BelongsTo
     {
         return $this

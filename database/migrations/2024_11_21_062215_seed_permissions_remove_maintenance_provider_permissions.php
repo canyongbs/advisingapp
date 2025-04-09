@@ -41,6 +41,9 @@ use Illuminate\Support\Facades\DB;
 return new class () extends Migration {
     use CanModifyPermissions;
 
+    /**
+     * @var array<string> $permissions
+     */
     private array $permissions = [
         'maintenance_provider.*.delete' => 'Maintenance Provider',
         'maintenance_provider.*.force-delete' => 'Maintenance Provider',
@@ -51,6 +54,9 @@ return new class () extends Migration {
         'maintenance_provider.view-any' => 'Maintenance Provider',
     ];
 
+    /**
+     * @var array<string> $guards
+     */
     private array $guards = [
         'web',
         'api',

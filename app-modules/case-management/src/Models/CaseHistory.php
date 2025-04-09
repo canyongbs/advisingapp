@@ -75,6 +75,9 @@ class CaseHistory extends BaseModel implements ProvidesATimeline
         return 'case_histories';
     }
 
+    /**
+     * @return BelongsTo<CaseModel, $this>
+     */
     public function case(): BelongsTo
     {
         return $this->belongsTo(CaseModel::class, 'case_model_id', 'id');

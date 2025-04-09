@@ -70,6 +70,9 @@ class TwilioConversation extends Model
         'is_private_channel',
     ];
 
+    /**
+     * @return BelongsToMany<User, $this>
+     */
     public function participants(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'twilio_conversation_user', 'conversation_sid', 'user_id')

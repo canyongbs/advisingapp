@@ -69,22 +69,34 @@ class EventRegistrationForm extends Submissible
         'rounding' => Rounding::class,
     ];
 
+    /**
+     * @return BelongsTo<Event, $this>
+     */
     public function event(): BelongsTo
     {
         return $this
             ->belongsTo(Event::class, 'event_id');
     }
 
+    /**
+     * @return HasMany<EventRegistrationFormField, $this>
+     */
     public function fields(): HasMany
     {
         return $this->hasMany(EventRegistrationFormField::class, 'form_id');
     }
 
+    /**
+     * @return HasMany<EventRegistrationFormStep, $this>
+     */
     public function steps(): HasMany
     {
         return $this->hasMany(EventRegistrationFormStep::class, 'form_id');
     }
 
+    /**
+     * @return HasMany<EventRegistrationFormSubmission, $this>
+     */
     public function submissions(): HasMany
     {
         return $this->hasMany(EventRegistrationFormSubmission::class, 'form_id');

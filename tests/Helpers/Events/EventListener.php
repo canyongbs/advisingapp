@@ -38,7 +38,7 @@ namespace Tests\Helpers\Events;
 
 use Illuminate\Support\Facades\Event;
 
-function testEventIsBeingListenedTo(string $event, string $listener)
+function testEventIsBeingListenedTo(string $event, string $listener): void
 {
     test("{$event} is being listened to by {$listener}", function () use ($event, $listener) {
         Event::fake();

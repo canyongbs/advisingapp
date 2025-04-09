@@ -37,7 +37,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -47,7 +46,6 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  */
 class Taggable extends MorphPivot
 {
-    use HasFactory;
     use HasUuids;
 
     protected $table = 'taggables';
@@ -72,6 +70,9 @@ class Taggable extends MorphPivot
         );
     }
 
+    /**
+     * @return BelongsTo<Tag, $this>
+     */
     public function tag(): BelongsTo
     {
         return $this->belongsTo(Tag::class, 'tag_id');

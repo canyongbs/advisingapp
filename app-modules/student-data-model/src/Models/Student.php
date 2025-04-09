@@ -57,6 +57,7 @@ use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Segment\Models\SegmentSubject;
+use AdvisingApp\StudentDataModel\Database\Factories\StudentFactory;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Task\Models\Task;
@@ -97,7 +98,10 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     use SoftDeletes;
     use HasApiTokens;
     use AuditableTrait;
+
+    /** @use HasFactory<StudentFactory> */
     use HasFactory;
+
     use Notifiable;
     use HasManyMorphedEngagements;
     use HasManyMorphedEngagementResponses;
@@ -178,6 +182,9 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         return 'preferred';
     }
 
+    /**
+     * @return MorphMany<CaseModel, $this>
+     */
     public function cases(): MorphMany
     {
         return $this->morphMany(
@@ -189,6 +196,9 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         );
     }
 
+    /**
+     * @return MorphToMany<EngagementFile, $this>
+     */
     public function engagementFiles(): MorphToMany
     {
         return $this->morphToMany(
@@ -202,36 +212,57 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
             ->withTimestamps();
     }
 
+    /**
+     * @return MorphMany<Task, $this>
+     */
     public function tasks(): MorphMany
     {
         return $this->morphMany(Task::class, 'concern');
     }
 
+    /**
+     * @return MorphMany<Alert, $this>
+     */
     public function alerts(): MorphMany
     {
         return $this->morphMany(Alert::class, 'concern');
     }
 
+    /**
+     * @return HasMany<Program, $this>
+     */
     public function programs(): HasMany
     {
         return $this->hasMany(Program::class, 'sisid', 'sisid');
     }
 
+    /**
+     * @return HasMany<Enrollment, $this>
+     */
     public function enrollments(): HasMany
     {
         return $this->hasMany(Enrollment::class, 'sisid', 'sisid');
     }
 
+    /**
+     * @return MorphMany<FormSubmission, $this>
+     */
     public function formSubmissions(): MorphMany
     {
         return $this->morphMany(FormSubmission::class, 'author');
     }
 
+    /**
+     * @return MorphMany<ApplicationSubmission, $this>
+     */
     public function applicationSubmissions(): MorphMany
     {
         return $this->morphMany(ApplicationSubmission::class, 'author');
     }
 
+    /**
+     * @return MorphToMany<User, $this>
+     */
     public function careTeam(): MorphToMany
     {
         return $this->morphToMany(
@@ -245,6 +276,9 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
             ->tap(new HasLicense($this->getLicenseType()));
     }
 
+    /**
+     * @return MorphToMany<User, $this>
+     */
     public function subscribedUsers(): MorphToMany
     {
         return $this->morphToMany(
@@ -258,6 +292,9 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
             ->tap(new HasLicense($this->getLicenseType()));
     }
 
+    /**
+     * @return HasMany<EventAttendee, $this>
+     */
     public function eventAttendeeRecords(): HasMany
     {
         return $this->hasMany(
@@ -267,6 +304,9 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         );
     }
 
+    /**
+     * @return MorphMany<SegmentSubject, $this>
+     */
     public function segmentSubjects(): MorphMany
     {
         return $this->morphMany(
@@ -293,6 +333,9 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         return $this->hasManyDeepFromRelations($this->tasks(), (new Task())->histories());
     }
 
+    /**
+     * @return HasMany<Prospect, $this>
+     */
     public function prospects(): HasMany
     {
         return $this->hasMany(Prospect::class, 'student_id');
@@ -308,6 +351,9 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         return $this->morphOne(Timeline::class, 'entity');
     }
 
+    /**
+     * @return MorphToMany<BasicNeedsProgram, $this>
+     */
     public function basicNeedsPrograms(): MorphToMany
     {
         return $this->morphToMany(
@@ -319,21 +365,33 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         )->withTimestamps();
     }
 
+    /**
+     * @return HasMany<StudentAddress, $this>
+     */
     public function addresses(): HasMany
     {
         return $this->hasMany(StudentAddress::class, 'sisid', 'sisid')->orderBy('order');
     }
 
+    /**
+     * @return HasMany<StudentEmailAddress, $this>
+     */
     public function emailAddresses(): HasMany
     {
         return $this->hasMany(StudentEmailAddress::class, 'sisid', 'sisid')->orderBy('order');
     }
 
+    /**
+     * @return HasMany<StudentPhoneNumber, $this>
+     */
     public function phoneNumbers(): HasMany
     {
         return $this->hasMany(StudentPhoneNumber::class, 'sisid', 'sisid')->orderBy('order');
     }
 
+    /**
+     * @return BelongsTo<StudentEmailAddress, $this>
+     */
     public function primaryEmailAddress(): BelongsTo
     {
         return $this->belongsTo(StudentEmailAddress::class, 'primary_email_id');
@@ -379,6 +437,9 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         return filled($this->primaryPhoneNumber?->number) && $this->primaryPhoneNumber->can_receive_sms;
     }
 
+    /**
+     * @return MorphToMany<Tag, $this>
+     */
     public function tags(): MorphToMany
     {
         return $this->morphToMany(

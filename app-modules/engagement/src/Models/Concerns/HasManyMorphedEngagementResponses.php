@@ -41,6 +41,9 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 trait HasManyMorphedEngagementResponses
 {
+    /**
+     * @return MorphMany<EngagementResponse, $this>
+     */
     public function engagementResponses(): MorphMany
     {
         return $this->morphMany(

@@ -78,6 +78,9 @@ class EmailMessage extends BaseModel implements Message
         );
     }
 
+    /**
+     * @return HasMany<EmailMessageEvent, $this>
+     */
     public function events(): HasMany
     {
         return $this->hasMany(EmailMessageEvent::class);

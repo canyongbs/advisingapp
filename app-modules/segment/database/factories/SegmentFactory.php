@@ -38,6 +38,7 @@ namespace AdvisingApp\Segment\Database\Factories;
 
 use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Enums\SegmentType;
+use AdvisingApp\Segment\Models\Segment;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -55,7 +56,7 @@ class SegmentFactory extends Factory
             'name' => fake()->words(asText: true),
             'model' => fake()->randomElement(SegmentModel::cases()),
             'type' => SegmentType::Dynamic, //TODO: add static later
-            'user_id' => User::inRandomOrder()->first()?->getKey() ?? User::factory()->create()?->getKey(),
+            'user_id' => User::inRandomOrder()->first()->getKey() ?? User::factory()->create()->getKey(),
         ];
     }
 }

@@ -37,10 +37,11 @@
 namespace AdvisingApp\Consent\Database\Factories;
 
 use AdvisingApp\Consent\Enums\ConsentAgreementType;
+use AdvisingApp\Consent\Models\ConsentAgreement;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \AdvisingApp\Consent\Models\ConsentAgreement>
+ * @extends Factory<ConsentAgreement>
  */
 class ConsentAgreementFactory extends Factory
 {

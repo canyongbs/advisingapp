@@ -61,12 +61,18 @@ class ApplicationStep extends SubmissibleStep
         'sort' => 'integer',
     ];
 
+    /**
+     * @return BelongsTo<Application, $this>
+     */
     public function submissible(): BelongsTo
     {
         return $this
             ->belongsTo(Application::class, 'application_id');
     }
 
+    /**
+     * @return HasMany<ApplicationField, $this>
+     */
     public function fields(): HasMany
     {
         return $this

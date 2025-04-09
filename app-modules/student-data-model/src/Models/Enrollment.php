@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Models;
 
+use AdvisingApp\StudentDataModel\Database\Factories\EnrollmentFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -48,7 +49,10 @@ use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 class Enrollment extends Model
 {
     use SoftDeletes;
+
+    /** @use HasFactory<EnrollmentFactory> */
     use HasFactory;
+
     use UsesTenantConnection;
 
     protected $table = 'enrollments';
@@ -91,6 +95,9 @@ class Enrollment extends Model
         'end_date' => 'datetime',
     ];
 
+    /**
+     * @return BelongsTo<Student, $this>
+     */
     public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class, 'sisid', 'sisid');

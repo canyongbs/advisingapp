@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Interaction\Models;
 
+use AdvisingApp\Interaction\Database\Factories\InteractionConfidentialTeamFactory;
 use AdvisingApp\Team\Models\Team;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -46,7 +47,9 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  */
 class InteractionConfidentialTeam extends Pivot
 {
+    /** @use HasFactory<InteractionConfidentialTeamFactory> */
     use HasFactory;
+
     use HasUuids;
 
     public function interaction()

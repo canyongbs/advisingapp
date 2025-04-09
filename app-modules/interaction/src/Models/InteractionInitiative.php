@@ -37,6 +37,7 @@
 namespace AdvisingApp\Interaction\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Interaction\Database\Factories\InteractionInitiativeFactory;
 use AdvisingApp\Interaction\Models\Concerns\HasManyInteractions;
 use AdvisingApp\Interaction\Observers\InteractionInitiativesObserver;
 use App\Models\BaseModel;
@@ -52,6 +53,8 @@ class InteractionInitiative extends BaseModel implements Auditable
 {
     use AuditableTrait;
     use HasManyInteractions;
+
+    /** @use HasFactory<InteractionInitiativeFactory> */
     use HasFactory;
 
     protected $fillable = [

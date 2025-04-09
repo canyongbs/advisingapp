@@ -74,21 +74,33 @@ class Form extends Submissible
         'generate_prospects' => 'boolean',
     ];
 
+    /**
+     * @return HasMany<FormField, $this>
+     */
     public function fields(): HasMany
     {
         return $this->hasMany(FormField::class);
     }
 
+    /**
+     * @return HasMany<FormStep, $this>
+     */
     public function steps(): HasMany
     {
         return $this->hasMany(FormStep::class);
     }
 
+    /**
+     * @return HasMany<FormSubmission, $this>
+     */
     public function submissions(): HasMany
     {
         return $this->hasMany(FormSubmission::class);
     }
 
+    /**
+     * @return HasOne<FormEmailAutoReply, $this>
+     */
     public function emailAutoReply(): HasOne
     {
         return $this->hasOne(FormEmailAutoReply::class);

@@ -70,6 +70,9 @@ class ProspectStatus extends BaseModel implements Auditable
         'is_system_protected' => 'boolean',
     ];
 
+    /**
+     * @return HasMany<Prospect, $this>
+     */
     public function prospects(): HasMany
     {
         return $this->hasMany(Prospect::class, 'status_id');

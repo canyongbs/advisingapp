@@ -41,6 +41,9 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 trait HasManyMorphedInteractions
 {
+    /**
+     * @return MorphMany<Interaction, $this>
+     */
     public function interactions(): MorphMany
     {
         return $this->morphMany(

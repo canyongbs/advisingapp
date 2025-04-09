@@ -78,11 +78,17 @@ class CaseType extends BaseModel implements Auditable
         return $this->through('priorities')->has('cases');
     }
 
+    /**
+     * @return HasMany<CasePriority, $this>
+     */
     public function priorities(): HasMany
     {
         return $this->hasMany(CasePriority::class, 'type_id');
     }
 
+    /**
+     * @return HasOne<CaseForm, $this>
+     */
     public function form(): HasOne
     {
         return $this->hasOne(CaseForm::class, 'case_type_id');

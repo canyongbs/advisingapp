@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Notification\Database\Factories;
 
-use App\Models\Subscription;
+use AdvisingApp\Notification\Models\Subscription;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Subscription>
+ * @extends Factory<Subscription>
  */
 class SubscriptionFactory extends Factory
 {

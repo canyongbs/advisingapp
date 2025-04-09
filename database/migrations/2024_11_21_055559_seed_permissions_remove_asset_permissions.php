@@ -41,6 +41,9 @@ use Illuminate\Support\Facades\DB;
 return new class () extends Migration {
     use CanModifyPermissions;
 
+    /**
+     * @var array<string> $permissions
+     */
     private array $permissions = [
         'asset.*.delete' => 'Asset',
         'asset.*.force-delete' => 'Asset',
@@ -86,6 +89,9 @@ return new class () extends Migration {
         'asset_type.view-any' => 'Asset Type',
     ];
 
+    /**
+     * @var array<string> $guards
+     */
     private array $guards = [
         'web',
         'api',

@@ -62,6 +62,9 @@ class AiAssistantFile extends BaseModel implements AiFile, HasMedia
         'temporary_url',
     ];
 
+    /**
+     * @return BelongsTo<AiAssistant, $this>
+     */
     public function assistant(): BelongsTo
     {
         return $this->belongsTo(AiAssistant::class, 'assistant_id');

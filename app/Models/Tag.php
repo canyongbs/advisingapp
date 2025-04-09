@@ -40,6 +40,7 @@ use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\TagType;
+use Database\Factories\TagFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -50,7 +51,9 @@ use OwenIt\Auditing\Contracts\Auditable;
  */
 class Tag extends BaseModel implements Auditable
 {
+    /** @use HasFactory<TagFactory> */
     use HasFactory;
+
     use SoftDeletes;
     use AuditableTrait;
 
@@ -63,12 +66,18 @@ class Tag extends BaseModel implements Auditable
         'type' => TagType::class,
     ];
 
+    /**
+     * @return MorphToMany<Prospect, $this>
+     */
     public function prospects(): MorphToMany
     {
         return $this->morphedByMany(Prospect::class, 'taggable')
             ->using(Taggable::class);
     }
 
+    /**
+     * @return MorphToMany<Student, $this>
+     */
     public function students(): MorphToMany
     {
         return $this->morphedByMany(Student::class, 'taggable')

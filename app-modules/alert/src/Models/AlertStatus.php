@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Alert\Models;
 
+use AdvisingApp\Alert\Database\Factories\AlertStatusFactory;
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Alert\Observers\AlertStatusObserver;
 use App\Models\BaseModel;
@@ -50,7 +51,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class AlertStatus extends BaseModel
 {
+    /** @use HasFactory<AlertStatusFactory> */
     use HasFactory;
+
     use SoftDeletes;
 
     protected $fillable = [
@@ -65,6 +68,9 @@ class AlertStatus extends BaseModel
         'is_default' => 'boolean',
     ];
 
+    /**
+     * @return HasMany<Alert, $this>
+     */
     public function alerts(): HasMany
     {
         return $this->hasMany(Alert::class, 'status_id');

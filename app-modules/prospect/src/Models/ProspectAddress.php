@@ -67,6 +67,9 @@ class ProspectAddress extends BaseModel implements Auditable
         'order',
     ];
 
+    /**
+     * @return BelongsTo<Prospect, $this>
+     */
     public function prospect(): BelongsTo
     {
         return $this->belongsTo(Prospect::class);
