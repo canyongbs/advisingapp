@@ -62,23 +62,23 @@ class CareTeamBlock extends CampaignActionBlock
     {
         return [
             Repeater::make('careTeam')
-              ->label('Who should be assigned to the care team?')
-              ->schema([
-                Select::make($fieldPrefix . 'user_id')
-                  ->label('User')
-                  ->options(User::all()->pluck('name', 'id'))
-                  ->searchable()
-                  ->required()
-                  ->exists('users', 'id'),
-                Select::make('care_team_role_id')
-                  ->label('Role')
-                  ->relationship('careTeamRole', 'name', fn (Builder $query) => $query->where('type', CareTeamRoleType::Student))
-                  ->searchable()
-                  ->model(CareTeam::class),
-              ])
-              ->addActionLabel('Add User')
-              ->reorderable(false),
-              
+                ->label('Who should be assigned to the care team?')
+                ->schema([
+                    Select::make($fieldPrefix . 'user_id')
+                        ->label('User')
+                        ->options(User::all()->pluck('name', 'id'))
+                        ->searchable()
+                        ->required()
+                        ->exists('users', 'id'),
+                    Select::make('care_team_role_id')
+                        ->label('Role')
+                        ->relationship('careTeamRole', 'name', fn (Builder $query) => $query->where('type', CareTeamRoleType::Student))
+                        ->searchable()
+                        ->model(CareTeam::class),
+                ])
+                ->addActionLabel('Add User')
+                ->reorderable(false),
+
             Toggle::make($fieldPrefix . 'remove_prior')
                 ->label('Remove all prior care team assignments?')
                 ->default(false)

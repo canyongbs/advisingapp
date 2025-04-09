@@ -106,8 +106,8 @@ class CareTeam extends MorphPivot implements ExecutableFromACampaignAction, CanT
                     $educatable
                         ->careTeam()
                         ->syncWithPivotValues(
-                            ids: $action->data['user_id'], 
-                            values: ['care_team_role_id' => $action->data['care_team_role_id']], 
+                            ids: $action->data['user_id'],
+                            values: ['care_team_role_id' => $action->data['care_team_role_id']],
                             detaching: $action->data['remove_prior']
                         );
                 });
