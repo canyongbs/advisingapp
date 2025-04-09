@@ -55,6 +55,7 @@ use AdvisingApp\Notification\Models\Concerns\NotifiableViaSms;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Notification\Models\Subscription;
+use AdvisingApp\Prospect\Database\Factories\ProspectFactory;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Observers\ProspectObserver;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
@@ -99,7 +100,10 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
 {
     use HasApiTokens;
     use AuditableTrait;
+
+    /** @use HasFactory<ProspectFactory> */
     use HasFactory;
+
     use HasManyMorphedEngagementResponses;
     use HasManyMorphedEngagements;
     use HasManyMorphedInteractions;
@@ -141,6 +145,9 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
         return $this->id;
     }
 
+    /**
+     * @return MorphMany<CaseModel, $this>
+     */
     public function cases(): MorphMany
     {
         return $this->morphMany(
@@ -152,21 +159,33 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
         );
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return BelongsTo<ProspectStatus, $this>
+     */
     public function status(): BelongsTo
     {
         return $this->belongsTo(ProspectStatus::class);
     }
 
+    /**
+     * @return BelongsTo<ProspectSource, $this>
+     */
     public function source(): BelongsTo
     {
         return $this->belongsTo(ProspectSource::class);
     }
 
+    /**
+     * @return BelongsTo<Student, $this>
+     */
     public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class, 'student_id', 'sisid');
@@ -186,16 +205,25 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
             ->withTimestamps();
     }
 
+    /**
+     * @return MorphMany<Task, $this>
+     */
     public function tasks(): MorphMany
     {
         return $this->morphMany(Task::class, 'concern');
     }
 
+    /**
+     * @return MorphMany<Alert, $this>
+     */
     public function alerts(): MorphMany
     {
         return $this->morphMany(Alert::class, 'concern');
     }
 
+    /**
+     * @return MorphToMany<User, $this>
+     */
     public function careTeam(): MorphToMany
     {
         return $this->morphToMany(
@@ -209,11 +237,17 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
             ->tap(new HasLicense($this->getLicenseType()));
     }
 
+    /**
+     * @return MorphMany<FormSubmission, $this>
+     */
     public function formSubmissions(): MorphMany
     {
         return $this->morphMany(FormSubmission::class, 'author');
     }
 
+    /**
+     * @return MorphMany<ApplicationSubmission, $this>
+     */
     public function applicationSubmissions(): MorphMany
     {
         return $this->morphMany(ApplicationSubmission::class, 'author');
@@ -259,6 +293,9 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
         return $this->hasManyDeepFromRelations($this->tasks(), (new Task())->histories());
     }
 
+    /**
+     * @return MorphToMany<User, $this>
+     */
     public function subscribedUsers(): MorphToMany
     {
         return $this->morphToMany(
@@ -272,6 +309,9 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
             ->tap(new HasLicense($this->getLicenseType()));
     }
 
+    /**
+     * @return HasMany<EventAttendee, $this>
+     */
     public function eventAttendeeRecords(): HasMany
     {
         return $this->hasMany(
@@ -291,6 +331,9 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
         return $this->morphOne(Timeline::class, 'entity');
     }
 
+    /**
+     * @return MorphToMany<BasicNeedsProgram, $this>
+     */
     public function basicNeedsPrograms(): MorphToMany
     {
         return $this->morphToMany(
@@ -302,31 +345,49 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
         )->withTimestamps();
     }
 
+    /**
+     * @return HasMany<ProspectAddress, $this>
+     */
     public function addresses(): HasMany
     {
         return $this->hasMany(ProspectAddress::class)->orderBy('order');
     }
 
+    /**
+     * @return HasMany<ProspectEmailAddress, $this>
+     */
     public function emailAddresses(): HasMany
     {
         return $this->hasMany(ProspectEmailAddress::class)->orderBy('order');
     }
 
+    /**
+     * @return HasMany<ProspectPhoneNumber, $this>
+     */
     public function phoneNumbers(): HasMany
     {
         return $this->hasMany(ProspectPhoneNumber::class)->orderBy('order');
     }
 
+    /**
+     * @return BelongsTo<ProspectEmailAddress, $this>
+     */
     public function primaryEmailAddress(): BelongsTo
     {
         return $this->belongsTo(ProspectEmailAddress::class, 'primary_email_id');
     }
 
+    /**
+     * @return BelongsTo<ProspectPhoneNumber, $this>
+     */
     public function primaryPhoneNumber(): BelongsTo
     {
         return $this->belongsTo(ProspectPhoneNumber::class, 'primary_phone_id');
     }
 
+    /**
+     * @return BelongsTo<ProspectAddress, $this>
+     */
     public function primaryAddress(): BelongsTo
     {
         return $this->belongsTo(ProspectAddress::class, 'primary_address_id');
@@ -379,6 +440,9 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
         return filled($this->primaryPhoneNumber?->number) && $this->primaryPhoneNumber->can_receive_sms;
     }
 
+    /**
+     * @return MorphToMany<Tag, $this>
+     */
     public function tags(): MorphToMany
     {
         return $this->morphToMany(

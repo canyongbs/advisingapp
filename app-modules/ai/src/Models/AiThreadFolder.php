@@ -62,6 +62,9 @@ class AiThreadFolder extends BaseModel
         'application' => AiApplication::class,
     ];
 
+    /**
+     * @return HasMany<AiThread, $this>
+     */
     public function threads(): HasMany
     {
         return $this->hasMany(AiThread::class, 'folder_id');
@@ -72,6 +75,9 @@ class AiThreadFolder extends BaseModel
         return config('assistant.default_chat_folders');
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

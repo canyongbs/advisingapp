@@ -37,6 +37,7 @@
 namespace AdvisingApp\Prospect\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Prospect\Database\Factories\PipelineFactory;
 use AdvisingApp\Segment\Models\Segment;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -52,7 +53,9 @@ use OwenIt\Auditing\Contracts\Auditable;
  */
 class Pipeline extends Model implements Auditable
 {
+    /** @use HasFactory<PipelineFactory> */
     use HasFactory;
+
     use HasUuids;
     use AuditableTrait;
 
@@ -64,16 +67,25 @@ class Pipeline extends Model implements Auditable
         'default_stage',
     ];
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    /**
+     * @return HasMany<PipelineStage, $this>
+     */
     public function stages(): HasMany
     {
         return $this->hasMany(PipelineStage::class, 'pipeline_id');
     }
 
+    /**
+     * @return BelongsTo<Segment, $this>
+     */
     public function segment(): BelongsTo
     {
         return $this->belongsTo(Segment::class, 'segment_id');

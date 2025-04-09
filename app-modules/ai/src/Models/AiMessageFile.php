@@ -67,6 +67,9 @@ class AiMessageFile extends BaseModel implements AiFile, HasMedia
         'forceDeleting' => AiMessageFileForceDeleting::class,
     ];
 
+    /**
+     * @return BelongsTo<AiMessage, $this>
+     */
     public function message(): BelongsTo
     {
         return $this->belongsTo(AiMessage::class, 'message_id');

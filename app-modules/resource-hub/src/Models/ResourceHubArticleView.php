@@ -54,11 +54,17 @@ class ResourceHubArticleView extends BaseModel
         return 'resource_hub_item_views';
     }
 
+    /**
+     * @return BelongsTo<ResourceHubArticle, $this>
+     */
     public function resourceHubArticle(): BelongsTo
     {
         return $this->belongsTo(ResourceHubArticle::class, 'resource_hub_item_id');
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

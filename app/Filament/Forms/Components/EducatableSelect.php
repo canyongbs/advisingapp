@@ -59,7 +59,7 @@ class EducatableSelect extends Component
 
     protected string $view = 'filament-forms::components.group';
 
-    protected $isExcludingConvertedProspects = false;
+    protected bool $isExcludingConvertedProspects = false;
 
     final public function __construct(string $name)
     {
@@ -96,7 +96,7 @@ class EducatableSelect extends Component
             ->titleAttribute(Student::displayNameKey());
     }
 
-    public static function getProspectType(string $keyColumnName, $isExcludingConvertedProspects = true, ?Model $record = null): Type
+    public static function getProspectType(string $keyColumnName, bool $isExcludingConvertedProspects = true, ?Model $record = null): Type
     {
         $prospectType = Type::make(Prospect::class)
             ->titleAttribute(Prospect::displayNameKey());
@@ -158,6 +158,9 @@ class EducatableSelect extends Component
         return $this;
     }
 
+    /**
+     * @return MorphTo<Model, Model>
+     */
     public function getRelationship(): MorphTo
     {
         return $this->getModelInstance()->{$this->getName()}();

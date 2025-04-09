@@ -68,17 +68,26 @@ class SurveySubmission extends Submission
         'request_method' => FormSubmissionRequestDeliveryMethod::class,
     ];
 
+    /**
+     * @return BelongsTo<Survey, $this>
+     */
     public function submissible(): BelongsTo
     {
         return $this
             ->belongsTo(Survey::class, 'survey_id');
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function requester(): BelongsTo
     {
         return $this->belongsTo(User::class, 'requester_id');
     }
 
+    /**
+     * @return BelongsToMany<SurveyField, $this>
+     */
     public function fields(): BelongsToMany
     {
         return $this->belongsToMany(

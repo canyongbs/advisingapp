@@ -53,11 +53,17 @@ class PromptUpvote extends BaseModel
         'user_id',
     ];
 
+    /**
+     * @return BelongsTo<Prompt, $this>
+     */
     public function prompt(): BelongsTo
     {
         return $this->belongsTo(Prompt::class);
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

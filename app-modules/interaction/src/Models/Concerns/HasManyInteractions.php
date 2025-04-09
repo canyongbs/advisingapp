@@ -41,6 +41,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 trait HasManyInteractions
 {
+    /**
+     * @return HasMany<Interaction, $this>
+     */
     public function interactions(): HasMany
     {
         return $this->hasMany(Interaction::class);

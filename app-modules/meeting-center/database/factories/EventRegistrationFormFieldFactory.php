@@ -36,10 +36,11 @@
 
 namespace AdvisingApp\MeetingCenter\Database\Factories;
 
+use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\MeetingCenter\Models\Model>
+ * @extends Factory<EventRegistrationFormField>
  */
 class EventRegistrationFormFieldFactory extends Factory
 {

@@ -51,6 +51,9 @@ class CaseFormAuthentication extends SubmissibleAuthentication
         return 'case_form_authentications';
     }
 
+    /**
+     * @return BelongsTo<CaseForm, $this>
+     */
     public function submissible(): BelongsTo
     {
         return $this->belongsTo(CaseForm::class, 'case_form_id');

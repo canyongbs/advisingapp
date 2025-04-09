@@ -60,12 +60,18 @@ class FormStep extends SubmissibleStep
         'sort' => 'integer',
     ];
 
+    /**
+     * @return BelongsTo<Form, $this>
+     */
     public function submissible(): BelongsTo
     {
         return $this
             ->belongsTo(Form::class, 'form_id');
     }
 
+    /**
+     * @return HasMany<FormField, $this>
+     */
     public function fields(): HasMany
     {
         return $this->hasMany(FormField::class, 'step_id');

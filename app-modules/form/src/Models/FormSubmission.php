@@ -70,17 +70,26 @@ class FormSubmission extends Submission
         'request_method' => FormSubmissionRequestDeliveryMethod::class,
     ];
 
+    /**
+     * @return BelongsTo<Form, $this>
+     */
     public function submissible(): BelongsTo
     {
         return $this
             ->belongsTo(Form::class, 'form_id');
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function requester(): BelongsTo
     {
         return $this->belongsTo(User::class, 'requester_id');
     }
 
+    /**
+     * @return BelongsToMany<FormField, $this>
+     */
     public function fields(): BelongsToMany
     {
         return $this->belongsToMany(

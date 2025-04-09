@@ -46,7 +46,6 @@ use App\Models\User;
 use Exception;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -58,7 +57,6 @@ use Illuminate\Support\Facades\DB;
 #[ObservedBy([CareTeamObserver::class])]
 class CareTeam extends MorphPivot implements ExecutableFromACampaignAction, CanTriggerAutoSubscription
 {
-    use HasFactory;
     use HasUuids;
 
     public $timestamps = true;
@@ -71,6 +69,9 @@ class CareTeam extends MorphPivot implements ExecutableFromACampaignAction, CanT
         return $this->morphTo();
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

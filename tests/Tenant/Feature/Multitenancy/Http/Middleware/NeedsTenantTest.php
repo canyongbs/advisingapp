@@ -37,6 +37,7 @@
 use App\Models\Tenant;
 use App\Multitenancy\Http\Middleware\NeedsTenant;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 use function PHPUnit\Framework\assertTrue;
 

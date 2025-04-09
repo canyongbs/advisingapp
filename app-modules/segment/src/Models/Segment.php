@@ -74,16 +74,25 @@ class Segment extends BaseModel
         'type' => SegmentType::class,
     ];
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return HasMany<SegmentSubject, $this>
+     */
     public function subjects(): HasMany
     {
         return $this->hasMany(SegmentSubject::class);
     }
 
+    /**
+     * @return HasMany<Campaign, $this>
+     */
     public function campaigns(): HasMany
     {
         return $this->hasMany(Campaign::class);

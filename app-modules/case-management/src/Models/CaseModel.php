@@ -170,36 +170,57 @@ class CaseModel extends BaseModel implements Auditable, CanTriggerAutoSubscripti
         );
     }
 
+    /**
+     * @return BelongsTo<Division, $this>
+     */
     public function division(): BelongsTo
     {
         return $this->belongsTo(Division::class, 'division_id');
     }
 
+    /**
+     * @return HasMany<CaseUpdate, $this>
+     */
     public function caseUpdates(): HasMany
     {
         return $this->hasMany(CaseUpdate::class);
     }
 
+    /**
+     * @return BelongsTo<CaseStatus, $this>
+     */
     public function status(): BelongsTo
     {
         return $this->belongsTo(CaseStatus::class);
     }
 
+    /**
+     * @return BelongsTo<CasePriority, $this>
+     */
     public function priority(): BelongsTo
     {
         return $this->belongsTo(CasePriority::class);
     }
 
+    /**
+     * @return BelongsTo<CaseFormSubmission, $this>
+     */
     public function caseFormSubmission(): BelongsTo
     {
         return $this->belongsTo(CaseFormSubmission::class, 'case_form_submission_id');
     }
 
+    /**
+     * @return HasMany<CaseAssignment, $this>
+     */
     public function assignments(): HasMany
     {
         return $this->hasMany(CaseAssignment::class);
     }
 
+    /**
+     * @return HasOne<CaseAssignment, $this>
+     */
     public function assignedTo(): HasOne
     {
         return $this->hasOne(CaseAssignment::class)
@@ -207,17 +228,26 @@ class CaseModel extends BaseModel implements Auditable, CanTriggerAutoSubscripti
             ->where('status', CaseAssignmentStatus::Active);
     }
 
+    /**
+     * @return HasOne<CaseAssignment, $this>
+     */
     public function initialAssignment(): HasOne
     {
         return $this->hasOne(CaseAssignment::class)
             ->oldest('assigned_at');
     }
 
+    /**
+     * @return HasMany<CaseHistory, $this>
+     */
     public function histories(): HasMany
     {
         return $this->hasMany(CaseHistory::class);
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -270,6 +300,9 @@ class CaseModel extends BaseModel implements Auditable, CanTriggerAutoSubscripti
         return false;
     }
 
+    /**
+     * @return HasOne<CaseUpdate, $this>
+     */
     public function latestInboundCaseUpdate(): HasOne
     {
         return $this->hasOne(CaseUpdate::class)
@@ -282,6 +315,9 @@ class CaseModel extends BaseModel implements Auditable, CanTriggerAutoSubscripti
             });
     }
 
+    /**
+     * @return HasOne<CaseUpdate, $this>
+     */
     public function latestOutboundCaseUpdate(): HasOne
     {
         return $this->hasOne(CaseUpdate::class)
@@ -294,6 +330,9 @@ class CaseModel extends BaseModel implements Auditable, CanTriggerAutoSubscripti
             });
     }
 
+    /**
+     * @return MorphMany<EmailMessage, $this>
+     */
     public function emailMessages(): MorphMany
     {
         return $this->morphMany(EmailMessage::class, 'related');
@@ -385,6 +424,9 @@ class CaseModel extends BaseModel implements Auditable, CanTriggerAutoSubscripti
         return $this->status->classification === SystemCaseClassification::Closed;
     }
 
+    /**
+     * @return HasOne<CaseFeedback, $this>
+     */
     public function feedback(): HasOne
     {
         return $this->hasOne(CaseFeedback::class, 'case_id');

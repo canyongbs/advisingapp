@@ -49,6 +49,9 @@ class ProspectConversionSettings extends Settings
         return 'prospect-conversion';
     }
 
+    /**
+     * @return array<string, class-string>
+     */
     public static function casts(): array
     {
         return [

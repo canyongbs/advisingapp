@@ -37,15 +37,22 @@
 use Database\Migrations\Concerns\CanModifyPermissions;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 
 return new class () extends Migration {
     use CanModifyPermissions;
 
+    /**
+     * @var array<string> $permissions
+     */
     private array $permissions = [
         'performance.*.view' => 'Analytics Resource Source',
         'performance.view-any' => 'Analytics Resource Source',
     ];
 
+    /**
+     * @var array<string> $guards
+     */
     private array $guards = [
         'web',
         'api',

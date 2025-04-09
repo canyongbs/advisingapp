@@ -64,16 +64,25 @@ class Application extends Submissible
         'rounding' => Rounding::class,
     ];
 
+    /**
+     * @return HasMany<ApplicationField, $this>
+     */
     public function fields(): HasMany
     {
         return $this->hasMany(ApplicationField::class);
     }
 
+    /**
+     * @return HasMany<ApplicationStep, $this>
+     */
     public function steps(): HasMany
     {
         return $this->hasMany(ApplicationStep::class);
     }
 
+    /**
+     * @return HasMany<ApplicationSubmission, $this>
+     */
     public function submissions(): HasMany
     {
         return $this->hasMany(ApplicationSubmission::class);

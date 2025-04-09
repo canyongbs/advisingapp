@@ -53,6 +53,9 @@ class SegmentSubject extends BaseModel
         'subject_type',
     ];
 
+    /**
+     * @return BelongsTo<Segment, $this>
+     */
     public function segment(): BelongsTo
     {
         return $this->belongsTo(Segment::class);

@@ -66,6 +66,9 @@ class ProspectPhoneNumber extends BaseModel implements Auditable
         'can_receive_sms' => 'boolean',
     ];
 
+    /**
+     * @return BelongsTo<Prospect, $this>
+     */
     public function prospect(): BelongsTo
     {
         return $this->belongsTo(Prospect::class);

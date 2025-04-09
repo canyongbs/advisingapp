@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Audit\Models;
 
+use AdvisingApp\Audit\Database\Factories\AuditFactory;
 use AdvisingApp\Audit\Settings\AuditSettings;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -49,7 +50,9 @@ use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
  */
 class Audit extends BaseAudit
 {
+    /** @use HasFactory<AuditFactory> */
     use HasFactory;
+
     use MassPrunable;
     use HasUuids;
     use UsesTenantConnection;

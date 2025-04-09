@@ -41,7 +41,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Pipeline>
+ * @extends Factory<Pipeline>
  */
 class PipelineFactory extends Factory
 {

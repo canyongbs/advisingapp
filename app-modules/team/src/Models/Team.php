@@ -52,6 +52,9 @@ class Team extends BaseModel
         'description',
     ];
 
+    /**
+     * @return BelongsToMany<User, $this>
+     */
     public function users(): BelongsToMany
     {
         return $this
@@ -60,6 +63,9 @@ class Team extends BaseModel
             ->withTimestamps();
     }
 
+    /**
+     * @return BelongsTo<Division, $this>
+     */
     public function division(): BelongsTo
     {
         return $this->belongsTo(Division::class);

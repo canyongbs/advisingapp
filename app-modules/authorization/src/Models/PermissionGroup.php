@@ -51,6 +51,9 @@ class PermissionGroup extends BaseModel
         'name',
     ];
 
+    /**
+     * @return HasMany<Permission, $this>
+     */
     public function permissions(): HasMany
     {
         return $this->hasMany(Permission::class, 'group_id');

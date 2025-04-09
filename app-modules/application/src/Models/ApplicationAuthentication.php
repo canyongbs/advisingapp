@@ -46,6 +46,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class ApplicationAuthentication extends SubmissibleAuthentication
 {
+    /**
+     * @return BelongsTo<Application, $this>
+     */
     public function submissible(): BelongsTo
     {
         return $this

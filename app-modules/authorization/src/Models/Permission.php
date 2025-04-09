@@ -37,6 +37,7 @@
 namespace AdvisingApp\Authorization\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Authorization\Database\Factories\PermissionFactory;
 use App\Models\SystemUser;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -52,16 +53,24 @@ use Spatie\Permission\Models\Permission as SpatiePermission;
  */
 class Permission extends SpatiePermission implements Auditable
 {
+    /** @use HasFactory<PermissionFactory> */
     use HasFactory;
+
     use HasUuids;
     use AuditableTrait;
     use UsesTenantConnection;
 
+    /**
+     * @return BelongsToMany<SystemUser, $this>
+     */
     public function systemUsers(): BelongsToMany
     {
         return $this->belongsToMany(SystemUser::class);
     }
 
+    /**
+     * @return BelongsTo<PermissionGroup, $this>
+     */
     public function group(): BelongsTo
     {
         return $this->belongsTo(PermissionGroup::class, 'group_id');

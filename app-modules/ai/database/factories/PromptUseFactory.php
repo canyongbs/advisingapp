@@ -42,7 +42,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends PromptUse
+ * @extends Factory<PromptUse>
  */
 class PromptUseFactory extends Factory
 {

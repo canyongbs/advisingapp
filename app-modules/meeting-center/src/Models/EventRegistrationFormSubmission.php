@@ -64,17 +64,26 @@ class EventRegistrationFormSubmission extends Submission
         'attendee_status' => EventAttendeeStatus::class,
     ];
 
+    /**
+     * @return BelongsTo<EventRegistrationForm, $this>
+     */
     public function submissible(): BelongsTo
     {
         return $this
             ->belongsTo(EventRegistrationForm::class, 'form_id');
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function requester(): BelongsTo
     {
         return $this->belongsTo(User::class, 'requester_id');
     }
 
+    /**
+     * @return BelongsToMany<EventRegistrationFormField, $this>
+     */
     public function fields(): BelongsToMany
     {
         return $this->belongsToMany(
@@ -86,6 +95,9 @@ class EventRegistrationFormSubmission extends Submission
             ->withPivot(['id', 'response']);
     }
 
+    /**
+     * @return BelongsTo<EventAttendee, $this>
+     */
     public function author(): BelongsTo
     {
         return $this->belongsTo(EventAttendee::class, 'event_attendee_id');

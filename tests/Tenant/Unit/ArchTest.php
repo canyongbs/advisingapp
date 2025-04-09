@@ -67,9 +67,9 @@ test('pages extending EditRecord have the EditPageRedirection test', function ()
         }
 
         Assert::assertContains(
-            needle: EditPageRedirection::class,
-            haystack: class_uses_recursive($class),
-            message: "Class [{$class}] does not use the EditPageRedirection trait.",
+            EditPageRedirection::class,
+            class_uses_recursive($class),
+            "Class [{$class}] does not use the EditPageRedirection trait.",
         );
     }
 });

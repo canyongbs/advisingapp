@@ -60,12 +60,18 @@ class EventRegistrationFormField extends SubmissibleField
         'is_required' => 'bool',
     ];
 
+    /**
+     * @return BelongsTo<EventRegistrationForm, $this>
+     */
     public function submissible(): BelongsTo
     {
         return $this
             ->belongsTo(EventRegistrationForm::class, 'form_id');
     }
 
+    /**
+     * @return BelongsTo<EventRegistrationFormStep, $this>
+     */
     public function step(): BelongsTo
     {
         return $this

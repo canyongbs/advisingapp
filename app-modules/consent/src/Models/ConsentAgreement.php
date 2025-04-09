@@ -64,6 +64,9 @@ class ConsentAgreement extends BaseModel implements Auditable
         'body',
     ];
 
+    /**
+     * @return BelongsToMany<User, $this>
+     */
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'user_consent_agreements')
@@ -72,6 +75,9 @@ class ConsentAgreement extends BaseModel implements Auditable
             ->withTimestamps();
     }
 
+    /**
+     * @return HasMany<UserConsentAgreement, $this>
+     */
     public function userConsentAgreements(): HasMany
     {
         return $this->hasMany(UserConsentAgreement::class, 'consent_agreement_id');

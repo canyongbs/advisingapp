@@ -75,11 +75,17 @@ class TwilioConversationUser extends Pivot
         $participation->save();
     }
 
+    /**
+     * @return BelongsTo<TwilioConversation, $this>
+     */
     public function conversation(): BelongsTo
     {
         return $this->belongsTo(TwilioConversation::class);
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
