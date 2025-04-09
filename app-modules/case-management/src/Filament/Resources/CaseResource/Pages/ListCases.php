@@ -88,7 +88,7 @@ class ListCases extends ListRecords
                         $respondent = $record->respondent;
 
                         if ($respondent === null) {
-                            return null;
+                            return 'N/A';
                         }
 
                         return $record->respondent->{$record->respondent::displayNameKey()};

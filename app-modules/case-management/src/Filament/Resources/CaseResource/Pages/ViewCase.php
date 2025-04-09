@@ -95,12 +95,12 @@ class ViewCase extends ViewRecord
                         TextEntry::make('respondent')
                             ->label('Related To')
                             ->color('primary')
-                            ->state(function (CaseModel $record): string|null {
+                            ->state(function (CaseModel $record): string {
                                 /** @var Student|Prospect|null $respondent */
                                 $respondent = $record->respondent;
 
                                 if ($respondent === null) {
-                                    return null;
+                                    return 'N/A';
                                 }
 
                                 return match ($respondent::class) {
