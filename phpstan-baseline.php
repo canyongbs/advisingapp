@@ -9746,6 +9746,12 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/app-modules/resource-hub/tests/Tenant/ResourceHubStatus/EditResourceHubStatusTest.php',
 ];
 $ignoreErrors[] = [
+	'message' => '#^Using nullsafe method call on non\\-nullable type App\\\\Models\\\\User\\. Use \\-\\> instead\\.$#',
+	'identifier' => 'nullsafe.neverNull',
+	'count' => 1,
+	'path' => __DIR__ . '/app-modules/segment/database/factories/SegmentFactory.php',
+];
+$ignoreErrors[] = [
 	'message' => '#^Method AdvisingApp\\\\Segment\\\\Actions\\\\TranslateSegmentFilters\\:\\:handle\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
 	'identifier' => 'missingType.generics',
 	'count' => 1,
