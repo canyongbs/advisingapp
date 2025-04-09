@@ -103,13 +103,15 @@ class CareTeam extends MorphPivot implements ExecutableFromACampaignAction, CanT
                 ->segment
                 ->retrieveRecords()
                 ->each(function (Educatable $educatable) use ($action) {
-                    $educatable
+                    foreach($action->data['careTeam'] as $careTeam) {
+                        $educatable
                         ->careTeam()
                         ->syncWithPivotValues(
-                            ids: $action->data['user_id'],
-                            values: ['care_team_role_id' => $action->data['care_team_role_id']],
+                            ids: $careTeam['user_id'],
+                            values: ['care_team_role_id' => $careTeam['care_team_role_id']],
                             detaching: $action->data['remove_prior']
                         );
+                    }  
                 });
 
             DB::commit();
