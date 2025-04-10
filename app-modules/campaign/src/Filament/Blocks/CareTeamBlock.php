@@ -80,8 +80,8 @@ class CareTeamBlock extends CampaignActionBlock
                             $segment = Segment::find($segment_id);
 
                             return User::query()->tap(new HasLicense(match ($segment->model->getLabel()) {
-                                      CareTeamRoleType::Student->getLabel() => Student::getLicenseType(),
-                                      CareTeamRoleType::Prospect->getLabel() => Prospect::getLicenseType(),
+                                CareTeamRoleType::Student->getLabel() => Student::getLicenseType(),
+                                CareTeamRoleType::Prospect->getLabel() => Prospect::getLicenseType(),
                             }))->pluck('name', 'id');
                         })
                         ->searchable()
