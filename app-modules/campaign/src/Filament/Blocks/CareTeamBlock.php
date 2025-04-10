@@ -38,7 +38,6 @@ namespace AdvisingApp\Campaign\Filament\Blocks;
 
 use AdvisingApp\Campaign\Settings\CampaignSettings;
 use AdvisingApp\CareTeam\Models\CareTeam;
-use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\Segment\Models\Segment;
 use App\Enums\CareTeamRoleType;
 use App\Models\User;
@@ -49,7 +48,6 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Get;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Log;
 
 class CareTeamBlock extends CampaignActionBlock
 {
@@ -69,30 +67,30 @@ class CareTeamBlock extends CampaignActionBlock
                 ->label('Who should be assigned to the care team?')
                 ->default(function (Get $get, $livewire, string $operation) {
                     if ($operation === 'create') {
-                      $segment_id = $get('../../../segment_id');
-                  } else {
-                      $segment_id = $livewire->getOwnerRecord()->segment_id;
-                  }
-                  $segment = Segment::find($segment_id);
+                        $segment_id = $get('../../../segment_id');
+                    } else {
+                        $segment_id = $livewire->getOwnerRecord()->segment_id;
+                    }
+                    $segment = Segment::find($segment_id);
 
-                  return [['care_team_role_id' => match ($segment->model->getLabel()) {
-                            CareTeamRoleType::Student->getLabel() => CareTeamRoleType::studentDefault()?->id,
-                            CareTeamRoleType::Prospect->getLabel() => CareTeamRoleType::prospectDefault()?->id,
-                        }]];
+                    return [['care_team_role_id' => match ($segment->model->getLabel()) {
+                        CareTeamRoleType::Student->getLabel() => CareTeamRoleType::studentDefault()?->id,
+                        CareTeamRoleType::Prospect->getLabel() => CareTeamRoleType::prospectDefault()?->id,
+                    }]];
                 })
                 ->schema([
                     Select::make($fieldPrefix . 'user_id')
                         ->label('User')
                         ->options(function (Get $get, $livewire, string $operation) {
-                          if ($operation === 'create') {
-                              $segment_id = $get('../../../segment_id');
-                          } else {
-                              $segment_id = $livewire->getOwnerRecord()->segment_id;
-                          }
-                          $segment = Segment::find($segment_id);
-      
-                          return User::all()->pluck('name', 'id');
-                      })
+                            if ($operation === 'create') {
+                                $segment_id = $get('../../../segment_id');
+                            } else {
+                                $segment_id = $livewire->getOwnerRecord()->segment_id;
+                            }
+                            $segment = Segment::find($segment_id);
+
+                            return User::all()->pluck('name', 'id');
+                        })
                         ->searchable()
                         ->required()
                         ->exists('users', 'id'),
