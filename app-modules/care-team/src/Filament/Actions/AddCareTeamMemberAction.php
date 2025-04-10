@@ -60,8 +60,8 @@ class AddCareTeamMemberAction
             ->fillForm(fn (Collection $records): array => [
                 'records' => $records,
                 'care_team_role_id' => match ($context) {
-                    CareTeamRoleType::Student => CareTeamRoleType::studentDefault()?->id,
-                    CareTeamRoleType::Prospect => CareTeamRoleType::prospectDefault()?->id,
+                    CareTeamRoleType::Student => CareTeamRoleType::studentDefault()?->getKey(),
+                    CareTeamRoleType::Prospect => CareTeamRoleType::prospectDefault()?->getKey(),
                 },
             ])
             ->form([
@@ -92,7 +92,7 @@ class AddCareTeamMemberAction
                         /** @var User $user */
                         $user = User::find($data['recordId']);
 
-                        if ($record->careTeam()->where('user_id', $user->id)->doesntExist()) {
+                        if ($record->careTeam()->where('user_id', $user->getKey())->doesntExist()) {
                             $record->careTeam()->attach($user, ['care_team_role_id' => $data['care_team_role_id']]);
                         }
                     });

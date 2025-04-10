@@ -102,8 +102,8 @@ class CareTeamBlock extends CampaignActionBlock
                             $segment = Segment::find($segment_id);
 
                             return match ($segment->model->getLabel()) {
-                                CareTeamRoleType::Student->getLabel() => CareTeamRoleType::studentDefault()?->id,
-                                CareTeamRoleType::Prospect->getLabel() => CareTeamRoleType::prospectDefault()?->id,
+                                CareTeamRoleType::Student->getLabel() => CareTeamRoleType::studentDefault()?->getKey(),
+                                CareTeamRoleType::Prospect->getLabel() => CareTeamRoleType::prospectDefault()?->getKey(),
                             };
                         })
                         ->model(CareTeam::class)
