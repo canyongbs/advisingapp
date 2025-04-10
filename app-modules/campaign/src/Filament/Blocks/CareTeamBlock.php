@@ -38,10 +38,12 @@ namespace AdvisingApp\Campaign\Filament\Blocks;
 
 use AdvisingApp\Campaign\Settings\CampaignSettings;
 use AdvisingApp\CareTeam\Models\CareTeam;
+use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\CareTeamRoleType;
+use App\Features\CareTeamRoleFeature;
 use App\Models\Scopes\HasLicense;
 use App\Models\User;
 use Carbon\CarbonImmutable;
@@ -104,7 +106,20 @@ class CareTeamBlock extends CampaignActionBlock
                                 CareTeamRoleType::Prospect->getLabel() => CareTeamRoleType::prospectDefault()?->id,
                             };
                         })
-                        ->model(CareTeam::class),
+                        ->model(CareTeam::class)
+                        ->visible(function (Get $get, $livewire, string $operation) {
+                            if ($operation === 'create') {
+                                $segment_id = $get('../../../../../segment_id');
+                            } else {
+                                $segment_id = $livewire->getOwnerRecord()->segment_id;
+                            }
+                            $segment = Segment::find($segment_id);
+
+                            return CareTeamRole::where('type', match($segment->model->getLabel()) {
+                                CareTeamRoleType::Student->getLabel() => CareTeamRoleType::Student,
+                                CareTeamRoleType::Prospect->getLabel() => CareTeamRoleType::Prospect,
+                            })->count() > 0 && CareTeamRoleFeature::active();
+                        }),
                 ])
                 ->addActionLabel('Add User')
                 ->reorderable(false),
