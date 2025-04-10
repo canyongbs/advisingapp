@@ -49,7 +49,7 @@ return new class () extends Migration {
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropIfExists('is_branding_bar_dismissed');
+            $table->dropColumn('is_branding_bar_dismissed');
         });
     }
 };

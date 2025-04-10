@@ -53,6 +53,9 @@ class PromptType extends BaseModel
         'description',
     ];
 
+    /**
+     * @return HasMany<Prompt, $this>
+     */
     public function prompts(): HasMany
     {
         return $this->hasMany(Prompt::class, 'type_id');

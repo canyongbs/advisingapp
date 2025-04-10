@@ -69,6 +69,9 @@ class CaseStatus extends BaseModel implements Auditable
         return 'case_statuses';
     }
 
+    /**
+     * @return HasMany<CaseModel, $this>
+     */
     public function cases(): HasMany
     {
         return $this->hasMany(CaseModel::class, 'status_id');

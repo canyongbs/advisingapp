@@ -42,7 +42,12 @@ use Illuminate\Support\Arr;
 
 use function Pest\Laravel\actingAs;
 
-function testResourceRequiresPermissionForAccess(string $resource, string|array $permissions, string $method)
+/**
+ * @param string $resource
+ * @param string|array<string> $permissions
+ * @param string $method
+ */
+function testResourceRequiresPermissionForAccess(string $resource, string|array $permissions, string $method): void
 {
     test("{$resource} {$method} is gated with proper access control", function () use ($permissions, $resource, $method) {
         $user = User::factory()->licensed(LicenseType::cases())->create();

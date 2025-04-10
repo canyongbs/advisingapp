@@ -56,11 +56,17 @@ class FormFieldSubmission extends Pivot
         'response' => 'array',
     ];
 
+    /**
+     * @return BelongsTo<FormField, $this>
+     */
     public function field(): BelongsTo
     {
         return $this->belongsTo(FormField::class, 'field_id');
     }
 
+    /**
+     * @return BelongsTo<FormSubmission, $this>
+     */
     public function submission(): BelongsTo
     {
         return $this->belongsTo(FormSubmission::class, 'submission_id');

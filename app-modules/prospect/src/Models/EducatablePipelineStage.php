@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Prospect\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
 
@@ -45,8 +44,6 @@ use Illuminate\Database\Eloquent\Relations\MorphPivot;
  */
 class EducatablePipelineStage extends MorphPivot
 {
-    use HasFactory;
-
     protected $table = 'educatable_pipeline_stages';
 
     public function educatable()
@@ -54,11 +51,17 @@ class EducatablePipelineStage extends MorphPivot
         return $this->morphTo();
     }
 
+    /**
+     * @return BelongsTo<PipelineStage, $this>
+     */
     public function stage(): BelongsTo
     {
-        return $this->belongsTo(PipelineStage::class);
+        return $this->belongsTo(PipelineStage::class, 'pipeline_stage_id');
     }
 
+    /**
+     * @return BelongsTo<Pipeline, $this>
+     */
     public function pipeline(): BelongsTo
     {
         return $this->belongsTo(Pipeline::class);

@@ -61,12 +61,18 @@ class EventRegistrationFormStep extends SubmissibleStep
         'sort' => 'integer',
     ];
 
+    /**
+     * @return BelongsTo<EventRegistrationForm, $this>
+     */
     public function submissible(): BelongsTo
     {
         return $this
             ->belongsTo(EventRegistrationForm::class, 'form_id');
     }
 
+    /**
+     * @return HasMany<EventRegistrationFormField, $this>
+     */
     public function fields(): HasMany
     {
         return $this->hasMany(EventRegistrationFormField::class, 'step_id');

@@ -63,11 +63,17 @@ class UserConsentAgreement extends BaseModel implements Auditable
         'user_id',
     ];
 
+    /**
+     * @return BelongsTo<ConsentAgreement, $this>
+     */
     public function consentAgreement(): BelongsTo
     {
         return $this->belongsTo(ConsentAgreement::class);
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

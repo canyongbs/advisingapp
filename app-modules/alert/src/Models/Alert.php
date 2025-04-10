@@ -101,6 +101,9 @@ class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription, 
         }
     }
 
+    /**
+     * @return MorphMany<AlertHistory, $this>
+     */
     public function histories(): MorphMany
     {
         return $this->morphMany(AlertHistory::class, 'subject');
@@ -116,6 +119,9 @@ class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription, 
         return $this->concern instanceof Subscribable ? $this->concern : null;
     }
 
+    /**
+     * @return BelongsTo<AlertStatus, $this>
+     */
     public function status(): BelongsTo
     {
         return $this->belongsTo(AlertStatus::class, 'status_id');

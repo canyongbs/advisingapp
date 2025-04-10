@@ -60,12 +60,18 @@ class ApplicationField extends SubmissibleField
         'is_required' => 'bool',
     ];
 
+    /**
+     * @return BelongsTo<Application, $this>
+     */
     public function submissible(): BelongsTo
     {
         return $this
             ->belongsTo(Application::class, 'application_id');
     }
 
+    /**
+     * @return BelongsTo<ApplicationStep, $this>
+     */
     public function step(): BelongsTo
     {
         return $this

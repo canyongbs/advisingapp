@@ -76,6 +76,8 @@ class Login extends FilamentLogin
 
     public function mount(): void
     {
+        parent::mount();
+
         $themeSettings = app(ThemeSettings::class);
 
         $this->themeChangelogUrl = ! empty($themeSettings->changelog_url) ? $themeSettings->changelog_url : 'https://advising.app/changelog/';

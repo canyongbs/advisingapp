@@ -45,6 +45,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[NoPermissions]
 class FormAuthentication extends SubmissibleAuthentication
 {
+    /**
+     * @return BelongsTo<Form, $this>
+     */
     public function submissible(): BelongsTo
     {
         return $this

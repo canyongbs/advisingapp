@@ -37,6 +37,7 @@
 namespace AdvisingApp\BasicNeeds\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\BasicNeeds\Database\Factories\BasicNeedsCategoryFactory;
 use AdvisingApp\BasicNeeds\Observers\BasicNeedsCategoryObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -52,7 +53,9 @@ use OwenIt\Auditing\Contracts\Auditable;
 #[ObservedBy([BasicNeedsCategoryObserver::class])]
 class BasicNeedsCategory extends Model implements Auditable
 {
+    /** @use HasFactory<BasicNeedsCategoryFactory> */
     use HasFactory;
+
     use AuditableTrait;
     use SoftDeletes;
     use HasUuids;
@@ -62,6 +65,9 @@ class BasicNeedsCategory extends Model implements Auditable
         'description',
     ];
 
+    /**
+     * @return HasMany<BasicNeedsProgram, $this>
+     */
     public function basicNeedsProgram(): HasMany
     {
         return $this->hasMany(BasicNeedsProgram::class, 'basic_needs_category_id');

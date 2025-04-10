@@ -42,11 +42,17 @@ use Illuminate\Support\Facades\DB;
 return new class () extends Migration {
     use CanModifyPermissions;
 
+    /**
+     * @var array<string> $permissions
+     */
     private array $permissions = [
         'permission.view-any' => 'Permission',
         'permission.*.view' => 'Permission',
     ];
 
+    /**
+     * @var array<string> $guards
+     */
     private array $guards = [
         'web',
     ];

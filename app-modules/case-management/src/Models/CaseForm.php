@@ -74,21 +74,33 @@ class CaseForm extends Submissible
         return 'case_forms';
     }
 
+    /**
+     * @return HasMany<CaseFormField, $this>
+     */
     public function fields(): HasMany
     {
         return $this->hasMany(CaseFormField::class, 'case_form_id');
     }
 
+    /**
+     * @return HasMany<CaseFormStep, $this>
+     */
     public function steps(): HasMany
     {
         return $this->hasMany(CaseFormStep::class, 'case_form_id');
     }
 
+    /**
+     * @return HasMany<CaseFormSubmission, $this>
+     */
     public function submissions(): HasMany
     {
         return $this->hasMany(CaseFormSubmission::class, 'case_form_id');
     }
 
+    /**
+     * @return BelongsTo<CaseType, $this>
+     */
     public function type(): BelongsTo
     {
         return $this->belongsTo(CaseType::class, 'case_type_id');

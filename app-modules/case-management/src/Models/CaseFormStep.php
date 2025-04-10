@@ -66,11 +66,17 @@ class CaseFormStep extends SubmissibleStep
         return 'case_form_steps';
     }
 
+    /**
+     * @return BelongsTo<CaseForm, $this>
+     */
     public function submissible(): BelongsTo
     {
         return $this->belongsTo(CaseForm::class);
     }
 
+    /**
+     * @return HasMany<CaseFormField, $this>
+     */
     public function fields(): HasMany
     {
         return $this->hasMany(CaseFormField::class);

@@ -42,6 +42,9 @@ use AdvisingApp\Consent\Models\UserConsentAgreement;
 
 trait CanConsent
 {
+    /**
+     * @return BelongsToMany<ConsentAgreement, $this>
+     */
     public function consentAgreements(): BelongsToMany
     {
         return $this->belongsToMany(ConsentAgreement::class, 'user_consent_agreements')

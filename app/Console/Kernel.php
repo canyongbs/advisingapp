@@ -156,6 +156,12 @@ class Kernel extends ConsoleKernel
                         ->monitorName("Refresh Calendar Refresh Tokens | Tenant {$tenant->domain}")
                         ->withoutOverlapping(720);
 
+                    $schedule->command("tenants:artisan \"prospect:prune-eductable-pipeline-stages\" --tenant={$tenant->id}")
+                        ->daily()
+                        ->name("Prune Educatable Pipeline Stages | Tenant {$tenant->domain}")
+                        ->monitorName("Prune Educatable Pipeline Stages | Tenant {$tenant->domain}")
+                        ->withoutOverlapping(720);
+
                     $schedule->command("tenants:artisan \"health:check\" --tenant={$tenant->id}")
                         ->everyMinute()
                         ->name("Health Check | Tenant {$tenant->domain}")

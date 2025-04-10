@@ -67,11 +67,17 @@ class Campaign extends BaseModel implements Auditable
         'enabled' => 'boolean',
     ];
 
+    /**
+     * @return BelongsTo<Segment, $this>
+     */
     public function segment(): BelongsTo
     {
         return $this->belongsTo(Segment::class);
     }
 
+    /**
+     * @return HasMany<CampaignAction, $this>
+     */
     public function actions(): HasMany
     {
         return $this->hasMany(CampaignAction::class);

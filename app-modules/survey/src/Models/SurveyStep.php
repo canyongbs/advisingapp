@@ -61,12 +61,18 @@ class SurveyStep extends SubmissibleStep
         'sort' => 'integer',
     ];
 
+    /**
+     * @return BelongsTo<Survey, $this>
+     */
     public function submissible(): BelongsTo
     {
         return $this
             ->belongsTo(Survey::class, 'survey_id');
     }
 
+    /**
+     * @return HasMany<SurveyField, $this>
+     */
     public function fields(): HasMany
     {
         return $this->hasMany(SurveyField::class, 'step_id');

@@ -65,6 +65,9 @@ class LegacyAiMessageLog extends BaseModel
         'feature' => AiFeature::class,
     ];
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

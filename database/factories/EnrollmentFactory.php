@@ -36,7 +36,7 @@
 
 namespace Database\Factories;
 
-use App\Models\Enrollment;
+use AdvisingApp\StudentDataModel\Models\Enrollment;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

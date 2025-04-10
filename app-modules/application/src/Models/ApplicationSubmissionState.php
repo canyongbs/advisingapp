@@ -64,6 +64,9 @@ class ApplicationSubmissionState extends BaseModel implements Auditable
         'color' => ApplicationSubmissionStateColorOptions::class,
     ];
 
+    /**
+     * @return HasMany<ApplicationSubmission, $this>
+     */
     public function submissions(): HasMany
     {
         return $this->hasMany(ApplicationSubmission::class, 'state_id');

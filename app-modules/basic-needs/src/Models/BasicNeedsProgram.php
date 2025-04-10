@@ -37,6 +37,7 @@
 namespace AdvisingApp\BasicNeeds\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\BasicNeeds\Database\Factories\BasicNeedsProgramFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -49,7 +50,9 @@ use OwenIt\Auditing\Contracts\Auditable;
  */
 class BasicNeedsProgram extends Model implements Auditable
 {
+    /** @use HasFactory<BasicNeedsProgramFactory> */
     use HasFactory;
+
     use AuditableTrait;
     use SoftDeletes;
     use HasUuids;
@@ -67,6 +70,9 @@ class BasicNeedsProgram extends Model implements Auditable
         'application_process',
     ];
 
+    /**
+     * @return BelongsTo<BasicNeedsCategory, $this>
+     */
     public function basicNeedsCategories(): BelongsTo
     {
         return $this->belongsTo(BasicNeedsCategory::class, 'basic_needs_category_id', 'id');

@@ -56,8 +56,8 @@ RUN apt-get update \
 
 FROM web-serversideup AS web-base
 
-ENV NVM_VERSION v0.40.1
-ENV NODE_VERSION 23.4.0
+ENV NVM_VERSION v0.40.2
+ENV NODE_VERSION 23.11.0
 ENV NPM_VERSION ^11.0.0
 ENV NVM_DIR /usr/local/nvm
 RUN mkdir "$NVM_DIR"
@@ -76,7 +76,7 @@ RUN echo "source $NVM_DIR/nvm.sh \
 COPY ./docker/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./docker/nginx/site-opts.d /etc/nginx/site-opts.d
 
-COPY --from=ghcr.io/roadrunner-server/roadrunner:2024.3.4 --chown=$PUID:$PGID --chmod=0755 /usr/bin/rr /usr/local/bin/rr
+COPY --from=ghcr.io/roadrunner-server/roadrunner:2024.3.5 --chown=$PUID:$PGID --chmod=0755 /usr/bin/rr /usr/local/bin/rr
 
 RUN rm -rf /etc/s6-overlay/s6-rc.d/laravel-automations
 RUN rm /etc/s6-overlay/s6-rc.d/user/contents.d/laravel-automations

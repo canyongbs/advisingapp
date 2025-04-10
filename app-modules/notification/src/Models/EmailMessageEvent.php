@@ -59,6 +59,9 @@ class EmailMessageEvent extends BaseModel
         'occurred_at' => 'datetime',
     ];
 
+    /**
+     * @return BelongsTo<EmailMessage, $this>
+     */
     public function message(): BelongsTo
     {
         return $this->belongsTo(EmailMessage::class);

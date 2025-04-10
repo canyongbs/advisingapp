@@ -42,11 +42,17 @@ use Illuminate\Support\Facades\DB;
 return new class () extends Migration {
     use CanModifyPermissions;
 
+    /**
+     * @var array<string> $permissions
+     */
     private array $permissions = [
         'student.tags.manage' => 'Tags',
         'prospect.tags.manage' => 'Tags',
     ];
 
+    /**
+     * @var array<string> $guards
+     */
     private array $guards = [
         'web',
         'api',

@@ -53,7 +53,7 @@ class EducatableAlertsWidget extends Widget
     public Educatable&Model $educatable;
 
     #[Locked]
-    public string $manageUrl;
+    public string $resource;
 
     public static function canView(): bool
     {
@@ -79,8 +79,16 @@ class EducatableAlertsWidget extends Widget
 
         return collect(AlertSeverity::cases())
             ->reverse()
-            ->mapWithKeys(fn (AlertSeverity $alertSeverity): array => [$alertSeverity->getLabel() => $counts[$alertSeverity->value] ?? 0])
+            ->mapWithKeys(fn (AlertSeverity $alertSeverity): array => [$alertSeverity->value => $counts[$alertSeverity->value] ?? 0])
             ->filter()
             ->all();
+    }
+
+    /**
+     * @param array<string, mixed> $filters
+    */
+    protected function getAlertsUrl(array $filters = []): string
+    {
+        return $this->resource::getUrl('alerts', ['record' => $this->educatable, 'tableFilters' => $filters]);
     }
 }

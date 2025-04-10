@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Models;
 
+use AdvisingApp\StudentDataModel\Database\Factories\ProgramFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -48,7 +49,10 @@ use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 class Program extends Model
 {
     use SoftDeletes;
+
+    /** @use HasFactory<ProgramFactory> */
     use HasFactory;
+
     use UsesTenantConnection;
 
     protected $table = 'programs';
@@ -90,6 +94,9 @@ class Program extends Model
         'conferred_dt' => 'datetime',
     ];
 
+    /**
+     * @return BelongsTo<Student, $this>
+     */
     public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class, 'sisid', 'sisid');

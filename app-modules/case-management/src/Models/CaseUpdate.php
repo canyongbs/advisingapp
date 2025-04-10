@@ -80,6 +80,9 @@ class CaseUpdate extends BaseModel implements Auditable, CanTriggerAutoSubscript
         return 'case_updates';
     }
 
+    /**
+     * @return BelongsTo<CaseModel, $this>
+     */
     public function case(): BelongsTo
     {
         return $this->belongsTo(CaseModel::class, 'case_model_id', 'id');

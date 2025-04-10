@@ -67,21 +67,33 @@ class Prompt extends BaseModel
 
     protected ?bool $isUpvoted = null;
 
+    /**
+     * @return BelongsTo<PromptType, $this>
+     */
     public function type(): BelongsTo
     {
         return $this->belongsTo(PromptType::class);
     }
 
+    /**
+     * @return HasMany<PromptUpvote, $this>
+     */
     public function upvotes(): HasMany
     {
         return $this->hasMany(PromptUpvote::class);
     }
 
+    /**
+     * @return HasMany<PromptUse, $this>
+     */
     public function uses(): HasMany
     {
         return $this->hasMany(PromptUse::class);
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

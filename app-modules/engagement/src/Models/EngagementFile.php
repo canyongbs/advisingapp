@@ -94,6 +94,9 @@ class EngagementFile extends BaseModel implements HasMedia, Auditable
             ]);
     }
 
+    /**
+     * @return MorphToMany<Student, $this>
+     */
     public function students(): MorphToMany
     {
         return $this->morphedByMany(
@@ -108,6 +111,9 @@ class EngagementFile extends BaseModel implements HasMedia, Auditable
             ->withTimestamps();
     }
 
+    /**
+     * @return MorphToMany<Prospect, $this>
+     */
     public function prospects(): MorphToMany
     {
         return $this->morphedByMany(

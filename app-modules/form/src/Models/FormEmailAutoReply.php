@@ -64,6 +64,9 @@ class FormEmailAutoReply extends BaseModel implements HasMedia
         'is_enabled' => 'boolean',
     ];
 
+    /**
+     * @return BelongsTo<Form, $this>
+     */
     public function form(): BelongsTo
     {
         return $this->belongsTo(Form::class);

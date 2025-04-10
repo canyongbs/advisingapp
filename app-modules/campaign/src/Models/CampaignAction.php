@@ -71,6 +71,9 @@ class CampaignAction extends BaseModel implements Auditable, HasMedia
         'execute_at' => 'datetime',
     ];
 
+    /**
+     * @return BelongsTo<Campaign, $this>
+     */
     public function campaign(): BelongsTo
     {
         return $this->belongsTo(Campaign::class);

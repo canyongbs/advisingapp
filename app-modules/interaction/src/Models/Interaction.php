@@ -104,6 +104,9 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
         'is_confidential' => 'boolean',
     ];
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -138,36 +141,57 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
         return $forModel->orderedInteractions()->get();
     }
 
+    /**
+     * @return BelongsTo<InteractionInitiative, $this>
+     */
     public function initiative(): BelongsTo
     {
         return $this->belongsTo(InteractionInitiative::class, 'interaction_initiative_id');
     }
 
+    /**
+     * @return BelongsTo<InteractionDriver, $this>
+     */
     public function driver(): BelongsTo
     {
         return $this->belongsTo(InteractionDriver::class, 'interaction_driver_id');
     }
 
+    /**
+     * @return BelongsTo<Division, $this>
+     */
     public function division(): BelongsTo
     {
         return $this->belongsTo(Division::class, 'division_id');
     }
 
+    /**
+     * @return BelongsTo<InteractionOutcome, $this>
+     */
     public function outcome(): BelongsTo
     {
         return $this->belongsTo(InteractionOutcome::class, 'interaction_outcome_id');
     }
 
+    /**
+     * @return BelongsTo<InteractionRelation, $this>
+     */
     public function relation(): BelongsTo
     {
         return $this->belongsTo(InteractionRelation::class, 'interaction_relation_id');
     }
 
+    /**
+     * @return BelongsTo<InteractionStatus, $this>
+     */
     public function status(): BelongsTo
     {
         return $this->belongsTo(InteractionStatus::class, 'interaction_status_id');
     }
 
+    /**
+     * @return BelongsTo<InteractionType, $this>
+     */
     public function type(): BelongsTo
     {
         return $this->belongsTo(InteractionType::class, 'interaction_type_id');
@@ -205,6 +229,9 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
         // Do we need to be able to relate campaigns/actions to the RESULT of their actions?
     }
 
+    /**
+     * @return BelongsToMany<User, $this>
+     */
     public function confidentialAccessUsers(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'interaction_confidential_users')
@@ -212,6 +239,9 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
             ->withTimestamps();
     }
 
+    /**
+     * @return BelongsToMany<Team, $this>
+     */
     public function confidentialAccessTeams(): BelongsToMany
     {
         return $this->belongsToMany(Team::class, 'interaction_confidential_teams')

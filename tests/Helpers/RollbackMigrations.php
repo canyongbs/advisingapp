@@ -40,7 +40,7 @@ use Exception;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 
-function rollbackToBefore(string $migrationToRollbackTo)
+function rollbackToBefore(string $migrationToRollbackTo): void
 {
     if (app()->environment('production')) {
         throw new Exception('This cannot safely be run in production environments.');

@@ -78,6 +78,9 @@ class SmsMessage extends BaseModel implements Message
         );
     }
 
+    /**
+     * @return HasMany<SmsMessageEvent, $this>
+     */
     public function events(): HasMany
     {
         return $this->hasMany(SmsMessageEvent::class);

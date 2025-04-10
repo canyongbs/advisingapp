@@ -48,12 +48,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class EventRegistrationFormAuthentication extends SubmissibleAuthentication
 {
+    /**
+     * @return BelongsTo<EventRegistrationForm, $this>
+     */
     public function submissible(): BelongsTo
     {
         return $this
             ->belongsTo(EventRegistrationForm::class, 'form_id');
     }
 
+    /**
+     * @return BelongsTo<EventAttendee, $this>
+     */
     public function author(): BelongsTo
     {
         return $this->belongsTo(EventAttendee::class, 'event_attendee_id');

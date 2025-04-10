@@ -41,7 +41,7 @@ use AdvisingApp\Prospect\Models\PipelineStage;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends PipelineStage>
+ * @extends Factory<PipelineStage>
  */
 class PipelineStageFactory extends Factory
 {
@@ -55,7 +55,6 @@ class PipelineStageFactory extends Factory
         return [
             'name' => fake()->word(),
             'pipeline_id' => Pipeline::factory(),
-            'is_default' => fake()->boolean(),
             'order' => fake()->numberBetween(1, 5),
         ];
     }

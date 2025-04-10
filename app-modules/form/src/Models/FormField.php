@@ -60,18 +60,27 @@ class FormField extends SubmissibleField
         'is_required' => 'bool',
     ];
 
+    /**
+     * @return BelongsTo<Form, $this>
+     */
     public function submissible(): BelongsTo
     {
         return $this
             ->belongsTo(Form::class, 'form_id');
     }
 
+    /**
+     * @return BelongsTo<FormStep, $this>
+     */
     public function step(): BelongsTo
     {
         return $this
             ->belongsTo(FormStep::class, 'step_id');
     }
 
+    /**
+     * @return BelongsToMany<FormSubmission, $this>
+     */
     public function submissions(): BelongsToMany
     {
         return $this->belongsToMany(

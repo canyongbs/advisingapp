@@ -41,6 +41,9 @@ use Illuminate\Support\Facades\DB;
 return new class () extends Migration {
     use CanModifyPermissions;
 
+    /**
+     * @var array<string> $permissions
+     */
     private array $permissions = [
         'caseload.view-any' => 'Caseload',
         'caseload.create' => 'Caseload',
@@ -58,6 +61,9 @@ return new class () extends Migration {
         'caseload_subject.*.force-delete' => 'Caseload Subject',
     ];
 
+    /**
+     * @var array<string> $guards
+     */
     private array $guards = [
         'web',
         'api',

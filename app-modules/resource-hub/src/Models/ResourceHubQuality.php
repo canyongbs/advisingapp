@@ -62,6 +62,9 @@ class ResourceHubQuality extends BaseModel implements Auditable
         return 'resource_hub_qualities';
     }
 
+    /**
+     * @return HasMany<ResourceHubArticle, $this>
+     */
     public function resourceHubArticles(): HasMany
     {
         return $this->hasMany(ResourceHubArticle::class, 'quality_id');

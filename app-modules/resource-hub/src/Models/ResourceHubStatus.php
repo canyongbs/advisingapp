@@ -62,6 +62,9 @@ class ResourceHubStatus extends BaseModel implements Auditable
         return 'resource_hub_statuses';
     }
 
+    /**
+     * @return HasMany<ResourceHubArticle, $this>
+     */
     public function resourceHubArticles(): HasMany
     {
         return $this->hasMany(ResourceHubArticle::class, 'status_id');

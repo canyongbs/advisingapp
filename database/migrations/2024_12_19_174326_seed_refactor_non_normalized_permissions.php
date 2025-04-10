@@ -36,16 +36,23 @@
 
 use Database\Migrations\Concerns\CanModifyPermissions;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
 return new class () extends Migration {
     use CanModifyPermissions;
 
+    /**
+     * @var array<string> $permissionsToCreate
+     */
     private array $permissionsToCreate = [
         'assistant.*.view' => 'Assistant',
         'realtime_chat.*.view' => 'Realtime Chat',
     ];
 
+    /**
+     * @var array<string> $permissionsToDelete
+     */
     private array $permissionsToDelete = [
         'campaign.view_campaign_settings' => 'Campaign',
         'engagement.view_message_center' => 'Engagement',
@@ -81,6 +88,9 @@ return new class () extends Migration {
         'prospect.tags.manage' => 'Prospect',
     ];
 
+    /**
+     * @var array<string> $permissionsToRename
+     */
     private array $permissionsToRename = [
         'ai_assistant.*.delete' => 'assistant_custom.*.delete',
         'ai_assistant.*.force-delete' => 'assistant_custom.*.force-delete',
@@ -93,11 +103,17 @@ return new class () extends Migration {
         'in-app-communication.realtime-chat.access' => 'realtime_chat.view-any',
     ];
 
+    /**
+     * @var array<string> $permissionGroupsToRename
+     */
     private array $permissionGroupsToRename = [
         'Ai Assistant' => 'Assistant Custom',
         'In-App Communication' => 'Realtime Chat',
     ];
 
+    /**
+     * @var array<string> $guards
+     */
     private array $guards = [
         'web',
         'api',

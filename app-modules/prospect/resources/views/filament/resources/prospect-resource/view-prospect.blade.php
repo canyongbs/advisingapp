@@ -77,14 +77,14 @@
                 @if (EducatableAlertsWidget::canView())
                     @livewire(EducatableAlertsWidget::class, [
                         'educatable' => $this->getRecord(),
-                        'manageUrl' => ProspectResource::getUrl('manage-alerts', ['record' => $this->getRecord()]),
+                        'resource' => ProspectResource::class,
                     ])
                 @endif
 
                 @if (EducatableTasksWidget::canView())
                     @livewire(EducatableTasksWidget::class, [
                         'educatable' => $this->getRecord(),
-                        'manageUrl' => ProspectResource::getUrl('manage-tasks', ['record' => $this->getRecord()]),
+                        'resource' => ProspectResource::class,
                     ])
                 @endif
             </div>
@@ -116,4 +116,28 @@
             />
         </div>
     </div>
+
+    @script
+        <script>
+            Livewire.hook('request', ({
+                fail
+            }) => {
+                fail(({
+                    status,
+                    content,
+                    preventDefault
+                }) => {
+                    preventDefault();
+
+                    new FilamentNotification()
+                        .title('Error while loading page')
+                        .body(
+                            'There was an error rendering some information on the holistic prospect profile page. We are tracking this error on the back end and will work on getting this fixed.'
+                        )
+                        .danger()
+                        .send()
+                })
+            })
+        </script>
+    @endscript
 </x-filament-panels::page>

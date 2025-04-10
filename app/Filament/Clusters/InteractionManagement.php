@@ -43,6 +43,7 @@ use AdvisingApp\Interaction\Filament\Resources\InteractionRelationResource;
 use AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource;
 use AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource;
 use Filament\Clusters\Cluster;
+use Filament\Resources\Resource;
 
 class InteractionManagement extends Cluster
 {
@@ -50,6 +51,9 @@ class InteractionManagement extends Cluster
 
     protected static ?int $navigationSort = 90;
 
+    /**
+     * @var array<class-string<Resource>>
+     */
     protected array $children = [
         InteractionDriverResource::class,
         InteractionInitiativeResource::class,

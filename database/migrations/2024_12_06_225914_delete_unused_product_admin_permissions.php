@@ -36,10 +36,15 @@
 
 use Database\Migrations\Concerns\CanModifyPermissions;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 
 return new class () extends Migration {
     use CanModifyPermissions;
 
+    /**
+     * @var array<string> $permissions
+     */
     private array $permissions = [
         'ai.access_integrated_assistant_settings' => 'Integrated Assistant',
         'application_submission_state.*.delete' => 'Application Submission State',
@@ -249,6 +254,9 @@ return new class () extends Migration {
         'student_record_manager.view-any' => 'Student Record Manager',
     ];
 
+    /**
+     * @var array<string> $guards
+     */
     private array $guards = [
         'web',
         'api',

@@ -58,6 +58,9 @@ class NotificationSettingPivot extends MorphPivot
         'related_to_type',
     ];
 
+    /**
+     * @return BelongsTo<NotificationSetting, $this>
+     */
     public function setting(): BelongsTo
     {
         return $this->belongsTo(NotificationSetting::class, 'notification_setting_id');

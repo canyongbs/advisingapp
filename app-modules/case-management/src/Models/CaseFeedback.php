@@ -67,6 +67,9 @@ class CaseFeedback extends BaseModel
         );
     }
 
+    /**
+     * @return BelongsTo<CaseModel, $this>
+     */
     public function case(): BelongsTo
     {
         return $this->belongsTo(CaseModel::class, 'case_id', 'id');

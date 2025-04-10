@@ -65,16 +65,25 @@ class EventAttendee extends BaseModel implements CanBeNotified
         'status' => EventAttendeeStatus::class,
     ];
 
+    /**
+     * @return BelongsTo<Event, $this>
+     */
     public function event(): BelongsTo
     {
         return $this->belongsTo(Event::class, 'event_id');
     }
 
+    /**
+     * @return HasMany<EventRegistrationFormSubmission, $this>
+     */
     public function submissions(): HasMany
     {
         return $this->hasMany(EventRegistrationFormSubmission::class, 'event_attendee_id');
     }
 
+    /**
+     * @return BelongsToMany<Prospect, $this>
+     */
     public function prospects(): BelongsToMany
     {
         return $this->belongsToMany(
@@ -86,6 +95,9 @@ class EventAttendee extends BaseModel implements CanBeNotified
         );
     }
 
+    /**
+     * @return BelongsToMany<Student, $this>
+     */
     public function students(): BelongsToMany
     {
         return $this->belongsToMany(

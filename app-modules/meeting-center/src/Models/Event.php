@@ -67,11 +67,17 @@ class Event extends BaseModel
         'ends_at' => 'datetime',
     ];
 
+    /**
+     * @return HasOne<EventRegistrationForm, $this>
+     */
     public function eventRegistrationForm(): HasOne
     {
         return $this->hasOne(EventRegistrationForm::class, 'event_id');
     }
 
+    /**
+     * @return HasMany<EventAttendee, $this>
+     */
     public function attendees(): HasMany
     {
         return $this->hasMany(EventAttendee::class, 'event_id');
