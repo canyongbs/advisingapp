@@ -48,13 +48,13 @@
         <div class="flex flex-col pb-3">
             <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Users to be assigned to the care team</dt>
             @foreach (collect($action['careTeam']) as $careTeam)
-              <dd class="text-sm font-semibold">
-                @if (CareTeamRoleFeature::active() && filled($careTeam['care_team_role_id']))
-                  {{ User::find($careTeam['user_id'])?->name . " - " . CareTeamRole::find($careTeam['care_team_role_id'])?->name }}
-                @else
-                  {{ User::find($careTeam['user_id'])?->name }}
-                @endif
-            </dd>
+                <dd class="text-sm font-semibold">
+                    @if (CareTeamRoleFeature::active() && filled($careTeam['care_team_role_id']))
+                        {{ User::find($careTeam['user_id'])?->name . ' - ' . CareTeamRole::find($careTeam['care_team_role_id'])?->name }}
+                    @else
+                        {{ User::find($careTeam['user_id'])?->name }}
+                    @endif
+                </dd>
             @endforeach
         </div>
         <div class="flex flex-col pb-3">
