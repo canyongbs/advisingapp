@@ -34,44 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\CareTeam\Models\CareTeam;
-use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
-use App\Enums\CareTeamRoleType;
-use App\Models\User;
-use Filament\Widgets\Widget;
-use Illuminate\Database\Eloquent\Model;
-use Livewire\Attributes\Locked;
-
-class EducatableCareTeamWidget extends Widget
-{
-    protected static string $view = 'student-data-model::filament.resources.educatable-resource.widgets.educatable-care-team-widget';
-
-    #[Locked]
-    public Educatable&Model $educatable;
-
-    #[Locked]
-    public string $manageUrl;
-
-    public static function canView(): bool
+return new class () extends Migration {
+    public function up(): void
     {
-        return auth()->user()->can('viewAny', CareTeam::class);
+        Schema::table('care_teams', function (Blueprint $table) {
+            $table->foreignUuid('care_team_role_id')->nullable()->constrained()->nullOnDelete();
+        });
     }
 
-    protected function getCareTeam(): array
+    public function down(): void
     {
-        return $this->educatable->careTeam()
-            ->orderBy('care_teams.created_at')
-            ->get()
-            ->map(function (User $user) {
-                match ($this->educatable->getLabel()) {
-                    CareTeamRoleType::Prospect->value => $user->careTeamRole = $user->getCareTeamRoleFor($this->educatable->id),
-                    CareTeamRoleType::Student->value => $user->careTeamRole = $user->getCareTeamRoleFor($this->educatable->sisid),
-                };
-
-                return $user;
-            })
-            ->all();
+        Schema::table('care_teams', function (Blueprint $table) {
+            $table->dropForeign('care_team_role_id');
+            $table->dropColumn('care_team_role_id');
+        });
     }
-}
+};

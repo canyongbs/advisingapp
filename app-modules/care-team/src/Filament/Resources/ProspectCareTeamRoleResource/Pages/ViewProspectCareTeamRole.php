@@ -34,44 +34,42 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets;
+namespace AdvisingApp\CareTeam\Filament\Resources\ProspectCareTeamRoleResource\Pages;
 
-use AdvisingApp\CareTeam\Models\CareTeam;
-use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
-use App\Enums\CareTeamRoleType;
-use App\Models\User;
-use Filament\Widgets\Widget;
-use Illuminate\Database\Eloquent\Model;
-use Livewire\Attributes\Locked;
+use AdvisingApp\CareTeam\Filament\Resources\ProspectCareTeamRoleResource;
+use Filament\Actions\EditAction;
+use Filament\Infolists\Components\Grid;
+use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Pages\ViewRecord;
 
-class EducatableCareTeamWidget extends Widget
+class ViewProspectCareTeamRole extends ViewRecord
 {
-    protected static string $view = 'student-data-model::filament.resources.educatable-resource.widgets.educatable-care-team-widget';
+    protected static string $resource = ProspectCareTeamRoleResource::class;
 
-    #[Locked]
-    public Educatable&Model $educatable;
-
-    #[Locked]
-    public string $manageUrl;
-
-    public static function canView(): bool
+    public function infolist(Infolist $infolist): Infolist
     {
-        return auth()->user()->can('viewAny', CareTeam::class);
+        return $infolist
+            ->schema([
+                Section::make()
+                    ->schema([
+                        Grid::make()
+                            ->schema([
+                                TextEntry::make('name'),
+                                IconEntry::make('is_default')
+                                    ->label('Default'),
+                            ]),
+                    ])
+                    ->columns(),
+            ]);
     }
 
-    protected function getCareTeam(): array
+    protected function getHeaderActions(): array
     {
-        return $this->educatable->careTeam()
-            ->orderBy('care_teams.created_at')
-            ->get()
-            ->map(function (User $user) {
-                match ($this->educatable->getLabel()) {
-                    CareTeamRoleType::Prospect->value => $user->careTeamRole = $user->getCareTeamRoleFor($this->educatable->id),
-                    CareTeamRoleType::Student->value => $user->careTeamRole = $user->getCareTeamRoleFor($this->educatable->sisid),
-                };
-
-                return $user;
-            })
-            ->all();
+        return [
+            EditAction::make(),
+        ];
     }
 }

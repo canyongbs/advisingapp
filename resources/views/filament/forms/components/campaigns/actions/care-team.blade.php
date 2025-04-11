@@ -33,8 +33,10 @@
 --}}
 @php
     use Carbon\Carbon;
+    use App\Features\CareTeamRoleFeature;
     use App\Models\User;
     use AdvisingApp\Campaign\Settings\CampaignSettings;
+    use AdvisingApp\CareTeam\Models\CareTeamRole;
 @endphp
 
 <x-filament::fieldset>
@@ -45,9 +47,15 @@
     <dl class="max-w-md divide-y divide-gray-200 text-gray-900 dark:divide-gray-700 dark:text-white">
         <div class="flex flex-col pb-3">
             <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Users to be assigned to the care team</dt>
-            <dd class="text-sm font-semibold">
-                {{ collect($action['user_ids'])->map(fn(string $userId): User => User::findOrFail($userId))->implode('name', ', ') }}
-            </dd>
+            @foreach (collect($action['careTeam']) as $careTeam)
+                <dd class="text-sm font-semibold">
+                    @if (CareTeamRoleFeature::active() && filled($careTeam['care_team_role_id']))
+                        {{ User::find($careTeam['user_id'])?->name . ' - ' . CareTeamRole::find($careTeam['care_team_role_id'])?->name }}
+                    @else
+                        {{ User::find($careTeam['user_id'])?->name }}
+                    @endif
+                </dd>
+            @endforeach
         </div>
         <div class="flex flex-col pb-3">
             <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Remove all prior care team assignments</dt>

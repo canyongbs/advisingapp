@@ -34,44 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets;
+namespace AdvisingApp\CareTeam\Database\Factories;
 
-use AdvisingApp\CareTeam\Models\CareTeam;
-use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use App\Enums\CareTeamRoleType;
-use App\Models\User;
-use Filament\Widgets\Widget;
-use Illuminate\Database\Eloquent\Model;
-use Livewire\Attributes\Locked;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class EducatableCareTeamWidget extends Widget
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\CareTeam\Models\CareTeamRole>
+ */
+class CareTeamRoleFactory extends Factory
 {
-    protected static string $view = 'student-data-model::filament.resources.educatable-resource.widgets.educatable-care-team-widget';
-
-    #[Locked]
-    public Educatable&Model $educatable;
-
-    #[Locked]
-    public string $manageUrl;
-
-    public static function canView(): bool
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
-        return auth()->user()->can('viewAny', CareTeam::class);
-    }
-
-    protected function getCareTeam(): array
-    {
-        return $this->educatable->careTeam()
-            ->orderBy('care_teams.created_at')
-            ->get()
-            ->map(function (User $user) {
-                match ($this->educatable->getLabel()) {
-                    CareTeamRoleType::Prospect->value => $user->careTeamRole = $user->getCareTeamRoleFor($this->educatable->id),
-                    CareTeamRoleType::Student->value => $user->careTeamRole = $user->getCareTeamRoleFor($this->educatable->sisid),
-                };
-
-                return $user;
-            })
-            ->all();
+        return [
+            'name' => fake()->word(),
+            'type' => fake()->randomElement(CareTeamRoleType::cases())->value,
+            'is_default' => false,
+        ];
     }
 }

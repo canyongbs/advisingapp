@@ -34,40 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CareTeam\Filament\Actions;
+namespace App\Enums;
 
-use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
-use App\Models\User;
-use Filament\Tables\Actions\BulkAction;
-use Illuminate\Database\Eloquent\Collection;
+use AdvisingApp\CareTeam\Models\CareTeamRole;
+use Filament\Support\Contracts\HasLabel;
 
-class ToggleCareTeamBulkAction extends BulkAction
+enum CareTeamRoleType: string implements HasLabel
 {
-    protected function setUp(): void
+    case Student = 'student';
+    case Prospect = 'prospect';
+
+    public function getLabel(): string
     {
-        parent::setUp();
-
-        $this->icon('heroicon-s-user-group');
-
-        $this->action(function (Collection $records) {
-            return $records
-                ->each(function (Educatable $record) {
-                    /** @var User $user */
-                    $user = auth()->user();
-
-                    if ($record->careTeam()->where('user_id', $user->id)->exists()) {
-                        $record->careTeam()->detach($user);
-                    } else {
-                        $record->careTeam()->attach($user);
-                    }
-                });
-        });
-
-        $this->deselectRecordsAfterCompletion();
+        return $this->name;
     }
 
-    public static function getDefaultName(): ?string
+    public static function prospectDefault(): ?CareTeamRole
     {
-        return 'toggleCareTeam';
+        $careTeamRole = CareTeamRole::where('type', CareTeamRoleType::Prospect)->where('is_default', true)->first();
+
+        return $careTeamRole;
+    }
+
+    public static function studentDefault(): ?CareTeamRole
+    {
+        $careTeamRole = CareTeamRole::where('type', CareTeamRoleType::Student)->where('is_default', true)->first();
+
+        return $careTeamRole;
     }
 }

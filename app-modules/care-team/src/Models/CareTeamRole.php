@@ -34,44 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets;
+namespace AdvisingApp\CareTeam\Models;
 
-use AdvisingApp\CareTeam\Models\CareTeam;
-use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use App\Enums\CareTeamRoleType;
-use App\Models\User;
-use Filament\Widgets\Widget;
-use Illuminate\Database\Eloquent\Model;
-use Livewire\Attributes\Locked;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class EducatableCareTeamWidget extends Widget
+class CareTeamRole extends BaseModel implements Auditable
 {
-    protected static string $view = 'student-data-model::filament.resources.educatable-resource.widgets.educatable-care-team-widget';
+    use HasFactory;
+    use SoftDeletes;
+    use AuditableTrait;
+    use HasUuids;
 
-    #[Locked]
-    public Educatable&Model $educatable;
+    protected $fillable = [
+        'name',
+        'type',
+        'is_default',
+    ];
 
-    #[Locked]
-    public string $manageUrl;
+    protected $casts = [
+        'type' => CareTeamRoleType::class,
+        'is_default' => 'boolean',
+    ];
 
-    public static function canView(): bool
+    public function careTeams(): HasMany
     {
-        return auth()->user()->can('viewAny', CareTeam::class);
-    }
-
-    protected function getCareTeam(): array
-    {
-        return $this->educatable->careTeam()
-            ->orderBy('care_teams.created_at')
-            ->get()
-            ->map(function (User $user) {
-                match ($this->educatable->getLabel()) {
-                    CareTeamRoleType::Prospect->value => $user->careTeamRole = $user->getCareTeamRoleFor($this->educatable->id),
-                    CareTeamRoleType::Student->value => $user->careTeamRole = $user->getCareTeamRoleFor($this->educatable->sisid),
-                };
-
-                return $user;
-            })
-            ->all();
+        return $this->hasMany(CareTeam::class)
+            ->withPivot(['user_id', 'educatable_id']);
     }
 }

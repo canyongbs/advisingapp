@@ -316,7 +316,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             table: 'care_teams'
         )
             ->using(CareTeam::class)
-            ->withPivot('id')
+            ->withPivot(['id', 'care_team_role_id'])
             ->withTimestamps();
     }
 
@@ -328,7 +328,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             table: 'care_teams'
         )
             ->using(CareTeam::class)
-            ->withPivot('id')
+            ->withPivot(['id', 'care_team_role_id'])
             ->withTimestamps();
     }
 
@@ -338,6 +338,13 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function careTeams(): HasMany
     {
         return $this->hasMany(CareTeam::class);
+    }
+
+    public function getCareTeamRoleFor(string $educatableId): ?CareTeamRole
+    {
+        $careTeam = $this->careTeams->where('educatable_id', $educatableId)->first();
+
+        return CareTeamRole::where('id', $careTeam->care_team_role_id)->first();
     }
 
     public function permissionsFromRoles(): HasManyDeep

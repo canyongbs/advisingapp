@@ -34,44 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets;
+namespace App\Features;
 
-use AdvisingApp\CareTeam\Models\CareTeam;
-use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
-use App\Enums\CareTeamRoleType;
-use App\Models\User;
-use Filament\Widgets\Widget;
-use Illuminate\Database\Eloquent\Model;
-use Livewire\Attributes\Locked;
+use App\Support\AbstractFeatureFlag;
 
-class EducatableCareTeamWidget extends Widget
+class CareTeamRoleFeature extends AbstractFeatureFlag
 {
-    protected static string $view = 'student-data-model::filament.resources.educatable-resource.widgets.educatable-care-team-widget';
-
-    #[Locked]
-    public Educatable&Model $educatable;
-
-    #[Locked]
-    public string $manageUrl;
-
-    public static function canView(): bool
+    public function resolve(mixed $scope): mixed
     {
-        return auth()->user()->can('viewAny', CareTeam::class);
-    }
-
-    protected function getCareTeam(): array
-    {
-        return $this->educatable->careTeam()
-            ->orderBy('care_teams.created_at')
-            ->get()
-            ->map(function (User $user) {
-                match ($this->educatable->getLabel()) {
-                    CareTeamRoleType::Prospect->value => $user->careTeamRole = $user->getCareTeamRoleFor($this->educatable->id),
-                    CareTeamRoleType::Student->value => $user->careTeamRole = $user->getCareTeamRoleFor($this->educatable->sisid),
-                };
-
-                return $user;
-            })
-            ->all();
+        return false;
     }
 }
