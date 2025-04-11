@@ -91,7 +91,19 @@ class CareTeamBlock extends CampaignActionBlock
                         ->exists('users', 'id'),
                     Select::make('care_team_role_id')
                         ->label('Role')
-                        ->relationship('careTeamRole', 'name', fn (Builder $query) => $query->where('type', CareTeamRoleType::Student))
+                        ->relationship('careTeamRole', 'name', function (Builder $query, Get $get, $livewire, string $operation) {
+                            if ($operation === 'create') {
+                                $segment_id = $get('../../../../../segment_id');
+                            } else {
+                                $segment_id = $livewire->getOwnerRecord()->segment_id;
+                            }
+                            $segment = Segment::find($segment_id);
+                            
+                            $query->where('type', match ($segment->model->getLabel()) {
+                                CareTeamRoleType::Student->getLabel() => CareTeamRoleType::Student,
+                                CareTeamRoleType::Prospect->getLabel() => CareTeamRoleType::Prospect,
+                            })
+                        })
                         ->searchable()
                         ->default(function (Get $get, $livewire, string $operation) {
                             if ($operation === 'create') {
