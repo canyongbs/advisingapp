@@ -101,10 +101,12 @@ class ProspectProfileInfolist
                         Subsection::make([
                             IconEntry::make('sms_opt_out')
                                 ->label('SMS Opt Out')
-                                ->boolean(),
+                                ->boolean()
+                                ->placeholder('N/A'),
                             IconEntry::make('email_bounce')
                                 ->label('Email Bounce')
-                                ->boolean(),
+                                ->boolean()
+                                ->placeholder('N/A'),
                         ]),
                         Subsection::make([
                             TextEntry::make('createdBy.name')
