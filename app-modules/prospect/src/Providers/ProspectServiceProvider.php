@@ -38,6 +38,7 @@ namespace AdvisingApp\Prospect\Providers;
 
 use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
+use AdvisingApp\Prospect\Listeners\RegisterGraphQLDirectives;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectAddress;
 use AdvisingApp\Prospect\Models\ProspectEmailAddress;
@@ -48,7 +49,9 @@ use AdvisingApp\Prospect\ProspectPlugin;
 use App\Concerns\ImplementsGraphQL;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use Nuwave\Lighthouse\Events\RegisterDirectiveNamespaces;
 
 class ProspectServiceProvider extends ServiceProvider
 {
@@ -73,5 +76,10 @@ class ProspectServiceProvider extends ServiceProvider
         $this->discoverSchema(__DIR__ . '/../../graphql/*');
         $this->registerEnum(ProspectStatusColorOptions::class);
         $this->registerEnum(SystemProspectClassification::class);
+
+        Event::listen(
+            RegisterDirectiveNamespaces::class,
+            RegisterGraphQLDirectives::class,
+        );
     }
 }
