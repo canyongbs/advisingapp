@@ -65,7 +65,7 @@ class StudentCareTeamRoleResource extends Resource
     {
         /** @var User $user */
         $user = auth()->user();
-        
+
         return CareTeamRoleFeature::active() && $user->can(['product_admin.view-any']);
     }
 

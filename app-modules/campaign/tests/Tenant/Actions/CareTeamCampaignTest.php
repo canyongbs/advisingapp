@@ -75,7 +75,7 @@ it('will create the appropriate records for educatables in the segment', functio
     ]);
 
     $users = User::factory()->licensed(LicenseType::cases())->count(3)->create();
-    
+
     $careTeam = [];
 
     foreach ($users as $user) {
@@ -91,7 +91,7 @@ it('will create the appropriate records for educatables in the segment', functio
                 'remove_prior' => $removePrior,
             ],
         ]);
-    
+
     // Log::info('Prior educatable care team id to array');
     // Log::info($educatables->first()->careTeam->pluck('id')->toArray());
 

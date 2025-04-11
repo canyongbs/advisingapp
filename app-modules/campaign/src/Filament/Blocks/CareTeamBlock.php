@@ -98,7 +98,7 @@ class CareTeamBlock extends CampaignActionBlock
                                 $segment_id = $livewire->getOwnerRecord()->segment_id;
                             }
                             $segment = Segment::find($segment_id);
-                            
+
                             $query->where('type', match ($segment->model->getLabel()) {
                                 CareTeamRoleType::Student->getLabel() => CareTeamRoleType::Student,
                                 CareTeamRoleType::Prospect->getLabel() => CareTeamRoleType::Prospect,

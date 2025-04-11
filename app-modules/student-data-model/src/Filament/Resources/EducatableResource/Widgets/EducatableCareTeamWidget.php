@@ -38,7 +38,6 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Wid
 
 use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
-use App\Enums\CareTeamRoleType;
 use App\Models\User;
 use Filament\Widgets\Widget;
 use Illuminate\Database\Eloquent\Model;
