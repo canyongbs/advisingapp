@@ -63,7 +63,10 @@ class StudentCareTeamRoleResource extends Resource
 
     public static function canAccess(): bool
     {
-        return CareTeamRoleFeature::active();
+        /** @var User $user */
+        $user = auth()->user();
+        
+        return CareTeamRoleFeature::active() && $user->can(['product_admin.view-any']);
     }
 
     public static function getEloquentQuery(): Builder

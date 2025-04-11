@@ -65,10 +65,7 @@ class EducatableCareTeamWidget extends Widget
             ->orderBy('care_teams.created_at')
             ->get()
             ->map(function (User $user) {
-                match ($this->educatable->getLabel()) {
-                    CareTeamRoleType::Prospect->value => $user->careTeamRole = $user->getCareTeamRoleFor($this->educatable->id),
-                    CareTeamRoleType::Student->value => $user->careTeamRole = $user->getCareTeamRoleFor($this->educatable->sisid),
-                };
+                $user->careTeamRole = $user->getCareTeamRoleFor($this->educatable->getKey());
 
                 return $user;
             })

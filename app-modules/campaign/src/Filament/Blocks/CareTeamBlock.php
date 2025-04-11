@@ -102,7 +102,7 @@ class CareTeamBlock extends CampaignActionBlock
                             $query->where('type', match ($segment->model->getLabel()) {
                                 CareTeamRoleType::Student->getLabel() => CareTeamRoleType::Student,
                                 CareTeamRoleType::Prospect->getLabel() => CareTeamRoleType::Prospect,
-                            })
+                            });
                         })
                         ->searchable()
                         ->default(function (Get $get, $livewire, string $operation) {

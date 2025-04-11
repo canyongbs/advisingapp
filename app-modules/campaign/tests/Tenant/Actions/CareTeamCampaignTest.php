@@ -45,6 +45,7 @@ use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Log;
 
 it('will create the appropriate records for educatables in the segment', function (array $priorCareTeam, Collection $educatables, bool $removePrior) {
     $segment = Segment::factory()->create([
@@ -60,24 +61,59 @@ it('will create the appropriate records for educatables in the segment', functio
         $educatable->careTeam()->sync($priorCareTeam);
     });
 
+    // if($removePrior) {
+    //     foreach ($educatables as $educatable) {
+    //             Log::info('Expecting prior care team.');
+    //             Log::info('Educatable care team:');
+    //             Log::info($educatable->careTeam->pluck('name'));
+    //             Log::info('Execute campaign action.');
+    //     }
+    // }
+
     $campaign = Campaign::factory()->create([
         'segment_id' => $segment->id,
     ]);
 
     $users = User::factory()->licensed(LicenseType::cases())->count(3)->create();
+    
+    $careTeam = [];
+
+    foreach ($users as $user) {
+        $careTeam[] = ['user_id' => $user->id, 'care_team_role_id' => null];
+    }
 
     $action = CampaignAction::factory()
         ->for($campaign, 'campaign')
         ->create([
             'type' => CampaignActionType::CareTeam,
             'data' => [
-                'user_ids' => $users->pluck('id')->toArray(),
+                'careTeam' => $careTeam,
                 'remove_prior' => $removePrior,
             ],
         ]);
+    
+    // Log::info('Prior educatable care team id to array');
+    // Log::info($educatables->first()->careTeam->pluck('id')->toArray());
 
     // When that action runs
     $action->execute();
+
+    // if($removePrior) {
+    //         foreach ($educatables as $educatable) {
+    //             Log::info('Educatable care team:');
+    //             Log::info($educatable->careTeam());
+    //             Log::info('Users id:');
+    //             Log::info($users->pluck('name'));
+    //     }
+    // }
+
+    // Log::info($removePrior ? "remove prior true" : "remove prior false");
+    // Log::info('Educatable care team id to array');
+    // Log::info($educatables->first()->careTeam->pluck('id')->toArray());
+    // Log::info('Expected result:');
+    // Log::info($removePrior
+    // ? $users->pluck('id')->toArray()
+    // : [...$priorCareTeam, ...$users->pluck('id')->toArray()]);
 
     $educatables->each(
         fn (Educatable $educatable) => expect(
