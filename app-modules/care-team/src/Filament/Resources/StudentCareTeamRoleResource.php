@@ -44,6 +44,7 @@ use AdvisingApp\CareTeam\Models\CareTeamRole;
 use App\Enums\CareTeamRoleType;
 use App\Features\CareTeamRoleFeature;
 use App\Filament\Clusters\ConstituentManagement;
+use App\Models\User;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -69,6 +70,9 @@ class StudentCareTeamRoleResource extends Resource
         return CareTeamRoleFeature::active() && $user->can(['product_admin.view-any']);
     }
 
+    /**
+     * @return Builder<CareTeamRoleType>
+     */
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->where('type', CareTeamRoleType::Student);

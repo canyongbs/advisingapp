@@ -54,6 +54,7 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * @mixin IdeHelperCareTeam
+ * @property string $care_team_role_id
  */
 #[ObservedBy([CareTeamObserver::class])]
 class CareTeam extends MorphPivot implements ExecutableFromACampaignAction, CanTriggerAutoSubscription
@@ -64,16 +65,25 @@ class CareTeam extends MorphPivot implements ExecutableFromACampaignAction, CanT
 
     protected $table = 'care_teams';
 
+    /**
+     * @return BelongsTo<CareTeamRole, $this>
+     */
     public function careTeamRole(): BelongsTo
     {
         return $this->belongsTo(CareTeamRole::class, 'care_team_role_id', 'id');
     }
 
+    /**
+     * @return BelongsTo<CareTeamRole, $this>
+     */
     public function prospectCareTeamRole(): BelongsTo
     {
         return $this->careTeamRole()->where('type', CareTeamRoleType::Prospect);
     }
 
+    /**
+     * @return BelongsTo<CareTeamRole, $this>
+     */
     public function studentCareTeamRole(): BelongsTo
     {
         return $this->careTeamRole()->where('type', CareTeamRoleType::Student);

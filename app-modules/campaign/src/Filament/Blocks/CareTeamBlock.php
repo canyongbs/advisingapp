@@ -47,6 +47,7 @@ use App\Features\CareTeamRoleFeature;
 use App\Models\Scopes\HasLicense;
 use App\Models\User;
 use Carbon\CarbonImmutable;
+use Exception;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
@@ -84,6 +85,7 @@ class CareTeamBlock extends CampaignActionBlock
                             return User::query()->tap(new HasLicense(match ($segment->model->getLabel()) {
                                 CareTeamRoleType::Student->getLabel() => Student::getLicenseType(),
                                 CareTeamRoleType::Prospect->getLabel() => Prospect::getLicenseType(),
+                                default => null,
                             }))->pluck('name', 'id');
                         })
                         ->searchable()
@@ -102,6 +104,7 @@ class CareTeamBlock extends CampaignActionBlock
                             $query->where('type', match ($segment->model->getLabel()) {
                                 CareTeamRoleType::Student->getLabel() => CareTeamRoleType::Student,
                                 CareTeamRoleType::Prospect->getLabel() => CareTeamRoleType::Prospect,
+                                default => throw new Exception('The segment population was not of a type that can have a care team role associated with it.'),
                             });
                         })
                         ->searchable()
@@ -116,6 +119,7 @@ class CareTeamBlock extends CampaignActionBlock
                             return match ($segment->model->getLabel()) {
                                 CareTeamRoleType::Student->getLabel() => CareTeamRoleType::studentDefault()?->getKey(),
                                 CareTeamRoleType::Prospect->getLabel() => CareTeamRoleType::prospectDefault()?->getKey(),
+                                default => throw new Exception('The segment population was not of a type that can have a care team role associated with it.'),
                             };
                         })
                         ->model(CareTeam::class)
@@ -130,6 +134,7 @@ class CareTeamBlock extends CampaignActionBlock
                             return CareTeamRole::where('type', match ($segment->model->getLabel()) {
                                 CareTeamRoleType::Student->getLabel() => CareTeamRoleType::Student,
                                 CareTeamRoleType::Prospect->getLabel() => CareTeamRoleType::Prospect,
+                                default => throw new Exception('The segment population was not of a type that can have a care team role associated with it.'),
                             })->count() > 0 && CareTeamRoleFeature::active();
                         }),
                 ])

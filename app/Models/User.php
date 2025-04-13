@@ -99,6 +99,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 /**
  * @mixin IdeHelperUser
+ * @property CareTeamRole $careTeamRole
  */
 #[ObservedBy([UserObserver::class])]
 class User extends Authenticatable implements HasLocalePreference, FilamentUser, Auditable, HasMedia, HasAvatar, CanBeNotified, HasFilamentResource
@@ -343,6 +344,9 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
 
     public function getCareTeamRoleFor(string $educatableId): ?CareTeamRole
     {
+        /**
+         * @var CareTeam $careTeam
+         */
         $careTeam = $this->careTeams->where('educatable_id', $educatableId)->first();
 
         return CareTeamRole::where('id', $careTeam->care_team_role_id)->first();

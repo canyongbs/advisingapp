@@ -37,6 +37,7 @@
 namespace AdvisingApp\CareTeam\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\CareTeam\Database\Factories\CareTeamRoleFactory;
 use App\Enums\CareTeamRoleType;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -45,8 +46,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
+/**
+ * @property bool $is_default
+ */
 class CareTeamRole extends BaseModel implements Auditable
 {
+  /** @use HasFactory<CareTeamRoleFactory> */
     use HasFactory;
     use SoftDeletes;
     use AuditableTrait;
@@ -63,9 +68,11 @@ class CareTeamRole extends BaseModel implements Auditable
         'is_default' => 'boolean',
     ];
 
+    /**
+     * @return HasMany<CareTeam, $this>
+     */
     public function careTeams(): HasMany
     {
-        return $this->hasMany(CareTeam::class)
-            ->withPivot(['user_id', 'educatable_id']);
+        return $this->hasMany(CareTeam::class);
     }
 }
