@@ -103,7 +103,7 @@ class CareTeam extends MorphPivot implements ExecutableFromACampaignAction, CanT
                 ->segment
                 ->retrieveRecords()
                 ->each(function (Educatable $educatable) use ($action) {
-                    if($action->data['remove_prior']) {
+                    if ($action->data['remove_prior']) {
                         $educatable->careTeam()->detach();
                     }
 
