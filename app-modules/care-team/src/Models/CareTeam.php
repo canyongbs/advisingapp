@@ -54,6 +54,7 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * @mixin IdeHelperCareTeam
+ *
  * @property string $care_team_role_id
  */
 #[ObservedBy([CareTeamObserver::class])]

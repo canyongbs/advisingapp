@@ -99,6 +99,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 /**
  * @mixin IdeHelperUser
+ *
  * @property CareTeamRole $careTeamRole
  */
 #[ObservedBy([UserObserver::class])]
