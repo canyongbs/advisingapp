@@ -38,6 +38,7 @@ namespace AdvisingApp\Engagement\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Engagement\Actions\GenerateEngagementBodyContent;
+use AdvisingApp\Engagement\Actions\GenerateEngagementSubjectContent;
 use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
 use AdvisingApp\Engagement\Observers\EngagementObserver;
 use AdvisingApp\Notification\Enums\NotificationChannel;
@@ -99,6 +100,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     ];
 
     protected $casts = [
+        'subject' => 'array',
         'body' => 'array',
         'scheduled_at' => 'datetime',
         'dispatched_at' => 'datetime',
@@ -224,9 +226,24 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         );
     }
 
+    public function getSubject(): string
+    {
+        return app(GenerateEngagementSubjectContent::class)(
+            $this->subject,
+            $this->getMergeData(),
+            $this->batch ?? $this,
+            'subject',
+        );
+    }
+
     public function getBodyMarkdown(): string
     {
         return stripslashes((new HtmlConverter())->convert($this->getBody()));
+    }
+
+    public function getSubjectMarkdown(): string
+    {
+        return stripslashes((new HtmlConverter())->convert($this->getSubject()));
     }
 
     public function getMergeData(): array

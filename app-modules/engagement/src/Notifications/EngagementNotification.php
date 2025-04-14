@@ -81,7 +81,7 @@ class EngagementNotification extends Notification implements ShouldQueue, HasBef
     {
         return MailMessage::make()
             ->to($this->engagement->recipient_route)
-            ->subject($this->engagement->subject)
+            ->subject($this->engagement->getSubject())
             ->greeting("Hello {$this->engagement->recipient->display_name}!")
             ->content($this->engagement->getBody());
     }

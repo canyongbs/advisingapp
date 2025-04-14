@@ -15,11 +15,11 @@ return new class () extends Migration {
     public function down(): void
     {
         Schema::table('engagements', function (Blueprint $table) {
-            $table->string('subject')->change();
+            $table->text('subject')->change();
         });
 
         Schema::table('engagement_batches', function (Blueprint $table) {
-            $table->string('subject')->change();
+            $table->text('subject')->change();
         });
     }
 };
