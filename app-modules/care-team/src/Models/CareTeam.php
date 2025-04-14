@@ -53,9 +53,9 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\DB;
 
 /**
- * @mixin IdeHelperCareTeam
- *
  * @property string $care_team_role_id
+ *
+ * @mixin IdeHelperCareTeam
  */
 #[ObservedBy([CareTeamObserver::class])]
 class CareTeam extends MorphPivot implements ExecutableFromACampaignAction, CanTriggerAutoSubscription

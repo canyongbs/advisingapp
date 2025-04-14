@@ -48,12 +48,13 @@ use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @property bool $is_default
+ *
+ * @mixin IdeHelperCareTeamRole
  */
 class CareTeamRole extends BaseModel implements Auditable
 {
     /** @use HasFactory<CareTeamRoleFactory> */
     use HasFactory;
-
     use SoftDeletes;
     use AuditableTrait;
     use HasUuids;

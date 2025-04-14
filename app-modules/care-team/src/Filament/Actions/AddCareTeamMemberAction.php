@@ -45,10 +45,12 @@ use App\Enums\CareTeamRoleType;
 use App\Features\CareTeamRoleFeature;
 use App\Models\Scopes\HasLicense;
 use App\Models\User;
+use Exception;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 class AddCareTeamMemberAction
 {
@@ -88,7 +90,9 @@ class AddCareTeamMemberAction
             ])
             ->action(function (Collection $records, array $data) {
                 return $records
-                    ->each(function (Educatable $record) use ($data) {
+                    ->each(function (Model $record) use ($data) {
+                        throw_unless($record instanceof Educatable, new Exception('Record must be of type educatable.'));
+                        
                         /** @var User $user */
                         $user = User::find($data['recordId']);
 

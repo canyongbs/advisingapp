@@ -71,7 +71,7 @@ class ProspectCareTeamRoleResource extends Resource
     }
 
     /**
-     * @return Builder<CareTeamRoleType>
+     * @return Builder<CareTeamRole>
      */
     public static function getEloquentQuery(): Builder
     {

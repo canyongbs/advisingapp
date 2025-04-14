@@ -98,9 +98,9 @@ use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 /**
- * @mixin IdeHelperUser
- *
  * @property CareTeamRole $careTeamRole
+ *
+ * @mixin IdeHelperUser
  */
 #[ObservedBy([UserObserver::class])]
 class User extends Authenticatable implements HasLocalePreference, FilamentUser, Auditable, HasMedia, HasAvatar, CanBeNotified, HasFilamentResource
