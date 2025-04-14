@@ -47,6 +47,7 @@ use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
+use App\Features\RefactorEngagementCampaignSubjectToJsonb;
 use App\Features\RoutedEngagements;
 use Filament\Actions\StaticAction;
 use Filament\Forms\Components\Actions;
@@ -145,7 +146,31 @@ class RelationManagerSendEngagementAction extends CreateAction
                             ->required()
                             ->placeholder(__('Subject'))
                             ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->visible(! RefactorEngagementCampaignSubjectToJsonb::active()),
+                        TiptapEditor::make('subject')
+                            ->label('Subject')
+                            ->mergeTags([
+                                'student first name',
+                                'student last name',
+                                'student full name',
+                                'student email',
+                                'student preferred name',
+                                'user first name',
+                                'user full name',
+                                'user job title',
+                                'user email',
+                                'user phone number',
+                            ])
+                            ->showMergeTagsInBlocksPanel(false)
+                            ->helperText('You may use “merge tags” to substitute information about a user into your subject line. Insert a “{{“ in the subject line field to see a list of available merge tags')
+                            // ->helperText('You may use “merge tags” to substitute information about a service request into your subject line. Insert a “{{“ in the subject line field to see a list of available merge tags')
+                            ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
+                            ->profile('sms')
+                            ->rules(['required'])
+                            ->placeholder('Enter the email subject here...')
+                            ->columnSpanFull()
+                            ->visible(RefactorEngagementCampaignSubjectToJsonb::active()),
                         TiptapEditor::make('body')
                             ->disk('s3-public')
                             ->label('Body')
@@ -255,6 +280,11 @@ class RelationManagerSendEngagementAction extends CreateAction
             ]))
             ->action(function (array $data, Form $form, RelationManager $livewire) {
                 $recipient = $livewire->getOwnerRecord();
+
+                $data['subject'] ??= ['type' => 'doc', 'content' => []];
+                $data['subject']['content'] = [
+                    ...($data['subject']['content'] ?? []),
+                ];
 
                 $data['body'] ??= ['type' => 'doc', 'content' => []];
                 $data['body']['content'] = [
