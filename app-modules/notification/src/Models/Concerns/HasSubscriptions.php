@@ -41,6 +41,9 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 trait HasSubscriptions
 {
+    /**
+     * @return MorphMany<Subscription, $this>
+     */
     public function subscriptions(): MorphMany
     {
         return $this->morphMany(Subscription::class, 'subscribable');

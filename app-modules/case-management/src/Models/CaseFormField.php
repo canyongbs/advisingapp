@@ -65,11 +65,17 @@ class CaseFormField extends SubmissibleField
         return 'case_form_fields';
     }
 
+    /**
+     * @return BelongsTo<CaseForm, $this>
+     */
     public function submissible(): BelongsTo
     {
         return $this->belongsTo(CaseForm::class, 'case_form_id');
     }
 
+    /**
+     * @return BelongsTo<CaseForm, $this>
+     */
     public function step(): BelongsTo
     {
         return $this->belongsTo(CaseForm::class, 'case_form_step_id');

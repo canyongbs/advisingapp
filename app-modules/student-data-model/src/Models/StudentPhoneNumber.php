@@ -66,6 +66,9 @@ class StudentPhoneNumber extends BaseModel implements Auditable
         'can_receive_sms' => 'boolean',
     ];
 
+    /**
+     * @return BelongsTo<Student, $this>
+     */
     public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class, 'sisid', 'sisid');

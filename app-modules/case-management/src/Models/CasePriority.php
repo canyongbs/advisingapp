@@ -65,16 +65,25 @@ class CasePriority extends BaseModel implements Auditable
         return 'case_priorities';
     }
 
+    /**
+     * @return HasMany<CaseModel, $this>
+     */
     public function cases(): HasMany
     {
         return $this->hasMany(CaseModel::class, 'priority_id');
     }
 
+    /**
+     * @return BelongsTo<CaseType, $this>
+     */
     public function type(): BelongsTo
     {
         return $this->belongsTo(CaseType::class, 'type_id');
     }
 
+    /**
+     * @return BelongsTo<Sla, $this>
+     */
     public function sla(): BelongsTo
     {
         return $this->belongsTo(Sla::class);

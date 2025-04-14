@@ -46,6 +46,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[NoPermissions]
 class SurveyAuthentication extends SubmissibleAuthentication
 {
+    /**
+     * @return BelongsTo<Survey, $this>
+     */
     public function submissible(): BelongsTo
     {
         return $this

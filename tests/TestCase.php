@@ -144,7 +144,7 @@ abstract class TestCase extends BaseTestCase
         });
     }
 
-    protected function beginDatabaseTransactionOnConnection(string $name)
+    protected function beginDatabaseTransactionOnConnection(string $name): void
     {
         $database = $this->app->make('db');
 

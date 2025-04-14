@@ -129,9 +129,11 @@ class ProspectsTable
                             ),
                         BooleanConstraint::make('sms_opt_out')
                             ->label('SMS Opt Out')
-                            ->icon('heroicon-m-chat-bubble-bottom-center'),
+                            ->icon('heroicon-m-chat-bubble-bottom-center')
+                            ->nullable(),
                         BooleanConstraint::make('email_bounce')
-                            ->icon('heroicon-m-arrow-uturn-left'),
+                            ->icon('heroicon-m-arrow-uturn-left')
+                            ->nullable(),
                         TextConstraint::make('hsgrad')
                             ->label('HS Grad')
                             ->icon('heroicon-m-academic-cap'),

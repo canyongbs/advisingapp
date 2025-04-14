@@ -78,16 +78,25 @@ class CaseAssignment extends BaseModel implements Auditable, CanTriggerAutoSubsc
         return 'case_assignments';
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function assignedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assigned_by_id');
     }
 
+    /**
+     * @return BelongsTo<CaseModel, $this>
+     */
     public function case(): BelongsTo
     {
         return $this->belongsTo(CaseModel::class, 'case_model_id', 'id');

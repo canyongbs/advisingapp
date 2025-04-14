@@ -68,16 +68,25 @@ class Survey extends Submissible
         'rounding' => Rounding::class,
     ];
 
+    /**
+     * @return HasMany<SurveyField, $this>
+     */
     public function fields(): HasMany
     {
         return $this->hasMany(SurveyField::class);
     }
 
+    /**
+     * @return HasMany<SurveyStep, $this>
+     */
     public function steps(): HasMany
     {
         return $this->hasMany(SurveyStep::class);
     }
 
+    /**
+     * @return HasMany<SurveySubmission, $this>
+     */
     public function submissions(): HasMany
     {
         return $this->hasMany(SurveySubmission::class);

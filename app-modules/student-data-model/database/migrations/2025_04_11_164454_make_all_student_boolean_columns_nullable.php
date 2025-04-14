@@ -34,53 +34,32 @@
 </COPYRIGHT>
 */
 
-use Database\Migrations\Concerns\CanModifyPermissions;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
 return new class () extends Migration {
-    use CanModifyPermissions;
-
-    /**
-     * @var array<string> $permissions
-     */
-    private array $permissions = [
-        'maintenance_activity.*.delete' => 'Maintenance Activity',
-        'maintenance_activity.*.force-delete' => 'Maintenance Activity',
-        'maintenance_activity.*.restore' => 'Maintenance Activity',
-        'maintenance_activity.*.update' => 'Maintenance Activity',
-        'maintenance_activity.*.view' => 'Maintenance Activity',
-        'maintenance_activity.create' => 'Maintenance Activity',
-        'maintenance_activity.view-any' => 'Maintenance Activity',
-    ];
-
-    /**
-     * @var array<string> $guards
-     */
-    private array $guards = [
-        'web',
-        'api',
-    ];
-
     public function up(): void
     {
-        collect($this->guards)
-            ->each(function (string $guard) {
-                $this->deletePermissions(array_keys($this->permissions), $guard);
-            });
-
-        DB::table('permission_groups')
-            ->whereIn('name', [
-                'Maintenance Activity',
-            ])
-            ->delete();
+        Schema::table('students', function (Blueprint $table) {
+            $table->boolean('sms_opt_out')->nullable()->change();
+            $table->boolean('email_bounce')->nullable()->change();
+            $table->boolean('dual')->nullable()->change();
+            $table->boolean('ferpa')->nullable()->change();
+            $table->boolean('sap')->nullable()->change();
+            $table->boolean('firstgen')->nullable()->change();
+        });
     }
 
     public function down(): void
     {
-        collect($this->guards)
-            ->each(function (string $guard) {
-                $this->createPermissions($this->permissions, $guard);
-            });
+        Schema::table('students', function (Blueprint $table) {
+            $table->boolean('sms_opt_out')->default(false)->change();
+            $table->boolean('email_bounce')->default(false)->change();
+            $table->boolean('dual')->default(false)->change();
+            $table->boolean('ferpa')->default(false)->change();
+            $table->boolean('sap')->default(false)->change();
+            $table->boolean('firstgen')->default(false)->change();
+        });
     }
 };

@@ -83,6 +83,9 @@ class EngagementBatch extends BaseModel implements ExecutableFromACampaignAction
         'successful_engagements' => 'integer',
     ];
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

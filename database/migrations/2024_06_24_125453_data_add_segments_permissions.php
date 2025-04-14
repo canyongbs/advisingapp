@@ -40,6 +40,9 @@ use Illuminate\Database\Migrations\Migration;
 return new class () extends Migration {
     use CanModifyPermissions;
 
+    /**
+     * @var array<string> $permissions
+     */
     private array $permissions = [
         'segment.view-any' => 'Segment',
         'segment.create' => 'Segment',
@@ -50,6 +53,9 @@ return new class () extends Migration {
         'segment.*.force-delete' => 'Segment',
     ];
 
+    /**
+     * @var array<string> $guards
+     */
     private array $guards = [
         'web',
         'api',

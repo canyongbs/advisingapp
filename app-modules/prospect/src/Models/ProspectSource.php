@@ -57,6 +57,9 @@ class ProspectSource extends BaseModel implements Auditable
         'name',
     ];
 
+    /**
+     * @return HasMany<Prospect, $this>
+     */
     public function prospects(): HasMany
     {
         return $this->hasMany(Prospect::class, 'source_id');

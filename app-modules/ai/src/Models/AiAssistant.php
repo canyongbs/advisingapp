@@ -112,16 +112,25 @@ class AiAssistant extends BaseModel implements HasMedia, Auditable
             ->height(32);
     }
 
+    /**
+     * @return HasMany<AiThread, $this>
+     */
     public function threads(): HasMany
     {
         return $this->hasMany(AiThread::class, 'assistant_id');
     }
 
+    /**
+     * @return HasMany<AiAssistantFile, $this>
+     */
     public function files(): HasMany
     {
         return $this->hasMany(AiAssistantFile::class, 'assistant_id');
     }
 
+    /**
+     * @return HasMany<AiAssistantUpvote, $this>
+     */
     public function upvotes(): HasMany
     {
         return $this->hasMany(AiAssistantUpvote::class, 'assistant_id');

@@ -64,6 +64,9 @@ class ResourceHubCategory extends BaseModel implements Auditable
         return 'resource_hub_categories';
     }
 
+    /**
+     * @return HasMany<ResourceHubArticle, $this>
+     */
     public function resourceHubArticles(): HasMany
     {
         return $this->hasMany(ResourceHubArticle::class, 'category_id');

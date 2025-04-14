@@ -71,18 +71,27 @@ class Division extends BaseModel implements Auditable
         'is_default' => 'boolean',
     ];
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function createdBy(): BelongsTo
     {
         return $this
             ->belongsTo(User::class);
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function lastUpdatedBy(): BelongsTo
     {
         return $this
             ->belongsTo(User::class);
     }
 
+    /**
+     * @return HasMany<Team, $this>
+     */
     public function teams(): HasMany
     {
         return $this->hasMany(Team::class);

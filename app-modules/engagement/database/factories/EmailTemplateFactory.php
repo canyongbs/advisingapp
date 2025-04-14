@@ -36,8 +36,12 @@
 
 namespace AdvisingApp\Engagement\Database\Factories;
 
+use AdvisingApp\Engagement\Models\EmailTemplate;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/**
+ * @extends Factory<EmailTemplate>
+ */
 class EmailTemplateFactory extends Factory
 {
     public function definition(): array

@@ -41,7 +41,7 @@ use AdvisingApp\Prospect\Models\PipelineStage;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends PipelineStage>
+ * @extends Factory<PipelineStage>
  */
 class PipelineStageFactory extends Factory
 {

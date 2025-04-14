@@ -79,21 +79,33 @@ class AiMessage extends BaseModel
         'trashed' => AiMessageTrashed::class,
     ];
 
+    /**
+     * @return BelongsTo<AiThread, $this>
+     */
     public function thread(): BelongsTo
     {
         return $this->belongsTo(AiThread::class, 'thread_id');
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return BelongsTo<Prompt, $this>
+     */
     public function prompt(): BelongsTo
     {
         return $this->belongsTo(Prompt::class)->withTrashed();
     }
 
+    /**
+     * @return HasMany<AiMessageFile, $this>
+     */
     public function files(): HasMany
     {
         return $this->hasMany(AiMessageFile::class, 'message_id');

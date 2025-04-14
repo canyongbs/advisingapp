@@ -120,6 +120,9 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         return $forModel->orderedEngagements()->with(['latestEmailMessage', 'latestSmsMessage', 'batch'])->get();
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -130,6 +133,9 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         return $this->user();
     }
 
+    /**
+     * @return MorphMany<EmailMessage, $this>
+     */
     public function emailMessages(): MorphMany
     {
         return $this->morphMany(
@@ -146,6 +152,9 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         return $this->morphOne(EmailMessage::class, 'related')->latestOfMany();
     }
 
+    /**
+     * @return MorphMany<SmsMessage, $this>
+     */
     public function smsMessages(): MorphMany
     {
         return $this->morphMany(
@@ -171,6 +180,9 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         );
     }
 
+    /**
+     * @return BelongsTo<EngagementBatch, $this>
+     */
     public function engagementBatch(): BelongsTo
     {
         return $this->belongsTo(EngagementBatch::class);

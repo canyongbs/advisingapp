@@ -44,6 +44,9 @@ use App\Multitenancy\DataTransferObjects\TenantS3FilesystemConfig;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Encryption\Encrypter;
 
+/**
+ * @extends Factory<Tenant>
+ */
 class TenantFactory extends Factory
 {
     protected $model = Tenant::class;

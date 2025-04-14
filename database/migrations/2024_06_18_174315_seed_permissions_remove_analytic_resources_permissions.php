@@ -42,6 +42,9 @@ use Illuminate\Support\Facades\DB;
 return new class () extends Migration {
     use CanModifyPermissions;
 
+    /**
+     * @var array<string> $permissions
+     */
     private array $permissions = [
         'analytics_resource.view-any' => 'Analytics Resource',
         'analytics_resource.create' => 'Analytics Resource',
@@ -52,6 +55,9 @@ return new class () extends Migration {
         'analytics_resource.*.force-delete' => 'Analytics Resource',
     ];
 
+    /**
+     * @var array<string> $guards
+     */
     private array $guards = [
         'web',
         'api',

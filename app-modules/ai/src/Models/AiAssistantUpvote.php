@@ -55,11 +55,17 @@ class AiAssistantUpvote extends BaseModel
         'user_id',
     ];
 
+    /**
+     * @return BelongsTo<AiAssistant, $this>
+     */
     public function assistant(): BelongsTo
     {
         return $this->belongsTo(AiAssistant::class, 'assistant_id');
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

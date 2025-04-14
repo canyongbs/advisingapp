@@ -77,26 +77,41 @@ class CaseFormSubmission extends Submission
         return 'case_form_submissions';
     }
 
+    /**
+     * @return HasOne<CaseModel, $this>
+     */
     public function case(): HasOne
     {
         return $this->hasOne(CaseModel::class, 'case_form_submission_id');
     }
 
+    /**
+     * @return BelongsTo<CaseForm, $this>
+     */
     public function submissible(): BelongsTo
     {
         return $this->belongsTo(CaseForm::class, 'case_form_id');
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function requester(): BelongsTo
     {
         return $this->belongsTo(User::class, 'requester_id');
     }
 
+    /**
+     * @return BelongsTo<CasePriority, $this>
+     */
     public function priority(): BelongsTo
     {
         return $this->belongsTo(CasePriority::class, 'case_priority_id');
     }
 
+    /**
+     * @return BelongsToMany<CaseFormField, $this>
+     */
     public function fields(): BelongsToMany
     {
         return $this->belongsToMany(

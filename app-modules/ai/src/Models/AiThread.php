@@ -81,21 +81,33 @@ class AiThread extends BaseModel implements Wireable
         'forceDeleting' => AiThreadForceDeleting::class,
     ];
 
+    /**
+     * @return BelongsTo<AiAssistant, $this>
+     */
     public function assistant(): BelongsTo
     {
         return $this->belongsTo(AiAssistant::class, 'assistant_id');
     }
 
+    /**
+     * @return BelongsTo<AiThreadFolder, $this>
+     */
     public function folder(): BelongsTo
     {
         return $this->belongsTo(AiThreadFolder::class, 'folder_id');
     }
 
+    /**
+     * @return HasMany<AiMessage, $this>
+     */
     public function messages(): HasMany
     {
         return $this->hasMany(AiMessage::class, 'thread_id');
     }
 
+    /**
+     * @return BelongsToMany<User, $this>
+     */
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(
@@ -105,6 +117,9 @@ class AiThread extends BaseModel implements Wireable
         )->using(AiMessage::class);
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

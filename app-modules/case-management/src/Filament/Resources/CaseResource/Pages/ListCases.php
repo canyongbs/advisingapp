@@ -40,8 +40,10 @@ use AdvisingApp\CaseManagement\Enums\SlaComplianceStatus;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Models\CasePriority;
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSearch;
 use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSort;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
@@ -81,7 +83,16 @@ class ListCases extends ListRecords
                     ->sortable(),
                 TextColumn::make('respondent.display_name')
                     ->label('Related To')
-                    ->getStateUsing(fn (CaseModel $record) => $record->respondent->{$record->respondent::displayNameKey()})
+                    ->getStateUsing(function (CaseModel $record) {
+                        /** @var Student|Prospect|null $respondent */
+                        $respondent = $record->respondent;
+
+                        if ($respondent === null) {
+                            return 'N/A';
+                        }
+
+                        return $record->respondent->{$record->respondent::displayNameKey()};
+                    })
                     ->searchable(query: fn (Builder $query, $search) => $query->tap(new EducatableSearch(relationship: 'respondent', search: $search)))
                     ->sortable(query: fn (Builder $query, string $direction): Builder => $query->tap(new EducatableSort($direction))),
                 TextColumn::make('respondent.sisid')

@@ -41,6 +41,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 trait HasManyEngagementBatches
 {
+    /**
+     * @return HasMany<EngagementBatch, $this>
+     */
     public function engagementBatches(): HasMany
     {
         return $this->hasMany(EngagementBatch::class);

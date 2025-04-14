@@ -59,36 +59,57 @@ class StudentDataImport extends BaseModel
         'canceled_at' => 'immutable_datetime',
     ];
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return BelongsTo<Import, $this>
+     */
     public function studentsImport(): BelongsTo
     {
         return $this->belongsTo(Import::class, 'students_import_id');
     }
 
+    /**
+     * @return BelongsTo<Import, $this>
+     */
     public function emailAddressesImport(): BelongsTo
     {
         return $this->belongsTo(Import::class, 'email_addresses_import_id');
     }
 
+    /**
+     * @return BelongsTo<Import, $this>
+     */
     public function phoneNumbersImport(): BelongsTo
     {
         return $this->belongsTo(Import::class, 'phone_numbers_import_id');
     }
 
+    /**
+     * @return BelongsTo<Import, $this>
+     */
     public function addressesImport(): BelongsTo
     {
         return $this->belongsTo(Import::class, 'addresses_import_id');
     }
 
+    /**
+     * @return BelongsTo<Import, $this>
+     */
     public function programsImport(): BelongsTo
     {
         return $this->belongsTo(Import::class, 'programs_import_id');
     }
 
+    /**
+     * @return BelongsTo<Import, $this>
+     */
     public function enrollmentsImport(): BelongsTo
     {
         return $this->belongsTo(Import::class, 'enrollments_import_id');

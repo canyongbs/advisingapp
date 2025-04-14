@@ -81,21 +81,33 @@ class ResourceHubArticle extends BaseModel implements Auditable, HasMedia
         return 'resource_hub_articles';
     }
 
+    /**
+     * @return BelongsTo<ResourceHubQuality, $this>
+     */
     public function quality(): BelongsTo
     {
         return $this->belongsTo(ResourceHubQuality::class);
     }
 
+    /**
+     * @return BelongsTo<ResourceHubStatus, $this>
+     */
     public function status(): BelongsTo
     {
         return $this->belongsTo(ResourceHubStatus::class);
     }
 
+    /**
+     * @return BelongsTo<ResourceHubCategory, $this>
+     */
     public function category(): BelongsTo
     {
         return $this->belongsTo(ResourceHubCategory::class);
     }
 
+    /**
+     * @return BelongsToMany<Division, $this>
+     */
     public function division(): BelongsToMany
     {
         return $this->belongsToMany(Division::class, 'division_resource_hub_item', 'resource_hub_item_id', 'division_id');
@@ -112,11 +124,17 @@ class ResourceHubArticle extends BaseModel implements Auditable, HasMedia
         return $query->where('public', true);
     }
 
+    /**
+     * @return HasMany<ResourceHubArticleView, $this>
+     */
     public function views(): HasMany
     {
         return $this->hasMany(ResourceHubArticleView::class, 'resource_hub_item_id');
     }
 
+    /**
+     * @return HasMany<ResourceHubArticleUpvote, $this>
+     */
     public function upvotes(): HasMany
     {
         return $this->hasMany(ResourceHubArticleUpvote::class, 'resource_hub_item_id');

@@ -61,18 +61,27 @@ class SurveyField extends SubmissibleField
         'is_required' => 'bool',
     ];
 
+    /**
+     * @return BelongsTo<Survey, $this>
+     */
     public function submissible(): BelongsTo
     {
         return $this
             ->belongsTo(Survey::class, 'survey_id');
     }
 
+    /**
+     * @return BelongsTo<SurveyStep, $this>
+     */
     public function step(): BelongsTo
     {
         return $this
             ->belongsTo(SurveyStep::class, 'step_id');
     }
 
+    /**
+     * @return BelongsToMany<SurveySubmission, $this>
+     */
     public function submissions(): BelongsToMany
     {
         return $this->belongsToMany(

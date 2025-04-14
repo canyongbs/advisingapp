@@ -41,6 +41,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 trait HasManyEngagements
 {
+    /**
+     * @return HasMany<Engagement, $this>
+     */
     public function engagements(): HasMany
     {
         return $this->hasMany(Engagement::class);

@@ -39,6 +39,7 @@ namespace AdvisingApp\Notification\Models;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
 use AdvisingApp\Notification\Actions\SubscriptionCreate;
+use AdvisingApp\Notification\Database\Factories\SubscriptionFactory;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Notification\Observers\SubscriptionObserver;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
@@ -62,7 +63,10 @@ use Illuminate\Support\Facades\DB;
 class Subscription extends MorphPivot implements ExecutableFromACampaignAction
 {
     use BelongsToEducatable;
+
+    /** @use HasFactory<SubscriptionFactory> */
     use HasFactory;
+
     use HasUuids;
 
     public $timestamps = true;
@@ -75,6 +79,9 @@ class Subscription extends MorphPivot implements ExecutableFromACampaignAction
         'subscribable_type',
     ];
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

@@ -40,6 +40,9 @@ use Illuminate\Database\Migrations\Migration;
 return new class () extends Migration {
     use CanModifyPermissions;
 
+    /**
+     * @var array<string> $permissions
+     */
     private array $permissions = [
         'license_settings.manage' => 'License Settings',
         'audit.view_audit_settings' => 'Audit',
@@ -62,6 +65,9 @@ return new class () extends Migration {
         'inbound_webhook.view-any' => 'Inbound Webhook',
     ];
 
+    /**
+     * @var array<string> $guards
+     */
     private array $guards = [
         'web',
         'api',

@@ -61,6 +61,11 @@ class UserResource extends Resource
 
     protected static ?string $modelLabel = 'User';
 
+    /**
+     * Get the Eloquent query builder for the User model.
+     *
+     * @return Builder<User>
+     */
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()

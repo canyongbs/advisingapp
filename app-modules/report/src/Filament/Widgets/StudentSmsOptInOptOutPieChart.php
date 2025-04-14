@@ -74,15 +74,20 @@ class StudentSmsOptInOptOutPieChart extends PieChartReportWidget
             return Student::where('sms_opt_out', true)->count();
         });
 
+        $smsNullCount = Cache::tags([$this->cacheTag])->remember('sms_null_count', now()->addHours(24), function (): int {
+            return Student::whereNull('sms_opt_out')->count();
+        });
+
         return [
-            'labels' => ['Can receive texts', 'Cannot receive texts'],
+            'labels' => ['Can receive texts', 'Cannot receive texts', 'Data unavailable'],
             'datasets' => [
                 [
                     'label' => 'My First Dataset',
-                    'data' => [$smsOptInCount, $smsOptOutCount],
+                    'data' => [$smsOptInCount, $smsOptOutCount, $smsNullCount],
                     'backgroundColor' => [
                         $this->getRgbString(Color::Orange[500]),
                         $this->getRgbString(Color::Blue[500]),
+                        $this->getRgbString(Color::Gray[500]),
                     ],
                     'hoverOffset' => 4,
                 ],
