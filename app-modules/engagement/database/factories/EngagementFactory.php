@@ -70,7 +70,8 @@ class EngagementFactory extends Factory
 
                 return $sender->getKey();
             },
-            'subject' => fake()->sentence,
+            // 'subject' => fake()->sentence,
+            'subject' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->sentence]]]]],
             'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->paragraph]]]]],
             'scheduled_at' => fake()->dateTimeBetween('-1 year', '-1 day'),
             'channel' => fake()->randomElement([NotificationChannel::Email, NotificationChannel::Sms]),

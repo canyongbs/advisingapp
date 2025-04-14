@@ -109,7 +109,8 @@ class EducatableActivityFeedWidget extends Widget implements HasActions, HasForm
             'interaction' => "Subject: {$record->subject}",
             'engagement' => match ($record->getDeliveryMethod()) {
                 NotificationChannel::Sms => "Preview: {$record->getBodyMarkdown()}",
-                default => "Subject: {$record->subject}",
+                default => "Subject: {$record->getSubjectMarkdown()}",
+                // default => "Subject: {$record->subject}",
             },
             'engagement_response' => 'Preview: ' . str($record->getBody())->stripTags(),
             'task_history' => "Title: {$record->subject?->title}",

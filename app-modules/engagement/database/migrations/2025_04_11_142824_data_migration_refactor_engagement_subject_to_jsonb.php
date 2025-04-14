@@ -8,31 +8,73 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function () {
-            DB::statement('
-                UPDATE engagements
-                SET subject = (
-                    \'{"type":"doc","content":[{"type":"paragraph","attrs":{"class":null,"style":null},"content":[{"type":"text","text":"\' || REPLACE(subject, \'"\', \'\\\"\') || \'"}]}]}\'
-                )::jsonb
-            ');
+            DB::table('engagements')->select('id', 'subject')->orderBy('id')->chunk(500, function ($rows) {
+                foreach ($rows as $row) {
+                    $json = [
+                        'type' => 'doc',
+                        'content' => [[
+                            'type' => 'paragraph',
+                            'attrs' => ['class' => null, 'style' => null],
+                            'content' => [[
+                                'type' => 'text',
+                                'text' => $row->subject,
+                            ]],
+                        ]],
+                    ];
+                    DB::table('engagements')
+                        ->where('id', $row->id)
+                        ->update(['subject' => json_encode($json)]);
+                }
+            });
 
-            DB::statement('
-                UPDATE engagement_batches
-                SET subject = (
-                    \'{"type":"doc","content":[{"type":"paragraph","attrs":{"class":null,"style":null},"content":[{"type":"text","text":"\' || REPLACE(subject, \'"\', \'\\\"\') || \'"}]}]}\'
-                )::jsonb
-            ');
+            DB::table('engagement_batches')->select('id', 'subject')->orderBy('id')->chunk(500, function ($rows) {
+                foreach ($rows as $row) {
+                    $json = [
+                        'type' => 'doc',
+                        'content' => [[
+                            'type' => 'paragraph',
+                            'attrs' => ['class' => null, 'style' => null],
+                            'content' => [[
+                                'type' => 'text',
+                                'text' => $row->subject,
+                            ]],
+                        ]],
+                    ];
+                    DB::table('engagement_batches')
+                        ->where('id', $row->id)
+                        ->update(['subject' => json_encode($json)]);
+                }
+            });
 
-            DB::statement("
-                UPDATE campaign_actions
-                SET data = (
-                    '{\"channel\":\"' || (data::json ->> 'channel') || '\",' ||
-                    '\"subject\":' ||
-                    '{\"type\":\"doc\",\"content\":[{\"type\":\"paragraph\",\"attrs\":{\"class\":null,\"style\":null},\"content\":[{\"type\":\"text\",\"text\":\"' || REPLACE(data::json ->> 'subject', '\"', '\\\"') || '\"}]}]},' ||
-                    '\"body\":' || (data::json -> 'body')::text ||
-                    '}'
-                )::json
-                WHERE json_typeof(data::json -> 'subject') = 'string'
-            ");
+            DB::table('campaign_actions')
+                ->select('id', 'data')
+                ->whereRaw("json_typeof(data::json -> 'subject') = 'string'")
+                ->orderBy('id')
+                ->chunk(500, function ($rows) {
+                    foreach ($rows as $row) {
+                        $data = json_decode($row->data, true);
+
+                        $json = [
+                            'channel' => $data['channel'] ?? null,
+                            'subject' => [
+                                'type' => 'doc',
+                                'content' => [[
+                                    'type' => 'paragraph',
+                                    'attrs' => ['class' => null, 'style' => null],
+                                    'content' => [[
+                                        'type' => 'text',
+                                        'text' => $data['subject'] ?? '',
+                                    ]],
+                                ]],
+                            ],
+                            'body' => $data['body'] ?? null,
+                        ];
+
+                        DB::table('campaign_actions')
+                            ->where('id', $row->id)
+                            ->update(['data' => json_encode($json)]);
+                    }
+                });
 
             RefactorEngagementCampaignSubjectToJsonb::activate();
         });
@@ -41,27 +83,46 @@ return new class () extends Migration {
     public function down(): void
     {
         DB::transaction(function () {
-            DB::statement('
-                UPDATE engagements
-                SET subject = subject::jsonb->\'content\'->0->\'content\'->0->>\'text\'
-            ');
+            DB::table('engagements')->select('id', 'subject')->orderBy('id')->chunk(500, function ($rows) {
+                foreach ($rows as $row) {
+                    $decoded = json_decode($row->subject, true);
+                    $text = $decoded['content'][0]['content'][0]['text'] ?? '';
+                    DB::table('engagements')
+                        ->where('id', $row->id)
+                        ->update(['subject' => $text]);
+                }
+            });
 
-            DB::statement('
-                UPDATE engagement_batches
-                SET subject = subject::jsonb->\'content\'->0->\'content\'->0->>\'text\'
-            ');
+            DB::table('engagement_batches')->select('id', 'subject')->orderBy('id')->chunk(500, function ($rows) {
+                foreach ($rows as $row) {
+                    $decoded = json_decode($row->subject, true);
+                    $text = $decoded['content'][0]['content'][0]['text'] ?? '';
+                    DB::table('engagement_batches')
+                        ->where('id', $row->id)
+                        ->update(['subject' => $text]);
+                }
+            });
 
-            DB::statement("
-                UPDATE campaign_actions
-                SET data = (
-                    '{\"channel\":\"' || (data::json ->> 'channel') || '\",' ||
-                    '\"subject\":\"' || (data::json -> 'subject' -> 'content' -> 0 -> 'content' -> 0 ->> 'text') || '\",' ||
-                    '\"body\":' || (data::json -> 'body')::text ||
-                    '}'
-                )::json
-                WHERE json_typeof(data::json -> 'subject') = 'object'
-                AND (data::json -> 'subject' ->> 'type') = 'doc'
-            ");
+            DB::table('campaign_actions')
+                ->select('id', 'data')
+                ->whereRaw("json_typeof(data::json -> 'subject') = 'object'")
+                ->whereRaw("(data::json -> 'subject' ->> 'type') = 'doc'")
+                ->orderBy('id')
+                ->chunk(500, function ($rows) {
+                    foreach ($rows as $row) {
+                        $data = json_decode($row->data, true);
+
+                        $json = [
+                            'channel' => $data['channel'] ?? null,
+                            'subject' => $data['subject']['content'][0]['content'][0]['text'] ?? '',
+                            'body' => $data['body'] ?? null,
+                        ];
+
+                        DB::table('campaign_actions')
+                            ->where('id', $row->id)
+                            ->update(['data' => json_encode($json)]);
+                    }
+                });
 
             RefactorEngagementCampaignSubjectToJsonb::deactivate();
         });
