@@ -92,7 +92,7 @@ class AddCareTeamMemberAction
                 return $records
                     ->each(function (Model $record) use ($data) {
                         throw_unless($record instanceof Educatable, new Exception('Record must be of type educatable.'));
-                        
+
                         /** @var User $user */
                         $user = User::find($data['recordId']);
 

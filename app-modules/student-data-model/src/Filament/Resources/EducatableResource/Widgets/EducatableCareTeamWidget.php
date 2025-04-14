@@ -66,7 +66,7 @@ class EducatableCareTeamWidget extends Widget
             ->get()
             ->map(function (Model $user) {
                 throw_unless($user instanceof User, new Exception('Care team models must be users.'));
-                
+
                 $user->careTeamRole = $user->getCareTeamRoleFor($this->educatable->getKey());
 
                 return $user;
