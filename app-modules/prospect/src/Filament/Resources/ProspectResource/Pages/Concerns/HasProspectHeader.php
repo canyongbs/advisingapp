@@ -43,12 +43,15 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\Disassociat
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ProspectTagsAction;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspect;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Pages\Concerns\HasEducatableHeader;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
 use App\Settings\DisplaySettings;
 use Illuminate\Contracts\View\View;
 
 trait HasProspectHeader
 {
+    use HasEducatableHeader;
+
     public function getHeader(): ?View
     {
         $sisSettings = app(StudentInformationSystemSettings::class);

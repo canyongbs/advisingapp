@@ -86,19 +86,6 @@ class RelationManagerSendEngagementAction extends CreateAction
 
                 return auth()->user()->can('create', [Engagement::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
             })
-            ->mountUsing(function (array $arguments, Form $form, RelationManager $livewire) {
-                $livewire->dispatch('engage-action-finished-loading');
-
-                if (filled($arguments['route'] ?? null)) {
-                    $form->fill([
-                        'channel' => $arguments['channel'] ?? 'email',
-                        'recipient_route_id' => $arguments['route'],
-                        'signature' => auth()->user()->signature,
-                    ]);
-                } else {
-                    $form->fill();
-                }
-            })
             ->form(fn (Form $form, RelationManager $livewire) => $form->schema([
                 Grid::make(2)
                     ->schema([
