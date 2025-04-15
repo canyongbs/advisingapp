@@ -73,7 +73,7 @@ class ManageImportSettings extends SettingsPage
                         ->orderBy('name')
                         ->select(['id', 'name', 'calling_code'])
                         ->get()
-                        ->mapWithKeys(fn (Country $country): array => [$country->getKey() => "{$country->name} (+{$country->calling_code})"]) /** @phpstan-ignore property.notFound */
+                        ->mapWithKeys(fn (Country $country): array => [$country->getKey() => "{$country->getAttributeValue('name')} (+{$country->getAttributeValue('calling_code')})"])
                         ->all())
                     ->required(),
             ]);
