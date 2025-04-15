@@ -60,7 +60,8 @@ class StudentEmailAddressImporter extends Importer
                     'max:255',
                 ]),
             ImportColumn::make('address')
-                ->rules(['max:255', 'email'])
+                ->requiredMapping()
+                ->rules(['required', 'email', 'max:255'])
                 ->example('joesmith@gmail.com'),
             ImportColumn::make('type')
                 ->rules(['max:255'])
