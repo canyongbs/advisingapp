@@ -97,6 +97,7 @@ trait HasManyMorphedInteractionsTrait
     {
         return $table
             ->recordTitleAttribute('id')
+            ->defaultSort('end_datetime', 'desc')
             ->columns([
                 TextColumn::make('subject')
                     ->icon(fn ($record) => $record->is_confidential ? 'heroicon-m-lock-closed' : null)

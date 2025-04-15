@@ -34,27 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
+namespace App\Settings;
 
-use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\Concerns\HasProspectHeader;
-use AdvisingApp\Task\Filament\RelationManagers\BaseTaskRelationManager;
+use Spatie\LaravelSettings\Settings;
 
-class ManageProspectTasks extends BaseTaskRelationManager
+class ImportSettings extends Settings
 {
-    use ProspectHolisticViewPage;
-    use HasProspectHeader;
+    public string $default_country = 'us';
 
-    protected static string $resource = ProspectResource::class;
-
-    protected static string $relationship = 'tasks';
-
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $navigationLabel = 'Tasks';
-
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $breadcrumb = 'Tasks';
-
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
+    public static function group(): string
+    {
+        return 'import';
+    }
 }

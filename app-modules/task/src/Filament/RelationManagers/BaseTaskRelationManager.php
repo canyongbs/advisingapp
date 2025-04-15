@@ -98,6 +98,7 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
     {
         return $table
             ->recordTitleAttribute('description')
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('description')
