@@ -142,6 +142,8 @@ class RelationManagerDraftWithAiAction extends Action
                             The first line should contain the raw subject of the email, with no "Subject: " label at the start.
                             All following lines after the subject are the email body.
 
+                            You should never include a signature in your response, the user will add that themselves.
+
                             When you answer, it is crucial that you format the email body using rich text in Markdown format.
                             The subject line can not use Markdown formatting, it is plain text.
                             Do not ever mention in your response that the answer is being formatted/rendered in Markdown.
