@@ -36,13 +36,27 @@
     use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 @endphp
 
-<button class="flex items-center gap-2" type="button" x-data="{ isLoading: false }"
+<button
+    class="flex items-center gap-2"
+    type="button"
+    x-data="{ isLoading: false }"
     x-on:engage-action-finished-loading.window="isLoading = false"
     x-on:click="isLoading = true; $dispatch('send-sms', { phoneNumberKey: @js($phoneNumber->getKey()) })"
-    x-tooltip.raw="Click to send an SMS" @disabled((!$phoneNumber->can_receive_sms) || (!auth()->user()->can('create', [Engagement::class, $phoneNumber instanceof ProspectPhoneNumber ? $phoneNumber->prospect : null])))>
+    x-tooltip.raw="Click to send an SMS"
+    @disabled(
+        !$phoneNumber->can_receive_sms ||
+            !auth()->user()->can('create', [
+                    Engagement::class,
+                    $phoneNumber instanceof ProspectPhoneNumber ? $phoneNumber->prospect : null,
+                ]))
+>
     @svg('heroicon-m-phone', 'size-5', ['x-show' => '! isLoading'])
 
-    <x-filament::loading-indicator class="size-5" x-show="isLoading" x-cloak />
+    <x-filament::loading-indicator
+        class="size-5"
+        x-show="isLoading"
+        x-cloak
+    />
 
     {{ $phoneNumber->number }}
 
