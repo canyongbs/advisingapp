@@ -386,8 +386,6 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     }
 
     /**
-     * Scope a query to include only users with the 'Admin' role.
-     *
      * @param Builder<User> $query
      *
      * @return Builder<User>

@@ -42,8 +42,6 @@ use Illuminate\View\Component;
 class SelectList extends Component
 {
     /**
-     * The options for the select list.
-     *
      * @var mixed
      */
     public $options;
