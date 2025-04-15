@@ -41,13 +41,17 @@ use Illuminate\View\Component;
 
 class SelectList extends Component
 {
+    /**
+     * The options for the select list.
+     *
+     * @var mixed
+     */
     public $options;
 
     /**
      * Create a new component instance.
      *
      * @param mixed $options
-     * @param mixed $id
      */
     public function __construct($options)
     {

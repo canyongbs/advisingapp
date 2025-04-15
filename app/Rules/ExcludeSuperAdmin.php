@@ -54,13 +54,13 @@ class ExcludeSuperAdmin implements ValidationRule
         $role = Role::find($value);
 
         if (! $role) {
-            $fail('The selected role does not exist.');
+            $fail($attribute, 'The selected role does not exist.');
 
             return;
         }
 
         if (! auth()->user()->isSuperAdmin() && $role->name === Authenticatable::SUPER_ADMIN_ROLE) {
-            $fail('You are not allowed to select the Super Admin role.');
+            $fail($attribute, 'You are not allowed to select the Super Admin role.');
         }
     }
 }

@@ -39,7 +39,6 @@ namespace App\Models;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
 use Laravel\Sanctum\HasApiTokens;
@@ -50,7 +49,6 @@ use OwenIt\Auditing\Contracts\Auditable;
  */
 class SystemUser extends Authenticatable implements Auditable
 {
-    use HasFactory;
     use SoftDeletes;
     use HasUuids;
     use AuditableTrait;

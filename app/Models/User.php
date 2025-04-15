@@ -77,8 +77,10 @@ use Filament\Models\Contracts\HasAvatar;
 use Filament\Panel;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -100,6 +102,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @mixin IdeHelperUser
  */
 #[ObservedBy([UserObserver::class])]
+
 class User extends Authenticatable implements HasLocalePreference, FilamentUser, Auditable, HasMedia, HasAvatar, CanBeNotified, HasFilamentResource
 {
     /** @use HasFactory<UserFactory> */
@@ -298,16 +301,25 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             ->withTimestamps();
     }
 
+    /**
+     * @return HasManyDeep<Model, $this>
+     */
     public function studentAlerts(): HasManyDeep
     {
         return $this->hasManyDeepFromRelations($this->studentSubscriptions(), (new Student())->alerts());
     }
 
+    /**
+     * @return HasManyDeep<Model, $this>
+     */
     public function prospectAlerts(): HasManyDeep
     {
         return $this->hasManyDeepFromRelations($this->prospectSubscriptions(), (new Prospect())->alerts());
     }
 
+    /**
+     * @return MorphToMany<Prospect, $this>
+     */
     public function prospectCareTeams(): MorphToMany
     {
         return $this->morphedByMany(
@@ -320,6 +332,9 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             ->withTimestamps();
     }
 
+    /**
+     * @return MorphToMany<Student, $this>
+     */
     public function studentCareTeams(): MorphToMany
     {
         return $this->morphedByMany(
@@ -340,6 +355,9 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return $this->hasMany(CareTeam::class);
     }
 
+    /**
+     * @return HasManyDeep<Model, $this>
+     */
     public function permissionsFromRoles(): HasManyDeep
     {
         return $this->hasManyDeepFromRelations($this->roles(), (new Role())->permissions());
@@ -354,6 +372,9 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             ->where('status', CaseAssignmentStatus::Active);
     }
 
+    /**
+     * @return HasManyDeep<Model, $this>
+     */
     public function cases(): HasManyDeep
     {
         return $this->hasManyDeepFromRelations($this->caseAssignments(), (new CaseAssignment())->case());
@@ -364,9 +385,16 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return $this->roles()->where('name', Authenticatable::SUPER_ADMIN_ROLE)->exists();
     }
 
-    public function scopeAdmins()
+    /**
+     * Scope a query to include only users with the 'Admin' role.
+     *
+     * @param Builder<User> $query
+     *
+     * @return Builder<User>
+     */
+    public function scopeAdmins(Builder $query): Builder
     {
-        return $this->whereHas('roles', fn ($q) => $q->where('title', 'Admin'));
+        return $query->whereHas('roles', fn ($q) => $q->where('title', 'Admin'));
     }
 
     /**

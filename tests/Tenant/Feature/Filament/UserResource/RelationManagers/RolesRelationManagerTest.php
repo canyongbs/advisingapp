@@ -113,7 +113,7 @@ it('allows user which has sass global admin role to assign sass global admin rol
 
     $secondUser->refresh();
 
-    expect($secondUser->roles)->pluck('id')->toContain($superAdminRole->getKey());
+    expect($secondUser->roles->pluck('id'))->toContain($superAdminRole->getKey());
 });
 
 it('does not display the Saas Global Admin role if the user is not itself a Saas Global Admin', function () {

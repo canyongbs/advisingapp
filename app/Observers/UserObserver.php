@@ -38,7 +38,7 @@ namespace App\Observers;
 
 use AdvisingApp\Authorization\Settings\LocalPasswordSettings;
 use App\Models\User;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 
 class UserObserver
 {

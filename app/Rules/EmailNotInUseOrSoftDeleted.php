@@ -43,11 +43,11 @@ use Illuminate\Translation\PotentiallyTranslatedString;
 
 class EmailNotInUseOrSoftDeleted implements ValidationRule
 {
-    protected $message;
+    protected string $message;
 
-    protected $currentUserId;
+    protected string $currentUserId;
 
-    public function __construct($currentUserId = null)
+    public function __construct(?string $currentUserId = null)
     {
         $this->currentUserId = $currentUserId;
     }
