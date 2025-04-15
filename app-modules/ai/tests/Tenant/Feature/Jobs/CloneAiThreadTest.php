@@ -34,4 +34,36 @@
 </COPYRIGHT>
 */
 
-todo('can clone a thread and its messages');
+use AdvisingApp\Ai\Jobs\CloneAiThread;
+use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Models\User;
+use Illuminate\Support\Facades\Notification;
+
+use function Pest\Laravel\withoutMiddleware;
+
+it('can clone a thread and its messages', function () {
+    Notification::fake();
+    withoutMiddleware();
+
+    $sender = User::factory()->licensed(LicenseType::cases())->create();
+    $recipient = User::factory()->licensed(LicenseType::cases())->create();
+
+    $thread = AiThread::factory()
+        ->has(AiMessage::factory()->count(3), 'messages')
+        ->for($sender, 'user')
+        ->create();
+
+    $job = new CloneAiThread($thread, $sender, $recipient);
+    $job->handle();
+
+    $recipient->refresh();
+    $clonedThread = $recipient->aiThreads()->latest()->first();
+
+    expect($clonedThread)->not->toBeNull();
+    expect($clonedThread->messages)->toHaveCount(3);
+
+    $thread->refresh();
+    expect($thread->cloned_count)->toBe(1);
+});
