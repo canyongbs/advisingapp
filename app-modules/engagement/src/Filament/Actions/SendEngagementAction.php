@@ -58,7 +58,6 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -165,11 +164,26 @@ class SendEngagementAction extends Action
                     ]),
                 Fieldset::make('Content')
                     ->schema([
-                        TextInput::make('subject')
-                            ->autofocus()
-                            ->required()
-                            ->placeholder(__('Subject'))
+                        TiptapEditor::make('subject')
+                            ->label('Subject')
+                            ->mergeTags([
+                                'student first name',
+                                'student last name',
+                                'student full name',
+                                'student email',
+                                'student preferred name',
+                                'user first name',
+                                'user full name',
+                                'user job title',
+                                'user email',
+                                'user phone number',
+                            ])
+                            ->showMergeTagsInBlocksPanel(false)
+                            ->helperText('You may use “merge tags” to substitute information about a student into your subject line. Insert a “{{“ in the subject line field to see a list of available merge tags')
                             ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
+                            ->profile('sms')
+                            ->required()
+                            ->placeholder('Enter the email subject here...')
                             ->columnSpanFull(),
                         TiptapEditor::make('body')
                             ->disk('s3-public')
@@ -281,6 +295,11 @@ class SendEngagementAction extends Action
             ->action(function (array $data, Form $form, Page $livewire) {
                 /** @var Student | Prospect $recipient */
                 $recipient = $this->getEducatable();
+
+                $data['subject'] ??= ['type' => 'doc', 'content' => []];
+                $data['subject']['content'] = [
+                    ...($data['subject']['content'] ?? []),
+                ];
 
                 $data['body'] ??= ['type' => 'doc', 'content' => []];
                 $data['body']['content'] = [

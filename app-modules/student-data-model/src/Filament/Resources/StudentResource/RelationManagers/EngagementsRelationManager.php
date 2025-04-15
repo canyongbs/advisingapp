@@ -44,7 +44,6 @@ use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\EmailMessageEvent;
 use AdvisingApp\Notification\Models\SmsMessageEvent;
 use AdvisingApp\Timeline\Models\Timeline;
-use App\Features\RefactorEngagementCampaignSubjectToJsonb;
 use Filament\Infolists\Components\Fieldset as InfolistFieldset;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Section;
@@ -86,15 +85,9 @@ class EngagementsRelationManager extends RelationManager
                                     ->getStateUsing(fn (Timeline $record): string => $record->timelineable->user->name),
                                 InfolistFieldset::make('Content')
                                     ->schema([
-                                        // TextEntry::make('subject')
-                                        //     ->getStateUsing(fn (Timeline $record): ?string => $record->timelineable->subject)
-                                        //     ->hidden(fn ($state): bool => blank($state))
-                                        //     ->columnSpanFull()
-                                        //     ->visible(! RefactorEngagementCampaignSubjectToJsonb::active()),
                                         TextEntry::make('subject')
                                             ->getStateUsing(fn (Timeline $record): ?string => $record->timelineable->getSubject())
-                                            ->columnSpanFull()
-                                            ->visible(RefactorEngagementCampaignSubjectToJsonb::active()),
+                                            ->columnSpanFull(),
                                         TextEntry::make('body')
                                             ->getStateUsing(fn (Timeline $record): HtmlString => $record->timelineable->getBody())
                                             ->columnSpanFull(),

@@ -47,7 +47,6 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use FilamentTiptapEditor\TiptapEditor;
@@ -70,10 +69,22 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
         return [
             Hidden::make($fieldPrefix . 'channel')
                 ->default(NotificationChannel::Email->value),
-            TextInput::make($fieldPrefix . 'subject')
-                ->columnSpanFull()
-                ->placeholder(__('Subject'))
-                ->required(),
+            TiptapEditor::make($fieldPrefix . 'subject')
+                ->recordAttribute('data.subject')
+                ->label('Subject')
+                ->mergeTags($mergeTags = [
+                    'student first name',
+                    'student last name',
+                    'student full name',
+                    'student email',
+                    'student preferred name',
+                ])
+                ->profile('sms')
+                ->placeholder('Enter the email subject here...')
+                ->showMergeTagsInBlocksPanel(false)
+                ->required()
+                ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
+                ->columnSpanFull(),
             TiptapEditor::make($fieldPrefix . 'body')
                 ->recordAttribute('data.body')
                 ->disk('s3-public')

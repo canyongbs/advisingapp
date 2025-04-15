@@ -49,7 +49,6 @@ class EngagementCreationData extends Data
         public User $user,
         public CanBeNotified | Collection $recipient,
         public NotificationChannel $channel,
-        // public ?string $subject = null,
         public ?array $subject = null,
         public ?array $body = null,
         public array $temporaryBodyImages = [],
