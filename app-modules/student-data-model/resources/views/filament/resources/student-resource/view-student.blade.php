@@ -122,7 +122,7 @@
         </div>
     </div>
 
-    @if (! app()->hasDebugModeEnabled())
+    @if (!app()->hasDebugModeEnabled())
         @script
             <script>
                 Livewire.hook('request', ({
