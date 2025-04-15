@@ -42,13 +42,11 @@ use AdvisingApp\Engagement\Filament\Forms\Components\EngagementSmsBodyInput;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
-use App\Features\RefactorEngagementCampaignSubjectToJsonb;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Form;
@@ -85,12 +83,6 @@ class BulkEngagementAction
                 Step::make('Engagement Details')
                     ->description("Add the details that will be sent to the selected {$context}")
                     ->schema([
-                        // TextInput::make('subject')
-                        //     ->autofocus()
-                        //     ->required()
-                        //     ->placeholder(__('Subject'))
-                        //     ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
-                        //     ->columnSpanFull(),
                         TiptapEditor::make('subject')
                             ->label('Subject')
                             ->mergeTags([
@@ -101,14 +93,12 @@ class BulkEngagementAction
                                 'student preferred name',
                             ])
                             ->showMergeTagsInBlocksPanel(false)
-                            ->helperText('You may use “merge tags” to substitute information about a user into your subject line. Insert a “{{“ in the subject line field to see a list of available merge tags')
-                            // ->helperText('You may use “merge tags” to substitute information about a service request into your subject line. Insert a “{{“ in the subject line field to see a list of available merge tags')
+                            ->helperText('You may use “merge tags” to substitute information about a student into your subject line. Insert a “{{“ in the subject line field to see a list of available merge tags')
                             ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
                             ->profile('sms')
-                            ->rules(['required'])
+                            ->required()
                             ->placeholder('Enter the email subject here...')
-                            ->columnSpanFull()
-                            ->visible(RefactorEngagementCampaignSubjectToJsonb::active()),
+                            ->columnSpanFull(),
                         TiptapEditor::make('body')
                             ->disk('s3-public')
                             ->label('Body')
