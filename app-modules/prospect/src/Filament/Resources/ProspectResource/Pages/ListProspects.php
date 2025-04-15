@@ -192,7 +192,7 @@ class ListProspects extends ListRecords
                                 ->options([
                                     'description' => 'Description',
                                     'email_bounce' => 'Email Bounce',
-                                    'hsgrad' => 'High School Graduation Date',
+                                    'hsgrad' => 'High School Graduation Year',
                                     'sms_opt_out' => 'SMS Opt Out',
                                     'source_id' => 'Source',
                                     'status_id' => 'Status',
@@ -208,7 +208,7 @@ class ListProspects extends ListRecords
                                 ->boolean()
                                 ->visible(fn (Get $get) => $get('field') === 'email_bounce'),
                             TextInput::make('hsgrad')
-                                ->label('High School Graduation Date')
+                                ->label('High School Graduation Year')
                                 ->numeric()
                                 ->minValue(1920)
                                 ->maxValue(now()->addYears(25)->year)
