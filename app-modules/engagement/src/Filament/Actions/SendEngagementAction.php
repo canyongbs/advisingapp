@@ -45,7 +45,7 @@ use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
-use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use Exception;
@@ -74,7 +74,7 @@ use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class SendEngagementAction extends Action
 {
-    protected Educatable $educatable;
+    protected Model $educatable;
 
     protected function setUp(): void
     {
@@ -84,8 +84,6 @@ class SendEngagementAction extends Action
             ->modalHeading('Send Engagement')
             ->modalDescription(function (): string {
                 $educatable = $this->getEducatable();
-
-                throw_unless($educatable instanceof Model, new Exception('The educatable must be a model.'));
 
                 $educatableName = $educatable->getAttributeValue($educatable::displayNameKey());
 
@@ -128,12 +126,14 @@ class SendEngagementAction extends Action
                                     NotificationChannel::Sms => $this->getEducatable()->primaryPhoneNumber()
                                         ->where('can_receive_sms', true)
                                         ->first()?->getKey(),
+                                    default => null,
                                 } ?? match ($channel) {
                                     NotificationChannel::Email => $this->getEducatable()->emailAddresses()
                                         ->first()?->getKey(),
                                     NotificationChannel::Sms => $this->getEducatable()->phoneNumbers()
                                         ->where('can_receive_sms', true)
                                         ->first()?->getKey(),
+                                    default => null,
                                 };
 
                                 $set('recipient_route_id', $route);
@@ -142,6 +142,7 @@ class SendEngagementAction extends Action
                             ->label(fn (Get $get): string => match (NotificationChannel::parse($get('channel'))) {
                                 NotificationChannel::Email => 'Email address',
                                 NotificationChannel::Sms => 'Phone number',
+                                default => throw new Exception('Invalid channel.'),
                             })
                             ->options(fn (Get $get): array => match (NotificationChannel::parse($get('channel'))) {
                                 NotificationChannel::Email => $this->getEducatable()->emailAddresses
@@ -156,6 +157,7 @@ class SendEngagementAction extends Action
                                         $phoneNumber->getKey() => $phoneNumber->number . (filled($phoneNumber->ext) ? " (ext. {$phoneNumber->ext})" : '') . (filled($phoneNumber->type) ? " ({$phoneNumber->type})" : ''),
                                     ])
                                     ->all(),
+                                default => [],
                             })
                             ->default(fn (): ?string => $this->getEducatable()->primaryEmailAddress?->getKey())
                             ->required(),
@@ -351,15 +353,17 @@ class SendEngagementAction extends Action
         return 'engage';
     }
 
-    public function educatable(Educatable $educatable): static
+    public function educatable(Model $educatable): static
     {
         $this->educatable = $educatable;
 
         return $this;
     }
 
-    public function getEducatable(): Educatable
+    public function getEducatable(): Student | Prospect
     {
+        throw_unless($this->educatable instanceof Student || $this->educatable instanceof Prospect, new Exception('Educatable must be a Student or Prospect instance.'));
+
         return $this->educatable;
     }
 }

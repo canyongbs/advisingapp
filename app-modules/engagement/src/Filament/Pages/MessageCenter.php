@@ -51,6 +51,7 @@ use App\Actions\GetRecordFromMorphAndKey;
 use App\Models\Authenticatable;
 use App\Models\User;
 use Carbon\Carbon;
+use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ViewAction;
 use Filament\Pages\Page;
@@ -356,6 +357,8 @@ class MessageCenter extends Page
 
     public function createAction(): Action
     {
+        throw_unless($this->recordModel instanceof Student || $this->recordModel instanceof Prospect, new Exception('The record model must be a student or prospect.'));
+
         return SendEngagementAction::make()
             ->educatable($this->recordModel)
             ->after(fn () => $this->refreshSelectedEducatable());
