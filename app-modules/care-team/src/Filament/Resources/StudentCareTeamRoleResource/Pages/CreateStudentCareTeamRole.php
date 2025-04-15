@@ -50,6 +50,10 @@ class CreateStudentCareTeamRole extends CreateRecord
 
     protected ?bool $hasDatabaseTransactions = true;
 
+    public string $name;
+    public bool $is_default;
+    public CareTeamRoleType $type;
+
     public function form(Form $form): Form
     {
         return $form
