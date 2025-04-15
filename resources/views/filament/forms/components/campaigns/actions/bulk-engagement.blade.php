@@ -59,7 +59,9 @@
         @if (isset($action['subject']))
             <div class="flex flex-col pt-3">
                 <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Subject</dt>
-                <dd class="text-sm font-semibold">{{ $action['subject'] }}</dd>
+                <dd class="text-sm font-semibold">
+                    {!! EngagementBatch::renderWithMergeTags(tiptap_converter()->asHTML($action['subject'])) !!}
+                </dd>
             </div>
         @endif
         @if ($action['body'])

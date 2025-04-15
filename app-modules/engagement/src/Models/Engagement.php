@@ -226,7 +226,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         );
     }
 
-    public function getSubject(): string
+    public function getSubject(): HtmlString
     {
         return app(GenerateEngagementSubjectContent::class)(
             $this->subject,
