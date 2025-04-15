@@ -40,6 +40,8 @@ use AdvisingApp\Campaign\Enums\CampaignActionType;
 use AdvisingApp\Campaign\Filament\Blocks\CampaignActionBlock;
 use AdvisingApp\Campaign\Filament\Resources\CampaignResource;
 use AdvisingApp\Campaign\Models\Campaign;
+use AdvisingApp\Segment\Models\Segment;
+use AdvisingApp\Team\Models\TeamUser;
 use App\Models\User;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Select;
@@ -71,7 +73,18 @@ class CreateCampaign extends CreateRecord
                         ->required(),
                     Select::make('segment_id')
                         ->label('Population Segment')
-                        ->options($user->segments()->pluck('name', 'id'))
+                        ->options(function () use ($user) {
+                            $teamIds = $user->teams->pluck('id');
+                            $users = TeamUser::query()
+                                ->whereIn('team_id', $teamIds)
+                                ->pluck('user_id');
+                            $users->push($user->getKey());
+                            $users->unique();
+
+                            return Segment::query()
+                                ->whereIn('user_id', $users)
+                                ->pluck('name', 'id');
+                        })
                         ->searchable()
                         ->required(),
                 ]),
