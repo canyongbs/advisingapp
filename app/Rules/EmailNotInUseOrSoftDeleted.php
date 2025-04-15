@@ -45,7 +45,7 @@ class EmailNotInUseOrSoftDeleted implements ValidationRule
 {
     protected string $message;
 
-    protected string $currentUserId;
+    protected ?string $currentUserId;
 
     public function __construct(?string $currentUserId = null)
     {
