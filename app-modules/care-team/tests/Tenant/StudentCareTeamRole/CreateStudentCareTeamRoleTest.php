@@ -49,8 +49,6 @@ use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertFalse;
 use function Tests\asSuperAdmin;
 
-
-
 test('CreateStudentCareTeamRole is gated with proper access control', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
@@ -60,7 +58,7 @@ test('CreateStudentCareTeamRole is gated with proper access control', function (
         )->assertForbidden();
 
     livewire(CreateStudentCareTeamRole::class)
-         ->assertForbidden();
+        ->assertForbidden();
 
     $user->givePermissionTo('product_admin.view-any');
     $user->givePermissionTo('product_admin.create');
@@ -84,9 +82,9 @@ test('A successful action on the CreateStudentCareTeamRole page', function () {
     $createRequest = CreateCareTeamRoleRequestFactory::new()->state(['type' => CareTeamRoleType::Student])->create();
 
     livewire(CreateStudentCareTeamRole::class)
-          ->set('data', $createRequest)
-          ->call('create')
-          ->assertHasNoFormErrors();
+        ->set('data', $createRequest)
+        ->call('create')
+        ->assertHasNoFormErrors();
 
     assertCount(1, CareTeamRole::all());
 
@@ -103,7 +101,7 @@ test('CreateStudentCareTeamRole requires valid data', function ($data, $errors) 
         ->call('create')
         ->assertHasFormErrors($errors);
 
-        assertCount(0, CareTeamRole::all());
+    assertCount(0, CareTeamRole::all());
 })->with(
     [
         'name missing' => [CreateCareTeamRoleRequestFactory::new()->state(['type' => CareTeamRoleType::Student])->without('name'), ['name' => 'required']],
@@ -112,7 +110,7 @@ test('CreateStudentCareTeamRole requires valid data', function ($data, $errors) 
     ]
 );
 
-test('Creating a default care team role will make all other care team roles not the default', function() {
+test('Creating a default care team role will make all other care team roles not the default', function () {
     asSuperAdmin();
 
     CareTeamRole::factory()->create(['is_default' => true, 'type' => CareTeamRoleType::Student]);
@@ -123,10 +121,9 @@ test('Creating a default care team role will make all other care team roles not 
     $createRequest = CreateCareTeamRoleRequestFactory::new()->state(['is_default' => true, 'type' => CareTeamRoleType::Student])->create();
 
     livewire(CreateStudentCareTeamRole::class)
-          ->set('data', $createRequest)
-          ->call('create')
-          ->assertHasNoFormErrors();
-    
-    $careTeamRoles->each(fn($careTeamRole) => assertFalse($careTeamRole->fresh()->is_default === true));
-});
+        ->set('data', $createRequest)
+        ->call('create')
+        ->assertHasNoFormErrors();
 
+    $careTeamRoles->each(fn ($careTeamRole) => assertFalse($careTeamRole->fresh()->is_default === true));
+});

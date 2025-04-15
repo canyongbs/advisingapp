@@ -43,7 +43,7 @@ class EditCareTeamRoleRequestFactory extends RequestFactory
     public function definition(): array
     {
         return [
-           'name' => fake()->word(),
+            'name' => fake()->word(),
             'is_default' => false,
         ];
     }

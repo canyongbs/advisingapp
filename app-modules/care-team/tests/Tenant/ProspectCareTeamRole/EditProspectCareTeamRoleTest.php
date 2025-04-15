@@ -48,7 +48,6 @@ use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertEquals;
 use function Tests\asSuperAdmin;
 
-
 test('EditProspectCareTeamRole is gated with proper access control', function () {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
@@ -76,10 +75,10 @@ test('EditProspectCareTeamRole is gated with proper access control', function ()
             ])
         )->assertSuccessful();
 
-        livewire(EditProspectCareTeamRole::class, [
-            'record' => $careTeamRole->getRouteKey(),
-        ])
-            ->assertSuccessful();
+    livewire(EditProspectCareTeamRole::class, [
+        'record' => $careTeamRole->getRouteKey(),
+    ])
+        ->assertSuccessful();
 });
 
 test('A successful action on the EditProspectCareTeamRole page', function () {
@@ -127,4 +126,3 @@ test('EditProspectCareTeamRole requires valid data', function ($data, $errors) {
         'is_default not a boolean' => [EditCareTeamRoleRequestFactory::new()->state(['is_default' => 'a', 'type' => CareTeamRoleType::Prospect]), ['is_default' => 'boolean']],
     ]
 );
-

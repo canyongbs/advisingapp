@@ -61,12 +61,10 @@ test('ListProspectCareTeamRole is gated with proper access control', function ()
         )->assertSuccessful();
 });
 
-
 test('The correct details are displayed on the ListProspectCareTeamRole page', function () {
     $careTeamRoles = CareTeamRole::factory()->count(3)->create(['type' => CareTeamRoleType::Prospect]);
 
     asSuperAdmin();
-
 
     $component = livewire(ListProspectCareTeamRoles::class)
         ->set('tableRecordsPerPage', 3);
