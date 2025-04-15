@@ -41,6 +41,7 @@ use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\Concerns\HasProspectHeader;
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Forms\Components\Select;
@@ -64,6 +65,7 @@ use Illuminate\Support\Facades\Cache;
 class ManageProspectAlerts extends ManageRelatedRecords
 {
     use ProspectHolisticViewPage;
+    use HasProspectHeader;
 
     protected static string $resource = ProspectResource::class;
 

@@ -53,6 +53,7 @@ trait HasProspectHeader
     {
         $sisSettings = app(StudentInformationSystemSettings::class);
 
+        /** @var Prospect $prospect */
         $prospect = $this->getRecord();
 
         $prospectName = filled($prospect->full_name)

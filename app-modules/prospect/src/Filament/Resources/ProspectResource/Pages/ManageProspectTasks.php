@@ -38,11 +38,13 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\Concerns\HasProspectHeader;
 use AdvisingApp\Task\Filament\RelationManagers\BaseTaskRelationManager;
 
 class ManageProspectTasks extends BaseTaskRelationManager
 {
     use ProspectHolisticViewPage;
+    use HasProspectHeader;
 
     protected static string $resource = ProspectResource::class;
 
