@@ -34,27 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\Concerns\HasProspectHeader;
-use AdvisingApp\Task\Filament\RelationManagers\BaseTaskRelationManager;
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::table('prospects', function (Blueprint $table) {
+            $table->boolean('sms_opt_out')->nullable()->change();
+            $table->boolean('email_bounce')->nullable()->change();
+        });
+    }
 
-class ManageProspectTasks extends BaseTaskRelationManager
-{
-    use ProspectHolisticViewPage;
-    use HasProspectHeader;
-
-    protected static string $resource = ProspectResource::class;
-
-    protected static string $relationship = 'tasks';
-
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $navigationLabel = 'Tasks';
-
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $breadcrumb = 'Tasks';
-
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
-}
+    public function down(): void
+    {
+        Schema::table('prospects', function (Blueprint $table) {
+            $table->boolean('sms_opt_out')->default(false)->change();
+            $table->boolean('email_bounce')->default(false)->change();
+        });
+    }
+};

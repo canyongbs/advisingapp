@@ -38,6 +38,7 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\Concerns\HasProspectHeader;
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Filament\Resources\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
@@ -56,6 +57,7 @@ use Illuminate\Database\Eloquent\Builder;
 class ManageProspectCareTeam extends ManageRelatedRecords
 {
     use ProspectHolisticViewPage;
+    use HasProspectHeader;
 
     protected static string $resource = ProspectResource::class;
 

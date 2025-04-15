@@ -39,12 +39,18 @@ namespace AdvisingApp\Prospect\Imports;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
+use App\Features\ImportSettingsFeature;
 use App\Models\User;
+use App\Settings\ImportSettings;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
+use libphonenumber\NumberParseException;
+use libphonenumber\PhoneNumberFormat;
+use libphonenumber\PhoneNumberUtil;
 
 class ProspectImporter extends Importer
 {
@@ -52,6 +58,37 @@ class ProspectImporter extends Importer
 
     public static function getColumns(): array
     {
+        $castPhoneNumber = function (ImportColumn $column, ?string $state): ?string {
+            if (blank($state)) {
+                return null;
+            }
+
+            $phoneNumberUtil = PhoneNumberUtil::getInstance();
+
+            // Try to parse the number without a region, which will only work if the phone number is in E164 format already.
+            try {
+                return $phoneNumberUtil->format(
+                    $phoneNumberUtil->parse($state),
+                    PhoneNumberFormat::E164,
+                );
+            } catch (NumberParseException) {
+                // Do not use invalid phone numbers.
+            }
+
+            $defaultCountry = ImportSettingsFeature::active() ? app(ImportSettings::class)->default_country : 'us';
+
+            try {
+                return $phoneNumberUtil->format(
+                    $phoneNumberUtil->parse($state, $defaultCountry),
+                    PhoneNumberFormat::E164,
+                );
+            } catch (NumberParseException $exception) {
+                throw ValidationException::withMessages([
+                    $column->getName() => "{$exception->getMessage()} ({$column->getName()})",
+                ]);
+            }
+        };
+
         return [
             ImportColumn::make('first_name')
                 ->rules(['required'])
@@ -120,8 +157,9 @@ class ProspectImporter extends Importer
                 ->example('Work')
                 ->fillRecordUsing(fn () => null),
             ImportColumn::make('phone_1')
-                ->rules(['phone:E164'])
+                ->rules(['max:255'])
                 ->example('+1 (555) 555-5555')
+                ->castStateUsing($castPhoneNumber)
                 ->fillRecordUsing(fn () => null),
             ImportColumn::make('phone_1_ext')
                 ->label('Phone 1 extension')
@@ -138,8 +176,9 @@ class ProspectImporter extends Importer
                 ->example('true')
                 ->fillRecordUsing(fn () => null),
             ImportColumn::make('phone_2')
-                ->rules(['phone:E164'])
+                ->rules(['max:255'])
                 ->example('+1 (666) 666-6666')
+                ->castStateUsing($castPhoneNumber)
                 ->fillRecordUsing(fn () => null),
             ImportColumn::make('phone_2_ext')
                 ->label('Phone 2 extension')
@@ -156,8 +195,9 @@ class ProspectImporter extends Importer
                 ->example('false')
                 ->fillRecordUsing(fn () => null),
             ImportColumn::make('phone_3')
-                ->rules(['phone:E164'])
+                ->rules(['max:255'])
                 ->example('+1 (777) 777-7777')
+                ->castStateUsing($castPhoneNumber)
                 ->fillRecordUsing(fn () => null),
             ImportColumn::make('phone_3_ext')
                 ->label('Phone 3 extension')
@@ -272,12 +312,18 @@ class ProspectImporter extends Importer
             ImportColumn::make('sms_opt_out')
                 ->label('SMS opt out')
                 ->boolean()
-                ->rules(['boolean'])
-                ->example('no'),
+                ->rules([
+                    'nullable',
+                    'boolean',
+                ])
+                ->example('false'),
             ImportColumn::make('email_bounce')
                 ->boolean()
-                ->rules(['boolean'])
-                ->example('yes'),
+                ->rules([
+                    'nullable',
+                    'boolean',
+                ])
+                ->example('true'),
             ImportColumn::make('birthdate')
                 ->rules(['date'])
                 ->example('1990-01-01'),

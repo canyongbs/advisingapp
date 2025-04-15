@@ -150,6 +150,12 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         'updated_at_source' => 'datetime',
         'birthdate' => 'date',
         'dfw' => 'date',
+        'sms_opt_out' => 'boolean',
+        'email_bounce' => 'boolean',
+        'dual' => 'boolean',
+        'ferpa' => 'boolean',
+        'sap' => 'boolean',
+        'firstgen' => 'boolean',
     ];
 
     public function identifier(): string

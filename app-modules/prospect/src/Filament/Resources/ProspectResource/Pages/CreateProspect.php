@@ -45,7 +45,6 @@ use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -133,7 +132,7 @@ class CreateProspect extends CreateRecord
                             ->displayFormat('Y-m-d')
                             ->maxDate(now()),
                         TextInput::make('hsgrad')
-                            ->label('High School Graduation Date')
+                            ->label('High School Graduation Year')
                             ->nullable()
                             ->numeric()
                             ->minValue(1920)
@@ -286,13 +285,11 @@ class CreateProspect extends CreateRecord
                     ->columns(2),
                 Section::make('Engagement Restrictions')
                     ->schema([
-                        Radio::make('sms_opt_out')
+                        Select::make('sms_opt_out')
                             ->label('SMS Opt Out')
-                            ->default(false)
                             ->boolean(),
-                        Radio::make('email_bounce')
+                        Select::make('email_bounce')
                             ->label('Email Bounce')
-                            ->default(false)
                             ->boolean(),
                     ])
                     ->columns(2),

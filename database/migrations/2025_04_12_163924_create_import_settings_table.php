@@ -34,27 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\Concerns\HasProspectHeader;
-use AdvisingApp\Task\Filament\RelationManagers\BaseTaskRelationManager;
+return new class () extends SettingsMigration {
+    public function up(): void
+    {
+        $this->migrator->add('import.default_country', 'us');
+    }
 
-class ManageProspectTasks extends BaseTaskRelationManager
-{
-    use ProspectHolisticViewPage;
-    use HasProspectHeader;
-
-    protected static string $resource = ProspectResource::class;
-
-    protected static string $relationship = 'tasks';
-
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $navigationLabel = 'Tasks';
-
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $breadcrumb = 'Tasks';
-
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
-}
+    public function down(): void
+    {
+        $this->migrator->deleteIfExists('import.default_country');
+    }
+};

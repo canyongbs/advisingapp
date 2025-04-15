@@ -54,7 +54,6 @@ use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Tag;
 use Filament\Actions\CreateAction;
 use Filament\Actions\ImportAction;
-use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -193,7 +192,7 @@ class ListProspects extends ListRecords
                                 ->options([
                                     'description' => 'Description',
                                     'email_bounce' => 'Email Bounce',
-                                    'hsgrad' => 'High School Graduation Date',
+                                    'hsgrad' => 'High School Graduation Year',
                                     'sms_opt_out' => 'SMS Opt Out',
                                     'source_id' => 'Source',
                                     'status_id' => 'Status',
@@ -204,22 +203,20 @@ class ListProspects extends ListRecords
                                 ->string()
                                 ->required()
                                 ->visible(fn (Get $get) => $get('field') === 'description'),
-                            Radio::make('email_bounce')
+                            Select::make('email_bounce')
                                 ->label('Email Bounce')
                                 ->boolean()
-                                ->required()
                                 ->visible(fn (Get $get) => $get('field') === 'email_bounce'),
                             TextInput::make('hsgrad')
-                                ->label('High School Graduation Date')
+                                ->label('High School Graduation Year')
                                 ->numeric()
                                 ->minValue(1920)
                                 ->maxValue(now()->addYears(25)->year)
                                 ->required()
                                 ->visible(fn (Get $get) => $get('field') === 'hsgrad'),
-                            Radio::make('sms_opt_out')
+                            Select::make('sms_opt_out')
                                 ->label('SMS Opt Out')
                                 ->boolean()
-                                ->required()
                                 ->visible(fn (Get $get) => $get('field') === 'sms_opt_out'),
                             Select::make('source_id')
                                 ->label('Source')

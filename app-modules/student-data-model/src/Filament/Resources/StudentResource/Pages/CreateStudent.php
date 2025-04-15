@@ -46,8 +46,8 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
@@ -138,7 +138,7 @@ class CreateStudent extends CreateRecord
                             ->displayFormat('Y-m-d')
                             ->maxDate(now()),
                         TextInput::make('hsgrad')
-                            ->label('High School Graduation Date')
+                            ->label('High School Graduation Year')
                             ->nullable()
                             ->numeric(),
                     ])
@@ -261,18 +261,24 @@ class CreateStudent extends CreateRecord
                     ]),
                 Section::make('Engagement Restrictions')
                     ->schema([
-                        Toggle::make('sms_opt_out')
-                            ->label('SMS Opt Out'),
-                        Toggle::make('email_bounce')
-                            ->label('Email Bounce'),
-                        Toggle::make('dual')
-                            ->label('Dual'),
-                        Toggle::make('ferpa')
-                            ->label('FERPA'),
-                        Toggle::make('firstgen')
-                            ->label('Firstgen'),
-                        Toggle::make('sap')
-                            ->label('SAP'),
+                        Select::make('sms_opt_out')
+                            ->label('SMS Opt Out')
+                            ->boolean(),
+                        Select::make('email_bounce')
+                            ->label('Email Bounce')
+                            ->boolean(),
+                        Select::make('dual')
+                            ->label('Dual')
+                            ->boolean(),
+                        Select::make('ferpa')
+                            ->label('FERPA')
+                            ->boolean(),
+                        Select::make('firstgen')
+                            ->label('Firstgen')
+                            ->boolean(),
+                        Select::make('sap')
+                            ->label('SAP')
+                            ->boolean(),
                         TextInput::make('holds')
                             ->label('Holds'),
                         DatePicker::make('dfw')

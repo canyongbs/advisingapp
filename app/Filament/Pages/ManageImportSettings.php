@@ -34,27 +34,48 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
+namespace App\Filament\Pages;
 
-use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\Concerns\HasProspectHeader;
-use AdvisingApp\Task\Filament\RelationManagers\BaseTaskRelationManager;
+use App\Features\ImportSettingsFeature;
+use App\Filament\Clusters\ProductIntegrations;
+use App\Models\User;
+use App\Settings\ImportSettings;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Form;
+use Filament\Pages\SettingsPage;
+use Squire\Models\Country;
 
-class ManageProspectTasks extends BaseTaskRelationManager
+class ManageImportSettings extends SettingsPage
 {
-    use ProspectHolisticViewPage;
-    use HasProspectHeader;
+    protected static ?string $title = 'Sync and Imports';
 
-    protected static string $resource = ProspectResource::class;
+    protected static ?int $navigationSort = 120;
 
-    protected static string $relationship = 'tasks';
+    protected static string $settings = ImportSettings::class;
 
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $navigationLabel = 'Tasks';
+    protected static ?string $cluster = ProductIntegrations::class;
 
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $breadcrumb = 'Tasks';
+    public static function canAccess(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
 
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
+        return ImportSettingsFeature::active() && $user->isSuperAdmin();
+    }
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Select::make('default_country')
+                    ->label('Default country code')
+                    ->options(fn (): array => Country::query()
+                        ->orderBy('name')
+                        ->select(['id', 'name', 'calling_code'])
+                        ->get()
+                        ->mapWithKeys(fn (Country $country): array => [$country->getKey() => "{$country->getAttributeValue('name')} (+{$country->getAttributeValue('calling_code')})"])
+                        ->all())
+                    ->required(),
+            ]);
+    }
 }

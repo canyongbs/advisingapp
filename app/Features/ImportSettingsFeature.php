@@ -34,27 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
+namespace App\Features;
 
-use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\Concerns\HasProspectHeader;
-use AdvisingApp\Task\Filament\RelationManagers\BaseTaskRelationManager;
+use App\Support\AbstractFeatureFlag;
 
-class ManageProspectTasks extends BaseTaskRelationManager
+class ImportSettingsFeature extends AbstractFeatureFlag
 {
-    use ProspectHolisticViewPage;
-    use HasProspectHeader;
-
-    protected static string $resource = ProspectResource::class;
-
-    protected static string $relationship = 'tasks';
-
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $navigationLabel = 'Tasks';
-
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $breadcrumb = 'Tasks';
-
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
+    public function resolve(mixed $scope): mixed
+    {
+        return false;
+    }
 }
