@@ -272,12 +272,18 @@ class ProspectImporter extends Importer
             ImportColumn::make('sms_opt_out')
                 ->label('SMS opt out')
                 ->boolean()
-                ->rules(['boolean'])
-                ->example('no'),
+                ->rules([
+                    'nullable',
+                    'boolean',
+                ])
+                ->example('false'),
             ImportColumn::make('email_bounce')
                 ->boolean()
-                ->rules(['boolean'])
-                ->example('yes'),
+                ->rules([
+                    'nullable',
+                    'boolean',
+                ])
+                ->example('true'),
             ImportColumn::make('birthdate')
                 ->rules(['date'])
                 ->example('1990-01-01'),

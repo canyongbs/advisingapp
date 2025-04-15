@@ -110,17 +110,33 @@ class StudentImporter extends Importer
             ImportColumn::make('sms_opt_out')
                 ->label('SMS opt out')
                 ->example('false')
-                ->boolean(),
+                ->boolean()
+                ->rules([
+                    'nullable',
+                    'boolean',
+                ]),
             ImportColumn::make('email_bounce')
                 ->example('true')
-                ->boolean(),
+                ->boolean()
+                ->rules([
+                    'nullable',
+                    'boolean',
+                ]),
             ImportColumn::make('dual')
                 ->example('true')
-                ->boolean(),
+                ->boolean()
+                ->rules([
+                    'nullable',
+                    'boolean',
+                ]),
             ImportColumn::make('ferpa')
                 ->label('FERPA')
                 ->example('true')
-                ->boolean(),
+                ->boolean()
+                ->rules([
+                    'nullable',
+                    'boolean',
+                ]),
             ImportColumn::make('dfw')
                 ->label('DFW')
                 ->example('2024-10-21')
@@ -131,7 +147,11 @@ class StudentImporter extends Importer
             ImportColumn::make('sap')
                 ->label('SAP')
                 ->example('true')
-                ->boolean(),
+                ->boolean()
+                ->rules([
+                    'nullable',
+                    'boolean',
+                ]),
             ImportColumn::make('holds')
                 ->example('UHIJN')
                 ->rules([
@@ -141,7 +161,11 @@ class StudentImporter extends Importer
                 ]),
             ImportColumn::make('firstgen')
                 ->example('true')
-                ->boolean(),
+                ->boolean()
+                ->rules([
+                    'nullable',
+                    'boolean',
+                ]),
             ImportColumn::make('ethnicity')
                 ->rules([
                     'nullable',

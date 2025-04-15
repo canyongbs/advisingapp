@@ -122,14 +122,18 @@ class StudentsTable
                             ->icon('heroicon-m-exclamation-triangle'),
                         BooleanConstraint::make('sap')
                             ->label('SAP')
-                            ->icon('heroicon-m-academic-cap'),
-                        BooleanConstraint::make('dual'),
+                            ->icon('heroicon-m-academic-cap')
+                            ->nullable(),
+                        BooleanConstraint::make('dual')
+                            ->nullable(),
                         BooleanConstraint::make('firstgen')
                             ->label('First Generation')
-                            ->icon('heroicon-m-academic-cap'),
+                            ->icon('heroicon-m-academic-cap')
+                            ->nullable(),
                         BooleanConstraint::make('ferpa')
                             ->label('FERPA')
-                            ->icon('heroicon-m-lock-open'),
+                            ->icon('heroicon-m-lock-open')
+                            ->nullable(),
                         Constraint::make('subscribed')
                             ->icon('heroicon-m-bell')
                             ->operators([
@@ -199,9 +203,11 @@ class StudentsTable
                             ->relationship('enrollments', 'unt_earned'),
                         BooleanConstraint::make('sms_opt_out')
                             ->label('SMS Opt Out')
-                            ->icon('heroicon-m-chat-bubble-bottom-center'),
+                            ->icon('heroicon-m-chat-bubble-bottom-center')
+                            ->nullable(),
                         BooleanConstraint::make('email_bounce')
-                            ->icon('heroicon-m-arrow-uturn-left'),
+                            ->icon('heroicon-m-arrow-uturn-left')
+                            ->nullable(),
                     ])
                     ->constraintPickerColumns([
                         'md' => 2,

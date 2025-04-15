@@ -74,14 +74,19 @@ class StudentEmailOptInOptOutPieChart extends PieChartReportWidget
             return Student::where('email_bounce', true)->count();
         });
 
+        $emailNullPercentage = Cache::tags([$this->cacheTag])->remember('email_null_count', now()->addHours(24), function (): int {
+            return Student::whereNull('email_bounce')->count();
+        });
+
         return [
-            'labels' => ['Can receive emails', 'Cannot receive emails'],
+            'labels' => ['Can receive emails', 'Cannot receive emails', 'Data unavailable'],
             'datasets' => [
                 [
-                    'data' => [$emailOptInPercentage, $emailOptOutPercentage],
+                    'data' => [$emailOptInPercentage, $emailOptOutPercentage, $emailNullPercentage],
                     'backgroundColor' => [
                         $this->getRgbString(Color::Orange[500]),
                         $this->getRgbString(Color::Blue[500]),
+                        $this->getRgbString(Color::Gray[500]),
                     ],
                     'hoverOffset' => 4,
                 ],
