@@ -83,6 +83,7 @@ class CreateCampaign extends CreateRecord
                         ->minItems(1)
                         ->blocks(CampaignActionType::blocks())
                         ->dehydrated(false)
+                        ->validationAttribute('journey steps')
                         ->saveRelationshipsUsing(function (Builder $component, Campaign $record) {
                             foreach ($component->getChildComponentContainers() as $item) {
                                 /** @var CampaignActionBlock $block */
