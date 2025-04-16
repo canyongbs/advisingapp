@@ -330,7 +330,7 @@ input UpdateProspectInput {
 type ProspectMutations {
     "Create an prospect."
     create(input: CreateProspectInput! @spread): Prospect!
-        @create
+        @createProspect
         @canModel(ability: "create")
 
     "Update an prospect."

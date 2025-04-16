@@ -34,52 +34,39 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Providers;
+namespace AdvisingApp\Prospect\GraphQL\Directives;
 
-use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
-use AdvisingApp\Prospect\Enums\SystemProspectClassification;
-use AdvisingApp\Prospect\Listeners\RegisterGraphQLDirectives;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Prospect\Models\ProspectAddress;
-use AdvisingApp\Prospect\Models\ProspectEmailAddress;
-use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
-use AdvisingApp\Prospect\Models\ProspectSource;
-use AdvisingApp\Prospect\Models\ProspectStatus;
-use AdvisingApp\Prospect\ProspectPlugin;
-use App\Concerns\ImplementsGraphQL;
-use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\ServiceProvider;
-use Nuwave\Lighthouse\Events\RegisterDirectiveNamespaces;
+use Nuwave\Lighthouse\Execution\Arguments\SaveModel;
+use Nuwave\Lighthouse\Schema\Directives\OneModelMutationDirective;
 
-class ProspectServiceProvider extends ServiceProvider
+class CreateProspectDirective extends OneModelMutationDirective
 {
-    use ImplementsGraphQL;
-
-    public function register(): void
+    public static function definition(): string
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new ProspectPlugin()));
+        return /** @lang GraphQL */ <<<'GRAPHQL'
+"""
+Create a new prospect with the given arguments.
+"""
+directive @createProspect(
+  """
+  Specify the name of the relation on the parent model.
+  This is only needed when using this directive as a nested arg
+  resolver and if the name of the relation is not the arg name.
+  """
+  relation: String
+) on FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
+GRAPHQL;
     }
 
-    public function boot(): void
+    protected function makeExecutionFunction(?Relation $parentRelation = null): callable
     {
-        Relation::morphMap([
-            'prospect' => Prospect::class,
-            'prospect_source' => ProspectSource::class,
-            'prospect_status' => ProspectStatus::class,
-            'prospect_email_address' => ProspectEmailAddress::class,
-            'prospect_address' => ProspectAddress::class,
-            'prospect_phone_number' => ProspectPhoneNumber::class,
-        ]);
+        return new SaveModel($parentRelation);
+    }
 
-        $this->discoverSchema(__DIR__ . '/../../graphql/*');
-        $this->registerEnum(ProspectStatusColorOptions::class);
-        $this->registerEnum(SystemProspectClassification::class);
-
-        Event::listen(
-            RegisterDirectiveNamespaces::class,
-            RegisterGraphQLDirectives::class,
-        );
+    protected function getModelClass(string $argumentName = 'model'): string
+    {
+        return Prospect::class;
     }
 }
