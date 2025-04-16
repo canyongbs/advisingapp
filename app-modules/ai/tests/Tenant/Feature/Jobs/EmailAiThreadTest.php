@@ -36,7 +36,7 @@
 
 use AdvisingApp\Ai\Enums\AiApplication;
 use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Jobs\CloneAiThread;
+use AdvisingApp\Ai\Jobs\EmailAiThread;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
@@ -66,9 +66,7 @@ it('can send a notification containing a thread transcript', function () {
         ->for($sender, 'user')
         ->create();
 
-    dispatch(new CloneAiThread($thread, $sender, $recipient));
-
-    Notification::send($recipient, new AssistantTranscriptNotification($thread, $sender));
+    dispatch(new EmailAiThread($thread, $sender, $recipient));
 
     Notification::assertSentTo($recipient, AssistantTranscriptNotification::class);
 });
