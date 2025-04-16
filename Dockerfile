@@ -56,16 +56,16 @@ RUN apt-get update \
 
 FROM web-serversideup AS web-base
 
-ENV NVM_VERSION v0.40.2
-ENV NODE_VERSION 23.11.0
-ENV NPM_VERSION ^11.0.0
-ENV NVM_DIR /usr/local/nvm
+ENV NVM_VERSION=v0.40.2
+ENV NODE_VERSION=23.11.0
+ENV NPM_VERSION=^11.0.0
+ENV NVM_DIR=/usr/local/nvm
 RUN mkdir "$NVM_DIR"
 
 RUN curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh" | bash
 
-ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
-ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+ENV NODE_PATH=$NVM_DIR/v$NODE_VERSION/lib/node_modules
+ENV PATH=$NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 
 RUN echo "source $NVM_DIR/nvm.sh \
     && nvm install $NODE_VERSION \
@@ -125,16 +125,16 @@ RUN chown -R "$PUID":"$PGID" /var/www/html \
 
 FROM cli-serversideup AS worker-base
 
-ENV NVM_VERSION v0.40.1
-ENV NODE_VERSION 23.4.0
-ENV NPM_VERSION ^11.0.0
-ENV NVM_DIR /usr/local/nvm
+ENV NVM_VERSION=v0.40.1
+ENV NODE_VERSION=23.11.0
+ENV NPM_VERSION=^11.0.0
+ENV NVM_DIR=/usr/local/nvm
 RUN mkdir "$NVM_DIR"
 
 RUN curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh" | bash
 
-ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
-ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+ENV NODE_PATH=$NVM_DIR/v$NODE_VERSION/lib/node_modules
+ENV PATH=$NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 
 RUN echo "source $NVM_DIR/nvm.sh \
     && nvm install $NODE_VERSION \
@@ -188,7 +188,7 @@ RUN /generate-queues.sh "default" "\$SQS_QUEUE" \
     && /generate-queues.sh "outbound-communication" "\$OUTBOUND_COMMUNICATION_QUEUE" \
     && /generate-queues.sh "audit" "\$AUDIT_QUEUE_QUEUE" \
     && /generate-queues.sh "meeting-center" "\$MEETING_CENTER_QUEUE" \
-    && /generate-queues.sh "import-export" "\$IMPORT_EXPORT_QUEUE" 
+    && /generate-queues.sh "import-export" "\$IMPORT_EXPORT_QUEUE"
 
 RUN rm /generate-queues.sh
 
@@ -209,10 +209,10 @@ RUN chown -R "$PUID":"$PGID" /var/www/html \
 
 FROM cli-serversideup AS scheduler-base
 
-ENV NVM_VERSION v0.40.1
-ENV NODE_VERSION 23.4.0
-ENV NPM_VERSION ^11.0.0
-ENV NVM_DIR /usr/local/nvm
+ENV NVM_VERSION=v0.40.1
+ENV NODE_VERSION=23.11.0
+ENV NPM_VERSION=^11.0.0
+ENV NVM_DIR=/usr/local/nvm
 RUN mkdir "$NVM_DIR"
 
 RUN curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh" | bash
@@ -290,16 +290,16 @@ ENTRYPOINT ["/init"]
 
 FROM cli-serversideup AS cli-local-tooling
 
-ENV NVM_VERSION v0.40.1
-ENV NODE_VERSION 23.4.0
-ENV NPM_VERSION ^11.0.0
-ENV NVM_DIR /usr/local/nvm
+ENV NVM_VERSION=v0.40.1
+ENV NODE_VERSION=23.11.0
+ENV NPM_VERSION=^11.0.0
+ENV NVM_DIR=/usr/local/nvm
 RUN mkdir "$NVM_DIR"
 
 RUN curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh" | bash
 
-ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
-ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+ENV NODE_PATH=$NVM_DIR/v$NODE_VERSION/lib/node_modules
+ENV PATH=$NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 
 RUN echo "source $NVM_DIR/nvm.sh \
     && nvm install $NODE_VERSION \
