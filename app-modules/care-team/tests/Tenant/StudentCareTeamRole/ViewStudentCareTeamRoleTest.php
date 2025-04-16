@@ -34,60 +34,52 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Audit\Models\Concerns;
+use AdvisingApp\CareTeam\Filament\Resources\StudentCareTeamRoleResource;
+use AdvisingApp\CareTeam\Models\CareTeamRole;
+use AdvisingApp\StudentDataModel\Models\Student;
+use App\Enums\CareTeamRoleType;
+use App\Models\User;
 
-use AdvisingApp\Audit\Overrides\BelongsToMany;
-use AdvisingApp\Audit\Overrides\MorphToMany;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
+use function Pest\Laravel\actingAs;
+use function Tests\asSuperAdmin;
 
-trait AuditableManyToMany
-{
-    protected function newBelongsToMany(
-        Builder $query,
-        Model $parent,
-        $table,
-        $foreignPivotKey,
-        $relatedPivotKey,
-        $parentKey,
-        $relatedKey,
-        $relationName = null
-    ): BelongsToMany {
-        return new BelongsToMany(
-            $query,
-            $parent,
-            $table,
-            $foreignPivotKey,
-            $relatedPivotKey,
-            $parentKey,
-            $relatedKey,
-            $relationName
+test('ViewStudentCareTeamRole is gated with proper access control', function () {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+
+    $careTeamRole = CareTeamRole::factory()->create(['type' => CareTeamRoleType::Student]);
+
+    actingAs($user)
+        ->get(
+            StudentCareTeamRoleResource::getUrl('view', [
+                'record' => $careTeamRole,
+            ])
+        )->assertForbidden();
+
+    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('product_admin.*.view');
+
+    actingAs($user)
+        ->get(
+            StudentCareTeamRoleResource::getUrl('view', [
+                'record' => $careTeamRole,
+            ])
+        )->assertSuccessful();
+});
+
+test('The correct details are displayed on the ViewStudentCareTeamRole page', function () {
+    $careTeamRole = CareTeamRole::factory()->create(['type' => CareTeamRoleType::Student]);
+
+    asSuperAdmin()
+        ->get(
+            StudentCareTeamRoleResource::getUrl('view', [
+                'record' => $careTeamRole,
+            ])
+        )
+        ->assertSuccessful()
+        ->assertSeeTextInOrder(
+            [
+                'Name',
+                $careTeamRole->name,
+            ]
         );
-    }
-
-    protected function newMorphToMany(
-        Builder $query,
-        Model $parent,
-        $name,
-        $table,
-        $foreignPivotKey,
-        $relatedPivotKey,
-        $parentKey,
-        $relatedKey,
-        $relationName = null,
-        $inverse = false
-    ): MorphToMany {
-        return new MorphToMany(
-            $query,
-            $parent,
-            $name,
-            $table,
-            $foreignPivotKey,
-            $relatedPivotKey,
-            $parentKey,
-            $relatedKey,
-            $relationName,
-            $inverse
-        );
-    }
-}
+});

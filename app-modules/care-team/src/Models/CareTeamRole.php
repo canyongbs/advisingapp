@@ -34,60 +34,48 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Audit\Models\Concerns;
+namespace AdvisingApp\CareTeam\Models;
 
-use AdvisingApp\Audit\Overrides\BelongsToMany;
-use AdvisingApp\Audit\Overrides\MorphToMany;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\CareTeam\Database\Factories\CareTeamRoleFactory;
+use App\Enums\CareTeamRoleType;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-trait AuditableManyToMany
+/**
+ * @property bool $is_default
+ *
+ * @mixin IdeHelperCareTeamRole
+ */
+class CareTeamRole extends BaseModel implements Auditable
 {
-    protected function newBelongsToMany(
-        Builder $query,
-        Model $parent,
-        $table,
-        $foreignPivotKey,
-        $relatedPivotKey,
-        $parentKey,
-        $relatedKey,
-        $relationName = null
-    ): BelongsToMany {
-        return new BelongsToMany(
-            $query,
-            $parent,
-            $table,
-            $foreignPivotKey,
-            $relatedPivotKey,
-            $parentKey,
-            $relatedKey,
-            $relationName
-        );
-    }
+    /** @use HasFactory<CareTeamRoleFactory> */
+    use HasFactory;
 
-    protected function newMorphToMany(
-        Builder $query,
-        Model $parent,
-        $name,
-        $table,
-        $foreignPivotKey,
-        $relatedPivotKey,
-        $parentKey,
-        $relatedKey,
-        $relationName = null,
-        $inverse = false
-    ): MorphToMany {
-        return new MorphToMany(
-            $query,
-            $parent,
-            $name,
-            $table,
-            $foreignPivotKey,
-            $relatedPivotKey,
-            $parentKey,
-            $relatedKey,
-            $relationName,
-            $inverse
-        );
+    use SoftDeletes;
+    use AuditableTrait;
+    use HasUuids;
+
+    protected $fillable = [
+        'name',
+        'type',
+        'is_default',
+    ];
+
+    protected $casts = [
+        'type' => CareTeamRoleType::class,
+        'is_default' => 'boolean',
+    ];
+
+    /**
+     * @return HasMany<CareTeam, $this>
+     */
+    public function careTeams(): HasMany
+    {
+        return $this->hasMany(CareTeam::class);
     }
 }

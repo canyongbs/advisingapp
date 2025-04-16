@@ -232,7 +232,7 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
             table: 'care_teams',
         )
             ->using(CareTeam::class)
-            ->withPivot('id')
+            ->withPivot(['id', 'care_team_role_id'])
             ->withTimestamps()
             ->tap(new HasLicense($this->getLicenseType()));
     }

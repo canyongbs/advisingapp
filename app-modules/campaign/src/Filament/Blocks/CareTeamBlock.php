@@ -37,11 +37,23 @@
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
 use AdvisingApp\Campaign\Settings\CampaignSettings;
+use AdvisingApp\CareTeam\Models\CareTeam;
+use AdvisingApp\CareTeam\Models\CareTeamRole;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Segment\Models\Segment;
+use AdvisingApp\StudentDataModel\Models\Student;
+use App\Enums\CareTeamRoleType;
+use App\Features\CareTeamRoleFeature;
+use App\Models\Scopes\HasLicense;
 use App\Models\User;
 use Carbon\CarbonImmutable;
+use Exception;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Get;
+use Illuminate\Database\Eloquent\Builder;
 
 class CareTeamBlock extends CampaignActionBlock
 {
@@ -57,14 +69,78 @@ class CareTeamBlock extends CampaignActionBlock
     public function generateFields(string $fieldPrefix = ''): array
     {
         return [
-            Select::make($fieldPrefix . 'user_ids')
+            Repeater::make('careTeam')
                 ->label('Who should be assigned to the care team?')
-                ->options(User::all()->pluck('name', 'id'))
-                ->multiple()
-                ->searchable()
-                ->default([auth()->user()->id])
-                ->required()
-                ->exists('users', 'id'),
+                ->schema([
+                    Select::make($fieldPrefix . 'user_id')
+                        ->label('User')
+                        ->options(function (Get $get, $livewire, string $operation) {
+                            if ($operation === 'create') {
+                                $segment_id = $get('../../../../../segment_id');
+                            } else {
+                                $segment_id = $livewire->getOwnerRecord()->segment_id;
+                            }
+                            $segment = Segment::find($segment_id);
+
+                            return User::query()->tap(new HasLicense(match ($segment->model->getLabel()) {
+                                CareTeamRoleType::Student->getLabel() => Student::getLicenseType(),
+                                CareTeamRoleType::Prospect->getLabel() => Prospect::getLicenseType(),
+                                default => null,
+                            }))->pluck('name', 'id');
+                        })
+                        ->searchable()
+                        ->required()
+                        ->exists('users', 'id'),
+                    Select::make('care_team_role_id')
+                        ->label('Role')
+                        ->relationship('careTeamRole', 'name', function (Builder $query, Get $get, $livewire, string $operation) {
+                            if ($operation === 'create') {
+                                $segment_id = $get('../../../../../segment_id');
+                            } else {
+                                $segment_id = $livewire->getOwnerRecord()->segment_id;
+                            }
+                            $segment = Segment::find($segment_id);
+
+                            $query->where('type', match ($segment->model->getLabel()) {
+                                CareTeamRoleType::Student->getLabel() => CareTeamRoleType::Student,
+                                CareTeamRoleType::Prospect->getLabel() => CareTeamRoleType::Prospect,
+                                default => throw new Exception('The segment population was not of a type that can have a care team role associated with it.'),
+                            });
+                        })
+                        ->searchable()
+                        ->default(function (Get $get, $livewire, string $operation) {
+                            if ($operation === 'create') {
+                                $segment_id = $get('../../../../../segment_id');
+                            } else {
+                                $segment_id = $livewire->getOwnerRecord()->segment_id;
+                            }
+                            $segment = Segment::find($segment_id);
+
+                            return match ($segment->model->getLabel()) {
+                                CareTeamRoleType::Student->getLabel() => CareTeamRoleType::studentDefault()?->getKey(),
+                                CareTeamRoleType::Prospect->getLabel() => CareTeamRoleType::prospectDefault()?->getKey(),
+                                default => throw new Exception('The segment population was not of a type that can have a care team role associated with it.'),
+                            };
+                        })
+                        ->model(CareTeam::class)
+                        ->visible(function (Get $get, $livewire, string $operation) {
+                            if ($operation === 'create') {
+                                $segment_id = $get('../../../../../segment_id');
+                            } else {
+                                $segment_id = $livewire->getOwnerRecord()->segment_id;
+                            }
+                            $segment = Segment::find($segment_id);
+
+                            return CareTeamRole::where('type', match ($segment->model->getLabel()) {
+                                CareTeamRoleType::Student->getLabel() => CareTeamRoleType::Student,
+                                CareTeamRoleType::Prospect->getLabel() => CareTeamRoleType::Prospect,
+                                default => throw new Exception('The segment population was not of a type that can have a care team role associated with it.'),
+                            })->count() > 0 && CareTeamRoleFeature::active();
+                        }),
+                ])
+                ->addActionLabel('Add User')
+                ->reorderable(false),
+
             Toggle::make($fieldPrefix . 'remove_prior')
                 ->label('Remove all prior care team assignments?')
                 ->default(false)

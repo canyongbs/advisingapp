@@ -44,6 +44,7 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Models\License;
 use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\CareTeam\Models\CareTeam;
+use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
 use AdvisingApp\CaseManagement\Models\CaseAssignment;
 use AdvisingApp\Consent\Models\Concerns\CanConsent;
@@ -97,6 +98,8 @@ use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 /**
+ * @property CareTeamRole $careTeamRole
+ *
  * @mixin IdeHelperUser
  */
 #[ObservedBy([UserObserver::class])]
@@ -316,7 +319,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             table: 'care_teams'
         )
             ->using(CareTeam::class)
-            ->withPivot('id')
+            ->withPivot(['id', 'care_team_role_id'])
             ->withTimestamps();
     }
 
@@ -328,7 +331,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             table: 'care_teams'
         )
             ->using(CareTeam::class)
-            ->withPivot('id')
+            ->withPivot(['id', 'care_team_role_id'])
             ->withTimestamps();
     }
 
@@ -338,6 +341,16 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function careTeams(): HasMany
     {
         return $this->hasMany(CareTeam::class);
+    }
+
+    public function getCareTeamRoleFor(string $educatableId): ?CareTeamRole
+    {
+        /**
+         * @var CareTeam $careTeam
+         */
+        $careTeam = $this->careTeams()->with('careTeamRole')->where('educatable_id', $educatableId)->first();
+
+        return $careTeam->careTeamRole;
     }
 
     public function permissionsFromRoles(): HasManyDeep

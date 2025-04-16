@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
-use AdvisingApp\CareTeam\Filament\Actions\ToggleCareTeamBulkAction;
+use AdvisingApp\CareTeam\Filament\Actions\AddCareTeamMemberAction;
 use AdvisingApp\Engagement\Filament\Actions\BulkEngagementAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeBulkAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeTableAction;
@@ -49,6 +49,7 @@ use AdvisingApp\Segment\Actions\BulkSegmentAction;
 use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Models\Segment;
+use App\Enums\CareTeamRoleType;
 use App\Enums\TagType;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Tag;
@@ -184,7 +185,7 @@ class ListProspects extends ListRecords
                     SubscribeBulkAction::make(),
                     BulkEngagementAction::make(context: 'prospects'),
                     DeleteBulkAction::make(),
-                    ToggleCareTeamBulkAction::make(),
+                    AddCareTeamMemberAction::make(CareTeamRoleType::Prospect),
                     BulkAction::make('bulk_update')
                         ->icon('heroicon-o-pencil-square')
                         ->form([

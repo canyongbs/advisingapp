@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
-use AdvisingApp\CareTeam\Filament\Actions\ToggleCareTeamBulkAction;
+use AdvisingApp\CareTeam\Filament\Actions\AddCareTeamMemberAction;
 use AdvisingApp\Engagement\Filament\Actions\BulkEngagementAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeBulkAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeTableAction;
@@ -47,6 +47,7 @@ use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Actions\DeleteStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Enums\CareTeamRoleType;
 use App\Enums\TagType;
 use App\Models\Tag;
 use App\Models\User;
@@ -228,7 +229,7 @@ class ListStudents extends ListRecords
                         }),
                     SubscribeBulkAction::make(),
                     BulkEngagementAction::make(context: 'students'),
-                    ToggleCareTeamBulkAction::make(),
+                    AddCareTeamMemberAction::make(CareTeamRoleType::Student),
                     BulkSegmentAction::make(segmentModel: SegmentModel::Student),
                 ]),
             ]);

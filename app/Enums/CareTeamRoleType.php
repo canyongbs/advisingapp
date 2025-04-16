@@ -34,60 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Audit\Models\Concerns;
+namespace App\Enums;
 
-use AdvisingApp\Audit\Overrides\BelongsToMany;
-use AdvisingApp\Audit\Overrides\MorphToMany;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
+use AdvisingApp\CareTeam\Models\CareTeamRole;
+use Filament\Support\Contracts\HasLabel;
 
-trait AuditableManyToMany
+enum CareTeamRoleType: string implements HasLabel
 {
-    protected function newBelongsToMany(
-        Builder $query,
-        Model $parent,
-        $table,
-        $foreignPivotKey,
-        $relatedPivotKey,
-        $parentKey,
-        $relatedKey,
-        $relationName = null
-    ): BelongsToMany {
-        return new BelongsToMany(
-            $query,
-            $parent,
-            $table,
-            $foreignPivotKey,
-            $relatedPivotKey,
-            $parentKey,
-            $relatedKey,
-            $relationName
-        );
+    case Student = 'student';
+    case Prospect = 'prospect';
+
+    public function getLabel(): string
+    {
+        return $this->name;
     }
 
-    protected function newMorphToMany(
-        Builder $query,
-        Model $parent,
-        $name,
-        $table,
-        $foreignPivotKey,
-        $relatedPivotKey,
-        $parentKey,
-        $relatedKey,
-        $relationName = null,
-        $inverse = false
-    ): MorphToMany {
-        return new MorphToMany(
-            $query,
-            $parent,
-            $name,
-            $table,
-            $foreignPivotKey,
-            $relatedPivotKey,
-            $parentKey,
-            $relatedKey,
-            $relationName,
-            $inverse
-        );
+    public static function prospectDefault(): ?CareTeamRole
+    {
+        $careTeamRole = CareTeamRole::where('type', CareTeamRoleType::Prospect)->where('is_default', true)->first();
+
+        return $careTeamRole;
+    }
+
+    public static function studentDefault(): ?CareTeamRole
+    {
+        $careTeamRole = CareTeamRole::where('type', CareTeamRoleType::Student)->where('is_default', true)->first();
+
+        return $careTeamRole;
     }
 }
