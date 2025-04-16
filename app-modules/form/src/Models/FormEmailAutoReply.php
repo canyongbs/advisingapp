@@ -37,6 +37,7 @@
 namespace AdvisingApp\Form\Models;
 
 use AdvisingApp\Engagement\Actions\GenerateEngagementBodyContent;
+use AdvisingApp\Engagement\Actions\GenerateEngagementSubjectContent;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\BaseModel;
@@ -60,6 +61,7 @@ class FormEmailAutoReply extends BaseModel implements HasMedia
     ];
 
     protected $casts = [
+        'subject' => 'array',
         'body' => 'array',
         'is_enabled' => 'boolean',
     ];
@@ -79,6 +81,16 @@ class FormEmailAutoReply extends BaseModel implements HasMedia
             $this->getMergeData($author),
             $this,
             'body',
+        );
+    }
+
+    public function getSubject(Student|Prospect|null $author): string
+    {
+        return app(GenerateEngagementSubjectContent::class)(
+            $this->subject,
+            $this->getMergeData($author),
+            $this,
+            'subject',
         );
     }
 

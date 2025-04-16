@@ -45,7 +45,6 @@ use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form as FilamentForm;
 use Filament\Forms\Get;
@@ -89,10 +88,21 @@ class ManageFormEmailAutoReply extends EditRecord
                         Toggle::make('is_enabled')
                             ->label('Enabled')
                             ->live(),
-                        TextInput::make('subject')
+                        TiptapEditor::make('subject')
+                            ->mergeTags([
+                                'student first name',
+                                'student last name',
+                                'student full name',
+                                'student email',
+                                'student preferred name',
+                            ])
+                            ->profile('sms')
                             ->required(fn (Get $get) => $get('is_enabled'))
-                            ->placeholder('Subject')
-                            ->columnSpanFull(),
+                            ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
+                            ->columnSpanFull()
+                            ->placeholder('Enter the email subject here...')
+                            ->showMergeTagsInBlocksPanel(false)
+                            ->live(),
                         TiptapEditor::make('body')
                             ->disk('s3-public')
                             ->mergeTags([
