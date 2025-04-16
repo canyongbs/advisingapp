@@ -348,7 +348,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         /**
          * @var CareTeam $careTeam
          */
-        $careTeam = $this->careTeams->with('careTeamRole')->where('educatable_id', $educatableId)->first();
+        $careTeam = $this->careTeams()->with('careTeamRole')->where('educatable_id', $educatableId)->first();
 
         return $careTeam->careTeamRole;
     }
