@@ -348,9 +348,9 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         /**
          * @var CareTeam $careTeam
          */
-        $careTeam = $this->careTeams->where('educatable_id', $educatableId)->first();
+        $careTeam = $this->careTeams->with('careTeamRole')->where('educatable_id', $educatableId)->first();
 
-        return CareTeamRole::where('id', $careTeam->care_team_role_id)->first();
+        return $careTeam->careTeamRole;
     }
 
     public function permissionsFromRoles(): HasManyDeep
