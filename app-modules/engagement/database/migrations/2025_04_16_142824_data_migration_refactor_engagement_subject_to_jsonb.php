@@ -46,24 +46,24 @@ return new class () extends Migration {
                 }
             });
 
-            // DB::table('form_email_auto_replies')->select('id', 'subject')->chunkById(500, function ($rows) {
-            //     foreach ($rows as $row) {
-            //         $json = [
-            //             'type' => 'doc',
-            //             'content' => [[
-            //                 'type' => 'paragraph',
-            //                 'attrs' => ['class' => null, 'style' => null],
-            //                 'content' => [[
-            //                     'type' => 'text',
-            //                     'text' => $row->subject,
-            //                 ]],
-            //             ]],
-            //         ];
-            //         DB::table('form_email_auto_replies')
-            //             ->where('id', $row->id)
-            //             ->update(['subject' => json_encode($json)]);
-            //     }
-            // });
+            DB::table('form_email_auto_replies')->select('id', 'subject')->chunkById(500, function ($rows) {
+                foreach ($rows as $row) {
+                    $json = [
+                        'type' => 'doc',
+                        'content' => [[
+                            'type' => 'paragraph',
+                            'attrs' => ['class' => null, 'style' => null],
+                            'content' => [[
+                                'type' => 'text',
+                                'text' => $row->subject,
+                            ]],
+                        ]],
+                    ];
+                    DB::table('form_email_auto_replies')
+                        ->where('id', $row->id)
+                        ->update(['subject' => json_encode($json)]);
+                }
+            });
 
             DB::table('campaign_actions')
                 ->select('id', 'data')
@@ -121,15 +121,15 @@ return new class () extends Migration {
                 }
             });
 
-            // DB::table('form_email_auto_replies')->select('id', 'subject')->chunkById(500, function ($rows) {
-            //     foreach ($rows as $row) {
-            //         $decoded = json_decode($row->subject, true);
-            //         $text = $decoded['content'][0]['content'][0]['text'] ?? '';
-            //         DB::table('form_email_auto_replies')
-            //             ->where('id', $row->id)
-            //             ->update(['subject' => $text]);
-            //     }
-            // });
+            DB::table('form_email_auto_replies')->select('id', 'subject')->chunkById(500, function ($rows) {
+                foreach ($rows as $row) {
+                    $decoded = json_decode($row->subject, true);
+                    $text = $decoded['content'][0]['content'][0]['text'] ?? '';
+                    DB::table('form_email_auto_replies')
+                        ->where('id', $row->id)
+                        ->update(['subject' => $text]);
+                }
+            });
 
             DB::table('campaign_actions')
                 ->select('id', 'data')

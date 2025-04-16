@@ -10,6 +10,7 @@ return new class () extends Migration {
     {
         DB::statement('ALTER TABLE engagements ALTER COLUMN subject TYPE jsonb USING subject::jsonb');
         DB::statement('ALTER TABLE engagement_batches ALTER COLUMN subject TYPE jsonb USING subject::jsonb');
+        DB::statement('ALTER TABLE form_email_auto_replies ALTER COLUMN subject TYPE jsonb USING subject::jsonb');
     }
 
     public function down(): void
@@ -19,6 +20,10 @@ return new class () extends Migration {
         });
 
         Schema::table('engagement_batches', function (Blueprint $table) {
+            $table->text('subject')->change();
+        });
+
+        Schema::table('form_email_auto_replies', function (Blueprint $table) {
             $table->text('subject')->change();
         });
     }

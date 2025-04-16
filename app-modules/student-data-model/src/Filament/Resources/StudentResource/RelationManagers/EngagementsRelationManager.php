@@ -86,14 +86,6 @@ class EngagementsRelationManager extends RelationManager
                                 InfolistFieldset::make('Content')
                                     ->schema([
                                         TextEntry::make('subject')
-                                            // ->getStateUsing(fn (Timeline $record): ?string => $record->timelineable->getSubject())
-                                            // ->getStateUsing(
-                                            //     fn (Timeline $record): ?string =>
-                                            //         /** @var Engagement $model */
-                                            //         $record->timelineable
-                                            //             ? $record->timelineable->getSubject()
-                                            //             : null
-                                            // )
                                             ->getStateUsing(function (Timeline $record): ?string {
                                                 $model = $record->timelineable;
 
