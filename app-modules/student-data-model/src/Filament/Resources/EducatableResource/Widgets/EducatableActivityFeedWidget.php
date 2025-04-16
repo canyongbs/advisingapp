@@ -108,10 +108,6 @@ class EducatableActivityFeedWidget extends Widget implements HasActions, HasForm
         return (string) str(match ($record->getMorphClass()) {
             'interaction' => "Subject: {$record->subject}",
             'engagement' => $this->getEngagementDescription($record),
-            // 'engagement' => match ($record->getDeliveryMethod()) {
-            //     NotificationChannel::Sms => "Preview: {$record->getBodyMarkdown()}",
-            //     default => "Subject: {$record->getSubjectMarkdown()}",
-            // },
             'engagement_response' => 'Preview: ' . str($record->getBody())->stripTags(),
             'task_history' => "Title: {$record->subject?->title}",
             'alert_history' => "{$record->subject?->severity->getLabel()} severity, " . str($record->subject?->description)->limit(200),
