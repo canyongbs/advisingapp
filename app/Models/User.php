@@ -451,8 +451,8 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     }
 
     /**
-    * @return MorphMany<TrackedEventCount, $this>
-    */
+     * @return MorphMany<TrackedEventCount, $this>
+     */
     public function loginsCount(): MorphMany
     {
         return $this->morphMany(TrackedEventCount::class, 'related_to')
