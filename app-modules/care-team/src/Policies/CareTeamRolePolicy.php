@@ -53,7 +53,7 @@ class CareTeamRolePolicy
     public function view(Authenticatable $authenticatable, CareTeamRole $careTeamRole): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$careTeamRole->getKey()}.view"],
+            abilities: ["product_admin.*.view"],
             denyResponse: 'You do not have permission to view this care team role.'
         );
     }
@@ -69,7 +69,7 @@ class CareTeamRolePolicy
     public function update(Authenticatable $authenticatable, CareTeamRole $careTeamRole): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$careTeamRole->getKey()}.update"],
+            abilities: ["product_admin.*.update"],
             denyResponse: 'You do not have permission to update this care team role.'
         );
     }
@@ -77,7 +77,7 @@ class CareTeamRolePolicy
     public function delete(Authenticatable $authenticatable, CareTeamRole $careTeamRole): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$careTeamRole->getKey()}.delete"],
+            abilities: ["product_admin.*.delete"],
             denyResponse: 'You do not have permission to delete this care team role.'
         );
     }
@@ -85,7 +85,7 @@ class CareTeamRolePolicy
     public function restore(Authenticatable $authenticatable, CareTeamRole $careTeamRole): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$careTeamRole->getKey()}.restore"],
+            abilities: ["product_admin.*.restore"],
             denyResponse: 'You do not have permission to restore this care team role.'
         );
     }
@@ -93,7 +93,7 @@ class CareTeamRolePolicy
     public function forceDelete(Authenticatable $authenticatable, CareTeamRole $careTeamRole): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$careTeamRole->getKey()}.force-delete"],
+            abilities: ["product_admin.*.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this care team role.'
         );
     }

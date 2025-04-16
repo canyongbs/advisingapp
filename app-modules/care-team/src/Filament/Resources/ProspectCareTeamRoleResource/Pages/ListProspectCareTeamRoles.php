@@ -65,7 +65,7 @@ class ListProspectCareTeamRoles extends ListRecords
                 ToggleColumn::make('is_default')
                     ->label('Default')
                     ->beforeStateUpdated(
-                        fn (CareTeamRole $record) => CareTeamRole::where('id', '!=', $record->id)
+                        fn (CareTeamRole $record) => CareTeamRole::where('id', '!=', $record->getKey())
                             ->where('type', CareTeamRoleType::Prospect)
                             ->update(['is_default' => false])
                     ),

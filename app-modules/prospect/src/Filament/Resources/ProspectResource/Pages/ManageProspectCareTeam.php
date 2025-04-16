@@ -104,7 +104,7 @@ class ManageProspectCareTeam extends ManageRelatedRecords
                     ->attachAnother(false)
                     ->color('primary')
                     ->mountUsing(fn (ComponentContainer $form) => $form->fill([
-                        'care_team_role_id' => CareTeamRoleType::prospectDefault()?->id,
+                        'care_team_role_id' => CareTeamRoleType::prospectDefault()?->getKey(),
                     ]))
                     ->form([
                         Select::make('recordId')

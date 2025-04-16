@@ -36,11 +36,12 @@
 
 namespace AdvisingApp\CareTeam\Database\Factories;
 
+use AdvisingApp\CareTeam\Models\CareTeamRole;
 use App\Enums\CareTeamRoleType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\CareTeam\Models\CareTeamRole>
+ * @extends Factory<CareTeamRole>
  */
 class CareTeamRoleFactory extends Factory
 {
