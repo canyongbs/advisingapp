@@ -68,17 +68,8 @@ class EngagementsRelationManager extends RelationManager
 
     protected static ?string $title = 'Messages';
 
-    #[On('send-email')]
-    public function mountSendEmailMessageAction(string $emailAddressKey): void
-    {
-        $this->mountTableAction('engage', arguments: ['channel' => 'email', 'route' => $emailAddressKey]);
-    }
-
-    #[On('send-sms')]
-    public function mountSendSmsMessageAction(string $phoneNumberKey): void
-    {
-        $this->mountTableAction('engage', arguments: ['channel' => 'sms', 'route' => $phoneNumberKey]);
-    }
+    #[On('engagement-sent')]
+    public function refresh(): void {}
 
     public function infolist(Infolist $infolist): Infolist
     {

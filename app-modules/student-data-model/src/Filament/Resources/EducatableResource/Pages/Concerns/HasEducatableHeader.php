@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -30,36 +32,30 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
-@php
-    use AdvisingApp\Engagement\Models\Engagement;
-    use AdvisingApp\Prospect\Models\ProspectEmailAddress;
-@endphp
+*/
 
-<button
-    class="flex items-center gap-2"
-    type="button"
-    x-data="{ isLoading: false }"
-    x-on:engage-action-finished-loading.window="isLoading = false"
-    x-on:click="isLoading = true; $dispatch('send-email', { emailAddressKey: @js($emailAddress->getKey()) })"
-    x-tooltip.raw="Click to send an email"
-    @disabled(
-        !auth()->user()->can('create', [
-                Engagement::class,
-                $emailAddress instanceof ProspectEmailAddress ? $emailAddress->prospect : null,
-            ]))
->
-    @svg('heroicon-m-envelope', 'size-5', ['x-show' => '! isLoading'])
+namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Pages\Concerns;
 
-    <x-filament::loading-indicator
-        class="size-5"
-        x-show="isLoading"
-        x-cloak
-    />
+use AdvisingApp\Engagement\Filament\Actions\SendEngagementAction;
+use Livewire\Attributes\On;
 
-    {{ $emailAddress->address }}
+trait HasEducatableHeader
+{
+    #[On('send-email')]
+    public function mountSendEmailMessageAction(string $emailAddressKey): void
+    {
+        $this->mountAction('engage', arguments: ['channel' => 'email', 'route' => $emailAddressKey]);
+    }
 
-    @if (filled($emailAddress->type))
-        ({{ $emailAddress->type }})
-    @endif
-</button>
+    #[On('send-sms')]
+    public function mountSendSmsMessageAction(string $phoneNumberKey): void
+    {
+        $this->mountAction('engage', arguments: ['channel' => 'sms', 'route' => $phoneNumberKey]);
+    }
+
+    public function engage(): SendEngagementAction
+    {
+        return SendEngagementAction::make()
+            ->educatable($this->getRecord());
+    }
+}

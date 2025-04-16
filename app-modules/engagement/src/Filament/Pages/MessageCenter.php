@@ -38,7 +38,7 @@ namespace AdvisingApp\Engagement\Filament\Pages;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\CaseManagement\Models\CaseModel;
-use AdvisingApp\Engagement\Filament\Actions\MessageCenterSendEngagementAction;
+use AdvisingApp\Engagement\Filament\Actions\SendEngagementAction;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -51,6 +51,7 @@ use App\Actions\GetRecordFromMorphAndKey;
 use App\Models\Authenticatable;
 use App\Models\User;
 use Carbon\Carbon;
+use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ViewAction;
 use Filament\Pages\Page;
@@ -356,9 +357,16 @@ class MessageCenter extends Page
 
     public function createAction(): Action
     {
-        return MessageCenterSendEngagementAction::make()
+        throw_unless($this->recordModel instanceof Student || $this->recordModel instanceof Prospect, new Exception('The record model must be a student or prospect.'));
+
+        return SendEngagementAction::make()
             ->educatable($this->recordModel)
             ->after(fn () => $this->refreshSelectedEducatable());
+    }
+
+    public function getRecord(): ?Educatable
+    {
+        return $this->recordModel;
     }
 
     protected function getViewData(): array
