@@ -1,7 +1,7 @@
 type Engagement @model(class: "AdvisingApp\\Engagement\\Models\\Engagement") {
     id: UUID!
 
-    subject: String
+    subject: String @method(name: "getSubject")
 
     body: String @method(name: "getBody")
 
@@ -30,7 +30,7 @@ input EngagementRecipientsQuery {
 input EngagementsQuery {
     id: UUID
 
-    subject: String
+    subject: JSONB
 
     body: JSON
 

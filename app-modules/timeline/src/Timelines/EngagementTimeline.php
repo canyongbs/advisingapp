@@ -86,6 +86,7 @@ class EngagementTimeline extends CustomTimeline
                     ->schema([
                         TextEntry::make('subject')
                             ->hidden(fn ($state): bool => blank($state))
+                            ->getStateUsing(fn (Engagement $engagement): HtmlString => $engagement->getSubject())
                             ->columnSpanFull(),
                         TextEntry::make('body')
                             ->getStateUsing(fn (Engagement $engagement): HtmlString => $engagement->getBody())

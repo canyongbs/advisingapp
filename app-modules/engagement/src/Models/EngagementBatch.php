@@ -75,6 +75,7 @@ class EngagementBatch extends BaseModel implements ExecutableFromACampaignAction
     ];
 
     protected $casts = [
+        'subject' => 'array',
         'body' => 'array',
         'scheduled_at' => 'datetime',
         'channel' => NotificationChannel::class,
