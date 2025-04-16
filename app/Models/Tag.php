@@ -37,13 +37,17 @@
 namespace App\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\TagType;
 use Database\Factories\TagFactory;
+use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
@@ -82,5 +86,28 @@ class Tag extends BaseModel implements Auditable
     {
         return $this->morphedByMany(Student::class, 'taggable')
             ->using(Taggable::class);
+    }
+
+    public static function executeFromCampaignAction(CampaignAction $action): bool|string
+    {
+        try {
+            DB::beginTransaction();
+
+            $action
+                ->campaign
+                ->segment
+                ->retrieveRecords()
+                ->each(function (Educatable $educatable) use ($action) {
+                    $educatable->tags()->sync(ids: $action->data['tag_ids'], detaching: $action->data['remove_prior']);
+                });
+
+            DB::commit();
+
+            return true;
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            return $e->getMessage();
+        }
     }
 }

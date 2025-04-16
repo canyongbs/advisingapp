@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -32,41 +30,42 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+@php
+    use Carbon\Carbon;
+    use App\Models\User;
+    use AdvisingApp\Campaign\Settings\CampaignSettings;
+    use AdvisingApp\Segment\Models\Segment;
+    use App\Models\Tag;
 
-namespace AdvisingApp\StudentDataModel\Models\Contracts;
+    $get = $evaluate(fn($get) => $get);
+    $segment_id = $get('segment_id');
+    $segment = Segment::find($segment_id);
+@endphp
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use App\Models\Tag;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
+<x-filament::fieldset>
+    <x-slot name="label">
+        Tags
+    </x-slot>
 
-/**
- * @property-read Collection $careTeam
- * @property string $email
- */
-interface Educatable extends Identifiable, CanBeNotified
-{
-    public static function getLabel(): string;
+    <dl class="max-w-md divide-y divide-gray-200 text-gray-900 dark:divide-gray-700 dark:text-white">
+        <div class="flex flex-col pb-3">
+            <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Tags to be assigned to the {{ $segment->model }}
+            </dt>
+            <dd class="text-sm font-semibold">
+                {{ collect($action['tag_ids'])->map(fn(string $tagId): Tag => Tag::findOrFail($tagId))->implode('name', ', ') }}
+            </dd>
+        </div>
+        <div class="flex flex-col pb-3">
+            <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Remove all prior {{ $segment->model }} assignments
+            </dt>
+            <dd class="text-sm font-semibold">{{ $action['remove_prior'] ? 'True' : 'False' }}</dd>
+        </div>
+        <div class="flex flex-col pt-3">
+            <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Execute At</dt>
+            <dd class="text-sm font-semibold">{{ Carbon::parse($action['execute_at'])->format('M j, Y H:i:s') }}
+                {{ app(CampaignSettings::class)->getActionExecutionTimezoneLabel() }}</dd>
+        </div>
+    </dl>
 
-    public static function displayNameKey(): string;
-
-    public static function displayEmailKey(): string;
-
-    public function careTeam(): MorphToMany;
-
-    public static function getLicenseType(): LicenseType;
-
-    public function eventAttendeeRecords(): HasMany;
-
-    public function canReceiveSms(): bool;
-
-    /**
-     * @return MorphToMany<Tag,covariant Student|Prospect>
-     */
-    public function tags(): MorphToMany;
-}
+</x-filament::fieldset>
