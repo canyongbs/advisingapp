@@ -45,6 +45,11 @@ use Spatie\LaravelData\Data;
 
 class EngagementCreationData extends Data
 {
+    /**
+     * @param array<string, mixed>|null $subject
+     * @param array<string, mixed>|null $body
+     * @param array<array<string, mixed>> $temporaryBodyImages
+     */
     public function __construct(
         public User $user,
         public CanBeNotified | Collection $recipient,

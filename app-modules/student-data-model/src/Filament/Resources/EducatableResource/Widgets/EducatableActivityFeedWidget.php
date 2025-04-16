@@ -107,11 +107,11 @@ class EducatableActivityFeedWidget extends Widget implements HasActions, HasForm
     {
         return (string) str(match ($record->getMorphClass()) {
             'interaction' => "Subject: {$record->subject}",
-            'engagement' => match ($record->getDeliveryMethod()) {
-                NotificationChannel::Sms => "Preview: {$record->getBodyMarkdown()}",
-                default => "Subject: {$record->getSubjectMarkdown()}",
-                // default => "Subject: {$record->subject}",
-            },
+            'engagement' => $this->getEngagementDescription($record),
+            // 'engagement' => match ($record->getDeliveryMethod()) {
+            //     NotificationChannel::Sms => "Preview: {$record->getBodyMarkdown()}",
+            //     default => "Subject: {$record->getSubjectMarkdown()}",
+            // },
             'engagement_response' => 'Preview: ' . str($record->getBody())->stripTags(),
             'task_history' => "Title: {$record->subject?->title}",
             'alert_history' => "{$record->subject?->severity->getLabel()} severity, " . str($record->subject?->description)->limit(200),
@@ -149,5 +149,21 @@ class EducatableActivityFeedWidget extends Widget implements HasActions, HasForm
         }
 
         return false;
+    }
+
+    /**
+     * @param Model $record
+     *
+     * @return string
+     */
+    protected function getEngagementDescription(Model $record): string
+    {
+        /** @var Engagement $record */
+        $record = $record;
+
+        return match ($record->getDeliveryMethod()) {
+            NotificationChannel::Sms => "Preview: {$record->getBodyMarkdown()}",
+            default => "Subject: {$record->getSubjectMarkdown()}",
+        };
     }
 }
