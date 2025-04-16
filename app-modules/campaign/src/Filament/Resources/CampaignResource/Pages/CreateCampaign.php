@@ -41,8 +41,6 @@ use AdvisingApp\Campaign\Filament\Blocks\CampaignActionBlock;
 use AdvisingApp\Campaign\Filament\Resources\CampaignResource;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Segment\Models\Segment;
-use AdvisingApp\Team\Models\TeamUser;
-use App\Models\User;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -62,9 +60,6 @@ class CreateCampaign extends CreateRecord
 
     protected function getSteps(): array
     {
-        /** @var User $user */
-        $user = auth()->user();
-
         return [
             Step::make('Campaign Details')
                 ->schema([
@@ -73,16 +68,11 @@ class CreateCampaign extends CreateRecord
                         ->required(),
                     Select::make('segment_id')
                         ->label('Population Segment')
-                        ->options(function () use ($user) {
-                            $teamIds = $user->teams->pluck('id');
-                            $users = TeamUser::query()
-                                ->whereIn('team_id', $teamIds)
-                                ->pluck('user_id');
-                            $users->push($user->getKey());
-                            $users->unique();
-
+                        ->options(function () {
                             return Segment::query()
-                                ->whereIn('user_id', $users)
+                                ->whereHas('user', function ($query) {
+                                    $query->whereKey(auth()->id())->orWhereRelation('teams.users', 'user_id', auth()->id());
+                                })
                                 ->pluck('name', 'id');
                         })
                         ->searchable()
