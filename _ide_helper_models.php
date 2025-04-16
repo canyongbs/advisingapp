@@ -2691,7 +2691,7 @@ namespace AdvisingApp\Engagement\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \AdvisingApp\Notification\Enums\NotificationChannel|null $channel
- * @property string $subject
+ * @property array<array-key, mixed> $subject
  * @property array<array-key, mixed>|null $body
  * @property \Illuminate\Support\Carbon|null $scheduled_at
  * @property int|null $total_engagements

@@ -65,7 +65,7 @@ it('will create and send an engagement immediately', function () {
         ->user->is($data['user'])->toBeTrue()
         ->recipient->is($data['recipient'])->toBeTrue()
         ->channel->toBe($data['channel'])
-        ->subject->toBe($data['subject'])
+        ->subject->toMatchArray($data['subject'])
         ->body->toMatchArray($data['body'])
         ->scheduled_at->toBeNull()
         ->dispatched_at->not->toBeNull();
@@ -98,7 +98,7 @@ it('will create but not dispatch a scheduled engagement', function () {
         ->user->is($data['user'])->toBeTrue()
         ->recipient->is($data['recipient'])->toBeTrue()
         ->channel->toBe($data['channel'])
-        ->subject->toBe($data['subject'])
+        ->subject->toMatchArray($data['subject'])
         ->body->toMatchArray($data['body'])
         ->scheduled_at->startOfSecond()->eq($scheduledAt->startOfSecond())->toBeTrue()
         ->dispatched_at->toBeNull();

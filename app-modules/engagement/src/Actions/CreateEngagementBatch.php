@@ -50,12 +50,10 @@ class CreateEngagementBatch
 {
     public function execute(EngagementCreationData $data): void
     {
-        dd(is_array($data->subject));
         $engagementBatch = new EngagementBatch();
         $engagementBatch->user()->associate($data->user);
         $engagementBatch->channel = $data->channel;
-        // $engagementBatch->subject = json_encode($data->subject);
-        // [$engagementBatch->subject] = $data->subject;
+        $engagementBatch->subject = $data->subject;
         $engagementBatch->scheduled_at = $data->scheduledAt;
         $engagementBatch->total_engagements = $data->recipient->count();
         $engagementBatch->processed_engagements = 0;
@@ -63,8 +61,6 @@ class CreateEngagementBatch
 
         DB::transaction(function () use ($engagementBatch, $data) {
             $engagementBatch->save();
-
-            [$engagementBatch->subject] = $data->subject;
 
             [$engagementBatch->body] = tiptap_converter()->saveImages(
                 $data->body,

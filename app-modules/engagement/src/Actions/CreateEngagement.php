@@ -50,8 +50,7 @@ class CreateEngagement
         $engagement->user()->associate($data->user);
         $engagement->recipient()->associate($data->recipient);
         $engagement->channel = $data->channel;
-        // $engagement->subject = json_encode($data->subject);
-        // [$engagement->subject] = $data->subject;
+        $engagement->subject = $data->subject;
         $engagement->scheduled_at = $data->scheduledAt;
 
         if (RoutedEngagements::active()) {
@@ -64,8 +63,6 @@ class CreateEngagement
 
         DB::transaction(function () use ($data, $engagement) {
             $engagement->save();
-
-            [$engagement->subject] = $data->subject;
 
             [$engagement->body] = tiptap_converter()->saveImages(
                 $data->body,
