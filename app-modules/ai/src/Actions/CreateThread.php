@@ -86,7 +86,7 @@ class CreateThread
         $assistant = new AiAssistant();
 
         if ($application === AiApplication::PersonalAssistant) {
-            $assistant->name = 'Institutional Assistant';
+            $assistant->name = 'Institutional Advisor';
             $assistant->description = 'Using the most powerful models available, the primary Institutional Assistant has robust general intelligence, and is designed to serve your college or university.';
         } else {
             $assistant->name = "{$tenant->name} AI Assistant";
