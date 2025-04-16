@@ -30,7 +30,7 @@ input EngagementRecipientsQuery {
 input EngagementsQuery {
     id: UUID
 
-    subject: JSONB
+    subject: JSON
 
     body: JSON
 

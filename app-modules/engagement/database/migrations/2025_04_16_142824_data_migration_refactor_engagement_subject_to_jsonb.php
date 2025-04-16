@@ -8,7 +8,7 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function () {
-            DB::table('engagements')->select('id', 'subject')->orderBy('id')->chunk(500, function ($rows) {
+            DB::table('engagements')->select('id', 'subject')->chunkById(500, function ($rows) {
                 foreach ($rows as $row) {
                     $json = [
                         'type' => 'doc',
@@ -27,7 +27,7 @@ return new class () extends Migration {
                 }
             });
 
-            DB::table('engagement_batches')->select('id', 'subject')->orderBy('id')->chunk(500, function ($rows) {
+            DB::table('engagement_batches')->select('id', 'subject')->chunkById(500, function ($rows) {
                 foreach ($rows as $row) {
                     $json = [
                         'type' => 'doc',
@@ -46,11 +46,29 @@ return new class () extends Migration {
                 }
             });
 
+            // DB::table('form_email_auto_replies')->select('id', 'subject')->chunkById(500, function ($rows) {
+            //     foreach ($rows as $row) {
+            //         $json = [
+            //             'type' => 'doc',
+            //             'content' => [[
+            //                 'type' => 'paragraph',
+            //                 'attrs' => ['class' => null, 'style' => null],
+            //                 'content' => [[
+            //                     'type' => 'text',
+            //                     'text' => $row->subject,
+            //                 ]],
+            //             ]],
+            //         ];
+            //         DB::table('form_email_auto_replies')
+            //             ->where('id', $row->id)
+            //             ->update(['subject' => json_encode($json)]);
+            //     }
+            // });
+
             DB::table('campaign_actions')
                 ->select('id', 'data')
                 ->whereRaw("json_typeof(data::json -> 'subject') = 'string'")
-                ->orderBy('id')
-                ->chunk(500, function ($rows) {
+                ->chunkById(500, function ($rows) {
                     foreach ($rows as $row) {
                         $data = json_decode($row->data, true);
 
@@ -83,7 +101,7 @@ return new class () extends Migration {
     public function down(): void
     {
         DB::transaction(function () {
-            DB::table('engagements')->select('id', 'subject')->orderBy('id')->chunk(500, function ($rows) {
+            DB::table('engagements')->select('id', 'subject')->chunkById(500, function ($rows) {
                 foreach ($rows as $row) {
                     $decoded = json_decode($row->subject, true);
                     $text = $decoded['content'][0]['content'][0]['text'] ?? '';
@@ -93,7 +111,7 @@ return new class () extends Migration {
                 }
             });
 
-            DB::table('engagement_batches')->select('id', 'subject')->orderBy('id')->chunk(500, function ($rows) {
+            DB::table('engagement_batches')->select('id', 'subject')->chunkById(500, function ($rows) {
                 foreach ($rows as $row) {
                     $decoded = json_decode($row->subject, true);
                     $text = $decoded['content'][0]['content'][0]['text'] ?? '';
@@ -103,12 +121,21 @@ return new class () extends Migration {
                 }
             });
 
+            // DB::table('form_email_auto_replies')->select('id', 'subject')->chunkById(500, function ($rows) {
+            //     foreach ($rows as $row) {
+            //         $decoded = json_decode($row->subject, true);
+            //         $text = $decoded['content'][0]['content'][0]['text'] ?? '';
+            //         DB::table('form_email_auto_replies')
+            //             ->where('id', $row->id)
+            //             ->update(['subject' => $text]);
+            //     }
+            // });
+
             DB::table('campaign_actions')
                 ->select('id', 'data')
                 ->whereRaw("json_typeof(data::json -> 'subject') = 'object'")
                 ->whereRaw("(data::json -> 'subject' ->> 'type') = 'doc'")
-                ->orderBy('id')
-                ->chunk(500, function ($rows) {
+                ->chunkById(500, function ($rows) {
                     foreach ($rows as $row) {
                         $data = json_decode($row->data, true);
 
