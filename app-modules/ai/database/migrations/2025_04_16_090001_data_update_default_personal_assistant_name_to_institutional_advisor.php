@@ -34,40 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Actions;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
-use AdvisingApp\Ai\Enums\AiFeature;
-use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Models\LegacyAiMessageLog;
-use Illuminate\Support\Arr;
-
-class CompletePrompt
-{
-    public function execute(AiModel $aiModel, string $prompt, string $content): string
+return new class () extends Migration {
+    public function up(): void
     {
-        $service = $aiModel->getService();
-
-        $completion = $service->complete($prompt, $content);
-
-        LegacyAiMessageLog::create([
-            'message' => $content,
-            'metadata' => [
-                'prompt' => $prompt,
-                'completion' => $completion,
-            ],
-            'request' => [
-                'headers' => Arr::only(
-                    request()->headers->all(),
-                    ['host', 'sec-ch-ua', 'user-agent', 'sec-ch-ua-platform', 'origin', 'referer', 'accept-language'],
-                ),
-                'ip' => request()->ip(),
-            ],
-            'sent_at' => now(),
-            'user_id' => auth()->id(),
-            'ai_assistant_name' => 'Institutional Advisor',
-            'feature' => AiFeature::DraftWithAi,
-        ]);
-
-        return $completion;
+        DB::table('ai_assistants')
+            ->where('is_default', true)
+            ->update([
+                'name' => 'Institutional Advisor',
+                'updated_at' => now(),
+            ]);
     }
-}
+
+    public function down(): void
+    {
+        DB::table('ai_assistants')
+            ->where('is_default', true)
+            ->update([
+                'name' => 'Institutional Assistant',
+                'updated_at' => now(),
+            ]);
+    }
+};
