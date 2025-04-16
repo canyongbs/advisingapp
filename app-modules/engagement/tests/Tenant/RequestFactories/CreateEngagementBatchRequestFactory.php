@@ -47,7 +47,6 @@ class CreateEngagementBatchRequestFactory extends RequestFactory
     {
         return [
             'user' => User::factory()->create(),
-            // 'subject' => fake()->sentence,
             'subject' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->sentence]]]]],
             'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->paragraph]]]]],
             'scheduledAt' => fake()->dateTimeBetween('-1 year', '-1 day'),

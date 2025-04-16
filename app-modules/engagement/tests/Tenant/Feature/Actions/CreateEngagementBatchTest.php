@@ -66,7 +66,7 @@ it('will create an engagement batch', function () {
     expect(EngagementBatch::first())
         ->user->is($data['user'])->toBeTrue()
         ->channel->toBe($data['channel'])
-        ->subject->toBe($data['subject'])
+        ->subject->toMatchArray($data['subject'])
         ->body->toMatchArray($data['body'])
         ->scheduled_at->startOfSecond()->eq(Carbon::parse($data['scheduledAt'])->startOfSecond())->toBeTrue();
 
