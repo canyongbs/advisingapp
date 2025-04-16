@@ -155,8 +155,6 @@ class EducatableActivityFeedWidget extends Widget implements HasActions, HasForm
     protected function getEngagementDescription(Model $record): string
     {
         /** @var Engagement $record */
-        $record = $record;
-
         return match ($record->getDeliveryMethod()) {
             NotificationChannel::Sms => "Preview: {$record->getBodyMarkdown()}",
             default => "Subject: {$record->getSubjectMarkdown()}",
