@@ -50,6 +50,7 @@ use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
+use App\Features\RefactorEngagementCampaignSubjectToJsonb;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Model;
@@ -81,7 +82,12 @@ class EngagementNotification extends Notification implements ShouldQueue, HasBef
     {
         return MailMessage::make()
             ->to($this->engagement->recipient_route)
-            ->subject($this->engagement->getSubject())
+            // ->subject($this->engagement->getSubject())
+            ->subject(
+                RefactorEngagementCampaignSubjectToJsonb::active()
+                    ? $this->engagement->getSubject()
+                    : $this->engagement->subject
+            )
             ->greeting("Hello {$this->engagement->recipient->display_name}!")
             ->content($this->engagement->getBody());
     }

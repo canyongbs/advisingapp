@@ -104,7 +104,12 @@ return new class () extends Migration {
             DB::table('engagements')->select('id', 'subject')->chunkById(500, function ($rows) {
                 foreach ($rows as $row) {
                     $decoded = json_decode($row->subject, true);
-                    $text = $decoded['content'][0]['content'][0]['text'] ?? '';
+                    $text = collect($decoded['content'] ?? [])
+                        ->flatMap(fn ($block) => collect($block['content'] ?? []))
+                        ->filter(fn ($node) => $node['type'] === 'text')
+                        ->pluck('text')
+                        ->implode('');
+
                     DB::table('engagements')
                         ->where('id', $row->id)
                         ->update(['subject' => $text]);
@@ -114,7 +119,12 @@ return new class () extends Migration {
             DB::table('engagement_batches')->select('id', 'subject')->chunkById(500, function ($rows) {
                 foreach ($rows as $row) {
                     $decoded = json_decode($row->subject, true);
-                    $text = $decoded['content'][0]['content'][0]['text'] ?? '';
+                    $text = collect($decoded['content'] ?? [])
+                        ->flatMap(fn ($block) => collect($block['content'] ?? []))
+                        ->filter(fn ($node) => $node['type'] === 'text')
+                        ->pluck('text')
+                        ->implode('');
+
                     DB::table('engagement_batches')
                         ->where('id', $row->id)
                         ->update(['subject' => $text]);
@@ -124,7 +134,12 @@ return new class () extends Migration {
             DB::table('form_email_auto_replies')->select('id', 'subject')->chunkById(500, function ($rows) {
                 foreach ($rows as $row) {
                     $decoded = json_decode($row->subject, true);
-                    $text = $decoded['content'][0]['content'][0]['text'] ?? '';
+                    $text = collect($decoded['content'] ?? [])
+                        ->flatMap(fn ($block) => collect($block['content'] ?? []))
+                        ->filter(fn ($node) => $node['type'] === 'text')
+                        ->pluck('text')
+                        ->implode('');
+
                     DB::table('form_email_auto_replies')
                         ->where('id', $row->id)
                         ->update(['subject' => $text]);
