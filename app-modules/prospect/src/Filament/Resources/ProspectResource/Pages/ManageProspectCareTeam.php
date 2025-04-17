@@ -36,14 +36,19 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
+use AdvisingApp\CareTeam\Models\CareTeam;
+use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\Concerns\HasProspectHeader;
 use AdvisingApp\Prospect\Models\Prospect;
+use App\Enums\CareTeamRoleType;
+use App\Features\CareTeamRoleFeature;
 use App\Filament\Resources\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Scopes\HasLicense;
 use App\Models\User;
+use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Select;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables\Actions\AttachAction;
@@ -83,6 +88,10 @@ class ManageProspectCareTeam extends ManageRelatedRecords
                     ->url(fn ($record) => UserResource::getUrl('view', ['record' => $record]))
                     ->color('primary'),
                 TextColumn::make('job_title'),
+                TextColumn::make('careTeams.prospectCareTeamRole.name')
+                    ->label('Role')
+                    ->badge()
+                    ->visible(CareTeamRole::where('type', CareTeamRoleType::Prospect)->count() > 0 && CareTeamRoleFeature::active()),
             ])
             ->headerActions([
                 AttachAction::make()
@@ -96,21 +105,27 @@ class ManageProspectCareTeam extends ManageRelatedRecords
                     ->modalSubmitActionLabel('Add')
                     ->attachAnother(false)
                     ->color('primary')
-                    ->recordSelect(
-                        fn (Select $select) => $select->placeholder('Select Users'),
-                    )
-                    ->multiple()
-                    ->recordSelectOptionsQuery(
-                        fn (Builder $query) => $query->tap(new HasLicense(Prospect::getLicenseType())),
-                    )
+                    ->mountUsing(fn (ComponentContainer $form) => $form->fill([
+                        'care_team_role_id' => CareTeamRoleType::prospectDefault()?->getKey(),
+                    ]))
+                    ->form([
+                        Select::make('recordId')
+                            ->label('User')
+                            ->searchable()
+                            ->required()
+                            ->options(User::query()->tap(new HasLicense(Prospect::getLicenseType()))->pluck('name', 'id')),
+                        Select::make('care_team_role_id')
+                            ->label('Role')
+                            ->relationship('careTeamRole', 'name', fn (Builder $query) => $query->where('type', CareTeamRoleType::Prospect))
+                            ->searchable()
+                            ->model(CareTeam::class)
+                            ->visible(CareTeamRole::where('type', CareTeamRoleType::Prospect)->count() > 0 && CareTeamRoleFeature::active()),
+                    ])
                     ->successNotificationTitle(function (array $data) {
                         /** @var Prospect $prospect */
                         $prospect = $this->getOwnerRecord();
 
-                        if (count($data['recordId']) > 1) {
-                            return count($data['recordId']) . " users were added to {$prospect->display_name}'s Care Team";
-                        }
-                        $record = User::find($data['recordId'][0]);
+                        $record = User::find($data['recordId']);
 
                         return "{$record->name} was added to {$prospect->display_name}'s Care Team";
                     }),

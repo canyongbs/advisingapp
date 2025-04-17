@@ -38,6 +38,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\
 
 use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
 use AdvisingApp\StudentDataModel\Actions\DeleteStudent;
+use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Pages\Concerns\HasEducatableHeader;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Actions\StudentTagsAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Actions\SyncStudentSisAction;
@@ -49,6 +50,8 @@ use Illuminate\Contracts\View\View;
 
 trait HasStudentHeader
 {
+    use HasEducatableHeader;
+
     public function getHeader(): ?View
     {
         $sisSettings = app(StudentInformationSystemSettings::class);

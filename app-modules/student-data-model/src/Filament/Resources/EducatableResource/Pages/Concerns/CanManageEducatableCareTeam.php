@@ -37,11 +37,15 @@
 namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Pages\Concerns;
 
 use AdvisingApp\CareTeam\Models\CareTeam;
+use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Enums\CareTeamRoleType;
+use App\Features\CareTeamRoleFeature;
 use App\Filament\Resources\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Scopes\HasLicense;
 use App\Models\User;
+use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Actions\BulkActionGroup;
@@ -72,6 +76,10 @@ trait CanManageEducatableCareTeam
                     ->url(fn ($record) => UserResource::getUrl('view', ['record' => $record]))
                     ->color('primary'),
                 TextColumn::make('job_title'),
+                TextColumn::make('careTeams.studentCareTeamRole.name')
+                    ->label('Role')
+                    ->badge()
+                    ->visible(CareTeamRole::where('type', CareTeamRoleType::Student)->count() > 0 && CareTeamRoleFeature::active()),
             ])
             ->headerActions([
                 AttachAction::make()
@@ -85,21 +93,27 @@ trait CanManageEducatableCareTeam
                     ->modalSubmitActionLabel('Add')
                     ->attachAnother(false)
                     ->color('primary')
-                    ->recordSelect(
-                        fn (Select $select) => $select->placeholder('Select Users'),
-                    )
-                    ->multiple()
-                    ->recordSelectOptionsQuery(
-                        fn (Builder $query) => $query->tap(new HasLicense(Student::getLicenseType())),
-                    )
+                    ->mountUsing(fn (ComponentContainer $form) => $form->fill([
+                        'care_team_role_id' => CareTeamRoleType::studentDefault()?->id,
+                    ]))
+                    ->form([
+                        Select::make('recordId')
+                            ->label('User')
+                            ->searchable()
+                            ->required()
+                            ->options(User::query()->tap(new HasLicense(Student::getLicenseType()))->pluck('name', 'id')),
+                        Select::make('care_team_role_id')
+                            ->label('Role')
+                            ->relationship('careTeamRole', 'name', fn (Builder $query) => $query->where('type', CareTeamRoleType::Student))
+                            ->searchable()
+                            ->model(CareTeam::class)
+                            ->visible(CareTeamRole::where('type', CareTeamRoleType::Student)->count() > 0 && CareTeamRoleFeature::active()),
+                    ])
                     ->successNotificationTitle(function (array $data) {
                         /** @var Student $student */
                         $student = $this->getOwnerRecord();
 
-                        if (count($data['recordId']) > 1) {
-                            return count($data['recordId']) . " users were added to {$student->display_name}'s Care Team";
-                        }
-                        $record = User::find($data['recordId'][0]);
+                        $record = User::find($data['recordId']);
 
                         return "{$record->name} was added to {$student->display_name}'s Care Team";
                     }),

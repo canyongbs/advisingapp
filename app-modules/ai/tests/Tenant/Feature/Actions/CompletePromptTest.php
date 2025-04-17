@@ -95,6 +95,6 @@ it('creates a new AI message log', function () {
             'completion' => 'test-completion',
         ])
         ->user_id->toBe(auth()->id())
-        ->ai_assistant_name->toBe('Institutional Assistant')
+        ->ai_assistant_name->toBe('Institutional Advisor')
         ->feature->toBe(AiFeature::DraftWithAi);
 });

@@ -61,7 +61,7 @@
                                 icon="heroicon-m-magnifying-glass"
                                 x-on:click="isSearchingAssistants = ! isSearchingAssistants"
                             >
-                                Use Custom Assistant
+                                Use Custom Advisor
                             </x-filament::button>
                         @endif
                     </div>
@@ -611,9 +611,7 @@
                                                         messageCopied: false,
                                                         copyMessage: function() {
                                                             navigator.clipboard.writeText(message.content.replace(/(<([^>]+)>)/gi, ''))
-                                                    
                                                             this.messageCopied = true
-                                                    
                                                             setTimeout(() => { this.messageCopied = false }, 2000)
                                                         }
                                                     }"

@@ -42,6 +42,7 @@ use AdvisingApp\CareTeam\Observers\CareTeamObserver;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use App\Enums\CareTeamRoleType;
 use App\Models\User;
 use Exception;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -52,6 +53,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\DB;
 
 /**
+ * @property string $care_team_role_id
+ *
  * @mixin IdeHelperCareTeam
  */
 #[ObservedBy([CareTeamObserver::class])]
@@ -62,6 +65,30 @@ class CareTeam extends MorphPivot implements ExecutableFromACampaignAction, CanT
     public $timestamps = true;
 
     protected $table = 'care_teams';
+
+    /**
+     * @return BelongsTo<CareTeamRole, $this>
+     */
+    public function careTeamRole(): BelongsTo
+    {
+        return $this->belongsTo(CareTeamRole::class, 'care_team_role_id', 'id');
+    }
+
+    /**
+     * @return BelongsTo<CareTeamRole, $this>
+     */
+    public function prospectCareTeamRole(): BelongsTo
+    {
+        return $this->careTeamRole()->where('type', CareTeamRoleType::Prospect);
+    }
+
+    /**
+     * @return BelongsTo<CareTeamRole, $this>
+     */
+    public function studentCareTeamRole(): BelongsTo
+    {
+        return $this->careTeamRole()->where('type', CareTeamRoleType::Student);
+    }
 
     /** @return MorphTo<Educatable> */
     public function educatable(): MorphTo
@@ -87,7 +114,19 @@ class CareTeam extends MorphPivot implements ExecutableFromACampaignAction, CanT
                 ->segment
                 ->retrieveRecords()
                 ->each(function (Educatable $educatable) use ($action) {
-                    $educatable->careTeam()->sync(ids: $action->data['user_ids'], detaching: $action->data['remove_prior']);
+                    if ($action->data['remove_prior']) {
+                        $educatable->careTeam()->detach();
+                    }
+
+                    foreach ($action->data['careTeam'] as $careTeam) {
+                        $educatable
+                            ->careTeam()
+                            ->syncWithPivotValues(
+                                ids: $careTeam['user_id'],
+                                values: ['care_team_role_id' => $careTeam['care_team_role_id']],
+                                detaching: false,
+                            );
+                    }
                 });
 
             DB::commit();

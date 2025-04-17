@@ -66,12 +66,18 @@ it('will create the appropriate records for educatables in the segment', functio
 
     $users = User::factory()->licensed(LicenseType::cases())->count(3)->create();
 
+    $careTeam = [];
+
+    foreach ($users as $user) {
+        $careTeam[] = ['user_id' => $user->id, 'care_team_role_id' => null];
+    }
+
     $action = CampaignAction::factory()
         ->for($campaign, 'campaign')
         ->create([
             'type' => CampaignActionType::CareTeam,
             'data' => [
-                'user_ids' => $users->pluck('id')->toArray(),
+                'careTeam' => $careTeam,
                 'remove_prior' => $removePrior,
             ],
         ]);

@@ -38,6 +38,7 @@ namespace AdvisingApp\CareTeam\Providers;
 
 use AdvisingApp\CareTeam\CareTeamPlugin;
 use AdvisingApp\CareTeam\Models\CareTeam;
+use AdvisingApp\CareTeam\Models\CareTeamRole;
 use App\Concerns\ImplementsGraphQL;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -56,6 +57,7 @@ class CareTeamServiceProvider extends ServiceProvider
     {
         Relation::morphMap([
             'care_team' => CareTeam::class,
+            'care_team_role' => CareTeamRole::class,
         ]);
 
         $this->discoverSchema(__DIR__ . '/../../graphql/care-team.graphql');

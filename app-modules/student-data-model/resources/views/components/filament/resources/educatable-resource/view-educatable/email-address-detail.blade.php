@@ -31,6 +31,11 @@
 
 </COPYRIGHT>
 --}}
+@php
+    use AdvisingApp\Engagement\Models\Engagement;
+    use AdvisingApp\Prospect\Models\ProspectEmailAddress;
+@endphp
+
 <button
     class="flex items-center gap-2"
     type="button"
@@ -38,6 +43,11 @@
     x-on:engage-action-finished-loading.window="isLoading = false"
     x-on:click="isLoading = true; $dispatch('send-email', { emailAddressKey: @js($emailAddress->getKey()) })"
     x-tooltip.raw="Click to send an email"
+    @disabled(
+        !auth()->user()->can('create', [
+                Engagement::class,
+                $emailAddress instanceof ProspectEmailAddress ? $emailAddress->prospect : null,
+            ]))
 >
     @svg('heroicon-m-envelope', 'size-5', ['x-show' => '! isLoading'])
 

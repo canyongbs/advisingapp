@@ -226,11 +226,41 @@ namespace App\Models{
 /**
  * 
  *
+ * @property string $id
+ * @property string $name
+ * @property string|null $type
+ * @property string $cron_expression
+ * @property string|null $timezone
+ * @property string|null $ping_url
+ * @property \Illuminate\Support\Carbon|null $last_started_at
+ * @property \Illuminate\Support\Carbon|null $last_finished_at
+ * @property \Illuminate\Support\Carbon|null $last_failed_at
+ * @property \Illuminate\Support\Carbon|null $last_skipped_at
+ * @property \Illuminate\Support\Carbon|null $registered_on_oh_dear_at
+ * @property \Illuminate\Support\Carbon|null $last_pinged_at
+ * @property int $grace_time_in_minutes
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\MonitoredScheduledTaskLogItem> $logItems
  * @property-read int|null $log_items_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTask newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTask newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTask query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTask whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTask whereCronExpression($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTask whereGraceTimeInMinutes($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTask whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTask whereLastFailedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTask whereLastFinishedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTask whereLastPingedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTask whereLastSkippedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTask whereLastStartedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTask whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTask wherePingUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTask whereRegisteredOnOhDearAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTask whereTimezone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTask whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTask whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -241,10 +271,22 @@ namespace App\Models{
 /**
  * 
  *
- * @property-read \App\Models\MonitoredScheduledTask|null $monitoredScheduledTask
+ * @property string $id
+ * @property string $monitored_scheduled_task_id
+ * @property string $type
+ * @property array<array-key, mixed>|null $meta
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\MonitoredScheduledTask $monitoredScheduledTask
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTaskLogItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTaskLogItem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTaskLogItem query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTaskLogItem whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTaskLogItem whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTaskLogItem whereMeta($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTaskLogItem whereMonitoredScheduledTaskId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTaskLogItem whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTaskLogItem whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -516,6 +558,7 @@ namespace App\Models{
 /**
  * 
  *
+ * @property CareTeamRole $careTeamRole
  * @property string $id
  * @property string|null $emplid
  * @property string|null $name
@@ -591,7 +634,7 @@ namespace App\Models{
  * @property-read int|null $engagements_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\MeetingCenter\Models\CalendarEvent> $events
  * @property-read int|null $events_count
- * @property-read mixed $is_admin
+ * @property-read bool $is_admin
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Authorization\Models\License> $licenses
  * @property-read int|null $licenses_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Report\Models\TrackedEvent> $logins
@@ -1815,17 +1858,22 @@ namespace AdvisingApp\CareTeam\Models{
 /**
  * 
  *
+ * @property string $care_team_role_id
  * @property string $id
  * @property string $user_id
  * @property string $educatable_id
  * @property string $educatable_type
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \AdvisingApp\CareTeam\Models\CareTeamRole|null $careTeamRole
  * @property-read \AdvisingApp\StudentDataModel\Models\Contracts\Educatable $educatable
+ * @property-read \AdvisingApp\CareTeam\Models\CareTeamRole|null $prospectCareTeamRole
+ * @property-read \AdvisingApp\CareTeam\Models\CareTeamRole|null $studentCareTeamRole
  * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeam newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeam newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeam query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeam whereCareTeamRoleId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeam whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeam whereEducatableId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeam whereEducatableType($value)
@@ -1836,6 +1884,41 @@ namespace AdvisingApp\CareTeam\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperCareTeam {}
+}
+
+namespace AdvisingApp\CareTeam\Models{
+/**
+ * 
+ *
+ * @property bool $is_default
+ * @property string $id
+ * @property string $name
+ * @property \App\Enums\CareTeamRoleType $type
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CareTeam\Models\CareTeam> $careTeams
+ * @property-read int|null $care_teams_count
+ * @method static \AdvisingApp\CareTeam\Database\Factories\CareTeamRoleFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeamRole newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeamRole newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeamRole onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeamRole query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeamRole whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeamRole whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeamRole whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeamRole whereIsDefault($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeamRole whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeamRole whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeamRole whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeamRole withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeamRole withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperCareTeamRole {}
 }
 
 namespace AdvisingApp\CaseManagement\Models{
@@ -2585,6 +2668,7 @@ namespace AdvisingApp\Engagement\Models{
  * @property \AdvisingApp\Notification\Enums\NotificationChannel $channel
  * @property \Illuminate\Support\Carbon|null $scheduled_at
  * @property \Illuminate\Support\Carbon|null $dispatched_at
+ * @property string|null $recipient_route
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \AdvisingApp\Engagement\Models\EngagementBatch|null $batch
@@ -2617,6 +2701,7 @@ namespace AdvisingApp\Engagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Engagement whereEngagementBatchId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Engagement whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Engagement whereRecipientId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Engagement whereRecipientRoute($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Engagement whereRecipientType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Engagement whereScheduledAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Engagement whereSubject($value)
@@ -3858,6 +3943,7 @@ namespace AdvisingApp\Notification\Models{
  * @property string|null $recipient_type
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $recipient_address
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Notification\Models\EmailMessageEvent> $events
  * @property-read int|null $events_count
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent|null $recipient
@@ -3872,6 +3958,7 @@ namespace AdvisingApp\Notification\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailMessage whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailMessage whereNotificationClass($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailMessage whereQuotaUsage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailMessage whereRecipientAddress($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailMessage whereRecipientId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailMessage whereRecipientType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailMessage whereRelatedId($value)
@@ -3926,6 +4013,7 @@ namespace AdvisingApp\Notification\Models{
  * @property string|null $recipient_type
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $recipient_number
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Notification\Models\SmsMessageEvent> $events
  * @property-read int|null $events_count
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent|null $recipient
@@ -3941,6 +4029,7 @@ namespace AdvisingApp\Notification\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SmsMessage whereNotificationClass($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SmsMessage whereQuotaUsage($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SmsMessage whereRecipientId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SmsMessage whereRecipientNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SmsMessage whereRecipientType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SmsMessage whereRelatedId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SmsMessage whereRelatedType($value)
@@ -3983,10 +4072,19 @@ namespace AdvisingApp\Notification\Models{
 /**
  * 
  *
+ * @property string $id
  * @property \AdvisingApp\Notification\Enums\NotificationChannel $type
+ * @property string $route
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StoredAnonymousNotifiable newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StoredAnonymousNotifiable newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StoredAnonymousNotifiable query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StoredAnonymousNotifiable whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StoredAnonymousNotifiable whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StoredAnonymousNotifiable whereRoute($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StoredAnonymousNotifiable whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StoredAnonymousNotifiable whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -4063,7 +4161,7 @@ namespace AdvisingApp\Prospect\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $educatable
  * @property-read \AdvisingApp\Prospect\Models\Pipeline $pipeline
- * @property-read \AdvisingApp\Prospect\Models\PipelineStage|null $stage
+ * @property-read \AdvisingApp\Prospect\Models\PipelineStage $stage
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EducatablePipelineStage newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EducatablePipelineStage newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EducatablePipelineStage query()

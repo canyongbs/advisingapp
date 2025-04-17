@@ -38,6 +38,8 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Wid
 
 use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use App\Models\User;
+use Exception;
 use Filament\Widgets\Widget;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Attributes\Locked;
@@ -62,6 +64,13 @@ class EducatableCareTeamWidget extends Widget
         return $this->educatable->careTeam()
             ->orderBy('care_teams.created_at')
             ->get()
+            ->map(function (Model $user) {
+                throw_unless($user instanceof User, new Exception('Care team models must be users.'));
+
+                $user->careTeamRole = $user->getCareTeamRoleFor($this->educatable->getKey());
+
+                return $user;
+            })
             ->all();
     }
 }
