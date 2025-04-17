@@ -70,6 +70,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Carbon;
+use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class SendEngagementAction extends Action
@@ -343,7 +344,7 @@ class SendEngagementAction extends Action
                     ->color('gray')
                     ->cancelParentActions()
                     ->requiresConfirmation()
-                    ->action(fn () => null)
+                    ->action(fn (Component $livewire) => $livewire->js('$store.previous = {}')) // This fixes an issue where the TipTap editor inside this modal is persisted after the modal is closed, and the old content is restored to the editor. This can be removed when the app is upgraded to Filament v4.
                     ->modalSubmitAction(fn (StaticAction $action) => $action->color('danger')),
             ]);
     }
