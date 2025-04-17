@@ -95,7 +95,10 @@ class ManageFormEmailAutoReply extends EditRecord
                             ->placeholder('Subject')
                             ->columnSpanFull()
                             ->visible(! RefactorEngagementCampaignSubjectToJsonb::active()),
-                        TiptapEditor::make('subject')
+                        /**
+                         * @todo Remove 'temp_subject' name once `RefactorEngagementCampaignSubjectToJsonb` is removed.
+                         */
+                        TiptapEditor::make(RefactorEngagementCampaignSubjectToJsonb::active() ? 'subject' : 'temp_subject')
                             ->mergeTags([
                                 'student first name',
                                 'student last name',
