@@ -294,7 +294,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     }
 
     /**
-     * @todo Remove this dynamic cast once `RefactorEngagementCampaignSubjectToJsonb` is always active.
+     * @todo Remove this dynamic cast once `RefactorEngagementCampaignSubjectToJsonb` is removed.
      *       Move 'subject' casting to the static `$casts` array: protected $casts = ['subject' => 'array'];
      */
     protected function casts(): array
