@@ -2626,7 +2626,7 @@ namespace AdvisingApp\Engagement\Models{
  * @property string|null $engagement_batch_id
  * @property string|null $recipient_id
  * @property string|null $recipient_type
- * @property array<array-key, mixed>|null $subject
+ * @property string|null $subject
  * @property array<array-key, mixed>|null $body
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -2691,7 +2691,7 @@ namespace AdvisingApp\Engagement\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \AdvisingApp\Notification\Enums\NotificationChannel|null $channel
- * @property array<array-key, mixed>|null $subject
+ * @property string|null $subject
  * @property array<array-key, mixed>|null $body
  * @property \Illuminate\Support\Carbon|null $scheduled_at
  * @property int|null $total_engagements
@@ -2959,7 +2959,7 @@ namespace AdvisingApp\Form\Models{
  * 
  *
  * @property string $id
- * @property array<array-key, mixed>|null $subject
+ * @property string|null $subject
  * @property array<array-key, mixed>|null $body
  * @property bool $is_enabled
  * @property string $form_id
