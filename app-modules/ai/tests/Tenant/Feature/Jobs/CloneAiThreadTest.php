@@ -45,14 +45,13 @@ use App\Models\User;
 use Filament\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Notification;
 
-use function Pest\Laravel\withoutMiddleware;
-
 it('can clone a thread and its messages', function () {
     Notification::fake();
-    withoutMiddleware();
 
     $sender = User::factory()->licensed(LicenseType::cases())->create();
     $recipient = User::factory()->licensed(LicenseType::cases())->create();
+
+    expect($recipient->aiThreads)->toHaveCount(0);
 
     $assistant = AiAssistant::factory()->create([
         'application' => AiApplication::Test,

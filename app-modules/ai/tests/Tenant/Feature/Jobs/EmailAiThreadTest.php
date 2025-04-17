@@ -45,11 +45,8 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use Illuminate\Support\Facades\Notification;
 
-use function Pest\Laravel\withoutMiddleware;
-
 it('can send a notification containing a thread transcript', function () {
     Notification::fake();
-    withoutMiddleware();
 
     $sender = User::factory()->licensed(LicenseType::cases())->create();
     $recipient = User::factory()->licensed(LicenseType::cases())->create();
