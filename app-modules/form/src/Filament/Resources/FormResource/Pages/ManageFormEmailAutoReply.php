@@ -39,12 +39,14 @@ namespace AdvisingApp\Form\Filament\Resources\FormResource\Pages;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Form\Filament\Resources\FormResource;
 use AdvisingApp\Form\Models\Form;
+use App\Features\RefactorEngagementCampaignSubjectToJsonb;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form as FilamentForm;
 use Filament\Forms\Get;
@@ -88,6 +90,11 @@ class ManageFormEmailAutoReply extends EditRecord
                         Toggle::make('is_enabled')
                             ->label('Enabled')
                             ->live(),
+                        TextInput::make('subject')
+                            ->required(fn (Get $get) => $get('is_enabled'))
+                            ->placeholder('Subject')
+                            ->columnSpanFull()
+                            ->visible(! RefactorEngagementCampaignSubjectToJsonb::active()),
                         TiptapEditor::make('subject')
                             ->mergeTags([
                                 'student first name',
@@ -102,7 +109,8 @@ class ManageFormEmailAutoReply extends EditRecord
                             ->columnSpanFull()
                             ->placeholder('Enter the email subject here...')
                             ->showMergeTagsInBlocksPanel(false)
-                            ->live(),
+                            ->live()
+                            ->visible(RefactorEngagementCampaignSubjectToJsonb::active()),
                         TiptapEditor::make('body')
                             ->disk('s3-public')
                             ->mergeTags([
