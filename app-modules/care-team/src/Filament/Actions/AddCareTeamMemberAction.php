@@ -42,7 +42,6 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\CareTeamRoleType;
-use App\Features\CareTeamRoleFeature;
 use App\Models\Scopes\HasLicense;
 use App\Models\User;
 use Exception;
@@ -86,7 +85,7 @@ class AddCareTeamMemberAction
                     ->visible(CareTeamRole::where('type', match ($context) {
                         CareTeamRoleType::Student => CareTeamRoleType::Student,
                         CareTeamRoleType::Prospect => CareTeamRoleType::Prospect,
-                    })->count() > 0 && CareTeamRoleFeature::active()),
+                    })->count() > 0),
             ])
             ->action(function (Collection $records, array $data) {
                 return $records

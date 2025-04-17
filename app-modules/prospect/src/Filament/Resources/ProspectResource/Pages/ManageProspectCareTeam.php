@@ -43,7 +43,6 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\Concerns\HasProspectHeader;
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Enums\CareTeamRoleType;
-use App\Features\CareTeamRoleFeature;
 use App\Filament\Resources\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Scopes\HasLicense;
@@ -91,7 +90,7 @@ class ManageProspectCareTeam extends ManageRelatedRecords
                 TextColumn::make('careTeams.prospectCareTeamRole.name')
                     ->label('Role')
                     ->badge()
-                    ->visible(CareTeamRole::where('type', CareTeamRoleType::Prospect)->count() > 0 && CareTeamRoleFeature::active()),
+                    ->visible(CareTeamRole::where('type', CareTeamRoleType::Prospect)->count() > 0),
             ])
             ->headerActions([
                 AttachAction::make()
@@ -119,7 +118,7 @@ class ManageProspectCareTeam extends ManageRelatedRecords
                             ->relationship('careTeamRole', 'name', fn (Builder $query) => $query->where('type', CareTeamRoleType::Prospect))
                             ->searchable()
                             ->model(CareTeam::class)
-                            ->visible(CareTeamRole::where('type', CareTeamRoleType::Prospect)->count() > 0 && CareTeamRoleFeature::active()),
+                            ->visible(CareTeamRole::where('type', CareTeamRoleType::Prospect)->count() > 0),
                     ])
                     ->successNotificationTitle(function (array $data) {
                         /** @var Prospect $prospect */
