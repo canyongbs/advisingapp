@@ -9,11 +9,19 @@ use Illuminate\Support\Str;
 class GenerateEngagementSubjectContent
 {
     /**
-     * @param string|array<string|int, string> $content
+     * @param string|array<string|int, string>|null $content
      * @param array<string, mixed> $mergeData
+     *
+     * @todo RefactorCleanup: Once migration to JSONB subject is complete and all usages are updated,
+     *       - make $content non-nullable (string|array)
+     *       - remove the blank($content) check
      */
-    public function __invoke(string|array $content, array $mergeData, Model $record, string $recordAttribute): HtmlString
+    public function __invoke(string|array|null $content, array $mergeData, Model $record, string $recordAttribute): HtmlString
     {
+        if (blank($content)) {
+            return new HtmlString('');
+        }
+
         $html = tiptap_converter()
             ->mergeTagsMap($mergeData)
             ->record($record, $recordAttribute)

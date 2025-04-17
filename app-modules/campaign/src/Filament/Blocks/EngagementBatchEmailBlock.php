@@ -40,6 +40,7 @@ use AdvisingApp\Campaign\Filament\Blocks\Actions\DraftCampaignEngagementBlockWit
 use AdvisingApp\Campaign\Settings\CampaignSettings;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Notification\Enums\NotificationChannel;
+use App\Features\RefactorEngagementCampaignSubjectToJsonb;
 use Carbon\CarbonImmutable;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
@@ -47,6 +48,7 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use FilamentTiptapEditor\TiptapEditor;
@@ -69,6 +71,11 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
         return [
             Hidden::make($fieldPrefix . 'channel')
                 ->default(NotificationChannel::Email->value),
+            TextInput::make($fieldPrefix . 'subject')
+                ->columnSpanFull()
+                ->placeholder(__('Subject'))
+                ->required()
+                ->visible(! RefactorEngagementCampaignSubjectToJsonb::active()),
             TiptapEditor::make($fieldPrefix . 'subject')
                 ->recordAttribute('data.subject')
                 ->label('Subject')
@@ -84,7 +91,8 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
                 ->showMergeTagsInBlocksPanel(false)
                 ->required()
                 ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
-                ->columnSpanFull(),
+                ->columnSpanFull()
+                ->visible(RefactorEngagementCampaignSubjectToJsonb::active()),
             TiptapEditor::make($fieldPrefix . 'body')
                 ->recordAttribute('data.body')
                 ->disk('s3-public')

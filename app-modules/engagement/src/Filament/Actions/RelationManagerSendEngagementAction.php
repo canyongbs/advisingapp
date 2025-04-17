@@ -47,6 +47,7 @@ use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
+use App\Features\RefactorEngagementCampaignSubjectToJsonb;
 use App\Features\RoutedEngagements;
 use Filament\Actions\StaticAction;
 use Filament\Forms\Components\Actions;
@@ -56,6 +57,7 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -139,6 +141,13 @@ class RelationManagerSendEngagementAction extends CreateAction
                     ]),
                 Fieldset::make('Content')
                     ->schema([
+                        TextInput::make('subject')
+                            ->autofocus()
+                            ->required()
+                            ->placeholder(__('Subject'))
+                            ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
+                            ->columnSpanFull()
+                            ->visible(! RefactorEngagementCampaignSubjectToJsonb::active()),
                         TiptapEditor::make('subject')
                             ->label('Subject')
                             ->mergeTags([
@@ -159,7 +168,8 @@ class RelationManagerSendEngagementAction extends CreateAction
                             ->profile('sms')
                             ->required()
                             ->placeholder('Enter the email subject here...')
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->visible(RefactorEngagementCampaignSubjectToJsonb::active()),
                         TiptapEditor::make('body')
                             ->disk('s3-public')
                             ->label('Body')
@@ -270,10 +280,12 @@ class RelationManagerSendEngagementAction extends CreateAction
             ->action(function (array $data, Form $form, RelationManager $livewire) {
                 $recipient = $livewire->getOwnerRecord();
 
-                $data['subject'] ??= ['type' => 'doc', 'content' => []];
-                $data['subject']['content'] = [
-                    ...($data['subject']['content'] ?? []),
-                ];
+                if (RefactorEngagementCampaignSubjectToJsonb::active()) {
+                    $data['subject'] ??= ['type' => 'doc', 'content' => []];
+                    $data['subject']['content'] = [
+                        ...($data['subject']['content'] ?? []),
+                    ];
+                }
 
                 $data['body'] ??= ['type' => 'doc', 'content' => []];
                 $data['body']['content'] = [
