@@ -10,7 +10,7 @@
     ],
     "license": "Elastic-2.0",
     "require": {
-        "php": "8.2.*",
+        "php": "8.4.*",
         "ext-gd": "*",
         "ext-pdo": "*",
         "aws/aws-php-sns-message-validator": "^1.9",
