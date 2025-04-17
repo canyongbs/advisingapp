@@ -37,6 +37,7 @@
 namespace AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages;
 
 use AdvisingApp\Campaign\Filament\Resources\CampaignResource;
+use AdvisingApp\Segment\Models\Segment;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
@@ -53,16 +54,19 @@ class EditCampaign extends EditRecord
 
     public function form(Form $form): Form
     {
-        /** @var User $user */
-        $user = auth()->user();
-
         return $form
             ->schema([
                 TextInput::make('name')
                     ->required(),
                 Select::make('segment_id')
                     ->label('Population Segment')
-                    ->options($user->segments()->pluck('name', 'id'))
+                    ->options(function () {
+                        return Segment::query()
+                            ->whereHas('user', function ($query) {
+                                $query->whereKey(auth()->id())->orWhereRelation('teams.users', 'user_id', auth()->id());
+                            })
+                            ->pluck('name', 'id');
+                    })
                     ->searchable()
                     ->required(),
                 Toggle::make('enabled'),

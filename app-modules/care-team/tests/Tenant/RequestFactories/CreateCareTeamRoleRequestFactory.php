@@ -34,40 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CareTeam\Filament\Actions;
+namespace AdvisingApp\CareTeam\Tests\Tenant\RequestFactories;
 
-use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
-use App\Models\User;
-use Filament\Tables\Actions\BulkAction;
-use Illuminate\Database\Eloquent\Collection;
+use App\Enums\CareTeamRoleType;
+use Worksome\RequestFactories\RequestFactory;
 
-class ToggleCareTeamBulkAction extends BulkAction
+class CreateCareTeamRoleRequestFactory extends RequestFactory
 {
-    protected function setUp(): void
+    public function definition(): array
     {
-        parent::setUp();
-
-        $this->icon('heroicon-s-user-group');
-
-        $this->action(function (Collection $records) {
-            return $records
-                ->each(function (Educatable $record) {
-                    /** @var User $user */
-                    $user = auth()->user();
-
-                    if ($record->careTeam()->where('user_id', $user->id)->exists()) {
-                        $record->careTeam()->detach($user);
-                    } else {
-                        $record->careTeam()->attach($user);
-                    }
-                });
-        });
-
-        $this->deselectRecordsAfterCompletion();
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return 'toggleCareTeam';
+        return [
+            'name' => fake()->word(),
+            'is_default' => false,
+            'type' => fake()->randomElement(CareTeamRoleType::cases()),
+        ];
     }
 }

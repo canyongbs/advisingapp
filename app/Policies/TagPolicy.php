@@ -36,6 +36,7 @@
 
 namespace App\Policies;
 
+use AdvisingApp\Campaign\Models\CampaignAction;
 use App\Enums\TagType;
 use App\Models\Authenticatable;
 use App\Models\Tag;
@@ -77,7 +78,11 @@ class TagPolicy
 
     public function delete(Authenticatable $authenticatable, Tag $tag): Response
     {
-        if (($tag->type === TagType::Student && $tag->students()->exists()) || ($tag->type === TagType::Prospect && $tag->prospects()->exists())) {
+        $tagExist = CampaignAction::where('type', 'tags')
+            ->whereJsonContains('data->tag_ids', $tag->getKey())
+            ->exists();
+
+        if (($tag->type === TagType::Student && $tag->students()->exists()) || ($tag->type === TagType::Prospect && $tag->prospects()->exists()) || $tagExist) {
             return Response::deny('Delete access denided as tag is used in other records');
         }
 
@@ -97,7 +102,11 @@ class TagPolicy
 
     public function forceDelete(Authenticatable $authenticatable, Tag $tag): Response
     {
-        if (($tag->type === TagType::Student && $tag->students()->exists()) || ($tag->type === TagType::Prospect && $tag->prospects()->exists())) {
+        $tagExist = CampaignAction::where('type', 'tags')
+            ->whereJsonContains('data->tag_ids', $tag->getKey())
+            ->exists();
+
+        if (($tag->type === TagType::Student && $tag->students()->exists()) || ($tag->type === TagType::Prospect && $tag->prospects()->exists()) || $tagExist) {
             return Response::deny('Delete access denided as tag is used in other records');
         }
 

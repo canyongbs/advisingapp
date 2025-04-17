@@ -52,7 +52,7 @@ trait AuditableManyToMany
         $parentKey,
         $relatedKey,
         $relationName = null
-    ) {
+    ): BelongsToMany {
         return new BelongsToMany(
             $query,
             $parent,
@@ -76,7 +76,7 @@ trait AuditableManyToMany
         $relatedKey,
         $relationName = null,
         $inverse = false
-    ) {
+    ): MorphToMany {
         return new MorphToMany(
             $query,
             $parent,

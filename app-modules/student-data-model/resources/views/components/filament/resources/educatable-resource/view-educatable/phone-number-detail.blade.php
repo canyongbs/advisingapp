@@ -31,6 +31,11 @@
 
 </COPYRIGHT>
 --}}
+@php
+    use AdvisingApp\Engagement\Models\Engagement;
+    use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
+@endphp
+
 <button
     class="flex items-center gap-2"
     type="button"
@@ -38,7 +43,12 @@
     x-on:engage-action-finished-loading.window="isLoading = false"
     x-on:click="isLoading = true; $dispatch('send-sms', { phoneNumberKey: @js($phoneNumber->getKey()) })"
     x-tooltip.raw="Click to send an SMS"
-    @disabled(!$phoneNumber->can_receive_sms)
+    @disabled(
+        !$phoneNumber->can_receive_sms ||
+            !auth()->user()->can('create', [
+                    Engagement::class,
+                    $phoneNumber instanceof ProspectPhoneNumber ? $phoneNumber->prospect : null,
+                ]))
 >
     @svg('heroicon-m-phone', 'size-5', ['x-show' => '! isLoading'])
 

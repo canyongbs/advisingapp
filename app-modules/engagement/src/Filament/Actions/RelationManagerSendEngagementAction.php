@@ -69,6 +69,7 @@ use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Carbon;
+use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class RelationManagerSendEngagementAction extends CreateAction
@@ -85,19 +86,6 @@ class RelationManagerSendEngagementAction extends CreateAction
                 $ownerRecord = $livewire->getOwnerRecord();
 
                 return auth()->user()->can('create', [Engagement::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
-            })
-            ->mountUsing(function (array $arguments, Form $form, RelationManager $livewire) {
-                $livewire->dispatch('engage-action-finished-loading');
-
-                if (filled($arguments['route'] ?? null)) {
-                    $form->fill([
-                        'channel' => $arguments['channel'] ?? 'email',
-                        'recipient_route_id' => $arguments['route'],
-                        'signature' => auth()->user()->signature,
-                    ]);
-                } else {
-                    $form->fill();
-                }
             })
             ->form(fn (Form $form, RelationManager $livewire) => $form->schema([
                 Grid::make(2)
@@ -323,7 +311,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                     ->color('gray')
                     ->cancelParentActions()
                     ->requiresConfirmation()
-                    ->action(fn () => null)
+                    ->action(fn (Component $livewire) => $livewire->js('$store.previous = {}')) // This fixes an issue where the TipTap editor inside this modal is persisted after the modal is closed, and the old content is restored to the editor. This can be removed when the app is upgraded to Filament v4.
                     ->modalSubmitAction(fn (StaticAction $action) => $action->color('danger')),
             ]);
     }

@@ -42,8 +42,6 @@
 @if ($managers)
     <div
         x-data="{ activeTab: @js(array_key_first($managers)) }"
-        x-on:send-email.window="activeTab = 'messages'"
-        x-on:send-sms.window="activeTab = 'messages'"
         {{ $attributes->class(['flex flex-col gap-3']) }}
     >
         <x-filament::tabs>
@@ -61,7 +59,7 @@
                     [
                         'ownerRecord' => $this->getRecord(),
                         'pageClass' => static::class,
-                        'lazy' => $loop->first || $managerKey === 'messages' ? false : 'on-load',
+                        'lazy' => $loop->first ? false : 'on-load',
                     ],
                     key('relation-manager-' . $managerKey)
                 )

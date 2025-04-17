@@ -125,7 +125,7 @@ trait CanManageThreads
             ->schema([
                 Select::make($propertyName)
                     ->label('Choose an assistant')
-                    ->placeholder('Search for an assistant')
+                    ->placeholder('Search for an advisor')
                     ->searchPrompt('Search')
                     ->hiddenLabel()
                     ->allowHtml()

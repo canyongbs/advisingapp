@@ -40,7 +40,7 @@ use AdvisingApp\Campaign\Enums\CampaignActionType;
 use AdvisingApp\Campaign\Filament\Blocks\CampaignActionBlock;
 use AdvisingApp\Campaign\Filament\Resources\CampaignResource;
 use AdvisingApp\Campaign\Models\Campaign;
-use App\Models\User;
+use AdvisingApp\Segment\Models\Segment;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -60,9 +60,6 @@ class CreateCampaign extends CreateRecord
 
     protected function getSteps(): array
     {
-        /** @var User $user */
-        $user = auth()->user();
-
         return [
             Step::make('Campaign Details')
                 ->schema([
@@ -71,7 +68,13 @@ class CreateCampaign extends CreateRecord
                         ->required(),
                     Select::make('segment_id')
                         ->label('Population Segment')
-                        ->options($user->segments()->pluck('name', 'id'))
+                        ->options(function () {
+                            return Segment::query()
+                                ->whereHas('user', function ($query) {
+                                    $query->whereKey(auth()->id())->orWhereRelation('teams.users', 'user_id', auth()->id());
+                                })
+                                ->pluck('name', 'id');
+                        })
                         ->searchable()
                         ->required(),
                 ]),
@@ -83,6 +86,7 @@ class CreateCampaign extends CreateRecord
                         ->minItems(1)
                         ->blocks(CampaignActionType::blocks())
                         ->dehydrated(false)
+                        ->validationAttribute('journey steps')
                         ->saveRelationshipsUsing(function (Builder $component, Campaign $record) {
                             foreach ($component->getChildComponentContainers() as $item) {
                                 /** @var CampaignActionBlock $block */
