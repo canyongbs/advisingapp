@@ -63,9 +63,8 @@ return new class () extends Migration {
         Schema::table('campaigns', function (Blueprint $table) {
             $table->foreignUuid('caseload_id')->nullable()->constrained('caseloads');
 
-            $table->dropForeign(['segment_id']);
-            $table->uuid('segment_id')->nullable()->change();
-            $table->foreign('segment_id')->references('id')->on('segments');
+            $table->dropForeign('segment_id');
+            $table->foreignUuid('segment_id')->nullable()->change()->constrained('segments');
         });
 
         Schema::create('caseloads', function (Blueprint $table) {

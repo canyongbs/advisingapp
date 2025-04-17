@@ -71,9 +71,7 @@ uses(LandlordTestCase::class)->in('../tests/Landlord', '../app-modules/*/tests/L
  * @param array<LicenseType>|LicenseType|null $licenses
  * @param array<string>|string|null $roles
  * @param array<string>|string|null $permissions
- * @param string $guard
  *
- * @return User
  */
 function user(LicenseType | array | null $licenses = null, array | null | string $roles = null, array | null | string $permissions = null, string $guard = 'web'): User
 {
