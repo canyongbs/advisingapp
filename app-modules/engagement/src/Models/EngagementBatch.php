@@ -44,6 +44,7 @@ use AdvisingApp\Engagement\Models\Concerns\HasManyEngagements;
 use AdvisingApp\Engagement\Observers\EngagementBatchObserver;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
+use App\Features\RefactorEngagementCampaignSubjectToJsonb;
 use App\Models\BaseModel;
 use App\Models\User;
 use DOMDocument;
@@ -75,7 +76,6 @@ class EngagementBatch extends BaseModel implements ExecutableFromACampaignAction
     ];
 
     protected $casts = [
-        'subject' => 'array',
         'body' => 'array',
         'scheduled_at' => 'datetime',
         'channel' => NotificationChannel::class,
@@ -130,5 +130,16 @@ class EngagementBatch extends BaseModel implements ExecutableFromACampaignAction
         }
 
         return $dom->saveHTML();
+    }
+
+    /**
+     * @todo Remove this dynamic cast once `RefactorEngagementCampaignSubjectToJsonb` is always active.
+     *       Move 'subject' casting to the static `$casts` array: protected $casts = ['subject' => 'array'];
+     */
+    protected function casts(): array
+    {
+        return [
+            'subject' => ! RefactorEngagementCampaignSubjectToJsonb::active() ? 'string' : 'array',
+        ];
     }
 }

@@ -54,6 +54,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Timeline\Models\Timeline;
 use AdvisingApp\Timeline\Timelines\EngagementTimeline;
+use App\Features\RefactorEngagementCampaignSubjectToJsonb;
 use App\Models\BaseModel;
 use App\Models\User;
 use Exception;
@@ -100,7 +101,6 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     ];
 
     protected $casts = [
-        'subject' => 'array',
         'body' => 'array',
         'scheduled_at' => 'datetime',
         'dispatched_at' => 'datetime',
@@ -291,6 +291,17 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     public function getDeliveryMethod(): NotificationChannel
     {
         return $this->channel;
+    }
+
+    /**
+     * @todo Remove this dynamic cast once `RefactorEngagementCampaignSubjectToJsonb` is always active.
+     *       Move 'subject' casting to the static `$casts` array: protected $casts = ['subject' => 'array'];
+     */
+    protected function casts(): array
+    {
+        return [
+            'subject' => ! RefactorEngagementCampaignSubjectToJsonb::active() ? 'string' : 'array',
+        ];
     }
 
     protected static function booted(): void

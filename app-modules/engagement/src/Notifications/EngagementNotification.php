@@ -82,7 +82,6 @@ class EngagementNotification extends Notification implements ShouldQueue, HasBef
     {
         return MailMessage::make()
             ->to($this->engagement->recipient_route)
-            // ->subject($this->engagement->getSubject())
             ->subject(
                 RefactorEngagementCampaignSubjectToJsonb::active()
                     ? $this->engagement->getSubject()

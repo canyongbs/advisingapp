@@ -109,7 +109,6 @@ class ManageFormEmailAutoReply extends EditRecord
                             ->columnSpanFull()
                             ->placeholder('Enter the email subject here...')
                             ->showMergeTagsInBlocksPanel(false)
-                            ->live()
                             ->visible(RefactorEngagementCampaignSubjectToJsonb::active()),
                         TiptapEditor::make('body')
                             ->disk('s3-public')

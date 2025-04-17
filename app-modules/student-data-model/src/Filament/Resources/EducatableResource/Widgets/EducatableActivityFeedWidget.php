@@ -108,7 +108,6 @@ class EducatableActivityFeedWidget extends Widget implements HasActions, HasForm
     {
         return (string) str(match ($record->getMorphClass()) {
             'interaction' => "Subject: {$record->subject}",
-            // 'engagement' => $this->getEngagementDescription($record),
             'engagement' => RefactorEngagementCampaignSubjectToJsonb::active()
             ? $this->getEngagementDescription($record)
             : match ($record->getDeliveryMethod()) {
