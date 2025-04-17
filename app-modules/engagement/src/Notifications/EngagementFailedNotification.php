@@ -69,7 +69,6 @@ class EngagementFailedNotification extends Notification implements ShouldQueue
             ->settings($this->resolveNotificationSetting($notifiable))
             ->subject('An engagement failed to deliver')
             ->line("The engagement {$this->engagement->channel->getLabel()} failed to be delivered to {$this->engagement->recipient->display_name}:")
-            // ->line('Subject: ' . $this->engagement->getSubject())
             ->line(
                 'Subject: ' . (
                     RefactorEngagementCampaignSubjectToJsonb::active()

@@ -103,8 +103,14 @@ return new class () extends Migration {
         DB::transaction(function () {
             DB::table('engagements')->select('id', 'subject')->chunkById(500, function ($rows) {
                 foreach ($rows as $row) {
+                    /** @var array<string, mixed> $decoded */
                     $decoded = json_decode($row->subject, true);
-                    $text = collect($decoded['content'] ?? [])
+
+                    /** @var array<int, array{type: string, content?: array<int, array{type: string, text: string}>}> $blocks */
+                    $blocks = $decoded['content'] ?? [];
+
+                    /** @var string $text */
+                    $text = collect($blocks)
                         ->flatMap(fn ($block) => collect($block['content'] ?? []))
                         ->filter(fn ($node) => $node['type'] === 'text')
                         ->pluck('text')
@@ -118,8 +124,14 @@ return new class () extends Migration {
 
             DB::table('engagement_batches')->select('id', 'subject')->chunkById(500, function ($rows) {
                 foreach ($rows as $row) {
+                    /** @var array<string, mixed> $decoded */
                     $decoded = json_decode($row->subject, true);
-                    $text = collect($decoded['content'] ?? [])
+
+                    /** @var array<int, array{type: string, content?: array<int, array{type: string, text: string}>}> $blocks */
+                    $blocks = $decoded['content'] ?? [];
+
+                    /** @var string $text */
+                    $text = collect($blocks)
                         ->flatMap(fn ($block) => collect($block['content'] ?? []))
                         ->filter(fn ($node) => $node['type'] === 'text')
                         ->pluck('text')
@@ -133,8 +145,14 @@ return new class () extends Migration {
 
             DB::table('form_email_auto_replies')->select('id', 'subject')->chunkById(500, function ($rows) {
                 foreach ($rows as $row) {
+                    /** @var array<string, mixed> $decoded */
                     $decoded = json_decode($row->subject, true);
-                    $text = collect($decoded['content'] ?? [])
+
+                    /** @var array<int, array{type: string, content?: array<int, array{type: string, text: string}>}> $blocks */
+                    $blocks = $decoded['content'] ?? [];
+
+                    /** @var string $text */
+                    $text = collect($blocks)
                         ->flatMap(fn ($block) => collect($block['content'] ?? []))
                         ->filter(fn ($node) => $node['type'] === 'text')
                         ->pluck('text')
