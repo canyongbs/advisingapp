@@ -50,6 +50,9 @@ class LicenseSettings extends Settings
         return 'license';
     }
 
+    /**
+    * @return string[]
+    */
     public static function encrypted(): array
     {
         return [

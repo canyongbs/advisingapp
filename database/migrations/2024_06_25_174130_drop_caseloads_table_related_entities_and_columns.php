@@ -64,7 +64,7 @@ return new class () extends Migration {
             $table->foreignUuid('caseload_id')->nullable()->constrained('caseloads');
 
             $table->dropForeign('segment_id');
-            $table->foreignUuid('segment_id')->nullable()->constrained('segments')->change();
+            $table->foreignUuid('segment_id')->nullable()->change()->constrained('segments');
         });
 
         Schema::create('caseloads', function (Blueprint $table) {
