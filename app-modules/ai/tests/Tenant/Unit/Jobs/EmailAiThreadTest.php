@@ -67,5 +67,11 @@ it('can send a notification containing a thread transcript', function () {
 
     dispatch(new EmailAiThread($thread, $sender, $recipient));
 
-    Notification::assertSentTo($recipient, AssistantTranscriptNotification::class);
+    Notification::assertSentTo(
+      $recipient,
+      function (AssistantTranscriptNotification $notification) use ($thread) {
+        $reflectionClass = new ReflectionClass($notification);
+        return $reflectionClass->getProperty('thread')->getValue($notification)->is($thread);
+      }
+  );
 });
