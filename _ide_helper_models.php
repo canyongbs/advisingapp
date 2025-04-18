@@ -4258,8 +4258,8 @@ namespace AdvisingApp\Prospect\Models{
  * @property string $full_name
  * @property string|null $preferred
  * @property string|null $description
- * @property bool $sms_opt_out
- * @property bool $email_bounce
+ * @property bool|null $sms_opt_out
+ * @property bool|null $email_bounce
  * @property \Illuminate\Support\Carbon|null $birthdate
  * @property string|null $hsgrad
  * @property string|null $created_by_id
@@ -5043,16 +5043,16 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property string|null $last
  * @property string|null $full_name
  * @property string|null $preferred
- * @property bool $sms_opt_out
- * @property bool $email_bounce
+ * @property bool|null $sms_opt_out
+ * @property bool|null $email_bounce
  * @property \Illuminate\Support\Carbon|null $birthdate
  * @property int|null $hsgrad
- * @property bool $dual
- * @property bool $ferpa
+ * @property bool|null $dual
+ * @property bool|null $ferpa
  * @property \Illuminate\Support\Carbon|null $dfw
- * @property bool $sap
+ * @property bool|null $sap
  * @property string|null $holds
- * @property bool $firstgen
+ * @property bool|null $firstgen
  * @property string|null $ethnicity
  * @property string|null $lastlmslogin
  * @property string|null $f_e_term

@@ -45,11 +45,19 @@ use Spatie\LaravelData\Data;
 
 class EngagementCreationData extends Data
 {
+    /**
+     * @param array<string, mixed>|null $subject
+     * @param array<string, mixed>|null $body
+     * @param array<array<string, mixed>> $temporaryBodyImages
+     */
     public function __construct(
         public User $user,
         public CanBeNotified | Collection $recipient,
         public NotificationChannel $channel,
-        public ?string $subject = null,
+        /**
+         * @todo RefactorEngagementCampaignSubjectToJsonb: Change this to `?array` once full migration to JSONB subject is complete.
+         */
+        public string|array|null $subject = null,
         public ?array $body = null,
         public array $temporaryBodyImages = [],
         public ?CarbonInterface $scheduledAt = null,

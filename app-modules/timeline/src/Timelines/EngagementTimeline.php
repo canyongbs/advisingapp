@@ -39,6 +39,7 @@ namespace AdvisingApp\Timeline\Timelines;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Timeline\Models\CustomTimeline;
+use App\Features\RefactorEngagementCampaignSubjectToJsonb;
 use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\TextEntry;
@@ -85,7 +86,13 @@ class EngagementTimeline extends CustomTimeline
                     ->schema([
                         TextEntry::make('subject')
                             ->hidden(fn ($state): bool => blank($state))
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->visible(! RefactorEngagementCampaignSubjectToJsonb::active()),
+                        TextEntry::make('subject')
+                            ->hidden(fn ($state): bool => blank($state))
+                            ->getStateUsing(fn (Engagement $engagement): HtmlString => $engagement->getSubject())
+                            ->columnSpanFull()
+                            ->visible(RefactorEngagementCampaignSubjectToJsonb::active()),
                         TextEntry::make('body')
                             ->getStateUsing(fn (Engagement $engagement): HtmlString => $engagement->getBody())
                             ->columnSpanFull(),

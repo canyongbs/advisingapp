@@ -36,6 +36,7 @@
     use AdvisingApp\Notification\Enums\NotificationChannel;
     use AdvisingApp\Engagement\Models\EngagementBatch;
     use Carbon\Carbon;
+    use App\Features\RefactorEngagementCampaignSubjectToJsonb;
 @endphp
 
 <x-filament::fieldset>
@@ -59,7 +60,13 @@
         @if (isset($action['subject']))
             <div class="flex flex-col pt-3">
                 <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Subject</dt>
-                <dd class="text-sm font-semibold">{{ $action['subject'] }}</dd>
+                @if (RefactorEngagementCampaignSubjectToJsonb::active())
+                    <dd class="text-sm font-semibold">
+                        {!! EngagementBatch::renderWithMergeTags(tiptap_converter()->asHTML($action['subject'])) !!}
+                    </dd>
+                @else
+                    <dd class="text-sm font-semibold">{{ $action['subject'] }}</dd>
+                @endif
             </div>
         @endif
         @if ($action['body'])
