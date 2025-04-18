@@ -51,6 +51,8 @@ it('can send a notification containing a thread transcript', function () {
     $sender = User::factory()->licensed(LicenseType::cases())->create();
     $recipient = User::factory()->licensed(LicenseType::cases())->create();
 
+    expect($recipient->aiThreads)->toHaveCount(0);
+
     $assistant = AiAssistant::factory()->create([
         'application' => AiApplication::Test,
         'is_default' => true,
