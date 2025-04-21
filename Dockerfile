@@ -94,7 +94,7 @@ RUN apt-get update \
     unzip \
     zip \
     \
-    # install PHP packages, TODO: why update and install seperate? \
+    # install PHP packages \
     && apt-get update \
     && apt-get -y --no-install-recommends install \
     php8.4-apcu \
