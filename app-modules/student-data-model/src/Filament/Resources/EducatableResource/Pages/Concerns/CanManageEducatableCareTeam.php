@@ -40,7 +40,6 @@ use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\CareTeamRoleType;
-use App\Features\CareTeamRoleFeature;
 use App\Filament\Resources\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Scopes\HasLicense;
@@ -79,7 +78,7 @@ trait CanManageEducatableCareTeam
                 TextColumn::make('careTeams.studentCareTeamRole.name')
                     ->label('Role')
                     ->badge()
-                    ->visible(CareTeamRole::where('type', CareTeamRoleType::Student)->count() > 0 && CareTeamRoleFeature::active()),
+                    ->visible(CareTeamRole::where('type', CareTeamRoleType::Student)->count() > 0),
             ])
             ->headerActions([
                 AttachAction::make()
@@ -107,7 +106,7 @@ trait CanManageEducatableCareTeam
                             ->relationship('careTeamRole', 'name', fn (Builder $query) => $query->where('type', CareTeamRoleType::Student))
                             ->searchable()
                             ->model(CareTeam::class)
-                            ->visible(CareTeamRole::where('type', CareTeamRoleType::Student)->count() > 0 && CareTeamRoleFeature::active()),
+                            ->visible(CareTeamRole::where('type', CareTeamRoleType::Student)->count() > 0),
                     ])
                     ->successNotificationTitle(function (array $data) {
                         /** @var Student $student */
