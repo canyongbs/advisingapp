@@ -95,6 +95,15 @@
     </label>
 
     <label class="flex items-center">
+        <x-filament::input.checkbox wire:model.live="filterInboundMessages" />
+
+        <span class="ml-2">
+            Inbound Messages
+        </span>
+    </label>
+
+
+    <label class="flex items-center">
         <x-filament::input.checkbox wire:model.live="filterOpenTasks" />
         <span class="ml-2">
             Open Tasks

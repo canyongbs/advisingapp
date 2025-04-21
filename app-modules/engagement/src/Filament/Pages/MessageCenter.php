@@ -119,6 +119,9 @@ class MessageCenter extends Page
     #[Url(as: 'hasMemberOfCareTeam')]
     public bool $filterMemberOfCareTeam = false;
 
+    #[Url(as: 'hasInboundMessages')]
+    public bool $filterInboundMessages = false;
+
     public int $inboxPerPage = 10;
 
     public static function canAccess(): bool
@@ -157,6 +160,7 @@ class MessageCenter extends Page
             'filterStartDate',
             'filterEndDate',
             'filterMemberOfCareTeam',
+            'filterInboundMessages',
         ];
 
         if (in_array($property, $filters)) {
@@ -309,6 +313,13 @@ class MessageCenter extends Page
                     $idColumn,
                     $this->user->careTeams()->pluck('educatable_id')
                 );
+            })
+            ->when($this->filterInboundMessages === true, function (Builder $query) use ($idColumn) {
+                $query->whereIn(
+                    $idColumn,
+                    EngagementResponse::query()
+                        ->pluck('sender_id')
+                );
             });
     }
 
@@ -344,6 +355,10 @@ class MessageCenter extends Page
         }
 
         if ($this->filterMemberOfCareTeam) {
+            $count++;
+        }
+
+        if ($this->filterInboundMessages) {
             $count++;
         }
 
