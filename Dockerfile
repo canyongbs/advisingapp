@@ -134,6 +134,8 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 # Bring in the shared s6 overlay tasks
 COPY --chmod=755 docker/etc/s6-overlay/ /etc/s6-overlay/
 
+COPY --chmod=755 docker/etc/php/8.4/cli/php.ini /etc/php/8.4/cli/php.ini
+
 WORKDIR /var/www/html
 
 # TODO: Ensure this is run be an unprivileged user and change it to www-data
