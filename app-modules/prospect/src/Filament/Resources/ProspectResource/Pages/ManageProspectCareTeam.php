@@ -112,7 +112,7 @@ class ManageProspectCareTeam extends ManageRelatedRecords
                             ->label('User')
                             ->searchable()
                             ->required()
-                            ->options(User::query()->tap(new HasLicense(Prospect::getLicenseType()))->whereDoesntHave('prospectCareTeam')->pluck('name', 'id')),
+                            ->options(User::query()->tap(new HasLicense(Prospect::getLicenseType()))->whereDoesntHave('prospectCareTeams')->pluck('name', 'id')),
                         Select::make('care_team_role_id')
                             ->label('Role')
                             ->relationship('careTeamRole', 'name', fn (Builder $query) => $query->where('type', CareTeamRoleType::Prospect))
