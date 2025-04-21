@@ -5,8 +5,7 @@ FROM ${BASE_IMAGE} AS setup
 ARG S6_DIR=/opt/s6/
 ARG S6_SRC_DEP="xz-utils wget"
 ARG S6_SRC_URL="https://github.com/just-containers/s6-overlay/releases/download"
-# TODO: Update this to the latest version
-ARG S6_VERSION="v3.1.5.0"
+ARG S6_VERSION="v3.2.0.2"
 ARG OTHER_DEP="gnupg ca-certificates software-properties-common"
 
 ENV DEBIAN_FRONTEND="noninteractive" \
