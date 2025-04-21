@@ -3,7 +3,7 @@ ARG BASE_IMAGE="public.ecr.aws/lts/ubuntu:24.04"
 FROM ${BASE_IMAGE} AS setup
 
 ARG S6_DIR=/opt/s6/
-ARG S6_SRC_DEP="xz-utils wget"
+ARG S6_SRC_DEP="curl xz-utils"
 ARG S6_SRC_URL="https://github.com/just-containers/s6-overlay/releases/download"
 ARG S6_VERSION="v3.2.0.2"
 ARG OTHER_DEP="gnupg ca-certificates software-properties-common"
@@ -26,7 +26,7 @@ RUN mkdir -p $S6_DIR; \
     *       ) export S6_ARCH='x86_64'  ;; \
     esac; \
     untar (){ \
-    wget --no-check-certificate -O- $1 | tar Jxp -C $S6_DIR; \
+    curl -L $1 -o - | tar Jxp -C $S6_DIR; \
     }; \
     \
     untar ${S6_SRC_URL}/${S6_VERSION}/s6-overlay-noarch.tar.xz \
