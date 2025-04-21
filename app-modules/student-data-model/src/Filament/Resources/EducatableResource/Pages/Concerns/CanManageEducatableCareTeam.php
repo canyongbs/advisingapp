@@ -53,6 +53,7 @@ use Filament\Tables\Actions\DetachBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Log;
 
 trait CanManageEducatableCareTeam
 {
@@ -76,6 +77,7 @@ trait CanManageEducatableCareTeam
                     ->color('primary'),
                 TextColumn::make('job_title'),
                 TextColumn::make('careTeams.studentCareTeamRole.name')
+                    ->getStateUsing(fn ($record) => CareTeamRole::find($record->care_team_role_id)?->pluck('name'))
                     ->label('Role')
                     ->badge()
                     ->visible(CareTeamRole::where('type', CareTeamRoleType::Student)->count() > 0),
