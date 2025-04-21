@@ -102,7 +102,6 @@
         </span>
     </label>
 
-
     <label class="flex items-center">
         <x-filament::input.checkbox wire:model.live="filterOpenTasks" />
         <span class="ml-2">
