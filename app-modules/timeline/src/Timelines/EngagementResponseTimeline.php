@@ -38,6 +38,7 @@ namespace AdvisingApp\Timeline\Timelines;
 
 use AdvisingApp\Engagement\Filament\Resources\EngagementResponseResource\Actions\EngagementResponseViewAction;
 use AdvisingApp\Engagement\Models\EngagementResponse;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Timeline\Models\CustomTimeline;
 use Filament\Actions\ViewAction;
 
@@ -50,7 +51,11 @@ class EngagementResponseTimeline extends CustomTimeline
 
     public function icon(): string
     {
-        return 'heroicon-o-arrow-small-left';
+        return match ($this->engagementResponse->getDeliveryMethod()) {
+            NotificationChannel::Email => 'heroicon-o-envelope',
+            NotificationChannel::Sms => 'heroicon-o-chat-bubble-left',
+            default => 'heroicon-o-arrow-small-right',
+        };
     }
 
     public function sortableBy(): string
