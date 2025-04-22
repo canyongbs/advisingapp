@@ -53,7 +53,7 @@ class Team extends BaseModel
     ];
 
     /**
-     * @return BelongsToMany<User, $this>
+     * @return BelongsToMany<User, $this, covariant TeamUser>
      */
     public function users(): BelongsToMany
     {

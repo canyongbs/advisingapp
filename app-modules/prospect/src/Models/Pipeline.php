@@ -92,7 +92,7 @@ class Pipeline extends Model implements Auditable
     }
 
     /**
-     * @return MorphToMany<Prospect>
+     * @return MorphToMany<Prospect, $this, covariant EducatablePipelineStage>
      */
     public function educatablePipelineStages(): MorphToMany
     {

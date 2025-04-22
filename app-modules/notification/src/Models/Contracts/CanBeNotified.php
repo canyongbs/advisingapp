@@ -40,7 +40,7 @@ interface CanBeNotified
 {
     public function notify($instance);
 
-    public function notifyNow($instance, array $channels = null);
+    public function notifyNow($instance, ?array $channels = null);
 
     public function routeNotificationFor($driver, $notification = null);
 

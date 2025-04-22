@@ -47,7 +47,7 @@ abstract class CampaignActionBlock extends Block
         parent::setUp();
     }
 
-    public static function make(string $name = null): static
+    public static function make(?string $name = null): static
     {
         return parent::make($name ?? static::type());
     }

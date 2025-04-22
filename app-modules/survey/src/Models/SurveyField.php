@@ -80,7 +80,7 @@ class SurveyField extends SubmissibleField
     }
 
     /**
-     * @return BelongsToMany<SurveySubmission, $this>
+     * @return BelongsToMany<SurveySubmission, $this, covariant SurveyFieldSubmission>
      */
     public function submissions(): BelongsToMany
     {

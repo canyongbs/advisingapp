@@ -74,7 +74,7 @@ class NotificationSetting extends BaseModel implements HasMedia
     }
 
     /**
-     * @return MorphToMany<Division, $this>
+     * @return MorphToMany<Division, $this, covariant NotificationSettingPivot>
      */
     public function divisions(): MorphToMany
     {
