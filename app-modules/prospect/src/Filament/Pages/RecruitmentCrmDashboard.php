@@ -50,9 +50,9 @@ class RecruitmentCrmDashboard extends BaseDashboard
 
     protected static ?int $navigationSort = 10;
 
-    protected static ?string $navigationLabel = 'My Dashboard';
+    protected static ?string $navigationLabel = 'Action Center';
 
-    protected static ?string $title = 'Recruitment CRM Dashboard';
+    protected static ?string $title = 'Action Center';
 
     protected static string $routePath = 'recruitment-crm-dashboard';
 
