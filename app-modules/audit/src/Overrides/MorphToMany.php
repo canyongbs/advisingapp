@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Audit\Overrides;
 
-use \Illuminate\Database\Eloquent\Model;
 use AdvisingApp\Audit\Overrides\Concerns\AttachOverrides;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany as IlluminateMorphToMany;
 
 /**

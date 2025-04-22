@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Form\Models;
 
-use AdvisingApp\Form\Models\FormField;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
 use AdvisingApp\StudentDataModel\Models\Student;
