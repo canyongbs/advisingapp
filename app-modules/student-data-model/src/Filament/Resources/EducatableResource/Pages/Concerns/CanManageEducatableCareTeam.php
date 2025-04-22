@@ -105,7 +105,7 @@ trait CanManageEducatableCareTeam
                                     ->whereDoesntHave(
                                         'studentCareTeams',
                                         fn ($query) => $query
-                                            ->where('educatable_type', CareTeamRoleType::Student)
+                                            ->where('educatable_type', $this->getOwnerRecord()->getMorphClass())
                                             ->where('educatable_id', $this->getOwnerRecord()->getKey())
                                     )->pluck('name', 'id')
                             ),

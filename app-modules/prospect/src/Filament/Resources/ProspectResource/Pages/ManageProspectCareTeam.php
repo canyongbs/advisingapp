@@ -115,7 +115,7 @@ class ManageProspectCareTeam extends ManageRelatedRecords
                             ->options(
                                 User::query()->tap(new HasLicense(Prospect::getLicenseType()))
                                     ->whereDoesntHave('prospectCareTeams', fn ($query) => $query
-                                        ->where('educatable_type', CareTeamRoleType::Prospect)
+                                        ->where('educatable_type', $this->getOwnerRecord()->getMorphClass())
                                         ->where('educatable_id', $this->getOwnerRecord()->getKey()))
                                     ->pluck('name', 'id')
                             ),
