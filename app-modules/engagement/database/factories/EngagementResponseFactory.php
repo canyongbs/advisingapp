@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Engagement\Database\Factories;
 
+use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -78,6 +79,7 @@ class EngagementResponseFactory extends Factory
             },
             // Bring in a raw value here for testing later
             'raw' => null,
+            'status' => EngagementResponseStatus::New,
         ];
     }
 }

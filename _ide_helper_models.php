@@ -1,39 +1,5 @@
 <?php
 
-/*
-<COPYRIGHT>
-
-    Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
-
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
-    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
-
-    Notice:
-
-    - You may not provide the software to third parties as a hosted or managed
-      service, where the service provides users with access to any substantial set of
-      the features or functionality of the software.
-    - You may not move, change, disable, or circumvent the license key functionality
-      in the software, and you may not remove or obscure any functionality in the
-      software that is protected by the license key.
-    - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
-      to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
-      vigorously.
-    - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
-    - Use of this software implies agreement to the license terms and conditions as stated
-      in the Elastic License 2.0.
-
-    For more information or inquiries please visit our website at
-    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
-
-</COPYRIGHT>
-*/
-
 // @formatter:off
 // phpcs:ignoreFile
 /**
@@ -2838,6 +2804,7 @@ namespace AdvisingApp\Engagement\Models{
  * @property string|null $subject
  * @property \AdvisingApp\Engagement\Enums\EngagementResponseType $type
  * @property string|null $raw
+ * @property \AdvisingApp\Engagement\Enums\EngagementResponseStatus $status
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
@@ -2859,6 +2826,7 @@ namespace AdvisingApp\Engagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementResponse whereSenderId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementResponse whereSenderType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementResponse whereSentAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementResponse whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementResponse whereSubject($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementResponse whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementResponse whereUpdatedAt($value)
@@ -4258,8 +4226,8 @@ namespace AdvisingApp\Prospect\Models{
  * @property string $full_name
  * @property string|null $preferred
  * @property string|null $description
- * @property bool $sms_opt_out
- * @property bool $email_bounce
+ * @property bool|null $sms_opt_out
+ * @property bool|null $email_bounce
  * @property \Illuminate\Support\Carbon|null $birthdate
  * @property string|null $hsgrad
  * @property string|null $created_by_id
@@ -5043,16 +5011,16 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property string|null $last
  * @property string|null $full_name
  * @property string|null $preferred
- * @property bool $sms_opt_out
- * @property bool $email_bounce
+ * @property bool|null $sms_opt_out
+ * @property bool|null $email_bounce
  * @property \Illuminate\Support\Carbon|null $birthdate
  * @property int|null $hsgrad
- * @property bool $dual
- * @property bool $ferpa
+ * @property bool|null $dual
+ * @property bool|null $ferpa
  * @property \Illuminate\Support\Carbon|null $dfw
- * @property bool $sap
+ * @property bool|null $sap
  * @property string|null $holds
- * @property bool $firstgen
+ * @property bool|null $firstgen
  * @property string|null $ethnicity
  * @property string|null $lastlmslogin
  * @property string|null $f_e_term
