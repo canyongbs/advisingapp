@@ -76,7 +76,7 @@ trait CanManageEducatableCareTeam
                     ->color('primary'),
                 TextColumn::make('job_title'),
                 TextColumn::make('careTeams.studentCareTeamRole.name')
-                    ->getStateUsing(fn ($record) => CareTeamRole::find($record->care_team_role_id)?->pluck('name'))
+                    ->getStateUsing(fn ($record) => CareTeamRole::find($record->care_team_role_id)?->name)
                     ->label('Role')
                     ->badge()
                     ->visible(CareTeamRole::where('type', CareTeamRoleType::Student)->count() > 0),
