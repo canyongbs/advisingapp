@@ -94,11 +94,11 @@ class BulkEngagementAction
                             ->disk('s3-public')
                             ->label('Body')
                             ->mergeTags($mergeTags = [
-                                'student first name',
-                                'student last name',
-                                'student full name',
-                                'student email',
-                                'student preferred name',
+                                'recipient first name',
+                                'recipient last name',
+                                'recipient full name',
+                                'recipient email',
+                                'recipient preferred name',
                             ])
                             ->showMergeTagsInBlocksPanel(false)
                             ->profile('email')

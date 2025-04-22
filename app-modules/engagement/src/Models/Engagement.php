@@ -231,6 +231,11 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     public function getMergeData(): array
     {
         return [
+            'recipient first name' => $this->recipient->getAttribute($this->recipient->displayFirstNameKey()),
+            'recipient last name' => $this->recipient->getAttribute($this->recipient->displayLastNameKey()),
+            'recipient full name' => $this->recipient->getAttribute($this->recipient->displayNameKey()),
+            'recipient email' => $this->recipient?->primaryEmailAddress?->address,
+            'recipient preferred name' => $this->recipient->getAttribute($this->recipient->displayPreferredNameKey()),
             'student first name' => $this->recipient->getAttribute($this->recipient->displayFirstNameKey()),
             'student last name' => $this->recipient->getAttribute($this->recipient->displayLastNameKey()),
             'student full name' => $this->recipient->getAttribute($this->recipient->displayNameKey()),
@@ -249,21 +254,18 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
      */
     public static function getMergeTags(string $type): array
     {
-        return match ($type) {
-            Student::class => [
-                'student first name',
-                'student last name',
-                'student full name',
-                'student email',
-                'student preferred name',
-                'user first name',
-                'user full name',
-                'user job title',
-                'user email',
-                'user phone number',
-            ],
-            default => [],
-        };
+        return [
+            'recipient first name',
+            'recipient last name',
+            'recipient full name',
+            'recipient email',
+            'recipient preferred name',
+            'user first name',
+            'user full name',
+            'user job title',
+            'user email',
+            'user phone number',
+        ];
     }
 
     public function getDeliveryMethod(): NotificationChannel

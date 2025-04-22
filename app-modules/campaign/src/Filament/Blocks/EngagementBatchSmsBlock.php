@@ -66,11 +66,11 @@ class EngagementBatchSmsBlock extends CampaignActionBlock
                 DraftCampaignEngagementBlockWithAi::make()
                     ->channel(NotificationChannel::Sms)
                     ->mergeTags([
-                        'student first name',
-                        'student last name',
-                        'student full name',
-                        'student email',
-                        'student preferred name',
+                        'recipient first name',
+                        'recipient last name',
+                        'recipient full name',
+                        'recipient email',
+                        'recipient preferred name',
                     ]),
             ]),
             DateTimePicker::make('execute_at')
