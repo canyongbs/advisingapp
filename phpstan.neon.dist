@@ -31,3 +31,15 @@ parameters:
             identifier: larastan.noEnvCallsOutsideOfConfig
             path: app-modules/*/config/*
             reportUnmatched: false
+        -
+            message: '#Call to method [a-zA-Z]*\(\) on an unknown class static\.#'
+            identifier: class.notFound
+            paths:
+                - tests/*
+                - app-modules/*/tests/*
+        -
+            message: '#Call to an undefined method Illuminate\\Testing\\TestResponse::[a-zA-Z]*\(\).#'
+            identifier: method.notFound
+            paths:
+                - tests/*
+                - app-modules/*/tests/*

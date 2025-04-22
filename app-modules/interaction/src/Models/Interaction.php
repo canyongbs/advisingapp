@@ -230,7 +230,7 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
     }
 
     /**
-     * @return BelongsToMany<User, $this>
+     * @return BelongsToMany<User, $this, covariant InteractionConfidentialUser>
      */
     public function confidentialAccessUsers(): BelongsToMany
     {
@@ -240,7 +240,7 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
     }
 
     /**
-     * @return BelongsToMany<Team, $this>
+     * @return BelongsToMany<Team, $this, covariant InteractionConfidentialTeam>
      */
     public function confidentialAccessTeams(): BelongsToMany
     {

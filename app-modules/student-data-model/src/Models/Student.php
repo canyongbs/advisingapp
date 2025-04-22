@@ -203,7 +203,7 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     }
 
     /**
-     * @return MorphToMany<EngagementFile, $this>
+     * @return MorphToMany<EngagementFile, $this, covariant EngagementFileEntities>
      */
     public function engagementFiles(): MorphToMany
     {
@@ -214,7 +214,8 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
             foreignPivotKey: 'entity_id',
             relatedPivotKey: 'engagement_file_id',
             relation: 'engagementFiles',
-        )->using(EngagementFileEntities::class)
+        )
+            ->using(EngagementFileEntities::class)
             ->withTimestamps();
     }
 
@@ -267,7 +268,7 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     }
 
     /**
-     * @return MorphToMany<User, $this>
+     * @return MorphToMany<User, $this, covariant CareTeam>
      */
     public function careTeam(): MorphToMany
     {
@@ -283,7 +284,7 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     }
 
     /**
-     * @return MorphToMany<User, $this>
+     * @return MorphToMany<User, $this, covariant Subscription>
      */
     public function subscribedUsers(): MorphToMany
     {
@@ -444,7 +445,7 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     }
 
     /**
-     * @return MorphToMany<Tag, $this>
+     * @return MorphToMany<Tag, $this, covariant Taggable>
      */
     public function tags(): MorphToMany
     {

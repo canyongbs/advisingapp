@@ -37,6 +37,7 @@
 namespace AdvisingApp\Form\Filament\Tables\Filters;
 
 use AdvisingApp\Form\Enums\FormSubmissionStatus;
+use Exception;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -63,6 +64,7 @@ class FormSubmissionStatusFilter extends SelectFilter
                 FormSubmissionStatus::Requested => $query->requested(),
                 FormSubmissionStatus::Submitted => $query->submitted(),
                 FormSubmissionStatus::Canceled => $query->canceled(),
+                default => throw new Exception('Invalid status filter value'),
             };
         });
     }

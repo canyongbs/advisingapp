@@ -36,9 +36,16 @@
 
 namespace AdvisingApp\Audit\Overrides;
 
+use \Illuminate\Database\Eloquent\Model;
 use AdvisingApp\Audit\Overrides\Concerns\AttachOverrides;
 use Illuminate\Database\Eloquent\Relations\MorphToMany as IlluminateMorphToMany;
 
+/**
+ * @template TRelatedModel of Model
+ * @template TDeclaringModel of Model
+ *
+ * @extends IlluminateMorphToMany<TRelatedModel, TDeclaringModel>
+ */
 class MorphToMany extends IlluminateMorphToMany
 {
     use AttachOverrides;

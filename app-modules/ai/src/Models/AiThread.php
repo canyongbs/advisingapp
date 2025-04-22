@@ -110,11 +110,12 @@ class AiThread extends BaseModel implements Wireable
      */
     public function users(): BelongsToMany
     {
+        /** @phpstan-ignore argument.templateType (We are using some Laravel magic here to use Tenant as a Pivot without actually being a pivot) */
         return $this->belongsToMany(
             User::class,
             table: 'ai_messages',
             foreignPivotKey: 'thread_id',
-        )->using(AiMessage::class);
+        )->using(AiMessage::class); // @phpstan-ignore argument.type (Same as above)
     }
 
     /**

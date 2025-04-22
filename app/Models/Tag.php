@@ -71,7 +71,7 @@ class Tag extends BaseModel implements Auditable
     ];
 
     /**
-     * @return MorphToMany<Prospect, $this>
+     * @return MorphToMany<Prospect, $this, covariant Taggable>
      */
     public function prospects(): MorphToMany
     {
@@ -80,7 +80,7 @@ class Tag extends BaseModel implements Auditable
     }
 
     /**
-     * @return MorphToMany<Student, $this>
+     * @return MorphToMany<Student, $this, covariant Taggable>
      */
     public function students(): MorphToMany
     {
