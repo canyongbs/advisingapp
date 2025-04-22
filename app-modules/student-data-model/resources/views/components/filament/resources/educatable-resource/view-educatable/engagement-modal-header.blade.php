@@ -36,21 +36,14 @@
     use AdvisingApp\Engagement\Models\EngagementResponse;
     use App\Features\EngagementResponseStatusFeature;
 
-    if(EngagementResponseStatusFeature::active()) {
-        $status = match ($record->timelineable::class) {
-            EngagementResponse::class => $record->timelineable->status->getLabel(),
-            default => ''
-        };
-    }
-
     /** @var HasDeliveryMethod $timelineable */
     $timelineable = $record->timelineable;
 @endphp
-<h1 class="fi-modal-heading text-base font-semibold leading-6 text-gray-950 dark:text-white me-6">
-    View {{$timelineable->getDeliveryMethod()->getLabel()}}
+<h1 class="fi-modal-heading me-6 text-base font-semibold leading-6 text-gray-950 dark:text-white">
+    View {{ $timelineable->getDeliveryMethod()->getLabel() }}
 </h1>
 @if (EngagementResponseStatusFeature::active() && $status)
-    <span class='flex w-auto text-gray-400 dark:text-gray-500 mt-2'>
+    <span class='mt-2 flex w-auto text-gray-400 dark:text-gray-500'>
         <x-filament::badge>
             {{ $status }}
         </x-filament::badge>

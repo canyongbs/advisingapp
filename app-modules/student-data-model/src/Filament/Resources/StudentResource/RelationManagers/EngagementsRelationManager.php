@@ -199,7 +199,16 @@ class EngagementsRelationManager extends RelationManager
             ->actions([
                 ViewAction::make()
                     ->modalHeading(function (Timeline $record): Htmlable {
-                        return new HtmlString(view('student-data-model::components.filament.resources.educatable-resource.view-educatable.engagement-modal-header', ['record' => $record]));
+                        if (EngagementResponseStatusFeature::active()) {
+                            $status = match ($record->timelineable::class) {
+                                EngagementResponse::class => $record->timelineable->status->getLabel(),
+                                default => ''
+                            };
+                        } else {
+                            $status = '';
+                        }
+
+                        return new HtmlString(view('student-data-model::components.filament.resources.educatable-resource.view-educatable.engagement-modal-header', ['record' => $record, 'status' => $status]));
                     })
                     ->extraModalFooterActions([
                         Action::make('updateStatus')
