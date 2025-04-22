@@ -21,6 +21,7 @@ services:
       PUID: '${PLS_USER_ID:-9999}'
       PGID: '${PLS_GROUP_ID:-9999}'
       FIX_PERMISSIONS: '${FIX_PERMISSIONS:-true}'
+      PHP_MEMORY_LIMIT: '${PHP_MEMORY_LIMIT:-512M}'
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.advisingapp-app.rule=HostRegexp(`advisingapp.local`, `{subdomain:[a-z0-9]+}.advisingapp.local`)"
