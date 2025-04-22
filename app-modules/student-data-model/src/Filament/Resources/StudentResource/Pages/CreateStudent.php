@@ -141,6 +141,9 @@ class CreateStudent extends CreateRecord
                             ->label('High School Graduation Year')
                             ->nullable()
                             ->numeric(),
+                        TextInput::make('gender')
+                            ->nullable()
+                            ->maxLength(255),
                     ])
                     ->columns(3),
                 Section::make('Contact Information')
