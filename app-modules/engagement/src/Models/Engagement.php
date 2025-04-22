@@ -55,6 +55,7 @@ use AdvisingApp\Timeline\Models\Timeline;
 use AdvisingApp\Timeline\Timelines\EngagementTimeline;
 use App\Models\BaseModel;
 use App\Models\User;
+use Exception;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -230,16 +231,18 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
 
     public function getMergeData(): array
     {
+        throw_unless(($this->recipient instanceof Student) || ($this->recipient instanceof Prospect), new Exception('Recipient is not a student or prospect.'));
+
         return [
             'recipient first name' => $this->recipient->getAttribute($this->recipient->displayFirstNameKey()),
             'recipient last name' => $this->recipient->getAttribute($this->recipient->displayLastNameKey()),
             'recipient full name' => $this->recipient->getAttribute($this->recipient->displayNameKey()),
-            'recipient email' => $this->recipient?->primaryEmailAddress?->address,
+            'recipient email' => $this->recipient->primaryEmailAddress?->address,
             'recipient preferred name' => $this->recipient->getAttribute($this->recipient->displayPreferredNameKey()),
             'student first name' => $this->recipient->getAttribute($this->recipient->displayFirstNameKey()),
             'student last name' => $this->recipient->getAttribute($this->recipient->displayLastNameKey()),
             'student full name' => $this->recipient->getAttribute($this->recipient->displayNameKey()),
-            'student email' => $this->recipient?->primaryEmailAddress?->address,
+            'student email' => $this->recipient->primaryEmailAddress?->address,
             'student preferred name' => $this->recipient->getAttribute($this->recipient->displayPreferredNameKey()),
             'user first name' => (new Parser())->parse($this->user->name)->getFirstname(),
             'user full name' => $this->user->name,
