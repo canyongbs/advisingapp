@@ -11,7 +11,7 @@ ARG OTHER_DEP="gnupg ca-certificates software-properties-common"
 ENV DEBIAN_FRONTEND="noninteractive" \
     S6_KEEP_ENV=1
 
-RUN mkdir -p $S6_DIR; \
+RUN mkdir -p "$S6_DIR"; \
     apt-get update; \
     apt-get install -yq ${S6_SRC_DEP} ${OTHER_DEP} --no-install-recommends --no-install-suggests; \
     export SYS_ARCH=$(uname -m); \
@@ -26,7 +26,7 @@ RUN mkdir -p $S6_DIR; \
     *       ) export S6_ARCH='x86_64'  ;; \
     esac; \
     untar (){ \
-    curl -L $1 -o - | tar Jxp -C $S6_DIR; \
+    curl -L "$1" -o - | tar Jxp -C "$S6_DIR"; \
     }; \
     \
     untar ${S6_SRC_URL}/${S6_VERSION}/s6-overlay-noarch.tar.xz \
@@ -81,8 +81,8 @@ COPY --from=setup /etc/apt/sources.list.d/ /etc/apt/sources.list.d/
 RUN apt-get update \
     \
     # configure web user and group \
-    && groupadd -r -g $PGID webgroup \
-    && useradd --no-log-init -r -s /usr/bin/bash -d $WEBUSER_HOME -u $PUID -g $PGID webuser \
+    && groupadd -r -g "$PGID" webgroup \
+    && useradd --no-log-init -r -s /usr/bin/bash -d "$WEBUSER_HOME" -u "$PUID" -g "$PGID" webuser \
     \
     # install dependencies \
     && apt-get -y --no-install-recommends install \
@@ -137,8 +137,6 @@ COPY --chmod=755 docker/etc/s6-overlay/ /etc/s6-overlay/
 COPY --chmod=755 docker/etc/php/8.4/cli/php.ini /etc/php/8.4/cli/php.ini
 
 WORKDIR /var/www/html
-
-# TODO: Ensure this is run be an unprivileged user and change it to www-data
 
 # Install JS package management
 ENV NVM_VERSION=v0.40.2
