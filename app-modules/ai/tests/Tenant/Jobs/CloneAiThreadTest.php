@@ -70,14 +70,22 @@ it('can clone a thread and its messages', function () {
 
     $recipient->refresh();
     $clonedThread = $recipient->aiThreads()->latest()->first();
+    $clonedMessages = $clonedThread->messages;
 
     expect($clonedThread)->not->toBeNull();
-    expect($clonedThread->id)->not->toBe($thread->id);
+    expect($clonedThread->getKey())->not->toBe($thread->getKey());
 
     expect($clonedThread->name)->toBe($thread->name);
     expect($clonedThread->assistant_id)->toBe($thread->assistant_id);
     expect($clonedThread->folder_id)->toBe($thread->folder_id);
-    expect($clonedThread->user_id)->toBe($recipient->id);
+    expect($clonedThread->user_id)->toBe($recipient->getKey());
+
+    expect($clonedMessages)->toHaveCount($originalMessages->count());
+
+    foreach ($originalMessages as $index => $originalMessage) {
+        $clonedMessage = $clonedMessages[$index];
+        expect($clonedMessage->content)->toBe($originalMessage->content);
+    }
 
     expect($clonedThread->messages)->toHaveCount(3);
     $thread->refresh();
