@@ -40,6 +40,7 @@ use AdvisingApp\Ai\Jobs\CloneAiThread;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Models\AiThreadFolder;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use Filament\Notifications\DatabaseNotification;
@@ -59,8 +60,15 @@ it('can clone a thread and its messages', function () {
         'model' => AiModel::Test,
     ]);
 
+    $folder = AiThreadFolder::factory()
+        ->for($sender, 'user')
+        ->create([
+            'application' => AiApplication::PersonalAssistant,
+        ]);
+
     $thread = AiThread::factory()
         ->for($assistant, 'assistant')
+        ->for($folder, 'folder')
         ->has(AiMessage::factory()->count(3), 'messages')
         ->for($sender, 'user')
         ->create();
@@ -77,7 +85,9 @@ it('can clone a thread and its messages', function () {
 
     expect($clonedThread->name)->toBe($thread->name);
     expect($clonedThread->assistant_id)->toBe($thread->assistant_id);
-    expect($clonedThread->folder_id)->toBe($thread->folder_id);
+    expect($thread->folder_id)->not->toBeNull();
+    expect($clonedThread->folder_id)->toBeNull();
+    expect($clonedThread->folder_id)->not->toBe($thread->folder_id);
     expect($clonedThread->user_id)->toBe($recipient->getKey());
 
     expect($clonedMessages)->toHaveCount($originalMessages->count());
