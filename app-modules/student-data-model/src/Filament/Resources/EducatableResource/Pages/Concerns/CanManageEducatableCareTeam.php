@@ -100,7 +100,13 @@ trait CanManageEducatableCareTeam
                             ->label('User')
                             ->searchable()
                             ->required()
-                            ->options(User::query()->tap(new HasLicense(Student::getLicenseType()))->whereDoesntHave('studentCareTeams', fn ($query) => $query->where('educatable_id', $this->getOwnerRecord()->getKey()))->pluck('name', 'id')),
+                            ->options(
+                                User::query()->tap(new HasLicense(Student::getLicenseType()))
+                                    ->whereDoesntHave('studentCareTeams', fn ($query) => $query
+                                        ->where('educatable_type', CareTeamRoleType::Student)
+                                        ->where('educatable_id', $this->getOwnerRecord()->getKey())
+                                    )->pluck('name', 'id')
+                            ),
                         Select::make('care_team_role_id')
                             ->label('Role')
                             ->relationship('careTeamRole', 'name', fn (Builder $query) => $query->where('type', CareTeamRoleType::Student))
