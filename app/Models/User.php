@@ -226,7 +226,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     }
 
     /**
-     * @return BelongsToMany<TwilioConversation, $this>
+     * @return BelongsToMany<TwilioConversation, $this, covariant TwilioConversationUser, 'participant'>
      */
     public function conversations(): BelongsToMany
     {
@@ -272,7 +272,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     }
 
     /**
-     * @return MorphToMany<Prospect, $this>
+     * @return MorphToMany<Prospect, $this, covariant Subscription>
      */
     public function prospectSubscriptions(): MorphToMany
     {
@@ -287,7 +287,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     }
 
     /**
-     * @return MorphToMany<Student, $this>
+     * @return MorphToMany<Student, $this, covariant Subscription>
      */
     public function studentSubscriptions(): MorphToMany
     {
@@ -311,6 +311,9 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return $this->hasManyDeepFromRelations($this->prospectSubscriptions(), (new Prospect())->alerts());
     }
 
+    /**
+     * @return MorphToMany<Prospect, $this, covariant CareTeam>
+     */
     public function prospectCareTeams(): MorphToMany
     {
         return $this->morphedByMany(
@@ -323,6 +326,9 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             ->withTimestamps();
     }
 
+    /**
+     * @return MorphToMany<Student, $this, covariant CareTeam>
+     */
     public function studentCareTeams(): MorphToMany
     {
         return $this->morphedByMany(
@@ -436,7 +442,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     }
 
     /**
-     * @return BelongsToMany<Team, $this>
+     * @return BelongsToMany<Team, $this, covariant TeamUser>
      */
     public function teams(): BelongsToMany
     {
@@ -502,7 +508,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             ]);
     }
 
-    public function registerMediaConversions(Media $media = null): void
+    public function registerMediaConversions(?Media $media = null): void
     {
         $this->addMediaConversion('avatar-height-250px')
             ->performOnCollections('avatar')

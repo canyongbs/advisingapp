@@ -55,9 +55,9 @@ use function PHPUnit\Framework\assertTrue;
  * @return array{user: User, records: EloquentCollection<User>, licenseTypes: Collection<LicenseType>}
  */
 $setUp = function (
-    User $user = null,
-    User | Collection $records = null,
-    LicenseType | array $licenseTypes = null,
+    ?User $user = null,
+    User | Collection | null $records = null,
+    LicenseType | array | null $licenseTypes = null,
 ) {
     $user ??= User::factory()->create();
     $user->givePermissionTo([

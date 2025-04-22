@@ -95,7 +95,7 @@ class EngagementFile extends BaseModel implements HasMedia, Auditable
     }
 
     /**
-     * @return MorphToMany<Student, $this>
+     * @return MorphToMany<Student, $this, covariant EngagementFileEntities>
      */
     public function students(): MorphToMany
     {
@@ -112,7 +112,7 @@ class EngagementFile extends BaseModel implements HasMedia, Auditable
     }
 
     /**
-     * @return MorphToMany<Prospect, $this>
+     * @return MorphToMany<Prospect, $this, covariant EngagementFileEntities>
      */
     public function prospects(): MorphToMany
     {
