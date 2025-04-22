@@ -49,9 +49,9 @@ class RetentionCrmDashboard extends BaseDashboard
 
     protected static ?int $navigationSort = 10;
 
-    protected static ?string $navigationLabel = 'My Dashboard';
+    protected static ?string $navigationLabel = 'Action Center';
 
-    protected static ?string $title = 'Retention CRM Dashboard';
+    protected static ?string $title = 'Action Center';
 
     protected static string $routePath = 'retention-crm-dashboard';
 
