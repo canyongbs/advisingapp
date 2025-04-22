@@ -31,7 +31,7 @@
 
 </COPYRIGHT>
 --}}
-@use('App\Features\CareTeamRoleFeature')
+
 <x-filament-widgets::widget>
     @php
         $careTeam = $this->getCareTeam();
@@ -77,7 +77,7 @@
                 </div>
 
                 <div class="grid gap-y-0.5">
-                    @if (filled($careTeamUser->careTeamRole) && CareTeamRoleFeature::active())
+                    @if (filled($careTeamUser->careTeamRole))
                         <span
                             class="rounded-md bg-custom-50 px-2 py-1 text-xs text-custom-600 ring-1 ring-inset ring-custom-600/10 dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30"
                             style="--c-50: var(--primary-50);--c-400: var(--primary-400);--c-600: var(--primary-600);"

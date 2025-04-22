@@ -42,7 +42,6 @@ use AdvisingApp\CareTeam\Filament\Resources\StudentCareTeamRoleResource\Pages\Li
 use AdvisingApp\CareTeam\Filament\Resources\StudentCareTeamRoleResource\Pages\ViewStudentCareTeamRole;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
 use App\Enums\CareTeamRoleType;
-use App\Features\CareTeamRoleFeature;
 use App\Filament\Clusters\ConstituentManagement;
 use App\Models\User;
 use Filament\Resources\Resource;
@@ -67,7 +66,7 @@ class StudentCareTeamRoleResource extends Resource
         /** @var User $user */
         $user = auth()->user();
 
-        return CareTeamRoleFeature::active() && $user->can(['product_admin.view-any']);
+        return $user->can(['product_admin.view-any']);
     }
 
     /**
