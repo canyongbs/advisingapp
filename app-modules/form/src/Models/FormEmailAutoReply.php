@@ -85,6 +85,11 @@ class FormEmailAutoReply extends BaseModel implements HasMedia
     public function getMergeData(Student|Prospect|null $author): array
     {
         return [
+            'recipient first name' => $author->getAttribute($author->displayFirstNameKey()),
+            'recipient last name' => $author->getAttribute($author->displayLastNameKey()),
+            'recipient full name' => $author->getAttribute($author->displayNameKey()),
+            'recipient email' => $author->primaryEmailAddress?->address,
+            'recipient preferred name' => $author->getAttribute($author->displayPreferredNameKey()),
             'student first name' => $author->getAttribute($author->displayFirstNameKey()),
             'student last name' => $author->getAttribute($author->displayLastNameKey()),
             'student full name' => $author->getAttribute($author->displayNameKey()),

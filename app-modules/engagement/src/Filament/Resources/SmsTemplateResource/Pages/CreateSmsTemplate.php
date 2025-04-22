@@ -66,11 +66,11 @@ class CreateSmsTemplate extends CreateRecord
                 // https://www.twilio.com/docs/glossary/what-sms-character-limit#:~:text=Twilio's%20platform%20supports%20long%20messages,best%20deliverability%20and%20user%20experience.
                 TiptapEditor::make('content')
                     ->mergeTags($mergeTags = [
-                        'student first name',
-                        'student last name',
-                        'student full name',
-                        'student email',
-                        'student preferred name',
+                        'recipient first name',
+                        'recipient last name',
+                        'recipient full name',
+                        'recipient email',
+                        'recipient preferred name',
                     ])
                     ->profile('sms')
                     ->columnSpanFull()

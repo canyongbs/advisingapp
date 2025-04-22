@@ -65,11 +65,11 @@ class CreateEmailTemplate extends CreateRecord
                 TiptapEditor::make('content')
                     ->disk('s3-public')
                     ->mergeTags($mergeTags = [
-                        'student first name',
-                        'student last name',
-                        'student full name',
-                        'student email',
-                        'student preferred name',
+                        'recipient first name',
+                        'recipient last name',
+                        'recipient full name',
+                        'recipient email',
+                        'recipient preferred name',
                     ])
                     ->profile('email')
                     ->columnSpanFull()
