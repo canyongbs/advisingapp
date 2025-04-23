@@ -34,35 +34,45 @@
 </COPYRIGHT>
 */
 
-namespace App\Http\Controllers\Tenants;
+namespace AdvisingApp\Ai\Actions;
 
-use AdvisingApp\Ai\Actions\SyncTenantSmartPrompts;
-use App\DataTransferObjects\LicenseManagement\LicenseAddonsData;
-use App\DataTransferObjects\LicenseManagement\LicenseData;
-use App\DataTransferObjects\LicenseManagement\LicenseLimitsData;
-use App\DataTransferObjects\LicenseManagement\LicenseSubscriptionData;
+use AdvisingApp\Ai\Models\Prompt;
+use AdvisingApp\Ai\Models\PromptType;
 use App\Http\Requests\Tenants\SyncTenantRequest;
-use App\Jobs\UpdateTenantLicenseData;
-use App\Models\Tenant;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 
-class SyncTenantController
+class SyncTenantSmartPrompts
 {
-    public function __invoke(SyncTenantRequest $request, Tenant $tenant): JsonResponse
+    public function execute(SyncTenantRequest $request): void
     {
-        $licenseData = new LicenseData(
-            updatedAt: now(),
-            subscription: LicenseSubscriptionData::from($request->validated('subscription')),
-            limits: LicenseLimitsData::from($request->validated('limits')),
-            addons: LicenseAddonsData::from($request->validated('addons')),
-        );
+        DB::transaction(function () use ($request) {
+            $promptIds = [];
 
-        dispatch_sync(new UpdateTenantLicenseData($tenant, $licenseData));
+            foreach ($request->validated('smartPrompts') ?? [] as $smartPromptCategory) {
+                $promptType = PromptType::query()
+                    ->firstOrCreate(
+                        ['title' => $smartPromptCategory['title']],
+                        ['description' => $smartPromptCategory['description'] ?? null],
+                    );
 
-        $tenant->execute(function () use ($request) {
-            app(SyncTenantSmartPrompts::class)->execute($request);
+                foreach ($smartPromptCategory['smart_prompts'] ?? [] as $smartPrompt) {
+                    $prompt = Prompt::find($smartPrompt['id']) ?? new Prompt();
+                    $prompt->id = $smartPrompt['id'];
+                    $prompt->title = $smartPrompt['title'];
+                    $prompt->description = $smartPrompt['description'] ?? null;
+                    $prompt->prompt = $smartPrompt['prompt'];
+                    $prompt->type_id = $promptType->getKey();
+                    $prompt->is_smart = true;
+                    $prompt->save();
+
+                    $promptIds[] = $smartPrompt['id'];
+                }
+            }
+
+            Prompt::query()
+                ->where('is_smart', true)
+                ->whereKeyNot($promptIds)
+                ->delete();
         });
-
-        return response()->json();
     }
 }
