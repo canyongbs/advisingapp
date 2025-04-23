@@ -41,7 +41,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class ThemeSettingsProperty extends SettingsPropertyWithMedia
 {
-    public function registerMediaConversions(Media $media = null): void
+    public function registerMediaConversions(?Media $media = null): void
     {
         $this->addMediaConversion('logo-height-250px')
             ->performOnCollections('logo', 'dark_logo')

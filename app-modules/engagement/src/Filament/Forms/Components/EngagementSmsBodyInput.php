@@ -60,11 +60,11 @@ class EngagementSmsBodyInput
         return TiptapEditor::make("{$fieldPrefix}body")
             ->label('Body')
             ->mergeTags([
-                'student first name',
-                'student last name',
-                'student full name',
-                'student email',
-                'student preferred name',
+                'recipient first name',
+                'recipient last name',
+                'recipient full name',
+                'recipient email',
+                'recipient preferred name',
             ])
             ->showMergeTagsInBlocksPanel(is_null($form) ? false : ! ($form->getLivewire() instanceof RelationManager))
             ->profile('sms')

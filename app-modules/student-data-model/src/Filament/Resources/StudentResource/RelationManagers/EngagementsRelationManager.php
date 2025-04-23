@@ -102,8 +102,8 @@ class EngagementsRelationManager extends RelationManager
 
                                         if ($timelineable instanceof Engagement) {
                                             return match ($timelineable->channel) {
-                                                NotificationChannel::Email => $timelineable->latestEmailMessage->events()->orderBy('occurred_at', 'desc')->get(),
-                                                NotificationChannel::Sms => $timelineable->latestSmsMessage->events()->orderBy('occurred_at', 'desc')->get(),
+                                                NotificationChannel::Email => $timelineable->latestEmailMessage?->events()?->orderBy('occurred_at', 'desc')->get() ?? [],
+                                                NotificationChannel::Sms => $timelineable->latestSmsMessage?->events()?->orderBy('occurred_at', 'desc')->get() ?? [],
                                                 default => [],
                                             };
                                         }

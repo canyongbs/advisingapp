@@ -60,8 +60,12 @@ class SwitchS3PublicFilesystemTask implements SwitchTenantTask
         $this->originalBucket ??= config('filesystems.disks.s3-public.bucket');
         $this->originalUrl ??= config('filesystems.disks.s3-public.url');
         $this->originalEndpoint ??= config('filesystems.disks.s3-public.endpoint');
-        $this->originalUsePathStyleEndpoint ??= config('filesystems.disks.s3-public.use_path_style_endpoint');
-        $this->originalThrow ??= config('filesystems.disks.s3-public.throw');
+        $this->originalUsePathStyleEndpoint = ! is_null(config('filesystems.disks.s3-public.use_path_style_endpoint'))
+            ? config('filesystems.disks.s3-public.use_path_style_endpoint')
+            : false;
+        $this->originalThrow = ! is_null(config('filesystems.disks.s3-public.throw'))
+            ? config('filesystems.disks.s3-public.throw')
+            : false;
         $this->originalRoot ??= config('filesystems.disks.s3-public.root');
     }
 

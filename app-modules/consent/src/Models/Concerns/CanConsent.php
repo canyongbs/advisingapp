@@ -47,8 +47,9 @@ trait CanConsent
      */
     public function consentAgreements(): BelongsToMany
     {
+        /** @phpstan-ignore argument.templateType (We are using some Laravel magic here to use Tenant as a Pivot without actually being a pivot) */
         return $this->belongsToMany(ConsentAgreement::class, 'user_consent_agreements')
-            ->using(UserConsentAgreement::class)
+            ->using(UserConsentAgreement::class) // @phpstan-ignore argument.type (Same as above)
             ->withPivot('ip_address', 'deleted_at')
             ->withTimestamps();
     }

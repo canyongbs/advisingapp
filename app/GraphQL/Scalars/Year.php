@@ -52,7 +52,7 @@ class Year extends ScalarType
         return Carbon::parse($value)->year;
     }
 
-    public function parseLiteral(Node $valueNode, array $variables = null): int
+    public function parseLiteral(Node $valueNode, ?array $variables = null): int
     {
         return Carbon::parse($valueNode->value)->year;
     }

@@ -71,7 +71,7 @@ class TwilioConversation extends Model
     ];
 
     /**
-     * @return BelongsToMany<User, $this>
+     * @return BelongsToMany<User, $this, covariant TwilioConversationUser, 'participant'>
      */
     public function participants(): BelongsToMany
     {
@@ -92,6 +92,9 @@ class TwilioConversation extends Model
             ->using(TwilioConversationUser::class);
     }
 
+    /**
+     * @return BelongsToMany<User, $this, covariant TwilioConversationUser, 'participant'>
+     */
     public function managers(): BelongsToMany
     {
         return $this->participants()->wherePivot('is_channel_manager', true);
