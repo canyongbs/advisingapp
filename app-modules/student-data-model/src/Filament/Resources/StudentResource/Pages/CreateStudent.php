@@ -38,6 +38,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\StudentGender;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
@@ -143,7 +144,8 @@ class CreateStudent extends CreateRecord
                             ->numeric(),
                         TextInput::make('gender')
                             ->nullable()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->visible(StudentGender::active()),
                     ])
                     ->columns(3),
                 Section::make('Contact Information')
