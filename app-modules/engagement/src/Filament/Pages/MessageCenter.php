@@ -240,7 +240,10 @@ class MessageCenter extends Page
 
     public function getEducatableIds($engagementScope, $engagementResponseScope): Collection
     {
-        $engagementEducatableIds = Engagement::query()
+        $engagementEducatableIds = collect();
+
+        if($this->filterInboundMessages === false){
+            $engagementEducatableIds = Engagement::query()
             ->$engagementScope()
             // TODO: We have removed the old `hasBeenDelivered` check here because we can no longer track the "status" of a message. We need to determine if something else is needed.
             ->tap(function (Builder $query) {
@@ -248,6 +251,7 @@ class MessageCenter extends Page
             })
             ->pluck('recipient_id')
             ->unique();
+        }
 
         $engagementResponseEducatableIds = EngagementResponse::query()
             ->$engagementResponseScope()
@@ -312,13 +316,6 @@ class MessageCenter extends Page
                 $query->whereIn(
                     $idColumn,
                     $this->user->careTeams()->pluck('educatable_id')
-                );
-            })
-            ->when($this->filterInboundMessages === true, function (Builder $query) use ($idColumn) {
-                $query->whereIn(
-                    $idColumn,
-                    EngagementResponse::query()
-                        ->pluck('sender_id')
                 );
             });
     }
