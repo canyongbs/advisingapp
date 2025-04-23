@@ -41,6 +41,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentAddress;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
+use App\Features\StudentGender;
 use App\Infolists\Components\Subsection;
 use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\Section;
@@ -80,6 +81,9 @@ class StudentProfileInfolist
                                 ))
                                 ->listWithLineBreaks()
                                 ->visible(fn (?array $state): bool => filled($state)),
+                            TextEntry::make('gender')
+                                ->placeholder('-')
+                                ->visible(StudentGender::active()),
                             TextEntry::make('additionalPhoneNumbers')
                                 ->label(fn (?array $state): string => Str::plural('Other phone number', count($state ?? [])))
                                 ->state(fn (Student $record): array => array_map(

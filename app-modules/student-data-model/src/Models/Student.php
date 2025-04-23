@@ -128,6 +128,7 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         'preferred',
         'birthdate',
         'hsgrad',
+        'gender',
         'sms_opt_out',
         'email_bounce',
         'dual',
@@ -463,10 +464,10 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     }
 
     /**
-      * Route notifications for the mail channel.
-      *
-      * @return array<string, string>|string|null
-      */
+     * Route notifications for the mail channel.
+     *
+     * @return array<string, string>|string|null
+     */
     public function routeNotificationForMail(Notification $notification): ?string
     {
         return $this->primaryEmailAddress?->address;
