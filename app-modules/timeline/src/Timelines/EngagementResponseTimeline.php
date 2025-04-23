@@ -40,6 +40,7 @@ use AdvisingApp\Engagement\Filament\Resources\EngagementResponseResource\Actions
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Timeline\Models\CustomTimeline;
+use Exception;
 use Filament\Actions\ViewAction;
 use InvalidArgumentException;
 
@@ -55,7 +56,7 @@ class EngagementResponseTimeline extends CustomTimeline
         return match ($this->engagementResponse->getDeliveryMethod()) {
             NotificationChannel::Email => 'heroicon-o-envelope',
             NotificationChannel::Sms => 'heroicon-o-chat-bubble-left',
-            default => throw new InvalidArgumentException('Unsupported delivery method: ' . $this->engagementResponse->getDeliveryMethod()->value),
+            default => throw new Exception('Unsupported delivery method: ' . $this->engagementResponse->getDeliveryMethod()->value),
         };
     }
 
