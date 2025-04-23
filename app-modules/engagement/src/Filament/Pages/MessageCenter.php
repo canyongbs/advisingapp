@@ -242,15 +242,15 @@ class MessageCenter extends Page
     {
         $engagementEducatableIds = collect();
 
-        if($this->filterInboundMessages === false){
+        if ($this->filterInboundMessages === false) {
             $engagementEducatableIds = Engagement::query()
-            ->$engagementScope()
+                ->$engagementScope()
             // TODO: We have removed the old `hasBeenDelivered` check here because we can no longer track the "status" of a message. We need to determine if something else is needed.
-            ->tap(function (Builder $query) {
-                $this->applyFilters(query: $query, dateColumn: 'dispatched_at', idColumn: 'recipient_id');
-            })
-            ->pluck('recipient_id')
-            ->unique();
+                ->tap(function (Builder $query) {
+                    $this->applyFilters(query: $query, dateColumn: 'dispatched_at', idColumn: 'recipient_id');
+                })
+                ->pluck('recipient_id')
+                ->unique();
         }
 
         $engagementResponseEducatableIds = EngagementResponse::query()
