@@ -45,13 +45,13 @@ class ClientMock extends Client
 {
     public function __construct(
         $messageList = null,
-        string $username = null,
-        string $password = null,
-        string $accountSid = null,
-        string $region = null,
-        HttpClient $httpClient = null,
-        array $environment = null,
-        array $userAgentExtensions = null,
+        ?string $username = null,
+        ?string $password = null,
+        ?string $accountSid = null,
+        ?string $region = null,
+        ?HttpClient $httpClient = null,
+        ?array $environment = null,
+        ?array $userAgentExtensions = null,
     ) {
         parent::__construct(
             $username,

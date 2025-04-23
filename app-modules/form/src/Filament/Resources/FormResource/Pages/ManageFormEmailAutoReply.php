@@ -96,11 +96,11 @@ class ManageFormEmailAutoReply extends EditRecord
                         TiptapEditor::make('body')
                             ->disk('s3-public')
                             ->mergeTags([
-                                'student first name',
-                                'student last name',
-                                'student full name',
-                                'student email',
-                                'student preferred name',
+                                'recipient first name',
+                                'recipient last name',
+                                'recipient full name',
+                                'recipient email',
+                                'recipient preferred name',
                             ])
                             ->profile('email')
                             ->required(fn (Get $get) => $get('is_enabled'))

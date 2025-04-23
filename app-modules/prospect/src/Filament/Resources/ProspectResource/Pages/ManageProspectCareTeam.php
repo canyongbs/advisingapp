@@ -88,6 +88,7 @@ class ManageProspectCareTeam extends ManageRelatedRecords
                     ->color('primary'),
                 TextColumn::make('job_title'),
                 TextColumn::make('careTeams.prospectCareTeamRole.name')
+                    ->getStateUsing(fn ($record) => CareTeamRole::find($record->care_team_role_id)?->name)
                     ->label('Role')
                     ->badge()
                     ->visible(CareTeamRole::where('type', CareTeamRoleType::Prospect)->count() > 0),
@@ -112,7 +113,13 @@ class ManageProspectCareTeam extends ManageRelatedRecords
                             ->label('User')
                             ->searchable()
                             ->required()
-                            ->options(User::query()->tap(new HasLicense(Prospect::getLicenseType()))->pluck('name', 'id')),
+                            ->options(
+                                User::query()->tap(new HasLicense(Prospect::getLicenseType()))
+                                    ->whereDoesntHave('prospectCareTeams', fn ($query) => $query
+                                        ->where('educatable_type', $this->getOwnerRecord()->getMorphClass())
+                                        ->where('educatable_id', $this->getOwnerRecord()->getKey()))
+                                    ->pluck('name', 'id')
+                            ),
                         Select::make('care_team_role_id')
                             ->label('Role')
                             ->relationship('careTeamRole', 'name', fn (Builder $query) => $query->where('type', CareTeamRoleType::Prospect))

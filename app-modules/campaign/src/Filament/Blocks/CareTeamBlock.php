@@ -68,10 +68,10 @@ class CareTeamBlock extends CampaignActionBlock
     public function generateFields(string $fieldPrefix = ''): array
     {
         return [
-            Repeater::make('careTeam')
+            Repeater::make($fieldPrefix . 'careTeam')
                 ->label('Who should be assigned to the care team?')
                 ->schema([
-                    Select::make($fieldPrefix . 'user_id')
+                    Select::make('user_id')
                         ->label('User')
                         ->options(function (Get $get, $livewire, string $operation) {
                             if ($operation === 'create') {

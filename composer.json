@@ -10,7 +10,7 @@
     ],
     "license": "Elastic-2.0",
     "require": {
-        "php": "8.2.*",
+        "php": "8.4.*",
         "ext-gd": "*",
         "ext-pdo": "*",
         "aws/aws-php-sns-message-validator": "^1.9",
@@ -173,10 +173,10 @@
             "@php artisan tenants:artisan \"db:seed --database=tenant\""
         ],
         "php-cs-format": [
-            "./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix -v --config=./php-cs-fixer.php"
+            "export PHP_CS_FIXER_IGNORE_ENV=1 ; ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix -v --config=./php-cs-fixer.php"
         ],
         "php-cs-format-dryrun": [
-            "@php-cs-format --dry-run --stop-on-violation"
+            "export PHP_CS_FIXER_IGNORE_ENV=1 ; @php-cs-format --dry-run --stop-on-violation"
         ],
         "php-cs-clear-cache": [
             "rm -f ./.php-cs-fixer.cache"

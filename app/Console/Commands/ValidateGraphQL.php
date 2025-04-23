@@ -261,7 +261,7 @@ class ValidateGraphQL extends Command implements PromptsForMissingInput
         $this->newLine();
     }
 
-    private function style(string $value, string $type = null): string
+    private function style(string $value, ?string $type = null): string
     {
         return match ($type) {
             'warning' => "\e[33m{$value}\e[39m",

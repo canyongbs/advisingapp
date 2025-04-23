@@ -2,6 +2,7 @@ services:
   app:
     build:
       context: .
+      dockerfile: Dockerfile
       target: web-development
       args:
         PUID: '${PLS_USER_ID:-9999}'
@@ -20,6 +21,7 @@ services:
       PUID: '${PLS_USER_ID:-9999}'
       PGID: '${PLS_GROUP_ID:-9999}'
       FIX_PERMISSIONS: '${FIX_PERMISSIONS:-true}'
+      PHP_MEMORY_LIMIT: '${PHP_MEMORY_LIMIT:-512M}'
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.advisingapp-app.rule=HostRegexp(`advisingapp.local`, `{subdomain:[a-z0-9]+}.advisingapp.local`)"
@@ -48,6 +50,7 @@ services:
   worker:
     build:
       context: .
+      dockerfile: Dockerfile
       target: worker-development
       args:
         TOTAL_QUEUE_WORKERS: '${TOTAL_QUEUE_WORKERS:-1}'
@@ -88,6 +91,7 @@ services:
   scheduler:
     build:
       context: .
+      dockerfile: Dockerfile
       target: scheduler-development
       args:
         USER_ID: '${PLS_USER_ID:-9999}'
@@ -166,6 +170,7 @@ services:
       - local-cli
     build:
       context: .
+      dockerfile: Dockerfile
       target: cli-local-tooling
       args:
         PUID: '${PLS_USER_ID:-9999}'

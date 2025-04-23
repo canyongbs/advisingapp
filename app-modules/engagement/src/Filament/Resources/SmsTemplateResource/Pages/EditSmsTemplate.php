@@ -67,11 +67,11 @@ class EditSmsTemplate extends EditRecord
                     ->string(),
                 TiptapEditor::make('content')
                     ->mergeTags($mergeTags = [
-                        'student first name',
-                        'student last name',
-                        'student full name',
-                        'student email',
-                        'student preferred name',
+                        'recipient first name',
+                        'recipient last name',
+                        'recipient full name',
+                        'recipient email',
+                        'recipient preferred name',
                     ])
                     ->profile('sms')
                     ->columnSpanFull()

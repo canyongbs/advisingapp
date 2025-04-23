@@ -34,4 +34,17 @@
 </COPYRIGHT>
 */
 
-todo('can send a notification containing a thread transcript');
+use App\Features\StudentGender;
+use Illuminate\Database\Migrations\Migration;
+
+return new class () extends Migration {
+    public function up(): void
+    {
+        StudentGender::activate();
+    }
+
+    public function down(): void
+    {
+        StudentGender::deactivate();
+    }
+};
