@@ -109,6 +109,7 @@ class EngagementsRelationManager extends RelationManager
                                             ->columnSpanFull()
                                             ->visible(RefactorEngagementCampaignSubjectToJsonb::active()),
                                         TextEntry::make('body')
+                                            ->extraAttributes(['class' => 'prose dark:prose-invert'])
                                             ->getStateUsing(fn (Timeline $record): HtmlString => $record->timelineable->getBody())
                                             ->columnSpanFull(),
                                     ]),
@@ -150,6 +151,7 @@ class EngagementsRelationManager extends RelationManager
                             ->hidden(fn ($state): bool => blank($state))
                             ->columnSpanFull(),
                         TextEntry::make('body')
+                            ->extraAttributes(['class' => 'prose dark:prose-invert'])
                             ->getStateUsing(fn (Timeline $record): HtmlString => $record->timelineable->getBody())
                             ->columnSpanFull(),
                     ]),

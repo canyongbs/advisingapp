@@ -95,6 +95,7 @@ class EngagementTimeline extends CustomTimeline
                             ->columnSpanFull()
                             ->visible(RefactorEngagementCampaignSubjectToJsonb::active()),
                         TextEntry::make('body')
+                            ->extraAttributes(['class' => 'prose dark:prose-invert'])
                             ->getStateUsing(fn (Engagement $engagement): HtmlString => $engagement->getBody())
                             ->columnSpanFull(),
                     ]),
