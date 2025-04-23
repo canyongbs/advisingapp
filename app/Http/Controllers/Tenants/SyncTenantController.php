@@ -36,6 +36,7 @@
 
 namespace App\Http\Controllers\Tenants;
 
+use AdvisingApp\Ai\Actions\SyncTenantSmartPrompts;
 use App\DataTransferObjects\LicenseManagement\LicenseAddonsData;
 use App\DataTransferObjects\LicenseManagement\LicenseData;
 use App\DataTransferObjects\LicenseManagement\LicenseLimitsData;
@@ -57,6 +58,10 @@ class SyncTenantController
         );
 
         dispatch_sync(new UpdateTenantLicenseData($tenant, $licenseData));
+
+        $tenant->execute(function () use ($request) {
+            app(SyncTenantSmartPrompts::class)->execute($request);
+        });
 
         return response()->json();
     }
