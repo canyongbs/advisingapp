@@ -36,13 +36,16 @@
 
 namespace AdvisingApp\Engagement\Jobs;
 
+use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Exceptions\SesS3InboundSpamOrVirusDetected;
 use AdvisingApp\Engagement\Exceptions\UnableToDetectAnyMatchingEducatablesFromSesS3EmailPayload;
 use AdvisingApp\Engagement\Exceptions\UnableToDetectTenantFromSesS3EmailPayload;
 use AdvisingApp\Engagement\Exceptions\UnableToRetrieveContentFromSesS3EmailPayload;
+use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\EngagementResponseStatusFeature;
 use App\Models\Tenant;
 use Aws\Crypto\KmsMaterialsProviderV2;
 use Aws\Kms\KmsClient;
@@ -171,15 +174,28 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
 
                     if ($students->isNotEmpty()) {
                         $students->each(function (Student $student) use ($parser, $content) {
-                            /** @var EngagementResponse $engagementResponse */
-                            $engagementResponse = $student->engagementResponses()
-                                ->create([
-                                    'subject' => $parser->getHeader('subject'),
-                                    'content' => $parser->getMessageBody('htmlEmbedded'),
-                                    'sent_at' => $parser->getHeader('date'),
-                                    'type' => EngagementResponseType::Email,
-                                    'raw' => $content,
-                                ]);
+                            if (EngagementResponseStatusFeature::active()) {
+                                /** @var EngagementResponse $engagementResponse */
+                                $engagementResponse = $student->engagementResponses()
+                                    ->create([
+                                        'subject' => $parser->getHeader('subject'),
+                                        'content' => $parser->getMessageBody('htmlEmbedded'),
+                                        'sent_at' => $parser->getHeader('date'),
+                                        'type' => EngagementResponseType::Email,
+                                        'raw' => $content,
+                                        'status' => EngagementResponseStatus::New,
+                                    ]);
+                            } else {
+                                /** @var EngagementResponse $engagementResponse */
+                                $engagementResponse = $student->engagementResponses()
+                                    ->create([
+                                        'subject' => $parser->getHeader('subject'),
+                                        'content' => $parser->getMessageBody('htmlEmbedded'),
+                                        'sent_at' => $parser->getHeader('date'),
+                                        'type' => EngagementResponseType::Email,
+                                        'raw' => $content,
+                                    ]);
+                            }
 
                             collect($parser->getAttachments())->each(function (Attachment $attachment) use ($engagementResponse) {
                                 $engagementResponse->addMediaFromStream($attachment->getStream())
@@ -205,15 +221,28 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
                     );
 
                     $prospects->each(function (Prospect $prospect) use ($parser, $content) {
-                        /** @var EngagementResponse $engagementResponse */
-                        $engagementResponse = $prospect->engagementResponses()
-                            ->create([
-                                'subject' => $parser->getHeader('subject'),
-                                'content' => $parser->getMessageBody('htmlEmbedded'),
-                                'sent_at' => $parser->getHeader('date'),
-                                'type' => EngagementResponseType::Email,
-                                'raw' => $content,
-                            ]);
+                        if (EngagementResponseStatusFeature::active()) {
+                            /** @var EngagementResponse $engagementResponse */
+                            $engagementResponse = $prospect->engagementResponses()
+                                ->create([
+                                    'subject' => $parser->getHeader('subject'),
+                                    'content' => $parser->getMessageBody('htmlEmbedded'),
+                                    'sent_at' => $parser->getHeader('date'),
+                                    'type' => EngagementResponseType::Email,
+                                    'raw' => $content,
+                                    'status' => EngagementResponseStatus::New,
+                                ]);
+                        } else {
+                            /** @var EngagementResponse $engagementResponse */
+                            $engagementResponse = $prospect->engagementResponses()
+                                ->create([
+                                    'subject' => $parser->getHeader('subject'),
+                                    'content' => $parser->getMessageBody('htmlEmbedded'),
+                                    'sent_at' => $parser->getHeader('date'),
+                                    'type' => EngagementResponseType::Email,
+                                    'raw' => $content,
+                                ]);
+                        }
 
                         collect($parser->getAttachments())->each(function (Attachment $attachment) use ($engagementResponse) {
                             $engagementResponse->addMediaFromStream($attachment->getStream())
@@ -229,16 +258,17 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
                 });
             });
         } catch (
-            UnableToRetrieveContentFromSesS3EmailPayload | SesS3InboundSpamOrVirusDetected | UnableToDetectTenantFromSesS3EmailPayload | UnableToDetectAnyMatchingEducatablesFromSesS3EmailPayload $e) {
-                DB::rollBack();
+            UnableToRetrieveContentFromSesS3EmailPayload | SesS3InboundSpamOrVirusDetected | UnableToDetectTenantFromSesS3EmailPayload | UnableToDetectAnyMatchingEducatablesFromSesS3EmailPayload $e
+        ) {
+            DB::rollBack();
 
-                // Instantly fail for this exception
-                $this->fail($e);
-            } catch (Throwable $e) {
-                DB::rollBack();
+            // Instantly fail for this exception
+            $this->fail($e);
+        } catch (Throwable $e) {
+            DB::rollBack();
 
-                throw $e;
-            }
+            throw $e;
+        }
     }
 
     public function failed(?Throwable $exception): void
