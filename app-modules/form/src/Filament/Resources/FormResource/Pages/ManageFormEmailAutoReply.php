@@ -100,15 +100,15 @@ class ManageFormEmailAutoReply extends EditRecord
                          */
                         TiptapEditor::make(RefactorEngagementCampaignSubjectToJsonb::active() ? 'subject' : 'temp_subject')
                             ->mergeTags([
-                                'student first name',
-                                'student last name',
-                                'student full name',
-                                'student email',
-                                'student preferred name',
+                                'recipient first name',
+                                'recipient last name',
+                                'recipient full name',
+                                'recipient email',
+                                'recipient preferred name',
                             ])
                             ->profile('sms')
                             ->required(fn (Get $get) => $get('is_enabled'))
-                            ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
+                            ->helperText('You can insert recipient information by typing {{ and choosing a merge value to insert.')
                             ->columnSpanFull()
                             ->placeholder('Enter the email subject here...')
                             ->showMergeTagsInBlocksPanel(false)
@@ -181,7 +181,7 @@ class ManageFormEmailAutoReply extends EditRecord
                                         $component->generateImageUrls($template->content),
                                     );
                                 }))
-                            ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
+                            ->helperText('You can insert recipient information by typing {{ and choosing a merge value to insert.')
                             ->columnSpanFull()
                             ->live(),
                     ]),

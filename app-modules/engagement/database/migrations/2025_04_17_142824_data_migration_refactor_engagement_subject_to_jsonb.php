@@ -67,6 +67,7 @@ return new class () extends Migration {
 
             DB::table('campaign_actions')
                 ->select('id', 'data')
+                ->where('type', 'bulk_engagement_email')
                 ->whereRaw("json_typeof(data::json -> 'subject') = 'string'")
                 ->chunkById(500, function ($rows) {
                     foreach ($rows as $row) {
@@ -166,6 +167,7 @@ return new class () extends Migration {
 
             DB::table('campaign_actions')
                 ->select('id', 'data')
+                ->where('type', 'bulk_engagement_email')
                 ->whereRaw("json_typeof(data::json -> 'subject') = 'object'")
                 ->whereRaw("(data::json -> 'subject' ->> 'type') = 'doc'")
                 ->chunkById(500, function ($rows) {
