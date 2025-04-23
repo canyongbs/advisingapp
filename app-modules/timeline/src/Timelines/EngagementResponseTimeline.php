@@ -42,7 +42,6 @@ use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Timeline\Models\CustomTimeline;
 use Exception;
 use Filament\Actions\ViewAction;
-use InvalidArgumentException;
 
 // TODO Decide where these belong - might want to keep these in the context of the original module
 class EngagementResponseTimeline extends CustomTimeline
