@@ -54,16 +54,21 @@ trait CanManagePromptLibrary
 {
     public function insertFromPromptLibraryAction(): Action
     {
-        $getPromptOptions = fn (Builder $query): array => $query
-            ->select(['id', 'title', 'description'])
-            ->withCount('upvotes')
-            ->withCount('uses')
-            ->orderByDesc('upvotes_count')
-            ->get()
-            ->mapWithKeys(fn (Prompt $prompt) => [
-                $prompt->id => view('ai::components.options.prompt', ['prompt' => $prompt])->render(),
-            ])
-            ->all();
+        $getPromptOptions = function (Builder $query): array {
+            /**
+             * @var Builder<Prompt> $query
+             */
+            return $query
+                ->select(['id', 'title', 'description'])
+                ->withCount('upvotes')
+                ->withCount('uses')
+                ->orderByDesc('upvotes_count')
+                ->get()
+                ->mapWithKeys(fn (Prompt $prompt) => [
+                    $prompt->id => view('ai::components.options.prompt', ['prompt' => $prompt])->render(),
+                ])
+                ->all();
+        };
 
         return Action::make('insertFromPromptLibrary')
             ->label('Prompt library')
