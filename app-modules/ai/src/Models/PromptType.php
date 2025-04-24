@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Ai\Models;
 
-use AdvisingApp\Assistant\Models\IdeHelperPromptType;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;

@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Ai\Models;
 
-use AdvisingApp\Assistant\Models\IdeHelperPromptUpvote;
 use App\Models\BaseModel;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
