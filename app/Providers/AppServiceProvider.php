@@ -36,6 +36,7 @@
 
 namespace App\Providers;
 
+use AdvisingApp\Engagement\Jobs\CreateBatchedEngagement;
 use AdvisingApp\Prospect\Models\Pipeline;
 use AdvisingApp\Prospect\Models\PipelineStage;
 use App\Models\SystemUser;
@@ -50,6 +51,7 @@ use App\Overrides\Laravel\PermissionMigrationCreator;
 use App\Overrides\Laravel\StartSession as OverrideStartSession;
 use App\Overrides\LastDragon_ru\LaraASP\GraphQL\SearchBy\Definitions\SearchByDirective as GraphQLSearchByDirectiveOverride;
 use App\Overrides\LastDragon_ru\LaraASP\GraphQL\SearchBy\Types\Condition as GraphQLSearchByTypesConditionOverride;
+use Exception;
 use Filament\Actions\Exports\Jobs\CreateXlsxFile;
 use Filament\Actions\Exports\Jobs\ExportCompletion;
 use Filament\Actions\Exports\Jobs\ExportCsv;
@@ -57,21 +59,24 @@ use Filament\Actions\Exports\Jobs\PrepareCsvExport;
 use Filament\Actions\Imports\Jobs\ImportCsv;
 use Filament\Notifications\Auth\ResetPassword;
 use Filament\Tables\Table;
+use function Sentry\configureScope;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Notifications\SendQueuedNotifications;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Session\SessionManager;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Octane\Commands\ReloadCommand;
 use Laravel\Pennant\Feature;
 use LastDragon_ru\LaraASP\GraphQL\SearchBy\Definitions\SearchByDirective as GraphQLSearchByDirectiveAlias;
+
 use LastDragon_ru\LaraASP\GraphQL\SearchBy\Types\Condition\Condition as GraphQLSearchByTypesCondition;
+
 use Rector\Caching\CacheFactory;
-
-use function Sentry\configureScope;
-
 use Sentry\State\Scope;
 
 class AppServiceProvider extends ServiceProvider
@@ -172,6 +177,23 @@ class AppServiceProvider extends ServiceProvider
             $scope->setTags([
                 'service' => config('app.service'),
             ]);
+        });
+
+        RateLimiter::for('notifications', function (object $job) {
+            $channels = match (true) {
+                $job instanceof CreateBatchedEngagement => [$job->engagementBatch->channel],
+                $job instanceof SendQueuedNotifications => $job->channels,
+                default => throw new Exception('Invalid job type'),
+            };
+
+            return collect($channels)->map(function (string $channel) {
+                return match ($channel) {
+                    'mail' => Limit::perSecond(14)->by('notifications-mail'),
+                    'sms' => Limit::none()->by('notifications-sms'),
+                    default => throw new Exception('Invalid channel'),
+                };
+            })
+                ->toArray();
         });
     }
 }
