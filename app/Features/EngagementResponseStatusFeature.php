@@ -34,35 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace App\Http\Controllers\Tenants;
+namespace App\Features;
 
-use AdvisingApp\Ai\Actions\SyncTenantSmartPrompts;
-use App\DataTransferObjects\LicenseManagement\LicenseAddonsData;
-use App\DataTransferObjects\LicenseManagement\LicenseData;
-use App\DataTransferObjects\LicenseManagement\LicenseLimitsData;
-use App\DataTransferObjects\LicenseManagement\LicenseSubscriptionData;
-use App\Http\Requests\Tenants\SyncTenantRequest;
-use App\Jobs\UpdateTenantLicenseData;
-use App\Models\Tenant;
-use Illuminate\Http\JsonResponse;
+use App\Support\AbstractFeatureFlag;
 
-class SyncTenantController
+class EngagementResponseStatusFeature extends AbstractFeatureFlag
 {
-    public function __invoke(SyncTenantRequest $request, Tenant $tenant): JsonResponse
+    public function resolve(mixed $scope): mixed
     {
-        $licenseData = new LicenseData(
-            updatedAt: now(),
-            subscription: LicenseSubscriptionData::from($request->validated('subscription')),
-            limits: LicenseLimitsData::from($request->validated('limits')),
-            addons: LicenseAddonsData::from($request->validated('addons')),
-        );
-
-        dispatch_sync(new UpdateTenantLicenseData($tenant, $licenseData));
-
-        $tenant->execute(function () use ($request) {
-            app(SyncTenantSmartPrompts::class)->execute($request);
-        });
-
-        return response()->json();
+        return false;
     }
 }

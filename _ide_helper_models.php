@@ -2838,6 +2838,7 @@ namespace AdvisingApp\Engagement\Models{
  * @property string|null $subject
  * @property \AdvisingApp\Engagement\Enums\EngagementResponseType $type
  * @property string|null $raw
+ * @property \AdvisingApp\Engagement\Enums\EngagementResponseStatus $status
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
@@ -2859,6 +2860,7 @@ namespace AdvisingApp\Engagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementResponse whereSenderId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementResponse whereSenderType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementResponse whereSentAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementResponse whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementResponse whereSubject($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementResponse whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementResponse whereUpdatedAt($value)
@@ -4258,8 +4260,8 @@ namespace AdvisingApp\Prospect\Models{
  * @property string $full_name
  * @property string|null $preferred
  * @property string|null $description
- * @property bool $sms_opt_out
- * @property bool $email_bounce
+ * @property bool|null $sms_opt_out
+ * @property bool|null $email_bounce
  * @property \Illuminate\Support\Carbon|null $birthdate
  * @property string|null $hsgrad
  * @property string|null $created_by_id
@@ -5043,16 +5045,16 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property string|null $last
  * @property string|null $full_name
  * @property string|null $preferred
- * @property bool $sms_opt_out
- * @property bool $email_bounce
+ * @property bool|null $sms_opt_out
+ * @property bool|null $email_bounce
  * @property \Illuminate\Support\Carbon|null $birthdate
  * @property int|null $hsgrad
- * @property bool $dual
- * @property bool $ferpa
+ * @property bool|null $dual
+ * @property bool|null $ferpa
  * @property \Illuminate\Support\Carbon|null $dfw
- * @property bool $sap
+ * @property bool|null $sap
  * @property string|null $holds
- * @property bool $firstgen
+ * @property bool|null $firstgen
  * @property string|null $ethnicity
  * @property string|null $lastlmslogin
  * @property string|null $f_e_term

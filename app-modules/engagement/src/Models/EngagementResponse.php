@@ -37,6 +37,7 @@
 namespace AdvisingApp\Engagement\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
 use AdvisingApp\Engagement\Observers\EngagementResponseObserver;
@@ -79,11 +80,13 @@ class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeli
         'subject',
         'type',
         'raw',
+        'status',
     ];
 
     protected $casts = [
         'sent_at' => 'datetime',
         'type' => EngagementResponseType::class,
+        'status' => EngagementResponseStatus::class,
     ];
 
     public function registerMediaCollections(): void

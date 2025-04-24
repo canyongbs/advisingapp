@@ -34,35 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace App\Http\Controllers\Tenants;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Ai\Actions\SyncTenantSmartPrompts;
-use App\DataTransferObjects\LicenseManagement\LicenseAddonsData;
-use App\DataTransferObjects\LicenseManagement\LicenseData;
-use App\DataTransferObjects\LicenseManagement\LicenseLimitsData;
-use App\DataTransferObjects\LicenseManagement\LicenseSubscriptionData;
-use App\Http\Requests\Tenants\SyncTenantRequest;
-use App\Jobs\UpdateTenantLicenseData;
-use App\Models\Tenant;
-use Illuminate\Http\JsonResponse;
-
-class SyncTenantController
-{
-    public function __invoke(SyncTenantRequest $request, Tenant $tenant): JsonResponse
+return new class () extends Migration {
+    public function up(): void
     {
-        $licenseData = new LicenseData(
-            updatedAt: now(),
-            subscription: LicenseSubscriptionData::from($request->validated('subscription')),
-            limits: LicenseLimitsData::from($request->validated('limits')),
-            addons: LicenseAddonsData::from($request->validated('addons')),
-        );
-
-        dispatch_sync(new UpdateTenantLicenseData($tenant, $licenseData));
-
-        $tenant->execute(function () use ($request) {
-            app(SyncTenantSmartPrompts::class)->execute($request);
+        Schema::table('students', function (Blueprint $table) {
+            $table->string('gender')->nullable();
         });
-
-        return response()->json();
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('students', function (Blueprint $table) {
+            $table->dropColumn(['gender']);
+        });
+    }
+};

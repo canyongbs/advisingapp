@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
+use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
 use AdvisingApp\Engagement\Filament\Actions\RelationManagerSendEngagementAction;
 use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
 use AdvisingApp\Engagement\Models\Engagement;
@@ -44,6 +45,7 @@ use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\EmailMessageEvent;
 use AdvisingApp\Notification\Models\SmsMessageEvent;
 use AdvisingApp\Timeline\Models\Timeline;
+use App\Features\EngagementResponseStatusFeature;
 use Filament\Infolists\Components\Fieldset as InfolistFieldset;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Section;
@@ -52,11 +54,14 @@ use Filament\Infolists\Components\Tabs;
 use Filament\Infolists\Components\Tabs\Tab;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
+use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
@@ -169,6 +174,13 @@ class EngagementsRelationManager extends RelationManager
                         'Outbound' => 'heroicon-o-arrow-up-tray',
                         'Inbound' => 'heroicon-o-arrow-down-tray',
                     }),
+                TextColumn::make('status')
+                    ->getStateUsing(fn (Timeline $record) => match ($record->timelineable::class) {
+                        EngagementResponse::class => $record->timelineable->status,
+                        default => ''
+                    })
+                    ->visible(EngagementResponseStatusFeature::active())
+                    ->badge(),
                 TextColumn::make('type')
                     ->getStateUsing(function (Timeline $record) {
                         /** @var HasDeliveryMethod $timelineable */
@@ -186,12 +198,48 @@ class EngagementsRelationManager extends RelationManager
             ])
             ->actions([
                 ViewAction::make()
-                    ->modalHeading(function (Timeline $record) {
-                        /** @var HasDeliveryMethod $timelineable */
-                        $timelineable = $record->timelineable;
+                    ->modalHeading(function (Timeline $record): Htmlable {
+                        if (EngagementResponseStatusFeature::active()) {
+                            $status = match ($record->timelineable::class) {
+                                EngagementResponse::class => $record->timelineable->status->getLabel(),
+                                default => ''
+                            };
+                        } else {
+                            $status = '';
+                        }
 
-                        return "View {$timelineable->getDeliveryMethod()->getLabel()}";
-                    }),
+                        return new HtmlString(view('student-data-model::components.filament.resources.educatable-resource.view-educatable.engagement-modal-header', ['record' => $record, 'status' => $status]));
+                    })
+                    ->extraModalFooterActions([
+                        Action::make('updateStatus')
+                            ->label(
+                                function (Timeline $record) {
+                                    /** @var EngagementResponse $timelineable */
+                                    $timelineable = $record->timelineable;
+
+                                    return $timelineable->status === EngagementResponseStatus::New ? 'Mark as Actioned' : 'Mark as New';
+                                }
+                            )
+                            ->color('gray')
+                            ->action(
+                                function (Timeline $record) {
+                                    /** @var EngagementResponse $timelineable */
+                                    $timelineable = $record->timelineable;
+
+                                    if ($timelineable->status === EngagementResponseStatus::New) {
+                                        $timelineable->update(['status' => EngagementResponseStatus::Actioned]);
+                                    } else {
+                                        $timelineable->update(['status' => EngagementResponseStatus::New]);
+                                    }
+
+                                    Notification::make()
+                                        ->success()
+                                        ->title('Status updated!')
+                                        ->send();
+                                }
+                            )
+                            ->visible(fn (Timeline $record): bool => EngagementResponseStatusFeature::active() && $record->timelineable instanceof EngagementResponse),
+                    ]),
             ])
             ->filters([
                 SelectFilter::make('direction')

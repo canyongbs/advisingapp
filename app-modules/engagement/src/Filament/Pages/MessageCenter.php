@@ -119,6 +119,9 @@ class MessageCenter extends Page
     #[Url(as: 'hasMemberOfCareTeam')]
     public bool $filterMemberOfCareTeam = false;
 
+    #[Url(as: 'hasInboundMessages')]
+    public bool $filterInboundMessages = false;
+
     public int $inboxPerPage = 10;
 
     public static function canAccess(): bool
@@ -157,6 +160,7 @@ class MessageCenter extends Page
             'filterStartDate',
             'filterEndDate',
             'filterMemberOfCareTeam',
+            'filterInboundMessages',
         ];
 
         if (in_array($property, $filters)) {
@@ -236,14 +240,18 @@ class MessageCenter extends Page
 
     public function getEducatableIds($engagementScope, $engagementResponseScope): Collection
     {
-        $engagementEducatableIds = Engagement::query()
-            ->$engagementScope()
+        $engagementEducatableIds = collect();
+
+        if ($this->filterInboundMessages === false) {
+            $engagementEducatableIds = Engagement::query()
+                ->$engagementScope()
             // TODO: We have removed the old `hasBeenDelivered` check here because we can no longer track the "status" of a message. We need to determine if something else is needed.
-            ->tap(function (Builder $query) {
-                $this->applyFilters(query: $query, dateColumn: 'dispatched_at', idColumn: 'recipient_id');
-            })
-            ->pluck('recipient_id')
-            ->unique();
+                ->tap(function (Builder $query) {
+                    $this->applyFilters(query: $query, dateColumn: 'dispatched_at', idColumn: 'recipient_id');
+                })
+                ->pluck('recipient_id')
+                ->unique();
+        }
 
         $engagementResponseEducatableIds = EngagementResponse::query()
             ->$engagementResponseScope()
@@ -344,6 +352,10 @@ class MessageCenter extends Page
         }
 
         if ($this->filterMemberOfCareTeam) {
+            $count++;
+        }
+
+        if ($this->filterInboundMessages) {
             $count++;
         }
 

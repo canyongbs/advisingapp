@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -32,37 +30,22 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+@php
+    use AdvisingApp\Engagement\Models\Engagement;
+    use AdvisingApp\Engagement\Models\EngagementResponse;
+    use App\Features\EngagementResponseStatusFeature;
 
-namespace App\Http\Controllers\Tenants;
-
-use AdvisingApp\Ai\Actions\SyncTenantSmartPrompts;
-use App\DataTransferObjects\LicenseManagement\LicenseAddonsData;
-use App\DataTransferObjects\LicenseManagement\LicenseData;
-use App\DataTransferObjects\LicenseManagement\LicenseLimitsData;
-use App\DataTransferObjects\LicenseManagement\LicenseSubscriptionData;
-use App\Http\Requests\Tenants\SyncTenantRequest;
-use App\Jobs\UpdateTenantLicenseData;
-use App\Models\Tenant;
-use Illuminate\Http\JsonResponse;
-
-class SyncTenantController
-{
-    public function __invoke(SyncTenantRequest $request, Tenant $tenant): JsonResponse
-    {
-        $licenseData = new LicenseData(
-            updatedAt: now(),
-            subscription: LicenseSubscriptionData::from($request->validated('subscription')),
-            limits: LicenseLimitsData::from($request->validated('limits')),
-            addons: LicenseAddonsData::from($request->validated('addons')),
-        );
-
-        dispatch_sync(new UpdateTenantLicenseData($tenant, $licenseData));
-
-        $tenant->execute(function () use ($request) {
-            app(SyncTenantSmartPrompts::class)->execute($request);
-        });
-
-        return response()->json();
-    }
-}
+    /** @var HasDeliveryMethod $timelineable */
+    $timelineable = $record->timelineable;
+@endphp
+<h1 class="fi-modal-heading me-6 text-base font-semibold leading-6 text-gray-950 dark:text-white">
+    View {{ $timelineable->getDeliveryMethod()->getLabel() }}
+</h1>
+@if (EngagementResponseStatusFeature::active() && $status)
+    <span class='mt-2 flex w-auto text-gray-400 dark:text-gray-500'>
+        <x-filament::badge>
+            {{ $status }}
+        </x-filament::badge>
+    </span>
+@endif

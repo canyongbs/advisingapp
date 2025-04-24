@@ -34,35 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace App\Http\Controllers\Tenants;
+namespace AdvisingApp\Engagement\Enums;
 
-use AdvisingApp\Ai\Actions\SyncTenantSmartPrompts;
-use App\DataTransferObjects\LicenseManagement\LicenseAddonsData;
-use App\DataTransferObjects\LicenseManagement\LicenseData;
-use App\DataTransferObjects\LicenseManagement\LicenseLimitsData;
-use App\DataTransferObjects\LicenseManagement\LicenseSubscriptionData;
-use App\Http\Requests\Tenants\SyncTenantRequest;
-use App\Jobs\UpdateTenantLicenseData;
-use App\Models\Tenant;
-use Illuminate\Http\JsonResponse;
+use Filament\Support\Contracts\HasLabel;
 
-class SyncTenantController
+enum EngagementResponseStatus: string implements HasLabel
 {
-    public function __invoke(SyncTenantRequest $request, Tenant $tenant): JsonResponse
+    case New = 'new';
+    case Actioned = 'actioned';
+
+    public function getLabel(): string
     {
-        $licenseData = new LicenseData(
-            updatedAt: now(),
-            subscription: LicenseSubscriptionData::from($request->validated('subscription')),
-            limits: LicenseLimitsData::from($request->validated('limits')),
-            addons: LicenseAddonsData::from($request->validated('addons')),
-        );
-
-        dispatch_sync(new UpdateTenantLicenseData($tenant, $licenseData));
-
-        $tenant->execute(function () use ($request) {
-            app(SyncTenantSmartPrompts::class)->execute($request);
-        });
-
-        return response()->json();
+        return $this->name;
     }
 }

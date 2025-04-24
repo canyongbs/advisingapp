@@ -19,4 +19,6 @@ echo "Starting Cron..."
 
 touch /etc/crontab /etc/cron.*/*
 
+printenv | grep -xFv -f /etc/environment >> /etc/environment
+
 exec cron -f

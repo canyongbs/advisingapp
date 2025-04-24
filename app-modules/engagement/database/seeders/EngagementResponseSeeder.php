@@ -34,35 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace App\Http\Controllers\Tenants;
+namespace AdvisingApp\Engagement\Database\Seeders;
 
-use AdvisingApp\Ai\Actions\SyncTenantSmartPrompts;
-use App\DataTransferObjects\LicenseManagement\LicenseAddonsData;
-use App\DataTransferObjects\LicenseManagement\LicenseData;
-use App\DataTransferObjects\LicenseManagement\LicenseLimitsData;
-use App\DataTransferObjects\LicenseManagement\LicenseSubscriptionData;
-use App\Http\Requests\Tenants\SyncTenantRequest;
-use App\Jobs\UpdateTenantLicenseData;
-use App\Models\Tenant;
-use Illuminate\Http\JsonResponse;
+use AdvisingApp\Engagement\Models\EngagementResponse;
+use Illuminate\Database\Seeder;
 
-class SyncTenantController
+class EngagementResponseSeeder extends Seeder
 {
-    public function __invoke(SyncTenantRequest $request, Tenant $tenant): JsonResponse
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
     {
-        $licenseData = new LicenseData(
-            updatedAt: now(),
-            subscription: LicenseSubscriptionData::from($request->validated('subscription')),
-            limits: LicenseLimitsData::from($request->validated('limits')),
-            addons: LicenseAddonsData::from($request->validated('addons')),
-        );
-
-        dispatch_sync(new UpdateTenantLicenseData($tenant, $licenseData));
-
-        $tenant->execute(function () use ($request) {
-            app(SyncTenantSmartPrompts::class)->execute($request);
-        });
-
-        return response()->json();
+        EngagementResponse::factory()->count(10)->create();
     }
 }
