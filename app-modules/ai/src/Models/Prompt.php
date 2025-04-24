@@ -37,7 +37,6 @@
 namespace AdvisingApp\Ai\Models;
 
 use AdvisingApp\Ai\Observers\PromptObserver;
-use AdvisingApp\Assistant\Models\IdeHelperPrompt;
 use App\Models\BaseModel;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;

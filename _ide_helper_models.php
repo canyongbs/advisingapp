@@ -5067,6 +5067,7 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property string|null $primary_email_id
  * @property string|null $primary_phone_id
  * @property string|null $primary_address_id
+ * @property string|null $gender
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\StudentDataModel\Models\StudentAddress> $additionalAddresses
  * @property-read int|null $additional_addresses_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\StudentDataModel\Models\StudentEmailAddress> $additionalEmailAddresses
@@ -5157,6 +5158,7 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereFirst($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereFirstgen($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereFullName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereGender($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereHolds($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereHsgrad($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereLast($value)
