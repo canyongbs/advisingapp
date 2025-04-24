@@ -37,6 +37,7 @@
 namespace AdvisingApp\Ai\Enums;
 
 use AdvisingApp\Ai\Settings\AiSettings;
+use App\Features\GPT41MiniAnd41NanoFeature;
 use Filament\Support\Contracts\HasLabel;
 
 enum AiApplication: string implements HasLabel
@@ -91,6 +92,7 @@ enum AiApplication: string implements HasLabel
                 ],
             },
             ...(app()->hasDebugModeEnabled() ? [AiModel::Test] : []),
+            ...(GPT41MiniAnd41NanoFeature::active() ? [AiModel::OpenAiGpt41Mini, AiModel::OpenAiGpt41Nano] : []), //TODO: Please move this model to PersonalAssistant array when you remove the feature flag.
         ];
     }
 
