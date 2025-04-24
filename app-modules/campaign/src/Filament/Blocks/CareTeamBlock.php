@@ -43,7 +43,6 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\CareTeamRoleType;
-use App\Features\CareTeamRoleFeature;
 use App\Models\Scopes\HasLicense;
 use App\Models\User;
 use Carbon\CarbonImmutable;
@@ -69,10 +68,10 @@ class CareTeamBlock extends CampaignActionBlock
     public function generateFields(string $fieldPrefix = ''): array
     {
         return [
-            Repeater::make('careTeam')
+            Repeater::make($fieldPrefix . 'careTeam')
                 ->label('Who should be assigned to the care team?')
                 ->schema([
-                    Select::make($fieldPrefix . 'user_id')
+                    Select::make('user_id')
                         ->label('User')
                         ->options(function (Get $get, $livewire, string $operation) {
                             if ($operation === 'create') {
@@ -135,7 +134,7 @@ class CareTeamBlock extends CampaignActionBlock
                                 CareTeamRoleType::Student->getLabel() => CareTeamRoleType::Student,
                                 CareTeamRoleType::Prospect->getLabel() => CareTeamRoleType::Prospect,
                                 default => throw new Exception('The segment population was not of a type that can have a care team role associated with it.'),
-                            })->count() > 0 && CareTeamRoleFeature::active();
+                            })->count() > 0;
                         }),
                 ])
                 ->addActionLabel('Add User')

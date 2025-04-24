@@ -175,11 +175,11 @@ class SendEngagementAction extends Action
                             ->disk('s3-public')
                             ->label('Body')
                             ->mergeTags($mergeTags = [
-                                'student first name',
-                                'student last name',
-                                'student full name',
-                                'student email',
-                                'student preferred name',
+                                'recipient first name',
+                                'recipient last name',
+                                'recipient full name',
+                                'recipient email',
+                                'recipient preferred name',
                                 'user first name',
                                 'user full name',
                                 'user job title',

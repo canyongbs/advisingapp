@@ -191,6 +191,9 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
         return $this->belongsTo(Student::class, 'student_id', 'sisid');
     }
 
+    /**
+     * @return MorphToMany<EngagementFile, $this, covariant EngagementFileEntities>
+     */
     public function engagementFiles(): MorphToMany
     {
         return $this->morphToMany(

@@ -62,7 +62,7 @@ class TaskFactory extends Factory
         ];
     }
 
-    public function concerningStudent(Student $student = null): self
+    public function concerningStudent(?Student $student = null): self
     {
         return $this->state([
             'concern_id' => $student?->id ?? fn () => Student::inRandomOrder()->first()->sisid ?? Student::factory(),
@@ -70,7 +70,7 @@ class TaskFactory extends Factory
         ]);
     }
 
-    public function concerningProspect(Prospect $prospect = null): self
+    public function concerningProspect(?Prospect $prospect = null): self
     {
         return $this->state([
             'concern_id' => $prospect?->id ?? Prospect::factory(),
@@ -78,7 +78,7 @@ class TaskFactory extends Factory
         ]);
     }
 
-    public function assigned(User $user = null): self
+    public function assigned(?User $user = null): self
     {
         return $this->state([
             'assigned_to' => $user?->id ?? User::factory(),

@@ -40,7 +40,6 @@ use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\CareTeamRoleType;
-use App\Features\CareTeamRoleFeature;
 use App\Filament\Resources\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Scopes\HasLicense;
@@ -77,9 +76,10 @@ trait CanManageEducatableCareTeam
                     ->color('primary'),
                 TextColumn::make('job_title'),
                 TextColumn::make('careTeams.studentCareTeamRole.name')
+                    ->getStateUsing(fn ($record) => CareTeamRole::find($record->care_team_role_id)?->name)
                     ->label('Role')
                     ->badge()
-                    ->visible(CareTeamRole::where('type', CareTeamRoleType::Student)->count() > 0 && CareTeamRoleFeature::active()),
+                    ->visible(CareTeamRole::where('type', CareTeamRoleType::Student)->count() > 0),
             ])
             ->headerActions([
                 AttachAction::make()
@@ -101,13 +101,21 @@ trait CanManageEducatableCareTeam
                             ->label('User')
                             ->searchable()
                             ->required()
-                            ->options(User::query()->tap(new HasLicense(Student::getLicenseType()))->pluck('name', 'id')),
+                            ->options(
+                                User::query()->tap(new HasLicense(Student::getLicenseType()))
+                                    ->whereDoesntHave(
+                                        'studentCareTeams',
+                                        fn ($query) => $query
+                                            ->where('educatable_type', $this->getOwnerRecord()->getMorphClass())
+                                            ->where('educatable_id', $this->getOwnerRecord()->getKey())
+                                    )->pluck('name', 'id')
+                            ),
                         Select::make('care_team_role_id')
                             ->label('Role')
                             ->relationship('careTeamRole', 'name', fn (Builder $query) => $query->where('type', CareTeamRoleType::Student))
                             ->searchable()
                             ->model(CareTeam::class)
-                            ->visible(CareTeamRole::where('type', CareTeamRoleType::Student)->count() > 0 && CareTeamRoleFeature::active()),
+                            ->visible(CareTeamRole::where('type', CareTeamRoleType::Student)->count() > 0),
                     ])
                     ->successNotificationTitle(function (array $data) {
                         /** @var Student $student */

@@ -88,7 +88,7 @@ class FormSubmission extends Submission
     }
 
     /**
-     * @return BelongsToMany<FormField, $this>
+     * @return BelongsToMany<FormField, $this, covariant FormFieldSubmission>
      */
     public function fields(): BelongsToMany
     {

@@ -43,7 +43,6 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\Concerns\HasProspectHeader;
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Enums\CareTeamRoleType;
-use App\Features\CareTeamRoleFeature;
 use App\Filament\Resources\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Scopes\HasLicense;
@@ -89,9 +88,10 @@ class ManageProspectCareTeam extends ManageRelatedRecords
                     ->color('primary'),
                 TextColumn::make('job_title'),
                 TextColumn::make('careTeams.prospectCareTeamRole.name')
+                    ->getStateUsing(fn ($record) => CareTeamRole::find($record->care_team_role_id)?->name)
                     ->label('Role')
                     ->badge()
-                    ->visible(CareTeamRole::where('type', CareTeamRoleType::Prospect)->count() > 0 && CareTeamRoleFeature::active()),
+                    ->visible(CareTeamRole::where('type', CareTeamRoleType::Prospect)->count() > 0),
             ])
             ->headerActions([
                 AttachAction::make()
@@ -113,13 +113,19 @@ class ManageProspectCareTeam extends ManageRelatedRecords
                             ->label('User')
                             ->searchable()
                             ->required()
-                            ->options(User::query()->tap(new HasLicense(Prospect::getLicenseType()))->pluck('name', 'id')),
+                            ->options(
+                                User::query()->tap(new HasLicense(Prospect::getLicenseType()))
+                                    ->whereDoesntHave('prospectCareTeams', fn ($query) => $query
+                                        ->where('educatable_type', $this->getOwnerRecord()->getMorphClass())
+                                        ->where('educatable_id', $this->getOwnerRecord()->getKey()))
+                                    ->pluck('name', 'id')
+                            ),
                         Select::make('care_team_role_id')
                             ->label('Role')
                             ->relationship('careTeamRole', 'name', fn (Builder $query) => $query->where('type', CareTeamRoleType::Prospect))
                             ->searchable()
                             ->model(CareTeam::class)
-                            ->visible(CareTeamRole::where('type', CareTeamRoleType::Prospect)->count() > 0 && CareTeamRoleFeature::active()),
+                            ->visible(CareTeamRole::where('type', CareTeamRoleType::Prospect)->count() > 0),
                     ])
                     ->successNotificationTitle(function (array $data) {
                         /** @var Prospect $prospect */

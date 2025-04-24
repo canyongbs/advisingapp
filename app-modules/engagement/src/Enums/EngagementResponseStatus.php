@@ -34,17 +34,17 @@
 </COPYRIGHT>
 */
 
-use App\Features\CareTeamRoleFeature;
-use Illuminate\Database\Migrations\Migration;
+namespace AdvisingApp\Engagement\Enums;
 
-return new class () extends Migration {
-    public function up(): void
-    {
-        CareTeamRoleFeature::activate();
-    }
+use Filament\Support\Contracts\HasLabel;
 
-    public function down(): void
+enum EngagementResponseStatus: string implements HasLabel
+{
+    case New = 'new';
+    case Actioned = 'actioned';
+
+    public function getLabel(): string
     {
-        CareTeamRoleFeature::deactivate();
+        return $this->name;
     }
-};
+}

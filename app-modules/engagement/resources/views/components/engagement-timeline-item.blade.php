@@ -57,6 +57,13 @@
             Sent {{ $record->dispatched_at->diffForHumans() }}
         </time>
     @endif
+    <span class="flex w-auto text-gray-400 dark:text-gray-500">
+        <x-filament::badge>
+            <h1 class="block w-auto text-sm font-normal">
+                Outbound
+            </h1>
+        </x-filament::badge>
+    </span>
 
     <div
         class="my-4 rounded-lg border-2 border-gray-200 p-2 text-base font-normal text-gray-500 dark:border-gray-800 dark:text-gray-400">

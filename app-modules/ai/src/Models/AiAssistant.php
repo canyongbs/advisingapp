@@ -100,7 +100,7 @@ class AiAssistant extends BaseModel implements HasMedia, Auditable
             });
     }
 
-    public function registerMediaConversions(Media $media = null): void
+    public function registerMediaConversions(?Media $media = null): void
     {
         $this->addMediaConversion('avatar-height-250px')
             ->performOnCollections('avatar')

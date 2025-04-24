@@ -90,7 +90,7 @@ abstract class TestCase extends BaseTestCase
         );
     }
 
-    protected function refreshTenantTestingEnvironment(Tenant $tenant = null): void
+    protected function refreshTenantTestingEnvironment(?Tenant $tenant = null): void
     {
         $tenant ??= Tenant::firstOrFail();
 
