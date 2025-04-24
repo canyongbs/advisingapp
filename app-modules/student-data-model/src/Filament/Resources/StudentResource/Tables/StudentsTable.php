@@ -125,6 +125,10 @@ class StudentsTable
                             ->label('Gender')
                             ->icon('heroicon-m-user-circle')
                             ->multiple(),
+                        ExistingValuesSelectConstraint::make('ethnicity')
+                            ->label('Ethnicity')
+                            ->icon('heroicon-m-globe-alt')
+                            ->multiple(),
                         BooleanConstraint::make('sap')
                             ->label('SAP')
                             ->icon('heroicon-m-academic-cap')
