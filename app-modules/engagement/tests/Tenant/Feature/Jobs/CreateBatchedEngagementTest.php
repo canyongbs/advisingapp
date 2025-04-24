@@ -35,13 +35,19 @@
 */
 
 use AdvisingApp\Engagement\Jobs\CreateBatchedEngagement;
+use AdvisingApp\Engagement\Jobs\Middleware\RateLimited;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Engagement\Notifications\EngagementNotification;
 use AdvisingApp\StudentDataModel\Models\Student;
+use function Pest\Laravel\assertDatabaseCount;
+use function Pest\Laravel\freezeSecond;
+use function Pest\Laravel\travel;
+
+use Illuminate\Queue\Middleware\RateLimitedWithRedis;
+use Illuminate\Redis\Limiters\DurationLimiter;
 use Illuminate\Support\Facades\Notification;
 
-use function Pest\Laravel\assertDatabaseCount;
 
 it('will create and send an engagement immediately', function () {
     Notification::fake();
@@ -105,4 +111,37 @@ it('will create but not dispatch a scheduled engagement', function () {
         $recipient,
         EngagementNotification::class
     );
+});
+
+it('has the notification rate limiting applied properly', function () {
+    $engagementBatch = EngagementBatch::factory()->deliverNow()->create();
+    $recipient = Student::factory()->create();
+
+    $job = new CreateBatchedEngagement(
+        $engagementBatch,
+        $recipient
+    );
+
+    // TODO: Test this by making sure the Limits returned are correct
+
+
+    freezeSecond(function () use ($job) {
+        for ($i = 1; $i < 20; $i++) {
+            $response = (new RateLimitedWithRedis('notifications'))
+                ->handle($job, function () {
+                    return true;
+                });
+
+            expect($response)
+                ->toBeTrue();
+        }
+
+        $response = (new RateLimitedWithRedis('notifications'))
+            ->handle($job, function () {
+                return true;
+            });
+
+        expect($response)
+            ->toBeFalse();
+    });
 });

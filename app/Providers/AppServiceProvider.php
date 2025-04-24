@@ -37,6 +37,7 @@
 namespace App\Providers;
 
 use AdvisingApp\Engagement\Jobs\CreateBatchedEngagement;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Pipeline;
 use AdvisingApp\Prospect\Models\PipelineStage;
 use App\Models\SystemUser;
@@ -186,9 +187,13 @@ class AppServiceProvider extends ServiceProvider
                 default => throw new Exception('Invalid job type'),
             };
 
-            return collect($channels)->map(function (string $channel) {
+            return collect($channels)->map(function (string|NotificationChannel $channel) {
+                if ($channel instanceof NotificationChannel) {
+                    $channel = $channel->value;
+                }
+
                 return match ($channel) {
-                    'mail' => Limit::perSecond(14)->by('notifications-mail'),
+                    'mail', 'email' => Limit::perSecond(14)->by('notifications-mail'),
                     'sms' => Limit::none()->by('notifications-sms'),
                     default => throw new Exception('Invalid channel'),
                 };
