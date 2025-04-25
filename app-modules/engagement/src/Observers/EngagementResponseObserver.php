@@ -36,19 +36,44 @@
 
 namespace AdvisingApp\Engagement\Observers;
 
+use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Models\EngagementResponse;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspect;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
 use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
+use App\Models\User;
+use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Model;
 
 class EngagementResponseObserver
 {
     public function created(EngagementResponse $response): void
     {
-        /** @var Model $entity */
+        /** @var Student|Prospect $entity */
         $entity = $response->sender;
 
         TimelineableRecordCreated::dispatch($entity, $response);
+
+        $entity->subscribedUsers()
+            ->each(function (User $user) use ($response, $entity) {
+                $type = match ($response->type) {
+                    EngagementResponseType::Email => 'email',
+                    EngagementResponseType::Sms => 'text message',
+                };
+
+                $user->notifyNow(
+                    Notification::make()
+                        ->success()
+                        ->title(match (true) {
+                            $entity instanceof Student => "An inbound {$type} has been received for student <a href='" . ViewStudent::getUrl(['record' => $entity]) . "' target='_blank' class='underline'>{$entity[$entity->displayNameKey()]}</a> and has been placed in a new status.",
+                            $entity instanceof Prospect => "An inbound {$type} has been received for prospect <a href='" . ViewProspect::getUrl(['record' => $entity]) . "' target='_blank' class='underline'>{$entity->full_name}</a> and has been placed in a new status.",
+                        })
+                        ->toDatabase(),
+                );
+            });
     }
 
     public function deleted(EngagementResponse $response): void
