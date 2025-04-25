@@ -36,20 +36,20 @@
 
 namespace AdvisingApp\Prospect\Filament\Widgets;
 
-use App\Models\User;
-use Filament\Tables\Table;
-use Filament\Widgets\TableWidget;
+use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
+use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
+use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Task\Enums\TaskStatus;
+use App\Models\User;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
+use Filament\Widgets\TableWidget;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
-use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
 
 class ProspectsActionCenterWidget extends TableWidget
 {
