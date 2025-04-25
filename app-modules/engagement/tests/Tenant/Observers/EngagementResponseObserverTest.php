@@ -34,53 +34,49 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Observers;
-
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Models\EngagementResponse;
+use AdvisingApp\Notification\Events\SubscriptionCreated;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspect;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
-use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
 use App\Models\User;
-use Filament\Notifications\Notification;
-use Illuminate\Database\Eloquent\Model;
+use Filament\Notifications\DatabaseNotification;
+use Illuminate\Support\Facades\Notification;
 
-class EngagementResponseObserver
-{
-    public function created(EngagementResponse $response): void
-    {
-        /** @var Student|Prospect $entity */
-        $entity = $response->sender;
+it('dispatches a notification to subscribed users when an engagement response is created', function () {
+    Notification::fake();
+    Event::fake([SubscriptionCreated::class]);
 
-        TimelineableRecordCreated::dispatch($entity, $response);
+    /** @var EngagementResponse $response */
+    $response = EngagementResponse::factory()->make();
 
-        $entity->subscribedUsers()
-            ->eachById(function (User $user) use ($response, $entity) {
-                $type = match ($response->type) {
-                    EngagementResponseType::Email => 'email',
-                    EngagementResponseType::Sms => 'text message',
-                };
+    /** @var Student|Prospect $educatable */
+    $educatable = $response->sender;
 
-                $user->notifyNow(
-                    Notification::make()
-                        ->success()
-                        ->title(match (true) {
-                            $entity instanceof Student => "An inbound {$type} has been received for student <a href='" . ViewStudent::getUrl(['record' => $entity]) . "' target='_blank' class='underline'>{$entity[$entity->displayNameKey()]}</a> and has been placed in a new status.",
-                            $entity instanceof Prospect => "An inbound {$type} has been received for prospect <a href='" . ViewProspect::getUrl(['record' => $entity]) . "' target='_blank' class='underline'>{$entity->full_name}</a> and has been placed in a new status.",
-                        })
-                        ->toDatabase(),
-                );
-            });
-    }
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    public function deleted(EngagementResponse $response): void
-    {
-        /** @var Model $entity */
-        $entity = $response->sender;
+    $educatable->subscribedUsers()->attach($user);
 
-        TimelineableRecordDeleted::dispatch($entity, $response);
-    }
-}
+    $response->save();
+
+    Notification::assertSentTo(
+        $user,
+        DatabaseNotification::class,
+        function (DatabaseNotification $notification) use ($response, $educatable) {
+            $type = match ($response->type) {
+                EngagementResponseType::Email => 'email',
+                EngagementResponseType::Sms => 'text message',
+            };
+
+            $title = match (true) {
+                $educatable instanceof Student => "An inbound {$type} has been received for student <a href='" . ViewStudent::getUrl(['record' => $educatable]) . "' target='_blank' class='underline'>{$educatable[$educatable->displayNameKey()]}</a> and has been placed in a new status.",
+                $educatable instanceof Prospect => "An inbound {$type} has been received for prospect <a href='" . ViewProspect::getUrl(['record' => $educatable]) . "' target='_blank' class='underline'>{$educatable->full_name}</a> and has been placed in a new status.",
+            };
+
+            return $notification->data['title'] === $title;
+        },
+    );
+});
