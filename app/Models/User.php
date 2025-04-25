@@ -461,15 +461,10 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return $this->hasMany(CalendarEvent::class);
     }
 
-    /**
-     * @return BelongsToMany<Team, $this, covariant TeamUser>
-     */
-    public function teams(): BelongsToMany
+    /** @return BelongsTo<Team, $this> */
+    public function team(): BelongsTo
     {
-        return $this
-            ->belongsToMany(Team::class, 'team_user', 'user_id', 'team_id')
-            ->using(TeamUser::class)
-            ->withTimestamps();
+        return $this->belongsTo(Team::class);
     }
 
     /**
