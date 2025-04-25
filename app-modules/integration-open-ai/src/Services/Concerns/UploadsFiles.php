@@ -104,6 +104,9 @@ trait UploadsFiles
         ]);
     }
 
+    /**
+     * @param array<string, mixed> $parameters
+     */
     public function createVectorStore(array $parameters): VectorStoresDataTransferObject
     {
         $response = $this->client->vectorStores()->create($parameters);
@@ -206,6 +209,11 @@ trait UploadsFiles
         }
     }
 
+    /**
+     * @param array<int, mixed|AiMessageFile> $files
+     *
+     * @return array<AiMessageFile>
+     */
     protected function createFiles(array $files): array
     {
         return array_map(
@@ -304,7 +312,11 @@ trait UploadsFiles
         ]);
     }
 
-    protected function retrieveAllVectorStoreFileIds(AiThread $thread, string $vectorStoreId, array &$vectorStoreFileIds = [], $after = null): void
+    /**
+     * @param array<string> $vectorStoreFileIds
+     * @param string|null $after
+     */
+    protected function retrieveAllVectorStoreFileIds(AiThread $thread, string $vectorStoreId, array &$vectorStoreFileIds = [], ?string $after = null): void
     {
         $params = [];
 
@@ -328,6 +340,9 @@ trait UploadsFiles
         }
     }
 
+    /**
+     * @param array<string, mixed> $vectorStore
+     */
     protected function recreateVectorStoreForThread(AiThread $thread, array $vectorStore): void
     {
         $vectorStoreFileIds = [];
@@ -357,6 +372,9 @@ trait UploadsFiles
         $this->awaitVectorStoreProcessing($newVectorStore);
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     protected function getExpiredVectorStoresForThread(AiThread $thread): ?array
     {
         if (! $this->supportsMessageFileUploads()) {
