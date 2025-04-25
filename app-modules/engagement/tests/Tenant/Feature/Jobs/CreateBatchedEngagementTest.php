@@ -44,9 +44,14 @@ use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\freezeSecond;
 use function Pest\Laravel\travel;
 
+use Illuminate\Cache\RateLimiter;
+use Illuminate\Cache\RateLimiting\Unlimited;
+use Illuminate\Container\Container;
 use Illuminate\Queue\Middleware\RateLimitedWithRedis;
 use Illuminate\Redis\Limiters\DurationLimiter;
 use Illuminate\Support\Facades\Notification;
+
+
 
 
 it('will create and send an engagement immediately', function () {
@@ -113,8 +118,8 @@ it('will create but not dispatch a scheduled engagement', function () {
     );
 });
 
-it('has the notification rate limiting applied properly', function () {
-    $engagementBatch = EngagementBatch::factory()->deliverNow()->create();
+it('has the notification rate limiting applied properly for email batched engagements', function () {
+    $engagementBatch = EngagementBatch::factory()->email()->create();
     $recipient = Student::factory()->create();
 
     $job = new CreateBatchedEngagement(
@@ -122,26 +127,34 @@ it('has the notification rate limiting applied properly', function () {
         $recipient
     );
 
-    // TODO: Test this by making sure the Limits returned are correct
+    $limiter = Container::getInstance()->make(RateLimiter::class)->limiter('notifications');
 
+    $limits = $limiter($job);
 
-    freezeSecond(function () use ($job) {
-        for ($i = 1; $i < 20; $i++) {
-            $response = (new RateLimitedWithRedis('notifications'))
-                ->handle($job, function () {
-                    return true;
-                });
+    /** @phpstan-ignore property.notFound */
+    expect($limits) 
+        ->toHaveCount(1)
+        ->and($limits[0])
+            ->key->toEqual('mail')
+            ->maxAttempts->toEqual(14)
+            ->decaySeconds->toEqual(1);
+});
 
-            expect($response)
-                ->toBeTrue();
-        }
+it('has the notification rate limiting applied properly for sms batched engagements', function () {
+    $engagementBatch = EngagementBatch::factory()->sms()->create();
+    $recipient = Student::factory()->create();
 
-        $response = (new RateLimitedWithRedis('notifications'))
-            ->handle($job, function () {
-                return true;
-            });
+    $job = new CreateBatchedEngagement(
+        $engagementBatch,
+        $recipient
+    );
 
-        expect($response)
-            ->toBeFalse();
-    });
+    $limiter = Container::getInstance()->make(RateLimiter::class)->limiter('notifications');
+
+    $limits = $limiter($job);
+
+    expect($limits) 
+        ->toHaveCount(1)
+        ->and($limits[0])
+            ->toBeInstanceOf(Unlimited::class);
 });
