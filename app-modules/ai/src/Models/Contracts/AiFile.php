@@ -36,4 +36,13 @@
 
 namespace AdvisingApp\Ai\Models\Contracts;
 
-interface AiFile {}
+interface AiFile
+{
+    public function getTemporaryUrl(): ?string;
+
+    public function getName(): ?string;
+
+    public function getMimeType(): ?string;
+
+    public function getFileId(): ?string;
+}

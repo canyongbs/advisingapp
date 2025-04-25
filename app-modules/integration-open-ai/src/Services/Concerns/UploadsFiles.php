@@ -75,6 +75,11 @@ trait UploadsFiles
         $this->afterThreadSelected($thread);
     }
 
+    /**
+     * @param Collection<int, AiAssistantFile>  $files
+     *
+     * @return Collection<int, AiAssistantFile>
+     */
     public function createAssistantFiles(AiAssistant $assistant, Collection $files): Collection
     {
         return $files->each(function (AiAssistantFile $fileRecord) {
@@ -203,7 +208,7 @@ trait UploadsFiles
     public function deleteFile(AiFile $file): void
     {
         try {
-            $this->client->files()->delete($file->file_id);
+            $this->client->files()->delete($file->getFileId());
         } catch (Throwable $e) {
             report($e);
         }
@@ -248,7 +253,7 @@ trait UploadsFiles
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
 
-        $cfile = new CURLFile($file->temporary_url, $file->mime_type, $file->name);
+        $cfile = new CURLFile($file->getTemporaryUrl(), $file->getMimeType(), $file->getName());
 
         $postFields = [
             'purpose' => 'assistants',
@@ -301,9 +306,9 @@ trait UploadsFiles
         return $response['id'];
     }
 
-    protected function retrieveFile(AiMessageFile $file): FilesDataTransferObject
+    protected function retrieveFile(AiFile $file): FilesDataTransferObject
     {
-        $response = $this->client->files()->retrieve($file->file_id);
+        $response = $this->client->files()->retrieve($file->getFileId());
 
         return FilesDataTransferObject::from([
             'id' => $response->id,
