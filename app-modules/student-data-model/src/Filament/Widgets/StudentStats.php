@@ -37,63 +37,69 @@
 namespace AdvisingApp\StudentDataModel\Filament\Widgets;
 
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
-use AdvisingApp\Alert\Models\AlertStatus;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Filament\Resources\SegmentResource;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\Alert\Models\Alert;
+use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
+use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
+use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Task\Enums\TaskStatus;
+use AdvisingApp\Task\Models\Task;
 use App\Models\User;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Number;
 
 class StudentStats extends StatsOverviewWidget
 {
+    protected function getColumns(): int
+    {
+        return 4;
+    }
+
     protected function getStats(): array
     {
         /** @var User $user */
         $user = auth()->user();
 
-        $studentsCount = Cache::tags(['students'])
-            ->remember('students-count', now()->addHour(), function (): int {
-                return Student::count();
-            });
-
         return [
-            Stat::make(
-                'Students',
-                ($studentsCount > 9999999)
-                    ? Number::abbreviate($studentsCount, maxPrecision: 2)
-                    : Number::format($studentsCount, maxPrecision: 2)
-            )
-                ->url(StudentResource::getUrl('index')),
-            Stat::make('My Subscriptions', Cache::tags(['students', "user-{$user->getKey()}-student-subscriptions"])
-                ->remember("user-{$user->getKey()}-student-subscriptions-count", now()->addHour(), function () use ($user): int {
-                    return $user->studentSubscriptions()->count();
-                }))
-                ->url(StudentResource::getUrl('index', ['tableFilters[subscribed][isActive]' => 'true'])),
-            Stat::make('My Alerts', Cache::tags(['students', "user-{$user->getKey()}-student-alerts"])
-                ->remember("user-{$user->getKey()}-student-alerts-count", now()->addHour(), function () use ($user): int {
-                    return $user->studentAlerts()->whereHas('status', function ($query) {
-                        $query->where('classification', SystemAlertStatusClassification::Active);
-                    })->count();
-                }))
-                ->url(StudentResource::getUrl('index', [
-                    'tableFilters' => [
-                        'alerts' => [
-                            'values' => array_values(AlertStatus::pluck('id')->toArray()),
-                        ],
-                        'subscribed' => [
-                            'isActive' => 'true',
-                        ],
-                    ],
-                ])),
-            Stat::make('My Population Segments', Cache::tags(["user-{$user->getKey()}-student-segments"])
-                ->remember("user-{$user->getKey()}-student-segments-count", now()->addHour(), function () use ($user): int {
-                    return $user->segments()->model(SegmentModel::Student)->count();
-                }))
-                ->url(SegmentResource::getUrl('index', ['tableFilters[my_segments][isActive]' => 'true'])),
+            Stat::make('New Messages', Number::format(EngagementResponse::query()
+                ->whereHasMorph('sender', Student::class, fn (Builder $query) => $query->whereRelation('subscriptions', 'user_id', $user->getKey()))
+                ->where('status', EngagementResponseStatus::New)
+                ->count())),
+            Stat::make('Open Cases', Number::format(CaseModel::query()
+                ->whereHasMorph('respondent', Student::class, fn (Builder $query) => $query->whereRelation('subscriptions', 'user_id', $user->getKey()))
+                ->whereRelation('status', 'classification', '!=', SystemCaseClassification::Closed)
+                ->count())),
+            Stat::make('Open Alerts', Number::format(Alert::query()
+                ->whereHasMorph('concern', Student::class, fn (Builder $query) => $query->whereRelation('subscriptions', 'user_id', $user->getKey()))
+                ->whereHas('status', fn (Builder $query) => $query->whereNotIn('classification', [SystemAlertStatusClassification::Resolved, SystemAlertStatusClassification::Canceled]))
+                ->count())),
+            Stat::make('Open Tasks', Number::format(Task::query()
+                ->whereHasMorph('concern', Student::class, fn (Builder $query) => $query->whereRelation('subscriptions', 'user_id', $user->getKey()))
+                ->whereNotIn('status', [TaskStatus::Completed, TaskStatus::Canceled])
+                ->count())),
+            Stat::make('Actioned Messages', Number::format(EngagementResponse::query()
+                ->whereHasMorph('sender', Student::class, fn (Builder $query) => $query->whereRelation('subscriptions', 'user_id', $user->getKey()))
+                ->where('status', EngagementResponseStatus::Actioned)
+                ->count()))
+                ->extraAttributes(['class' => 'fi-wi-stats-overview-stat-primary']),
+            Stat::make('Closed Cases', Number::format(CaseModel::query()
+                ->whereHasMorph('respondent', Student::class, fn (Builder $query) => $query->whereRelation('subscriptions', 'user_id', $user->getKey()))
+                ->whereRelation('status', 'classification', SystemCaseClassification::Closed)
+                ->count()))
+                ->extraAttributes(['class' => 'fi-wi-stats-overview-stat-primary']),
+            Stat::make('Closed Alerts', Number::format(Alert::query()
+                ->whereHasMorph('concern', Student::class, fn (Builder $query) => $query->whereRelation('subscriptions', 'user_id', $user->getKey()))
+                ->whereHas('status', fn (Builder $query) => $query->whereIn('classification', [SystemAlertStatusClassification::Resolved, SystemAlertStatusClassification::Canceled]))
+                ->count()))
+                ->extraAttributes(['class' => 'fi-wi-stats-overview-stat-primary']),
+            Stat::make('Closed Tasks', Number::format(Task::query()
+                ->whereHasMorph('concern', Student::class, fn (Builder $query) => $query->whereRelation('subscriptions', 'user_id', $user->getKey()))
+                ->whereIn('status', [TaskStatus::Completed, TaskStatus::Canceled])
+                ->count()))
+                ->extraAttributes(['class' => 'fi-wi-stats-overview-stat-primary']),
         ];
     }
 }
