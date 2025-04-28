@@ -228,3 +228,15 @@
 .fi-sidebar-nav > ul > li a {
     @apply dark:hover:!bg-white/20;
 }
+
+.fi-wi-stats-overview-stat-primary {
+    @apply bg-primary-700 text-white dark:bg-primary-950;
+}
+
+.fi-wi-stats-overview-stat-primary .fi-wi-stats-overview-stat-label {
+    @apply text-primary-200;
+}
+
+.fi-wi-stats-overview-stat-primary .fi-wi-stats-overview-stat-value {
+    @apply text-white;
+}
