@@ -624,10 +624,10 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function assignTeam(int|string $teamId): void
     {
         // Remove the current team if exists
-        $this->teams()->detach();
+        $this->team()->disassociate()->save();
 
         // Assign the new team
-        $this->teams()->attach($teamId);
+        $this->team()->associate($teamId)->save();
     }
 
     public function canReceiveSms(): bool
