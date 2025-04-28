@@ -164,7 +164,7 @@ class AppServiceProvider extends ServiceProvider
 
         Table::configureUsing(function (Table $table): void {
             $table
-                ->paginationPageOptions([5, 10, 20, 'all'])
+                ->paginationPageOptions([5, 10, 20])
                 ->defaultPaginationPageOption(5);
         });
 
