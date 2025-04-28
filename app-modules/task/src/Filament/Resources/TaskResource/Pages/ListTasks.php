@@ -133,7 +133,7 @@ class ListTasks extends ListRecords
                             /** @var User $user */
                             $user = auth()->user();
                             //TODO: change this if we support multiple teams
-                            $teamUserIds = $user->teams()->first()->users()->get()->pluck('id');
+                            $teamUserIds = $user->team->users()->get()->pluck('id');
 
                             return $query->whereIn('assigned_to', $teamUserIds)->get();
                         }

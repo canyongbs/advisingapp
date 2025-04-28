@@ -113,6 +113,6 @@ class EngagementBatchFinishedNotification extends Notification implements Should
 
     private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
     {
-        return $this->engagementBatch->user->teams()->first()?->division?->notificationSetting?->setting;
+        return $this->engagementBatch->user->team?->division?->notificationSetting?->setting;
     }
 }

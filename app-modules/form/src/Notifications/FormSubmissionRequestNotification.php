@@ -60,7 +60,7 @@ class FormSubmissionRequestNotification extends Notification implements ShouldQu
 
     public function toMail(object $notifiable): MailMessage
     {
-        $division = $this->submission->requester->teams()->first()?->division;
+        $division = $this->submission->requester->team?->division;
 
         return MailMessage::make()
             ->settings($division?->notificationSetting?->setting)
