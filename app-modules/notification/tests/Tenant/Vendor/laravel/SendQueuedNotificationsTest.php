@@ -7,7 +7,6 @@ use Illuminate\Cache\RateLimiter;
 use Illuminate\Cache\RateLimiting\Unlimited;
 use Illuminate\Container\Container;
 use Illuminate\Notifications\SendQueuedNotifications;
-use Illuminate\Support\Facades\Queue;
 
 it('has the notification rate limiting applied properly for email notifications', function () {
     $recipient = Student::factory()->create();
@@ -74,23 +73,4 @@ it('has the notification rate limiting applied properly for notifications that s
             ->decaySeconds->toEqual(1)
         ->and($limits[1])
             ->toBeInstanceOf(Unlimited::class);
-});
-
-// Should we move this to a test file for the Channel Manager?
-it('modifies the SendQueuedNotifications job properly', function () {
-    Queue::fake();
-
-    $recipient = Student::factory()->create();
-    $notification = new TestEmailNotification();
-
-    $recipient->notify($notification);
-
-    Queue::assertPushed(SendQueuedNotifications::class, function ($job) use ($recipient, $notification) {
-        return $job->notification::class === $notification::class
-            && $job->notifiables->count() === 1
-            && $job->notifiables->first()->is($recipient)
-            && $job->channels === ['mail']
-            && $job->tries === 15
-            && $job->maxExceptions === 3;
-    });
 });
