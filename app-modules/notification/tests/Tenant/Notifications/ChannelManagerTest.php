@@ -58,6 +58,6 @@ it('modifies the SendQueuedNotifications job properly', function () {
                 && $job->channels === ['mail']
                 && $job->retryUntil() instanceof Carbon && $job->retryUntil()->equalTo(now()->addHours(2))
                 && $job->maxExceptions === 3;
-        }); 
+        });
     });
 });

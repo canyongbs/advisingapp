@@ -57,12 +57,12 @@ it('has the notification rate limiting applied properly for email notifications'
     $limits = $limiter($job);
 
     /** @phpstan-ignore property.notFound */
-    expect($limits) 
+    expect($limits)
         ->toHaveCount(1)
         ->and($limits[0])
-            ->key->toEqual('mail')
-            ->maxAttempts->toEqual(14)
-            ->decaySeconds->toEqual(1);
+        ->key->toEqual('mail')
+        ->maxAttempts->toEqual(14)
+        ->decaySeconds->toEqual(1);
 });
 
 it('has the notification rate limiting applied properly for sms notifications', function () {
@@ -79,10 +79,10 @@ it('has the notification rate limiting applied properly for sms notifications', 
 
     $limits = $limiter($job);
 
-    expect($limits) 
+    expect($limits)
         ->toHaveCount(1)
         ->and($limits[0])
-            ->toBeInstanceOf(Unlimited::class);
+        ->toBeInstanceOf(Unlimited::class);
 });
 
 it('has the notification rate limiting applied properly for notifications that send to multiple channels', function () {
@@ -99,12 +99,12 @@ it('has the notification rate limiting applied properly for notifications that s
 
     $limits = $limiter($job);
 
-    expect($limits) 
+    expect($limits)
         ->toHaveCount(2)
         ->and($limits[0])
-            ->key->toEqual('mail')
-            ->maxAttempts->toEqual(14)
-            ->decaySeconds->toEqual(1)
+        ->key->toEqual('mail')
+        ->maxAttempts->toEqual(14)
+        ->decaySeconds->toEqual(1)
         ->and($limits[1])
-            ->toBeInstanceOf(Unlimited::class);
+        ->toBeInstanceOf(Unlimited::class);
 });
