@@ -83,13 +83,18 @@ test('Interactions model with fetch data for created user', function () {
 test('Interactions model with fetch data for team user', function () {
     $teamUser = User::factory()->licensed(LicenseType::cases())->create();
 
-    $team = Team::factory()->hasAttached($teamUser, [], 'users')->create();
+    $team = Team::factory()->create();
+
+    $teamUser->team()->associate($team)->save();
 
     actingAs($teamUser);
 
-    $ownedConfidentialInteractions = Interaction::factory()->hasAttached($team, [], 'confidentialAccessTeams')->count(10)->create([
-        'is_confidential' => true,
-    ]);
+    $ownedConfidentialInteractions = Interaction::factory()
+        ->hasAttached($team, [], 'confidentialAccessTeams')
+        ->count(10)
+        ->create([
+            'is_confidential' => true,
+        ]);
 
     $privateInteractions = Interaction::factory()->count(10)->create([
         'is_confidential' => true,

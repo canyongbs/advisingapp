@@ -222,27 +222,36 @@ it('can filter users by multiple teams', function () {
 
     $adminTeamGroup = User::factory()
         ->count(3)
-        ->hasAttached($adminTeam, [], 'teams')
         ->create();
+
+    $adminTeamGroup->each(function ($user) use ($adminTeam) {
+        $user->team()->associate($adminTeam)->save();
+    });
 
     $modTeam = Team::factory()->create();
 
     $modsTeamGroup = User::factory()
         ->count(3)
-        ->hasAttached($modTeam, [], 'teams')
         ->create();
+
+    $modsTeamGroup->each(function ($user) use ($modTeam) {
+        $user->team()->associate($modTeam)->save();
+    });
 
     $supportTeam = Team::factory()->create();
 
     $supportTeamGroup = User::factory()
         ->count(3)
-        ->hasAttached($supportTeam, [], 'teams')
         ->create();
+
+    $supportTeamGroup->each(function ($user) use ($supportTeam) {
+        $user->team()->associate($supportTeam)->save();
+    });
 
     livewire(ListUsers::class)
         ->set('tableRecordsPerPage', 10)
         ->assertCanSeeTableRecords($adminTeamGroup->merge($modsTeamGroup)->merge($supportTeamGroup))
-        ->filterTable('teams', [$adminTeam->id, $modTeam->id])
+        ->filterTable('team', [$adminTeam->id, $modTeam->id])
         ->assertCanSeeTableRecords(
             $adminTeamGroup
         )
@@ -257,34 +266,40 @@ it('it filters users based on team', function () {
 
     $userInTeamA = User::factory()
         ->count(3)
-        ->hasAttached($teamA, [], 'teams')
         ->create();
+
+    $userInTeamA->each(function ($user) use ($teamA) {
+        $user->team()->associate($teamA)->save();
+    });
 
     $userInTeamB = User::factory()
         ->count(3)
-        ->hasAttached($teamB, [], 'teams')
         ->create();
+
+    $userInTeamB->each(function ($user) use ($teamB) {
+        $user->team()->associate($teamB)->save();
+    });
 
     $unassignedUser = User::factory()->count(2)->create();
 
     livewire(ListUsers::class)
         ->set('tableRecordsPerPage', 10)
         ->assertCanSeeTableRecords($unassignedUser->merge($userInTeamA)->merge($userInTeamB))
-        ->filterTable('teams', [$teamA->getKey()])
+        ->filterTable('team', [$teamA->getKey()])
         ->assertCanSeeTableRecords(
             $userInTeamA
         )
         ->assertCanNotSeeTableRecords(
             $unassignedUser->merge($userInTeamB)
         )
-        ->filterTable('teams', [$teamB->getKey()])
+        ->filterTable('team', [$teamB->getKey()])
         ->assertCanSeeTableRecords(
             $userInTeamB
         )
         ->assertCanNotSeeTableRecords(
             $unassignedUser->merge($userInTeamA)
         )
-        ->filterTable('teams', ['unassigned'])
+        ->filterTable('team', ['unassigned'])
         ->assertCanSeeTableRecords(
             $unassignedUser
         )
