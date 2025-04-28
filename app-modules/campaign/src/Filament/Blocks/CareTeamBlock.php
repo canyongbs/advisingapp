@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
+use AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages\CreateCampaign;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
 use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
@@ -74,7 +75,7 @@ class CareTeamBlock extends CampaignActionBlock
                     Select::make('user_id')
                         ->label('User')
                         ->options(function (Get $get, $livewire, string $operation) {
-                            if ($operation === 'create') {
+                            if ($livewire instanceof CreateCampaign) {
                                 $segment_id = $get('../../../../../segment_id');
                             } else {
                                 $segment_id = $livewire->getOwnerRecord()->segment_id;
@@ -93,7 +94,7 @@ class CareTeamBlock extends CampaignActionBlock
                     Select::make('care_team_role_id')
                         ->label('Role')
                         ->relationship('careTeamRole', 'name', function (Builder $query, Get $get, $livewire, string $operation) {
-                            if ($operation === 'create') {
+                            if ($livewire instanceof CreateCampaign) {
                                 $segment_id = $get('../../../../../segment_id');
                             } else {
                                 $segment_id = $livewire->getOwnerRecord()->segment_id;
@@ -108,7 +109,7 @@ class CareTeamBlock extends CampaignActionBlock
                         })
                         ->searchable()
                         ->default(function (Get $get, $livewire, string $operation) {
-                            if ($operation === 'create') {
+                            if ($livewire instanceof CreateCampaign) {
                                 $segment_id = $get('../../../../../segment_id');
                             } else {
                                 $segment_id = $livewire->getOwnerRecord()->segment_id;
@@ -123,7 +124,7 @@ class CareTeamBlock extends CampaignActionBlock
                         })
                         ->model(CareTeam::class)
                         ->visible(function (Get $get, $livewire, string $operation) {
-                            if ($operation === 'create') {
+                            if ($livewire instanceof CreateCampaign) {
                                 $segment_id = $get('../../../../../segment_id');
                             } else {
                                 $segment_id = $livewire->getOwnerRecord()->segment_id;
