@@ -73,7 +73,6 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\DB;
-use Kirschbaum\PowerJoins\PowerJoins;
 use OwenIt\Auditing\Contracts\Auditable;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
@@ -87,7 +86,6 @@ class CaseModel extends BaseModel implements Auditable, CanTriggerAutoSubscripti
 {
     use BelongsToEducatable;
     use SoftDeletes;
-    use PowerJoins;
     use AuditableTrait;
     use HasManyMorphedInteractions;
     use HasRelationships;
