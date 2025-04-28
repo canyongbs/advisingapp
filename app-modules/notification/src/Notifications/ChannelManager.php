@@ -62,7 +62,7 @@ class ChannelManager extends BaseChannelManager
         }
 
         if ($notification instanceof ShouldQueue) {
-            $notification->tries ??= 15;
+            $notification->retryUntil ??= now()->addHours(2);
         }
 
         if ($notification instanceof ShouldQueue) {
