@@ -62,11 +62,11 @@ class ChannelManager extends BaseChannelManager
         }
 
         if ($notification instanceof ShouldQueue) {
-            $notification->retryUntil ??= now()->addHours(2);
+            $notification->retryUntil ??= now()->addHours(2); // @phpstan-ignore property.notFound
         }
 
         if ($notification instanceof ShouldQueue) {
-            $notification->maxExceptions ??= 3;
+            $notification->maxExceptions ??= 3; // @phpstan-ignore property.notFound
         }
 
         parent::send($notifiables, $notification);

@@ -99,6 +99,7 @@ it('has the notification rate limiting applied properly for notifications that s
 
     $limits = $limiter($job);
 
+    /** @phpstan-ignore property.notFound */
     expect($limits)
         ->toHaveCount(2)
         ->and($limits[0])
