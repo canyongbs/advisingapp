@@ -61,11 +61,11 @@ class ChannelManager extends BaseChannelManager
             $notification->middleware[] = new RateLimitedWithRedis('notification');
         }
 
-        if ($notification instanceof ShouldQueue && property_exists($notification, 'tries')) {
+        if ($notification instanceof ShouldQueue) {
             $notification->tries ??= 15;
         }
 
-        if ($notification instanceof ShouldQueue && property_exists($notification, 'maxExceptions')) {
+        if ($notification instanceof ShouldQueue) {
             $notification->maxExceptions ??= 3;
         }
 

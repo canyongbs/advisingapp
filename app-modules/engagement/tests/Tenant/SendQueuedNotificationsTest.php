@@ -53,6 +53,7 @@ it('has the notification rate limiting applied properly for sms notifications', 
 
 // TODO: checking if the limits are setup properly if it ever dispatches SMS and email at the same time
 
+// Should we move this to a test file for the Channel Manager?
 it('modifies the SendQueuedNotifications job properly', function () {
     Queue::fake();
 
@@ -65,8 +66,8 @@ it('modifies the SendQueuedNotifications job properly', function () {
         return $job->notification::class === $notification::class
             && $job->notifiables->count() === 1
             && $job->notifiables->first()->is($recipient)
-            && $job->channels === ['mail'];
+            && $job->channels === ['mail']
+            && $job->tries === 15
+            && $job->maxExceptions === 3;
     });
 });
-
-// TODO: Test that the tries, maxExceptions, etc. is properly set
