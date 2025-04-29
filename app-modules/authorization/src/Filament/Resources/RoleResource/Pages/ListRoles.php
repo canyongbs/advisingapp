@@ -69,42 +69,6 @@ class ListRoles extends ListRecords
 
     public function table(Table $table): Table
     {
-        $duplicateRoleAction = fn (): Action => Action::make('duplicateRole')
-            ->label('Duplicate')
-            ->icon('heroicon-o-document-duplicate')
-            ->requiresConfirmation()
-            ->modalHeading('Duplicate Role')
-            ->modalSubmitActionLabel('Duplicate')
-            ->form([
-                TextInput::make('name')
-                    ->label('Name')
-                    ->required(),
-            ])
-            ->action(function (Role $record, array $data) {
-                try {
-                    return DB::transaction(function () use ($record, $data) {
-                        $newRole = Role::create([
-                            'name' => $data['name'],
-                            'guard_name' => $record->guard_name,
-                        ]);
-
-                        $newRole->syncPermissions($record->permissions);
-
-                        Notification::make()
-                            ->title('Role duplicated successfully.')
-                            ->success()
-                            ->send();
-
-                        return redirect(EditRole::getUrl(['record' => $newRole]));
-                    });
-                } catch (Throwable $e) {
-                    Notification::make()
-                        ->title('Failed to duplicate role.')
-                        ->danger()
-                        ->send();
-                }
-            });
-
         return $table
             ->modifyQueryUsing(function (Builder $query) {
                 /** @var User $user */
@@ -135,7 +99,44 @@ class ListRoles extends ListRecords
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->actions([
-                $duplicateRoleAction(),
+                Action::make('duplicateRole')
+                    ->label('Duplicate')
+                    ->icon('heroicon-o-document-duplicate')
+                    ->requiresConfirmation()
+                    ->modalHeading('Duplicate Role')
+                    ->modalSubmitActionLabel('Duplicate')
+                    ->form([
+                        TextInput::make('name')
+                            ->label('Name')
+                            ->required(),
+                    ])
+                    ->action(function (Role $record, array $data) {
+                        try {
+                            DB::beginTransaction();
+
+                            $newRole = Role::create([
+                                'name' => $data['name'],
+                                'guard_name' => $record->guard_name,
+                            ]);
+
+                            $newRole->syncPermissions($record->permissions);
+
+                            DB::commit();
+
+                            Notification::make()
+                                ->title('Role duplicated successfully.')
+                                ->success()
+                                ->send();
+
+                            return redirect(EditRole::getUrl(['record' => $newRole]));
+                        } catch (Throwable $e) {
+                            DB::rollback();
+                            Notification::make()
+                                ->title('Failed to duplicate role.')
+                                ->danger()
+                                ->send();
+                        }
+                    }),
                 ViewAction::make(),
             ]);
     }
