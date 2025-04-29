@@ -95,6 +95,10 @@ class EngagementNotification extends Notification implements ShouldQueue, HasBef
 
     public function failed(?Throwable $exception): void
     {
+        if (app()->bound('sentry')) {
+            app('sentry')->captureException($exception);
+        }
+
         if (is_null($this->engagement->engagement_batch_id)) {
             $this->engagement->user->notify(new EngagementFailedNotification($this->engagement));
         }
