@@ -38,6 +38,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Tables
 
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\ExistingValuesSelectConstraint;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
@@ -120,6 +121,10 @@ class StudentsTable
                             ),
                         TextConstraint::make('holds')
                             ->icon('heroicon-m-exclamation-triangle'),
+                        ExistingValuesSelectConstraint::make('gender')
+                            ->label('Gender')
+                            ->icon('heroicon-m-user-circle')
+                            ->multiple(),
                         BooleanConstraint::make('sap')
                             ->label('SAP')
                             ->icon('heroicon-m-academic-cap')
