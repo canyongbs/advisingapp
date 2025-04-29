@@ -153,7 +153,7 @@ trait CanManagePromptLibrary
                                     function (Builder $query) {
                                         /** @var User $user */
                                         $user = auth()->user();
-                                        $teamUsers = $user?->teams->first()?->users;
+                                        $teamUsers = $user?->team?->users;
 
                                         if ($teamUsers) {
                                             $query->whereHas('user', function (Builder $query) use ($teamUsers) {
