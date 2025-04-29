@@ -1,0 +1,385 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^PHPDoc tag @var for variable \$relationship contains generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany but does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app-modules/audit/src/Filament/Actions/AuditDetachAction.php
+
+		-
+			message: '#^Class AdvisingApp\\Audit\\Overrides\\BelongsToMany extends generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany but does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app-modules/audit/src/Overrides/BelongsToMany.php
+
+		-
+			message: '#^Method AdvisingApp\\Authorization\\Models\\Role\:\:users\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app-modules/authorization/src/Models/Role.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\Prospect\\Models\\Prospect, \$this\(AdvisingApp\\Engagement\\Models\\EngagementFile\), covariant AdvisingApp\\Engagement\\Models\\EngagementFileEntities\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\Database\\Eloquent\\Relations\\MorphToMany supports only 2\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.moreTypes
+			count: 1
+			path: app-modules/engagement/src/Models/EngagementFile.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\StudentDataModel\\Models\\Student, \$this\(AdvisingApp\\Engagement\\Models\\EngagementFile\), covariant AdvisingApp\\Engagement\\Models\\EngagementFileEntities\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\Database\\Eloquent\\Relations\\MorphToMany supports only 2\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.moreTypes
+			count: 1
+			path: app-modules/engagement/src/Models/EngagementFile.php
+
+		-
+			message: '#^Method AdvisingApp\\Engagement\\Models\\EngagementFile\:\:prospects\(\) should return Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\Prospect\\Models\\Prospect, \$this\(AdvisingApp\\Engagement\\Models\\EngagementFile\), covariant AdvisingApp\\Engagement\\Models\\EngagementFileEntities\> but returns Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\Prospect\\Models\\Prospect, \$this\(AdvisingApp\\Engagement\\Models\\EngagementFile\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app-modules/engagement/src/Models/EngagementFile.php
+
+		-
+			message: '#^Method AdvisingApp\\Engagement\\Models\\EngagementFile\:\:students\(\) should return Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\StudentDataModel\\Models\\Student, \$this\(AdvisingApp\\Engagement\\Models\\EngagementFile\), covariant AdvisingApp\\Engagement\\Models\\EngagementFileEntities\> but returns Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\StudentDataModel\\Models\\Student, \$this\(AdvisingApp\\Engagement\\Models\\EngagementFile\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app-modules/engagement/src/Models/EngagementFile.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany\<AdvisingApp\\Form\\Models\\FormSubmission, \$this\(AdvisingApp\\Form\\Models\\FormField\), covariant AdvisingApp\\Form\\Models\\FormFieldSubmission\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany supports only 2\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.moreTypes
+			count: 1
+			path: app-modules/form/src/Models/FormField.php
+
+		-
+			message: '#^Method AdvisingApp\\Form\\Models\\FormField\:\:submissions\(\) should return Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany\<AdvisingApp\\Form\\Models\\FormSubmission, \$this\(AdvisingApp\\Form\\Models\\FormField\), covariant AdvisingApp\\Form\\Models\\FormFieldSubmission\> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany\<AdvisingApp\\Form\\Models\\FormSubmission, \$this\(AdvisingApp\\Form\\Models\\FormField\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app-modules/form/src/Models/FormField.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany\<AdvisingApp\\Form\\Models\\FormField, \$this\(AdvisingApp\\Form\\Models\\FormSubmission\), covariant AdvisingApp\\Form\\Models\\FormFieldSubmission\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany supports only 2\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.moreTypes
+			count: 1
+			path: app-modules/form/src/Models/FormSubmission.php
+
+		-
+			message: '#^Method AdvisingApp\\Form\\Models\\FormSubmission\:\:fields\(\) should return Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany\<AdvisingApp\\Form\\Models\\FormField, \$this\(AdvisingApp\\Form\\Models\\FormSubmission\), covariant AdvisingApp\\Form\\Models\\FormFieldSubmission\> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany\<AdvisingApp\\Form\\Models\\FormField, \$this\(AdvisingApp\\Form\\Models\\FormSubmission\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app-modules/form/src/Models/FormSubmission.php
+
+		-
+			message: '#^Method AdvisingApp\\Form\\Models\\Submission\:\:fields\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app-modules/form/src/Models/Submission.php
+
+		-
+			message: '#^Property AdvisingApp\\InAppCommunication\\Models\\IdeHelperTwilioConversationUser\:\:\$last_read_at \(Carbon\\CarbonImmutable\|null\) does not accept Illuminate\\Support\\Carbon\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: app-modules/in-app-communication/src/Filament/Pages/UserChat.php
+
+		-
+			message: '#^Property AdvisingApp\\InAppCommunication\\Models\\IdeHelperTwilioConversationUser\:\:\$first_unread_message_at \(Carbon\\CarbonImmutable\|null\) does not accept Carbon\\CarbonInterface\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: app-modules/in-app-communication/src/Jobs/NotifyConversationParticipant.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany\<App\\Models\\User, \$this\(AdvisingApp\\InAppCommunication\\Models\\TwilioConversation\), covariant AdvisingApp\\InAppCommunication\\Models\\TwilioConversationUser, string\> in PHPDoc tag @return specifies 4 template types, but class Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany supports only 2\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.moreTypes
+			count: 2
+			path: app-modules/in-app-communication/src/Models/TwilioConversation.php
+
+		-
+			message: '#^Method AdvisingApp\\InAppCommunication\\Models\\TwilioConversation\:\:participants\(\) should return Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany\<App\\Models\\User, \$this\(AdvisingApp\\InAppCommunication\\Models\\TwilioConversation\), covariant AdvisingApp\\InAppCommunication\\Models\\TwilioConversationUser, ''participant''\> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany\<App\\Models\\User, \$this\(AdvisingApp\\InAppCommunication\\Models\\TwilioConversation\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app-modules/in-app-communication/src/Models/TwilioConversation.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany\<AdvisingApp\\Team\\Models\\Team, \$this\(AdvisingApp\\Interaction\\Models\\Interaction\), covariant AdvisingApp\\Interaction\\Models\\InteractionConfidentialTeam\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany supports only 2\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.moreTypes
+			count: 1
+			path: app-modules/interaction/src/Models/Interaction.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany\<App\\Models\\User, \$this\(AdvisingApp\\Interaction\\Models\\Interaction\), covariant AdvisingApp\\Interaction\\Models\\InteractionConfidentialUser\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany supports only 2\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.moreTypes
+			count: 1
+			path: app-modules/interaction/src/Models/Interaction.php
+
+		-
+			message: '#^Method AdvisingApp\\Interaction\\Models\\Interaction\:\:confidentialAccessTeams\(\) should return Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany\<AdvisingApp\\Team\\Models\\Team, \$this\(AdvisingApp\\Interaction\\Models\\Interaction\), covariant AdvisingApp\\Interaction\\Models\\InteractionConfidentialTeam\> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany\<AdvisingApp\\Team\\Models\\Team, \$this\(AdvisingApp\\Interaction\\Models\\Interaction\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app-modules/interaction/src/Models/Interaction.php
+
+		-
+			message: '#^Method AdvisingApp\\Interaction\\Models\\Interaction\:\:confidentialAccessUsers\(\) should return Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany\<App\\Models\\User, \$this\(AdvisingApp\\Interaction\\Models\\Interaction\), covariant AdvisingApp\\Interaction\\Models\\InteractionConfidentialUser\> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany\<App\\Models\\User, \$this\(AdvisingApp\\Interaction\\Models\\Interaction\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app-modules/interaction/src/Models/Interaction.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\Prospect\\Models\\Prospect, \$this\(AdvisingApp\\Prospect\\Models\\Pipeline\), covariant AdvisingApp\\Prospect\\Models\\EducatablePipelineStage\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\Database\\Eloquent\\Relations\\MorphToMany supports only 2\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.moreTypes
+			count: 1
+			path: app-modules/prospect/src/Models/Pipeline.php
+
+		-
+			message: '#^Method AdvisingApp\\Prospect\\Models\\Pipeline\:\:educatablePipelineStages\(\) should return Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\Prospect\\Models\\Prospect, \$this\(AdvisingApp\\Prospect\\Models\\Pipeline\), covariant AdvisingApp\\Prospect\\Models\\EducatablePipelineStage\> but returns Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\Prospect\\Models\\Prospect, \$this\(AdvisingApp\\Prospect\\Models\\Pipeline\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app-modules/prospect/src/Models/Pipeline.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\Engagement\\Models\\EngagementFile, \$this\(AdvisingApp\\Prospect\\Models\\Prospect\), covariant AdvisingApp\\Engagement\\Models\\EngagementFileEntities\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\Database\\Eloquent\\Relations\\MorphToMany supports only 2\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.moreTypes
+			count: 1
+			path: app-modules/prospect/src/Models/Prospect.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\Prospect\\Models\\Pipeline\> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.lessTypes
+			count: 1
+			path: app-modules/prospect/src/Models/Prospect.php
+
+		-
+			message: '#^Method AdvisingApp\\Prospect\\Models\\Prospect\:\:educatablePipelineStages\(\) should return Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\Prospect\\Models\\Pipeline\> but returns Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\Prospect\\Models\\Pipeline, \$this\(AdvisingApp\\Prospect\\Models\\Prospect\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app-modules/prospect/src/Models/Prospect.php
+
+		-
+			message: '#^Method AdvisingApp\\Prospect\\Models\\Prospect\:\:engagementFiles\(\) should return Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\Engagement\\Models\\EngagementFile, \$this\(AdvisingApp\\Prospect\\Models\\Prospect\), covariant AdvisingApp\\Engagement\\Models\\EngagementFileEntities\> but returns Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\Engagement\\Models\\EngagementFile, \$this\(AdvisingApp\\Prospect\\Models\\Prospect\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app-modules/prospect/src/Models/Prospect.php
+
+		-
+			message: '#^Return type \(Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<App\\Models\\Tag, \$this\(AdvisingApp\\Prospect\\Models\\Prospect\)\>\) of method AdvisingApp\\Prospect\\Models\\Prospect\:\:tags\(\) should be compatible with return type \(Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<App\\Models\\Tag, covariant AdvisingApp\\Prospect\\Models\\Prospect\|AdvisingApp\\StudentDataModel\\Models\\Student, covariant App\\Models\\Taggable\>\) of method AdvisingApp\\StudentDataModel\\Models\\Contracts\\Educatable\:\:tags\(\)$#'
+			identifier: method.childReturnType
+			count: 1
+			path: app-modules/prospect/src/Models/Prospect.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<App\\Models\\Tag, covariant AdvisingApp\\Prospect\\Models\\Prospect\|AdvisingApp\\StudentDataModel\\Models\\Student, covariant App\\Models\\Taggable\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\Database\\Eloquent\\Relations\\MorphToMany supports only 2\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.moreTypes
+			count: 1
+			path: app-modules/student-data-model/src/Models/Contracts/Educatable.php
+
+		-
+			message: '#^Method AdvisingApp\\StudentDataModel\\Models\\Contracts\\Educatable\:\:careTeam\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\MorphToMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app-modules/student-data-model/src/Models/Contracts/Educatable.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\Engagement\\Models\\EngagementFile, \$this\(AdvisingApp\\StudentDataModel\\Models\\Student\), covariant AdvisingApp\\Engagement\\Models\\EngagementFileEntities\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\Database\\Eloquent\\Relations\\MorphToMany supports only 2\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.moreTypes
+			count: 1
+			path: app-modules/student-data-model/src/Models/Student.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<App\\Models\\Tag, \$this\(AdvisingApp\\StudentDataModel\\Models\\Student\), covariant App\\Models\\Taggable\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\Database\\Eloquent\\Relations\\MorphToMany supports only 2\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.moreTypes
+			count: 1
+			path: app-modules/student-data-model/src/Models/Student.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<App\\Models\\User, \$this\(AdvisingApp\\StudentDataModel\\Models\\Student\), covariant AdvisingApp\\CareTeam\\Models\\CareTeam\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\Database\\Eloquent\\Relations\\MorphToMany supports only 2\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.moreTypes
+			count: 1
+			path: app-modules/student-data-model/src/Models/Student.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<App\\Models\\User, \$this\(AdvisingApp\\StudentDataModel\\Models\\Student\), covariant AdvisingApp\\Notification\\Models\\Subscription\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\Database\\Eloquent\\Relations\\MorphToMany supports only 2\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.moreTypes
+			count: 1
+			path: app-modules/student-data-model/src/Models/Student.php
+
+		-
+			message: '#^Method AdvisingApp\\StudentDataModel\\Models\\Student\:\:careTeam\(\) should return Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<App\\Models\\User, \$this\(AdvisingApp\\StudentDataModel\\Models\\Student\), covariant AdvisingApp\\CareTeam\\Models\\CareTeam\> but returns Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<App\\Models\\User, \$this\(AdvisingApp\\StudentDataModel\\Models\\Student\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app-modules/student-data-model/src/Models/Student.php
+
+		-
+			message: '#^Method AdvisingApp\\StudentDataModel\\Models\\Student\:\:engagementFiles\(\) should return Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\Engagement\\Models\\EngagementFile, \$this\(AdvisingApp\\StudentDataModel\\Models\\Student\), covariant AdvisingApp\\Engagement\\Models\\EngagementFileEntities\> but returns Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\Engagement\\Models\\EngagementFile, \$this\(AdvisingApp\\StudentDataModel\\Models\\Student\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app-modules/student-data-model/src/Models/Student.php
+
+		-
+			message: '#^Method AdvisingApp\\StudentDataModel\\Models\\Student\:\:subscribedUsers\(\) should return Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<App\\Models\\User, \$this\(AdvisingApp\\StudentDataModel\\Models\\Student\), covariant AdvisingApp\\Notification\\Models\\Subscription\> but returns Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<App\\Models\\User, \$this\(AdvisingApp\\StudentDataModel\\Models\\Student\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app-modules/student-data-model/src/Models/Student.php
+
+		-
+			message: '#^Method AdvisingApp\\StudentDataModel\\Models\\Student\:\:tags\(\) should return Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<App\\Models\\Tag, \$this\(AdvisingApp\\StudentDataModel\\Models\\Student\), covariant App\\Models\\Taggable\> but returns Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<App\\Models\\Tag, \$this\(AdvisingApp\\StudentDataModel\\Models\\Student\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app-modules/student-data-model/src/Models/Student.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany\<AdvisingApp\\Survey\\Models\\SurveySubmission, \$this\(AdvisingApp\\Survey\\Models\\SurveyField\), covariant AdvisingApp\\Survey\\Models\\SurveyFieldSubmission\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany supports only 2\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.moreTypes
+			count: 1
+			path: app-modules/survey/src/Models/SurveyField.php
+
+		-
+			message: '#^Method AdvisingApp\\Survey\\Models\\SurveyField\:\:submissions\(\) should return Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany\<AdvisingApp\\Survey\\Models\\SurveySubmission, \$this\(AdvisingApp\\Survey\\Models\\SurveyField\), covariant AdvisingApp\\Survey\\Models\\SurveyFieldSubmission\> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany\<AdvisingApp\\Survey\\Models\\SurveySubmission, \$this\(AdvisingApp\\Survey\\Models\\SurveyField\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app-modules/survey/src/Models/SurveyField.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany\<AdvisingApp\\Survey\\Models\\SurveyField, \$this\(AdvisingApp\\Survey\\Models\\SurveySubmission\), covariant AdvisingApp\\Survey\\Models\\SurveyFieldSubmission\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany supports only 2\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.moreTypes
+			count: 1
+			path: app-modules/survey/src/Models/SurveySubmission.php
+
+		-
+			message: '#^Method AdvisingApp\\Survey\\Models\\SurveySubmission\:\:fields\(\) should return Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany\<AdvisingApp\\Survey\\Models\\SurveyField, \$this\(AdvisingApp\\Survey\\Models\\SurveySubmission\), covariant AdvisingApp\\Survey\\Models\\SurveyFieldSubmission\> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany\<AdvisingApp\\Survey\\Models\\SurveyField, \$this\(AdvisingApp\\Survey\\Models\\SurveySubmission\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app-modules/survey/src/Models/SurveySubmission.php
+
+		-
+			message: '#^Method AdvisingApp\\Team\\Models\\Team\:\:division\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app-modules/team/src/Models/Team.php
+
+		-
+			message: '#^Call to method getAttributeValue\(\) on an unknown class Squire\\Models\\Country\.$#'
+			identifier: class.notFound
+			count: 2
+			path: app/Filament/Pages/ManageImportSettings.php
+
+		-
+			message: '#^Call to method getKey\(\) on an unknown class Squire\\Models\\Country\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Filament/Pages/ManageImportSettings.php
+
+		-
+			message: '#^Call to static method query\(\) on an unknown class Squire\\Models\\Country\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Filament/Pages/ManageImportSettings.php
+
+		-
+			message: '#^Parameter \$country of anonymous function has invalid type Squire\\Models\\Country\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Filament/Pages/ManageImportSettings.php
+
+		-
+			message: '#^Method App\\Filament\\Widgets\\Notifications\:\:getNotifications\(\) return type with generic interface Illuminate\\Contracts\\Pagination\\Paginator does not specify its types\: TItem$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Filament/Widgets/Notifications.php
+
+		-
+			message: '#^Method App\\Models\\Authenticatable\:\:roles\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Authenticatable.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\Division\\Models\\Division, \$this\(App\\Models\\NotificationSetting\), covariant App\\Models\\NotificationSettingPivot\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\Database\\Eloquent\\Relations\\MorphToMany supports only 2\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.moreTypes
+			count: 1
+			path: app/Models/NotificationSetting.php
+
+		-
+			message: '#^Method App\\Models\\NotificationSetting\:\:divisions\(\) should return Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\Division\\Models\\Division, \$this\(App\\Models\\NotificationSetting\), covariant App\\Models\\NotificationSettingPivot\> but returns Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\Division\\Models\\Division, \$this\(App\\Models\\NotificationSetting\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/NotificationSetting.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\Prospect\\Models\\Prospect, \$this\(App\\Models\\Tag\), covariant App\\Models\\Taggable\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\Database\\Eloquent\\Relations\\MorphToMany supports only 2\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.moreTypes
+			count: 1
+			path: app/Models/Tag.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\StudentDataModel\\Models\\Student, \$this\(App\\Models\\Tag\), covariant App\\Models\\Taggable\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\Database\\Eloquent\\Relations\\MorphToMany supports only 2\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.moreTypes
+			count: 1
+			path: app/Models/Tag.php
+
+		-
+			message: '#^Method App\\Models\\Tag\:\:prospects\(\) should return Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\Prospect\\Models\\Prospect, \$this\(App\\Models\\Tag\), covariant App\\Models\\Taggable\> but returns Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\Prospect\\Models\\Prospect, \$this\(App\\Models\\Tag\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/Tag.php
+
+		-
+			message: '#^Method App\\Models\\Tag\:\:students\(\) should return Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\StudentDataModel\\Models\\Student, \$this\(App\\Models\\Tag\), covariant App\\Models\\Taggable\> but returns Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\StudentDataModel\\Models\\Student, \$this\(App\\Models\\Tag\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/Tag.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany\<AdvisingApp\\InAppCommunication\\Models\\TwilioConversation, \$this\(App\\Models\\User\), covariant AdvisingApp\\InAppCommunication\\Models\\TwilioConversationUser, string\> in PHPDoc tag @return specifies 4 template types, but class Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany supports only 2\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.moreTypes
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\Prospect\\Models\\Prospect, \$this\(App\\Models\\User\), covariant AdvisingApp\\CareTeam\\Models\\CareTeam\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\Database\\Eloquent\\Relations\\MorphToMany supports only 2\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.moreTypes
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\Prospect\\Models\\Prospect, \$this\(App\\Models\\User\), covariant AdvisingApp\\Notification\\Models\\Subscription\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\Database\\Eloquent\\Relations\\MorphToMany supports only 2\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.moreTypes
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\StudentDataModel\\Models\\Student, \$this\(App\\Models\\User\), covariant AdvisingApp\\CareTeam\\Models\\CareTeam\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\Database\\Eloquent\\Relations\\MorphToMany supports only 2\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.moreTypes
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\StudentDataModel\\Models\\Student, \$this\(App\\Models\\User\), covariant AdvisingApp\\Notification\\Models\\Subscription\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\Database\\Eloquent\\Relations\\MorphToMany supports only 2\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.moreTypes
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:conversations\(\) should return Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany\<AdvisingApp\\InAppCommunication\\Models\\TwilioConversation, \$this\(App\\Models\\User\), covariant AdvisingApp\\InAppCommunication\\Models\\TwilioConversationUser, ''participant''\> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany\<AdvisingApp\\InAppCommunication\\Models\\TwilioConversation, \$this\(App\\Models\\User\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:prospectCareTeams\(\) should return Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\Prospect\\Models\\Prospect, \$this\(App\\Models\\User\), covariant AdvisingApp\\CareTeam\\Models\\CareTeam\> but returns Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\Prospect\\Models\\Prospect, \$this\(App\\Models\\User\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:prospectSubscriptions\(\) should return Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\Prospect\\Models\\Prospect, \$this\(App\\Models\\User\), covariant AdvisingApp\\Notification\\Models\\Subscription\> but returns Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\Prospect\\Models\\Prospect, \$this\(App\\Models\\User\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:studentCareTeams\(\) should return Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\StudentDataModel\\Models\\Student, \$this\(App\\Models\\User\), covariant AdvisingApp\\CareTeam\\Models\\CareTeam\> but returns Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\StudentDataModel\\Models\\Student, \$this\(App\\Models\\User\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:studentSubscriptions\(\) should return Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\StudentDataModel\\Models\\Student, \$this\(App\\Models\\User\), covariant AdvisingApp\\Notification\\Models\\Subscription\> but returns Illuminate\\Database\\Eloquent\\Relations\\MorphToMany\<AdvisingApp\\StudentDataModel\\Models\\Student, \$this\(App\\Models\\User\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/User.php
