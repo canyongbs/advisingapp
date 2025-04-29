@@ -38,11 +38,6 @@ namespace App\Settings;
 
 use Spatie\LaravelSettings\Settings;
 
-/**
- * @property string $account_sid
- * @property string $auth_token
- * @property string $from_number
- */
 abstract class IntegrationSettings extends Settings
 {
     public bool $is_enabled = false;

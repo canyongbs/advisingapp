@@ -53,7 +53,7 @@ return new class () extends Migration {
             $table->integer('cum_att');
             $table->integer('cum_ern');
             $table->integer('pct_ern');
-            $table->float('cum_gpa', 3);
+            $table->float('cum_gpa', 4);
             $table->timestampTz('max_dt');
         });
     }
