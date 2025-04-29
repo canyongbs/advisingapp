@@ -60,11 +60,11 @@ class SyncTenantSmartPrompts
                     $prompt = Prompt::find($smartPrompt['id']) ?? new Prompt();
 
                     $prompt->id = $smartPrompt['id'];
-                    $prompt->title = $smartPrompt['title']; /** @phpstan-ignore property.notFound */
-                    $prompt->description = $smartPrompt['description'] ?? null; /** @phpstan-ignore property.notFound */
-                    $prompt->prompt = $smartPrompt['prompt']; /** @phpstan-ignore property.notFound */
-                    $prompt->type_id = $promptType->getKey(); /** @phpstan-ignore property.notFound */
-                    $prompt->is_smart = true; /** @phpstan-ignore property.notFound */
+                    $prompt->title = $smartPrompt['title'];
+                    $prompt->description = $smartPrompt['description'] ?? null;
+                    $prompt->prompt = $smartPrompt['prompt'];
+                    $prompt->type_id = $promptType->getKey();
+                    $prompt->is_smart = true;
                     $prompt->save();
 
                     $promptIds[] = $smartPrompt['id'];

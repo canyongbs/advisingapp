@@ -34,20 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Widgets;
+namespace AdvisingApp\Notification\Tests\Fixtures;
 
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Task\Filament\Widgets\TasksWidget;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Notification;
 
-class ProspectTasks extends TasksWidget
+class TestDualNotification extends Notification implements ShouldQueue
 {
-    public function title(): string
+    use Queueable;
+
+    /**
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
     {
-        return 'My Tasks for Prospects';
+        return ['mail', 'sms'];
     }
 
-    public function concern(): string
+    public function toMail(object $notifiable): MailMessage
     {
-        return Prospect::class;
+        return MailMessage::make()
+            ->subject('Test Subject')
+            ->greeting('Test Greeting')
+            ->content('This is a test email');
+    }
+
+    public function toSms(object $notifiable): TwilioMessage
+    {
+        return TwilioMessage::make($notifiable)
+            ->content('This is a test');
     }
 }

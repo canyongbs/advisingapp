@@ -69,7 +69,7 @@
         "guzzlehttp/guzzle": "^7.2",
         "internachi/modular": "^2.2",
         "itsgoingd/clockwork": "^5.2",
-        "kirschbaum-development/eloquent-power-joins": "^3.5",
+        "kirschbaum-development/eloquent-power-joins": "^4.0",
         "laravel/framework": "^11.0",
         "laravel/octane": "^2.8.3",
         "laravel/pennant": "^1.10",

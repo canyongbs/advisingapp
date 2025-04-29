@@ -45,7 +45,6 @@ use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\EmailMessageEvent;
 use AdvisingApp\Notification\Models\SmsMessageEvent;
 use AdvisingApp\Timeline\Models\Timeline;
-use App\Features\EngagementResponseStatusFeature;
 use Filament\Infolists\Components\Fieldset as InfolistFieldset;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Section;
@@ -179,7 +178,6 @@ class EngagementsRelationManager extends RelationManager
                         EngagementResponse::class => $record->timelineable->status,
                         default => ''
                     })
-                    ->visible(EngagementResponseStatusFeature::active())
                     ->badge(),
                 TextColumn::make('type')
                     ->getStateUsing(function (Timeline $record) {
@@ -199,14 +197,10 @@ class EngagementsRelationManager extends RelationManager
             ->actions([
                 ViewAction::make()
                     ->modalHeading(function (Timeline $record): Htmlable {
-                        if (EngagementResponseStatusFeature::active()) {
-                            $status = match ($record->timelineable::class) {
-                                EngagementResponse::class => $record->timelineable->status->getLabel(),
-                                default => ''
-                            };
-                        } else {
-                            $status = '';
-                        }
+                        $status = match ($record->timelineable::class) {
+                            EngagementResponse::class => $record->timelineable->status->getLabel(),
+                            default => ''
+                        };
 
                         return new HtmlString(view('student-data-model::components.filament.resources.educatable-resource.view-educatable.engagement-modal-header', ['record' => $record, 'status' => $status]));
                     })
@@ -238,7 +232,7 @@ class EngagementsRelationManager extends RelationManager
                                         ->send();
                                 }
                             )
-                            ->visible(fn (Timeline $record): bool => EngagementResponseStatusFeature::active() && $record->timelineable instanceof EngagementResponse),
+                            ->visible(fn (Timeline $record): bool => $record->timelineable instanceof EngagementResponse),
                     ]),
             ])
             ->filters([
