@@ -38,7 +38,9 @@ namespace AdvisingApp\Timeline\Timelines;
 
 use AdvisingApp\Engagement\Filament\Resources\EngagementResponseResource\Actions\EngagementResponseViewAction;
 use AdvisingApp\Engagement\Models\EngagementResponse;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Timeline\Models\CustomTimeline;
+use Exception;
 use Filament\Actions\ViewAction;
 
 // TODO Decide where these belong - might want to keep these in the context of the original module
@@ -50,7 +52,11 @@ class EngagementResponseTimeline extends CustomTimeline
 
     public function icon(): string
     {
-        return 'heroicon-o-arrow-small-left';
+        return match ($this->engagementResponse->getDeliveryMethod()) {
+            NotificationChannel::Email => 'heroicon-o-envelope',
+            NotificationChannel::Sms => 'heroicon-o-chat-bubble-left',
+            default => throw new Exception('Unsupported delivery method: ' . $this->engagementResponse->getDeliveryMethod()->value),
+        };
     }
 
     public function sortableBy(): string

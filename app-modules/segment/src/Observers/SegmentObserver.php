@@ -36,41 +36,12 @@
 
 namespace AdvisingApp\Segment\Observers;
 
-use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Models\Segment;
-use App\Models\User;
-use Illuminate\Support\Facades\Cache;
 
 class SegmentObserver
 {
     public function creating(Segment $segment): void
     {
         $segment->user()->associate($segment->user ?? auth()->user());
-    }
-
-    public function created(Segment $segment): void
-    {
-        /** @var ?User $user */
-        $user = auth()->user();
-
-        if ($user) {
-            Cache::tags([match ($segment->model) {
-                SegmentModel::Prospect => "user-{$user->getKey()}-prospect-segments",
-                SegmentModel::Student => "user-{$user->getKey()}-student-segments",
-            }])->flush();
-        }
-    }
-
-    public function deleted(Segment $segment): void
-    {
-        /** @var ?User $user */
-        $user = auth()->user();
-
-        if ($user) {
-            Cache::tags([match ($segment->model) {
-                SegmentModel::Prospect => "user-{$user->getKey()}-prospect-segments",
-                SegmentModel::Student => "user-{$user->getKey()}-student-segments",
-            }])->flush();
-        }
     }
 }

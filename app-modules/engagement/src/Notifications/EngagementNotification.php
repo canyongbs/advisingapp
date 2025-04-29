@@ -50,7 +50,6 @@ use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
-use App\Features\EngagementResponseStatusFeature;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Model;
@@ -115,24 +114,14 @@ class EngagementNotification extends Notification implements ShouldQueue, HasBef
             && $twilioSettings->is_demo_mode_enabled && $twilioSettings->is_demo_auto_reply_mode_enabled
             && $this->engagement->recipient instanceof Model
         ) {
-            if (EngagementResponseStatusFeature::active()) {
-                EngagementResponse::create([
-                    'type' => EngagementResponseType::Sms,
-                    'sender_id' => $this->engagement->recipient->getKey(),
-                    'sender_type' => $this->engagement->recipient->getMorphClass(),
-                    'content' => 'Thank you for your message. Will get back to you shortly.',
-                    'sent_at' => now()->addSeconds(2),
-                    'status' => EngagementResponseStatus::New,
-                ]);
-            } else {
-                EngagementResponse::create([
-                    'type' => EngagementResponseType::Sms,
-                    'sender_id' => $this->engagement->recipient->getKey(),
-                    'sender_type' => $this->engagement->recipient->getMorphClass(),
-                    'content' => 'Thank you for your message. Will get back to you shortly.',
-                    'sent_at' => now()->addSeconds(2),
-                ]);
-            }
+            EngagementResponse::create([
+                'type' => EngagementResponseType::Sms,
+                'sender_id' => $this->engagement->recipient->getKey(),
+                'sender_type' => $this->engagement->recipient->getMorphClass(),
+                'content' => 'Thank you for your message. Will get back to you shortly.',
+                'sent_at' => now()->addSeconds(2),
+                'status' => EngagementResponseStatus::New,
+            ]);
         }
 
         if (! $this->engagement->engagementBatch) {
