@@ -12258,70 +12258,70 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Method App\\\\Models\\\\User\\:\\:cases\\(\\) return type with generic class Staudenmeir\\\\EloquentHasManyDeep\\\\HasManyDeep does not specify its types\\: TRelatedModel, TDeclaringModel$#',
     'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Models\\\\User\\:\\:confirmMultifactorAuthentication\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
     'count' => 1,
     'path' => __DIR__ . '/app/Models/User.php',
 ];
-$ignoreErrors[] = [
-    'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student, \\$this\\(App\\\\Models\\\\User\\), covariant AdvisingApp\\\\CareTeam\\\\Models\\\\CareTeam\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
-    'identifier' => 'generics.moreTypes',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:confirmMultifactorAuthentication\\(\\) has no return type specified\\.$#',
+    'identifier' => 'missingType.return',
     'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student, \\$this\\(App\\\\Models\\\\User\\), covariant AdvisingApp\\\\Notification\\\\Models\\\\Subscription\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
     'identifier' => 'generics.moreTypes',
     'count' => 1,
     'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Models\\\\User\\:\\:allowedOperators\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
+    'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student, \\$this\\(App\\\\Models\\\\User\\), covariant AdvisingApp\\\\CareTeam\\\\Models\\\\CareTeam\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
     'path' => __DIR__ . '/app/Models/User.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method App\\\\Models\\\\User\\:\\:confirmMultifactorAuthentication\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Models\\\\User\\:\\:conversations\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\InAppCommunication\\\\Models\\\\TwilioConversation, \\$this\\(App\\\\Models\\\\User\\), covariant AdvisingApp\\\\InAppCommunication\\\\Models\\\\TwilioConversationUser, \'participant\'\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\InAppCommunication\\\\Models\\\\TwilioConversation, \\$this\\(App\\\\Models\\\\User\\)\\>\\.$#',
-    'identifier' => 'return.type',
-    'count' => 1,
+    'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student, \\$this\\(App\\\\Models\\\\User\\), covariant AdvisingApp\\\\Notification\\\\Models\\\\Subscription\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+    'identifier' => 'generics.moreTypes',
     'path' => __DIR__ . '/app/Models/User.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method App\\\\Models\\\\User\\:\\:disableMultifactorAuthentication\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:allowedOperators\\(\\) has no return type specified\\.$#',
     'message' => '#^Method App\\\\Models\\\\User\\:\\:enableMultifactorAuthentication\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
     'count' => 1,
     'path' => __DIR__ . '/app/Models/User.php',
 ];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Models\\\\User\\:\\:generateRecoveryCodes\\(\\) has no return type specified\\.$#',
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:confirmMultifactorAuthentication\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method App\\\\Models\\\\User\\:\\:permissionsFromRoles\\(\\) return type with generic class Staudenmeir\\\\EloquentHasManyDeep\\\\HasManyDeep does not specify its types\\: TRelatedModel, TDeclaringModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app/Models/User.php',
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:conversations\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\InAppCommunication\\\\Models\\\\TwilioConversation, \\$this\\(App\\\\Models\\\\User\\), covariant AdvisingApp\\\\InAppCommunication\\\\Models\\\\TwilioConversationUser, \'participant\'\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\InAppCommunication\\\\Models\\\\TwilioConversation, \\$this\\(App\\\\Models\\\\User\\)\\>\\.$#',
+    'identifier' => 'return.type',
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:multifactorRecoveryCodes\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Casts\\\\Attribute does not specify its types\\: TGet, TSet$#',
+    'identifier' => 'missingType.generics',
+    'count' => 1,
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:disableMultifactorAuthentication\\(\\) has no return type specified\\.$#',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Models/User.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:orderableColumns\\(\\) has no return type specified\\.$#',
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:enableMultifactorAuthentication\\(\\) has no return type specified\\.$#',
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:processGlobalSearch\\(\\) has no return type specified\\.$#',
+    'identifier' => 'missingType.return',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Models/User.php',
+];
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:generateRecoveryCodes\\(\\) has no return type specified\\.$#',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:processQuery\\(\\) has no return type specified\\.$#',
+    'identifier' => 'missingType.return',
+    'count' => 1,
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:permissionsFromRoles\\(\\) return type with generic class Staudenmeir\\\\EloquentHasManyDeep\\\\HasManyDeep does not specify its types\\: TRelatedModel, TDeclaringModel$#',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Models/User.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:processQuery\\(\\) has parameter \\$query with no type specified\\.$#',
     'message' => '#^Method App\\\\Models\\\\User\\:\\:processGlobalSearch\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
     'count' => 1,
@@ -12330,112 +12330,112 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Method App\\\\Models\\\\User\\:\\:multifactorRecoveryCodes\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Casts\\\\Attribute does not specify its types\\: TGet, TSet$#',
     'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Models\\\\User\\:\\:newMorphToMany\\(\\) return type with generic class AdvisingApp\\\\Audit\\\\Overrides\\\\MorphToMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Models\\\\User\\:\\:orderableColumns\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Models\\\\User\\:\\:processGlobalSearch\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Models\\\\User\\:\\:processGlobalSearch\\(\\) has parameter \\$data with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Models\\\\User\\:\\:processQuery\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Models\\\\User\\:\\:processQuery\\(\\) has parameter \\$data with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Models\\\\User\\:\\:processQuery\\(\\) has parameter \\$query with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Models\\\\User\\:\\:scopeAdmins\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Models\\\\User\\:\\:scopeAdvancedFilter\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Models\\\\User\\:\\:prospectSubscriptions\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Prospect\\\\Models\\\\Prospect, \\$this\\(App\\\\Models\\\\User\\), covariant AdvisingApp\\\\Notification\\\\Models\\\\Subscription\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Prospect\\\\Models\\\\Prospect, \\$this\\(App\\\\Models\\\\User\\)\\>\\.$#',
     'identifier' => 'return.type',
     'count' => 1,
     'path' => __DIR__ . '/app/Models/User.php',
 ];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Models\\\\User\\:\\:reGenerateRecoveryCodes\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:newMorphToMany\\(\\) return type with generic class AdvisingApp\\\\Audit\\\\Overrides\\\\MorphToMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
+    'identifier' => 'missingType.generics',
     'message' => '#^Method App\\\\Models\\\\User\\:\\:scopeAdvancedFilter\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
     'count' => 1,
     'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Models\\\\User\\:\\:scopeAdvancedFilter\\(\\) has parameter \\$data with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/User.php',
-];
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:orderableColumns\\(\\) has no return type specified\\.$#',
+    'identifier' => 'missingType.return',
 $ignoreErrors[] = [
     'message' => '#^Method App\\\\Models\\\\User\\:\\:scopeAdvancedFilter\\(\\) has parameter \\$query with no type specified\\.$#',
     'identifier' => 'missingType.parameter',
     'count' => 1,
-    'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Models\\\\User\\:\\:studentCareTeams\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student, \\$this\\(App\\\\Models\\\\User\\), covariant AdvisingApp\\\\CareTeam\\\\Models\\\\CareTeam\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student, \\$this\\(App\\\\Models\\\\User\\)\\>\\.$#',
-    'identifier' => 'return.type',
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:processGlobalSearch\\(\\) has no return type specified\\.$#',
     'count' => 1,
     'path' => __DIR__ . '/app/Models/User.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method App\\\\Models\\\\User\\:\\:studentSubscriptions\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student, \\$this\\(App\\\\Models\\\\User\\), covariant AdvisingApp\\\\Notification\\\\Models\\\\Subscription\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student, \\$this\\(App\\\\Models\\\\User\\)\\>\\.$#',
-    'identifier' => 'return.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:processGlobalSearch\\(\\) has parameter \\$data with no type specified\\.$#',
     'message' => '#^Method App\\\\Models\\\\User\\:\\:whiteListColumns\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
     'count' => 1,
     'path' => __DIR__ . '/app/Models/User.php',
 ];
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:processQuery\\(\\) has no return type specified\\.$#',
+    'identifier' => 'missingType.return',
+    'message' => '#^Strict comparison using \\!\\=\\= between \\*NEVER\\* and string will always evaluate to true\\.$#',
+    'identifier' => 'notIdentical.alwaysTrue',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Models/User.php',
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:processQuery\\(\\) has parameter \\$data with no type specified\\.$#',
+    'identifier' => 'missingType.parameter',
 $ignoreErrors[] = [
+    'message' => '#^Property App\\\\Multitenancy\\\\Exceptions\\\\TenantAppKeyIsNull\\:\\:\\$message has no type specified\\.$#',
+    'identifier' => 'missingType.property',
+    'count' => 1,
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:processQuery\\(\\) has parameter \\$query with no type specified\\.$#',
+    'identifier' => 'missingType.parameter',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Multitenancy\\\\Http\\\\Middleware\\\\NeedsTenant\\:\\:handleInvalidRequest\\(\\) has no return type specified\\.$#',
+    'identifier' => 'missingType.return',
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:scopeAdmins\\(\\) has no return type specified\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Multitenancy/Listeners/SetSentryTenantTag.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Multitenancy\\\\Tasks\\\\PrefixCacheTask\\:\\:setCachePrefix\\(\\) has no return type specified\\.$#',
+    'identifier' => 'missingType.return',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Multitenancy/Tasks/PrefixCacheTask.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:prospectSubscriptions\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Prospect\\\\Models\\\\Prospect, \\$this\\(App\\\\Models\\\\User\\), covariant AdvisingApp\\\\Notification\\\\Models\\\\Subscription\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Prospect\\\\Models\\\\Prospect, \\$this\\(App\\\\Models\\\\User\\)\\>\\.$#',
+    'identifier' => 'return.type',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Multitenancy/Tasks/SwitchAppName.php',
+];
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:reGenerateRecoveryCodes\\(\\) has no return type specified\\.$#',
+    'identifier' => 'missingType.return',
+    'message' => '#^Method App\\\\Multitenancy\\\\Tasks\\\\SwitchAppUrl\\:\\:setAppUrl\\(\\) has no return type specified\\.$#',
+    'identifier' => 'missingType.return',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Multitenancy/Tasks/SwitchAppUrl.php',
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:scopeAdvancedFilter\\(\\) has no return type specified\\.$#',
+    'identifier' => 'missingType.return',
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property Spatie\\\\Multitenancy\\\\Models\\\\Tenant\\:\\:\\$domain\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:scopeAdvancedFilter\\(\\) has parameter \\$data with no type specified\\.$#',
+    'identifier' => 'missingType.parameter',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property Spatie\\\\Multitenancy\\\\Models\\\\Tenant\\:\\:\\$config\\.$#',
+    'identifier' => 'property.notFound',
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:scopeAdvancedFilter\\(\\) has parameter \\$query with no type specified\\.$#',
+    'identifier' => 'missingType.parameter',
+    'path' => __DIR__ . '/app/Observers/UserObserver.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Overrides\\\\LaravelSqsExtended\\\\SqsDiskConnector\\:\\:connect\\(\\) has parameter \\$config with no value type specified in iterable type array\\.$#',
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:studentCareTeams\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student, \\$this\\(App\\\\Models\\\\User\\), covariant AdvisingApp\\\\CareTeam\\\\Models\\\\CareTeam\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student, \\$this\\(App\\\\Models\\\\User\\)\\>\\.$#',
+    'identifier' => 'return.type',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Multitenancy/Tasks/SwitchTenantDatabasesTask.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:studentSubscriptions\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student, \\$this\\(App\\\\Models\\\\User\\), covariant AdvisingApp\\\\Notification\\\\Models\\\\Subscription\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student, \\$this\\(App\\\\Models\\\\User\\)\\>\\.$#',
+    'identifier' => 'return.type',
+    'identifier' => 'return.missing',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Overrides/LaravelSqsExtended/SqsDiskQueue.php',
+];
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:whiteListColumns\\(\\) has no return type specified\\.$#',
+    'identifier' => 'missingType.return',
+    'message' => '#^Negated boolean expression is always false\\.$#',
+    'identifier' => 'booleanNot.alwaysFalse',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Overrides/LaravelSqsExtended/SqsDiskQueue.php',
     'message' => '#^PHPDoc tag @return contains generic type AdvisingApp\\\\Audit\\\\Overrides\\\\BelongsToMany\\<AdvisingApp\\\\Consent\\\\Models\\\\ConsentAgreement, \\$this\\(App\\\\Models\\\\User\\)\\> but class AdvisingApp\\\\Audit\\\\Overrides\\\\BelongsToMany is not generic\\.$#',
     'identifier' => 'generics.notGeneric',
     'count' => 1,
@@ -12488,17 +12488,17 @@ $ignoreErrors[] = [
     'identifier' => 'property.notFound',
     'count' => 1,
     'path' => __DIR__ . '/app/Multitenancy/Tasks/SwitchAppKey.php',
+    'path' => __DIR__ . '/app/Support/FilterQueryBuilder.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Spatie\\\\Multitenancy\\\\Models\\\\Tenant\\:\\:\\$config\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
+    'message' => '#^Method App\\\\Support\\\\FilterQueryBuilder\\:\\:makeFilter\\(\\) has no return type specified\\.$#',
+    'identifier' => 'missingType.return',
     'path' => __DIR__ . '/app/Multitenancy/Tasks/SwitchAppName.php',
+    'identifier' => 'missingType.parameter',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Support/FilterQueryBuilder.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Spatie\\\\Multitenancy\\\\Models\\\\Tenant\\:\\:\\$domain\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
     'path' => __DIR__ . '/app/Multitenancy/Tasks/SwitchAppUrl.php',
 ];
 $ignoreErrors[] = [
@@ -12506,23 +12506,23 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.return',
     'count' => 1,
     'path' => __DIR__ . '/app/Multitenancy/Tasks/SwitchAppUrl.php',
-];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Spatie\\\\Multitenancy\\\\Models\\\\Tenant\\:\\:\\$config\\.$#',
-    'identifier' => 'property.notFound',
+    'message' => '#^Method App\\\\Support\\\\FilterQueryBuilder\\:\\:makeOrder\\(\\) has parameter \\$query with no type specified\\.$#',
+    'identifier' => 'missingType.parameter',
     'count' => 1,
+    'path' => __DIR__ . '/app/Support/FilterQueryBuilder.php',
     'path' => __DIR__ . '/app/Multitenancy/Tasks/SwitchMailTask.php',
+    'path' => __DIR__ . '/app/Support/FilterQueryBuilder.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Spatie\\\\Multitenancy\\\\Models\\\\Tenant\\:\\:\\$domain\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
+    'message' => '#^Property App\\\\Support\\\\FilterQueryBuilder\\:\\:\\$table has no type specified\\.$#',
+    'identifier' => 'missingType.property',
     'path' => __DIR__ . '/app/Multitenancy/Tasks/SwitchMailTask.php',
+    'identifier' => 'parameter.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app/View/Components/SelectList.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Spatie\\\\Multitenancy\\\\Models\\\\Tenant\\:\\:\\$config\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
     'path' => __DIR__ . '/app/Multitenancy/Tasks/SwitchS3FilesystemTask.php',
 ];
 $ignoreErrors[] = [
@@ -12624,10 +12624,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Method App\\\\Support\\\\FilterQueryBuilder\\:\\:apply\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Support/FilterQueryBuilder.php',
-];
-$ignoreErrors[] = [
     'message' => '#^PHPDoc tag @var with type Filament\\\\Forms\\\\Components\\\\Toggle is not subtype of native type \\$this\\(App\\\\Providers\\\\FilamentServiceProvider\\)\\.$#',
     'identifier' => 'varTag.nativeType',
     'count' => 1,
@@ -12636,28 +12632,11 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Method App\\\\Support\\\\FilterQueryBuilder\\:\\:apply\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Support/FilterQueryBuilder.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method App\\\\Support\\\\FilterQueryBuilder\\:\\:apply\\(\\) has parameter \\$data with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Support/FilterQueryBuilder.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method App\\\\Support\\\\FilterQueryBuilder\\:\\:apply\\(\\) has parameter \\$query with no type specified\\.$#',
     'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Support/FilterQueryBuilder.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method App\\\\Support\\\\FilterQueryBuilder\\:\\:contains\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Support/FilterQueryBuilder.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method App\\\\Support\\\\FilterQueryBuilder\\:\\:contains\\(\\) has parameter \\$filter with no type specified\\.$#',
     'identifier' => 'missingType.parameter',
     'count' => 1,
@@ -12838,10 +12817,3 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/tests/Helpers.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Pest\\\\PendingCalls\\\\TestCall\\:\\:expect\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/tests/Tenant/Unit/ArchTest.php',
-];
-
-return ['parameters' => ['ignoreErrors' => $ignoreErrors]];
