@@ -78,12 +78,12 @@ class AdminPanelProvider extends PanelProvider
     {
         parent::register();
 
-        Field::configureUsing(fn($field) => $field->translateLabel());
-        Entry::configureUsing(fn($entry) => $entry->translateLabel());
-        Column::configureUsing(fn($column) => $column->translateLabel());
-        ExportAction::configureUsing(fn(ExportAction $action) => $action->maxRows(100000));
-        ImportAction::configureUsing(fn(ImportAction $action) => $action->maxRows(100000));
-        TiptapEditor::configureUsing(fn(TiptapEditor $editor) => $editor->gridLayouts([
+        Field::configureUsing(fn ($field) => $field->translateLabel());
+        Entry::configureUsing(fn ($entry) => $entry->translateLabel());
+        Column::configureUsing(fn ($column) => $column->translateLabel());
+        ExportAction::configureUsing(fn (ExportAction $action) => $action->maxRows(100000));
+        ImportAction::configureUsing(fn (ImportAction $action) => $action->maxRows(100000));
+        TiptapEditor::configureUsing(fn (TiptapEditor $editor) => $editor->gridLayouts([
             'two-columns',
             'three-columns',
             'four-columns',
@@ -185,7 +185,7 @@ class AdminPanelProvider extends PanelProvider
             ->userMenuItems([
                 MenuItem::make()
                     ->label('Profile Settings')
-                    ->url(fn() => EditProfile::getUrl())
+                    ->url(fn () => EditProfile::getUrl())
                     ->icon('heroicon-s-cog-6-tooth'),
                 MenuItem::make()
                     ->label('About')
@@ -212,14 +212,14 @@ class AdminPanelProvider extends PanelProvider
                         return $themeSettings->is_support_url_enabled && ! empty($themeSettings->support_url);
                     }),
             ])
-            ->colors(fn(ThemeSettings $themeSettings): array => array_merge(config('default-colors'), $themeSettings->color_overrides))
+            ->colors(fn (ThemeSettings $themeSettings): array => array_merge(config('default-colors'), $themeSettings->color_overrides))
             ->renderHook(
                 'panels::scripts.before',
-                fn() => view('filament.scripts.scroll-sidebar-to-active-menu-item'),
+                fn () => view('filament.scripts.scroll-sidebar-to-active-menu-item'),
             )
             ->renderHook(
                 'panels::head.end',
-                fn(ThemeSettings $themeSettings) => ($themeSettings->url) ? view('filament.layout.theme', ['url' => $themeSettings->url]) : null,
+                fn (ThemeSettings $themeSettings) => ($themeSettings->url) ? view('filament.layout.theme', ['url' => $themeSettings->url]) : null,
             )
             ->bootUsing(function (Panel $panel) {
                 if (! Tenant::current()) {
@@ -230,7 +230,7 @@ class AdminPanelProvider extends PanelProvider
             })
             ->renderHook(
                 PanelsRenderHook::BODY_END,
-                fn() => view('components.about-modal'),
+                fn () => view('components.about-modal'),
             );
     }
 
