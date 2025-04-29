@@ -3850,6 +3850,18 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/app-modules/engagement/src/Models/EngagementBatch.php',
 ];
 $ignoreErrors[] = [
+	'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Prospect\\\\Models\\\\Prospect, \\$this\\(AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFile\\), covariant AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFileEntities\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+	'identifier' => 'generics.moreTypes',
+	'count' => 1,
+	'path' => __DIR__ . '/app-modules/engagement/src/Models/EngagementFile.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student, \\$this\\(AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFile\\), covariant AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFileEntities\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+	'identifier' => 'generics.moreTypes',
+	'count' => 1,
+	'path' => __DIR__ . '/app-modules/engagement/src/Models/EngagementFile.php',
+];
+$ignoreErrors[] = [
 	'message' => '#^Method AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFile\\:\\:createdBy\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo does not specify its types\\: TRelatedModel, TDeclaringModel$#',
 	'identifier' => 'missingType.generics',
 	'count' => 1,
@@ -3862,8 +3874,20 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/app-modules/engagement/src/Models/EngagementFile.php',
 ];
 $ignoreErrors[] = [
+	'message' => '#^Method AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFile\\:\\:prospects\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Prospect\\\\Models\\\\Prospect, \\$this\\(AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFile\\), covariant AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFileEntities\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Prospect\\\\Models\\\\Prospect, \\$this\\(AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFile\\)\\>\\.$#',
+	'identifier' => 'return.type',
+	'count' => 1,
+	'path' => __DIR__ . '/app-modules/engagement/src/Models/EngagementFile.php',
+];
+$ignoreErrors[] = [
 	'message' => '#^Method AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFile\\:\\:prunable\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
 	'identifier' => 'missingType.generics',
+	'count' => 1,
+	'path' => __DIR__ . '/app-modules/engagement/src/Models/EngagementFile.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Method AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFile\\:\\:students\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student, \\$this\\(AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFile\\), covariant AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFileEntities\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student, \\$this\\(AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFile\\)\\>\\.$#',
+	'identifier' => 'return.type',
 	'count' => 1,
 	'path' => __DIR__ . '/app-modules/engagement/src/Models/EngagementFile.php',
 ];
@@ -4726,9 +4750,33 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/app-modules/form/src/Models/FormEmailAutoReply.php',
 ];
 $ignoreErrors[] = [
+	'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\Form\\\\Models\\\\FormSubmission, \\$this\\(AdvisingApp\\\\Form\\\\Models\\\\FormField\\), covariant AdvisingApp\\\\Form\\\\Models\\\\FormFieldSubmission\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+	'identifier' => 'generics.moreTypes',
+	'count' => 1,
+	'path' => __DIR__ . '/app-modules/form/src/Models/FormField.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Method AdvisingApp\\\\Form\\\\Models\\\\FormField\\:\\:submissions\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\Form\\\\Models\\\\FormSubmission, \\$this\\(AdvisingApp\\\\Form\\\\Models\\\\FormField\\), covariant AdvisingApp\\\\Form\\\\Models\\\\FormFieldSubmission\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\Form\\\\Models\\\\FormSubmission, \\$this\\(AdvisingApp\\\\Form\\\\Models\\\\FormField\\)\\>\\.$#',
+	'identifier' => 'return.type',
+	'count' => 1,
+	'path' => __DIR__ . '/app-modules/form/src/Models/FormField.php',
+];
+$ignoreErrors[] = [
 	'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\:\\:notSubmitted\\(\\)\\.$#',
 	'identifier' => 'method.notFound',
 	'count' => 2,
+	'path' => __DIR__ . '/app-modules/form/src/Models/FormSubmission.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\Form\\\\Models\\\\FormField, \\$this\\(AdvisingApp\\\\Form\\\\Models\\\\FormSubmission\\), covariant AdvisingApp\\\\Form\\\\Models\\\\FormFieldSubmission\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+	'identifier' => 'generics.moreTypes',
+	'count' => 1,
+	'path' => __DIR__ . '/app-modules/form/src/Models/FormSubmission.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Method AdvisingApp\\\\Form\\\\Models\\\\FormSubmission\\:\\:fields\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\Form\\\\Models\\\\FormField, \\$this\\(AdvisingApp\\\\Form\\\\Models\\\\FormSubmission\\), covariant AdvisingApp\\\\Form\\\\Models\\\\FormFieldSubmission\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\Form\\\\Models\\\\FormField, \\$this\\(AdvisingApp\\\\Form\\\\Models\\\\FormSubmission\\)\\>\\.$#',
+	'identifier' => 'return.type',
+	'count' => 1,
 	'path' => __DIR__ . '/app-modules/form/src/Models/FormSubmission.php',
 ];
 $ignoreErrors[] = [
@@ -5148,6 +5196,12 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
 	'message' => '#^Property AdvisingApp\\\\InAppCommunication\\\\Filament\\\\Pages\\\\UserChat\\:\\:\\$conversationActiveUsers type has no value type specified in iterable type array\\.$#',
 	'identifier' => 'missingType.iterableValue',
+	'count' => 1,
+	'path' => __DIR__ . '/app-modules/in-app-communication/src/Filament/Pages/UserChat.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Property AdvisingApp\\\\InAppCommunication\\\\Models\\\\IdeHelperTwilioConversationUser\\:\\:\\$last_read_at \\(Carbon\\\\CarbonImmutable\\|null\\) does not accept Illuminate\\\\Support\\\\Carbon\\.$#',
+	'identifier' => 'assign.propertyType',
 	'count' => 1,
 	'path' => __DIR__ . '/app-modules/in-app-communication/src/Filament/Pages/UserChat.php',
 ];
@@ -5676,6 +5730,30 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
 	'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:orderedInteractions\\(\\)\\.$#',
 	'identifier' => 'method.notFound',
+	'count' => 1,
+	'path' => __DIR__ . '/app-modules/interaction/src/Models/Interaction.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\Team\\\\Models\\\\Team, \\$this\\(AdvisingApp\\\\Interaction\\\\Models\\\\Interaction\\), covariant AdvisingApp\\\\Interaction\\\\Models\\\\InteractionConfidentialTeam\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+	'identifier' => 'generics.moreTypes',
+	'count' => 1,
+	'path' => __DIR__ . '/app-modules/interaction/src/Models/Interaction.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<App\\\\Models\\\\User, \\$this\\(AdvisingApp\\\\Interaction\\\\Models\\\\Interaction\\), covariant AdvisingApp\\\\Interaction\\\\Models\\\\InteractionConfidentialUser\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+	'identifier' => 'generics.moreTypes',
+	'count' => 1,
+	'path' => __DIR__ . '/app-modules/interaction/src/Models/Interaction.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Method AdvisingApp\\\\Interaction\\\\Models\\\\Interaction\\:\\:confidentialAccessTeams\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\Team\\\\Models\\\\Team, \\$this\\(AdvisingApp\\\\Interaction\\\\Models\\\\Interaction\\), covariant AdvisingApp\\\\Interaction\\\\Models\\\\InteractionConfidentialTeam\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\Team\\\\Models\\\\Team, \\$this\\(AdvisingApp\\\\Interaction\\\\Models\\\\Interaction\\)\\>\\.$#',
+	'identifier' => 'return.type',
+	'count' => 1,
+	'path' => __DIR__ . '/app-modules/interaction/src/Models/Interaction.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Method AdvisingApp\\\\Interaction\\\\Models\\\\Interaction\\:\\:confidentialAccessUsers\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<App\\\\Models\\\\User, \\$this\\(AdvisingApp\\\\Interaction\\\\Models\\\\Interaction\\), covariant AdvisingApp\\\\Interaction\\\\Models\\\\InteractionConfidentialUser\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<App\\\\Models\\\\User, \\$this\\(AdvisingApp\\\\Interaction\\\\Models\\\\Interaction\\)\\>\\.$#',
+	'identifier' => 'return.type',
 	'count' => 1,
 	'path' => __DIR__ . '/app-modules/interaction/src/Models/Interaction.php',
 ];
@@ -7252,10 +7330,34 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/app-modules/prospect/src/Models/EducatablePipelineStage.php',
 ];
 $ignoreErrors[] = [
+	'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Prospect\\\\Models\\\\Prospect, \\$this\\(AdvisingApp\\\\Prospect\\\\Models\\\\Pipeline\\), covariant AdvisingApp\\\\Prospect\\\\Models\\\\EducatablePipelineStage\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+	'identifier' => 'generics.moreTypes',
+	'count' => 1,
+	'path' => __DIR__ . '/app-modules/prospect/src/Models/Pipeline.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Method AdvisingApp\\\\Prospect\\\\Models\\\\Pipeline\\:\\:educatablePipelineStages\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Prospect\\\\Models\\\\Prospect, \\$this\\(AdvisingApp\\\\Prospect\\\\Models\\\\Pipeline\\), covariant AdvisingApp\\\\Prospect\\\\Models\\\\EducatablePipelineStage\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Prospect\\\\Models\\\\Prospect, \\$this\\(AdvisingApp\\\\Prospect\\\\Models\\\\Pipeline\\)\\>\\.$#',
+	'identifier' => 'return.type',
+	'count' => 1,
+	'path' => __DIR__ . '/app-modules/prospect/src/Models/Pipeline.php',
+];
+$ignoreErrors[] = [
 	'message' => '#^Method AdvisingApp\\\\Prospect\\\\Models\\\\Pipeline\\:\\:newMorphToMany\\(\\) return type with generic class AdvisingApp\\\\Audit\\\\Overrides\\\\MorphToMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
 	'identifier' => 'missingType.generics',
 	'count' => 1,
 	'path' => __DIR__ . '/app-modules/prospect/src/Models/Pipeline.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFile, \\$this\\(AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\), covariant AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFileEntities\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+	'identifier' => 'generics.moreTypes',
+	'count' => 1,
+	'path' => __DIR__ . '/app-modules/prospect/src/Models/Prospect.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Prospect\\\\Models\\\\Pipeline\\> in PHPDoc tag @return does not specify all template types of class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\: TRelatedModel, TDeclaringModel$#',
+	'identifier' => 'generics.lessTypes',
+	'count' => 1,
+	'path' => __DIR__ . '/app-modules/prospect/src/Models/Prospect.php',
 ];
 $ignoreErrors[] = [
 	'message' => '#^Method AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\:\\:additionalAddresses\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\HasMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
@@ -9718,6 +9820,30 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Scopes/LicensedToEducatable.php',
 ];
 $ignoreErrors[] = [
+	'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFile, \\$this\\(AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\), covariant AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFileEntities\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+	'identifier' => 'generics.moreTypes',
+	'count' => 1,
+	'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Student.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<App\\\\Models\\\\Tag, \\$this\\(AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\), covariant App\\\\Models\\\\Taggable\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+	'identifier' => 'generics.moreTypes',
+	'count' => 1,
+	'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Student.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<App\\\\Models\\\\User, \\$this\\(AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\), covariant AdvisingApp\\\\CareTeam\\\\Models\\\\CareTeam\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+	'identifier' => 'generics.moreTypes',
+	'count' => 1,
+	'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Student.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<App\\\\Models\\\\User, \\$this\\(AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\), covariant AdvisingApp\\\\Notification\\\\Models\\\\Subscription\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+	'identifier' => 'generics.moreTypes',
+	'count' => 1,
+	'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Student.php',
+];
+$ignoreErrors[] = [
 	'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\:\\:additionalAddresses\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\HasMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
 	'identifier' => 'missingType.generics',
 	'count' => 1,
@@ -9742,8 +9868,20 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Student.php',
 ];
 $ignoreErrors[] = [
+	'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\:\\:careTeam\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<App\\\\Models\\\\User, \\$this\\(AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\), covariant AdvisingApp\\\\CareTeam\\\\Models\\\\CareTeam\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<App\\\\Models\\\\User, \\$this\\(AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\)\\>\\.$#',
+	'identifier' => 'return.type',
+	'count' => 1,
+	'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Student.php',
+];
+$ignoreErrors[] = [
 	'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\:\\:displayName\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Casts\\\\Attribute does not specify its types\\: TGet, TSet$#',
 	'identifier' => 'missingType.generics',
+	'count' => 1,
+	'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Student.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\:\\:engagementFiles\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFile, \\$this\\(AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\), covariant AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFileEntities\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFile, \\$this\\(AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\)\\>\\.$#',
+	'identifier' => 'return.type',
 	'count' => 1,
 	'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Student.php',
 ];
@@ -9786,6 +9924,18 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
 	'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\:\\:primaryPhoneNumber\\(\\) has no return type specified\\.$#',
 	'identifier' => 'missingType.return',
+	'count' => 1,
+	'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Student.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\:\\:subscribedUsers\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<App\\\\Models\\\\User, \\$this\\(AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\), covariant AdvisingApp\\\\Notification\\\\Models\\\\Subscription\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<App\\\\Models\\\\User, \\$this\\(AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\)\\>\\.$#',
+	'identifier' => 'return.type',
+	'count' => 1,
+	'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Student.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\:\\:tags\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<App\\\\Models\\\\Tag, \\$this\\(AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\), covariant App\\\\Models\\\\Taggable\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<App\\\\Models\\\\Tag, \\$this\\(AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\)\\>\\.$#',
+	'identifier' => 'return.type',
 	'count' => 1,
 	'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Student.php',
 ];
@@ -10048,9 +10198,33 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/app-modules/survey/src/Livewire/RenderSurvey.php',
 ];
 $ignoreErrors[] = [
+	'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\Survey\\\\Models\\\\SurveySubmission, \\$this\\(AdvisingApp\\\\Survey\\\\Models\\\\SurveyField\\), covariant AdvisingApp\\\\Survey\\\\Models\\\\SurveyFieldSubmission\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+	'identifier' => 'generics.moreTypes',
+	'count' => 1,
+	'path' => __DIR__ . '/app-modules/survey/src/Models/SurveyField.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Method AdvisingApp\\\\Survey\\\\Models\\\\SurveyField\\:\\:submissions\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\Survey\\\\Models\\\\SurveySubmission, \\$this\\(AdvisingApp\\\\Survey\\\\Models\\\\SurveyField\\), covariant AdvisingApp\\\\Survey\\\\Models\\\\SurveyFieldSubmission\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\Survey\\\\Models\\\\SurveySubmission, \\$this\\(AdvisingApp\\\\Survey\\\\Models\\\\SurveyField\\)\\>\\.$#',
+	'identifier' => 'return.type',
+	'count' => 1,
+	'path' => __DIR__ . '/app-modules/survey/src/Models/SurveyField.php',
+];
+$ignoreErrors[] = [
 	'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\:\\:notSubmitted\\(\\)\\.$#',
 	'identifier' => 'method.notFound',
 	'count' => 2,
+	'path' => __DIR__ . '/app-modules/survey/src/Models/SurveySubmission.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\Survey\\\\Models\\\\SurveyField, \\$this\\(AdvisingApp\\\\Survey\\\\Models\\\\SurveySubmission\\), covariant AdvisingApp\\\\Survey\\\\Models\\\\SurveyFieldSubmission\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+	'identifier' => 'generics.moreTypes',
+	'count' => 1,
+	'path' => __DIR__ . '/app-modules/survey/src/Models/SurveySubmission.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Method AdvisingApp\\\\Survey\\\\Models\\\\SurveySubmission\\:\\:fields\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\Survey\\\\Models\\\\SurveyField, \\$this\\(AdvisingApp\\\\Survey\\\\Models\\\\SurveySubmission\\), covariant AdvisingApp\\\\Survey\\\\Models\\\\SurveyFieldSubmission\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\Survey\\\\Models\\\\SurveyField, \\$this\\(AdvisingApp\\\\Survey\\\\Models\\\\SurveySubmission\\)\\>\\.$#',
+	'identifier' => 'return.type',
+	'count' => 1,
 	'path' => __DIR__ . '/app-modules/survey/src/Models/SurveySubmission.php',
 ];
 $ignoreErrors[] = [
@@ -11020,6 +11194,30 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/app/Filament/Pages/ManageDisplaySettings.php',
 ];
 $ignoreErrors[] = [
+	'message' => '#^Call to method getAttributeValue\\(\\) on an unknown class Squire\\\\Models\\\\Country\\.$#',
+	'identifier' => 'class.notFound',
+	'count' => 2,
+	'path' => __DIR__ . '/app/Filament/Pages/ManageImportSettings.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Call to method getKey\\(\\) on an unknown class Squire\\\\Models\\\\Country\\.$#',
+	'identifier' => 'class.notFound',
+	'count' => 1,
+	'path' => __DIR__ . '/app/Filament/Pages/ManageImportSettings.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Call to static method query\\(\\) on an unknown class Squire\\\\Models\\\\Country\\.$#',
+	'identifier' => 'class.notFound',
+	'count' => 1,
+	'path' => __DIR__ . '/app/Filament/Pages/ManageImportSettings.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Parameter \\$country of anonymous function has invalid type Squire\\\\Models\\\\Country\\.$#',
+	'identifier' => 'class.notFound',
+	'count' => 1,
+	'path' => __DIR__ . '/app/Filament/Pages/ManageImportSettings.php',
+];
+$ignoreErrors[] = [
 	'message' => '#^Method App\\\\Filament\\\\Pages\\\\ProductHealth\\:\\:getNavigationBadge\\(\\) should return string\\|null but returns int\\<1, max\\>\\|null\\.$#',
 	'identifier' => 'return.type',
 	'count' => 1,
@@ -11464,6 +11662,18 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/app/Models/BaseModel.php',
 ];
 $ignoreErrors[] = [
+	'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Division\\\\Models\\\\Division, \\$this\\(App\\\\Models\\\\NotificationSetting\\), covariant App\\\\Models\\\\NotificationSettingPivot\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+	'identifier' => 'generics.moreTypes',
+	'count' => 1,
+	'path' => __DIR__ . '/app/Models/NotificationSetting.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Method App\\\\Models\\\\NotificationSetting\\:\\:divisions\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Division\\\\Models\\\\Division, \\$this\\(App\\\\Models\\\\NotificationSetting\\), covariant App\\\\Models\\\\NotificationSettingPivot\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Division\\\\Models\\\\Division, \\$this\\(App\\\\Models\\\\NotificationSetting\\)\\>\\.$#',
+	'identifier' => 'return.type',
+	'count' => 1,
+	'path' => __DIR__ . '/app/Models/NotificationSetting.php',
+];
+$ignoreErrors[] = [
 	'message' => '#^Method App\\\\Models\\\\NotificationSettingPivot\\:\\:relatedTo\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo does not specify its types\\: TRelatedModel, TDeclaringModel$#',
 	'identifier' => 'missingType.generics',
 	'count' => 1,
@@ -11542,6 +11752,18 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Models/Tag.php',
 ];
 $ignoreErrors[] = [
+	'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Prospect\\\\Models\\\\Prospect, \\$this\\(App\\\\Models\\\\Tag\\), covariant App\\\\Models\\\\Taggable\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+	'identifier' => 'generics.moreTypes',
+	'count' => 1,
+	'path' => __DIR__ . '/app/Models/Tag.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student, \\$this\\(App\\\\Models\\\\Tag\\), covariant App\\\\Models\\\\Taggable\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+	'identifier' => 'generics.moreTypes',
+	'count' => 1,
+	'path' => __DIR__ . '/app/Models/Tag.php',
+];
+$ignoreErrors[] = [
 	'message' => '#^Method App\\\\Models\\\\Tag\\:\\:newMorphToMany\\(\\) return type with generic class AdvisingApp\\\\Audit\\\\Overrides\\\\MorphToMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
 	'identifier' => 'missingType.generics',
 	'count' => 1,
@@ -11556,6 +11778,12 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
 	'message' => '#^Method App\\\\Models\\\\User\\:\\:confirmMultifactorAuthentication\\(\\) has no return type specified\\.$#',
 	'identifier' => 'missingType.return',
+	'count' => 1,
+	'path' => __DIR__ . '/app/Models/User.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Method App\\\\Models\\\\User\\:\\:conversations\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\InAppCommunication\\\\Models\\\\TwilioConversation, \\$this\\(App\\\\Models\\\\User\\), covariant AdvisingApp\\\\InAppCommunication\\\\Models\\\\TwilioConversationUser, \'participant\'\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\InAppCommunication\\\\Models\\\\TwilioConversation, \\$this\\(App\\\\Models\\\\User\\)\\>\\.$#',
+	'identifier' => 'return.type',
 	'count' => 1,
 	'path' => __DIR__ . '/app/Models/User.php',
 ];
