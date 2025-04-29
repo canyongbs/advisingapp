@@ -219,14 +219,14 @@ class EditProfile extends Page
                             ->live()
                             ->visible($hasCrmLicense),
                         Placeholder::make('teams')
-                            ->label(str('Team')->plural($user->teams->count()))
+                            ->label('Team')
                             ->content($user->team->name)
-                            ->hidden($user->team->isEmpty())
+                            ->hidden(! $user->team)
                             ->hint(fn (Get $get): string => $get('are_teams_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
                         //TODO: Right now this is not passed to the frontend
                         Checkbox::make('are_teams_visible_on_profile')
                             ->label('Show ' . str('team') . ' on profile')
-                            ->hidden($user->team->isEmpty())
+                            ->hidden(! $user->team)
                             ->live(),
                         Placeholder::make('division')
                             ->content($user->team?->division?->name)
