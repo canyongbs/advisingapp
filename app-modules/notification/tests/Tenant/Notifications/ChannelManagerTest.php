@@ -34,41 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Notifications;
+use AdvisingApp\Notification\Tests\Fixtures\TestEmailNotification;
+use AdvisingApp\StudentDataModel\Models\Student;
+use Carbon\Carbon;
+use Illuminate\Notifications\SendQueuedNotifications;
+use Illuminate\Support\Facades\Queue;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\ChannelManager as BaseChannelManager;
-use Illuminate\Queue\Middleware\RateLimitedWithRedis;
-use Illuminate\Support\Collection;
+use function Pest\Laravel\freezeTime;
 
-class ChannelManager extends BaseChannelManager
-{
-    /**
-     * Send the given notification to the given notifiable entities.
-     *
-     * @param  Collection|array|mixed  $notifiables
-     * @param  mixed  $notification
-     *
-     * @return void
-     */
-    public function send($notifiables, $notification)
-    {
-        if (property_exists($notification, 'queue')) {
-            $notification->queue ??= config('queue.outbound_communication_queue');
-        }
+it('modifies the SendQueuedNotifications job properly', function () {
+    Queue::fake();
 
-        if ($notification instanceof ShouldQueue && property_exists($notification, 'middleware')) {
-            $notification->middleware[] = new RateLimitedWithRedis('notification');
-        }
+    $recipient = Student::factory()->create();
+    $notification = new TestEmailNotification();
 
-        if ($notification instanceof ShouldQueue) {
-            $notification->retryUntil ??= now()->addHours(2); // @phpstan-ignore property.notFound
-        }
+    freezeTime(function () use ($recipient, $notification) {
+        $recipient->notify($notification);
 
-        if ($notification instanceof ShouldQueue) {
-            $notification->maxExceptions ??= 3; // @phpstan-ignore property.notFound
-        }
-
-        parent::send($notifiables, $notification);
-    }
-}
+        Queue::assertPushed(SendQueuedNotifications::class, function ($job) use ($recipient, $notification) {
+            return $job->notification::class === $notification::class
+                && $job->notifiables->count() === 1
+                && $job->notifiables->first()->is($recipient)
+                && $job->channels === ['mail']
+                && $job->retryUntil() instanceof Carbon && $job->retryUntil()->equalTo(now()->addHours(2))
+                && $job->maxExceptions === 3;
+        });
+    });
+});

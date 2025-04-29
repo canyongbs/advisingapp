@@ -39,6 +39,9 @@ use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Engagement\Notifications\EngagementNotification;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Cache\RateLimiter;
+use Illuminate\Cache\RateLimiting\Unlimited;
+use Illuminate\Container\Container;
 use Illuminate\Support\Facades\Notification;
 
 use function Pest\Laravel\assertDatabaseCount;
@@ -105,4 +108,45 @@ it('will create but not dispatch a scheduled engagement', function () {
         $recipient,
         EngagementNotification::class
     );
+});
+
+it('has the notification rate limiting applied properly for email batched engagements', function () {
+    $engagementBatch = EngagementBatch::factory()->email()->create();
+    $recipient = Student::factory()->create();
+
+    $job = new CreateBatchedEngagement(
+        $engagementBatch,
+        $recipient
+    );
+
+    $limiter = Container::getInstance()->make(RateLimiter::class)->limiter('notifications');
+
+    $limits = $limiter($job);
+
+    /** @phpstan-ignore property.notFound */
+    expect($limits)
+        ->toHaveCount(1)
+        ->and($limits[0])
+        ->key->toEqual('mail')
+        ->maxAttempts->toEqual(14)
+        ->decaySeconds->toEqual(1);
+});
+
+it('has the notification rate limiting applied properly for sms batched engagements', function () {
+    $engagementBatch = EngagementBatch::factory()->sms()->create();
+    $recipient = Student::factory()->create();
+
+    $job = new CreateBatchedEngagement(
+        $engagementBatch,
+        $recipient
+    );
+
+    $limiter = Container::getInstance()->make(RateLimiter::class)->limiter('notifications');
+
+    $limits = $limiter($job);
+
+    expect($limits)
+        ->toHaveCount(1)
+        ->and($limits[0])
+        ->toBeInstanceOf(Unlimited::class);
 });

@@ -34,41 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Notifications;
+namespace AdvisingApp\Notification\Tests\Fixtures;
 
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
+use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\ChannelManager as BaseChannelManager;
-use Illuminate\Queue\Middleware\RateLimitedWithRedis;
-use Illuminate\Support\Collection;
+use Illuminate\Notifications\Notification;
 
-class ChannelManager extends BaseChannelManager
+class TestDualNotification extends Notification implements ShouldQueue
 {
+    use Queueable;
+
     /**
-     * Send the given notification to the given notifiable entities.
-     *
-     * @param  Collection|array|mixed  $notifiables
-     * @param  mixed  $notification
-     *
-     * @return void
+     * @return array<int, string>
      */
-    public function send($notifiables, $notification)
+    public function via(object $notifiable): array
     {
-        if (property_exists($notification, 'queue')) {
-            $notification->queue ??= config('queue.outbound_communication_queue');
-        }
+        return ['mail', 'sms'];
+    }
 
-        if ($notification instanceof ShouldQueue && property_exists($notification, 'middleware')) {
-            $notification->middleware[] = new RateLimitedWithRedis('notification');
-        }
+    public function toMail(object $notifiable): MailMessage
+    {
+        return MailMessage::make()
+            ->subject('Test Subject')
+            ->greeting('Test Greeting')
+            ->content('This is a test email');
+    }
 
-        if ($notification instanceof ShouldQueue) {
-            $notification->retryUntil ??= now()->addHours(2); // @phpstan-ignore property.notFound
-        }
-
-        if ($notification instanceof ShouldQueue) {
-            $notification->maxExceptions ??= 3; // @phpstan-ignore property.notFound
-        }
-
-        parent::send($notifiables, $notification);
+    public function toSms(object $notifiable): TwilioMessage
+    {
+        return TwilioMessage::make($notifiable)
+            ->content('This is a test');
     }
 }

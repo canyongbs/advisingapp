@@ -40,11 +40,13 @@ use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Engagement\Notifications\EngagementNotification;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
+use DateTimeInterface;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\Middleware\RateLimitedWithRedis;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 
@@ -56,10 +58,25 @@ class CreateBatchedEngagement implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    public int $maxExceptions = 3;
+
     public function __construct(
         public EngagementBatch $engagementBatch,
         public CanBeNotified $recipient,
     ) {}
+
+    /**
+     * @return array<object>
+     */
+    public function middleware(): array
+    {
+        return [new RateLimitedWithRedis('notification')];
+    }
+
+    public function retryUntil(): DateTimeInterface
+    {
+        return now()->addHours(2);
+    }
 
     public function handle(): void
     {
