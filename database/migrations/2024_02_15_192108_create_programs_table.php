@@ -52,7 +52,7 @@ return new class () extends Migration {
             $table->string('division');
             $table->string('acad_plan');
             $table->string('prog_status');
-            $table->float('cum_gpa', 4, 3);
+            $table->float('cum_gpa', 4);
             $table->string('semester');
             $table->string('descr');
             $table->string('foi');

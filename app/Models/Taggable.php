@@ -37,6 +37,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -52,6 +53,9 @@ class Taggable extends MorphPivot
 
     public $timestamps = true;
 
+    /**
+     * @return MorphTo<Model, $this>
+     */
     public function prospects(): MorphTo
     {
         return $this->morphTo(
@@ -61,6 +65,9 @@ class Taggable extends MorphPivot
         );
     }
 
+    /**
+     * @return MorphTo<Model, $this>
+     */
     public function students(): MorphTo
     {
         return $this->morphTo(

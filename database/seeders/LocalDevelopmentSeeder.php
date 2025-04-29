@@ -37,9 +37,11 @@
 namespace Database\Seeders;
 
 use AdvisingApp\Authorization\Models\Role;
+use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use App\Enums\Integration;
 use App\Models\Authenticatable;
 use App\Models\User;
+use Exception;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -62,7 +64,9 @@ class LocalDevelopmentSeeder extends Seeder
             return;
         }
 
-        collect(config('local_development.internal_users.emails'))->each(function ($email) use ($superAdminRole) {
+        /** @var array<string> $emails */
+        $emails = config('local_development.internal_users.emails');
+        collect($emails)->each(function ($email) use ($superAdminRole) {
             $user = User::where('email', $email)->first();
 
             if (is_null($user)) {
@@ -81,6 +85,7 @@ class LocalDevelopmentSeeder extends Seeder
     private function twilio(): void
     {
         $twilio = Integration::Twilio->settings();
+        throw_unless($twilio instanceof TwilioSettings, new Exception('The Twilio settings object must be an instance of [TwilioSettings].'));
 
         $twilio->account_sid = config('local_development.twilio.account_sid');
         $twilio->auth_token = config('local_development.twilio.auth_token');

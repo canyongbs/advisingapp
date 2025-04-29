@@ -56,6 +56,9 @@ class OlympusSettings extends Settings
         return 'olympus';
     }
 
+    /**
+     * @return string[]
+     */
     public static function encrypted(): array
     {
         return [
