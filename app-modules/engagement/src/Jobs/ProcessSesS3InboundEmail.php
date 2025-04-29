@@ -273,6 +273,10 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
 
     public function failed(?Throwable $exception): void
     {
+        if (app()->bound('sentry')) {
+            app('sentry')->captureException($exception);
+        }
+
         if ($exception === null) {
             $this->moveFile('/failed');
 
