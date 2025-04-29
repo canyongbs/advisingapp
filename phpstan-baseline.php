@@ -1,38 +1,6 @@
 <?php
 
-/*
-<COPYRIGHT>
-
-    Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
-
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
-    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
-
-    Notice:
-
-    - You may not provide the software to third parties as a hosted or managed
-      service, where the service provides users with access to any substantial set of
-      the features or functionality of the software.
-    - You may not move, change, disable, or circumvent the license key functionality
-      in the software, and you may not remove or obscure any functionality in the
-      software that is protected by the license key.
-    - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
-      to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
-      vigorously.
-    - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
-    - Use of this software implies agreement to the license terms and conditions as stated
-      in the Elastic License 2.0.
-
-    For more information or inquiries please visit our website at
-    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
-
-</COPYRIGHT>
-*/ declare(strict_types = 1);
+declare(strict_types = 1);
 
 $ignoreErrors = [];
 $ignoreErrors[] = [
@@ -1470,7 +1438,7 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/audit/src/Filament/Actions/AuditDetachAction.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^PHPDoc tag @var for variable \\$relationship contains generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany but does not specify its types\\: TRelatedModel, TDeclaringModel, TPivotModel, TAccessor \\(2\\-4 required\\)$#',
+    'message' => '#^PHPDoc tag @var for variable \\$relationship contains generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany but does not specify its types\\: TRelatedModel, TDeclaringModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/audit/src/Filament/Actions/AuditDetachAction.php',
@@ -1506,7 +1474,7 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/audit/src/Overrides/BelongsToMany.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Class AdvisingApp\\\\Audit\\\\Overrides\\\\BelongsToMany extends generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany but does not specify its types\\: TRelatedModel, TDeclaringModel, TPivotModel, TAccessor \\(2\\-4 required\\)$#',
+    'message' => '#^Class AdvisingApp\\\\Audit\\\\Overrides\\\\BelongsToMany extends generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany but does not specify its types\\: TRelatedModel, TDeclaringModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/audit/src/Overrides/BelongsToMany.php',
@@ -1812,7 +1780,7 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/authorization/src/Models/Role.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Authorization\\\\Models\\\\Role\\:\\:users\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany does not specify its types\\: TRelatedModel, TDeclaringModel, TPivotModel, TAccessor \\(2\\-4 required\\)$#',
+    'message' => '#^Method AdvisingApp\\\\Authorization\\\\Models\\\\Role\\:\\:users\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/authorization/src/Models/Role.php',
@@ -2026,12 +1994,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/campaign/src/Filament/Blocks/CaseBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, AdvisingApp\\\\Team\\\\Models\\\\Team\\>\\:\\:\\$users\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/campaign/src/Filament/Blocks/EngagementBatchEmailBlock.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Campaign\\\\Filament\\\\Blocks\\\\EngagementBatchEmailBlock\\:\\:generateFields\\(\\) return type has no value type specified in iterable type array\\.$#',
@@ -2686,6 +2648,18 @@ $ignoreErrors[] = [
     'identifier' => 'assign.propertyType',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/case-management/src/Http/Controllers/CaseFormWidgetController.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Cannot access property \\$priority on object\\|string\\.$#',
+    'identifier' => 'property.nonObject',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/case-management/src/Http/Middleware/CaseTypeFeedbackIsOn.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Using nullsafe property access on non\\-nullable type object\\|string\\. Use \\-\\> instead\\.$#',
+    'identifier' => 'nullsafe.neverNull',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/case-management/src/Http/Middleware/CaseTypeFeedbackIsOn.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Property AdvisingApp\\\\CaseManagement\\\\Livewire\\\\RenderCaseFeedbackForm\\:\\:\\$data type has no value type specified in iterable type array\\.$#',
@@ -3360,12 +3334,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/engagement/src/Filament/Actions/BulkDraftWithAiAction.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, AdvisingApp\\\\Team\\\\Models\\\\Team\\>\\:\\:\\$users\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Actions/BulkEngagementAction.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to an undefined method Filament\\\\Forms\\\\Components\\\\Field\\:\\:getTemporaryImages\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 1,
@@ -3438,12 +3406,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/engagement/src/Filament/Actions/RelationManagerDraftWithAiAction.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, AdvisingApp\\\\Team\\\\Models\\\\Team\\>\\:\\:\\$users\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Actions/RelationManagerSendEngagementAction.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$emailAddresses\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
@@ -3490,12 +3452,6 @@ $ignoreErrors[] = [
     'identifier' => 'argument.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/engagement/src/Filament/Actions/RelationManagerSendEngagementAction.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, AdvisingApp\\\\Team\\\\Models\\\\Team\\>\\:\\:\\$users\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Forms/Components/EngagementSmsBodyInput.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Engagement\\\\Filament\\\\Forms\\\\Components\\\\EngagementSmsBodyInput\\:\\:make\\(\\) has no return type specified\\.$#',
@@ -3590,7 +3546,7 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$recordModel of method AdvisingApp\\\\Timeline\\\\Actions\\\\SyncTimelineData\\:\\:now\\(\\) expects Illuminate\\\\Database\\\\Eloquent\\\\Model, AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\|null given\\.$#',
     'identifier' => 'argument.type',
-    'count' => 2,
+    'count' => 1,
     'path' => __DIR__ . '/app-modules/engagement/src/Filament/Pages/MessageCenter.php',
 ];
 $ignoreErrors[] = [
@@ -3870,6 +3826,18 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/engagement/src/Models/EngagementBatch.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Prospect\\\\Models\\\\Prospect, \\$this\\(AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFile\\), covariant AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFileEntities\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+    'identifier' => 'generics.moreTypes',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/engagement/src/Models/EngagementFile.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student, \\$this\\(AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFile\\), covariant AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFileEntities\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+    'identifier' => 'generics.moreTypes',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/engagement/src/Models/EngagementFile.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFile\\:\\:createdBy\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo does not specify its types\\: TRelatedModel, TDeclaringModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
@@ -3882,8 +3850,20 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/engagement/src/Models/EngagementFile.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFile\\:\\:prospects\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Prospect\\\\Models\\\\Prospect, \\$this\\(AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFile\\), covariant AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFileEntities\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Prospect\\\\Models\\\\Prospect, \\$this\\(AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFile\\)\\>\\.$#',
+    'identifier' => 'return.type',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/engagement/src/Models/EngagementFile.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFile\\:\\:prunable\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
     'identifier' => 'missingType.generics',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/engagement/src/Models/EngagementFile.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFile\\:\\:students\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student, \\$this\\(AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFile\\), covariant AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFileEntities\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student, \\$this\\(AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFile\\)\\>\\.$#',
+    'identifier' => 'return.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/engagement/src/Models/EngagementFile.php',
 ];
@@ -4752,9 +4732,33 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/form/src/Models/FormEmailAutoReply.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\Form\\\\Models\\\\FormSubmission, \\$this\\(AdvisingApp\\\\Form\\\\Models\\\\FormField\\), covariant AdvisingApp\\\\Form\\\\Models\\\\FormFieldSubmission\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+    'identifier' => 'generics.moreTypes',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Models/FormField.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\Form\\\\Models\\\\FormField\\:\\:submissions\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\Form\\\\Models\\\\FormSubmission, \\$this\\(AdvisingApp\\\\Form\\\\Models\\\\FormField\\), covariant AdvisingApp\\\\Form\\\\Models\\\\FormFieldSubmission\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\Form\\\\Models\\\\FormSubmission, \\$this\\(AdvisingApp\\\\Form\\\\Models\\\\FormField\\)\\>\\.$#',
+    'identifier' => 'return.type',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Models/FormField.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\:\\:notSubmitted\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 2,
+    'path' => __DIR__ . '/app-modules/form/src/Models/FormSubmission.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\Form\\\\Models\\\\FormField, \\$this\\(AdvisingApp\\\\Form\\\\Models\\\\FormSubmission\\), covariant AdvisingApp\\\\Form\\\\Models\\\\FormFieldSubmission\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+    'identifier' => 'generics.moreTypes',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Models/FormSubmission.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\Form\\\\Models\\\\FormSubmission\\:\\:fields\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\Form\\\\Models\\\\FormField, \\$this\\(AdvisingApp\\\\Form\\\\Models\\\\FormSubmission\\), covariant AdvisingApp\\\\Form\\\\Models\\\\FormFieldSubmission\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\Form\\\\Models\\\\FormField, \\$this\\(AdvisingApp\\\\Form\\\\Models\\\\FormSubmission\\)\\>\\.$#',
+    'identifier' => 'return.type',
+    'count' => 1,
     'path' => __DIR__ . '/app-modules/form/src/Models/FormSubmission.php',
 ];
 $ignoreErrors[] = [
@@ -4986,7 +4990,7 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/form/src/Models/Submission.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Models\\\\Submission\\:\\:fields\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany does not specify its types\\: TRelatedModel, TDeclaringModel, TPivotModel, TAccessor \\(2\\-4 required\\)$#',
+    'message' => '#^Method AdvisingApp\\\\Form\\\\Models\\\\Submission\\:\\:fields\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/form/src/Models/Submission.php',
@@ -5112,30 +5116,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/in-app-communication/src/Events/ConversationMessageSent.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, \\*NEVER\\*\\>\\:\\:\\$participant\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/in-app-communication/src/Filament/Pages/UserChat.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Cannot access property \\$notification_preference on null\\.$#',
-    'identifier' => 'property.nonObject',
-    'count' => 3,
-    'path' => __DIR__ . '/app-modules/in-app-communication/src/Filament/Pages/UserChat.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Cannot access property \\$participant on null\\.$#',
-    'identifier' => 'property.nonObject',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/in-app-communication/src/Filament/Pages/UserChat.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^If condition is always true\\.$#',
-    'identifier' => 'if.alwaysTrue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/in-app-communication/src/Filament/Pages/UserChat.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\InAppCommunication\\\\Filament\\\\Pages\\\\UserChat\\:\\:conversations\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Collection does not specify its types\\: TKey, TModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
@@ -5154,12 +5134,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/in-app-communication/src/Filament/Pages/UserChat.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Negated boolean expression is always false\\.$#',
-    'identifier' => 'booleanNot.alwaysFalse',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/in-app-communication/src/Filament/Pages/UserChat.php',
-];
-$ignoreErrors[] = [
     'message' => '#^PHPDoc tag @property for property AdvisingApp\\\\InAppCommunication\\\\Filament\\\\Pages\\\\UserChat\\:\\:\\$conversations contains generic class Illuminate\\\\Database\\\\Eloquent\\\\Collection but does not specify its types\\: TKey, TModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
@@ -5174,6 +5148,12 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Property AdvisingApp\\\\InAppCommunication\\\\Filament\\\\Pages\\\\UserChat\\:\\:\\$conversationActiveUsers type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/in-app-communication/src/Filament/Pages/UserChat.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Property AdvisingApp\\\\InAppCommunication\\\\Models\\\\IdeHelperTwilioConversationUser\\:\\:\\$last_read_at \\(Carbon\\\\CarbonImmutable\\|null\\) does not accept Illuminate\\\\Support\\\\Carbon\\.$#',
+    'identifier' => 'assign.propertyType',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/in-app-communication/src/Filament/Pages/UserChat.php',
 ];
@@ -5196,34 +5176,28 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/in-app-communication/src/InAppCommunicationPlugin.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, \\*NEVER\\*\\>\\:\\:\\$participant\\.$#',
-    'identifier' => 'property.notFound',
+    'message' => '#^Property AdvisingApp\\\\InAppCommunication\\\\Models\\\\IdeHelperTwilioConversationUser\\:\\:\\$first_unread_message_at \\(Carbon\\\\CarbonImmutable\\|null\\) does not accept Carbon\\\\CarbonInterface\\.$#',
+    'identifier' => 'assign.propertyType',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/in-app-communication/src/Jobs/NotifyConversationParticipant.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Using nullsafe property access on non\\-nullable type Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, \\*NEVER\\*\\>\\. Use \\-\\> instead\\.$#',
-    'identifier' => 'nullsafe.neverNull',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/in-app-communication/src/Jobs/NotifyConversationParticipant.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$callback of method Illuminate\\\\Support\\\\LazyCollection\\<int,\\*NEVER\\*\\>\\:\\:each\\(\\) contains unresolvable type\\.$#',
-    'identifier' => 'argument.unresolvableType',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/in-app-communication/src/Jobs/NotifyConversationParticipants.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Return type of call to method Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<App\\\\Models\\\\User,AdvisingApp\\\\InAppCommunication\\\\Models\\\\TwilioConversation,covariant AdvisingApp\\\\InAppCommunication\\\\Models\\\\TwilioConversationUser,string\\>\\:\\:lazyById\\(\\) contains unresolvable type\\.$#',
-    'identifier' => 'method.unresolvableReturnType',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/in-app-communication/src/Jobs/NotifyConversationParticipants.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\InAppCommunication\\\\Livewire\\\\ChatNotifications\\:\\:getNotifications\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Collection does not specify its types\\: TKey, TModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/in-app-communication/src/Livewire/ChatNotifications.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<App\\\\Models\\\\User, \\$this\\(AdvisingApp\\\\InAppCommunication\\\\Models\\\\TwilioConversation\\), covariant AdvisingApp\\\\InAppCommunication\\\\Models\\\\TwilioConversationUser, string\\> in PHPDoc tag @return specifies 4 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+    'identifier' => 'generics.moreTypes',
+    'count' => 2,
+    'path' => __DIR__ . '/app-modules/in-app-communication/src/Models/TwilioConversation.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\InAppCommunication\\\\Models\\\\TwilioConversation\\:\\:participants\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<App\\\\Models\\\\User, \\$this\\(AdvisingApp\\\\InAppCommunication\\\\Models\\\\TwilioConversation\\), covariant AdvisingApp\\\\InAppCommunication\\\\Models\\\\TwilioConversationUser, \'participant\'\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<App\\\\Models\\\\User, \\$this\\(AdvisingApp\\\\InAppCommunication\\\\Models\\\\TwilioConversation\\)\\>\\.$#',
+    'identifier' => 'return.type',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/in-app-communication/src/Models/TwilioConversation.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Property AdvisingApp\\\\InAppCommunication\\\\Models\\\\IdeHelperTwilioConversationUser\\:\\:\\$last_read_at \\(Carbon\\\\CarbonImmutable\\|null\\) does not accept Illuminate\\\\Support\\\\Carbon\\.$#',
@@ -5442,6 +5416,30 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/integration-open-ai/src/Providers/IntegrationOpenAiServiceProvider.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$file_id\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$mime_type\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$name\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$temporary_url\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Call to function method_exists\\(\\) with \\$this\\(AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\BaseOpenAiService\\) and \'createFiles\' will always evaluate to true\\.$#',
     'identifier' => 'function.alreadyNarrowedType',
     'count' => 1,
@@ -5449,6 +5447,30 @@ $ignoreErrors[] = [
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\BaseOpenAiService\\:\\:completeResponse\\(\\) has parameter \\$files with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\BaseOpenAiService\\:\\:createAssistantFiles\\(\\) has parameter \\$files with generic class Illuminate\\\\Support\\\\Collection but does not specify its types\\: TKey, TValue$#',
+    'identifier' => 'missingType.generics',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\BaseOpenAiService\\:\\:createAssistantFiles\\(\\) return type with generic class Illuminate\\\\Support\\\\Collection does not specify its types\\: TKey, TValue$#',
+    'identifier' => 'missingType.generics',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\BaseOpenAiService\\:\\:createFiles\\(\\) has parameter \\$files with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\BaseOpenAiService\\:\\:createFiles\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
@@ -5466,7 +5488,49 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\BaseOpenAiService\\:\\:createVectorStore\\(\\) has parameter \\$parameters with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\BaseOpenAiService\\:\\:createVectorStoreFilesBatch\\(\\) has parameter \\$fileIds with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\BaseOpenAiService\\:\\:getExpiredVectorStoresForThread\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\BaseOpenAiService\\:\\:modifyThread\\(\\) has parameter \\$parameters with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\BaseOpenAiService\\:\\:recreateVectorStoreForThread\\(\\) has parameter \\$vectorStore with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\BaseOpenAiService\\:\\:retrieveAllVectorStoreFileIds\\(\\) has parameter \\$after with no type specified\\.$#',
+    'identifier' => 'missingType.parameter',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\BaseOpenAiService\\:\\:retrieveAllVectorStoreFileIds\\(\\) has parameter \\$vectorStoreFileIds with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\BaseOpenAiService\\:\\:retrieveVectorStoreFiles\\(\\) has parameter \\$params with no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
@@ -5490,6 +5554,18 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\BaseOpenAiService\\:\\:updateAssistantVectorStoreId\\(\\) has parameter \\$vectorStoreId with no type specified\\.$#',
+    'identifier' => 'missingType.parameter',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Parameter \\#1 \\$file of method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\BaseOpenAiService\\:\\:retrieveFile\\(\\) expects AdvisingApp\\\\Ai\\\\Models\\\\AiMessageFile, AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile given\\.$#',
+    'identifier' => 'argument.type',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Using nullsafe property access "\\?\\-\\>message" on left side of \\?\\? is unnecessary\\. Use \\-\\> instead\\.$#',
     'identifier' => 'nullsafe.neverNull',
     'count' => 1,
@@ -5506,6 +5582,414 @@ $ignoreErrors[] = [
     'identifier' => 'nullsafe.neverNull',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$file_id\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oMiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$mime_type\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oMiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$name\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oMiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$temporary_url\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oMiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oMiniService\\:\\:createAssistantFiles\\(\\) has parameter \\$files with generic class Illuminate\\\\Support\\\\Collection but does not specify its types\\: TKey, TValue$#',
+    'identifier' => 'missingType.generics',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oMiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oMiniService\\:\\:createAssistantFiles\\(\\) return type with generic class Illuminate\\\\Support\\\\Collection does not specify its types\\: TKey, TValue$#',
+    'identifier' => 'missingType.generics',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oMiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oMiniService\\:\\:createFiles\\(\\) has parameter \\$files with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oMiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oMiniService\\:\\:createFiles\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oMiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oMiniService\\:\\:createVectorStore\\(\\) has parameter \\$parameters with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oMiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oMiniService\\:\\:createVectorStoreFilesBatch\\(\\) has parameter \\$fileIds with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oMiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oMiniService\\:\\:getExpiredVectorStoresForThread\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oMiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oMiniService\\:\\:recreateVectorStoreForThread\\(\\) has parameter \\$vectorStore with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oMiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oMiniService\\:\\:retrieveAllVectorStoreFileIds\\(\\) has parameter \\$after with no type specified\\.$#',
+    'identifier' => 'missingType.parameter',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oMiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oMiniService\\:\\:retrieveAllVectorStoreFileIds\\(\\) has parameter \\$vectorStoreFileIds with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oMiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oMiniService\\:\\:retrieveVectorStoreFiles\\(\\) has parameter \\$params with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oMiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oMiniService\\:\\:updateAssistantVectorStoreId\\(\\) has parameter \\$vectorStoreId with no type specified\\.$#',
+    'identifier' => 'missingType.parameter',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oMiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Parameter \\#1 \\$file of method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oMiniService\\:\\:retrieveFile\\(\\) expects AdvisingApp\\\\Ai\\\\Models\\\\AiMessageFile, AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile given\\.$#',
+    'identifier' => 'argument.type',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oMiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$file_id\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$mime_type\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$name\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$temporary_url\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oService\\:\\:createAssistantFiles\\(\\) has parameter \\$files with generic class Illuminate\\\\Support\\\\Collection but does not specify its types\\: TKey, TValue$#',
+    'identifier' => 'missingType.generics',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oService\\:\\:createAssistantFiles\\(\\) return type with generic class Illuminate\\\\Support\\\\Collection does not specify its types\\: TKey, TValue$#',
+    'identifier' => 'missingType.generics',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oService\\:\\:createFiles\\(\\) has parameter \\$files with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oService\\:\\:createFiles\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oService\\:\\:createVectorStore\\(\\) has parameter \\$parameters with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oService\\:\\:createVectorStoreFilesBatch\\(\\) has parameter \\$fileIds with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oService\\:\\:getExpiredVectorStoresForThread\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oService\\:\\:recreateVectorStoreForThread\\(\\) has parameter \\$vectorStore with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oService\\:\\:retrieveAllVectorStoreFileIds\\(\\) has parameter \\$after with no type specified\\.$#',
+    'identifier' => 'missingType.parameter',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oService\\:\\:retrieveAllVectorStoreFileIds\\(\\) has parameter \\$vectorStoreFileIds with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oService\\:\\:retrieveVectorStoreFiles\\(\\) has parameter \\$params with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oService\\:\\:updateAssistantVectorStoreId\\(\\) has parameter \\$vectorStoreId with no type specified\\.$#',
+    'identifier' => 'missingType.parameter',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Parameter \\#1 \\$file of method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oService\\:\\:retrieveFile\\(\\) expects AdvisingApp\\\\Ai\\\\Models\\\\AiMessageFile, AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile given\\.$#',
+    'identifier' => 'argument.type',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$file_id\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO1MiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$mime_type\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO1MiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$name\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO1MiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$temporary_url\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO1MiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO1MiniService\\:\\:createAssistantFiles\\(\\) has parameter \\$files with generic class Illuminate\\\\Support\\\\Collection but does not specify its types\\: TKey, TValue$#',
+    'identifier' => 'missingType.generics',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO1MiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO1MiniService\\:\\:createAssistantFiles\\(\\) return type with generic class Illuminate\\\\Support\\\\Collection does not specify its types\\: TKey, TValue$#',
+    'identifier' => 'missingType.generics',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO1MiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO1MiniService\\:\\:createFiles\\(\\) has parameter \\$files with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO1MiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO1MiniService\\:\\:createFiles\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO1MiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO1MiniService\\:\\:createVectorStore\\(\\) has parameter \\$parameters with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO1MiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO1MiniService\\:\\:createVectorStoreFilesBatch\\(\\) has parameter \\$fileIds with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO1MiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO1MiniService\\:\\:getExpiredVectorStoresForThread\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO1MiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO1MiniService\\:\\:recreateVectorStoreForThread\\(\\) has parameter \\$vectorStore with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO1MiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO1MiniService\\:\\:retrieveAllVectorStoreFileIds\\(\\) has parameter \\$after with no type specified\\.$#',
+    'identifier' => 'missingType.parameter',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO1MiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO1MiniService\\:\\:retrieveAllVectorStoreFileIds\\(\\) has parameter \\$vectorStoreFileIds with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO1MiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO1MiniService\\:\\:retrieveVectorStoreFiles\\(\\) has parameter \\$params with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO1MiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO1MiniService\\:\\:updateAssistantVectorStoreId\\(\\) has parameter \\$vectorStoreId with no type specified\\.$#',
+    'identifier' => 'missingType.parameter',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO1MiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Parameter \\#1 \\$file of method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO1MiniService\\:\\:retrieveFile\\(\\) expects AdvisingApp\\\\Ai\\\\Models\\\\AiMessageFile, AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile given\\.$#',
+    'identifier' => 'argument.type',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO1MiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$file_id\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO3MiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$mime_type\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO3MiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$name\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO3MiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$temporary_url\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO3MiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO3MiniService\\:\\:createAssistantFiles\\(\\) has parameter \\$files with generic class Illuminate\\\\Support\\\\Collection but does not specify its types\\: TKey, TValue$#',
+    'identifier' => 'missingType.generics',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO3MiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO3MiniService\\:\\:createAssistantFiles\\(\\) return type with generic class Illuminate\\\\Support\\\\Collection does not specify its types\\: TKey, TValue$#',
+    'identifier' => 'missingType.generics',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO3MiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO3MiniService\\:\\:createFiles\\(\\) has parameter \\$files with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO3MiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO3MiniService\\:\\:createFiles\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO3MiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO3MiniService\\:\\:createVectorStore\\(\\) has parameter \\$parameters with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO3MiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO3MiniService\\:\\:createVectorStoreFilesBatch\\(\\) has parameter \\$fileIds with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO3MiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO3MiniService\\:\\:getExpiredVectorStoresForThread\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO3MiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO3MiniService\\:\\:recreateVectorStoreForThread\\(\\) has parameter \\$vectorStore with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO3MiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO3MiniService\\:\\:retrieveAllVectorStoreFileIds\\(\\) has parameter \\$after with no type specified\\.$#',
+    'identifier' => 'missingType.parameter',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO3MiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO3MiniService\\:\\:retrieveAllVectorStoreFileIds\\(\\) has parameter \\$vectorStoreFileIds with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO3MiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO3MiniService\\:\\:retrieveVectorStoreFiles\\(\\) has parameter \\$params with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO3MiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO3MiniService\\:\\:updateAssistantVectorStoreId\\(\\) has parameter \\$vectorStoreId with no type specified\\.$#',
+    'identifier' => 'missingType.parameter',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO3MiniService.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Parameter \\#1 \\$file of method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO3MiniService\\:\\:retrieveFile\\(\\) expects AdvisingApp\\\\Ai\\\\Models\\\\AiMessageFile, AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile given\\.$#',
+    'identifier' => 'argument.type',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO3MiniService.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to method addResponses\\(\\) on an unknown class ClientFake\\.$#',
@@ -5702,6 +6186,30 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:orderedInteractions\\(\\)\\.$#',
     'identifier' => 'method.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/interaction/src/Models/Interaction.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\Team\\\\Models\\\\Team, \\$this\\(AdvisingApp\\\\Interaction\\\\Models\\\\Interaction\\), covariant AdvisingApp\\\\Interaction\\\\Models\\\\InteractionConfidentialTeam\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+    'identifier' => 'generics.moreTypes',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/interaction/src/Models/Interaction.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<App\\\\Models\\\\User, \\$this\\(AdvisingApp\\\\Interaction\\\\Models\\\\Interaction\\), covariant AdvisingApp\\\\Interaction\\\\Models\\\\InteractionConfidentialUser\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+    'identifier' => 'generics.moreTypes',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/interaction/src/Models/Interaction.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\Interaction\\\\Models\\\\Interaction\\:\\:confidentialAccessTeams\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\Team\\\\Models\\\\Team, \\$this\\(AdvisingApp\\\\Interaction\\\\Models\\\\Interaction\\), covariant AdvisingApp\\\\Interaction\\\\Models\\\\InteractionConfidentialTeam\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\Team\\\\Models\\\\Team, \\$this\\(AdvisingApp\\\\Interaction\\\\Models\\\\Interaction\\)\\>\\.$#',
+    'identifier' => 'return.type',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/interaction/src/Models/Interaction.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\Interaction\\\\Models\\\\Interaction\\:\\:confidentialAccessUsers\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<App\\\\Models\\\\User, \\$this\\(AdvisingApp\\\\Interaction\\\\Models\\\\Interaction\\), covariant AdvisingApp\\\\Interaction\\\\Models\\\\InteractionConfidentialUser\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<App\\\\Models\\\\User, \\$this\\(AdvisingApp\\\\Interaction\\\\Models\\\\Interaction\\)\\>\\.$#',
+    'identifier' => 'return.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/interaction/src/Models/Interaction.php',
 ];
@@ -7272,10 +7780,34 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/prospect/src/Models/EducatablePipelineStage.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Prospect\\\\Models\\\\Prospect, \\$this\\(AdvisingApp\\\\Prospect\\\\Models\\\\Pipeline\\), covariant AdvisingApp\\\\Prospect\\\\Models\\\\EducatablePipelineStage\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+    'identifier' => 'generics.moreTypes',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Models/Pipeline.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Models\\\\Pipeline\\:\\:educatablePipelineStages\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Prospect\\\\Models\\\\Prospect, \\$this\\(AdvisingApp\\\\Prospect\\\\Models\\\\Pipeline\\), covariant AdvisingApp\\\\Prospect\\\\Models\\\\EducatablePipelineStage\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Prospect\\\\Models\\\\Prospect, \\$this\\(AdvisingApp\\\\Prospect\\\\Models\\\\Pipeline\\)\\>\\.$#',
+    'identifier' => 'return.type',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Models/Pipeline.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Prospect\\\\Models\\\\Pipeline\\:\\:newMorphToMany\\(\\) return type with generic class AdvisingApp\\\\Audit\\\\Overrides\\\\MorphToMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/prospect/src/Models/Pipeline.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFile, \\$this\\(AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\), covariant AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFileEntities\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+    'identifier' => 'generics.moreTypes',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Models/Prospect.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Prospect\\\\Models\\\\Pipeline\\> in PHPDoc tag @return does not specify all template types of class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\: TRelatedModel, TDeclaringModel$#',
+    'identifier' => 'generics.lessTypes',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Models/Prospect.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\:\\:additionalAddresses\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\HasMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
@@ -7302,19 +7834,19 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/prospect/src/Models/Prospect.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\:\\:careTeam\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<App\\\\Models\\\\User, \\$this\\(AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\), Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphPivot, \'pivot\'\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<App\\\\Models\\\\User, \\$this\\(AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\), AdvisingApp\\\\CareTeam\\\\Models\\\\CareTeam, \'pivot\'\\>\\.$#',
-    'identifier' => 'return.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Models/Prospect.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\:\\:displayName\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Casts\\\\Attribute does not specify its types\\: TGet, TSet$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/prospect/src/Models/Prospect.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\:\\:educatablePipelineStages\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Prospect\\\\Models\\\\Pipeline, Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphPivot, \'pivot\'\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Prospect\\\\Models\\\\Pipeline, \\$this\\(AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\), AdvisingApp\\\\Prospect\\\\Models\\\\EducatablePipelineStage, \'pivot\'\\>\\.$#',
+    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\:\\:educatablePipelineStages\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Prospect\\\\Models\\\\Pipeline\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Prospect\\\\Models\\\\Pipeline, \\$this\\(AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\)\\>\\.$#',
+    'identifier' => 'return.type',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Models/Prospect.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\:\\:engagementFiles\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFile, \\$this\\(AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\), covariant AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFileEntities\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFile, \\$this\\(AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\)\\>\\.$#',
     'identifier' => 'return.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/prospect/src/Models/Prospect.php',
@@ -7350,18 +7882,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/prospect/src/Models/Prospect.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\:\\:subscribedUsers\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<App\\\\Models\\\\User, \\$this\\(AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\), Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphPivot, \'pivot\'\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<App\\\\Models\\\\User, \\$this\\(AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\), AdvisingApp\\\\Notification\\\\Models\\\\Subscription, \'pivot\'\\>\\.$#',
-    'identifier' => 'return.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Models/Prospect.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\:\\:tags\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<App\\\\Models\\\\Tag, \\$this\\(AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\), Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphPivot, \'pivot\'\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<App\\\\Models\\\\Tag, \\$this\\(AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\), App\\\\Models\\\\Taggable, \'pivot\'\\>\\.$#',
-    'identifier' => 'return.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Models/Prospect.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\:\\:taskHistories\\(\\) return type with generic class Staudenmeir\\\\EloquentHasManyDeep\\\\HasManyDeep does not specify its types\\: TRelatedModel, TDeclaringModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
@@ -7380,8 +7900,8 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/prospect/src/Models/Prospect.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Type string in generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Prospect\\\\Models\\\\Pipeline, Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphPivot, string\\> in PHPDoc tag @return is not subtype of template type TPivotModel of Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\Pivot \\= Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphPivot of class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\.$#',
-    'identifier' => 'generics.notSubtype',
+    'message' => '#^Return type \\(Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<App\\\\Models\\\\Tag, \\$this\\(AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\)\\>\\) of method AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\:\\:tags\\(\\) should be compatible with return type \\(Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<App\\\\Models\\\\Tag, covariant AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\|AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student, covariant App\\\\Models\\\\Taggable\\>\\) of method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\:\\:tags\\(\\)$#',
+    'identifier' => 'method.childReturnType',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/prospect/src/Models/Prospect.php',
 ];
@@ -9696,7 +10216,13 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/student-data-model/src/Jobs/PrepareStudentDataCsvImport.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\:\\:careTeam\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany does not specify its types\\: TRelatedModel, TDeclaringModel, TPivotModel, TAccessor \\(2\\-4 required\\)$#',
+    'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<App\\\\Models\\\\Tag, covariant AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\|AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student, covariant App\\\\Models\\\\Taggable\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+    'identifier' => 'generics.moreTypes',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Contracts/Educatable.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\:\\:careTeam\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Contracts/Educatable.php',
@@ -9732,6 +10258,30 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Scopes/LicensedToEducatable.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFile, \\$this\\(AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\), covariant AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFileEntities\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+    'identifier' => 'generics.moreTypes',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Student.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<App\\\\Models\\\\Tag, \\$this\\(AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\), covariant App\\\\Models\\\\Taggable\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+    'identifier' => 'generics.moreTypes',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Student.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<App\\\\Models\\\\User, \\$this\\(AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\), covariant AdvisingApp\\\\CareTeam\\\\Models\\\\CareTeam\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+    'identifier' => 'generics.moreTypes',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Student.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<App\\\\Models\\\\User, \\$this\\(AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\), covariant AdvisingApp\\\\Notification\\\\Models\\\\Subscription\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+    'identifier' => 'generics.moreTypes',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Student.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\:\\:additionalAddresses\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\HasMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
@@ -9756,8 +10306,20 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Student.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\:\\:careTeam\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<App\\\\Models\\\\User, \\$this\\(AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\), covariant AdvisingApp\\\\CareTeam\\\\Models\\\\CareTeam\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<App\\\\Models\\\\User, \\$this\\(AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\)\\>\\.$#',
+    'identifier' => 'return.type',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Student.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\:\\:displayName\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Casts\\\\Attribute does not specify its types\\: TGet, TSet$#',
     'identifier' => 'missingType.generics',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Student.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\:\\:engagementFiles\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFile, \\$this\\(AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\), covariant AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFileEntities\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFile, \\$this\\(AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\)\\>\\.$#',
+    'identifier' => 'return.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Student.php',
 ];
@@ -9800,6 +10362,18 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\:\\:primaryPhoneNumber\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Student.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\:\\:subscribedUsers\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<App\\\\Models\\\\User, \\$this\\(AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\), covariant AdvisingApp\\\\Notification\\\\Models\\\\Subscription\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<App\\\\Models\\\\User, \\$this\\(AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\)\\>\\.$#',
+    'identifier' => 'return.type',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Student.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\:\\:tags\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<App\\\\Models\\\\Tag, \\$this\\(AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\), covariant App\\\\Models\\\\Taggable\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<App\\\\Models\\\\Tag, \\$this\\(AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\)\\>\\.$#',
+    'identifier' => 'return.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Student.php',
 ];
@@ -10062,9 +10636,33 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/survey/src/Livewire/RenderSurvey.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\Survey\\\\Models\\\\SurveySubmission, \\$this\\(AdvisingApp\\\\Survey\\\\Models\\\\SurveyField\\), covariant AdvisingApp\\\\Survey\\\\Models\\\\SurveyFieldSubmission\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+    'identifier' => 'generics.moreTypes',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/survey/src/Models/SurveyField.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\Survey\\\\Models\\\\SurveyField\\:\\:submissions\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\Survey\\\\Models\\\\SurveySubmission, \\$this\\(AdvisingApp\\\\Survey\\\\Models\\\\SurveyField\\), covariant AdvisingApp\\\\Survey\\\\Models\\\\SurveyFieldSubmission\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\Survey\\\\Models\\\\SurveySubmission, \\$this\\(AdvisingApp\\\\Survey\\\\Models\\\\SurveyField\\)\\>\\.$#',
+    'identifier' => 'return.type',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/survey/src/Models/SurveyField.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\:\\:notSubmitted\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 2,
+    'path' => __DIR__ . '/app-modules/survey/src/Models/SurveySubmission.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\Survey\\\\Models\\\\SurveyField, \\$this\\(AdvisingApp\\\\Survey\\\\Models\\\\SurveySubmission\\), covariant AdvisingApp\\\\Survey\\\\Models\\\\SurveyFieldSubmission\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+    'identifier' => 'generics.moreTypes',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/survey/src/Models/SurveySubmission.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\Survey\\\\Models\\\\SurveySubmission\\:\\:fields\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\Survey\\\\Models\\\\SurveyField, \\$this\\(AdvisingApp\\\\Survey\\\\Models\\\\SurveySubmission\\), covariant AdvisingApp\\\\Survey\\\\Models\\\\SurveyFieldSubmission\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\Survey\\\\Models\\\\SurveyField, \\$this\\(AdvisingApp\\\\Survey\\\\Models\\\\SurveySubmission\\)\\>\\.$#',
+    'identifier' => 'return.type',
+    'count' => 1,
     'path' => __DIR__ . '/app-modules/survey/src/Models/SurveySubmission.php',
 ];
 $ignoreErrors[] = [
@@ -10474,6 +11072,12 @@ $ignoreErrors[] = [
     'identifier' => 'method.notFound',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/team/database/factories/TeamFactory.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\Team\\\\Models\\\\Team\\:\\:division\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsTo does not specify its types\\: TRelatedModel, TDeclaringModel$#',
+    'identifier' => 'missingType.generics',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/team/src/Models/Team.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Team\\\\Providers\\\\TeamServiceProvider\\:\\:boot\\(\\) has no return type specified\\.$#',
@@ -11028,6 +11632,30 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Filament/Pages/ManageDisplaySettings.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Call to method getAttributeValue\\(\\) on an unknown class Squire\\\\Models\\\\Country\\.$#',
+    'identifier' => 'class.notFound',
+    'count' => 2,
+    'path' => __DIR__ . '/app/Filament/Pages/ManageImportSettings.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Call to method getKey\\(\\) on an unknown class Squire\\\\Models\\\\Country\\.$#',
+    'identifier' => 'class.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Filament/Pages/ManageImportSettings.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Call to static method query\\(\\) on an unknown class Squire\\\\Models\\\\Country\\.$#',
+    'identifier' => 'class.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Filament/Pages/ManageImportSettings.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Parameter \\$country of anonymous function has invalid type Squire\\\\Models\\\\Country\\.$#',
+    'identifier' => 'class.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Filament/Pages/ManageImportSettings.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Method App\\\\Filament\\\\Pages\\\\ProductHealth\\:\\:getNavigationBadge\\(\\) should return string\\|null but returns int\\<1, max\\>\\|null\\.$#',
     'identifier' => 'return.type',
     'count' => 1,
@@ -11136,7 +11764,7 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Filament/Widgets/Notifications.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method App\\\\Filament\\\\Widgets\\\\Notifications\\:\\:getNotifications\\(\\) return type with generic interface Illuminate\\\\Contracts\\\\Pagination\\\\Paginator does not specify its types\\: TKey, TValue$#',
+    'message' => '#^Method App\\\\Filament\\\\Widgets\\\\Notifications\\:\\:getNotifications\\(\\) return type with generic interface Illuminate\\\\Contracts\\\\Pagination\\\\Paginator does not specify its types\\: TItem$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app/Filament/Widgets/Notifications.php',
@@ -11454,7 +12082,7 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Models/Authenticatable.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method App\\\\Models\\\\Authenticatable\\:\\:roles\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany does not specify its types\\: TRelatedModel, TDeclaringModel, TPivotModel, TAccessor \\(2\\-4 required\\)$#',
+    'message' => '#^Method App\\\\Models\\\\Authenticatable\\:\\:roles\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app/Models/Authenticatable.php',
@@ -11470,6 +12098,18 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app/Models/BaseModel.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Division\\\\Models\\\\Division, \\$this\\(App\\\\Models\\\\NotificationSetting\\), covariant App\\\\Models\\\\NotificationSettingPivot\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+    'identifier' => 'generics.moreTypes',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Models/NotificationSetting.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Models\\\\NotificationSetting\\:\\:divisions\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Division\\\\Models\\\\Division, \\$this\\(App\\\\Models\\\\NotificationSetting\\), covariant App\\\\Models\\\\NotificationSettingPivot\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Division\\\\Models\\\\Division, \\$this\\(App\\\\Models\\\\NotificationSetting\\)\\>\\.$#',
+    'identifier' => 'return.type',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Models/NotificationSetting.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method App\\\\Models\\\\NotificationSettingPivot\\:\\:relatedTo\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo does not specify its types\\: TRelatedModel, TDeclaringModel$#',
@@ -11526,10 +12166,28 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Models/Scopes/WithoutSuperAdmin.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Class App\\\\Models\\\\SystemUser uses generic trait Illuminate\\\\Database\\\\Eloquent\\\\Factories\\\\HasFactory but does not specify its types\\: TFactory$#',
+    'identifier' => 'missingType.generics',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Models/SystemUser.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Method App\\\\Models\\\\SystemUser\\:\\:newMorphToMany\\(\\) return type with generic class AdvisingApp\\\\Audit\\\\Overrides\\\\MorphToMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app/Models/SystemUser.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Prospect\\\\Models\\\\Prospect, \\$this\\(App\\\\Models\\\\Tag\\), covariant App\\\\Models\\\\Taggable\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+    'identifier' => 'generics.moreTypes',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Models/Tag.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student, \\$this\\(App\\\\Models\\\\Tag\\), covariant App\\\\Models\\\\Taggable\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+    'identifier' => 'generics.moreTypes',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Models/Tag.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method App\\\\Models\\\\Tag\\:\\:newMorphToMany\\(\\) return type with generic class AdvisingApp\\\\Audit\\\\Overrides\\\\MorphToMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
@@ -11538,14 +12196,80 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Models/Tag.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Method App\\\\Models\\\\Tag\\:\\:prospects\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Prospect\\\\Models\\\\Prospect, \\$this\\(App\\\\Models\\\\Tag\\), covariant App\\\\Models\\\\Taggable\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Prospect\\\\Models\\\\Prospect, \\$this\\(App\\\\Models\\\\Tag\\)\\>\\.$#',
+    'identifier' => 'return.type',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Models/Tag.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Models\\\\Tag\\:\\:students\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student, \\$this\\(App\\\\Models\\\\Tag\\), covariant App\\\\Models\\\\Taggable\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student, \\$this\\(App\\\\Models\\\\Tag\\)\\>\\.$#',
+    'identifier' => 'return.type',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Models/Tag.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Models\\\\Taggable\\:\\:prospects\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo does not specify its types\\: TRelatedModel, TDeclaringModel$#',
+    'identifier' => 'missingType.generics',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Models/Taggable.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Models\\\\Taggable\\:\\:students\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo does not specify its types\\: TRelatedModel, TDeclaringModel$#',
+    'identifier' => 'missingType.generics',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Models/Taggable.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\InAppCommunication\\\\Models\\\\TwilioConversation, \\$this\\(App\\\\Models\\\\User\\), covariant AdvisingApp\\\\InAppCommunication\\\\Models\\\\TwilioConversationUser, string\\> in PHPDoc tag @return specifies 4 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+    'identifier' => 'generics.moreTypes',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Models/User.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Prospect\\\\Models\\\\Prospect, \\$this\\(App\\\\Models\\\\User\\), covariant AdvisingApp\\\\CareTeam\\\\Models\\\\CareTeam\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+    'identifier' => 'generics.moreTypes',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Models/User.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Prospect\\\\Models\\\\Prospect, \\$this\\(App\\\\Models\\\\User\\), covariant AdvisingApp\\\\Notification\\\\Models\\\\Subscription\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+    'identifier' => 'generics.moreTypes',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Models/User.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student, \\$this\\(App\\\\Models\\\\User\\), covariant AdvisingApp\\\\CareTeam\\\\Models\\\\CareTeam\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+    'identifier' => 'generics.moreTypes',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Models/User.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student, \\$this\\(App\\\\Models\\\\User\\), covariant AdvisingApp\\\\Notification\\\\Models\\\\Subscription\\> in PHPDoc tag @return specifies 3 template types, but class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany supports only 2\\: TRelatedModel, TDeclaringModel$#',
+    'identifier' => 'generics.moreTypes',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Models/User.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Method App\\\\Models\\\\User\\:\\:allowedOperators\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
     'count' => 1,
     'path' => __DIR__ . '/app/Models/User.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:cases\\(\\) return type with generic class Staudenmeir\\\\EloquentHasManyDeep\\\\HasManyDeep does not specify its types\\: TRelatedModel, TDeclaringModel$#',
+    'identifier' => 'missingType.generics',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Models/User.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Method App\\\\Models\\\\User\\:\\:confirmMultifactorAuthentication\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Models/User.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:conversations\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\InAppCommunication\\\\Models\\\\TwilioConversation, \\$this\\(App\\\\Models\\\\User\\), covariant AdvisingApp\\\\InAppCommunication\\\\Models\\\\TwilioConversationUser, \'participant\'\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\InAppCommunication\\\\Models\\\\TwilioConversation, \\$this\\(App\\\\Models\\\\User\\)\\>\\.$#',
+    'identifier' => 'return.type',
     'count' => 1,
     'path' => __DIR__ . '/app/Models/User.php',
 ];
@@ -11592,6 +12316,12 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Models/User.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:permissionsFromRoles\\(\\) return type with generic class Staudenmeir\\\\EloquentHasManyDeep\\\\HasManyDeep does not specify its types\\: TRelatedModel, TDeclaringModel$#',
+    'identifier' => 'missingType.generics',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Models/User.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Method App\\\\Models\\\\User\\:\\:processGlobalSearch\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
     'count' => 1,
@@ -11622,7 +12352,31 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Models/User.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:prospectAlerts\\(\\) return type with generic class Staudenmeir\\\\EloquentHasManyDeep\\\\HasManyDeep does not specify its types\\: TRelatedModel, TDeclaringModel$#',
+    'identifier' => 'missingType.generics',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Models/User.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:prospectCareTeams\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Prospect\\\\Models\\\\Prospect, \\$this\\(App\\\\Models\\\\User\\), covariant AdvisingApp\\\\CareTeam\\\\Models\\\\CareTeam\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Prospect\\\\Models\\\\Prospect, \\$this\\(App\\\\Models\\\\User\\)\\>\\.$#',
+    'identifier' => 'return.type',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Models/User.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:prospectSubscriptions\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Prospect\\\\Models\\\\Prospect, \\$this\\(App\\\\Models\\\\User\\), covariant AdvisingApp\\\\Notification\\\\Models\\\\Subscription\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Prospect\\\\Models\\\\Prospect, \\$this\\(App\\\\Models\\\\User\\)\\>\\.$#',
+    'identifier' => 'return.type',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Models/User.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Method App\\\\Models\\\\User\\:\\:reGenerateRecoveryCodes\\(\\) has no return type specified\\.$#',
+    'identifier' => 'missingType.return',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Models/User.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:scopeAdmins\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
     'count' => 1,
     'path' => __DIR__ . '/app/Models/User.php',
@@ -11642,6 +12396,24 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Method App\\\\Models\\\\User\\:\\:scopeAdvancedFilter\\(\\) has parameter \\$query with no type specified\\.$#',
     'identifier' => 'missingType.parameter',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Models/User.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:studentAlerts\\(\\) return type with generic class Staudenmeir\\\\EloquentHasManyDeep\\\\HasManyDeep does not specify its types\\: TRelatedModel, TDeclaringModel$#',
+    'identifier' => 'missingType.generics',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Models/User.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:studentCareTeams\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student, \\$this\\(App\\\\Models\\\\User\\), covariant AdvisingApp\\\\CareTeam\\\\Models\\\\CareTeam\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student, \\$this\\(App\\\\Models\\\\User\\)\\>\\.$#',
+    'identifier' => 'return.type',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Models/User.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:studentSubscriptions\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student, \\$this\\(App\\\\Models\\\\User\\), covariant AdvisingApp\\\\Notification\\\\Models\\\\Subscription\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student, \\$this\\(App\\\\Models\\\\User\\)\\>\\.$#',
+    'identifier' => 'return.type',
     'count' => 1,
     'path' => __DIR__ . '/app/Models/User.php',
 ];
@@ -11688,16 +12460,82 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Multitenancy/Http/Middleware/NeedsTenant.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Access to an undefined property Spatie\\\\Multitenancy\\\\Models\\\\Tenant\\:\\:\\$name\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Multitenancy/Listeners/SetSentryTenantTag.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Method App\\\\Multitenancy\\\\Tasks\\\\PrefixCacheTask\\:\\:setCachePrefix\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
     'count' => 1,
     'path' => __DIR__ . '/app/Multitenancy/Tasks/PrefixCacheTask.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Access to an undefined property Spatie\\\\Multitenancy\\\\Models\\\\Tenant\\:\\:\\$key\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Multitenancy/Tasks/SwitchAppKey.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property Spatie\\\\Multitenancy\\\\Models\\\\Tenant\\:\\:\\$config\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Multitenancy/Tasks/SwitchAppName.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property Spatie\\\\Multitenancy\\\\Models\\\\Tenant\\:\\:\\$domain\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Multitenancy/Tasks/SwitchAppUrl.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Method App\\\\Multitenancy\\\\Tasks\\\\SwitchAppUrl\\:\\:setAppUrl\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
     'count' => 1,
     'path' => __DIR__ . '/app/Multitenancy/Tasks/SwitchAppUrl.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property Spatie\\\\Multitenancy\\\\Models\\\\Tenant\\:\\:\\$config\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Multitenancy/Tasks/SwitchMailTask.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property Spatie\\\\Multitenancy\\\\Models\\\\Tenant\\:\\:\\$domain\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Multitenancy/Tasks/SwitchMailTask.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property Spatie\\\\Multitenancy\\\\Models\\\\Tenant\\:\\:\\$config\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Multitenancy/Tasks/SwitchS3FilesystemTask.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property Spatie\\\\Multitenancy\\\\Models\\\\Tenant\\:\\:\\$config\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Multitenancy/Tasks/SwitchS3PublicFilesystemTask.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property Spatie\\\\Multitenancy\\\\Models\\\\Tenant\\:\\:\\$domain\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Multitenancy/Tasks/SwitchSessionDriver.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property Spatie\\\\Multitenancy\\\\Models\\\\Tenant\\:\\:\\$config\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Multitenancy/Tasks/SwitchTenantDatabasesTask.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Property App\\\\Models\\\\IdeHelperUser\\:\\:\\$password_last_updated_at \\(Illuminate\\\\Support\\\\Carbon\\) does not accept Carbon\\\\Carbon\\.$#',
+    'identifier' => 'assign.propertyType',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Observers/UserObserver.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method App\\\\Overrides\\\\LaravelSqsExtended\\\\SqsDiskConnector\\:\\:connect\\(\\) has parameter \\$config with no value type specified in iterable type array\\.$#',
@@ -11734,6 +12572,54 @@ $ignoreErrors[] = [
     'identifier' => 'varTag.nativeType',
     'count' => 1,
     'path' => __DIR__ . '/app/Providers/FilamentServiceProvider.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Property App\\\\Providers\\\\MultiConnectionParallelTestingServiceProvider\\:\\:\\$parallelConnections type has no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Providers/MultiConnectionParallelTestingServiceProvider.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Providers\\\\RouteServiceProvider\\:\\:configureRateLimiting\\(\\) has no return type specified\\.$#',
+    'identifier' => 'missingType.return',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Providers/RouteServiceProvider.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Rules\\\\EmailNotInUseOrSoftDeleted\\:\\:__construct\\(\\) has parameter \\$currentUserId with no type specified\\.$#',
+    'identifier' => 'missingType.parameter',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Rules/EmailNotInUseOrSoftDeleted.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Property App\\\\Rules\\\\EmailNotInUseOrSoftDeleted\\:\\:\\$currentUserId has no type specified\\.$#',
+    'identifier' => 'missingType.property',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Rules/EmailNotInUseOrSoftDeleted.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Property App\\\\Rules\\\\EmailNotInUseOrSoftDeleted\\:\\:\\$message has no type specified\\.$#',
+    'identifier' => 'missingType.property',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Rules/EmailNotInUseOrSoftDeleted.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Closure invoked with 1 parameter, 2 required\\.$#',
+    'identifier' => 'arguments.count',
+    'count' => 2,
+    'path' => __DIR__ . '/app/Rules/ExcludeSuperAdmin.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Settings\\\\LicenseSettings\\:\\:encrypted\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Settings/LicenseSettings.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Settings\\\\OlympusSettings\\:\\:encrypted\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Settings/OlympusSettings.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method App\\\\Support\\\\FilterQueryBuilder\\:\\:apply\\(\\) has no return type specified\\.$#',
@@ -11844,8 +12730,20 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/View/Components/Dropzone.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^PHPDoc tag @param references unknown parameter\\: \\$id$#',
+    'identifier' => 'parameter.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app/View/Components/SelectList.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$view of function view expects view\\-string\\|null, string given\\.$#',
     'identifier' => 'argument.type',
+    'count' => 1,
+    'path' => __DIR__ . '/app/View/Components/SelectList.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Property App\\\\View\\\\Components\\\\SelectList\\:\\:\\$options has no type specified\\.$#',
+    'identifier' => 'missingType.property',
     'count' => 1,
     'path' => __DIR__ . '/app/View/Components/SelectList.php',
 ];
@@ -11854,6 +12752,24 @@ $ignoreErrors[] = [
     'identifier' => 'trait.unused',
     'count' => 1,
     'path' => __DIR__ . '/database/factories/Concerns/RandomizeState.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method Illuminate\\\\Database\\\\Schema\\\\Blueprint\\:\\:float\\(\\) invoked with 3 parameters, 1\\-2 required\\.$#',
+    'identifier' => 'arguments.count',
+    'count' => 1,
+    'path' => __DIR__ . '/database/migrations/2024_02_15_191911_create_performance_table.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method Illuminate\\\\Database\\\\Schema\\\\Blueprint\\:\\:float\\(\\) invoked with 3 parameters, 1\\-2 required\\.$#',
+    'identifier' => 'arguments.count',
+    'count' => 1,
+    'path' => __DIR__ . '/database/migrations/2024_02_15_192108_create_programs_table.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Schema\\\\ForeignKeyDefinition\\:\\:change\\(\\)\\.$#',
+    'identifier' => 'method.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/database/migrations/2024_06_25_174130_drop_caseloads_table_related_entities_and_columns.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method Illuminate\\\\Database\\\\Migrations\\\\Migration@anonymous/database/migrations/2024_07_31_202514_data_rename_checkbox_form_fields\\.php\\:40\\:\\:fixTipTapBlock\\(\\) has parameter \\$block with no value type specified in iterable type array\\.$#',
@@ -11868,10 +12784,88 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/database/migrations/2024_07_31_202514_data_rename_checkbox_form_fields.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Method Illuminate\\\\Database\\\\Schema\\\\Blueprint\\:\\:float\\(\\) invoked with 3 parameters, 1\\-2 required\\.$#',
+    'identifier' => 'arguments.count',
+    'count' => 1,
+    'path' => __DIR__ . '/database/migrations/2024_09_27_105155_drop_performance_table.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property App\\\\Settings\\\\IntegrationSettings\\:\\:\\$account_sid\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/database/seeders/LocalDevelopmentSeeder.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property App\\\\Settings\\\\IntegrationSettings\\:\\:\\$auth_token\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/database/seeders/LocalDevelopmentSeeder.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property App\\\\Settings\\\\IntegrationSettings\\:\\:\\$from_number\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/database/seeders/LocalDevelopmentSeeder.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Unable to resolve the template type TKey in call to function collect$#',
+    'identifier' => 'argument.templateType',
+    'count' => 1,
+    'path' => __DIR__ . '/database/seeders/LocalDevelopmentSeeder.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Unable to resolve the template type TValue in call to function collect$#',
+    'identifier' => 'argument.templateType',
+    'count' => 1,
+    'path' => __DIR__ . '/database/seeders/LocalDevelopmentSeeder.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Call to an undefined method Pest\\\\PendingCalls\\\\TestCall\\|Pest\\\\Support\\\\HigherOrderTapProxy\\:\\:actingAs\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 1,
     'path' => __DIR__ . '/tests/Helpers.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Function user\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/tests/Pest.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Function user\\(\\) has parameter \\$permissions with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/tests/Pest.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Function user\\(\\) has parameter \\$roles with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/tests/Pest.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^PHPDoc tag @var above a function has no effect\\.$#',
+    'identifier' => 'varTag.misplaced',
+    'count' => 1,
+    'path' => __DIR__ . '/tests/Pest.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Call to an undefined method Pest\\\\Expectation\\<Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, AdvisingApp\\\\Authorization\\\\Models\\\\Role\\>\\|null\\>\\:\\:pluck\\(\\)\\.$#',
+    'identifier' => 'method.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/tests/Tenant/Feature/Filament/UserResource/RelationManagers/RolesRelationManagerTest.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Call to an undefined method Pest\\\\PendingCalls\\\\TestCall\\:\\:expectException\\(\\)\\.$#',
+    'identifier' => 'method.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/tests/Tenant/Feature/Multitenancy/Http/Middleware/NeedsTenantTest.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Call to an undefined method Pest\\\\PendingCalls\\\\TestCall\\:\\:expect\\(\\)\\.$#',
+    'identifier' => 'method.notFound',
+    'count' => 2,
+    'path' => __DIR__ . '/tests/Tenant/Unit/ArchTest.php',
 ];
 
 return ['parameters' => ['ignoreErrors' => $ignoreErrors]];
