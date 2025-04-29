@@ -40,7 +40,7 @@ use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Engagement\Notifications\EngagementNotification;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
-use DateTime;
+use DateTimeInterface;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -73,7 +73,7 @@ class CreateBatchedEngagement implements ShouldQueue
         return [new RateLimitedWithRedis('notification')];
     }
 
-    public function retryUntil(): DateTime
+    public function retryUntil(): DateTimeInterface
     {
         return now()->addHours(2);
     }
