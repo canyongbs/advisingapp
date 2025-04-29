@@ -31,12 +31,12 @@
 
 </COPYRIGHT>
 --}}
-<x-filament::modal id="about">
+<x-filament::modal id="app-about">
     <x-slot name="header">
     </x-slot>
     <div class="space-y-4 text-center">
         <div>
-            <h2 class="text-xl font-bold">Advising App® by Canyon GBS </h2>
+            <h2 class="text-xl font-bold">Advising App® by Canyon GBS</h2>
             <p>Version {{ config('sentry.release') }}</p>
         </div>
         <div>
