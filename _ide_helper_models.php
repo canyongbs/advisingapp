@@ -1,39 +1,5 @@
 <?php
 
-/*
-<COPYRIGHT>
-
-    Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
-
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
-    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
-
-    Notice:
-
-    - You may not provide the software to third parties as a hosted or managed
-      service, where the service provides users with access to any substantial set of
-      the features or functionality of the software.
-    - You may not move, change, disable, or circumvent the license key functionality
-      in the software, and you may not remove or obscure any functionality in the
-      software that is protected by the license key.
-    - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
-      to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
-      vigorously.
-    - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
-    - Use of this software implies agreement to the license terms and conditions as stated
-      in the Elastic License 2.0.
-
-    For more information or inquiries please visit our website at
-    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
-
-</COPYRIGHT>
-*/
-
 // @formatter:off
 // phpcs:ignoreFile
 /**
@@ -622,7 +588,7 @@ namespace App\Models{
  * @property-read int|null $care_teams_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseAssignment> $caseAssignments
  * @property-read int|null $case_assignments_count
- * @property-read \AdvisingApp\Team\Models\TeamUser|\AdvisingApp\Notification\Models\Subscription|\AdvisingApp\CareTeam\Models\CareTeam|\AdvisingApp\Consent\Models\UserConsentAgreement|null $pivot
+ * @property-read \AdvisingApp\Notification\Models\Subscription|\AdvisingApp\CareTeam\Models\CareTeam|\AdvisingApp\Consent\Models\UserConsentAgreement|null $pivot
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Consent\Models\ConsentAgreement> $consentAgreements
  * @property-read int|null $consent_agreements_count
  * @property-read \AdvisingApp\InAppCommunication\Models\TwilioConversationUser|null $participant
@@ -662,8 +628,7 @@ namespace App\Models{
  * @property-read int|null $student_subscriptions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Notification\Models\Subscription> $subscriptions
  * @property-read int|null $subscriptions_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Team\Models\Team> $teams
- * @property-read int|null $teams_count
+ * @property-read \AdvisingApp\Team\Models\Team|null $team
  * @property-read \Illuminate\Database\Eloquent\Collection|\AdvisingApp\Alert\Models\Alert[] $studentAlerts
  * @property-read int|null $student_alerts_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\AdvisingApp\Alert\Models\Alert[] $prospectAlerts
@@ -1873,7 +1838,6 @@ namespace AdvisingApp\CareTeam\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeam newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeam newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeam query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeam whereCareTeamRoleId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeam whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeam whereEducatableId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeam whereEducatableType($value)
@@ -1891,12 +1855,7 @@ namespace AdvisingApp\CareTeam\Models{
  * 
  *
  * @property bool $is_default
- * @property string $id
- * @property string $name
  * @property \App\Enums\CareTeamRoleType $type
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CareTeam\Models\CareTeam> $careTeams
@@ -1906,13 +1865,6 @@ namespace AdvisingApp\CareTeam\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeamRole newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeamRole onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeamRole query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeamRole whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeamRole whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeamRole whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeamRole whereIsDefault($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeamRole whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeamRole whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeamRole whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeamRole withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CareTeamRole withoutTrashed()
  * @mixin \Eloquent
@@ -2860,7 +2812,6 @@ namespace AdvisingApp\Engagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementResponse whereSenderId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementResponse whereSenderType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementResponse whereSentAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementResponse whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementResponse whereSubject($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementResponse whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementResponse whereUpdatedAt($value)
@@ -4260,8 +4211,8 @@ namespace AdvisingApp\Prospect\Models{
  * @property string $full_name
  * @property string|null $preferred
  * @property string|null $description
- * @property bool|null $sms_opt_out
- * @property bool|null $email_bounce
+ * @property bool $sms_opt_out
+ * @property bool $email_bounce
  * @property \Illuminate\Support\Carbon|null $birthdate
  * @property string|null $hsgrad
  * @property string|null $created_by_id
@@ -5045,16 +4996,16 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property string|null $last
  * @property string|null $full_name
  * @property string|null $preferred
- * @property bool|null $sms_opt_out
- * @property bool|null $email_bounce
+ * @property bool $sms_opt_out
+ * @property bool $email_bounce
  * @property \Illuminate\Support\Carbon|null $birthdate
  * @property int|null $hsgrad
- * @property bool|null $dual
- * @property bool|null $ferpa
+ * @property bool $dual
+ * @property bool $ferpa
  * @property \Illuminate\Support\Carbon|null $dfw
- * @property bool|null $sap
+ * @property bool $sap
  * @property string|null $holds
- * @property bool|null $firstgen
+ * @property bool $firstgen
  * @property string|null $ethnicity
  * @property string|null $lastlmslogin
  * @property string|null $f_e_term
@@ -5067,7 +5018,6 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property string|null $primary_email_id
  * @property string|null $primary_phone_id
  * @property string|null $primary_address_id
- * @property string|null $gender
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\StudentDataModel\Models\StudentAddress> $additionalAddresses
  * @property-read int|null $additional_addresses_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\StudentDataModel\Models\StudentEmailAddress> $additionalEmailAddresses
@@ -5158,7 +5108,6 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereFirst($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereFirstgen($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereFullName($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereGender($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereHolds($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereHsgrad($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereLast($value)
@@ -5636,7 +5585,6 @@ namespace AdvisingApp\Team\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
  * @property-read \AdvisingApp\Division\Models\Division|null $division
- * @property-read \AdvisingApp\Team\Models\TeamUser|null $pivot
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
  * @property-read int|null $users_count
  * @method static \AdvisingApp\Team\Database\Factories\TeamFactory factory($count = null, $state = [])
@@ -5654,31 +5602,6 @@ namespace AdvisingApp\Team\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperTeam {}
-}
-
-namespace AdvisingApp\Team\Models{
-/**
- * 
- *
- * @property string $id
- * @property string $team_id
- * @property string $user_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \AdvisingApp\Team\Models\Team $team
- * @property-read \App\Models\User $user
- * @method static \Illuminate\Database\Eloquent\Builder<static>|TeamUser newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|TeamUser newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|TeamUser query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|TeamUser whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|TeamUser whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|TeamUser whereTeamId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|TeamUser whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|TeamUser whereUserId($value)
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperTeamUser {}
 }
 
 namespace AdvisingApp\Timeline\Models{
