@@ -54,6 +54,7 @@ use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ReplicateAction;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
@@ -121,6 +122,7 @@ class ListResourceHubArticles extends ListRecords
                 TernaryFilter::make('public'),
             ])
             ->actions([
+                ViewAction::make(),
                 EditAction::make(),
                 ReplicateAction::make()
                     ->label('Replicate')
