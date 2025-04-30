@@ -41,6 +41,7 @@ use AdvisingApp\Campaign\Filament\Blocks\CampaignActionBlock;
 use AdvisingApp\Campaign\Filament\Resources\CampaignResource;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Segment\Models\Segment;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -49,6 +50,7 @@ use Filament\Forms\Components\ViewField;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Pages\CreateRecord\Concerns\HasWizard;
+use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
 
@@ -57,6 +59,37 @@ class CreateCampaign extends CreateRecord
     use HasWizard;
 
     protected static string $resource = CampaignResource::class;
+
+    public function getCreateFormAction(): Action
+    {
+        return parent::getCreateFormAction()
+            ->submit(null)
+            ->requiresConfirmation()
+            ->modalHeading('Great work on this campaign! 🎉')
+            ->modalDescription('Before we create it, let us know how you’d like to proceed. Click the “Draft” button if you want to save the campaign for further edits, or choose the “Enable” button to create and make it live immediately. If you’re not quite ready to create it, simply select the “Cancel” button.')
+            ->modalWidth(MaxWidth::ThreeExtraLarge)
+            ->modalSubmitActionLabel('Save and enable')
+            ->extraModalFooterActions([
+                Action::make('draft')
+                    ->label('Save as draft')
+                    ->color('gray')
+                    ->action(function () {
+                        $state = $this->form->getRawState();
+                        $state['enabled'] = false;
+                        $this->form->fill($state, false, false);
+                        $this->create();
+                    })
+                    ->cancelParentActions(),
+            ])
+            ->action(function () {
+                $this->create();
+            });
+    }
+
+    public function createAction(): Action
+    {
+        return $this->getCreateFormAction();
+    }
 
     protected function getSteps(): array
     {
