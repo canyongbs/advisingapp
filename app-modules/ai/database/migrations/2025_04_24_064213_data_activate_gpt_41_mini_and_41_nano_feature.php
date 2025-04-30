@@ -34,15 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models\Contracts;
+use App\Features\GPT41MiniAnd41NanoFeature;
+use Illuminate\Database\Migrations\Migration;
 
-interface AiFile
-{
-    public function getTemporaryUrl(): ?string;
+return new class () extends Migration {
+    public function up(): void
+    {
+        GPT41MiniAnd41NanoFeature::activate();
+    }
 
-    public function getName(): ?string;
-
-    public function getMimeType(): ?string;
-
-    public function getFileId(): ?string;
-}
+    public function down(): void
+    {
+        GPT41MiniAnd41NanoFeature::deactivate();
+    }
+};

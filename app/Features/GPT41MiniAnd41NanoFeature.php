@@ -34,15 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models\Contracts;
+namespace App\Features;
 
-interface AiFile
+use App\Support\AbstractFeatureFlag;
+
+class GPT41MiniAnd41NanoFeature extends AbstractFeatureFlag
 {
-    public function getTemporaryUrl(): ?string;
-
-    public function getName(): ?string;
-
-    public function getMimeType(): ?string;
-
-    public function getFileId(): ?string;
+    public function resolve(mixed $scope): mixed
+    {
+        return false;
+    }
 }
