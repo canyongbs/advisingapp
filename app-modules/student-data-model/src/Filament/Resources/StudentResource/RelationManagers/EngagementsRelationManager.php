@@ -47,6 +47,7 @@ use AdvisingApp\Notification\Models\EmailMessageEvent;
 use AdvisingApp\Notification\Models\SmsMessageEvent;
 use AdvisingApp\Timeline\Models\Timeline;
 use App\Features\RefactorEngagementCampaignSubjectToJsonb;
+use App\Infolists\Components\EngagementBody;
 use Filament\Infolists\Components\Fieldset as InfolistFieldset;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Section;
@@ -108,8 +109,7 @@ class EngagementsRelationManager extends RelationManager
                                             })
                                             ->columnSpanFull()
                                             ->visible(RefactorEngagementCampaignSubjectToJsonb::active()),
-                                        TextEntry::make('body')
-                                            ->extraAttributes(['class' => 'prose dark:prose-invert'])
+                                        EngagementBody::make('body')
                                             ->getStateUsing(fn (Timeline $record): HtmlString => $record->timelineable->getBody())
                                             ->columnSpanFull(),
                                     ]),
