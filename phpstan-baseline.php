@@ -11898,10 +11898,10 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Models/User.php',
 ];
 $ignoreErrors[] = [
-	'message' => '#^Method App\\\\Models\\\\User\\:\\:scopeAdvancedFilter\\(\\) has parameter \\$query with no type specified\\.$#',
-	'identifier' => 'missingType.parameter',
-	'count' => 1,
-	'path' => __DIR__ . '/app/Models/User.php',
+    'message' => '#^Method App\\\\Models\\\\User\\:\\:scopeAdvancedFilter\\(\\) has parameter \\$query with no type specified\\.$#',
+    'identifier' => 'missingType.parameter',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Models/User.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method App\\\\Models\\\\User\\:\\:studentAlerts\\(\\) return type with generic class Staudenmeir\\\\EloquentHasManyDeep\\\\HasManyDeep does not specify its types\\: TRelatedModel, TDeclaringModel$#',
