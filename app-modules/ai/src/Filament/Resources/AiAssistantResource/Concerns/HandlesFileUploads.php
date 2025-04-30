@@ -36,16 +36,17 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Concerns;
 
+use Throwable;
+use Illuminate\Support\Collection;
 use AdvisingApp\Ai\Models\AiAssistant;
+use Filament\Notifications\Notification;
 use AdvisingApp\Ai\Models\AiAssistantFile;
 use AdvisingApp\Ai\Services\Contracts\AiService;
+use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4Service;
 use AdvisingApp\IntegrationOpenAi\Jobs\UploadFilesToAssistant;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt35Service;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4oService;
-use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4Service;
-use Filament\Notifications\Notification;
-use Illuminate\Support\Collection;
-use Throwable;
+use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4oMiniService;
 
 trait HandlesFileUploads
 {
@@ -71,6 +72,7 @@ trait HandlesFileUploads
         try {
             match (true) {
                 $aiService instanceof OpenAiGpt4oService => UploadFilesToAssistant::dispatchSync($aiService, $assistant, $aiAssistantFiles),
+                $aiService instanceof OpenAiGpt4oMiniService => UploadFilesToAssistant::dispatchSync($aiService, $assistant, $aiAssistantFiles),
                 $aiService instanceof OpenAiGpt4Service => UploadFilesToAssistant::dispatchSync($aiService, $assistant, $aiAssistantFiles),
                 $aiService instanceof OpenAiGpt35Service => UploadFilesToAssistant::dispatchSync($aiService, $assistant, $aiAssistantFiles),
                 default => $this->couldNotUploadFilesToAssistant($aiAssistantFiles),
