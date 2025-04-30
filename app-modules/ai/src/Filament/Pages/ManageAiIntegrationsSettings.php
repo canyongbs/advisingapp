@@ -40,6 +40,7 @@ use AdvisingApp\Ai\Actions\ResetAiServiceIdsForModel;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Jobs\ReInitializeAiModel;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use App\Features\OpenAiVersionFeatureFlag;
 use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -89,6 +90,9 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->label('API Key')
                                     ->password()
                                     ->autocomplete(false),
+                                TextInput::make('open_ai_gpt_35_version')
+                                    ->label('Version')
+                                    ->visible(OpenAiVersionFeatureFlag::active()),
                                 TextInput::make('open_ai_gpt_35_model')
                                     ->label('Model'),
                             ]),
@@ -103,6 +107,9 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->label('API Key')
                                     ->password()
                                     ->autocomplete(false),
+                                TextInput::make('open_ai_gpt_4_version')
+                                    ->label('Version')
+                                    ->visible(OpenAiVersionFeatureFlag::active()),
                                 TextInput::make('open_ai_gpt_4_model')
                                     ->label('Model'),
                             ]),
@@ -117,6 +124,9 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->label('API Key')
                                     ->password()
                                     ->autocomplete(false),
+                                TextInput::make('open_ai_gpt_4o_version')
+                                    ->label('Version')
+                                    ->visible(OpenAiVersionFeatureFlag::active()),
                                 TextInput::make('open_ai_gpt_4o_model')
                                     ->label('Model'),
                             ]),
@@ -131,6 +141,9 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->label('API Key')
                                     ->password()
                                     ->autocomplete(false),
+                                TextInput::make('open_ai_gpt_4o_mini_version')
+                                    ->label('Version')
+                                    ->visible(OpenAiVersionFeatureFlag::active()),
                                 TextInput::make('open_ai_gpt_4o_mini_model')
                                     ->label('Model'),
                             ]),
@@ -145,6 +158,9 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->label('API Key')
                                     ->password()
                                     ->autocomplete(false),
+                                TextInput::make('open_ai_gpt_o1_mini_version')
+                                    ->label('Version')
+                                    ->visible(OpenAiVersionFeatureFlag::active()),
                                 TextInput::make('open_ai_gpt_o1_mini_model')
                                     ->label('Model'),
                             ]),
@@ -159,6 +175,9 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->label('API Key')
                                     ->password()
                                     ->autocomplete(false),
+                                TextInput::make('open_ai_gpt_o3_mini_version')
+                                    ->label('Version')
+                                    ->visible(OpenAiVersionFeatureFlag::active()),
                                 TextInput::make('open_ai_gpt_o3_mini_model')
                                     ->label('Model'),
                             ]),
