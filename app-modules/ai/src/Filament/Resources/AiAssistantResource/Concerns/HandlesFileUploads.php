@@ -36,9 +36,13 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Concerns;
 
+use Throwable;
+use Illuminate\Support\Collection;
 use AdvisingApp\Ai\Models\AiAssistant;
+use Filament\Notifications\Notification;
 use AdvisingApp\Ai\Models\AiAssistantFile;
 use AdvisingApp\Ai\Services\Contracts\AiService;
+use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4Service;
 use AdvisingApp\IntegrationOpenAi\Jobs\UploadFilesToAssistant;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt35Service;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt41MiniService;
