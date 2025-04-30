@@ -86,13 +86,13 @@ enum AiApplication: string implements HasLabel
                     AiModel::OpenAiGpt4oMini,
                     AiModel::OpenAiGptO1Mini,
                     AiModel::OpenAiGptO3Mini,
+                    ...(GPT41MiniAnd41NanoFeature::active() ? [AiModel::OpenAiGpt41Mini, AiModel::OpenAiGpt41Nano] : []),
                 ],
                 self::Test => [
                     AiModel::OpenAiGptTest,
                 ],
             },
             ...(app()->hasDebugModeEnabled() ? [AiModel::Test] : []),
-            ...(GPT41MiniAnd41NanoFeature::active() ? [AiModel::OpenAiGpt41Mini, AiModel::OpenAiGpt41Nano] : []), //TODO: Please move this model to PersonalAssistant array when you remove the feature flag.
         ];
     }
 
