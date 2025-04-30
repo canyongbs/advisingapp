@@ -77,7 +77,7 @@ class OpenAiGpt41NanoService extends BaseOpenAiService implements AiServiceLifec
 
     public function getApiKey(): string
     {
-        return $this->settings->open_ai_gpt_o1_nano_api_key ?? config('integration-open-ai.gpt_41_nano_api_key');
+        return $this->settings->open_ai_gpt_41_nano_api_key ?? config('integration-open-ai.gpt_41_nano_api_key');
     }
 
     public function getApiVersion(): string
