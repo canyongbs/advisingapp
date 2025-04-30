@@ -38,7 +38,6 @@ namespace AdvisingApp\Notification\Notifications\Messages;
 
 use App\Models\NotificationSetting;
 use Illuminate\Notifications\Messages\MailMessage as BaseMailMessage;
-use Illuminate\Support\Facades\Log;
 
 class MailMessage extends BaseMailMessage
 {
