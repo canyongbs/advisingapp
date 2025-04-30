@@ -41,6 +41,7 @@ use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Timeline\Models\CustomTimeline;
 use App\Features\RefactorEngagementCampaignSubjectToJsonb;
 use Exception;
+use App\Infolists\Components\EngagementBody;
 use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\TextEntry;
@@ -94,8 +95,7 @@ class EngagementTimeline extends CustomTimeline
                             ->getStateUsing(fn (Engagement $engagement): HtmlString => $engagement->getSubject())
                             ->columnSpanFull()
                             ->visible(RefactorEngagementCampaignSubjectToJsonb::active()),
-                        TextEntry::make('body')
-                            ->extraAttributes(['class' => 'prose dark:prose-invert'])
+                        EngagementBody::make('body')
                             ->getStateUsing(fn (Engagement $engagement): HtmlString => $engagement->getBody())
                             ->columnSpanFull(),
                     ]),
