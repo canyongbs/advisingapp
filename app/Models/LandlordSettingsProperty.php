@@ -36,7 +36,7 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Spatie\LaravelSettings\Models\SettingsProperty as BaseSettingsProperty;
 
 /**
