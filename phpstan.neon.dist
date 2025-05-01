@@ -24,7 +24,7 @@ parameters:
     level: 6
 
     ignoreErrors:
-        - 
+        -
             message: '#Call to an undefined static method Illuminate\\Support\\Facades\\Queue::pushed\(\)#'
             reportUnmatched: false
         -
