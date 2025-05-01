@@ -1,29 +1,29 @@
 {
-  "name": "canyon-gbs/advising-app-audit",
-  "description": "",
-  "type": "library",
-  "version": "1.0",
-  "license": "proprietary",
-  "require": {
-    "filament/filament": "^3.0",
-    "filament/spatie-laravel-settings-plugin": "^3.0",
-    "spatie/laravel-settings": "^3.2",
-    "owen-it/laravel-auditing": "^13.6"
-  },
-  "autoload": {
-    "psr-4": {
-      "AdvisingApp\\Audit\\": "src/",
-      "AdvisingApp\\Audit\\Tests\\": "tests/",
-      "AdvisingApp\\Audit\\Database\\Factories\\": "database/factories/",
-      "AdvisingApp\\Audit\\Database\\Seeders\\": "database/seeders/"
+    "name": "canyon-gbs/advising-app-audit",
+    "description": "",
+    "type": "library",
+    "version": "1.0",
+    "license": "proprietary",
+    "require": {
+        "filament/filament": "^3.0",
+        "filament/spatie-laravel-settings-plugin": "^3.0",
+        "spatie/laravel-settings": "^3.2",
+        "owen-it/laravel-auditing": "^14.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "AdvisingApp\\Audit\\": "src/",
+            "AdvisingApp\\Audit\\Tests\\": "tests/",
+            "AdvisingApp\\Audit\\Database\\Factories\\": "database/factories/",
+            "AdvisingApp\\Audit\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AdvisingApp\\Audit\\Providers\\AuditServiceProvider"
+            ]
+        }
     }
-  },
-  "minimum-stability": "stable",
-  "extra": {
-    "laravel": {
-      "providers": [
-        "AdvisingApp\\Audit\\Providers\\AuditServiceProvider"
-      ]
-    }
-  }
 }
