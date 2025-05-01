@@ -36,8 +36,10 @@
 
 namespace App\Multitenancy\Tasks;
 
+use App\Models\Tenant;
+use Exception;
 use Illuminate\Support\Facades\URL;
-use Spatie\Multitenancy\Models\Tenant;
+use Spatie\Multitenancy\Contracts\IsTenant;
 use Spatie\Multitenancy\Tasks\SwitchTenantTask;
 
 class SwitchAppUrl implements SwitchTenantTask
@@ -48,21 +50,26 @@ class SwitchAppUrl implements SwitchTenantTask
         $this->originalUrl ??= config('app.url');
     }
 
-    public function makeCurrent(Tenant $tenant): void
+    public function makeCurrent(IsTenant $tenant): void
     {
+        throw_if(
+            ! $tenant instanceof Tenant,
+            new Exception('Tenant is not an instance of Tenant')
+        );
+
         // We may want to look into defining whether we want to use https at the tenant level
         $scheme = parse_url($this->originalUrl)['scheme'];
 
         $this->setAppUrl("{$scheme}://{$tenant->domain}");
 
-        URL::forceRootUrl(config('app.url'));
+        URL::useOrigin(config('app.url'));
     }
 
     public function forgetCurrent(): void
     {
         $this->setAppUrl($this->originalUrl);
 
-        URL::forceRootUrl($this->originalUrl);
+        URL::useOrigin($this->originalUrl);
     }
 
     protected function setAppUrl(string $url)
