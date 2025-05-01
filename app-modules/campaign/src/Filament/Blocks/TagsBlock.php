@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
+use AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages\CreateCampaign;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
 use AdvisingApp\Segment\Models\Segment;
 use App\Models\Tag;
@@ -69,7 +70,7 @@ class TagsBlock extends CampaignActionBlock
             Select::make($fieldPrefix . 'tag_ids')
                 ->label('Which tags should be applied?')
                 ->options(function (Get $get, $livewire, string $operation) {
-                    if ($operation === 'create') {
+                    if ($livewire instanceof CreateCampaign) {
                         $segment_id = $get('../../../segment_id');
                     } else {
                         $segment_id = $livewire->getOwnerRecord()->segment_id;
