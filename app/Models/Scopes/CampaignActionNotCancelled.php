@@ -34,38 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Actions;
+namespace App\Models\Scopes;
 
-use AdvisingApp\Campaign\Models\CampaignAction;
-use App\Models\Tenant;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Database\Eloquent\Builder;
 
-class ExecuteCampaignAction implements ShouldQueue, ShouldBeUnique
+class CampaignActionNotCancelled
 {
-    use Dispatchable;
-
-    public int $tries = 3;
-
-    public int $timeout = 600;
-
-    public int $uniqueFor = 600 * 3;
-
-    public function __construct(
-        public CampaignAction $action
-    ) {}
-
-    public function uniqueId(): string
+    public function __invoke(Builder $query): void
     {
-        return Tenant::current()->getKey() . ':' . $this->action->getKey();
-    }
-
-    public function handle(): void
-    {
-        if ($this->action->cancelled_at !== null) {
-            return;
-        }
-        $this->action->execute();
+        $query->where('cancelled_at', null);
     }
 }

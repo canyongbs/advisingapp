@@ -37,6 +37,7 @@
 namespace AdvisingApp\Campaign\Actions;
 
 use AdvisingApp\Campaign\Models\CampaignAction;
+use App\Models\Scopes\CampaignActionNotCancelled;
 use App\Models\Tenant;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -60,6 +61,7 @@ class ExecuteCampaignActions implements ShouldQueue
         CampaignAction::query()
             ->where('execute_at', '<=', now())
             ->whereNull('last_execution_attempt_at')
+            ->tap(new CampaignActionNotCancelled())
             ->hasNotBeenExecuted()
             ->campaignEnabled()
             ->cursor()

@@ -81,9 +81,23 @@ class CampaignActionsRelationManager extends RelationManager
             ->recordTitleAttribute('id')
             ->modifyQueryUsing(fn (QueryBuilder $query) => $query->orderBy('execute_at', 'ASC'))
             ->columns([
-                TextColumn::make('type')->label('Step Type'),
+                TextColumn::make('type')->label('Step Type')
+                    ->formatStateUsing(function ($state, $record) {
+                        $badge = '';
+
+                        if ($record->cancelled_at) {
+                            $badge = '<span class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">Cancelled</span>';
+                        }
+
+                        return e($state) . $badge;
+                    })
+                    ->html(),
                 TextColumn::make('execute_at')->label('Schedule')
                     ->dateTime(timezone: app(CampaignSettings::class)->getActionExecutionTimezone()),
+                TextColumn::make('cancelled_at')
+                    ->label('')
+                    ->hidden(fn () => $this->getOwnerRecord()->cancelled_at !== null)
+                    ->badge(),
             ])
             ->headerActions([
                 Action::make('create')
@@ -117,6 +131,17 @@ class CampaignActionsRelationManager extends RelationManager
                     ->hidden(fn () => $this->getOwnerRecord()->hasBeenExecuted() === true),
             ])
             ->actions([
+                Action::make('cancel')
+                    ->label('Cancel')
+                    ->requiresConfirmation()
+                    ->color('danger')
+                    ->icon('heroicon-o-x-circle')
+                    ->modalHeading('Cancel Journey Step')
+                    ->hidden(fn () => $this->getOwnerRecord()->hasBeenExecuted() === true)
+                    ->action(function ($record) {
+                        $record->cancelled_at = now();
+                        $record->save();
+                    }),
                 EditAction::make()
                     ->modalHeading(fn (CampaignAction $action) => 'Edit ' . $action->type->getLabel())
                     ->hidden(fn () => $this->getOwnerRecord()->hasBeenExecuted() === true),
