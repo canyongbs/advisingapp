@@ -41,6 +41,7 @@ use AdvisingApp\Engagement\Filament\Actions\RelationManagerSendEngagementAction;
 use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementResponse;
+use AdvisingApp\Notification\Enums\EmailMessageDisplayStatus;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\EmailMessageEvent;
 use AdvisingApp\Notification\Models\SmsMessageEvent;
@@ -64,6 +65,7 @@ use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\HtmlString;
 use Livewire\Attributes\On;
 
@@ -190,7 +192,7 @@ class EngagementsRelationManager extends RelationManager
                 TextColumn::make('status')
                     ->getStateUsing(fn (Timeline $record) => match ($record->timelineable::class) {
                         EngagementResponse::class => $record->timelineable->status,
-                        default => ''
+                        Engagement::class => EmailMessageDisplayStatus::getStatusFromEmailMessage($record->timelineable->latestEmailMessage)
                     })
                     ->badge(),
                 TextColumn::make('type')
