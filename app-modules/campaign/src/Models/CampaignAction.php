@@ -63,12 +63,14 @@ class CampaignAction extends BaseModel implements Auditable, HasMedia
         'last_execution_attempt_at',
         'last_execution_attempt_error',
         'successfully_executed_at',
+        'cancelled_at',
     ];
 
     protected $casts = [
         'type' => CampaignActionType::class,
         'data' => 'array',
         'execute_at' => 'datetime',
+        'cancelled_at' => 'datetime',
     ];
 
     /**
