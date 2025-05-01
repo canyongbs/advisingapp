@@ -8,7 +8,7 @@ enum InteractableType {
 
 scalar InteractableId
     @scalar(class: "App\\GraphQL\\Scalars\\InteractableId")
-    @searchByOperators(type: "ID")
+    @searchByExtendOperators(type: "ID")
 
 type Interaction
     @model(class: "AdvisingApp\\Interaction\\Models\\Interaction") {
