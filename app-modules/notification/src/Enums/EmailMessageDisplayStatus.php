@@ -36,29 +36,26 @@
 
 namespace AdvisingApp\Notification\Enums;
 
-use AdvisingApp\Notification\Models\EmailMessage;
-use Filament\Support\Contracts\HasLabel;
-use Illuminate\Support\Facades\Log;
-
 enum EmailMessageDisplayStatus
 {
-  case Complaint;
-  case Bounced;
-  case Failed;
-  case Clicked;
-  case Read;
-  case Delivered;
-  case Delayed;
-  case Unsubscribed;
-  case Sent;
+    case Complaint;
+    case Bounced;
+    case Failed;
+    case Clicked;
+    case Read;
+    case Delivered;
+    case Delayed;
+    case Unsubscribed;
+    case Sent;
 
     public function getLabel(): ?string
     {
         return str($this->name)->headline();
     }
 
-    public static function getStatusFromEmailMessage($message) :string {
-        if (!$message) {
+    public static function getStatusFromEmailMessage($message): string
+    {
+        if (! $message) {
             return '';
         }
 
@@ -75,6 +72,7 @@ enum EmailMessageDisplayStatus
             default => '',
         };
     }
+
     public function color(): string
     {
         return match ($this) {
