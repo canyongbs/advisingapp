@@ -7,24 +7,24 @@ scalar DateTime
 
 scalar UUID
     @scalar(class: "App\\GraphQL\\Scalars\\UUID")
-    @searchByOperators(type: "ID")
+    @searchByExtendOperators(type: "ID")
 
 scalar EducatableId
     @scalar(class: "App\\GraphQL\\Scalars\\EducatableId")
-    @searchByOperators(type: "ID")
+    @searchByExtendOperators(type: "ID")
 
 scalar JSON
     @scalar(class: "MLL\\GraphQLScalars\\JSON")
-    @searchByOperators(type: "String")
+    @searchByExtendOperators(type: "String")
 
 scalar Email
     @scalar(class: "MLL\\GraphQLScalars\\Email")
-    @searchByOperators(type: "String")
+    @searchByExtendOperators(type: "String")
 
 "A four digit integer year, e.g. `2018`."
 scalar Year
     @scalar(class: "App\\GraphQL\\Scalars\\Year")
-    @searchByOperators(type: "Date")
+    @searchByExtendOperators(type: "Date")
 
 type Query
 
