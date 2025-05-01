@@ -39,12 +39,16 @@
 <div>
     <div class="flex flex-row justify-between">
         <h3 class="mb-1 flex items-center text-lg font-semibold text-gray-500 dark:text-gray-100">
-            <a
-                class="font-medium underline"
-                href="{{ UserResource::getUrl('view', ['record' => $record->createdBy]) }}"
-            >
-                {{ $record->createdBy->name }}
-            </a>
+            @if ($record->createdBy)
+                <a
+                    class="font-medium underline"
+                    href="{{ UserResource::getUrl('view', ['record' => $record->createdBy]) }}"
+                >
+                    {{ $record->createdBy->name }}
+                </a>
+            @else
+                Sender N/A
+            @endif
         </h3>
 
         <div>

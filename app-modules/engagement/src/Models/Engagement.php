@@ -244,11 +244,11 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
             'student full name' => $this->recipient->getAttribute($this->recipient->displayNameKey()),
             'student email' => $this->recipient->primaryEmailAddress?->address,
             'student preferred name' => $this->recipient->getAttribute($this->recipient->displayPreferredNameKey()),
-            'user first name' => (new Parser())->parse($this->user->name)->getFirstname(),
-            'user full name' => $this->user->name,
-            'user job title' => $this->user->job_title,
-            'user email' => $this->user->email,
-            'user phone number' => $this->user->phone_number,
+            'user first name' => $this->user ? (new Parser())->parse($this->user->name)->getFirstname() : null,
+            'user full name' => $this->user?->name,
+            'user job title' => $this->user?->job_title,
+            'user email' => $this->user?->email,
+            'user phone number' => $this->user?->phone_number,
         ];
     }
 
