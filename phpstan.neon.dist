@@ -43,3 +43,7 @@ parameters:
             paths:
                 - tests/*
                 - app-modules/*/tests/*
+        -
+            message: '#Call to an undefined method Pest\\PendingCalls\\TestCall::expect\(\)#'
+            identifier: method.notFound
+            path: tests/Unit/ArchTest.php

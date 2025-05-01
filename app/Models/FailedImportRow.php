@@ -37,7 +37,7 @@
 namespace App\Models;
 
 use Filament\Actions\Imports\Models\FailedImportRow as BaseFailedImportRow;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
