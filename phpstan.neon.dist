@@ -46,4 +46,4 @@ parameters:
         -
             message: '#Call to an undefined method Pest\\PendingCalls\\TestCall::expect\(\)#'
             identifier: method.notFound
-            path: tests/Unit/ArchTest.php
+            path: tests/Tenant/Unit/ArchTest.php

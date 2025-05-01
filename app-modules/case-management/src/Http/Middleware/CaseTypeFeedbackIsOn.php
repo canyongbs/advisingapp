@@ -51,7 +51,7 @@ class CaseTypeFeedbackIsOn
     {
         $case = $request->route('case');
 
-        if ($case && $case?->priority?->type?->has_enabled_feedback_collection) {
+        if ($case && $case->priority?->type?->has_enabled_feedback_collection) {
             return $next($request);
         }
 
