@@ -70,47 +70,42 @@ a img {
 
 /* Typography */
 
-h1 {
-    color: #3d4852;
-    font-size: 18px;
-    font-weight: bold;
-    margin-top: 0;
-    text-align: left;
-}
-
-h2 {
-    font-size: 16px;
-    font-weight: bold;
-    margin-top: 0;
-    text-align: left;
-}
-
-h3 {
-    font-size: 14px;
-    font-weight: bold;
-    margin-top: 0;
-    text-align: left;
-}
-
-h4 {
-    font-size: 13px;
-    font-weight: bold;
-    margin-top: 0;
-    text-align: left;
-}
-
-h5 {
-    font-size: 12px;
-    font-weight: bold;
-    margin-top: 0;
-    text-align: left;
-}
-
+h1,
+h2,
+h3,
+h4,
+h5,
 h6 {
-    font-size: 11px;
-    font-weight: bold;
-    margin-top: 0;
+    color: #3d4852;
     text-align: left;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+h1 { font-size: 18px; }
+h2 { font-size: 16px; }
+h3 { font-size: 14px; }
+h4 { font-size: 13px; }
+h5 { font-size: 12px; }
+h6 { font-size: 11px; }
+
+/* Font weight */
+h1,
+h2
+{
+    font-weight: 700;
+}
+
+h3,
+h4
+{
+    font-weight: 600;
+}
+
+h5,
+h6
+{
+    font-weight: 500;
 }
 
 p {

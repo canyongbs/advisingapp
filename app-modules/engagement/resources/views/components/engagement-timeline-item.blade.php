@@ -84,7 +84,7 @@
         @endif
         <div class="flex flex-col">
             <p class="text-xs text-gray-400 dark:text-gray-500">Body:</p>
-            <div class="prose font-bold
+            <div class="prose
                 prose-h1:mt-4 prose-h1:mb-4
                 prose-h2:mt-4 prose-h2:mb-4
                 prose-h3:mt-4 prose-h3:mb-4
@@ -94,6 +94,8 @@
                 prose-h1:leading-[1.5] prose-h2:leading-[1.5] prose-h3:leading-[1.5]
                 prose-h4:leading-[1.5] prose-h5:leading-[1.5] prose-h6:leading-[1.5]
                 prose-h4:text-lg prose-h5:text-base prose-h6:text-sm
+                prose-h5:font-medium prose-h6:font-medium
+                prose-h5:text-[--tw-prose-headings] prose-h6:text-[--tw-prose-headings]
                 prose-hr:mt-4 prose-hr:mb-4
                 dark:prose-invert"
             >

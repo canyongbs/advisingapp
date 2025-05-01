@@ -150,8 +150,7 @@ class EngagementsRelationManager extends RelationManager
                             ->getStateUsing(fn (Timeline $record): ?string => $record->timelineable->subject)
                             ->hidden(fn ($state): bool => blank($state))
                             ->columnSpanFull(),
-                        TextEntry::make('body')
-                            ->extraAttributes(['class' => 'prose dark:prose-invert'])
+                        EngagementBody::make('body')
                             ->getStateUsing(fn (Timeline $record): HtmlString => $record->timelineable->getBody())
                             ->columnSpanFull(),
                     ]),
