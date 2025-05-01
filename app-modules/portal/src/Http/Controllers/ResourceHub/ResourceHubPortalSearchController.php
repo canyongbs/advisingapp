@@ -50,7 +50,7 @@ class ResourceHubPortalSearchController extends Controller
 {
     public function get(Request $request): ResourceHubSearchData
     {
-        $itemData = ResourceHubArticleData::collection(
+        $itemData = ResourceHubArticleData::collect(
             ResourceHubArticle::query()
                 ->public()
                 ->tap(new SearchBy('title', Str::lower($request->get('search'))))
@@ -65,7 +65,7 @@ class ResourceHubPortalSearchController extends Controller
                 ->toArray()
         );
 
-        $categoryData = ResourceHubCategoryData::collection(
+        $categoryData = ResourceHubCategoryData::collect(
             ResourceHubCategory::query()
                 ->tap(new SearchBy('name', Str::lower($request->get('search'))))
                 ->get()
