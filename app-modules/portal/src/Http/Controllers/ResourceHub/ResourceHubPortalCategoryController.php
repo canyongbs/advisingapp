@@ -46,7 +46,7 @@ class ResourceHubPortalCategoryController extends Controller
     public function index(): JsonResponse
     {
         return response()->json(
-            ResourceHubCategoryData::collection(
+            ResourceHubCategoryData::collect(
                 ResourceHubCategory::query()
                     ->get()
                     ->map(function (ResourceHubCategory $category) {
