@@ -67,7 +67,7 @@ trait AttachOverrides
         $parentModel->auditCustomNew = [
             $relationName => $parentModel->{$relationName}()->get()->toArray(),
         ];
-        Event::dispatch(AuditCustom::class, [$parentModel]);
+        Event::dispatch(new AuditCustom($parentModel));
         $parentModel->isCustomEvent = false;
     }
 
@@ -93,7 +93,7 @@ trait AttachOverrides
         $parentModel->auditCustomNew = [
             $relationName => $parentModel->{$relationName}()->get()->toArray(),
         ];
-        Event::dispatch(AuditCustom::class, [$parentModel]);
+        Event::dispatch(new AuditCustom($parentModel));
         $parentModel->isCustomEvent = false;
 
         return empty($results) ? 0 : $results;
@@ -128,7 +128,7 @@ trait AttachOverrides
         }
 
         $parentModel->isCustomEvent = true;
-        Event::dispatch(AuditCustom::class, [$parentModel]);
+        Event::dispatch(new AuditCustom($parentModel));
         $parentModel->isCustomEvent = false;
 
         return $changes;
