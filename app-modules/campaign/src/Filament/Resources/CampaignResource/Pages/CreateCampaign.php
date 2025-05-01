@@ -66,7 +66,7 @@ class CreateCampaign extends CreateRecord
             ->submit(null)
             ->requiresConfirmation()
             ->modalHeading('Great work on this campaign! 🎉')
-            ->modalDescription("Before we create it, let us know how you'd like to proceed. Click the 'Save as Draft' button if you want to save the campaign for further edits or choose the 'Save and Enable' button to create and make it live immediately. If you're not quite ready to create the campaign, simply select the 'Cancel' button.")
+            ->modalDescription('Before we create it, let us know how you’d like to proceed. Click the "Save as Draft" button if you want to save the campaign for further edits or choose the "Save and Enable" button to create and make it live immediately. If you’re not quite ready to create the campaign, simply select the "Cancel" button.')
             ->modalWidth(MaxWidth::ThreeExtraLarge)
             ->modalSubmitActionLabel('Save and Enable')
             ->extraModalFooterActions([
