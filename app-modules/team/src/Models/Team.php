@@ -58,6 +58,9 @@ class Team extends BaseModel
         return $this->hasMany(User::class);
     }
 
+    /**
+    * @return BelongsTo<Division, $this>
+    */
     public function division(): BelongsTo
     {
         return $this->belongsTo(Division::class);
