@@ -144,16 +144,6 @@ enum AiModel: string implements HasLabel
         return app($service);
     }
 
-    public function isVisibleForApplication(AiApplication $aiApplication): bool
-    {
-        return match ($this) {
-            self::OpenAiGpt35, self::OpenAiGpt4o, self::OpenAiGpt4oMini, self::OpenAiGptO1Mini, self::OpenAiGptO3Mini, self::OpenAiGpt41Mini, self::OpenAiGpt41Nano => $aiApplication === AiApplication::PersonalAssistant,
-            self::OpenAiGpt4 => false,
-            self::OpenAiGptTest => false,
-            self::Test => true,
-        };
-    }
-
     public function supportsAssistantFileUploads(): bool
     {
         // TODO: Not actually sure mini supports files, need to confirm
