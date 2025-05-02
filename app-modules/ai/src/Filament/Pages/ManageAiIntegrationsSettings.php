@@ -102,6 +102,12 @@ class ManageAiIntegrationsSettings extends SettingsPage
                         Section::make('GPT 4')
                             ->collapsible()
                             ->schema([
+                                TextInput::make('open_ai_gpt_4_model_name')
+                                    ->label('Model Name')
+                                    ->placeholder('Canyon 4')
+                                    ->string()
+                                    ->maxLength(255)
+                                    ->nullable(),
                                 TextInput::make('open_ai_gpt_4_base_uri')
                                     ->label('Base URI')
                                     ->placeholder('https://example.openai.azure.com/openai')
@@ -116,6 +122,12 @@ class ManageAiIntegrationsSettings extends SettingsPage
                         Section::make('GPT 4o')
                             ->collapsible()
                             ->schema([
+                                TextInput::make('open_ai_gpt_4o_model_name')
+                                    ->label('Model Name')
+                                    ->placeholder('Canyon 4o')
+                                    ->string()
+                                    ->maxLength(255)
+                                    ->nullable(),
                                 TextInput::make('open_ai_gpt_4o_base_uri')
                                     ->label('Base URI')
                                     ->placeholder('https://example.openai.azure.com/openai')
@@ -130,6 +142,12 @@ class ManageAiIntegrationsSettings extends SettingsPage
                         Section::make('GPT 4o mini')
                             ->collapsible()
                             ->schema([
+                                TextInput::make('open_ai_gpt_4o_mini_model_name')
+                                    ->label('Model Name')
+                                    ->placeholder('Canyon 4o mini')
+                                    ->string()
+                                    ->maxLength(255)
+                                    ->nullable(),
                                 TextInput::make('open_ai_gpt_4o_mini_base_uri')
                                     ->label('Base URI')
                                     ->placeholder('https://example.openai.azure.com/openai')
@@ -144,6 +162,12 @@ class ManageAiIntegrationsSettings extends SettingsPage
                         Section::make('GPT o1 mini')
                             ->collapsible()
                             ->schema([
+                                TextInput::make('open_ai_gpt_o1_mini_model_name')
+                                    ->label('Model Name')
+                                    ->placeholder('Canyon o1 mini')
+                                    ->string()
+                                    ->maxLength(255)
+                                    ->nullable(),
                                 TextInput::make('open_ai_gpt_o1_mini_base_uri')
                                     ->label('Base URI')
                                     ->placeholder('https://example.openai.azure.com/openai')
@@ -158,6 +182,12 @@ class ManageAiIntegrationsSettings extends SettingsPage
                         Section::make('GPT o3 mini')
                             ->collapsible()
                             ->schema([
+                                TextInput::make('open_ai_gpt_o3_mini_model_name')
+                                    ->label('Model Name')
+                                    ->placeholder('Canyon o3 mini')
+                                    ->string()
+                                    ->maxLength(255)
+                                    ->nullable(),
                                 TextInput::make('open_ai_gpt_o3_mini_base_uri')
                                     ->label('Base URI')
                                     ->placeholder('https://example.openai.azure.com/openai')
@@ -172,6 +202,12 @@ class ManageAiIntegrationsSettings extends SettingsPage
                         Section::make('GPT 4.1 mini')
                             ->collapsible()
                             ->schema([
+                                TextInput::make('open_ai_gpt_41_mini_model_name')
+                                    ->label('Model Name')
+                                    ->placeholder('Canyon 4.1 mini')
+                                    ->string()
+                                    ->maxLength(255)
+                                    ->nullable(),
                                 TextInput::make('open_ai_gpt_41_mini_base_uri')
                                     ->label('Base URI')
                                     ->placeholder('https://example.openai.azure.com/openai')
@@ -187,6 +223,12 @@ class ManageAiIntegrationsSettings extends SettingsPage
                         Section::make('GPT 4.1 nano')
                             ->collapsible()
                             ->schema([
+                                TextInput::make('open_ai_gpt_41_nano_model_name')
+                                    ->label('Model Name')
+                                    ->placeholder('Canyon 4.1 nano')
+                                    ->string()
+                                    ->maxLength(255)
+                                    ->nullable(),
                                 TextInput::make('open_ai_gpt_41_nano_base_uri')
                                     ->label('Base URI')
                                     ->placeholder('https://example.openai.azure.com/openai')
