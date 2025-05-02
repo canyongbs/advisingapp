@@ -146,9 +146,15 @@ enum AiModel: string implements HasLabel
 
     public function supportsAssistantFileUploads(): bool
     {
-        // TODO: Not actually sure mini supports files, need to confirm
         return match ($this) {
-            self::OpenAiGpt35, self::OpenAiGpt4, self::OpenAiGpt4o, self::OpenAiGpt4oMini, self::OpenAiGptO1Mini, self::OpenAiGptO3Mini, self::OpenAiGpt41Mini, self::OpenAiGpt41Nano => true,
+            self::OpenAiGpt35,
+            self::OpenAiGpt4,
+            self::OpenAiGpt4o,
+            self::OpenAiGpt4oMini,
+            self::OpenAiGptO1Mini,
+            self::OpenAiGptO3Mini,
+            self::OpenAiGpt41Mini,
+            self::OpenAiGpt41Nano => true,
             default => false,
         };
     }
