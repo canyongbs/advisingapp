@@ -82,6 +82,12 @@ class ManageAiIntegrationsSettings extends SettingsPage
                         Section::make('GPT 3.5')
                             ->collapsible()
                             ->schema([
+                                TextInput::make('open_ai_gpt_35_model_name')
+                                    ->label('Model Name')
+                                    ->placeholder('Canyon 3.5')
+                                    ->string()
+                                    ->maxLength(255)
+                                    ->nullable(),
                                 TextInput::make('open_ai_gpt_35_base_uri')
                                     ->label('Base URI')
                                     ->placeholder('https://example.openai.azure.com/openai')
