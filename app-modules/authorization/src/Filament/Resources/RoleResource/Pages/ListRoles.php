@@ -105,6 +105,7 @@ class ListRoles extends ListRecords
                     ->requiresConfirmation()
                     ->modalHeading('Duplicate Role')
                     ->modalSubmitActionLabel('Duplicate')
+                    ->visible(fn (Role $record): bool => $record->name !== Authenticatable::SUPER_ADMIN_ROLE)
                     ->form([
                         TextInput::make('name')
                             ->label('Name')
