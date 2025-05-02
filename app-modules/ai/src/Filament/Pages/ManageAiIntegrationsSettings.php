@@ -40,7 +40,6 @@ use AdvisingApp\Ai\Actions\ResetAiServiceIdsForModel;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Jobs\ReInitializeAiModel;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
-use App\Features\GPT41MiniAnd41NanoFeature;
 use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -176,8 +175,7 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->autocomplete(false),
                                 TextInput::make('open_ai_gpt_41_mini_model')
                                     ->label('Model'),
-                            ])
-                            ->visible(GPT41MiniAnd41NanoFeature::active()),
+                            ]),
                         Section::make('GPT 4.1 nano')
                             ->collapsible()
                             ->schema([
@@ -191,8 +189,7 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->autocomplete(false),
                                 TextInput::make('open_ai_gpt_41_nano_model')
                                     ->label('Model'),
-                            ])
-                            ->visible(GPT41MiniAnd41NanoFeature::active()),
+                            ]),
                     ]),
             ]);
     }
