@@ -34,53 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Database\Factories;
+namespace AdvisingApp\Engagement\Actions;
 
-use AdvisingApp\Notification\Enums\NotificationChannel;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Engagement\Models\EngagementBatch>
- */
-class EngagementBatchFactory extends Factory
+class GenerateEngagementSubjectContent
 {
-    public function definition(): array
+    /**
+     * @param string|array<string|int, string>|null $content
+     * @param array<string, mixed> $mergeData
+     *
+     * @todo RefactorEngagementCampaignSubjectToJsonb: Once migration to JSONB subject is complete and all usages are updated,
+     *       - make $content non-nullable (string|array)
+     *       - remove the blank($content) check
+     */
+    public function __invoke(string|array|null $content, array $mergeData, Model $record, string $recordAttribute): HtmlString
     {
-        return [
-            'user_id' => User::factory(),
-            'subject' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->sentence]]]]],
-            'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->paragraph]]]]],
-            'scheduled_at' => fake()->dateTimeBetween('-1 year', '-1 day'),
-            'channel' => fake()->randomElement([NotificationChannel::Email, NotificationChannel::Sms]),
-        ];
-    }
+        if (blank($content)) {
+            return new HtmlString('');
+        }
 
-    public function deliverNow(): self
-    {
-        return $this->state([
-            'scheduled_at' => null,
-        ]);
-    }
+        $html = tiptap_converter()
+            ->mergeTagsMap($mergeData)
+            ->record($record, $recordAttribute)
+            ->asHTML($content);
 
-    public function deliverLater(): self
-    {
-        return $this->state([
-            'scheduled_at' => fake()->dateTimeBetween('+1 day', '+1 week'),
-        ]);
-    }
+        $text = strip_tags($html);
+        $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $text = trim(preg_replace('/\s+/u', ' ', $text));
+        $text = Str::limit($text, 988, '');
 
-    public function email(): self
-    {
-        return $this->state([
-            'channel' => NotificationChannel::Email,
-        ]);
-    }
-
-    public function sms(): self
-    {
-        return $this->state([
-            'channel' => NotificationChannel::Sms,
-        ]);
+        return new HtmlString($text);
     }
 }
