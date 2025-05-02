@@ -40,6 +40,7 @@ use AdvisingApp\Campaign\Filament\Blocks\Actions\DraftCampaignEngagementBlockWit
 use AdvisingApp\Campaign\Settings\CampaignSettings;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Notification\Enums\NotificationChannel;
+use App\Features\RefactorEngagementCampaignSubjectToJsonb;
 use Carbon\CarbonImmutable;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
@@ -73,7 +74,25 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
             TextInput::make($fieldPrefix . 'subject')
                 ->columnSpanFull()
                 ->placeholder(__('Subject'))
-                ->required(),
+                ->required()
+                ->visible(! RefactorEngagementCampaignSubjectToJsonb::active()),
+            TiptapEditor::make($fieldPrefix . 'subject')
+                ->recordAttribute('data.subject')
+                ->label('Subject')
+                ->mergeTags($mergeTags = [
+                    'recipient first name',
+                    'recipient last name',
+                    'recipient full name',
+                    'recipient email',
+                    'recipient preferred name',
+                ])
+                ->profile('sms')
+                ->placeholder('Enter the email subject here...')
+                ->showMergeTagsInBlocksPanel(false)
+                ->required()
+                ->helperText('You can insert recipient information by typing {{ and choosing a merge value to insert.')
+                ->columnSpanFull()
+                ->visible(RefactorEngagementCampaignSubjectToJsonb::active()),
             TiptapEditor::make($fieldPrefix . 'body')
                 ->recordAttribute('data.body')
                 ->disk('s3-public')
@@ -138,7 +157,7 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
                             $component->generateImageUrls($template->content),
                         );
                     }))
-                ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
+                ->helperText('You can insert recipient information by typing {{ and choosing a merge value to insert.')
                 ->columnSpanFull(),
             Actions::make([
                 DraftCampaignEngagementBlockWithAi::make()

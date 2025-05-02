@@ -92,7 +92,7 @@ class MailMessage extends BaseMailMessage
         return [
             'recipient_email_address' => $this->getRecipientEmailAddress(),
             'level' => $this->level,
-            'subject' => $this->subject,
+            'subject' => (string) $this->subject,
             'greeting' => $this->greeting,
             'salutation' => $this->salutation,
             'introLines' => $this->introLines,

@@ -34,58 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Tests\Tenant\RequestFactories;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\Engagement\Models\EngagementBatch;
-use AdvisingApp\Notification\Enums\NotificationChannel;
-use App\Models\User;
-use Worksome\RequestFactories\RequestFactory;
-
-class CreateEngagementBatchRequestFactory extends RequestFactory
-{
-    public function definition(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [
-            'user' => User::factory()->create(),
-            'subject' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->sentence]]]]],
-            'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->paragraph]]]]],
-            'scheduledAt' => fake()->dateTimeBetween('-1 year', '-1 day'),
-            'channel' => fake()->randomElement([NotificationChannel::Email, NotificationChannel::Sms]),
-        ];
+        DB::statement('ALTER TABLE engagements ALTER COLUMN subject TYPE jsonb USING subject::jsonb');
+        DB::statement('ALTER TABLE engagement_batches ALTER COLUMN subject TYPE jsonb USING subject::jsonb');
+        DB::statement('ALTER TABLE form_email_auto_replies ALTER COLUMN subject TYPE jsonb USING subject::jsonb');
     }
 
-    public function deliverNow(): self
+    public function down(): void
     {
-        return $this->state([
-            'scheduledAt' => null,
-        ]);
-    }
+        Schema::table('engagements', function (Blueprint $table) {
+            $table->text('subject')->nullable()->change();
+        });
 
-    public function deliverLater(): self
-    {
-        return $this->state([
-            'scheduledAt' => fake()->dateTimeBetween('+1 day', '+1 week'),
-        ]);
-    }
+        Schema::table('engagement_batches', function (Blueprint $table) {
+            $table->text('subject')->nullable()->change();
+        });
 
-    public function ofBatch(): self
-    {
-        return $this->state([
-            'engagement_batch_id' => EngagementBatch::factory(),
-        ]);
+        Schema::table('form_email_auto_replies', function (Blueprint $table) {
+            $table->text('subject')->nullable()->change();
+        });
     }
-
-    public function email(): self
-    {
-        return $this->state([
-            'channel' => NotificationChannel::Email,
-        ]);
-    }
-
-    public function sms(): self
-    {
-        return $this->state([
-            'channel' => NotificationChannel::Sms,
-        ]);
-    }
-}
+};
