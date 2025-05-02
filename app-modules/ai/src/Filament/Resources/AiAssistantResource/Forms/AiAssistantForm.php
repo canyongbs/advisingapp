@@ -114,11 +114,10 @@ class AiAssistantForm
                 Textarea::make('description')
                     ->columnSpanFull()
                     ->required(),
-                Section::make('Configure AI Assistant')
-                    ->description('The following information will be used to instruct your AI Assistant on how to respond.')
+                Section::make('Configure AI Advisor')
+                    ->description('Design the capability of your advisor by including detailed instructions below.')
                     ->schema([
                         Textarea::make('instructions')
-                            ->helperText('Instructions are used to provide context to the AI Assistant on how to respond to user queries.')
                             ->reactive()
                             ->required()
                             ->maxLength(fn (Get $get): int => (AiModel::parse($get('model')) ?? AiModel::OpenAiGpt35)->getService()->getMaxAssistantInstructionsLength()),
