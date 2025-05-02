@@ -36,12 +36,19 @@
 
 namespace App\Models\Scopes;
 
+use AdvisingApp\Campaign\Models\CampaignAction;
+use App\Features\CancelCampaignAction;
 use Illuminate\Database\Eloquent\Builder;
 
 class CampaignActionNotCancelled
 {
+    /**
+     * @param Builder<CampaignAction> $query
+     */
     public function __invoke(Builder $query): void
     {
-        $query->where('cancelled_at', null);
+        if (CancelCampaignAction::active()) {
+            $query->whereNull('cancelled_at');
+        }
     }
 }

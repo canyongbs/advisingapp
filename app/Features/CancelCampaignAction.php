@@ -34,39 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Actions;
+namespace App\Features;
 
-use AdvisingApp\Campaign\Models\CampaignAction;
-use App\Features\CancelCampaignAction;
-use App\Models\Tenant;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
+use App\Support\AbstractFeatureFlag;
 
-class ExecuteCampaignAction implements ShouldQueue, ShouldBeUnique
+class CancelCampaignAction extends AbstractFeatureFlag
 {
-    use Dispatchable;
-
-    public int $tries = 3;
-
-    public int $timeout = 600;
-
-    public int $uniqueFor = 600 * 3;
-
-    public function __construct(
-        public CampaignAction $action
-    ) {}
-
-    public function uniqueId(): string
+    public function resolve(mixed $scope): mixed
     {
-        return Tenant::current()->getKey() . ':' . $this->action->getKey();
-    }
-
-    public function handle(): void
-    {
-        if (CancelCampaignAction::active() && $this->action->cancelled_at !== null) {
-            return;
-        }
-        $this->action->execute();
+        return false;
     }
 }
