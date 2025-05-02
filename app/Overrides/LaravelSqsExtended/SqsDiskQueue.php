@@ -44,13 +44,11 @@ use Illuminate\Contracts\Queue\Job;
 use Illuminate\Support\Arr;
 use Spatie\Multitenancy\Concerns\BindAsCurrentTenant;
 use Spatie\Multitenancy\Exceptions\CurrentTenantCouldNotBeDeterminedInTenantAwareJob;
-use Spatie\Multitenancy\Models\Concerns\UsesTenantModel;
 use Spatie\Multitenancy\Models\Tenant;
 
 class SqsDiskQueue extends BaseSqsDiskQueue
 {
     use BindAsCurrentTenant;
-    use UsesTenantModel;
 
     /**
      * Push a raw payload onto the queue.
@@ -105,7 +103,7 @@ class SqsDiskQueue extends BaseSqsDiskQueue
         if (! is_null($response['Messages']) && count($response['Messages']) > 0) {
             if (isset(json_decode($response['Messages'][0]['Body'])->tenantId)) {
                 /** @var Tenant $tenant */
-                $tenant = $this->getTenantModel()::find(json_decode($response['Messages'][0]['Body'])->tenantId);
+                $tenant = config('multitenancy.tenant_model')::find(json_decode($response['Messages'][0]['Body'])->tenantId);
 
                 if (! $tenant) {
                     throw new CurrentTenantCouldNotBeDeterminedInTenantAwareJob('The current tenant could not be determined in a job. The tenant finder could not find a tenant.');

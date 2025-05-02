@@ -972,12 +972,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/alert/src/Observers/AlertHistoryObserver.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Match expression does not handle remaining value\\: string$#',
-    'identifier' => 'match.unhandled',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/alert/src/Observers/AlertObserver.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Access to an undefined property AdvisingApp\\\\Alert\\\\Models\\\\AlertStatus\\:\\:\\$order\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
@@ -2694,18 +2688,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/case-management/src/Http/Controllers/CaseFormWidgetController.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Cannot access property \\$priority on object\\|string\\.$#',
-    'identifier' => 'property.nonObject',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Http/Middleware/CaseTypeFeedbackIsOn.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Using nullsafe property access on non\\-nullable type object\\|string\\. Use \\-\\> instead\\.$#',
-    'identifier' => 'nullsafe.neverNull',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Http/Middleware/CaseTypeFeedbackIsOn.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Property AdvisingApp\\\\CaseManagement\\\\Livewire\\\\RenderCaseFeedbackForm\\:\\:\\$data type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -3608,7 +3590,7 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$recordModel of method AdvisingApp\\\\Timeline\\\\Actions\\\\SyncTimelineData\\:\\:now\\(\\) expects Illuminate\\\\Database\\\\Eloquent\\\\Model, AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\|null given\\.$#',
     'identifier' => 'argument.type',
-    'count' => 1,
+    'count' => 2,
     'path' => __DIR__ . '/app-modules/engagement/src/Filament/Pages/MessageCenter.php',
 ];
 $ignoreErrors[] = [
@@ -5460,30 +5442,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/integration-open-ai/src/Providers/IntegrationOpenAiServiceProvider.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$file_id\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$mime_type\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$temporary_url\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to function method_exists\\(\\) with \\$this\\(AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\BaseOpenAiService\\) and \'createFiles\' will always evaluate to true\\.$#',
     'identifier' => 'function.alreadyNarrowedType',
     'count' => 1,
@@ -5491,30 +5449,6 @@ $ignoreErrors[] = [
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\BaseOpenAiService\\:\\:completeResponse\\(\\) has parameter \\$files with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\BaseOpenAiService\\:\\:createAssistantFiles\\(\\) has parameter \\$files with generic class Illuminate\\\\Support\\\\Collection but does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\BaseOpenAiService\\:\\:createAssistantFiles\\(\\) return type with generic class Illuminate\\\\Support\\\\Collection does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\BaseOpenAiService\\:\\:createFiles\\(\\) has parameter \\$files with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\BaseOpenAiService\\:\\:createFiles\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
@@ -5532,49 +5466,7 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\BaseOpenAiService\\:\\:createVectorStore\\(\\) has parameter \\$parameters with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\BaseOpenAiService\\:\\:createVectorStoreFilesBatch\\(\\) has parameter \\$fileIds with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\BaseOpenAiService\\:\\:getExpiredVectorStoresForThread\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\BaseOpenAiService\\:\\:modifyThread\\(\\) has parameter \\$parameters with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\BaseOpenAiService\\:\\:recreateVectorStoreForThread\\(\\) has parameter \\$vectorStore with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\BaseOpenAiService\\:\\:retrieveAllVectorStoreFileIds\\(\\) has parameter \\$after with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\BaseOpenAiService\\:\\:retrieveAllVectorStoreFileIds\\(\\) has parameter \\$vectorStoreFileIds with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\BaseOpenAiService\\:\\:retrieveVectorStoreFiles\\(\\) has parameter \\$params with no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
@@ -5598,18 +5490,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\BaseOpenAiService\\:\\:updateAssistantVectorStoreId\\(\\) has parameter \\$vectorStoreId with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$file of method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\BaseOpenAiService\\:\\:retrieveFile\\(\\) expects AdvisingApp\\\\Ai\\\\Models\\\\AiMessageFile, AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Using nullsafe property access "\\?\\-\\>message" on left side of \\?\\? is unnecessary\\. Use \\-\\> instead\\.$#',
     'identifier' => 'nullsafe.neverNull',
     'count' => 1,
@@ -5626,414 +5506,6 @@ $ignoreErrors[] = [
     'identifier' => 'nullsafe.neverNull',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$file_id\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oMiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$mime_type\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oMiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oMiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$temporary_url\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oMiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oMiniService\\:\\:createAssistantFiles\\(\\) has parameter \\$files with generic class Illuminate\\\\Support\\\\Collection but does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oMiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oMiniService\\:\\:createAssistantFiles\\(\\) return type with generic class Illuminate\\\\Support\\\\Collection does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oMiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oMiniService\\:\\:createFiles\\(\\) has parameter \\$files with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oMiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oMiniService\\:\\:createFiles\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oMiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oMiniService\\:\\:createVectorStore\\(\\) has parameter \\$parameters with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oMiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oMiniService\\:\\:createVectorStoreFilesBatch\\(\\) has parameter \\$fileIds with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oMiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oMiniService\\:\\:getExpiredVectorStoresForThread\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oMiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oMiniService\\:\\:recreateVectorStoreForThread\\(\\) has parameter \\$vectorStore with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oMiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oMiniService\\:\\:retrieveAllVectorStoreFileIds\\(\\) has parameter \\$after with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oMiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oMiniService\\:\\:retrieveAllVectorStoreFileIds\\(\\) has parameter \\$vectorStoreFileIds with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oMiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oMiniService\\:\\:retrieveVectorStoreFiles\\(\\) has parameter \\$params with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oMiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oMiniService\\:\\:updateAssistantVectorStoreId\\(\\) has parameter \\$vectorStoreId with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oMiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$file of method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oMiniService\\:\\:retrieveFile\\(\\) expects AdvisingApp\\\\Ai\\\\Models\\\\AiMessageFile, AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oMiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$file_id\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$mime_type\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$temporary_url\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oService\\:\\:createAssistantFiles\\(\\) has parameter \\$files with generic class Illuminate\\\\Support\\\\Collection but does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oService\\:\\:createAssistantFiles\\(\\) return type with generic class Illuminate\\\\Support\\\\Collection does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oService\\:\\:createFiles\\(\\) has parameter \\$files with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oService\\:\\:createFiles\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oService\\:\\:createVectorStore\\(\\) has parameter \\$parameters with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oService\\:\\:createVectorStoreFilesBatch\\(\\) has parameter \\$fileIds with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oService\\:\\:getExpiredVectorStoresForThread\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oService\\:\\:recreateVectorStoreForThread\\(\\) has parameter \\$vectorStore with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oService\\:\\:retrieveAllVectorStoreFileIds\\(\\) has parameter \\$after with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oService\\:\\:retrieveAllVectorStoreFileIds\\(\\) has parameter \\$vectorStoreFileIds with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oService\\:\\:retrieveVectorStoreFiles\\(\\) has parameter \\$params with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oService\\:\\:updateAssistantVectorStoreId\\(\\) has parameter \\$vectorStoreId with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$file of method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGpt4oService\\:\\:retrieveFile\\(\\) expects AdvisingApp\\\\Ai\\\\Models\\\\AiMessageFile, AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$file_id\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO1MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$mime_type\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO1MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO1MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$temporary_url\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO1MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO1MiniService\\:\\:createAssistantFiles\\(\\) has parameter \\$files with generic class Illuminate\\\\Support\\\\Collection but does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO1MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO1MiniService\\:\\:createAssistantFiles\\(\\) return type with generic class Illuminate\\\\Support\\\\Collection does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO1MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO1MiniService\\:\\:createFiles\\(\\) has parameter \\$files with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO1MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO1MiniService\\:\\:createFiles\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO1MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO1MiniService\\:\\:createVectorStore\\(\\) has parameter \\$parameters with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO1MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO1MiniService\\:\\:createVectorStoreFilesBatch\\(\\) has parameter \\$fileIds with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO1MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO1MiniService\\:\\:getExpiredVectorStoresForThread\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO1MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO1MiniService\\:\\:recreateVectorStoreForThread\\(\\) has parameter \\$vectorStore with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO1MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO1MiniService\\:\\:retrieveAllVectorStoreFileIds\\(\\) has parameter \\$after with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO1MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO1MiniService\\:\\:retrieveAllVectorStoreFileIds\\(\\) has parameter \\$vectorStoreFileIds with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO1MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO1MiniService\\:\\:retrieveVectorStoreFiles\\(\\) has parameter \\$params with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO1MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO1MiniService\\:\\:updateAssistantVectorStoreId\\(\\) has parameter \\$vectorStoreId with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO1MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$file of method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO1MiniService\\:\\:retrieveFile\\(\\) expects AdvisingApp\\\\Ai\\\\Models\\\\AiMessageFile, AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO1MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$file_id\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO3MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$mime_type\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO3MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO3MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile\\:\\:\\$temporary_url\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO3MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO3MiniService\\:\\:createAssistantFiles\\(\\) has parameter \\$files with generic class Illuminate\\\\Support\\\\Collection but does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO3MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO3MiniService\\:\\:createAssistantFiles\\(\\) return type with generic class Illuminate\\\\Support\\\\Collection does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO3MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO3MiniService\\:\\:createFiles\\(\\) has parameter \\$files with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO3MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO3MiniService\\:\\:createFiles\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO3MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO3MiniService\\:\\:createVectorStore\\(\\) has parameter \\$parameters with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO3MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO3MiniService\\:\\:createVectorStoreFilesBatch\\(\\) has parameter \\$fileIds with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO3MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO3MiniService\\:\\:getExpiredVectorStoresForThread\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO3MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO3MiniService\\:\\:recreateVectorStoreForThread\\(\\) has parameter \\$vectorStore with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO3MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO3MiniService\\:\\:retrieveAllVectorStoreFileIds\\(\\) has parameter \\$after with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO3MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO3MiniService\\:\\:retrieveAllVectorStoreFileIds\\(\\) has parameter \\$vectorStoreFileIds with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO3MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO3MiniService\\:\\:retrieveVectorStoreFiles\\(\\) has parameter \\$params with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO3MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO3MiniService\\:\\:updateAssistantVectorStoreId\\(\\) has parameter \\$vectorStoreId with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO3MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$file of method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\OpenAiGptO3MiniService\\:\\:retrieveFile\\(\\) expects AdvisingApp\\\\Ai\\\\Models\\\\AiMessageFile, AdvisingApp\\\\Ai\\\\Models\\\\Contracts\\\\AiFile given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO3MiniService.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to method addResponses\\(\\) on an unknown class ClientFake\\.$#',
@@ -7192,12 +6664,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/notification/src/Notifications/Messages/TwilioMessage.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Match expression does not handle remaining value\\: string$#',
-    'identifier' => 'match.unhandled',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/notification/src/Observers/SubscriptionObserver.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:getLicenseType\\(\\)\\.$#',
@@ -10806,18 +10272,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/task/src/Filament/Resources/TaskResource/Pages/ListTasks.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Ternary operator condition is always true\\.$#',
-    'identifier' => 'ternary.alwaysTrue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/task/src/Filament/Widgets/TasksWidget.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Using nullsafe property access on non\\-nullable type AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\|AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\. Use \\-\\> instead\\.$#',
-    'identifier' => 'nullsafe.neverNull',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/task/src/Filament/Widgets/TasksWidget.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:taskHistories\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 1,
@@ -12078,12 +11532,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Models/Scopes/WithoutSuperAdmin.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Class App\\\\Models\\\\SystemUser uses generic trait Illuminate\\\\Database\\\\Eloquent\\\\Factories\\\\HasFactory but does not specify its types\\: TFactory$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/SystemUser.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method App\\\\Models\\\\SystemUser\\:\\:newMorphToMany\\(\\) return type with generic class AdvisingApp\\\\Audit\\\\Overrides\\\\MorphToMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
@@ -12180,12 +11628,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Models/User.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method App\\\\Models\\\\User\\:\\:prospectAlerts\\(\\) return type with generic class Staudenmeir\\\\EloquentHasManyDeep\\\\HasManyDeep does not specify its types\\: TRelatedModel, TDeclaringModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method App\\\\Models\\\\User\\:\\:reGenerateRecoveryCodes\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
     'count' => 1,
@@ -12206,12 +11648,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Method App\\\\Models\\\\User\\:\\:scopeAdvancedFilter\\(\\) has parameter \\$query with no type specified\\.$#',
     'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Models\\\\User\\:\\:studentAlerts\\(\\) return type with generic class Staudenmeir\\\\EloquentHasManyDeep\\\\HasManyDeep does not specify its types\\: TRelatedModel, TDeclaringModel$#',
-    'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app/Models/User.php',
 ];
@@ -12258,76 +11694,16 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Multitenancy/Http/Middleware/NeedsTenant.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Spatie\\\\Multitenancy\\\\Models\\\\Tenant\\:\\:\\$name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Multitenancy/Listeners/SetSentryTenantTag.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method App\\\\Multitenancy\\\\Tasks\\\\PrefixCacheTask\\:\\:setCachePrefix\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
     'count' => 1,
     'path' => __DIR__ . '/app/Multitenancy/Tasks/PrefixCacheTask.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Spatie\\\\Multitenancy\\\\Models\\\\Tenant\\:\\:\\$key\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Multitenancy/Tasks/SwitchAppKey.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Spatie\\\\Multitenancy\\\\Models\\\\Tenant\\:\\:\\$config\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Multitenancy/Tasks/SwitchAppName.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Spatie\\\\Multitenancy\\\\Models\\\\Tenant\\:\\:\\$domain\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Multitenancy/Tasks/SwitchAppUrl.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method App\\\\Multitenancy\\\\Tasks\\\\SwitchAppUrl\\:\\:setAppUrl\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
     'count' => 1,
     'path' => __DIR__ . '/app/Multitenancy/Tasks/SwitchAppUrl.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Spatie\\\\Multitenancy\\\\Models\\\\Tenant\\:\\:\\$config\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Multitenancy/Tasks/SwitchMailTask.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Spatie\\\\Multitenancy\\\\Models\\\\Tenant\\:\\:\\$domain\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Multitenancy/Tasks/SwitchMailTask.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Spatie\\\\Multitenancy\\\\Models\\\\Tenant\\:\\:\\$config\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Multitenancy/Tasks/SwitchS3FilesystemTask.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Spatie\\\\Multitenancy\\\\Models\\\\Tenant\\:\\:\\$config\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Multitenancy/Tasks/SwitchS3PublicFilesystemTask.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Spatie\\\\Multitenancy\\\\Models\\\\Tenant\\:\\:\\$domain\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Multitenancy/Tasks/SwitchSessionDriver.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Spatie\\\\Multitenancy\\\\Models\\\\Tenant\\:\\:\\$config\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Multitenancy/Tasks/SwitchTenantDatabasesTask.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method App\\\\Overrides\\\\LaravelSqsExtended\\\\SqsDiskConnector\\:\\:connect\\(\\) has parameter \\$config with no value type specified in iterable type array\\.$#',
@@ -12502,48 +11878,6 @@ $ignoreErrors[] = [
     'identifier' => 'method.notFound',
     'count' => 1,
     'path' => __DIR__ . '/tests/Helpers.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Function user\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/tests/Pest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Function user\\(\\) has parameter \\$permissions with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/tests/Pest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Function user\\(\\) has parameter \\$roles with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/tests/Pest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^PHPDoc tag @var above a function has no effect\\.$#',
-    'identifier' => 'varTag.misplaced',
-    'count' => 1,
-    'path' => __DIR__ . '/tests/Pest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Pest\\\\Expectation\\<Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, AdvisingApp\\\\Authorization\\\\Models\\\\Role\\>\\|null\\>\\:\\:pluck\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/tests/Tenant/Feature/Filament/UserResource/RelationManagers/RolesRelationManagerTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Pest\\\\PendingCalls\\\\TestCall\\:\\:expectException\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/tests/Tenant/Feature/Multitenancy/Http/Middleware/NeedsTenantTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Pest\\\\PendingCalls\\\\TestCall\\:\\:expect\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/tests/Tenant/Unit/ArchTest.php',
 ];
 
 return ['parameters' => ['ignoreErrors' => $ignoreErrors]];

@@ -39,7 +39,7 @@ namespace AdvisingApp\Audit\Models;
 use AdvisingApp\Audit\Database\Factories\AuditFactory;
 use AdvisingApp\Audit\Settings\AuditSettings;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\MassPrunable;
 use OwenIt\Auditing\Models\Audit as BaseAudit;
