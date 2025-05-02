@@ -47,7 +47,6 @@ use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4Service;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptO1MiniService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptO3MiniService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptTestService;
-use App\Features\GPT41MiniAnd41NanoFeature;
 use Filament\Support\Contracts\HasLabel;
 
 enum AiModel: string implements HasLabel
@@ -111,14 +110,6 @@ enum AiModel: string implements HasLabel
     {
         $models = self::cases();
 
-        //TODO: remove whole if condition when you remove the Feature Flag.
-        if (! GPT41MiniAnd41NanoFeature::active()) {
-            return array_filter(
-                $models,
-                fn (AiModel $model): bool => ! in_array($model, [self::Test, self::OpenAiGptTest, self::OpenAiGpt41Mini, self::OpenAiGpt41Nano]),
-            );
-        }
-
         if (app()->hasDebugModeEnabled()) {
             return array_filter(
                 $models,
@@ -128,7 +119,7 @@ enum AiModel: string implements HasLabel
 
         return array_filter(
             $models,
-            fn (AiModel $model): bool => ! in_array($model, [self::Test, self::OpenAiGptTest]),
+            fn (AiModel $model): bool => ! in_array($model, [self::Test, self::OpenAiGptTest, self::OpenAiGpt41Mini, self::OpenAiGpt41Nano]),
         );
     }
 
