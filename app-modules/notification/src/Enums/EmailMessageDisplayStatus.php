@@ -57,22 +57,22 @@ enum EmailMessageDisplayStatus
 
     public static function getStatusFromEmailMessage(?EmailMessage $message): ?self
     {
-      if (! $message) {
-        return null;
-      }
+        if (! $message) {
+            return null;
+        }
 
-      return match (true) {
-        $message->events()->where('type', EmailMessageEventType::Complaint->value)->exists() => self::Complaint,
-        $message->events()->where('type', EmailMessageEventType::Bounce->value)->exists() => self::Bounced,
-        $message->events()->where('type', EmailMessageEventType::Reject->value)->orWhere('type', EmailMessageEventType::RenderingFailure->value)->exists() => self::Failed,
-        $message->events()->where('type', EmailMessageEventType::Click->value)->exists() => self::Clicked,
-        $message->events()->where('type', EmailMessageEventType::Open->value)->exists() => self::Read,
-        $message->events()->where('type', EmailMessageEventType::Delivery->value)->exists() => self::Delivered,
-        $message->events()->where('type', EmailMessageEventType::DeliveryDelay->value)->exists() => self::Delayed,
-        $message->events()->where('type', EmailMessageEventType::Subscription->value)->exists() => self::Unsubscribed,
-        $message->events()->where('type', EmailMessageEventType::Send->value)->exists() => self::Sent,
-        default => null,
-      };
+        return match (true) {
+            $message->events()->where('type', EmailMessageEventType::Complaint->value)->exists() => self::Complaint,
+            $message->events()->where('type', EmailMessageEventType::Bounce->value)->exists() => self::Bounced,
+            $message->events()->where('type', EmailMessageEventType::Reject->value)->orWhere('type', EmailMessageEventType::RenderingFailure->value)->exists() => self::Failed,
+            $message->events()->where('type', EmailMessageEventType::Click->value)->exists() => self::Clicked,
+            $message->events()->where('type', EmailMessageEventType::Open->value)->exists() => self::Read,
+            $message->events()->where('type', EmailMessageEventType::Delivery->value)->exists() => self::Delivered,
+            $message->events()->where('type', EmailMessageEventType::DeliveryDelay->value)->exists() => self::Delayed,
+            $message->events()->where('type', EmailMessageEventType::Subscription->value)->exists() => self::Unsubscribed,
+            $message->events()->where('type', EmailMessageEventType::Send->value)->exists() => self::Sent,
+            default => null,
+        };
     }
 
     public function getColor(): string

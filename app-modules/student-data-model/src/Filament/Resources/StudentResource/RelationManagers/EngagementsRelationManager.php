@@ -174,26 +174,27 @@ class EngagementsRelationManager extends RelationManager
             ->emptyStateHeading('No email or text messages.')
             ->emptyStateDescription('Create an email or text message to get started.')
             ->defaultSort('record_sortable_date', 'desc')
-            ->modifyQueryUsing(fn (Builder $query) => $query
-            ->whereHasMorph('timelineable', [
-                ...($canAccessEngagements ? [Engagement::class] : []),
-                ...($canAccessEngagementResponses ? [EngagementResponse::class] : []),
-            ])
-            ->with([
-                'timelineable' => function ($morphQuery) {
-                    $morphQuery->when(
-                        $morphQuery->getModel() instanceof Engagement,
-                        fn ($query) => $query->with('latestEmailMessage')
-                    );
-                },
-            ])
-        )
+            ->modifyQueryUsing(
+                fn (Builder $query) => $query
+                    ->whereHasMorph('timelineable', [
+                        ...($canAccessEngagements ? [Engagement::class] : []),
+                        ...($canAccessEngagementResponses ? [EngagementResponse::class] : []),
+                    ])
+                    ->with([
+                        'timelineable' => function ($morphQuery) {
+                            $morphQuery->when(
+                                $morphQuery->getModel() instanceof Engagement,
+                                fn ($query) => $query->with('latestEmailMessage')
+                            );
+                        },
+                    ])
+            )
             ->columns([
                 TextColumn::make('direction')
                     ->getStateUsing(fn (Timeline $record) => match ($record->timelineable::class) {
                         Engagement::class => 'Outbound',
                         EngagementResponse::class => 'Inbound',
-                        default => '', 
+                        default => '',
                     })
                     ->icon(fn (string $state) => match ($state) {
                         'Outbound' => 'heroicon-o-arrow-up-tray',
