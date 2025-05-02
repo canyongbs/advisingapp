@@ -67,7 +67,6 @@ class EducatableTasksWidget extends Widget
             ->pluck('task_count', 'status');
 
         return collect(TaskStatus::cases())
-            ->reverse()
             ->mapWithKeys(fn (TaskStatus $taskStatus): array => [$taskStatus->value => $counts[$taskStatus->value] ?? 0])
             ->filter()
             ->all();
