@@ -77,7 +77,9 @@ class AiAssistantForm
                     ->maxLength(255)
                     ->columnSpanFull(),
                 Select::make('application')
-                    ->options(AiApplication::class)
+                    ->options([
+                        AiApplication::PersonalAssistant->value => 'Custom Advisor',
+                    ])
                     ->default(AiApplication::getDefault())
                     ->live()
                     ->afterStateUpdated(fn (Set $set, $state) => filled(AiApplication::parse($state)) ? $set('model', AiApplication::parse($state)->getDefaultModel()->value) : null)
