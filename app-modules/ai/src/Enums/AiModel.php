@@ -119,7 +119,7 @@ enum AiModel: string implements HasLabel
 
         return array_filter(
             $models,
-            fn (AiModel $model): bool => ! in_array($model, [self::Test, self::OpenAiGptTest, self::OpenAiGpt41Mini, self::OpenAiGpt41Nano]),
+            fn (AiModel $model): bool => ! in_array($model, [self::Test, self::OpenAiGptTest]),
         );
     }
 
