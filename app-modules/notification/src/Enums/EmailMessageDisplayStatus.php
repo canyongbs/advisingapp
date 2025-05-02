@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Notification\Enums;
 
+use AdvisingApp\Notification\Models\EmailMessage;
+
 enum EmailMessageDisplayStatus
 {
     case Complaint;
@@ -48,39 +50,38 @@ enum EmailMessageDisplayStatus
     case Unsubscribed;
     case Sent;
 
-    public function getLabel(): ?string
+    public function getLabel(): string
     {
         return str($this->name)->headline();
     }
 
-    public static function getStatusFromEmailMessage($message): string
+    public static function getStatusFromEmailMessage(?EmailMessage $message): ?self
     {
-        if (! $message) {
-            return '';
-        }
+      if (! $message) {
+        return null;
+      }
 
-        return match (true) {
-            $message->events()->where('type', EmailMessageEventType::Complaint->value)->exists() => 'Complaint',
-            $message->events()->where('type', EmailMessageEventType::Bounce->value)->exists() => 'Bounced',
-            $message->events()->where('type', EmailMessageEventType::Reject->value)->orWhere('type', EmailMessageEventType::RenderingFailure->value)->exists() => 'Failed',
-            $message->events()->where('type', EmailMessageEventType::Click->value)->exists() => 'Clicked',
-            $message->events()->where('type', EmailMessageEventType::Open->value)->exists() => 'Read',
-            $message->events()->where('type', EmailMessageEventType::Delivery->value)->exists() => 'Delivered',
-            $message->events()->where('type', EmailMessageEventType::DeliveryDelay->value)->exists() => 'Delayed',
-            $message->events()->where('type', EmailMessageEventType::Subscription->value)->exists() => 'Unsubscribed',
-            $message->events()->where('type', EmailMessageEventType::Send->value)->exists() => 'Sent',
-            default => '',
-        };
+      return match (true) {
+        $message->events()->where('type', EmailMessageEventType::Complaint->value)->exists() => self::Complaint,
+        $message->events()->where('type', EmailMessageEventType::Bounce->value)->exists() => self::Bounced,
+        $message->events()->where('type', EmailMessageEventType::Reject->value)->orWhere('type', EmailMessageEventType::RenderingFailure->value)->exists() => self::Failed,
+        $message->events()->where('type', EmailMessageEventType::Click->value)->exists() => self::Clicked,
+        $message->events()->where('type', EmailMessageEventType::Open->value)->exists() => self::Read,
+        $message->events()->where('type', EmailMessageEventType::Delivery->value)->exists() => self::Delivered,
+        $message->events()->where('type', EmailMessageEventType::DeliveryDelay->value)->exists() => self::Delayed,
+        $message->events()->where('type', EmailMessageEventType::Subscription->value)->exists() => self::Unsubscribed,
+        $message->events()->where('type', EmailMessageEventType::Send->value)->exists() => self::Sent,
+        default => null,
+      };
     }
 
-    public function color(): string
+    public function getColor(): string
     {
         return match ($this) {
-            self::Delivered, self::Read, self::Clicked => 'success',
+            self::Delivered, self::Read, self::Clicked => 'danger',
             self::Delayed => 'primary',
-            self::Failed, self::Bounced, self::Complaint => 'danger',
+            self::Failed, self::Bounced, self::Complaint => 'success',
             self::Sent, self::Unsubscribed => 'gray',
-            default => 'gray',
         };
     }
 }
