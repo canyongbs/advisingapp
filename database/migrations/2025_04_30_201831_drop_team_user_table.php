@@ -34,39 +34,6 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Team\Models;
-
-use AdvisingApp\Team\Observers\TeamUserObserver;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\Pivot;
-
-/**
- * @mixin IdeHelperTeamUser
- */
-#[ObservedBy([TeamUserObserver::class])]
-class TeamUser extends Pivot
-{
-    use HasUuids;
-
-    /**
-     * @return BelongsTo<Team, $this>
-     */
-    public function team(): BelongsTo
-    {
-        return $this->BelongsTo(Team::class);
-    }
-
-    /**
-     * @return BelongsTo<User, $this>
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-}
 use Illuminate\Database\Migrations\Migration;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
