@@ -34,20 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Widgets;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Task\Filament\Widgets\TasksWidget;
-
-class ProspectTasks extends TasksWidget
-{
-    public function title(): string
+return new class () extends Migration {
+    public function up(): void
     {
-        return 'My Tasks for Prospects';
+        Schema::table('users', function (Blueprint $table) {
+            $table->foreignUuid('team_id')
+                ->nullable()
+                ->constrained('teams');
+        });
     }
 
-    public function concern(): string
+    public function down(): void
     {
-        return Prospect::class;
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropForeign(['team_id']);
+            $table->dropColumn('team_id');
+        });
     }
-}
+};

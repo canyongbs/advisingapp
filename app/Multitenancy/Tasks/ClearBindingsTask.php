@@ -37,12 +37,12 @@
 namespace App\Multitenancy\Tasks;
 
 use AdvisingApp\Ai\Enums\AiModel;
-use Spatie\Multitenancy\Models\Tenant;
+use Spatie\Multitenancy\Contracts\IsTenant;
 use Spatie\Multitenancy\Tasks\SwitchTenantTask;
 
 class ClearBindingsTask implements SwitchTenantTask
 {
-    public function makeCurrent(Tenant $tenant): void
+    public function makeCurrent(IsTenant $tenant): void
     {
         $this->clearBindings();
     }

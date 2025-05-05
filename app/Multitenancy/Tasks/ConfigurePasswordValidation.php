@@ -43,12 +43,12 @@ use Exception;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
-use Spatie\Multitenancy\Models\Tenant;
+use Spatie\Multitenancy\Contracts\IsTenant;
 use Spatie\Multitenancy\Tasks\SwitchTenantTask;
 
 class ConfigurePasswordValidation implements SwitchTenantTask
 {
-    public function makeCurrent(Tenant $tenant): void
+    public function makeCurrent(IsTenant $tenant): void
     {
         Password::defaults(function (): Password {
             $settings = app(LocalPasswordSettings::class);

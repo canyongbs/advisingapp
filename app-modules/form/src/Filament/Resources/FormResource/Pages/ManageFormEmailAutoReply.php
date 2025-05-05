@@ -39,6 +39,7 @@ namespace AdvisingApp\Form\Filament\Resources\FormResource\Pages;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Form\Filament\Resources\FormResource;
 use AdvisingApp\Form\Models\Form;
+use App\Features\RefactorEngagementCampaignSubjectToJsonb;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
 use Filament\Forms\Components\Actions\Action;
@@ -92,7 +93,26 @@ class ManageFormEmailAutoReply extends EditRecord
                         TextInput::make('subject')
                             ->required(fn (Get $get) => $get('is_enabled'))
                             ->placeholder('Subject')
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->visible(! RefactorEngagementCampaignSubjectToJsonb::active()),
+                        /**
+                         * @todo Remove 'temp_subject' name once `RefactorEngagementCampaignSubjectToJsonb` is removed.
+                         */
+                        TiptapEditor::make(RefactorEngagementCampaignSubjectToJsonb::active() ? 'subject' : 'temp_subject')
+                            ->mergeTags([
+                                'recipient first name',
+                                'recipient last name',
+                                'recipient full name',
+                                'recipient email',
+                                'recipient preferred name',
+                            ])
+                            ->profile('sms')
+                            ->required(fn (Get $get) => $get('is_enabled'))
+                            ->helperText('You can insert recipient information by typing {{ and choosing a merge value to insert.')
+                            ->columnSpanFull()
+                            ->placeholder('Enter the email subject here...')
+                            ->showMergeTagsInBlocksPanel(false)
+                            ->visible(RefactorEngagementCampaignSubjectToJsonb::active()),
                         TiptapEditor::make('body')
                             ->disk('s3-public')
                             ->mergeTags([
@@ -133,7 +153,7 @@ class ManageFormEmailAutoReply extends EditRecord
                                                 )
                                                 ->when(
                                                     $get('onlyMyTeamTemplates'),
-                                                    fn (Builder $query) => $query->whereIn('user_id', $user->teams->users->pluck('id'))
+                                                    fn (Builder $query) => $query->whereIn('user_id', $user->team->users->pluck('id'))
                                                 )
                                                 ->where(new Expression('lower(name)'), 'like', "%{$search}%")
                                                 ->orderBy('name')
@@ -161,7 +181,7 @@ class ManageFormEmailAutoReply extends EditRecord
                                         $component->generateImageUrls($template->content),
                                     );
                                 }))
-                            ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
+                            ->helperText('You can insert recipient information by typing {{ and choosing a merge value to insert.')
                             ->columnSpanFull()
                             ->live(),
                     ]),

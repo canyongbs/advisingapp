@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Prospect\Filament\Pages;
 
+use AdvisingApp\Prospect\Filament\Widgets\ProspectsActionCenterWidget;
 use AdvisingApp\Prospect\Filament\Widgets\ProspectStats;
-use AdvisingApp\Prospect\Filament\Widgets\ProspectTasks;
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Filament\Widgets\ProspectGrowthChart;
 use App\Models\User;
@@ -78,8 +78,8 @@ class RecruitmentCrmDashboard extends BaseDashboard
     {
         return [
             ProspectStats::class,
+            ProspectsActionCenterWidget::class,
             ProspectGrowthChart::class,
-            ProspectTasks::class,
         ];
     }
 }

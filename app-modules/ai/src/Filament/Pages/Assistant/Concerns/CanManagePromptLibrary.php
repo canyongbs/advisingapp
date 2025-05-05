@@ -122,7 +122,7 @@ trait CanManagePromptLibrary
                         $set('promptId', null);
                     })
                     ->hidden(fn (Get $get): bool => blank($get('isSmart')))
-                    ->visible(fn () => count(auth()->user()->teams) ? true : false)
+                    ->visible(fn () => auth()->user()->team ? true : false)
                     ->live(),
                 Select::make('promptId')
                     ->label('Select a prompt')
@@ -153,7 +153,7 @@ trait CanManagePromptLibrary
                                     function (Builder $query) {
                                         /** @var User $user */
                                         $user = auth()->user();
-                                        $teamUsers = $user?->teams->first()?->users;
+                                        $teamUsers = $user?->team?->users;
 
                                         if ($teamUsers) {
                                             $query->whereHas('user', function (Builder $query) use ($teamUsers) {

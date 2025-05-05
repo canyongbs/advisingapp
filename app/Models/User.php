@@ -66,7 +66,6 @@ use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Team\Models\Team;
-use AdvisingApp\Team\Models\TeamUser;
 use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
 use App\Filament\Resources\UserResource;
 use App\Observers\UserObserver;
@@ -78,8 +77,10 @@ use Filament\Models\Contracts\HasAvatar;
 use Filament\Panel;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -103,6 +104,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @mixin IdeHelperUser
  */
 #[ObservedBy([UserObserver::class])]
+
 class User extends Authenticatable implements HasLocalePreference, FilamentUser, Auditable, HasMedia, HasAvatar, CanBeNotified, HasFilamentResource
 {
     /** @use HasFactory<UserFactory> */
@@ -301,11 +303,17 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             ->withTimestamps();
     }
 
+    /**
+     * @return HasManyDeep<Model, $this>
+     */
     public function studentAlerts(): HasManyDeep
     {
         return $this->hasManyDeepFromRelations($this->studentSubscriptions(), (new Student())->alerts());
     }
 
+    /**
+     * @return HasManyDeep<Model, $this>
+     */
     public function prospectAlerts(): HasManyDeep
     {
         return $this->hasManyDeepFromRelations($this->prospectSubscriptions(), (new Prospect())->alerts());
@@ -359,6 +367,9 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return $careTeam->careTeamRole;
     }
 
+    /**
+     * @return HasManyDeep<Model, $this>
+     */
     public function permissionsFromRoles(): HasManyDeep
     {
         return $this->hasManyDeepFromRelations($this->roles(), (new Role())->permissions());
@@ -373,6 +384,9 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             ->where('status', CaseAssignmentStatus::Active);
     }
 
+    /**
+     * @return HasManyDeep<Model, $this>
+     */
     public function cases(): HasManyDeep
     {
         return $this->hasManyDeepFromRelations($this->caseAssignments(), (new CaseAssignment())->case());
@@ -383,9 +397,14 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return $this->roles()->where('name', Authenticatable::SUPER_ADMIN_ROLE)->exists();
     }
 
-    public function scopeAdmins()
+    /**
+     * @param Builder<User> $query
+     *
+     * @return Builder<User>
+     */
+    public function scopeAdmins(Builder $query): Builder
     {
-        return $this->whereHas('roles', fn ($q) => $q->where('title', 'Admin'));
+        return $query->whereHas('roles', fn ($q) => $q->where('title', 'Admin'));
     }
 
     /**
@@ -441,15 +460,10 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return $this->hasMany(CalendarEvent::class);
     }
 
-    /**
-     * @return BelongsToMany<Team, $this, covariant TeamUser>
-     */
-    public function teams(): BelongsToMany
+    /** @return BelongsTo<Team, $this> */
+    public function team(): BelongsTo
     {
-        return $this
-            ->belongsToMany(Team::class, 'team_user', 'user_id', 'team_id')
-            ->using(TeamUser::class)
-            ->withTimestamps();
+        return $this->belongsTo(Team::class);
     }
 
     /**
@@ -609,11 +623,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
 
     public function assignTeam(int|string $teamId): void
     {
-        // Remove the current team if exists
-        $this->teams()->detach();
-
-        // Assign the new team
-        $this->teams()->attach($teamId);
+        $this->team()->associate($teamId)->save();
     }
 
     public function canReceiveSms(): bool

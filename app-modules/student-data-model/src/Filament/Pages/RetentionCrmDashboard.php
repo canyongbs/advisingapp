@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Pages;
 
+use AdvisingApp\StudentDataModel\Filament\Widgets\StudentsActionCenterWidget;
 use AdvisingApp\StudentDataModel\Filament\Widgets\StudentStats;
-use AdvisingApp\StudentDataModel\Filament\Widgets\StudentTasks;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Filament\Pages\Dashboard as BaseDashboard;
@@ -77,7 +77,7 @@ class RetentionCrmDashboard extends BaseDashboard
     {
         return [
             StudentStats::class,
-            StudentTasks::class,
+            StudentsActionCenterWidget::class,
         ];
     }
 }

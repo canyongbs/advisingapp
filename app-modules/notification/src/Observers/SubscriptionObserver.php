@@ -39,40 +39,16 @@ namespace AdvisingApp\Notification\Observers;
 use AdvisingApp\Notification\Events\SubscriptionCreated;
 use AdvisingApp\Notification\Events\SubscriptionDeleted;
 use AdvisingApp\Notification\Models\Subscription;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use App\Models\User;
-use Illuminate\Support\Facades\Cache;
 
 class SubscriptionObserver
 {
     public function created(Subscription $subscription): void
     {
         SubscriptionCreated::dispatch($subscription);
-
-        /** @var ?User $user */
-        $user = auth()->user();
-
-        if ($user) {
-            Cache::tags([match ($subscription->subscribable_type) {
-                app(Prospect::class)->getMorphClass() => "user-{$user->getKey()}-prospect-subscriptions",
-                app(Student::class)->getMorphClass() => "user-{$user->getKey()}-student-subscriptions",
-            }])->flush();
-        }
     }
 
     public function deleted(Subscription $subscription): void
     {
         SubscriptionDeleted::dispatch($subscription);
-
-        /** @var ?User $user */
-        $user = auth()->user();
-
-        if ($user) {
-            Cache::tags([match ($subscription->subscribable_type) {
-                app(Prospect::class)->getMorphClass() => "user-{$user->getKey()}-prospect-subscriptions",
-                app(Student::class)->getMorphClass() => "user-{$user->getKey()}-student-subscriptions",
-            }])->flush();
-        }
     }
 }

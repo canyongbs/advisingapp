@@ -34,17 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Team\Observers;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\Team\Models\TeamUser;
-
-class TeamUserObserver
-{
-    //TODO: remove this if we support multiple teams
-    public function creating(TeamUser $teamUser)
+return new class () extends Migration {
+    public function up(): void
     {
-        if ($teamUser->user->teams()->count() > 0) {
-            return false;
-        }
+        DB::statement('ALTER TABLE engagements ALTER COLUMN subject TYPE jsonb USING subject::jsonb');
+        DB::statement('ALTER TABLE engagement_batches ALTER COLUMN subject TYPE jsonb USING subject::jsonb');
+        DB::statement('ALTER TABLE form_email_auto_replies ALTER COLUMN subject TYPE jsonb USING subject::jsonb');
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('engagements', function (Blueprint $table) {
+            $table->text('subject')->nullable()->change();
+        });
+
+        Schema::table('engagement_batches', function (Blueprint $table) {
+            $table->text('subject')->nullable()->change();
+        });
+
+        Schema::table('form_email_auto_replies', function (Blueprint $table) {
+            $table->text('subject')->nullable()->change();
+        });
+    }
+};

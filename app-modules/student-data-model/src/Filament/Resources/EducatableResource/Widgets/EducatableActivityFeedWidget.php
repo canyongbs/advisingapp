@@ -47,6 +47,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Histories\TaskHistory;
 use AdvisingApp\Timeline\Livewire\Concerns\CanLoadTimelineRecords;
 use AdvisingApp\Timeline\Livewire\Concerns\HasTimelineRecords;
+use App\Features\RefactorEngagementCampaignSubjectToJsonb;
 use App\Models\User;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
@@ -107,7 +108,9 @@ class EducatableActivityFeedWidget extends Widget implements HasActions, HasForm
     {
         return (string) str(match ($record->getMorphClass()) {
             'interaction' => "Subject: {$record->subject}",
-            'engagement' => match ($record->getDeliveryMethod()) {
+            'engagement' => RefactorEngagementCampaignSubjectToJsonb::active()
+            ? $this->getEngagementDescription($record)
+            : match ($record->getDeliveryMethod()) {
                 NotificationChannel::Sms => "Preview: {$record->getBodyMarkdown()}",
                 default => "Subject: {$record->subject}",
             },
@@ -148,5 +151,19 @@ class EducatableActivityFeedWidget extends Widget implements HasActions, HasForm
         }
 
         return false;
+    }
+
+    /**
+     * @param Model $record
+     *
+     * @return string
+     */
+    protected function getEngagementDescription(Model $record): string
+    {
+        /** @var Engagement $record */
+        return match ($record->getDeliveryMethod()) {
+            NotificationChannel::Sms => "Preview: {$record->getBodyMarkdown()}",
+            default => "Subject: {$record->getSubjectMarkdown()}",
+        };
     }
 }

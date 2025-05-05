@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Enums;
 
+use AdvisingApp\Ai\Settings\AiSettings;
 use Filament\Support\Contracts\HasLabel;
 
 enum AiApplication: string implements HasLabel
@@ -84,6 +85,8 @@ enum AiApplication: string implements HasLabel
                     AiModel::OpenAiGpt4oMini,
                     AiModel::OpenAiGptO1Mini,
                     AiModel::OpenAiGptO3Mini,
+                    AiModel::OpenAiGpt41Mini,
+                    AiModel::OpenAiGpt41Nano,
                 ],
                 self::Test => [
                     AiModel::OpenAiGptTest,
@@ -95,7 +98,9 @@ enum AiApplication: string implements HasLabel
 
     public function getDefaultModel(): AiModel
     {
-        return match ($this) {
+        $settings = app(AiSettings::class);
+
+        return $settings->default_model ?? match ($this) {
             self::PersonalAssistant => AiModel::OpenAiGpt4o,
             self::Test => AiModel::Test,
         };

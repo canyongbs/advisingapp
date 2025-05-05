@@ -82,4 +82,20 @@ return [
     'gpt_o3_mini_api_version' => env('OPEN_AI_GPT_O3_MINI_API_VERSION'),
 
     'gpt_o3_mini_model' => env('OPEN_AI_GPT_O3_MINI_MODEL'),
+
+    'gpt_41_mini_base_uri' => env('OPEN_AI_GPT_41_MINI_BASE_URI'),
+
+    'gpt_41_mini_api_key' => env('OPEN_AI_GPT_41_MINI_API_KEY'),
+
+    'gpt_41_mini_api_version' => env('OPEN_AI_GPT_41_MINI_API_VERSION'),
+
+    'gpt_41_mini_model' => env('OPEN_AI_GPT_41_MINI_MODEL'),
+
+    'gpt_41_nano_base_uri' => env('OPEN_AI_GPT_41_NANO_BASE_URI'),
+
+    'gpt_41_nano_api_key' => env('OPEN_AI_GPT_41_NANO_API_KEY'),
+
+    'gpt_41_nano_api_version' => env('OPEN_AI_GPT_41_NANO_API_VERSION'),
+
+    'gpt_41_nano_model' => env('OPEN_AI_GPT_41_NANO_MODEL'),
 ];

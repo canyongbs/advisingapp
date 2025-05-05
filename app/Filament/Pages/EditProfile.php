@@ -219,23 +219,23 @@ class EditProfile extends Page
                             ->live()
                             ->visible($hasCrmLicense),
                         Placeholder::make('teams')
-                            ->label(str('Team')->plural($user->teams->count()))
-                            ->content($user->teams->pluck('name')->join(', ', ' and '))
-                            ->hidden($user->teams->isEmpty())
+                            ->label('Team')
+                            ->content($user->team->name)
+                            ->hidden(! $user->team)
                             ->hint(fn (Get $get): string => $get('are_teams_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
                         //TODO: Right now this is not passed to the frontend
                         Checkbox::make('are_teams_visible_on_profile')
-                            ->label('Show ' . str('team')->plural($user->teams->count())->ucfirst() . ' on profile')
-                            ->hidden($user->teams->isEmpty())
+                            ->label('Show ' . str('team') . ' on profile')
+                            ->hidden(! $user->team)
                             ->live(),
                         Placeholder::make('division')
-                            ->content($user->teams->first()?->division?->name)
-                            ->hidden(! $user->teams->first()?->division()->exists())
+                            ->content($user->team?->division?->name)
+                            ->hidden(! $user->team?->division()->exists())
                             ->hint(fn (Get $get): string => $get('is_division_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
                         //TODO: Right now this is not passed to the frontend
                         Checkbox::make('is_division_visible_on_profile')
                             ->label('Show Division on profile')
-                            ->hidden(! $user->teams->first()?->division()->exists())
+                            ->hidden(! $user->team?->division()->exists())
                             ->live(),
                     ]),
                 Section::make('Account Information')

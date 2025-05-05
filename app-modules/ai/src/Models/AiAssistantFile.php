@@ -75,4 +75,24 @@ class AiAssistantFile extends BaseModel implements AiFile, HasMedia
         $this->addMediaCollection('file')
             ->singleFile();
     }
+
+    public function getTemporaryUrl(): ?string
+    {
+        return $this->temporary_url;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function getMimeType(): ?string
+    {
+        return $this->mime_type;
+    }
+
+    public function getFileId(): ?string
+    {
+        return $this->file_id;
+    }
 }

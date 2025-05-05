@@ -48,6 +48,7 @@ use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
+use App\Features\RefactorEngagementCampaignSubjectToJsonb;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\StaticAction;
@@ -170,7 +171,30 @@ class SendEngagementAction extends Action
                             ->required()
                             ->placeholder(__('Subject'))
                             ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->visible(! RefactorEngagementCampaignSubjectToJsonb::active()),
+                        TiptapEditor::make('subject')
+                            ->label('Subject')
+                            ->mergeTags([
+                                'recipient first name',
+                                'recipient last name',
+                                'recipient full name',
+                                'recipient email',
+                                'recipient preferred name',
+                                'user first name',
+                                'user full name',
+                                'user job title',
+                                'user email',
+                                'user phone number',
+                            ])
+                            ->showMergeTagsInBlocksPanel(false)
+                            ->helperText('You may use “merge tags” to substitute information about a student into your subject line. Insert a “{{“ in the subject line field to see a list of available merge tags')
+                            ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
+                            ->profile('sms')
+                            ->required()
+                            ->placeholder('Enter the email subject here...')
+                            ->columnSpanFull()
+                            ->visible(RefactorEngagementCampaignSubjectToJsonb::active()),
                         TiptapEditor::make('body')
                             ->disk('s3-public')
                             ->label('Body')
@@ -211,7 +235,7 @@ class SendEngagementAction extends Action
                                                 )
                                                 ->when(
                                                     $get('onlyMyTeamTemplates'),
-                                                    fn (Builder $query) => $query->whereIn('user_id', auth()->user()->teams()->first()->users()->pluck('id'))
+                                                    fn (Builder $query) => $query->whereIn('user_id', auth()->user()->team->users()->pluck('id'))
                                                 )
                                                 ->where(new Expression('lower(name)'), 'like', "%{$search}%")
                                                 ->orderBy('name')
@@ -281,6 +305,13 @@ class SendEngagementAction extends Action
             ->action(function (array $data, Form $form, Page $livewire) {
                 /** @var Student | Prospect $recipient */
                 $recipient = $this->getEducatable();
+
+                if (RefactorEngagementCampaignSubjectToJsonb::active()) {
+                    $data['subject'] ??= ['type' => 'doc', 'content' => []];
+                    $data['subject']['content'] = [
+                        ...($data['subject']['content'] ?? []),
+                    ];
+                }
 
                 $data['body'] ??= ['type' => 'doc', 'content' => []];
                 $data['body']['content'] = [

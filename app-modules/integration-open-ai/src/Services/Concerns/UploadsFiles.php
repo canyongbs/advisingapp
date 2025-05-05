@@ -75,6 +75,11 @@ trait UploadsFiles
         $this->afterThreadSelected($thread);
     }
 
+    /**
+     * @param Collection<int, AiAssistantFile>  $files
+     *
+     * @return Collection<int, AiAssistantFile>
+     */
     public function createAssistantFiles(AiAssistant $assistant, Collection $files): Collection
     {
         return $files->each(function (AiAssistantFile $fileRecord) {
@@ -93,7 +98,7 @@ trait UploadsFiles
         $this->client->files()->delete($file->file_id);
     }
 
-    public function updateAssistantVectorStoreId(AiAssistant $assistant, $vectorStoreId): void
+    public function updateAssistantVectorStoreId(AiAssistant $assistant, string $vectorStoreId): void
     {
         $this->client->assistants()->modify($assistant->assistant_id, [
             'tool_resources' => [
@@ -104,6 +109,9 @@ trait UploadsFiles
         ]);
     }
 
+    /**
+     * @param array<string, mixed> $parameters
+     */
     public function createVectorStore(array $parameters): VectorStoresDataTransferObject
     {
         $response = $this->client->vectorStores()->create($parameters);
@@ -141,6 +149,9 @@ trait UploadsFiles
         }
     }
 
+    /**
+     * @param array<string> $fileIds
+     */
     public function createVectorStoreFilesBatch(string $vectorStoreId, array $fileIds): void
     {
         $this->client->vectorStores()->batches()->create(
@@ -168,6 +179,8 @@ trait UploadsFiles
      * The `openai-php/client` does not current work with the `GET /vector_stores/{vectorStoreId}/files` endpoint
      * for Azure Open AI. This is due to the expectation of a `chunking_strategy` key in the response, which Azure
      * does not provide. An issue has been opened, but this request needs to happen without the client for now.
+     *
+     * @param array<string> $params
      */
     public function retrieveVectorStoreFiles(string $vectorStoreId, array $params = []): VectorStoreFilesDataTransferObject
     {
@@ -195,12 +208,17 @@ trait UploadsFiles
     public function deleteFile(AiFile $file): void
     {
         try {
-            $this->client->files()->delete($file->file_id);
+            $this->client->files()->delete($file->getFileId());
         } catch (Throwable $e) {
             report($e);
         }
     }
 
+    /**
+     * @param array<int, mixed|AiMessageFile> $files
+     *
+     * @return array<AiMessageFile>
+     */
     protected function createFiles(array $files): array
     {
         return array_map(
@@ -235,7 +253,7 @@ trait UploadsFiles
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
 
-        $cfile = new CURLFile($file->temporary_url, $file->mime_type, $file->name);
+        $cfile = new CURLFile($file->getTemporaryUrl(), $file->getMimeType(), $file->getName());
 
         $postFields = [
             'purpose' => 'assistants',
@@ -288,9 +306,9 @@ trait UploadsFiles
         return $response['id'];
     }
 
-    protected function retrieveFile(AiMessageFile $file): FilesDataTransferObject
+    protected function retrieveFile(AiFile $file): FilesDataTransferObject
     {
-        $response = $this->client->files()->retrieve($file->file_id);
+        $response = $this->client->files()->retrieve($file->getFileId());
 
         return FilesDataTransferObject::from([
             'id' => $response->id,
@@ -299,7 +317,11 @@ trait UploadsFiles
         ]);
     }
 
-    protected function retrieveAllVectorStoreFileIds(AiThread $thread, string $vectorStoreId, array &$vectorStoreFileIds = [], $after = null): void
+    /**
+     * @param array<string> $vectorStoreFileIds
+     * @param string|null $after
+     */
+    protected function retrieveAllVectorStoreFileIds(AiThread $thread, string $vectorStoreId, array &$vectorStoreFileIds = [], ?string $after = null): void
     {
         $params = [];
 
@@ -323,6 +345,9 @@ trait UploadsFiles
         }
     }
 
+    /**
+     * @param array<string, mixed> $vectorStore
+     */
     protected function recreateVectorStoreForThread(AiThread $thread, array $vectorStore): void
     {
         $vectorStoreFileIds = [];
@@ -352,6 +377,9 @@ trait UploadsFiles
         $this->awaitVectorStoreProcessing($newVectorStore);
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     protected function getExpiredVectorStoresForThread(AiThread $thread): ?array
     {
         if (! $this->supportsMessageFileUploads()) {

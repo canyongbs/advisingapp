@@ -36,7 +36,9 @@
 
 namespace AdvisingApp\Notification\Notifications;
 
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\ChannelManager as BaseChannelManager;
+use Illuminate\Queue\Middleware\RateLimitedWithRedis;
 use Illuminate\Support\Collection;
 
 class ChannelManager extends BaseChannelManager
@@ -53,6 +55,18 @@ class ChannelManager extends BaseChannelManager
     {
         if (property_exists($notification, 'queue')) {
             $notification->queue ??= config('queue.outbound_communication_queue');
+        }
+
+        if ($notification instanceof ShouldQueue && property_exists($notification, 'middleware')) {
+            $notification->middleware[] = new RateLimitedWithRedis('notification');
+        }
+
+        if ($notification instanceof ShouldQueue) {
+            $notification->retryUntil ??= now()->addHours(2); // @phpstan-ignore property.notFound
+        }
+
+        if ($notification instanceof ShouldQueue) {
+            $notification->maxExceptions ??= 3; // @phpstan-ignore property.notFound
         }
 
         parent::send($notifiables, $notification);

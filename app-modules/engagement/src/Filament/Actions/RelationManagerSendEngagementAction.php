@@ -47,6 +47,7 @@ use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
+use App\Features\RefactorEngagementCampaignSubjectToJsonb;
 use App\Features\RoutedEngagements;
 use Filament\Actions\StaticAction;
 use Filament\Forms\Components\Actions;
@@ -145,7 +146,30 @@ class RelationManagerSendEngagementAction extends CreateAction
                             ->required()
                             ->placeholder(__('Subject'))
                             ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->visible(! RefactorEngagementCampaignSubjectToJsonb::active()),
+                        TiptapEditor::make('subject')
+                            ->label('Subject')
+                            ->mergeTags([
+                                'recipient first name',
+                                'recipient last name',
+                                'recipient full name',
+                                'recipient email',
+                                'recipient preferred name',
+                                'user first name',
+                                'user full name',
+                                'user job title',
+                                'user email',
+                                'user phone number',
+                            ])
+                            ->showMergeTagsInBlocksPanel(false)
+                            ->helperText('You may use “merge tags” to substitute information about a recipient into your subject line. Insert a “{{“ in the subject line field to see a list of available merge tags')
+                            ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
+                            ->profile('sms')
+                            ->required()
+                            ->placeholder('Enter the email subject here...')
+                            ->columnSpanFull()
+                            ->visible(RefactorEngagementCampaignSubjectToJsonb::active()),
                         TiptapEditor::make('body')
                             ->disk('s3-public')
                             ->label('Body')
@@ -186,7 +210,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                                                 )
                                                 ->when(
                                                     $get('onlyMyTeamTemplates'),
-                                                    fn (Builder $query) => $query->whereIn('user_id', auth()->user()->teams->users->pluck('id'))
+                                                    fn (Builder $query) => $query->whereIn('user_id', auth()->user()->team->users->pluck('id'))
                                                 )
                                                 ->where(new Expression('lower(name)'), 'like', "%{$search}%")
                                                 ->orderBy('name')
@@ -215,7 +239,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                                     );
                                 }))
                             ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
-                            ->helperText('You can insert student or your information by typing {{ and choosing a merge value to insert.')
+                            ->helperText('You can insert recipient or your information by typing {{ and choosing a merge value to insert.')
                             ->columnSpanFull(),
                         EngagementSmsBodyInput::make(context: 'create', form: $form),
                         Actions::make([
@@ -255,6 +279,13 @@ class RelationManagerSendEngagementAction extends CreateAction
             ]))
             ->action(function (array $data, Form $form, RelationManager $livewire) {
                 $recipient = $livewire->getOwnerRecord();
+
+                if (RefactorEngagementCampaignSubjectToJsonb::active()) {
+                    $data['subject'] ??= ['type' => 'doc', 'content' => []];
+                    $data['subject']['content'] = [
+                        ...($data['subject']['content'] ?? []),
+                    ];
+                }
 
                 $data['body'] ??= ['type' => 'doc', 'content' => []];
                 $data['body']['content'] = [

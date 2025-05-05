@@ -34,7 +34,6 @@
 @php
     use AdvisingApp\Engagement\Models\Engagement;
     use AdvisingApp\Engagement\Models\EngagementResponse;
-    use App\Features\EngagementResponseStatusFeature;
 
     /** @var HasDeliveryMethod $timelineable */
     $timelineable = $record->timelineable;
@@ -42,7 +41,7 @@
 <h1 class="fi-modal-heading me-6 text-base font-semibold leading-6 text-gray-950 dark:text-white">
     View {{ $timelineable->getDeliveryMethod()->getLabel() }}
 </h1>
-@if (EngagementResponseStatusFeature::active() && $status)
+@if ($status)
     <span class='mt-2 flex w-auto text-gray-400 dark:text-gray-500'>
         <x-filament::badge>
             {{ $status }}

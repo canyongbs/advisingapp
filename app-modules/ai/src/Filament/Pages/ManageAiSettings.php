@@ -67,7 +67,7 @@ class ManageAiSettings extends SettingsPage
 {
     protected static string $settings = AiSettings::class;
 
-    protected static ?string $title = 'Institutional Assistant';
+    protected static ?string $title = 'Institutional Advisor';
 
     protected static ?string $cluster = GlobalArtificialIntelligence::class;
 

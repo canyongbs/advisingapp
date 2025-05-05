@@ -52,7 +52,7 @@ beforeEach(function () {
 
 it('returns a 404 without a tenant', function () {
     (new NeedsTenant())->handle(Request::create('/needs-tenant-test-route'), fn () => new Response());
-})->expectException(NotFoundHttpException::class);
+})->throws(NotFoundHttpException::class);
 
 it('continues with a tenant', function () {
     Tenant::first()->makeCurrent();

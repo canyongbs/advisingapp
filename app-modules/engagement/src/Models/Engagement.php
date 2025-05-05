@@ -38,6 +38,7 @@ namespace AdvisingApp\Engagement\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Engagement\Actions\GenerateEngagementBodyContent;
+use AdvisingApp\Engagement\Actions\GenerateEngagementSubjectContent;
 use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
 use AdvisingApp\Engagement\Observers\EngagementObserver;
 use AdvisingApp\Notification\Enums\NotificationChannel;
@@ -53,6 +54,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Timeline\Models\Timeline;
 use AdvisingApp\Timeline\Timelines\EngagementTimeline;
+use App\Features\RefactorEngagementCampaignSubjectToJsonb;
 use App\Models\BaseModel;
 use App\Models\User;
 use Exception;
@@ -224,9 +226,24 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         );
     }
 
+    public function getSubject(): HtmlString
+    {
+        return app(GenerateEngagementSubjectContent::class)(
+            $this->subject,
+            $this->getMergeData(),
+            $this->batch ?? $this,
+            'subject',
+        );
+    }
+
     public function getBodyMarkdown(): string
     {
         return stripslashes((new HtmlConverter())->convert($this->getBody()));
+    }
+
+    public function getSubjectMarkdown(): string
+    {
+        return stripslashes((new HtmlConverter())->convert($this->getSubject()));
     }
 
     public function getMergeData(): array
@@ -244,11 +261,11 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
             'student full name' => $this->recipient->getAttribute($this->recipient->displayNameKey()),
             'student email' => $this->recipient->primaryEmailAddress?->address,
             'student preferred name' => $this->recipient->getAttribute($this->recipient->displayPreferredNameKey()),
-            'user first name' => (new Parser())->parse($this->user->name)->getFirstname(),
-            'user full name' => $this->user->name,
-            'user job title' => $this->user->job_title,
-            'user email' => $this->user->email,
-            'user phone number' => $this->user->phone_number,
+            'user first name' => $this->user ? (new Parser())->parse($this->user->name)->getFirstname() : null,
+            'user full name' => $this->user?->name,
+            'user job title' => $this->user?->job_title,
+            'user email' => $this->user?->email,
+            'user phone number' => $this->user?->phone_number,
         ];
     }
 
@@ -274,6 +291,17 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     public function getDeliveryMethod(): NotificationChannel
     {
         return $this->channel;
+    }
+
+    /**
+     * @todo Remove this dynamic cast once `RefactorEngagementCampaignSubjectToJsonb` is removed.
+     *       Move 'subject' casting to the static `$casts` array: protected $casts = ['subject' => 'array'];
+     */
+    protected function casts(): array
+    {
+        return [
+            'subject' => ! RefactorEngagementCampaignSubjectToJsonb::active() ? 'string' : 'array',
+        ];
     }
 
     protected static function booted(): void

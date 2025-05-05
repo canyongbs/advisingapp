@@ -162,6 +162,34 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                 TextInput::make('open_ai_gpt_o3_mini_model')
                                     ->label('Model'),
                             ]),
+                        Section::make('GPT 4.1 mini')
+                            ->collapsible()
+                            ->schema([
+                                TextInput::make('open_ai_gpt_41_mini_base_uri')
+                                    ->label('Base URI')
+                                    ->placeholder('https://example.openai.azure.com/openai')
+                                    ->url(),
+                                TextInput::make('open_ai_gpt_41_mini_api_key')
+                                    ->label('API Key')
+                                    ->password()
+                                    ->autocomplete(false),
+                                TextInput::make('open_ai_gpt_41_mini_model')
+                                    ->label('Model'),
+                            ]),
+                        Section::make('GPT 4.1 nano')
+                            ->collapsible()
+                            ->schema([
+                                TextInput::make('open_ai_gpt_41_nano_base_uri')
+                                    ->label('Base URI')
+                                    ->placeholder('https://example.openai.azure.com/openai')
+                                    ->url(),
+                                TextInput::make('open_ai_gpt_41_nano_api_key')
+                                    ->label('API Key')
+                                    ->password()
+                                    ->autocomplete(false),
+                                TextInput::make('open_ai_gpt_41_nano_model')
+                                    ->label('Model'),
+                            ]),
                     ]),
             ]);
     }

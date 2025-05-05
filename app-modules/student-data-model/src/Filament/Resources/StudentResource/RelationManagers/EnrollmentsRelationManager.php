@@ -117,16 +117,21 @@ class EnrollmentsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('division')
             ->columns([
-                TextColumn::make('division')
-                    ->label('College'),
+                TextColumn::make('name')
+                    ->label('Name')
+                    ->placeholder('N/A'),
                 TextColumn::make('class_nbr')
-                    ->label('Course'),
+                    ->label('Course')
+                    ->placeholder('N/A'),
+                TextColumn::make('section')
+                    ->label('Section')
+                    ->placeholder('N/A'),
                 TextColumn::make('crse_grade_off')
-                    ->label('Grade'),
-                TextColumn::make('unt_taken')
-                    ->label('Attempted'),
-                TextColumn::make('unt_earned')
-                    ->label('Earned'),
+                    ->label('Grade')
+                    ->placeholder('N/A'),
+                TextColumn::make('semester_name')
+                    ->label('Semester')
+                    ->placeholder('N/A'),
             ])
             ->actions([
                 ViewAction::make(),

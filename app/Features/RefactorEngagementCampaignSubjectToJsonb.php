@@ -38,7 +38,7 @@ namespace App\Features;
 
 use App\Support\AbstractFeatureFlag;
 
-class EngagementResponseStatusFeature extends AbstractFeatureFlag
+class RefactorEngagementCampaignSubjectToJsonb extends AbstractFeatureFlag
 {
     public function resolve(mixed $scope): mixed
     {

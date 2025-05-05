@@ -36,13 +36,15 @@
 
 namespace App\Multitenancy\Tasks;
 
+use App\Models\Tenant;
+use Exception;
 use Illuminate\Bus\BatchRepository;
 use Illuminate\Bus\DatabaseBatchRepository;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Spatie\Multitenancy\Concerns\UsesMultitenancyConfig;
+use Spatie\Multitenancy\Contracts\IsTenant;
 use Spatie\Multitenancy\Exceptions\InvalidConfiguration;
-use Spatie\Multitenancy\Models\Tenant;
 use Spatie\Multitenancy\Tasks\SwitchTenantTask;
 
 class SwitchTenantDatabasesTask implements SwitchTenantTask
@@ -72,8 +74,13 @@ class SwitchTenantDatabasesTask implements SwitchTenantTask
         $this->originalDbPassword ??= config("database.connections.{$this->tenantConnectionName}.password");
     }
 
-    public function makeCurrent(Tenant $tenant): void
+    public function makeCurrent(IsTenant $tenant): void
     {
+        throw_if(
+            ! $tenant instanceof Tenant,
+            new Exception('Tenant is not an instance of Tenant')
+        );
+
         $config = $tenant->config;
 
         $this->setTenantDatabase(

@@ -95,7 +95,7 @@ class ListUsers extends ListRecords
                 IdColumn::make(),
                 TextColumn::make('name')
                     ->searchable(),
-                TextColumn::make('teams.name')
+                TextColumn::make('team.name')
                     ->label('Team')
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('email')
@@ -159,26 +159,26 @@ class ListUsers extends ListRecords
             ->filters([
                 TrashedFilter::make()
                     ->visible((fn () => auth()->user()->can('user.*.restore'))),
-                SelectFilter::make('teams')
+                SelectFilter::make('team')
                     ->label('Team')
                     ->options(
                         fn (): array => [
                             '' => [
                                 'unassigned' => 'Unassigned',
                             ],
-                            'Teams' => Team::query()->take(50)->orderBy('name')->pluck('name', 'id')->toArray(),
+                            'Team' => Team::query()->take(50)->orderBy('name')->pluck('name', 'id')->toArray(),
                         ]
                     )
-                    ->getSearchResultsUsing(fn (string $search): array => ['Teams' => Team::query()->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')->take(50)->pluck('name', 'id')->toArray()])
+                    ->getSearchResultsUsing(fn (string $search): array => ['Team' => Team::query()->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')->take(50)->pluck('name', 'id')->toArray()])
                     ->query(function (Builder $query, array $data) {
                         if (empty($data['values'])) {
                             return;
                         }
 
                         $query->when(in_array('unassigned', $data['values']), function ($query) {
-                            $query->whereDoesntHave('teams');
+                            $query->whereDoesntHave('team');
                         })
-                            ->{in_array('unassigned', $data['values']) ? 'orWhereHas' : 'whereHas'}('teams', function ($query) use ($data) {
+                            ->{in_array('unassigned', $data['values']) ? 'orWhereHas' : 'whereHas'}('team', function ($query) use ($data) {
                                 $query->whereIn('team_id', array_filter($data['values'], fn ($value) => $value !== 'unassigned'));
                             });
                     })

@@ -57,6 +57,7 @@ use Filament\PanelProvider;
 use Filament\Support\Assets\Asset;
 use Filament\Support\Assets\Js;
 use Filament\Tables\Columns\Column;
+use Filament\View\PanelsRenderHook;
 use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -187,6 +188,10 @@ class AdminPanelProvider extends PanelProvider
                     ->url(fn () => EditProfile::getUrl())
                     ->icon('heroicon-s-cog-6-tooth'),
                 MenuItem::make()
+                    ->label('About')
+                    ->url("javascript:window.dispatchEvent(new CustomEvent('open-modal', {detail:{id:'app-about'}}))")
+                    ->icon('heroicon-s-information-circle'),
+                MenuItem::make()
                     ->label('Recent Updates')
                     ->url(function (ThemeSettings $themeSettings) {
                         return $themeSettings->recent_updates_url;
@@ -222,7 +227,11 @@ class AdminPanelProvider extends PanelProvider
                 }
 
                 $panel->darkMode(app(ThemeSettings::class)->has_dark_mode);
-            });
+            })
+            ->renderHook(
+                PanelsRenderHook::BODY_END,
+                fn () => view('components.about-modal'),
+            );
     }
 
     public function boot(): void {}

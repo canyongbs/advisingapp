@@ -42,6 +42,7 @@ use AdvisingApp\Engagement\Filament\Forms\Components\EngagementSmsBodyInput;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
+use App\Features\RefactorEngagementCampaignSubjectToJsonb;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
@@ -89,7 +90,25 @@ class BulkEngagementAction
                             ->required()
                             ->placeholder(__('Subject'))
                             ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->visible(! RefactorEngagementCampaignSubjectToJsonb::active()),
+                        TiptapEditor::make('subject')
+                            ->label('Subject')
+                            ->mergeTags([
+                                'recipient first name',
+                                'recipient last name',
+                                'recipient full name',
+                                'recipient email',
+                                'recipient preferred name',
+                            ])
+                            ->showMergeTagsInBlocksPanel(false)
+                            ->helperText('You may use “merge tags” to substitute information about a recipient into your subject line. Insert a “{{“ in the subject line field to see a list of available merge tags')
+                            ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
+                            ->profile('sms')
+                            ->required()
+                            ->placeholder('Enter the email subject here...')
+                            ->columnSpanFull()
+                            ->visible(RefactorEngagementCampaignSubjectToJsonb::active()),
                         TiptapEditor::make('body')
                             ->disk('s3-public')
                             ->label('Body')
@@ -126,7 +145,7 @@ class BulkEngagementAction
                                                 )
                                                 ->when(
                                                     $get('onlyMyTeamTemplates'),
-                                                    fn (Builder $query) => $query->whereIn('user_id', auth()->user()->teams->users->pluck('id'))
+                                                    fn (Builder $query) => $query->whereIn('user_id', auth()->user()->team->users->pluck('id'))
                                                 )
                                                 ->where(new Expression('lower(name)'), 'like', "%{$search}%")
                                                 ->orderBy('name')
@@ -155,7 +174,7 @@ class BulkEngagementAction
                                     );
                                 }))
                             ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
-                            ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
+                            ->helperText('You can insert recipient information by typing {{ and choosing a merge value to insert.')
                             ->columnSpanFull(),
                         EngagementSmsBodyInput::make(context: 'create'),
                         Actions::make([

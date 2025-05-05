@@ -36,8 +36,9 @@
 
 namespace App\Multitenancy\Tasks;
 
-use App\Multitenancy\DataTransferObjects\TenantConfig;
-use Spatie\Multitenancy\Models\Tenant;
+use App\Models\Tenant;
+use Exception;
+use Spatie\Multitenancy\Contracts\IsTenant;
 use Spatie\Multitenancy\Tasks\SwitchTenantTask;
 
 class SwitchAppName implements SwitchTenantTask
@@ -48,9 +49,13 @@ class SwitchAppName implements SwitchTenantTask
         $this->originalAppName ??= config('app.name');
     }
 
-    public function makeCurrent(Tenant $tenant): void
+    public function makeCurrent(IsTenant $tenant): void
     {
-        /** @var TenantConfig $config */
+        throw_if(
+            ! $tenant instanceof Tenant,
+            new Exception('Tenant is not an instance of Tenant')
+        );
+
         $config = $tenant->config;
 
         $appName = $config->applicationName ?? config('app.name');

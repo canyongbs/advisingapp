@@ -37,15 +37,21 @@
 namespace AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages;
 
 use AdvisingApp\Authorization\Filament\Resources\RoleResource;
+use AdvisingApp\Authorization\Models\Role;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Authenticatable;
 use Filament\Actions\CreateAction;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class ListRoles extends ListRecords
 {
@@ -93,6 +99,44 @@ class ListRoles extends ListRecords
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->actions([
+                Action::make('duplicateRole')
+                    ->label('Duplicate')
+                    ->icon('heroicon-o-document-duplicate')
+                    ->requiresConfirmation()
+                    ->modalHeading('Duplicate Role')
+                    ->modalSubmitActionLabel('Duplicate')
+                    ->form([
+                        TextInput::make('name')
+                            ->label('Name')
+                            ->required(),
+                    ])
+                    ->action(function (Role $record, array $data) {
+                        try {
+                            DB::beginTransaction();
+
+                            $newRole = Role::create([
+                                'name' => $data['name'],
+                                'guard_name' => $record->guard_name,
+                            ]);
+
+                            $newRole->syncPermissions($record->permissions);
+
+                            DB::commit();
+
+                            Notification::make()
+                                ->title('Role duplicated successfully.')
+                                ->success()
+                                ->send();
+
+                            return redirect(EditRole::getUrl(['record' => $newRole]));
+                        } catch (Throwable $e) {
+                            DB::rollback();
+                            Notification::make()
+                                ->title('Failed to duplicate role.')
+                                ->danger()
+                                ->send();
+                        }
+                    }),
                 ViewAction::make(),
             ]);
     }

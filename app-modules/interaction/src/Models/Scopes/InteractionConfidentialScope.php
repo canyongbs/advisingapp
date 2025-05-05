@@ -47,7 +47,7 @@ class InteractionConfidentialScope implements Scope
      */
     public function apply(Builder $builder, Model $model): void
     {
-        if (auth()->user()?->IsAdmin) {
+        if (auth()->user()?->isAdmin) {
             return;
         }
 
@@ -57,11 +57,11 @@ class InteractionConfidentialScope implements Scope
                     $query->where('user_id', auth()->id())
                         ->orWhereHas('confidentialAccessTeams', function (Builder $query) {
                             $query->whereHas('users', function (Builder $query) {
-                                $query->where('user_id', auth()->id());
+                                $query->where('users.id', auth()->id());
                             });
                         })
                         ->orWhereHas('confidentialAccessUsers', function (Builder $query) {
-                            $query->where('user_id', auth()->id());
+                            $query->where('users.id', auth()->id());
                         });
                 });
         });
