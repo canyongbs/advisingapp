@@ -88,11 +88,11 @@ class CampaignActionsRelationManager extends RelationManager
             ->headerActions([
                 Action::make('create')
                     ->label('New')
-                    ->modalHeading('Create campaign actions')
+                    ->modalHeading('Create Journey Steps')
                     ->form([
                         Builder::make('data')
                             ->hiddenLabel()
-                            ->addActionLabel('Add a new Campaign Action')
+                            ->addActionLabel('Add a new Journey Step')
                             ->blocks(CampaignActionType::blocks())
                             ->dehydrated(false)
                             ->model($this->getOwnerRecord())
