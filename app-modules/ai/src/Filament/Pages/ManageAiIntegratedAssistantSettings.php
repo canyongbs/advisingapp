@@ -54,7 +54,7 @@ class ManageAiIntegratedAssistantSettings extends SettingsPage
 {
     protected static string $settings = AiIntegratedAssistantSettings::class;
 
-    protected static ?string $title = 'Integrated Assistant';
+    protected static ?string $title = 'Integrated Advisor';
 
     protected static ?string $cluster = GlobalArtificialIntelligence::class;
 
