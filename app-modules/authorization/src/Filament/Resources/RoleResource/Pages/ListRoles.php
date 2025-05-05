@@ -100,14 +100,14 @@ class ListRoles extends ListRecords
             ])
             ->actions([
                 Action::make('duplicateRole')
-                    ->label('Duplicate')
                     ->icon('heroicon-o-document-duplicate')
                     ->requiresConfirmation()
+                    ->modalDescription('This action will make a copy of the role and all associate permissions. This action will not, however, automatically attach any users to that role. To continue, please enter a name for the new role and then select the "Duplicate" option below.')
                     ->modalHeading('Duplicate Role')
                     ->modalSubmitActionLabel('Duplicate')
                     ->form([
                         TextInput::make('name')
-                            ->label('Name')
+                            ->label('New Role Name')
                             ->required(),
                     ])
                     ->action(function (Role $record, array $data) {
