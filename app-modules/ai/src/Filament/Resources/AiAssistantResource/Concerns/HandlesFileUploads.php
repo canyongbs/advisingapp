@@ -45,8 +45,6 @@ use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt41MiniService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt41NanoService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4oMiniService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4oService;
-use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4oMiniService;
-use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4oService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4Service;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Collection;
