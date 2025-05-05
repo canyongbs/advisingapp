@@ -2028,12 +2028,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/campaign/src/Filament/Blocks/CaseBlock.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, AdvisingApp\\\\Team\\\\Models\\\\Team\\>\\:\\:\\$users\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/campaign/src/Filament/Blocks/EngagementBatchEmailBlock.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Campaign\\\\Filament\\\\Blocks\\\\EngagementBatchEmailBlock\\:\\:generateFields\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -2260,6 +2254,42 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.property',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/care-team/src/Rules/UniqueCareTeamRule.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\CareTeam\\\\Models\\\\CareTeamRole\\:\\:\\$name\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/care-team/tests/Tenant/ProspectCareTeamRole/EditProspectCareTeamRoleTest.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\CareTeam\\\\Models\\\\CareTeamRole\\:\\:\\$name\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/care-team/tests/Tenant/ProspectCareTeamRole/ListProspectCareTeamRoleTest.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\CareTeam\\\\Models\\\\CareTeamRole\\:\\:\\$name\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/care-team/tests/Tenant/ProspectCareTeamRole/ViewProspectCareTeamRoleTest.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\CareTeam\\\\Models\\\\CareTeamRole\\:\\:\\$name\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/care-team/tests/Tenant/StudentCareTeamRole/EditStudentCareTeamRoleTest.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\CareTeam\\\\Models\\\\CareTeamRole\\:\\:\\$name\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/care-team/tests/Tenant/StudentCareTeamRole/ListStudentCareTeamRoleTest.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\CareTeam\\\\Models\\\\CareTeamRole\\:\\:\\$name\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/care-team/tests/Tenant/StudentCareTeamRole/ViewStudentCareTeamRoleTest.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Using nullsafe property access "\\?\\-\\>id" on left side of \\?\\? is unnecessary\\. Use \\-\\> instead\\.$#',
@@ -3324,20 +3354,8 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/engagement/src/Actions/GenerateTipTapBodyJson.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Engagement\\\\DataTransferObjects\\\\EngagementCreationData\\:\\:__construct\\(\\) has parameter \\$body with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/DataTransferObjects/EngagementCreationData.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Engagement\\\\DataTransferObjects\\\\EngagementCreationData\\:\\:__construct\\(\\) has parameter \\$recipient with generic class Illuminate\\\\Database\\\\Eloquent\\\\Collection but does not specify its types\\: TKey, TModel$#',
     'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/DataTransferObjects/EngagementCreationData.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Engagement\\\\DataTransferObjects\\\\EngagementCreationData\\:\\:__construct\\(\\) has parameter \\$temporaryBodyImages with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/engagement/src/DataTransferObjects/EngagementCreationData.php',
 ];
@@ -3358,12 +3376,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/engagement/src/Filament/Actions/BulkDraftWithAiAction.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, AdvisingApp\\\\Team\\\\Models\\\\Team\\>\\:\\:\\$users\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Actions/BulkEngagementAction.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Filament\\\\Forms\\\\Components\\\\Field\\:\\:getTemporaryImages\\(\\)\\.$#',
@@ -3438,12 +3450,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/engagement/src/Filament/Actions/RelationManagerDraftWithAiAction.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, AdvisingApp\\\\Team\\\\Models\\\\Team\\>\\:\\:\\$users\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Actions/RelationManagerSendEngagementAction.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$emailAddresses\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
@@ -3490,12 +3496,6 @@ $ignoreErrors[] = [
     'identifier' => 'argument.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/engagement/src/Filament/Actions/RelationManagerSendEngagementAction.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, AdvisingApp\\\\Team\\\\Models\\\\Team\\>\\:\\:\\$users\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Forms/Components/EngagementSmsBodyInput.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Engagement\\\\Filament\\\\Forms\\\\Components\\\\EngagementSmsBodyInput\\:\\:make\\(\\) has no return type specified\\.$#',
@@ -4678,12 +4678,6 @@ $ignoreErrors[] = [
     'identifier' => 'property.notFound',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/FormResource/Pages/ListForms.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, AdvisingApp\\\\Team\\\\Models\\\\Team\\>\\:\\:\\$users\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/FormResource/Pages/ManageFormEmailAutoReply.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property AdvisingApp\\\\Form\\\\Models\\\\Submissible\\:\\:\\$is_authenticated\\.$#',
@@ -7170,6 +7164,12 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Pages/ManageProspectAlerts.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\CareTeam\\\\Models\\\\CareTeamRole\\|Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, AdvisingApp\\\\CareTeam\\\\Models\\\\CareTeamRole\\>\\:\\:\\$name\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Pages/ManageProspectCareTeam.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\ProspectResource\\\\Pages\\\\ManageProspectCareTeam\\:\\:boot\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
     'count' => 1,
@@ -9144,6 +9144,12 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/StudentResource/Pages/ManageStudentAlerts.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\CareTeam\\\\Models\\\\CareTeamRole\\|Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, AdvisingApp\\\\CareTeam\\\\Models\\\\CareTeamRole\\>\\:\\:\\$name\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/StudentResource/Pages/ManageStudentCareTeam.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$dfw\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
@@ -10474,12 +10480,6 @@ $ignoreErrors[] = [
     'identifier' => 'method.notFound',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/team/database/factories/TeamFactory.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Team\\\\Observers\\\\TeamUserObserver\\:\\:creating\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/team/src/Observers/TeamUserObserver.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Team\\\\Providers\\\\TeamServiceProvider\\:\\:boot\\(\\) has no return type specified\\.$#',
@@ -11872,6 +11872,18 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/database/migrations/2024_07_31_202514_data_rename_checkbox_form_fields.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Class AdvisingApp\\\\Team\\\\Observers\\\\TeamUserObserver not found\\.$#',
+    'identifier' => 'class.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/database/migrations/2025_04_30_201831_drop_team_user_table.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^PHPDoc tag @mixin contains unknown class AdvisingApp\\\\Team\\\\Models\\\\IdeHelperTeamUser\\.$#',
+    'identifier' => 'class.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/database/migrations/2025_04_30_201831_drop_team_user_table.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Pest\\\\PendingCalls\\\\TestCall\\|Pest\\\\Support\\\\HigherOrderTapProxy\\:\\:actingAs\\(\\)\\.$#',

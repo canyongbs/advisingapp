@@ -102,10 +102,10 @@ class EditUser extends EditRecord
                     ]),
                 Section::make('Team')
                     ->schema([
-                        Select::make('teams')
+                        Select::make('team')
                             ->label('')
                             ->options(Team::all()->pluck('name', 'id'))
-                            ->relationship('teams', 'name'),
+                            ->relationship('team', 'name'),
                     ])
                     ->hidden($this->record->IsAdmin),
                 Licenses::make()

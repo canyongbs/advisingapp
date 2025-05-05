@@ -162,7 +162,7 @@ class CreateInteraction extends CreateRecord
                             ->exists((new InteractionDriver())->getTable(), 'id'),
                         Select::make('division_id')
                             ->relationship('division', 'name')
-                            ->default(fn () => auth()->user()->teams()->first()?->division?->getKey())
+                            ->default(fn () => auth()->user()->team?->division?->getKey())
                             ->preload()
                             ->label('Division')
                             ->required()

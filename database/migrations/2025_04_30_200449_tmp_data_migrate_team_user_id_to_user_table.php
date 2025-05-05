@@ -34,36 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Team\Models;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
-use AdvisingApp\Team\Observers\TeamUserObserver;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\Pivot;
-
-/**
- * @mixin IdeHelperTeamUser
- */
-#[ObservedBy([TeamUserObserver::class])]
-class TeamUser extends Pivot
-{
-    use HasUuids;
-
-    /**
-     * @return BelongsTo<Team, $this>
-     */
-    public function team(): BelongsTo
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->BelongsTo(Team::class);
+        DB::table('team_user')->chunkById(100, function ($teamUser) {
+            $teamUser->each(function ($teamUser) {
+                DB::table('users')
+                    ->where('id', $teamUser->user_id)  // @phpstan-ignore-line
+                    ->update(['team_id' => $teamUser->team_id]);  // @phpstan-ignore-line
+            });
+        });
     }
 
-    /**
-     * @return BelongsTo<User, $this>
-     */
-    public function user(): BelongsTo
+    public function down(): void
     {
-        return $this->belongsTo(User::class);
+        DB::table('users')->chunkById(100, function ($teamUser) {
+            $teamUser->each(function ($teamUser) {
+                DB::table('team_user')->insert([
+                    'team_id' => $teamUser->team_id,  // @phpstan-ignore-line
+                    'user_id' => $teamUser->user_id,  // @phpstan-ignore-line
+                    'updated_at' => $teamUser->updated_at,  // @phpstan-ignore-line
+                    'created_at' => $teamUser->created_at,  // @phpstan-ignore-line
+                ]);
+            });
+        });
     }
-}
+};

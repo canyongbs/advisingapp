@@ -153,7 +153,7 @@ class ManageFormEmailAutoReply extends EditRecord
                                                 )
                                                 ->when(
                                                     $get('onlyMyTeamTemplates'),
-                                                    fn (Builder $query) => $query->whereIn('user_id', $user->teams->users->pluck('id'))
+                                                    fn (Builder $query) => $query->whereIn('user_id', $user->team->users->pluck('id'))
                                                 )
                                                 ->where(new Expression('lower(name)'), 'like', "%{$search}%")
                                                 ->orderBy('name')

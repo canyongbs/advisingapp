@@ -41,7 +41,7 @@ use AdvisingApp\Team\Models\Team;
 use App\Models\Authenticatable;
 use App\Models\User;
 use Filament\Forms\Components\Select;
-use Filament\Tables\Actions\AttachAction;
+use Filament\Tables\Actions\AssociateAction;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
@@ -113,7 +113,7 @@ test('Non Super Admin Users can be added to a team', function () {
         'pageClass' => EditTeam::class,
     ])
         ->callTableAction(
-            AttachAction::class,
+            AssociateAction::class,
             data: ['recordId' => $user->getKey()]
         )->assertSuccessful();
 });
@@ -142,7 +142,7 @@ test('Super Admin Users cannot be added to a team', function () {
         'pageClass' => EditTeam::class,
     ])
         ->callTableAction(
-            AttachAction::class,
+            AssociateAction::class,
             data: ['recordId' => $superAdmin->getKey()]
         )->assertHasTableActionErrors(['recordId'])
         ->assertSeeText('Super admin users cannot be added to a team.');
@@ -171,7 +171,7 @@ test('Super Admin Users do not show up in UsersRelationManager for Teams search 
         'ownerRecord' => $team,
         'pageClass' => EditTeam::class,
     ])
-        ->mountTableAction(AttachAction::class)
+        ->mountTableAction(AssociateAction::class)
         ->assertFormFieldExists('recordId', 'mountedTableActionForm', function (Select $select) use ($superAdmin) {
             $options = $select->getSearchResults($superAdmin->name);
 

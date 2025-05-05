@@ -34,33 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace App\Notifications;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use App\Models\NotificationSetting;
-use App\Models\User;
-use Filament\Notifications\Auth\ResetPassword;
-
-#[SystemNotification]
-class ResetPasswordNotification extends ResetPassword
-{
-    /**
-     * @inheritDoc
-     */
-    public function toMail($notifiable): MailMessage
+return new class () extends Migration {
+    public function up(): void
     {
-        return MailMessage::make()
-            ->settings($this->resolveNotificationSetting($notifiable))
-            ->subject(__('Reset Password Notification'))
-            ->line(__('You are receiving this email because we received a password reset request for your account.'))
-            ->action(__('Reset Password'), $this->resetUrl($notifiable))
-            ->line(__('This password reset link will expire in :count minutes.', ['count' => config('auth.passwords.' . config('auth.defaults.passwords') . '.expire')]))
-            ->line(__('If you did not request a password reset, no further action is required.'));
+        Schema::dropIfExists('team_user');
     }
 
-    private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
+    public function down(): void
     {
-        return $notifiable->team?->division?->notificationSetting?->setting;
+        Schema::create('team_user', function (Blueprint $table) {
+            $table->id();
+            $table->foreignUuid('team_id')
+                ->constrained('teams');
+            $table->foreignUuid('user_id')
+                ->constrained('users');
+            $table->timestamps();
+        });
     }
-}
+};

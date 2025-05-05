@@ -235,7 +235,7 @@ class SendEngagementAction extends Action
                                                 )
                                                 ->when(
                                                     $get('onlyMyTeamTemplates'),
-                                                    fn (Builder $query) => $query->whereIn('user_id', auth()->user()->teams()->first()->users()->pluck('id'))
+                                                    fn (Builder $query) => $query->whereIn('user_id', auth()->user()->team->users()->pluck('id'))
                                                 )
                                                 ->where(new Expression('lower(name)'), 'like', "%{$search}%")
                                                 ->orderBy('name')

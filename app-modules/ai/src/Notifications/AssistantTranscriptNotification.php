@@ -127,6 +127,6 @@ class AssistantTranscriptNotification extends Notification implements ShouldQueu
 
     private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
     {
-        return $this->sender->teams()->first()?->division?->notificationSetting?->setting;
+        return $this->sender->team?->division?->notificationSetting?->setting;
     }
 }

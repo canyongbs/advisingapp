@@ -66,7 +66,6 @@ use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Team\Models\Team;
-use AdvisingApp\Team\Models\TeamUser;
 use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
 use App\Filament\Resources\UserResource;
 use App\Observers\UserObserver;
@@ -461,15 +460,10 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return $this->hasMany(CalendarEvent::class);
     }
 
-    /**
-     * @return BelongsToMany<Team, $this, covariant TeamUser>
-     */
-    public function teams(): BelongsToMany
+    /** @return BelongsTo<Team, $this> */
+    public function team(): BelongsTo
     {
-        return $this
-            ->belongsToMany(Team::class, 'team_user', 'user_id', 'team_id')
-            ->using(TeamUser::class)
-            ->withTimestamps();
+        return $this->belongsTo(Team::class);
     }
 
     /**
@@ -629,11 +623,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
 
     public function assignTeam(int|string $teamId): void
     {
-        // Remove the current team if exists
-        $this->teams()->detach();
-
-        // Assign the new team
-        $this->teams()->attach($teamId);
+        $this->team()->associate($teamId)->save();
     }
 
     public function canReceiveSms(): bool
