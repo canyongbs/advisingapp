@@ -39,7 +39,7 @@ namespace AdvisingApp\Ai\Enums;
 use AdvisingApp\Ai\Settings\AiSettings;
 use Filament\Support\Contracts\HasLabel;
 
-enum AiApplication: string implements HasLabel
+enum AiAssistantApplication: string implements HasLabel
 {
     case PersonalAssistant = 'personal_assistant';
 

@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Forms;
 
-use AdvisingApp\Ai\Enums\AiApplication;
+use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Models\AiAssistant;
 use Filament\Forms\Components\Actions\Action;
@@ -78,20 +78,20 @@ class AiAssistantForm
                     ->columnSpanFull(),
                 Select::make('application')
                     ->options([
-                        AiApplication::PersonalAssistant->value => 'Custom Advisor',
+                        AiAssistantApplication::PersonalAssistant->value => 'Custom Advisor',
                     ])
-                    ->default(AiApplication::getDefault())
+                    ->default(AiAssistantApplication::getDefault())
                     ->live()
-                    ->afterStateUpdated(fn (Set $set, $state) => filled(AiApplication::parse($state)) ? $set('model', AiApplication::parse($state)->getDefaultModel()->value) : null)
+                    ->afterStateUpdated(fn (Set $set, $state) => filled(AiAssistantApplication::parse($state)) ? $set('model', AiAssistantApplication::parse($state)->getDefaultModel()->value) : null)
                     ->required()
-                    ->enum(AiApplication::class)
+                    ->enum(AiAssistantApplication::class)
                     ->columnStart(1)
                     ->disabledOn('edit'),
                 Select::make('model')
                     ->reactive()
                     ->options(
-                        fn (Get $get): array => filled(AiApplication::parse($get('application')))
-                            ? collect(AiApplication::parse($get('application'))
+                        fn (Get $get): array => filled(AiAssistantApplication::parse($get('application')))
+                            ? collect(AiAssistantApplication::parse($get('application'))
                                 ->getCustomAssistantModels())
                                 ->mapWithKeys(fn (AiModel $model): array => [$model->value => $model->getLabel()])
                                 ->all()
@@ -100,11 +100,11 @@ class AiAssistantForm
                     ->searchable()
                     ->required()
                     ->rules(
-                        fn (Get $get): array => filled(AiApplication::parse($get('application')))
+                        fn (Get $get): array => filled(AiAssistantApplication::parse($get('application')))
                             ? [
                                 Rule::enum(AiModel::class)
                                     ->only(
-                                        AiApplication::parse($get('application'))
+                                        AiAssistantApplication::parse($get('application'))
                                             ->getCustomAssistantModels()
                                     ),
                             ]

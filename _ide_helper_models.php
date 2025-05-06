@@ -751,7 +751,7 @@ namespace AdvisingApp\Ai\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property \AdvisingApp\Ai\Enums\AiApplication $application
+ * @property \AdvisingApp\Ai\Enums\AiAssistantApplication $application
  * @property bool $is_default
  * @property \AdvisingApp\Ai\Enums\AiModel $model
  * @property \Illuminate\Support\Carbon|null $archived_at
@@ -999,7 +999,7 @@ namespace AdvisingApp\Ai\Models{
  *
  * @property string $id
  * @property string $name
- * @property \AdvisingApp\Ai\Enums\AiApplication $application
+ * @property \AdvisingApp\Ai\Enums\AiAssistantApplication $application
  * @property string $user_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at

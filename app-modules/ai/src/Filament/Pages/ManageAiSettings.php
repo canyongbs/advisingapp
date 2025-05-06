@@ -38,7 +38,7 @@ namespace AdvisingApp\Ai\Filament\Pages;
 
 use AdvisingApp\Ai\Actions\ReInitializeAiServiceAssistant;
 use AdvisingApp\Ai\Actions\ResetAiServiceIdsForAssistant;
-use AdvisingApp\Ai\Enums\AiApplication;
+use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiMaxTokens;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Models\AiAssistant;
@@ -89,7 +89,7 @@ class ManageAiSettings extends SettingsPage
     public function defaultAssistant(): ?AiAssistant
     {
         return AiAssistant::query()
-            ->where('application', AiApplication::PersonalAssistant)
+            ->where('application', AiAssistantApplication::PersonalAssistant)
             ->where('is_default', true)
             ->first();
     }
@@ -105,7 +105,7 @@ class ManageAiSettings extends SettingsPage
                     ->model($this->defaultAssistant)
                     ->schema([
                         Select::make('model')
-                            ->options(fn (Get $get): array => collect(AiApplication::parse($get('application'))->getModels())
+                            ->options(fn (Get $get): array => collect(AiAssistantApplication::parse($get('application'))->getModels())
                                 ->mapWithKeys(fn (AiModel $model): array => [$model->value => $model->getLabel()])
                                 ->all())
                             ->searchable()
