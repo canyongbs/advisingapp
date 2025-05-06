@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Ai\Models;
 
-use AdvisingApp\Ai\Enums\AiFeature;
+use AdvisingApp\Ai\Enums\AiMessageLogFeature;
 use App\Models\BaseModel;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -62,7 +62,7 @@ class LegacyAiMessageLog extends BaseModel
         'metadata' => 'encrypted:array',
         'request' => 'encrypted:array',
         'sent_at' => 'datetime',
-        'feature' => AiFeature::class,
+        'feature' => AiMessageLogFeature::class,
     ];
 
     /**

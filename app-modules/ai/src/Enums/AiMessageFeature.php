@@ -38,7 +38,7 @@ namespace AdvisingApp\Ai\Enums;
 
 use Filament\Support\Contracts\HasLabel;
 
-enum AiFeature: string implements HasLabel
+enum AiMessageLogFeature: string implements HasLabel
 {
     case DraftWithAi = 'draft_with_ai';
 

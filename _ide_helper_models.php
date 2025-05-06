@@ -1040,7 +1040,7 @@ namespace AdvisingApp\Ai\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $ai_assistant_name
- * @property \AdvisingApp\Ai\Enums\AiFeature|null $feature
+ * @property \AdvisingApp\Ai\Enums\AiMessageLogFeature|null $feature
  * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LegacyAiMessageLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LegacyAiMessageLog newQuery()
