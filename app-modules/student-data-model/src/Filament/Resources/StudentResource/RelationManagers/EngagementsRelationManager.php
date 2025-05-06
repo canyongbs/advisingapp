@@ -88,7 +88,7 @@ class EngagementsRelationManager extends RelationManager
                             ->schema([
                                 TextEntry::make('user.name')
                                     ->label('Created By')
-                                    ->getStateUsing(fn (Timeline $record): string => $record->timelineable->user->name),
+                                    ->getStateUsing(fn (Timeline $record): string => $record->timelineable->user?->name ?? 'N/A'),
                                 InfolistFieldset::make('Content')
                                     ->schema([
                                         TextEntry::make('subject')
@@ -185,7 +185,7 @@ class EngagementsRelationManager extends RelationManager
                         'timelineable' => function ($morphQuery) use ($canAccessEngagements) {
                             $morphQuery->when(
                                 $canAccessEngagements && $morphQuery->getModel() instanceof Engagement,
-                                fn ($query) => $query->with('latestEmailMessage')
+                                fn (Builder $query) => $query->with(['latestEmailMessage.events', 'latestSmsMessage.events'])
                             );
                         },
                     ])
