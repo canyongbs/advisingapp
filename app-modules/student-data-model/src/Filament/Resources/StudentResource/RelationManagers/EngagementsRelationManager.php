@@ -206,11 +206,11 @@ class EngagementsRelationManager extends RelationManager
                         EngagementResponse::class => $record->timelineable->status,
                         Engagement::class => EngagementDisplayStatus::getStatus($record->timelineable)?->getLabel(),
                     })
-                    ->badge(),
-                // ->color(fn (Timeline $record) => match ($record->timelineable::class) {
-                //     Engagement::class => EngagementDisplayStatus::getStatus($record->timelineable)->getColor(),
-                //     default => null,
-                // }),
+                    ->badge()
+                    ->color(fn (Timeline $record) => match ($record->timelineable::class) {
+                        Engagement::class => EngagementDisplayStatus::getStatus($record->timelineable)->getColor(),
+                        default => null,
+                    }),
                 TextColumn::make('type')
                     ->getStateUsing(function (Timeline $record) {
                         /** @var HasDeliveryMethod $timelineable */

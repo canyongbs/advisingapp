@@ -82,9 +82,9 @@ enum EngagementDisplayStatus implements HasLabel, HasColor
     public function getColor(): string
     {
         return match ($this) {
-            self::Delivered, self::Read, self::Clicked => 'danger',
-            self::Delayed => 'primary',
-            self::Failed, self::Bounced, self::Complaint => 'success',
+            self::Delivered, self::Read, self::Clicked => 'success',
+            self::Scheduled, self::Delayed, self::Pending, self::Accepted, self::Queued, self::Sending => 'info',
+            self::Failed, self::Bounced, self::Complaint => 'danger',
             self::Sent, self::Unsubscribed => 'gray',
         };
     }
