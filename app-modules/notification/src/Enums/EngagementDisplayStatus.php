@@ -67,7 +67,7 @@ enum EngagementDisplayStatus
         return $this->name;
     }
 
-    public static function getStatusFromEmailMessage(?EmailMessage $message): ?self
+    public static function getStatus(?EmailMessage $message): ?self
     {
         if (! $message) {
             return null;
