@@ -67,6 +67,7 @@ class ExecuteCampaignAction implements ShouldQueue, ShouldBeUnique
         if (CancelCampaignAction::active() && $this->action->cancelled_at !== null) {
             return;
         }
+        
         $this->action->execute();
     }
 }
