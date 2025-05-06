@@ -45,29 +45,28 @@ use Illuminate\Foundation\Bus\Dispatchable;
 
 class ExecuteCampaignAction implements ShouldQueue, ShouldBeUnique
 {
-  use Dispatchable;
+    use Dispatchable;
 
-  public int $tries = 3;
+    public int $tries = 3;
 
-  public int $timeout = 600;
+    public int $timeout = 600;
 
-  public int $uniqueFor = 600 * 3;
+    public int $uniqueFor = 600 * 3;
 
-  public function __construct(
-    public CampaignAction $action
-  ) {}
+    public function __construct(
+        public CampaignAction $action
+    ) {}
 
-  public function uniqueId(): string
-  {
-    return Tenant::current()->getKey() . ':' . $this->action->getKey();
-  }
-
-  public function handle(): void
-  {
-    if (CancelCampaignAction::active() && $this->action->cancelled_at !== null) {
-
-      return;
+    public function uniqueId(): string
+    {
+        return Tenant::current()->getKey() . ':' . $this->action->getKey();
     }
-    $this->action->execute();
-  }
+
+    public function handle(): void
+    {
+        if (CancelCampaignAction::active() && $this->action->cancelled_at !== null) {
+            return;
+        }
+        $this->action->execute();
+    }
 }
