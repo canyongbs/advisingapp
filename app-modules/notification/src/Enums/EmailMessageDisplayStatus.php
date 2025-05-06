@@ -40,19 +40,21 @@ use AdvisingApp\Notification\Models\EmailMessage;
 
 enum EmailMessageDisplayStatus
 {
-    case Complaint;
-    case Bounced;
-    case Failed;
-    case Clicked;
-    case Read;
-    case Delivered;
-    case Delayed;
-    case Unsubscribed;
+    case Scheduled;
+    case Processing;
     case Sent;
+    case Failed;
+    case Bounced;
+    case Delayed;
+    case Delivered;
+    case Read;
+    case Clicked;
+    case Complaint;
+    case Unsubscribed;
 
     public function getLabel(): string
     {
-        return str($this->name)->headline();
+        return $this->name;
     }
 
     public static function getStatusFromEmailMessage(?EmailMessage $message): ?self
