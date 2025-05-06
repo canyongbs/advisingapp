@@ -77,7 +77,9 @@ class AiAssistantForm
                     ->maxLength(255)
                     ->columnSpanFull(),
                 Select::make('application')
-                    ->options(AiApplication::class)
+                    ->options([
+                        AiApplication::PersonalAssistant->value => 'Custom Advisor',
+                    ])
                     ->default(AiApplication::getDefault())
                     ->live()
                     ->afterStateUpdated(fn (Set $set, $state) => filled(AiApplication::parse($state)) ? $set('model', AiApplication::parse($state)->getDefaultModel()->value) : null)
@@ -112,11 +114,10 @@ class AiAssistantForm
                 Textarea::make('description')
                     ->columnSpanFull()
                     ->required(),
-                Section::make('Configure AI Assistant')
-                    ->description('The following information will be used to instruct your AI Assistant on how to respond.')
+                Section::make('Configure AI Advisor')
+                    ->description('Design the capability of your advisor by including detailed instructions below.')
                     ->schema([
                         Textarea::make('instructions')
-                            ->helperText('Instructions are used to provide context to the AI Assistant on how to respond to user queries.')
                             ->reactive()
                             ->required()
                             ->maxLength(fn (Get $get): int => (AiModel::parse($get('model')) ?? AiModel::OpenAiGpt35)->getService()->getMaxAssistantInstructionsLength()),
