@@ -74,7 +74,7 @@ enum EngagementDisplayStatus implements HasLabel, HasColor
     {
         return match ($engagement->channel) {
             NotificationChannel::Email => self::parseEmailStatus($engagement),
-            NotificationChannel::Sms => self::Pending,
+            NotificationChannel::Sms => self::parseSmsStatus($engagement),
             default => throw new Exception('Unsupported channel'),
         };
     }
@@ -123,6 +123,40 @@ enum EngagementDisplayStatus implements HasLabel, HasColor
             EmailMessageEventType::RenderingFailure => $status = self::Failed,
             EmailMessageEventType::Subscription => $status = self::Unsubscribed,
             EmailMessageEventType::DeliveryDelay => $status = self::Delayed,
+        });
+
+        return $status;
+    }
+
+    protected static function parseSmsStatus(Engagement $engagement): self
+    {
+        $status = self::Pending;
+
+        if (! is_null($engagement->scheduled_at)) {
+            $status = self::Scheduled;
+        }
+
+        $events = $engagement->latestSmsMessage?->events()->orderBy('occurred_at', 'asc')->get();
+
+        $events->each(fn ($event) => match ($event->type) {
+            // This is needed due to a bug where sometimes the Dispatched event isn't saved
+            // until some of the other external events have already come in
+            SmsMessageEventType::Dispatched => $status = ($status === self::Pending) ? self::Pending : $status,
+
+            SmsMessageEventType::FailedDispatch => $status = self::Failed,
+            SmsMessageEventType::RateLimited => $status = self::Failed,
+
+            // We will consider the message "delivered" if blocked by demo mode
+            // for visual demo purposes
+            SmsMessageEventType::BlockedByDemoMode => $status = self::Delivered,
+
+            SmsMessageEventType::Queued => $status = self::Queued,
+            SmsMessageEventType::Canceled => $status = self::Failed,
+            SmsMessageEventType::Sent => $status = self::Sent,
+            SmsMessageEventType::Failed => $status = self::Failed,
+            SmsMessageEventType::Delivered => $status = self::Delivered,
+            SmsMessageEventType::Undelivered => $status = self::Failed,
+            SmsMessageEventType::Read => $status = self::Read,
         });
 
         return $status;
