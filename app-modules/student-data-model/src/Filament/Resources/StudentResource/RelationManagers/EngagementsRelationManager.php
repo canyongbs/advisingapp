@@ -41,7 +41,7 @@ use AdvisingApp\Engagement\Filament\Actions\RelationManagerSendEngagementAction;
 use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementResponse;
-use AdvisingApp\Notification\Enums\EmailMessageDisplayStatus;
+use AdvisingApp\Notification\Enums\EngagementDisplayStatus;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\EmailMessageEvent;
 use AdvisingApp\Notification\Models\SmsMessageEvent;
@@ -204,11 +204,11 @@ class EngagementsRelationManager extends RelationManager
                 TextColumn::make('status')
                     ->getStateUsing(fn (Timeline $record) => match ($record->timelineable::class) {
                         EngagementResponse::class => $record->timelineable->status,
-                        Engagement::class => EmailMessageDisplayStatus::getStatusFromEmailMessage($record->timelineable->latestEmailMessage)?->getLabel(),
+                        Engagement::class => EngagementDisplayStatus::getStatusFromEmailMessage($record->timelineable->latestEmailMessage)?->getLabel(),
                     })
                     ->badge()
                     ->color(fn (Timeline $record) => match ($record->timelineable::class) {
-                        Engagement::class => EmailMessageDisplayStatus::getStatusFromEmailMessage($record->timelineable->latestEmailMessage)->getColor(),
+                        Engagement::class => EngagementDisplayStatus::getStatusFromEmailMessage($record->timelineable->latestEmailMessage)->getColor(),
                         default => null,
                     }),
                 TextColumn::make('type')

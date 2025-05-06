@@ -38,7 +38,7 @@ namespace AdvisingApp\Notification\Enums;
 
 use AdvisingApp\Notification\Models\EmailMessage;
 
-enum EmailMessageDisplayStatus
+enum EngagementDisplayStatus
 {
     case Scheduled;
     case Processing;
