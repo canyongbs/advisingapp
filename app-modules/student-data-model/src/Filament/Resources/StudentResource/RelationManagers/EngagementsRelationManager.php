@@ -180,7 +180,6 @@ class EngagementsRelationManager extends RelationManager
                         ...($canAccessEngagements ? [Engagement::class] : []),
                         ...($canAccessEngagementResponses ? [EngagementResponse::class] : []),
                     ])
-                    // TODO: Is this correct?
                     ->with([
                         'timelineable' => function ($morphQuery) use ($canAccessEngagements) {
                             $morphQuery->when(
@@ -204,7 +203,7 @@ class EngagementsRelationManager extends RelationManager
                 TextColumn::make('status')
                     ->getStateUsing(fn (Timeline $record) => match ($record->timelineable::class) {
                         EngagementResponse::class => $record->timelineable->status,
-                        Engagement::class => EngagementDisplayStatus::getStatus($record->timelineable)?->getLabel(),
+                        Engagement::class => EngagementDisplayStatus::getStatus($record->timelineable)->getLabel(),
                     })
                     ->badge()
                     ->color(fn (Timeline $record) => match ($record->timelineable::class) {
