@@ -180,10 +180,11 @@ class EngagementsRelationManager extends RelationManager
                         ...($canAccessEngagements ? [Engagement::class] : []),
                         ...($canAccessEngagementResponses ? [EngagementResponse::class] : []),
                     ])
+                    // TODO: Is this correct?
                     ->with([
-                        'timelineable' => function ($morphQuery) {
+                        'timelineable' => function ($morphQuery) use ($canAccessEngagements) {
                             $morphQuery->when(
-                                $morphQuery->getModel() instanceof Engagement,
+                                $canAccessEngagements && $morphQuery->getModel() instanceof Engagement,
                                 fn ($query) => $query->with('latestEmailMessage')
                             );
                         },
