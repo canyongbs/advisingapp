@@ -114,7 +114,8 @@ trait CanManageEducatableTasks
                     ->limit(50),
                 TextColumn::make('status')
                     ->formatStateUsing(fn (TaskStatus $state): string => str($state->value)->title()->headline())
-                    ->badge(),
+                    ->badge()
+                    ->sortable(),
                 TextColumn::make('due')
                     ->label('Due Date')
                     ->dateTime()
