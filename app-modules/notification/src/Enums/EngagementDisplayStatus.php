@@ -40,17 +40,27 @@ use AdvisingApp\Notification\Models\EmailMessage;
 
 enum EngagementDisplayStatus
 {
+    // Internal
     case Scheduled;
     case Processing;
-    case Sent;
-    case Failed;
+
+    // Email specific
     case Bounced;
     case Delayed;
-    case Delivered;
     case Read;
     case Clicked;
     case Complaint;
     case Unsubscribed;
+
+    // SMS specific
+    case Accepted;
+    case Queued;
+    case Sending;
+
+    // Shared
+    case Sent;
+    case Failed;
+    case Delivered;
 
     public function getLabel(): string
     {
