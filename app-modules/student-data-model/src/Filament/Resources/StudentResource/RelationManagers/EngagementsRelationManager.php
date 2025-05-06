@@ -88,7 +88,7 @@ class EngagementsRelationManager extends RelationManager
                             ->schema([
                                 TextEntry::make('user.name')
                                     ->label('Created By')
-                                    ->getStateUsing(fn (Timeline $record): string => $record->timelineable->user?->name ?? 'N/A'),
+                                    ->getStateUsing(fn (Timeline $record): string => $record->timelineable->user->name ?? 'N/A'),
                                 InfolistFieldset::make('Content')
                                     ->schema([
                                         TextEntry::make('subject')
