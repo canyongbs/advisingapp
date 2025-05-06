@@ -40,11 +40,15 @@ use Spatie\LaravelSettings\Settings;
 
 class AiIntegrationsSettings extends Settings
 {
+    public ?string $open_ai_gpt_35_model_name = null;
+
     public ?string $open_ai_gpt_35_base_uri = null;
 
     public ?string $open_ai_gpt_35_api_key = null;
 
     public ?string $open_ai_gpt_35_model = null;
+
+    public ?string $open_ai_gpt_4_model_name = null;
 
     public ?string $open_ai_gpt_4_base_uri = null;
 
@@ -52,11 +56,15 @@ class AiIntegrationsSettings extends Settings
 
     public ?string $open_ai_gpt_4_model = null;
 
+    public ?string $open_ai_gpt_4o_model_name = null;
+
     public ?string $open_ai_gpt_4o_base_uri = null;
 
     public ?string $open_ai_gpt_4o_api_key = null;
 
     public ?string $open_ai_gpt_4o_model = null;
+
+    public ?string $open_ai_gpt_4o_mini_model_name = null;
 
     public ?string $open_ai_gpt_4o_mini_base_uri = null;
 
@@ -64,11 +72,15 @@ class AiIntegrationsSettings extends Settings
 
     public ?string $open_ai_gpt_4o_mini_model = null;
 
+    public ?string $open_ai_gpt_o1_mini_model_name = null;
+
     public ?string $open_ai_gpt_o1_mini_base_uri = null;
 
     public ?string $open_ai_gpt_o1_mini_api_key = null;
 
     public ?string $open_ai_gpt_o1_mini_model = null;
+
+    public ?string $open_ai_gpt_o3_mini_model_name = null;
 
     public ?string $open_ai_gpt_o3_mini_base_uri = null;
 
@@ -76,11 +88,15 @@ class AiIntegrationsSettings extends Settings
 
     public ?string $open_ai_gpt_o3_mini_model = null;
 
+    public ?string $open_ai_gpt_41_mini_model_name = null;
+
     public ?string $open_ai_gpt_41_mini_base_uri = null;
 
     public ?string $open_ai_gpt_41_mini_api_key = null;
 
     public ?string $open_ai_gpt_41_mini_model = null;
+
+    public ?string $open_ai_gpt_41_nano_model_name = null;
 
     public ?string $open_ai_gpt_41_nano_base_uri = null;
 
