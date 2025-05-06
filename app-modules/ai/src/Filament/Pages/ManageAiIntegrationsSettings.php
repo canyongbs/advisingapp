@@ -36,19 +36,21 @@
 
 namespace AdvisingApp\Ai\Filament\Pages;
 
-use AdvisingApp\Ai\Actions\ResetAiServiceIdsForModel;
-use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Jobs\ReInitializeAiModel;
-use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
-use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
+use Filament\Forms\Form;
 use Filament\Actions\Action;
+use Filament\Pages\SettingsPage;
+use AdvisingApp\Ai\Enums\AiModel;
+use Illuminate\Support\Facades\DB;
+use Filament\Support\Enums\MaxWidth;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Pages\SettingsPage;
-use Filament\Support\Enums\MaxWidth;
-use Illuminate\Support\Facades\DB;
+use AdvisingApp\Ai\Jobs\ReInitializeAiModel;
+use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use AdvisingApp\Ai\Actions\ResetAiServiceIdsForModel;
+use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
+use App\Filament\Clusters\GlobalArtificialIntelligence;
 
 class ManageAiIntegrationsSettings extends SettingsPage
 {
@@ -97,6 +99,10 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->autocomplete(false),
                                 TextInput::make('open_ai_gpt_35_model')
                                     ->label('Model'),
+                                Select::make('open_ai_gpt_35_applicable_features')
+                                    ->label('Applicability')
+                                    ->options(AiModelApplicabilityFeature::class)
+                                    ->multiple(),
                             ]),
                         Section::make('GPT 4')
                             ->collapsible()
@@ -117,6 +123,10 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->autocomplete(false),
                                 TextInput::make('open_ai_gpt_4_model')
                                     ->label('Model'),
+                                    Select::make('open_ai_gpt_4_applicable_features')
+                                        ->label('Applicability')
+                                        ->options(AiModelApplicabilityFeature::class)
+                                        ->multiple(),
                             ]),
                         Section::make('GPT 4o')
                             ->collapsible()
@@ -137,6 +147,10 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->autocomplete(false),
                                 TextInput::make('open_ai_gpt_4o_model')
                                     ->label('Model'),
+                                Select::make('open_ai_gpt_4o_applicable_features')
+                                    ->label('Applicability')
+                                    ->options(AiModelApplicabilityFeature::class)
+                                    ->multiple(),
                             ]),
                         Section::make('GPT 4o mini')
                             ->collapsible()
@@ -157,6 +171,10 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->autocomplete(false),
                                 TextInput::make('open_ai_gpt_4o_mini_model')
                                     ->label('Model'),
+                                Select::make('open_ai_gpt_4o_mini_applicable_features')
+                                    ->label('Applicability')
+                                    ->options(AiModelApplicabilityFeature::class)
+                                    ->multiple(),
                             ]),
                         Section::make('GPT o1 mini')
                             ->collapsible()
@@ -177,6 +195,10 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->autocomplete(false),
                                 TextInput::make('open_ai_gpt_o1_mini_model')
                                     ->label('Model'),
+                                Select::make('open_ai_gpt_o1_mini_applicable_features')
+                                    ->label('Applicability')
+                                    ->options(AiModelApplicabilityFeature::class)
+                                    ->multiple(),
                             ]),
                         Section::make('GPT o3 mini')
                             ->collapsible()
@@ -197,6 +219,10 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->autocomplete(false),
                                 TextInput::make('open_ai_gpt_o3_mini_model')
                                     ->label('Model'),
+                                Select::make('open_ai_gpt_o3_mini_applicable_features')
+                                    ->label('Applicability')
+                                    ->options(AiModelApplicabilityFeature::class)
+                                    ->multiple(),
                             ]),
                         Section::make('GPT 4.1 mini')
                             ->collapsible()
@@ -217,6 +243,10 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->autocomplete(false),
                                 TextInput::make('open_ai_gpt_41_mini_model')
                                     ->label('Model'),
+                                Select::make('open_ai_gpt_41_mini_applicable_features')
+                                    ->label('Applicability')
+                                    ->options(AiModelApplicabilityFeature::class)
+                                    ->multiple(),
                             ]),
                         Section::make('GPT 4.1 nano')
                             ->collapsible()
@@ -237,6 +267,10 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->autocomplete(false),
                                 TextInput::make('open_ai_gpt_41_nano_model')
                                     ->label('Model'),
+                                Select::make('open_ai_gpt_41_nano_applicable_features')
+                                    ->label('Applicability')
+                                    ->options(AiModelApplicabilityFeature::class)
+                                    ->multiple(),
                             ]),
                     ]),
             ]);
