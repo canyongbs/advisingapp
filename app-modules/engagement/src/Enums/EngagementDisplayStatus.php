@@ -34,9 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Enums;
+namespace AdvisingApp\Engagement\Enums;
 
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Notification\Enums\EmailMessageEventType;
+use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\Notification\Enums\SmsMessageEventType;
 use Exception;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
