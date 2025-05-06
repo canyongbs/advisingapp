@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace App\Models\Scopes;
+namespace AdvisingApp\Campaign\Models\Scopes;
 
 use AdvisingApp\Campaign\Models\CampaignAction;
 use App\Features\CancelCampaignAction;

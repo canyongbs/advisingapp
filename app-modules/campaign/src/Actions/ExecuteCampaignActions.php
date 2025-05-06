@@ -37,7 +37,7 @@
 namespace AdvisingApp\Campaign\Actions;
 
 use AdvisingApp\Campaign\Models\CampaignAction;
-use App\Models\Scopes\CampaignActionNotCancelled;
+use AdvisingApp\Campaign\Models\Scopes\CampaignActionNotCancelled;
 use App\Models\Tenant;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
