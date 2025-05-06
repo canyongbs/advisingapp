@@ -46,7 +46,9 @@ use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4oService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4Service;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptO1MiniService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptO3MiniService;
+use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptO4MiniService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptTestService;
+use App\Features\GPTO4MiniFeature;
 use Filament\Support\Contracts\HasLabel;
 
 enum AiModel: string implements HasLabel
@@ -67,6 +69,8 @@ enum AiModel: string implements HasLabel
 
     case OpenAiGpt41Nano = 'openai_gpt_41_nano';
 
+    case OpenAiGptO4Mini = 'openai_gpt_o4_mini';
+
     case OpenAiGptTest = 'openai_gpt_test';
 
     case Test = 'test';
@@ -82,6 +86,7 @@ enum AiModel: string implements HasLabel
             self::OpenAiGptO3Mini => 'Canyon GPT-o3 mini',
             self::OpenAiGpt41Mini => 'Canyon GPT-4.1 mini',
             self::OpenAiGpt41Nano => 'Canyon GPT-4.1 nano',
+            self::OpenAiGptO4Mini => 'Canyon GPT-o4 mini',
             self::OpenAiGptTest => 'Canyon GPT Test',
             self::Test => 'Test',
         };
@@ -101,6 +106,7 @@ enum AiModel: string implements HasLabel
             self::OpenAiGptO3Mini => OpenAiGptO3MiniService::class,
             self::OpenAiGpt41Mini => OpenAiGpt41MiniService::class,
             self::OpenAiGpt41Nano => OpenAiGpt41NanoService::class,
+            self::OpenAiGptO4Mini => OpenAiGptO4MiniService::class,
             self::OpenAiGptTest => OpenAiGptTestService::class,
             self::Test => TestAiService::class,
         };
@@ -109,6 +115,14 @@ enum AiModel: string implements HasLabel
     public static function getDefaultModels(): array
     {
         $models = self::cases();
+
+        //TODO: remove whole if condition when you remove the Feature Flag.
+        if (! GPTO4MiniFeature::active()) {
+            return array_filter(
+                $models,
+                fn (AiModel $model): bool => ! in_array($model, [self::Test, self::OpenAiGptTest, self::OpenAiGptO4Mini]),
+            );
+        }
 
         if (app()->hasDebugModeEnabled()) {
             return array_filter(
@@ -135,7 +149,7 @@ enum AiModel: string implements HasLabel
     public function isVisibleForApplication(AiApplication $aiApplication): bool
     {
         return match ($this) {
-            self::OpenAiGpt35, self::OpenAiGpt4o, self::OpenAiGpt4oMini, self::OpenAiGptO1Mini, self::OpenAiGptO3Mini, self::OpenAiGpt41Mini, self::OpenAiGpt41Nano => $aiApplication === AiApplication::PersonalAssistant,
+            self::OpenAiGpt35, self::OpenAiGpt4o, self::OpenAiGpt4oMini, self::OpenAiGptO1Mini, self::OpenAiGptO3Mini, self::OpenAiGpt41Mini, self::OpenAiGpt41Nano, self::OpenAiGptO4Mini => $aiApplication === AiApplication::PersonalAssistant,
             self::OpenAiGpt4 => false,
             self::OpenAiGptTest => false,
             self::Test => true,
@@ -146,7 +160,7 @@ enum AiModel: string implements HasLabel
     {
         // TODO: Not actually sure mini supports files, need to confirm
         return match ($this) {
-            self::OpenAiGpt35, self::OpenAiGpt4, self::OpenAiGpt4o, self::OpenAiGpt4oMini, self::OpenAiGptO1Mini, self::OpenAiGptO3Mini, self::OpenAiGpt41Mini, self::OpenAiGpt41Nano => true,
+            self::OpenAiGpt35, self::OpenAiGpt4, self::OpenAiGpt4o, self::OpenAiGpt4oMini, self::OpenAiGptO1Mini, self::OpenAiGptO3Mini, self::OpenAiGpt41Mini, self::OpenAiGpt41Nano, self::OpenAiGptO4Mini => true,
             default => false,
         };
     }

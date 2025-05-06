@@ -46,6 +46,7 @@ use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt41NanoService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4oMiniService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4oService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4Service;
+use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptO4MiniService;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Collection;
 use Throwable;
@@ -79,6 +80,7 @@ trait HandlesFileUploads
                 $aiService instanceof OpenAiGpt35Service => UploadFilesToAssistant::dispatchSync($aiService, $assistant, $aiAssistantFiles),
                 $aiService instanceof OpenAiGpt41MiniService => UploadFilesToAssistant::dispatchSync($aiService, $assistant, $aiAssistantFiles),
                 $aiService instanceof OpenAiGpt41NanoService => UploadFilesToAssistant::dispatchSync($aiService, $assistant, $aiAssistantFiles),
+                $aiService instanceof OpenAiGptO4MiniService => UploadFilesToAssistant::dispatchSync($aiService, $assistant, $aiAssistantFiles),
                 default => $this->couldNotUploadFilesToAssistant($aiAssistantFiles),
             };
         } catch (Throwable $e) {

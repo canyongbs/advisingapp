@@ -37,6 +37,7 @@
 namespace AdvisingApp\Ai\Enums;
 
 use AdvisingApp\Ai\Settings\AiSettings;
+use App\Features\GPTO4MiniFeature;
 use Filament\Support\Contracts\HasLabel;
 
 enum AiApplication: string implements HasLabel
@@ -87,6 +88,7 @@ enum AiApplication: string implements HasLabel
                     AiModel::OpenAiGptO3Mini,
                     AiModel::OpenAiGpt41Mini,
                     AiModel::OpenAiGpt41Nano,
+                    ...(GPTO4MiniFeature::active() ? [AiModel::OpenAiGptO4Mini] : []),
                 ],
                 self::Test => [
                     AiModel::OpenAiGptTest,

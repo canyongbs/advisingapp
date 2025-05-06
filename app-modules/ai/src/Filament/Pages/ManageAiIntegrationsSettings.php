@@ -40,6 +40,7 @@ use AdvisingApp\Ai\Actions\ResetAiServiceIdsForModel;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Jobs\ReInitializeAiModel;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use App\Features\GPTO4MiniFeature;
 use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -190,6 +191,21 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                 TextInput::make('open_ai_gpt_41_nano_model')
                                     ->label('Model'),
                             ]),
+                        Section::make('GPT o4 mini')
+                            ->collapsible()
+                            ->schema([
+                                TextInput::make('open_ai_gpt_o4_mini_base_uri')
+                                    ->label('Base URI')
+                                    ->placeholder('https://example.openai.azure.com/openai')
+                                    ->url(),
+                                TextInput::make('open_ai_gpt_o4_mini_api_key')
+                                    ->label('API Key')
+                                    ->password()
+                                    ->autocomplete(false),
+                                TextInput::make('open_ai_gpt_o4_mini_model')
+                                    ->label('Model'),
+                            ]),
+                        // ->visible(GPTO4MiniFeature::active()),
                     ]),
             ]);
     }
