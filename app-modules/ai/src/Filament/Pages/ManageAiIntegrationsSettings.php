@@ -204,8 +204,8 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->autocomplete(false),
                                 TextInput::make('open_ai_gpt_o4_mini_model')
                                     ->label('Model'),
-                            ]),
-                        // ->visible(GPTO4MiniFeature::active()),
+                            ])
+                            ->visible(GPTO4MiniFeature::active()),
                     ]),
             ]);
     }
