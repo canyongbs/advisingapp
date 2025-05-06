@@ -204,13 +204,13 @@ class EngagementsRelationManager extends RelationManager
                 TextColumn::make('status')
                     ->getStateUsing(fn (Timeline $record) => match ($record->timelineable::class) {
                         EngagementResponse::class => $record->timelineable->status,
-                        Engagement::class => EngagementDisplayStatus::getStatus($record->timelineable->latestEmailMessage)?->getLabel(),
+                        Engagement::class => EngagementDisplayStatus::getStatus($record->timelineable)?->getLabel(),
                     })
-                    ->badge()
-                    ->color(fn (Timeline $record) => match ($record->timelineable::class) {
-                        Engagement::class => EngagementDisplayStatus::getStatus($record->timelineable->latestEmailMessage)->getColor(),
-                        default => null,
-                    }),
+                    ->badge(),
+                // ->color(fn (Timeline $record) => match ($record->timelineable::class) {
+                //     Engagement::class => EngagementDisplayStatus::getStatus($record->timelineable)->getColor(),
+                //     default => null,
+                // }),
                 TextColumn::make('type')
                     ->getStateUsing(function (Timeline $record) {
                         /** @var HasDeliveryMethod $timelineable */

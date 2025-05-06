@@ -36,13 +36,16 @@
 
 namespace AdvisingApp\Notification\Enums;
 
-use AdvisingApp\Notification\Models\EmailMessage;
+use AdvisingApp\Engagement\Models\Engagement;
+use Exception;
+use Filament\Support\Contracts\HasColor;
+use Filament\Support\Contracts\HasLabel;
 
-enum EngagementDisplayStatus
+enum EngagementDisplayStatus implements HasLabel, HasColor
 {
     // Internal
     case Scheduled;
-    case Processing;
+    case Pending;
 
     // Email specific
     case Bounced;
@@ -67,23 +70,12 @@ enum EngagementDisplayStatus
         return $this->name;
     }
 
-    public static function getStatus(?EmailMessage $message): ?self
+    public static function getStatus(Engagement $engagement): self
     {
-        if (! $message) {
-            return null;
-        }
-
-        return match (true) {
-            $message->events()->where('type', EmailMessageEventType::Complaint->value)->exists() => self::Complaint,
-            $message->events()->where('type', EmailMessageEventType::Bounce->value)->exists() => self::Bounced,
-            $message->events()->where('type', EmailMessageEventType::Reject->value)->orWhere('type', EmailMessageEventType::RenderingFailure->value)->exists() => self::Failed,
-            $message->events()->where('type', EmailMessageEventType::Click->value)->exists() => self::Clicked,
-            $message->events()->where('type', EmailMessageEventType::Open->value)->exists() => self::Read,
-            $message->events()->where('type', EmailMessageEventType::Delivery->value)->exists() => self::Delivered,
-            $message->events()->where('type', EmailMessageEventType::DeliveryDelay->value)->exists() => self::Delayed,
-            $message->events()->where('type', EmailMessageEventType::Subscription->value)->exists() => self::Unsubscribed,
-            $message->events()->where('type', EmailMessageEventType::Send->value)->exists() => self::Sent,
-            default => null,
+        return match ($engagement->channel) {
+            NotificationChannel::Email => self::parseEmailStatus($engagement),
+            NotificationChannel::Sms => self::Pending,
+            default => throw new Exception('Unsupported channel'),
         };
     }
 
@@ -95,5 +87,44 @@ enum EngagementDisplayStatus
             self::Failed, self::Bounced, self::Complaint => 'success',
             self::Sent, self::Unsubscribed => 'gray',
         };
+    }
+
+    protected static function parseEmailStatus(Engagement $engagement): self
+    {
+        $status = self::Pending;
+
+        if (! is_null($engagement->scheduled_at)) {
+            $status = self::Scheduled;
+        }
+
+        // TODO: this can probably be improved to reduce the number of queries
+        $events = $engagement->latestEmailMessage?->events()->orderBy('occurred_at', 'asc')->get();
+
+        $events->each(fn ($event) => match ($event->type) {
+            // This is needed due to a bug where sometimes the Dispatched event isn't saved
+            // until some of the other external events have already come in
+            EmailMessageEventType::Dispatched => $status = $status === self::Pending ? self::Pending : $status,
+
+            EmailMessageEventType::FailedDispatch => $status = self::Failed,
+            EmailMessageEventType::RateLimited => $status = self::Failed,
+
+            // We will consider the message "delivered" if blocked by demo mode
+            // for visual demo purposes
+            EmailMessageEventType::BlockedByDemoMode => $status = self::Delivered,
+
+            EmailMessageEventType::Bounce => $status = self::Bounced,
+            EmailMessageEventType::Complaint => $status = self::Complaint,
+            EmailMessageEventType::Delivery => $status = self::Delivered,
+            EmailMessageEventType::Send => $status = self::Sent,
+            EmailMessageEventType::Reject => $status = self::Failed,
+            EmailMessageEventType::Open => $status = $status === self::Clicked ? self::Clicked : self::Read,
+            EmailMessageEventType::Click => $status = self::Clicked,
+            EmailMessageEventType::RenderingFailure => $status = self::Failed,
+            EmailMessageEventType::Subscription => $status = self::Unsubscribed,
+            EmailMessageEventType::DeliveryDelay => $status = self::Delayed,
+            default => throw new Exception('Unsupported event type'),
+        });
+
+        return $status;
     }
 }
