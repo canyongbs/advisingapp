@@ -37,7 +37,6 @@
 use Database\Migrations\Concerns\CanModifySettings;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Migrations\Migration;
-use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 
 return new class () extends Migration {
     use CanModifySettings;
