@@ -91,4 +91,230 @@ it('returns the correct case given a particular Engagement', function (Engagemen
             ->create(),
         EngagementDisplayStatus::Sent,
     ],
+    'email | send, dispatched' => [
+        fn () => Engagement::factory()
+            ->has(
+                EmailMessage::factory()
+                    ->has(
+                        EmailMessageEvent::factory()
+                            ->count(2)
+                            ->sequence(
+                                [
+                                    'type' => EmailMessageEventType::Send,
+                                ],
+                                [
+                                    'type' => EmailMessageEventType::Dispatched,
+                                ],
+                            ),
+                        'events'
+                    ),
+                relationship: 'emailMessages'
+            )
+            ->email()
+            ->deliverNow()
+            ->create(),
+        EngagementDisplayStatus::Sent,
+    ],
+    'email | failedDispatch' => [
+        fn () => Engagement::factory()
+            ->has(
+                EmailMessage::factory()
+                    ->has(
+                        EmailMessageEvent::factory()
+                            ->state(['type' => EmailMessageEventType::FailedDispatch]),
+                        'events'
+                    ),
+                'latestEmailMessage'
+            )
+            ->email()
+            ->deliverNow()
+            ->create(),
+        EngagementDisplayStatus::Failed,
+    ],
+    'email | rateLimited' => [
+        fn () => Engagement::factory()
+            ->has(
+                EmailMessage::factory()
+                    ->has(
+                        EmailMessageEvent::factory()
+                            ->state(['type' => EmailMessageEventType::RateLimited]),
+                        'events'
+                    ),
+                'latestEmailMessage'
+            )
+            ->email()
+            ->deliverNow()
+            ->create(),
+        EngagementDisplayStatus::Failed,
+    ],
+    'email | blockedByDemoMode' => [
+        fn () => Engagement::factory()
+            ->has(
+                EmailMessage::factory()
+                    ->has(
+                        EmailMessageEvent::factory()
+                            ->state(['type' => EmailMessageEventType::BlockedByDemoMode]),
+                        'events'
+                    ),
+                'latestEmailMessage'
+            )
+            ->email()
+            ->deliverNow()
+            ->create(),
+        EngagementDisplayStatus::Delivered,
+    ],
+    'email | dispatched, send, bounce' => [
+        fn () => Engagement::factory()
+            ->has(
+                EmailMessage::factory()
+                    ->has(
+                        EmailMessageEvent::factory()
+                            ->count(3)
+                            ->sequence(
+                                ['type' => EmailMessageEventType::Dispatched],
+                                ['type' => EmailMessageEventType::Send],
+                                ['type' => EmailMessageEventType::Bounce],
+                            ),
+                        'events'
+                    ),
+                'latestEmailMessage'
+            )
+            ->email()
+            ->deliverNow()
+            ->create(),
+        EngagementDisplayStatus::Bounced,
+    ],
+    'email | dispatched, send, delivery' => [
+        fn () => Engagement::factory()
+            ->has(
+                EmailMessage::factory()
+                    ->has(
+                        EmailMessageEvent::factory()
+                            ->count(3)
+                            ->sequence(
+                                ['type' => EmailMessageEventType::Dispatched],
+                                ['type' => EmailMessageEventType::Send],
+                                ['type' => EmailMessageEventType::Delivery],
+                            ),
+                        'events'
+                    ),
+                'latestEmailMessage'
+            )
+            ->email()
+            ->deliverNow()
+            ->create(),
+        EngagementDisplayStatus::Delivered,
+    ],
+    'email | dispatched, send, delivery, complaint' => [
+        fn () => Engagement::factory()
+            ->has(
+                EmailMessage::factory()
+                    ->has(
+                        EmailMessageEvent::factory()
+                            ->count(4)
+                            ->sequence(
+                                ['type' => EmailMessageEventType::Dispatched],
+                                ['type' => EmailMessageEventType::Send],
+                                ['type' => EmailMessageEventType::Delivery],
+                                ['type' => EmailMessageEventType::Complaint],
+                            ),
+                        'events'
+                    ),
+                'latestEmailMessage'
+            )
+            ->email()
+            ->deliverNow()
+            ->create(),
+        EngagementDisplayStatus::Complaint,
+    ],
+    'email | dispatched, send, reject' => [
+        fn () => Engagement::factory()
+            ->has(
+                EmailMessage::factory()
+                    ->has(
+                        EmailMessageEvent::factory()
+                            ->count(3)
+                            ->sequence(
+                                ['type' => EmailMessageEventType::Dispatched],
+                                ['type' => EmailMessageEventType::Send],
+                                ['type' => EmailMessageEventType::Reject],
+                            ),
+                        'events'
+                    ),
+                'latestEmailMessage'
+            )
+            ->email()
+            ->deliverNow()
+            ->create(),
+        EngagementDisplayStatus::Failed,
+    ],
+    'email | dispatched, send, delivery, open' => [
+        fn () => Engagement::factory()
+            ->has(
+                EmailMessage::factory()
+                    ->has(
+                        EmailMessageEvent::factory()
+                            ->count(4)
+                            ->sequence(
+                                ['type' => EmailMessageEventType::Dispatched],
+                                ['type' => EmailMessageEventType::Send],
+                                ['type' => EmailMessageEventType::Delivery],
+                                ['type' => EmailMessageEventType::Open],
+                            ),
+                        'events'
+                    ),
+                'latestEmailMessage'
+            )
+            ->email()
+            ->deliverNow()
+            ->create(),
+        EngagementDisplayStatus::Read,
+    ],
+    'email | dispatched, send, delivery, open, click' => [
+        fn () => Engagement::factory()
+            ->has(
+                EmailMessage::factory()
+                    ->has(
+                        EmailMessageEvent::factory()
+                            ->count(5)
+                            ->sequence(
+                                ['type' => EmailMessageEventType::Dispatched],
+                                ['type' => EmailMessageEventType::Send],
+                                ['type' => EmailMessageEventType::Delivery],
+                                ['type' => EmailMessageEventType::Open],
+                                ['type' => EmailMessageEventType::Click],
+                            ),
+                        'events'
+                    ),
+                'latestEmailMessage'
+            )
+            ->email()
+            ->deliverNow()
+            ->create(),
+        EngagementDisplayStatus::Clicked,
+    ],
+    'email | dispatched, send, delivery, open, click, open' => [
+        fn () => Engagement::factory()
+            ->has(
+                EmailMessage::factory()
+                    ->has(
+                        EmailMessageEvent::factory()
+                            ->count(6)
+                            ->sequence(
+                                ['type' => EmailMessageEventType::Dispatched],
+                                ['type' => EmailMessageEventType::Send],
+                                ['type' => EmailMessageEventType::Delivery],
+                                ['type' => EmailMessageEventType::Open],
+                                ['type' => EmailMessageEventType::Click],
+                                ['type' => EmailMessageEventType::Open],
+                            ),
+                        'events'
+                    ),
+                'latestEmailMessage'
+            )
+            ->email()
+            ->deliverNow()
+            ->create(),
+        EngagementDisplayStatus::Clicked,
+    ],
 ]);
