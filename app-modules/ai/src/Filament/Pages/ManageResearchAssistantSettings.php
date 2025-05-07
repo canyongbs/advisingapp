@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Ai\Filament\Pages;
 
+use AdvisingApp\Ai\Settings\AiResearchAssistantSettings;
+use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
-use Filament\Forms\Components\Textarea;
-use App\Filament\Clusters\GlobalArtificialIntelligence;
-use AdvisingApp\Ai\Settings\AiResearchAssistantSettings;
 
 class ManageResearchAssistantSettings extends SettingsPage
 {

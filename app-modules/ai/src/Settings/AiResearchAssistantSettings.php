@@ -42,6 +42,7 @@ use Spatie\LaravelSettings\Settings;
 class AiResearchAssistantSettings extends Settings
 {
     public ?AiModel $ai_model = null;
+
     public ?string $context = null;
 
     public static function group(): string

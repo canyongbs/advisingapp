@@ -41,7 +41,6 @@ use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Jobs\ReInitializeAiModel;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
-use App\Features\GPTO4MiniFeature;
 use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -278,15 +277,15 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->label('Model'),
                             ]),
                     ]),
-                    Section::make('Jina AI')
-                        ->collapsible()
-                        ->schema([
-                            Section::make('Jina DeepSearch')
-                                ->collapsible()
-                                ->schema([
-                                    TextInput::make('jina_deepsearch_ai_api_key')
-                                        ->label('API Key'),
-                                ]),
+                Section::make('Jina AI')
+                    ->collapsible()
+                    ->schema([
+                        Section::make('Jina DeepSearch')
+                            ->collapsible()
+                            ->schema([
+                                TextInput::make('jina_deepsearch_ai_api_key')
+                                    ->label('API Key'),
+                            ]),
                     ]),
             ]);
     }
