@@ -103,7 +103,7 @@ enum EngagementDisplayStatus implements HasLabel, HasColor
         // TODO: this can probably be improved to reduce the number of queries
         $events = $engagement->latestEmailMessage?->events()->orderBy('occurred_at', 'asc')->get();
 
-        $events->each(fn ($event) => match ($event->type) {
+        $events?->each(fn ($event) => match ($event->type) {
             // This is needed due to a bug where sometimes the Dispatched event isn't saved
             // until some of the other external events have already come in
             EmailMessageEventType::Dispatched => $status = ($status === self::Pending) ? self::Pending : $status,
@@ -141,7 +141,7 @@ enum EngagementDisplayStatus implements HasLabel, HasColor
 
         $events = $engagement->latestSmsMessage?->events()->orderBy('occurred_at', 'asc')->get();
 
-        $events->each(fn ($event) => match ($event->type) {
+        $events?->each(fn ($event) => match ($event->type) {
             // This is needed due to a bug where sometimes the Dispatched event isn't saved
             // until some of the other external events have already come in
             SmsMessageEventType::Dispatched => $status = ($status === self::Pending) ? self::Pending : $status,
