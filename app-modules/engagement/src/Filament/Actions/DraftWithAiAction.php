@@ -102,7 +102,7 @@ class DraftWithAiAction extends Action
             ->action(function (array $data, Get $get, Set $set, Page $livewire) {
                 throw_unless(method_exists($livewire, 'getRecord'), new Exception('The Livewire component must have a [getRecord()] method.'));
 
-                $model = app(AiIntegratedAssistantSettings::class)->default_model;
+                $model = app(AiIntegratedAssistantSettings::class)->getDefaultModel();
 
                 $userName = auth()->user()->name;
                 $userJobTitle = auth()->user()->job_title ?? 'staff member';

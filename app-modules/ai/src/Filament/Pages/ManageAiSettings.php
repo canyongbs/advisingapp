@@ -38,9 +38,10 @@ namespace AdvisingApp\Ai\Filament\Pages;
 
 use AdvisingApp\Ai\Actions\ReInitializeAiServiceAssistant;
 use AdvisingApp\Ai\Actions\ResetAiServiceIdsForAssistant;
-use AdvisingApp\Ai\Enums\AiApplication;
+use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiMaxTokens;
 use AdvisingApp\Ai\Enums\AiModel;
+use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiSettings;
 use AdvisingApp\Authorization\Enums\LicenseType;
@@ -89,7 +90,7 @@ class ManageAiSettings extends SettingsPage
     public function defaultAssistant(): ?AiAssistant
     {
         return AiAssistant::query()
-            ->where('application', AiApplication::PersonalAssistant)
+            ->where('application', AiAssistantApplication::PersonalAssistant)
             ->where('is_default', true)
             ->first();
     }
@@ -105,9 +106,7 @@ class ManageAiSettings extends SettingsPage
                     ->model($this->defaultAssistant)
                     ->schema([
                         Select::make('model')
-                            ->options(fn (Get $get): array => collect(AiApplication::parse($get('application'))->getModels())
-                                ->mapWithKeys(fn (AiModel $model): array => [$model->value => $model->getLabel()])
-                                ->all())
+                            ->options(AiModelApplicabilityFeature::InstitutionalAdvisor->getModelsAsSelectOptions())
                             ->searchable()
                             ->required()
                             ->columnSpanFull()
@@ -122,7 +121,7 @@ class ManageAiSettings extends SettingsPage
                                     ->helperText('Instructions are used to provide context to the AI Assistant on how to respond to user queries.')
                                     ->required()
                                     ->rows(8)
-                                    ->maxLength(fn (?AiAssistant $record): int => ($record?->model ?? AiModel::OpenAiGpt35)->getService()->getMaxAssistantInstructionsLength()),
+                                    ->maxLength(fn (?AiAssistant $record): int => ($record?->model ?? AiModel::OpenAiGpt4o)->getService()->getMaxAssistantInstructionsLength()),
                             ]),
                     ]),
                 Select::make('max_tokens')
@@ -137,9 +136,7 @@ class ManageAiSettings extends SettingsPage
                     ->minValue(0)
                     ->maxValue(1),
                 Select::make('default_model')
-                    ->options(collect(AiModel::getDefaultModels())
-                        ->mapWithKeys(fn (AiModel $model): array => [$model->value => $model->getLabel()])
-                        ->all())
+                    ->options(AiModelApplicabilityFeature::InstitutionalAdvisor->getModelsAsSelectOptions())
                     ->searchable()
                     ->required(),
             ])

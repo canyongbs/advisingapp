@@ -35,7 +35,7 @@
 */
 
 use AdvisingApp\Ai\Actions\CompleteResponse;
-use AdvisingApp\Ai\Enums\AiApplication;
+use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
 use AdvisingApp\Ai\Exceptions\AiResponseToCompleteDoesNotExistException;
@@ -55,7 +55,7 @@ it('completes the last response', function () {
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
-        'application' => AiApplication::Test,
+        'application' => AiAssistantApplication::Test,
         'is_default' => true,
         'model' => AiModel::Test,
     ]);
@@ -134,7 +134,7 @@ it('strips the appended ... when completing the last response', function () {
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
-        'application' => AiApplication::Test,
+        'application' => AiAssistantApplication::Test,
         'is_default' => true,
         'model' => AiModel::Test,
     ]);
@@ -181,7 +181,7 @@ it('throws an exception if the latest response does not exist', function () {
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
-        'application' => AiApplication::Test,
+        'application' => AiAssistantApplication::Test,
         'is_default' => true,
         'model' => AiModel::Test,
     ]);
@@ -209,7 +209,7 @@ it('throws an exception if the assistant is archived', function () {
 
     $thread = AiThread::factory()
         ->for(AiAssistant::factory()->state([
-            'application' => AiApplication::Test,
+            'application' => AiAssistantApplication::Test,
             'archived_at' => now(),
             'model' => AiModel::Test,
         ]), 'assistant')

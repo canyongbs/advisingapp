@@ -38,6 +38,7 @@ namespace AdvisingApp\Ai\Filament\Pages;
 
 use AdvisingApp\Ai\Actions\ResetAiServiceIdsForModel;
 use AdvisingApp\Ai\Enums\AiModel;
+use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Jobs\ReInitializeAiModel;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use App\Features\GPTO4MiniFeature;
@@ -45,11 +46,13 @@ use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class ManageAiIntegrationsSettings extends SettingsPage
 {
@@ -82,6 +85,12 @@ class ManageAiIntegrationsSettings extends SettingsPage
                         Section::make('GPT 3.5')
                             ->collapsible()
                             ->schema([
+                                TextInput::make('open_ai_gpt_35_model_name')
+                                    ->label('Model Name')
+                                    ->placeholder('Canyon 3.5')
+                                    ->string()
+                                    ->maxLength(255)
+                                    ->nullable(),
                                 TextInput::make('open_ai_gpt_35_base_uri')
                                     ->label('Base URI')
                                     ->placeholder('https://example.openai.azure.com/openai')
@@ -92,10 +101,21 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->autocomplete(false),
                                 TextInput::make('open_ai_gpt_35_model')
                                     ->label('Model'),
+                                Select::make('open_ai_gpt_35_applicable_features')
+                                    ->label('Applicability')
+                                    ->options(AiModelApplicabilityFeature::class)
+                                    ->multiple()
+                                    ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
                             ]),
                         Section::make('GPT 4')
                             ->collapsible()
                             ->schema([
+                                TextInput::make('open_ai_gpt_4_model_name')
+                                    ->label('Model Name')
+                                    ->placeholder('Canyon 4')
+                                    ->string()
+                                    ->maxLength(255)
+                                    ->nullable(),
                                 TextInput::make('open_ai_gpt_4_base_uri')
                                     ->label('Base URI')
                                     ->placeholder('https://example.openai.azure.com/openai')
@@ -106,10 +126,21 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->autocomplete(false),
                                 TextInput::make('open_ai_gpt_4_model')
                                     ->label('Model'),
+                                Select::make('open_ai_gpt_4_applicable_features')
+                                    ->label('Applicability')
+                                    ->options(AiModelApplicabilityFeature::class)
+                                    ->multiple()
+                                    ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
                             ]),
                         Section::make('GPT 4o')
                             ->collapsible()
                             ->schema([
+                                TextInput::make('open_ai_gpt_4o_model_name')
+                                    ->label('Model Name')
+                                    ->placeholder('Canyon 4o')
+                                    ->string()
+                                    ->maxLength(255)
+                                    ->nullable(),
                                 TextInput::make('open_ai_gpt_4o_base_uri')
                                     ->label('Base URI')
                                     ->placeholder('https://example.openai.azure.com/openai')
@@ -120,10 +151,21 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->autocomplete(false),
                                 TextInput::make('open_ai_gpt_4o_model')
                                     ->label('Model'),
+                                Select::make('open_ai_gpt_4o_applicable_features')
+                                    ->label('Applicability')
+                                    ->options(AiModelApplicabilityFeature::class)
+                                    ->multiple()
+                                    ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
                             ]),
                         Section::make('GPT 4o mini')
                             ->collapsible()
                             ->schema([
+                                TextInput::make('open_ai_gpt_4o_mini_model_name')
+                                    ->label('Model Name')
+                                    ->placeholder('Canyon 4o mini')
+                                    ->string()
+                                    ->maxLength(255)
+                                    ->nullable(),
                                 TextInput::make('open_ai_gpt_4o_mini_base_uri')
                                     ->label('Base URI')
                                     ->placeholder('https://example.openai.azure.com/openai')
@@ -134,10 +176,21 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->autocomplete(false),
                                 TextInput::make('open_ai_gpt_4o_mini_model')
                                     ->label('Model'),
+                                Select::make('open_ai_gpt_4o_mini_applicable_features')
+                                    ->label('Applicability')
+                                    ->options(AiModelApplicabilityFeature::class)
+                                    ->multiple()
+                                    ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
                             ]),
                         Section::make('GPT o1 mini')
                             ->collapsible()
                             ->schema([
+                                TextInput::make('open_ai_gpt_o1_mini_model_name')
+                                    ->label('Model Name')
+                                    ->placeholder('Canyon o1 mini')
+                                    ->string()
+                                    ->maxLength(255)
+                                    ->nullable(),
                                 TextInput::make('open_ai_gpt_o1_mini_base_uri')
                                     ->label('Base URI')
                                     ->placeholder('https://example.openai.azure.com/openai')
@@ -148,10 +201,21 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->autocomplete(false),
                                 TextInput::make('open_ai_gpt_o1_mini_model')
                                     ->label('Model'),
+                                Select::make('open_ai_gpt_o1_mini_applicable_features')
+                                    ->label('Applicability')
+                                    ->options(AiModelApplicabilityFeature::class)
+                                    ->multiple()
+                                    ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
                             ]),
                         Section::make('GPT o3 mini')
                             ->collapsible()
                             ->schema([
+                                TextInput::make('open_ai_gpt_o3_mini_model_name')
+                                    ->label('Model Name')
+                                    ->placeholder('Canyon o3 mini')
+                                    ->string()
+                                    ->maxLength(255)
+                                    ->nullable(),
                                 TextInput::make('open_ai_gpt_o3_mini_base_uri')
                                     ->label('Base URI')
                                     ->placeholder('https://example.openai.azure.com/openai')
@@ -162,10 +226,21 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->autocomplete(false),
                                 TextInput::make('open_ai_gpt_o3_mini_model')
                                     ->label('Model'),
+                                Select::make('open_ai_gpt_o3_mini_applicable_features')
+                                    ->label('Applicability')
+                                    ->options(AiModelApplicabilityFeature::class)
+                                    ->multiple()
+                                    ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
                             ]),
                         Section::make('GPT 4.1 mini')
                             ->collapsible()
                             ->schema([
+                                TextInput::make('open_ai_gpt_41_mini_model_name')
+                                    ->label('Model Name')
+                                    ->placeholder('Canyon 4.1 mini')
+                                    ->string()
+                                    ->maxLength(255)
+                                    ->nullable(),
                                 TextInput::make('open_ai_gpt_41_mini_base_uri')
                                     ->label('Base URI')
                                     ->placeholder('https://example.openai.azure.com/openai')
@@ -176,10 +251,21 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->autocomplete(false),
                                 TextInput::make('open_ai_gpt_41_mini_model')
                                     ->label('Model'),
+                                Select::make('open_ai_gpt_41_mini_applicable_features')
+                                    ->label('Applicability')
+                                    ->options(AiModelApplicabilityFeature::class)
+                                    ->multiple()
+                                    ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
                             ]),
                         Section::make('GPT 4.1 nano')
                             ->collapsible()
                             ->schema([
+                                TextInput::make('open_ai_gpt_41_nano_model_name')
+                                    ->label('Model Name')
+                                    ->placeholder('Canyon 4.1 nano')
+                                    ->string()
+                                    ->maxLength(255)
+                                    ->nullable(),
                                 TextInput::make('open_ai_gpt_41_nano_base_uri')
                                     ->label('Base URI')
                                     ->placeholder('https://example.openai.azure.com/openai')
@@ -190,6 +276,11 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->autocomplete(false),
                                 TextInput::make('open_ai_gpt_41_nano_model')
                                     ->label('Model'),
+                                Select::make('open_ai_gpt_41_nano_applicable_features')
+                                    ->label('Applicability')
+                                    ->options(AiModelApplicabilityFeature::class)
+                                    ->multiple()
+                                    ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
                             ]),
                         Section::make('GPT o4 mini')
                             ->collapsible()
@@ -246,6 +337,14 @@ class ManageAiIntegrationsSettings extends SettingsPage
                     return false;
                 }
 
+                if ($originalSettings->open_ai_gpt_41_mini_base_uri !== $newSettings['open_ai_gpt_41_mini_base_uri']) {
+                    return false;
+                }
+
+                if ($originalSettings->open_ai_gpt_41_nano_base_uri !== $newSettings['open_ai_gpt_41_nano_base_uri']) {
+                    return false;
+                }
+
                 return true;
             })
             ->extraModalFooterActions([
@@ -265,6 +364,8 @@ class ManageAiIntegrationsSettings extends SettingsPage
                     ...(($originalSettings->open_ai_gpt_4o_mini_base_uri !== $newSettings['open_ai_gpt_4o_mini_base_uri']) ? [AiModel::OpenAiGpt4o] : []),
                     ...(($originalSettings->open_ai_gpt_o1_mini_base_uri !== $newSettings['open_ai_gpt_o1_mini_base_uri']) ? [AiModel::OpenAiGptO1Mini] : []),
                     ...(($originalSettings->open_ai_gpt_o3_mini_base_uri !== $newSettings['open_ai_gpt_o3_mini_base_uri']) ? [AiModel::OpenAiGptO3Mini] : []),
+                    ...(($originalSettings->open_ai_gpt_41_mini_base_uri !== $newSettings['open_ai_gpt_41_mini_base_uri']) ? [AiModel::OpenAiGpt41Mini] : []),
+                    ...(($originalSettings->open_ai_gpt_41_nano_base_uri !== $newSettings['open_ai_gpt_41_nano_base_uri']) ? [AiModel::OpenAiGpt41Nano] : []),
                 ];
 
                 DB::transaction(function () use ($changedModels, $resetAiServiceIds) {

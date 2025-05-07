@@ -34,22 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Settings;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Ai\Enums\AiModel;
-use Spatie\LaravelSettings\Settings;
-
-class AiIntegratedAssistantSettings extends Settings
-{
-    public ?AiModel $default_model = null;
-
-    public static function group(): string
+return new class () extends Migration {
+    public function up(): void
     {
-        return 'ai-integrated-assistant';
+        Schema::table('campaign_actions', function (Blueprint $table) {
+            $table->timestamp('cancelled_at')->nullable();
+        });
     }
 
-    public function getDefaultModel(): AiModel
+    public function down(): void
     {
-        return $this->default_model ?? AiModel::OpenAiGpt4o;
+        Schema::table('campaign_actions', function (Blueprint $table) {
+            $table->dropColumn('cancelled_at');
+        });
     }
-}
+};

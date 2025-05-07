@@ -34,22 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Settings;
+namespace AdvisingApp\Campaign\Models\Scopes;
 
-use AdvisingApp\Ai\Enums\AiModel;
-use Spatie\LaravelSettings\Settings;
+use AdvisingApp\Campaign\Models\CampaignAction;
+use App\Features\CancelCampaignAction;
+use Illuminate\Database\Eloquent\Builder;
 
-class AiIntegratedAssistantSettings extends Settings
+class CampaignActionNotCancelled
 {
-    public ?AiModel $default_model = null;
-
-    public static function group(): string
+    /**
+     * @param Builder<CampaignAction> $query
+     */
+    public function __invoke(Builder $query): void
     {
-        return 'ai-integrated-assistant';
-    }
-
-    public function getDefaultModel(): AiModel
-    {
-        return $this->default_model ?? AiModel::OpenAiGpt4o;
+        if (CancelCampaignAction::active()) {
+            $query->whereNull('cancelled_at');
+        }
     }
 }

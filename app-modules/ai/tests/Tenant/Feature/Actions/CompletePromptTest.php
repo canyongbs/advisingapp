@@ -35,7 +35,7 @@
 */
 
 use AdvisingApp\Ai\Actions\CompletePrompt;
-use AdvisingApp\Ai\Enums\AiFeature;
+use AdvisingApp\Ai\Enums\AiMessageLogFeature;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Models\LegacyAiMessageLog;
 use AdvisingApp\Ai\Services\TestAiService;
@@ -96,5 +96,5 @@ it('creates a new AI message log', function () {
         ])
         ->user_id->toBe(auth()->id())
         ->ai_assistant_name->toBe('Institutional Advisor')
-        ->feature->toBe(AiFeature::DraftWithAi);
+        ->feature->toBe(AiMessageLogFeature::DraftWithAi);
 });

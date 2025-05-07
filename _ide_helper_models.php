@@ -751,7 +751,7 @@ namespace AdvisingApp\Ai\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property \AdvisingApp\Ai\Enums\AiApplication $application
+ * @property \AdvisingApp\Ai\Enums\AiAssistantApplication $application
  * @property bool $is_default
  * @property \AdvisingApp\Ai\Enums\AiModel $model
  * @property \Illuminate\Support\Carbon|null $archived_at
@@ -999,7 +999,7 @@ namespace AdvisingApp\Ai\Models{
  *
  * @property string $id
  * @property string $name
- * @property \AdvisingApp\Ai\Enums\AiApplication $application
+ * @property \AdvisingApp\Ai\Enums\AiAssistantApplication $application
  * @property string $user_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -1040,7 +1040,7 @@ namespace AdvisingApp\Ai\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $ai_assistant_name
- * @property \AdvisingApp\Ai\Enums\AiFeature|null $feature
+ * @property \AdvisingApp\Ai\Enums\AiMessageLogFeature|null $feature
  * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LegacyAiMessageLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LegacyAiMessageLog newQuery()
@@ -1822,6 +1822,7 @@ namespace AdvisingApp\Campaign\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property \Illuminate\Support\Carbon|null $cancelled_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \AdvisingApp\Campaign\Models\Campaign $campaign
@@ -1835,6 +1836,7 @@ namespace AdvisingApp\Campaign\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignAction onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignAction query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignAction whereCampaignId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignAction whereCancelledAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignAction whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignAction whereData($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignAction whereDeletedAt($value)

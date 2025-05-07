@@ -104,7 +104,7 @@ class CreateCampaign extends CreateRecord
                         ->options(function () {
                             return Segment::query()
                                 ->whereHas('user', function ($query) {
-                                    $query->whereKey(auth()->id())->orWhereRelation('teams.users', 'user_id', auth()->id());
+                                    $query->whereKey(auth()->id())->orWhereRelation('team.users', 'id', auth()->id());
                                 })
                                 ->pluck('name', 'id');
                         })

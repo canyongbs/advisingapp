@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Assistant\Filament\Pages;
 
-use AdvisingApp\Ai\Enums\AiApplication;
+use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageConsent;
 use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageFolders;
 use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManagePromptLibrary;
@@ -54,7 +54,7 @@ class PersonalAssistant extends Page
     use CanManageThreads;
     use CanUploadFiles;
 
-    public const APPLICATION = AiApplication::PersonalAssistant;
+    public const APPLICATION = AiAssistantApplication::PersonalAssistant;
 
     protected static string $view = 'assistant::filament.pages.personal-assistant';
 

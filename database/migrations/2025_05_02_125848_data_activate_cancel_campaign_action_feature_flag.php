@@ -34,30 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Enums;
+use App\Features\CancelCampaignAction;
+use Illuminate\Database\Migrations\Migration;
 
-use Filament\Support\Contracts\HasLabel;
-
-enum AiFeature: string implements HasLabel
-{
-    case DraftWithAi = 'draft_with_ai';
-
-    case Conversations = 'conversations';
-
-    public function getLabel(): string
+return new class () extends Migration {
+    public function up(): void
     {
-        return match ($this) {
-            self::DraftWithAi => 'Draft With AI',
-            self::Conversations => 'Conversations',
-        };
+        CancelCampaignAction::activate();
     }
 
-    public static function parse(string | self | null $value): ?self
+    public function down(): void
     {
-        if ($value instanceof self) {
-            return $value;
-        }
-
-        return self::tryFrom($value);
+        CancelCampaignAction::deactivate();
     }
-}
+};

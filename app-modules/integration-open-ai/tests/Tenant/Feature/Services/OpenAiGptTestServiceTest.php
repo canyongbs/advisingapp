@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Enums\AiApplication;
+use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
@@ -107,7 +107,7 @@ it('can update an assistant', function () {
 
     $assistant = AiAssistant::factory()
         ->create([
-            'application' => AiApplication::PersonalAssistant,
+            'application' => AiAssistantApplication::PersonalAssistant,
             'assistant_id' => Str::random(),
             'is_default' => true,
             'model' => AiModel::OpenAiGptTest,
@@ -161,7 +161,7 @@ it('can create a thread with existing messages', function () {
     $thread = AiThread::factory()
         ->for(auth()->user())
         ->for(AiAssistant::factory()->state([
-            'application' => AiApplication::Test,
+            'application' => AiAssistantApplication::Test,
             'assistant_id' => Str::random(),
             'is_default' => true,
             'model' => AiModel::OpenAiGptTest,
@@ -198,7 +198,7 @@ it('can create a thread with more than 32 messages', function () {
     $thread = AiThread::factory()
         ->for(auth()->user())
         ->for(AiAssistant::factory()->state([
-            'application' => AiApplication::Test,
+            'application' => AiAssistantApplication::Test,
             'assistant_id' => Str::random(),
             'is_default' => true,
             'model' => AiModel::OpenAiGptTest,
@@ -280,7 +280,7 @@ it('can send a message', function () {
     $message = AiMessage::factory()
         ->for(AiThread::factory()
             ->for(AiAssistant::factory()->state([
-                'application' => AiApplication::PersonalAssistant,
+                'application' => AiAssistantApplication::PersonalAssistant,
                 'assistant_id' => Str::random(),
                 'is_default' => true,
                 'model' => AiModel::OpenAiGptTest,
@@ -329,7 +329,7 @@ it('can complete a message response', function () {
     $message = AiMessage::factory()
         ->for(AiThread::factory()
             ->for(AiAssistant::factory()->state([
-                'application' => AiApplication::PersonalAssistant,
+                'application' => AiAssistantApplication::PersonalAssistant,
                 'assistant_id' => Str::random(),
                 'is_default' => true,
                 'model' => AiModel::OpenAiGptTest,
@@ -372,7 +372,7 @@ it('can retry a message', function () {
     $message = AiMessage::factory()
         ->for(AiThread::factory()
             ->for(AiAssistant::factory()->state([
-                'application' => AiApplication::PersonalAssistant,
+                'application' => AiAssistantApplication::PersonalAssistant,
                 'assistant_id' => Str::random(),
                 'is_default' => true,
                 'model' => AiModel::OpenAiGptTest,
@@ -433,7 +433,7 @@ it('can await the response of a previous run instead of sending a message again 
     $message = AiMessage::factory()
         ->for(AiThread::factory()
             ->for(AiAssistant::factory()->state([
-                'application' => AiApplication::PersonalAssistant,
+                'application' => AiAssistantApplication::PersonalAssistant,
                 'assistant_id' => Str::random(),
                 'is_default' => true,
                 'model' => AiModel::OpenAiGptTest,
@@ -486,7 +486,7 @@ it('can create a run if one does not exist without sending the message again whe
     $message = AiMessage::factory()
         ->for(AiThread::factory()
             ->for(AiAssistant::factory()->state([
-                'application' => AiApplication::PersonalAssistant,
+                'application' => AiAssistantApplication::PersonalAssistant,
                 'assistant_id' => Str::random(),
                 'is_default' => true,
                 'model' => AiModel::OpenAiGptTest,

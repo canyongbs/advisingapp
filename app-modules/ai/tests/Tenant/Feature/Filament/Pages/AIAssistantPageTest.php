@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Enums\AiApplication;
+use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiThreadShareTarget;
 use AdvisingApp\Ai\Jobs\PrepareAiThreadCloning;
@@ -85,7 +85,7 @@ $setUp = function (
     }
 
     $assistant = AiAssistant::factory()->create([
-        'application' => AiApplication::PersonalAssistant,
+        'application' => AiAssistantApplication::PersonalAssistant,
         'is_default' => true,
         'model' => AiModel::Test,
     ]);
@@ -213,7 +213,7 @@ it('will not automatically set the current thread to one with a folder', functio
     ['user' => $user, 'thread' => $thread] = $setUp();
 
     $thread->folder()->associate(AiThreadFolder::factory()->for($user)->create([
-        'application' => AiApplication::PersonalAssistant,
+        'application' => AiAssistantApplication::PersonalAssistant,
     ]));
     $thread->save();
 
@@ -270,7 +270,7 @@ it('can save threads into a folder', function () use ($setUp) {
     $folder = AiThreadFolder::factory()
         ->for($user)
         ->create([
-            'application' => AiApplication::PersonalAssistant,
+            'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
     Livewire::test(PersonalAssistant::class)
@@ -311,7 +311,7 @@ it('can select a thread', function () use ($setUp) {
         ->for($assistant, 'assistant')
         ->for($user)
         ->for(AiThreadFolder::factory()->for($user)->create([
-            'application' => AiApplication::PersonalAssistant,
+            'application' => AiAssistantApplication::PersonalAssistant,
         ]), 'folder')
         ->has(AiMessage::factory()->count(5), 'messages')
         ->create();
@@ -330,7 +330,7 @@ it('can not select a thread belonging to a different user', function () use ($se
         ->for($assistant, 'assistant')
         ->for($otherUser = User::factory()->create())
         ->for(AiThreadFolder::factory()->for($otherUser)->create([
-            'application' => AiApplication::PersonalAssistant,
+            'application' => AiAssistantApplication::PersonalAssistant,
         ]), 'folder')
         ->has(AiMessage::factory()->count(5), 'messages')
         ->create();
@@ -383,7 +383,7 @@ it('can not create a folder with a duplicate name', function () use ($setUp) {
     $folder = AiThreadFolder::factory()
         ->for($user)
         ->create([
-            'application' => AiApplication::PersonalAssistant,
+            'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
     Livewire::test(PersonalAssistant::class)
@@ -399,7 +399,7 @@ it('can create a folder with a duplicate name but belonging to a different user'
     $folder = AiThreadFolder::factory()
         ->for(User::factory()->create())
         ->create([
-            'application' => AiApplication::PersonalAssistant,
+            'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
     Livewire::test(PersonalAssistant::class)
@@ -420,7 +420,7 @@ it('can rename a folder', function () use ($setUp) {
     $folder = AiThreadFolder::factory()
         ->for($user)
         ->create([
-            'application' => AiApplication::PersonalAssistant,
+            'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
     Livewire::test(PersonalAssistant::class)
@@ -443,7 +443,7 @@ it('can not rename a folder without a name', function () use ($setUp) {
     $folder = AiThreadFolder::factory()
         ->for($user)
         ->create([
-            'application' => AiApplication::PersonalAssistant,
+            'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
     Livewire::test(PersonalAssistant::class)
@@ -461,13 +461,13 @@ it('can not rename a folder with a duplicate name', function () use ($setUp) {
     $folder = AiThreadFolder::factory()
         ->for($user)
         ->create([
-            'application' => AiApplication::PersonalAssistant,
+            'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
     $otherFolder = AiThreadFolder::factory()
         ->for($user)
         ->create([
-            'application' => AiApplication::PersonalAssistant,
+            'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
     Livewire::test(PersonalAssistant::class)
@@ -485,13 +485,13 @@ it('can rename a folder with a duplicate name but belonging to a different user'
     $folder = AiThreadFolder::factory()
         ->for($user)
         ->create([
-            'application' => AiApplication::PersonalAssistant,
+            'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
     $otherFolder = AiThreadFolder::factory()
         ->for(User::factory()->create())
         ->create([
-            'application' => AiApplication::PersonalAssistant,
+            'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
     Livewire::test(PersonalAssistant::class)
@@ -514,7 +514,7 @@ it('can not rename a folder belonging to a different user', function () use ($se
     $folder = AiThreadFolder::factory()
         ->for(User::factory()->create())
         ->create([
-            'application' => AiApplication::PersonalAssistant,
+            'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
     $oldFolderName = $folder->name;
@@ -541,7 +541,7 @@ it('can delete a folder', function () use ($setUp) {
     $folder = AiThreadFolder::factory()
         ->for($user)
         ->create([
-            'application' => AiApplication::PersonalAssistant,
+            'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
     Livewire::test(PersonalAssistant::class)
@@ -560,7 +560,7 @@ it('can not delete a folder belonging to a different user', function () use ($se
     $folder = AiThreadFolder::factory()
         ->for(User::factory()->create())
         ->create([
-            'application' => AiApplication::PersonalAssistant,
+            'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
     Livewire::test(PersonalAssistant::class)
@@ -579,7 +579,7 @@ it('can move a thread in to a folder', function () use ($setUp) {
     $folder = AiThreadFolder::factory()
         ->for($user)
         ->create([
-            'application' => AiApplication::PersonalAssistant,
+            'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
     Livewire::test(PersonalAssistant::class)
@@ -601,7 +601,7 @@ it('can move a thread between folders', function () use ($setUp) {
     $folder = AiThreadFolder::factory()
         ->for($user)
         ->create([
-            'application' => AiApplication::PersonalAssistant,
+            'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
     $thread->folder()->associate($folder);
@@ -610,7 +610,7 @@ it('can move a thread between folders', function () use ($setUp) {
     $newFolder = AiThreadFolder::factory()
         ->for($user)
         ->create([
-            'application' => AiApplication::PersonalAssistant,
+            'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
     Livewire::test(PersonalAssistant::class)
@@ -632,7 +632,7 @@ it('can move a thread out of a folder', function () use ($setUp) {
     $folder = AiThreadFolder::factory()
         ->for($user)
         ->create([
-            'application' => AiApplication::PersonalAssistant,
+            'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
     $thread->folder()->associate($folder);
@@ -660,7 +660,7 @@ it('can not move a thread belonging to a different user in to a folder', functio
     $folder = AiThreadFolder::factory()
         ->for($user)
         ->create([
-            'application' => AiApplication::PersonalAssistant,
+            'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
     Livewire::test(PersonalAssistant::class)
@@ -682,7 +682,7 @@ it('can not move a thread in to a folder belonging to a different user', functio
     $folder = AiThreadFolder::factory()
         ->for(User::factory()->create())
         ->create([
-            'application' => AiApplication::PersonalAssistant,
+            'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
     Livewire::test(PersonalAssistant::class)
@@ -704,7 +704,7 @@ it('can move a thread in to a folder with drag and drop', function () use ($setU
     $folder = AiThreadFolder::factory()
         ->for($user)
         ->create([
-            'application' => AiApplication::PersonalAssistant,
+            'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
     Livewire::test(PersonalAssistant::class)
@@ -723,7 +723,7 @@ it('can move a thread between folders with drag and drop', function () use ($set
     $folder = AiThreadFolder::factory()
         ->for($user)
         ->create([
-            'application' => AiApplication::PersonalAssistant,
+            'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
     $thread->folder()->associate($folder);
@@ -732,7 +732,7 @@ it('can move a thread between folders with drag and drop', function () use ($set
     $newFolder = AiThreadFolder::factory()
         ->for($user)
         ->create([
-            'application' => AiApplication::PersonalAssistant,
+            'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
     Livewire::test(PersonalAssistant::class)
@@ -751,7 +751,7 @@ it('can move a thread out of a folder with drag and drop', function () use ($set
     $folder = AiThreadFolder::factory()
         ->for($user)
         ->create([
-            'application' => AiApplication::PersonalAssistant,
+            'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
     $thread->folder()->associate($folder);
@@ -776,7 +776,7 @@ it('can not move a thread belonging to a different user in to a folder with drag
     $folder = AiThreadFolder::factory()
         ->for($user)
         ->create([
-            'application' => AiApplication::PersonalAssistant,
+            'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
     Livewire::test(PersonalAssistant::class)
@@ -795,7 +795,7 @@ it('can not move a thread in to a folder belonging to a different user with drag
     $folder = AiThreadFolder::factory()
         ->for(User::factory()->create())
         ->create([
-            'application' => AiApplication::PersonalAssistant,
+            'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
     Livewire::test(PersonalAssistant::class)
