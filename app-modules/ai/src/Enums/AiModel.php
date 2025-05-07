@@ -111,6 +111,7 @@ enum AiModel: string implements HasLabel
             self::OpenAiGptO3Mini => $aiIntegrationSettings->open_ai_gpt_o3_mini_applicable_features,
             self::OpenAiGpt41Mini => $aiIntegrationSettings->open_ai_gpt_41_mini_applicable_features,
             self::OpenAiGpt41Nano => $aiIntegrationSettings->open_ai_gpt_41_nano_applicable_features,
+            self::OpenAiGptO4Mini => $aiIntegrationSettings->open_ai_gpt_o4_mini_applicable_features,
             self::OpenAiGptTest => app()->hasDebugModeEnabled() ? AiModelApplicabilityFeature::cases() : [],
             self::Test => app()->hasDebugModeEnabled() ? AiModelApplicabilityFeature::cases() : [],
         };

@@ -285,6 +285,12 @@ class ManageAiIntegrationsSettings extends SettingsPage
                         Section::make('GPT o4 mini')
                             ->collapsible()
                             ->schema([
+                                TextInput::make('open_ai_gpt_o4_mini_model_name')
+                                    ->label('Model Name')
+                                    ->placeholder('Canyon o4 mini')
+                                    ->string()
+                                    ->maxLength(255)
+                                    ->nullable(),
                                 TextInput::make('open_ai_gpt_o4_mini_base_uri')
                                     ->label('Base URI')
                                     ->placeholder('https://example.openai.azure.com/openai')
@@ -295,6 +301,11 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->autocomplete(false),
                                 TextInput::make('open_ai_gpt_o4_mini_model')
                                     ->label('Model'),
+                                Select::make('open_ai_gpt_o4_mini_applicable_features')
+                                    ->label('Applicability')
+                                    ->options(AiModelApplicabilityFeature::class)
+                                    ->multiple()
+                                    ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
                             ])
                             ->visible(GPTO4MiniFeature::active()),
                     ]),
@@ -345,6 +356,10 @@ class ManageAiIntegrationsSettings extends SettingsPage
                     return false;
                 }
 
+                if ($originalSettings->open_ai_gpt_o4_mini_base_uri !== $newSettings['open_ai_gpt_o4_mini_base_uri']) {
+                    return false;
+                }
+
                 return true;
             })
             ->extraModalFooterActions([
@@ -366,6 +381,7 @@ class ManageAiIntegrationsSettings extends SettingsPage
                     ...(($originalSettings->open_ai_gpt_o3_mini_base_uri !== $newSettings['open_ai_gpt_o3_mini_base_uri']) ? [AiModel::OpenAiGptO3Mini] : []),
                     ...(($originalSettings->open_ai_gpt_41_mini_base_uri !== $newSettings['open_ai_gpt_41_mini_base_uri']) ? [AiModel::OpenAiGpt41Mini] : []),
                     ...(($originalSettings->open_ai_gpt_41_nano_base_uri !== $newSettings['open_ai_gpt_41_nano_base_uri']) ? [AiModel::OpenAiGpt41Nano] : []),
+                    ...(($originalSettings->open_ai_gpt_o4_mini_base_uri !== $newSettings['open_ai_gpt_o4_mini_base_uri']) ? [AiModel::OpenAiGptO4Mini] : []),
                 ];
 
                 DB::transaction(function () use ($changedModels, $resetAiServiceIds) {
