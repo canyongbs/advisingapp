@@ -37,8 +37,11 @@
 use AdvisingApp\Engagement\Enums\EngagementDisplayStatus;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\EmailMessageEventType;
+use AdvisingApp\Notification\Enums\SmsMessageEventType;
 use AdvisingApp\Notification\Models\EmailMessage;
 use AdvisingApp\Notification\Models\EmailMessageEvent;
+use AdvisingApp\Notification\Models\SmsMessage;
+use AdvisingApp\Notification\Models\SmsMessageEvent;
 
 it('returns the correct case given a particular Engagement', function (Engagement $engagement, EngagementDisplayStatus $expectedStatus) {
     expect(EngagementDisplayStatus::getStatus($engagement))->toBe($expectedStatus);
@@ -397,5 +400,30 @@ it('returns the correct case given a particular Engagement', function (Engagemen
             ->deliverNow()
             ->create(),
         EngagementDisplayStatus::Delayed,
+    ],
+    // Start of SMS
+    'sms | not scheduled' => [
+        fn () => Engagement::factory()->sms()->deliverNow()->create(),
+        EngagementDisplayStatus::Pending,
+    ],
+    'sms | scheduled' => [
+        fn () => Engagement::factory()->sms()->deliverLater()->create(),
+        EngagementDisplayStatus::Scheduled,
+    ],
+    'sms | scheduled, dispatched' => [
+        fn () => Engagement::factory()
+            ->has(
+                SmsMessage::factory()
+                    ->has(
+                        SmsMessageEvent::factory()
+                            ->state(['type' => SmsMessageEventType::Dispatched]),
+                        'events'
+                    ),
+                'latestSmsMessage'
+            )
+            ->sms()
+            ->deliverLater()
+            ->create(),
+        EngagementDisplayStatus::Pending,
     ],
 ]);
