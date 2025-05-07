@@ -58,50 +58,12 @@ enum AiAssistantApplication: string implements HasLabel
         return self::PersonalAssistant;
     }
 
-    public function getCustomAssistantModels(): array
-    {
-        return [
-            ...match ($this) {
-                self::PersonalAssistant => [
-                    AiModel::OpenAiGpt35,
-                    AiModel::OpenAiGpt4o,
-                    AiModel::OpenAiGpt4oMini,
-                ],
-                self::Test => [
-                    AiModel::OpenAiGptTest,
-                ],
-            },
-            ...(app()->hasDebugModeEnabled() ? [AiModel::Test] : []),
-        ];
-    }
-
-    public function getModels(): array
-    {
-        return [
-            ...match ($this) {
-                self::PersonalAssistant => [
-                    AiModel::OpenAiGpt35,
-                    AiModel::OpenAiGpt4o,
-                    AiModel::OpenAiGpt4oMini,
-                    AiModel::OpenAiGptO1Mini,
-                    AiModel::OpenAiGptO3Mini,
-                    AiModel::OpenAiGpt41Mini,
-                    AiModel::OpenAiGpt41Nano,
-                ],
-                self::Test => [
-                    AiModel::OpenAiGptTest,
-                ],
-            },
-            ...(app()->hasDebugModeEnabled() ? [AiModel::Test] : []),
-        ];
-    }
-
     public function getDefaultModel(): AiModel
     {
         $settings = app(AiSettings::class);
 
-        return $settings->default_model ?? match ($this) {
-            self::PersonalAssistant => AiModel::OpenAiGpt4o,
+        return match ($this) {
+            self::PersonalAssistant => $settings->default_model ?? AiModel::OpenAiGpt4o,
             self::Test => AiModel::Test,
         };
     }

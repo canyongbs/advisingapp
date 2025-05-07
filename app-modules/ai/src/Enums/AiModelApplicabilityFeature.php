@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Ai\Enums;
 
-use AdvisingApp\Ai\Settings\AiSettings;
 use Filament\Support\Contracts\HasLabel;
 
 enum AiModelApplicabilityFeature: string implements HasLabel
@@ -60,5 +59,41 @@ enum AiModelApplicabilityFeature: string implements HasLabel
             self::QuestionAndAnswerAdvisor => 'QnA Advisor',
             self::IntegratedAdvisor => 'Integrated Advisor',
         };
+    }
+
+    /**
+     * @return array<AiModel>
+     */
+    public function getModels(): array
+    {
+        return array_filter(
+            AiModel::cases(),
+            fn (AiModel $model): bool => in_array($this, $model->getApplicableFeatures()),
+        );
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function getModelsAsSelectOptions(): array
+    {
+        return array_reduce(
+            $this->getModels(),
+            function (array $carry, AiModel $model): array {
+                $carry[$model->value] = $model->getLabel();
+
+                return $carry;
+            },
+            initial: [],
+        );
+    }
+
+    public static function parse(string | self | null $value): ?self
+    {
+        if ($value instanceof self) {
+            return $value;
+        }
+
+        return self::tryFrom($value);
     }
 }

@@ -34,10 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Enums\AiFeature;
-use AdvisingApp\Ai\Enums\AiModel;
-use Spatie\LaravelSettings\Migrations\SettingsMigration;
 use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 return new class () extends SettingsMigration {
     public function up(): void
@@ -65,7 +63,7 @@ return new class () extends SettingsMigration {
         } catch (SettingAlreadyExists $exception) {
             // do nothing
         }
-        
+
         try {
             $this->migrator->add('ai.open_ai_gpt_o1_mini_applicable_features', []);
         } catch (SettingAlreadyExists $exception) {

@@ -84,7 +84,7 @@ class DraftCampaignEngagementBlockWithAi extends Action
                     ->required(),
             ])
             ->action(function (array $data, Get $get, Set $set) {
-                $model = app(AiIntegratedAssistantSettings::class)->default_model;
+                $model = app(AiIntegratedAssistantSettings::class)->getDefaultModel();
 
                 $userName = auth()->user()->name;
                 $userJobTitle = auth()->user()->job_title ?? 'staff member';

@@ -38,6 +38,7 @@ namespace AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Forms;
 
 use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiModel;
+use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Models\AiAssistant;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Component;
@@ -89,27 +90,10 @@ class AiAssistantForm
                     ->disabledOn('edit'),
                 Select::make('model')
                     ->reactive()
-                    ->options(
-                        fn (Get $get): array => filled(AiAssistantApplication::parse($get('application')))
-                            ? collect(AiAssistantApplication::parse($get('application'))
-                                ->getCustomAssistantModels())
-                                ->mapWithKeys(fn (AiModel $model): array => [$model->value => $model->getLabel()])
-                                ->all()
-                            : []
-                    )
+                    ->options(AiModelApplicabilityFeature::CustomAdvisors->getModelsAsSelectOptions())
                     ->searchable()
                     ->required()
-                    ->rules(
-                        fn (Get $get): array => filled(AiAssistantApplication::parse($get('application')))
-                            ? [
-                                Rule::enum(AiModel::class)
-                                    ->only(
-                                        AiAssistantApplication::parse($get('application'))
-                                            ->getCustomAssistantModels()
-                                    ),
-                            ]
-                            : []
-                    )
+                    ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::CustomAdvisors->getModels()))
                     ->visible(fn (Get $get): bool => filled($get('application'))),
                 Textarea::make('description')
                     ->columnSpanFull()
@@ -120,7 +104,7 @@ class AiAssistantForm
                         Textarea::make('instructions')
                             ->reactive()
                             ->required()
-                            ->maxLength(fn (Get $get): int => (AiModel::parse($get('model')) ?? AiModel::OpenAiGpt35)->getService()->getMaxAssistantInstructionsLength()),
+                            ->maxLength(fn (Get $get): int => (AiModel::parse($get('model')) ?? AiModel::OpenAiGpt4o)->getService()->getMaxAssistantInstructionsLength()),
                     ]),
                 Section::make('Additional Knowledge')
                     ->description('Add additional knowledge to your custom AI Assistant to improve its responses.')
