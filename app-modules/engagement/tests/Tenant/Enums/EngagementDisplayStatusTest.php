@@ -51,6 +51,22 @@ it('returns the correct case given a particular Engagement', function (Engagemen
         fn () => Engagement::factory()->email()->deliverLater()->create(),
         EngagementDisplayStatus::Scheduled,
     ],
+    'email | scheduled, dispatched' => [
+        fn () => Engagement::factory()
+            ->has(
+                EmailMessage::factory()
+                    ->has(
+                        EmailMessageEvent::factory()
+                            ->state(['type' => EmailMessageEventType::Dispatched]),
+                        'events'
+                    ),
+                'latestEmailMessage'
+            )
+            ->email()
+            ->deliverLater()
+            ->create(),
+        EngagementDisplayStatus::Pending,
+    ],
     'email | dispatched' => [
         fn () => Engagement::factory()
             ->has(

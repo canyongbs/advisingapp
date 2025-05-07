@@ -107,7 +107,7 @@ enum EngagementDisplayStatus implements HasLabel, HasColor
             match ($event->type) {
                 // This is needed due to a bug where sometimes the Dispatched event isn't saved
                 // until some of the other external events have already come in
-                EmailMessageEventType::Dispatched => $status = ($status === self::Pending) ? self::Pending : $status,
+                EmailMessageEventType::Dispatched => $status = ($status === self::Pending || $status === self::Scheduled) ? self::Pending : $status,
 
                 EmailMessageEventType::FailedDispatch => $status = self::Failed,
                 EmailMessageEventType::RateLimited => $status = self::Failed,
