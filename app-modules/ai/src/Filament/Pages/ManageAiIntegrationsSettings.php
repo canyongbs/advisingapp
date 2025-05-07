@@ -309,6 +309,16 @@ class ManageAiIntegrationsSettings extends SettingsPage
                             ])
                             ->visible(GPTO4MiniFeature::active()),
                     ]),
+                Section::make('Jina AI')
+                    ->collapsible()
+                    ->schema([
+                        Section::make('Jina DeepSearch')
+                            ->collapsible()
+                            ->schema([
+                                TextInput::make('jina_deepsearch_ai_api_key')
+                                    ->label('API Key'),
+                            ]),
+                    ]),
             ]);
     }
 
