@@ -426,4 +426,260 @@ it('returns the correct case given a particular Engagement', function (Engagemen
             ->create(),
         EngagementDisplayStatus::Pending,
     ],
+    'sms | dispatched' => [
+        fn () => Engagement::factory()
+            ->has(
+                SmsMessage::factory()
+                    ->has(
+                        SmsMessageEvent::factory()
+                            ->state(['type' => SmsMessageEventType::Dispatched]),
+                        'events'
+                    ),
+                'latestSmsMessage'
+            )
+            ->sms()
+            ->deliverNow()
+            ->create(),
+        EngagementDisplayStatus::Pending,
+    ],
+    'sms | dispatched, sent' => [
+        fn () => Engagement::factory()
+            ->has(
+                SmsMessage::factory()
+                    ->has(
+                        SmsMessageEvent::factory()
+                            ->count(2)
+                            ->sequence(
+                                [
+                                    'type' => SmsMessageEventType::Dispatched,
+                                ],
+                                [
+                                    'type' => SmsMessageEventType::Sent,
+                                ],
+                            ),
+                        'events'
+                    ),
+                relationship: 'smsMessages'
+            )
+            ->sms()
+            ->deliverNow()
+            ->create(),
+        EngagementDisplayStatus::Sent,
+    ],
+    'sms | sent, dispatched' => [
+        fn () => Engagement::factory()
+            ->has(
+                SmsMessage::factory()
+                    ->has(
+                        SmsMessageEvent::factory()
+                            ->count(2)
+                            ->sequence(
+                                [
+                                    'type' => SmsMessageEventType::Sent,
+                                ],
+                                [
+                                    'type' => SmsMessageEventType::Dispatched,
+                                ],
+                            ),
+                        'events'
+                    ),
+                relationship: 'smsMessages'
+            )
+            ->sms()
+            ->deliverNow()
+            ->create(),
+        EngagementDisplayStatus::Sent,
+    ],
+    'sms | failedDispatch' => [
+        fn () => Engagement::factory()
+            ->has(
+                SmsMessage::factory()
+                    ->has(
+                        SmsMessageEvent::factory()
+                            ->state(['type' => SmsMessageEventType::FailedDispatch]),
+                        'events'
+                    ),
+                'latestSmsMessage'
+            )
+            ->sms()
+            ->deliverNow()
+            ->create(),
+        EngagementDisplayStatus::Failed,
+    ],
+    'sms | rateLimited' => [
+        fn () => Engagement::factory()
+            ->has(
+                SmsMessage::factory()
+                    ->has(
+                        SmsMessageEvent::factory()
+                            ->state(['type' => SmsMessageEventType::RateLimited]),
+                        'events'
+                    ),
+                'latestSmsMessage'
+            )
+            ->sms()
+            ->deliverNow()
+            ->create(),
+        EngagementDisplayStatus::Failed,
+    ],
+    'sms | blockedByDemoMode' => [
+        fn () => Engagement::factory()
+            ->has(
+                SmsMessage::factory()
+                    ->has(
+                        SmsMessageEvent::factory()
+                            ->state(['type' => SmsMessageEventType::BlockedByDemoMode]),
+                        'events'
+                    ),
+                'latestSmsMessage'
+            )
+            ->sms()
+            ->deliverNow()
+            ->create(),
+        EngagementDisplayStatus::Delivered,
+    ],
+    'sms | dispatched, queued' => [
+        fn () => Engagement::factory()
+            ->has(
+                SmsMessage::factory()
+                    ->has(
+                        SmsMessageEvent::factory()
+                            ->count(2)
+                            ->sequence(
+                                ['type' => SmsMessageEventType::Dispatched],
+                                ['type' => SmsMessageEventType::Queued],
+                            ),
+                        'events'
+                    ),
+                'latestSmsMessage'
+            )
+            ->sms()
+            ->deliverNow()
+            ->create(),
+        EngagementDisplayStatus::Queued,
+    ],
+    'sms | dispatched, canceled' => [
+        fn () => Engagement::factory()
+            ->has(
+                SmsMessage::factory()
+                    ->has(
+                        SmsMessageEvent::factory()
+                            ->count(2)
+                            ->sequence(
+                                ['type' => SmsMessageEventType::Dispatched],
+                                ['type' => SmsMessageEventType::Canceled],
+                            ),
+                        'events'
+                    ),
+                'latestSmsMessage'
+            )
+            ->sms()
+            ->deliverNow()
+            ->create(),
+        EngagementDisplayStatus::Failed,
+    ],
+    'sms | dispatched, sent' => [
+        fn () => Engagement::factory()
+            ->has(
+                SmsMessage::factory()
+                    ->has(
+                        SmsMessageEvent::factory()
+                            ->count(2)
+                            ->sequence(
+                                ['type' => SmsMessageEventType::Dispatched],
+                                ['type' => SmsMessageEventType::Sent],
+                            ),
+                        'events'
+                    ),
+                'latestSmsMessage'
+            )
+            ->sms()
+            ->deliverNow()
+            ->create(),
+        EngagementDisplayStatus::Sent,
+    ],
+    'sms | dispatched, failed' => [
+        fn () => Engagement::factory()
+            ->has(
+                SmsMessage::factory()
+                    ->has(
+                        SmsMessageEvent::factory()
+                            ->count(2)
+                            ->sequence(
+                                ['type' => SmsMessageEventType::Dispatched],
+                                ['type' => SmsMessageEventType::Failed],
+                            ),
+                        'events'
+                    ),
+                'latestSmsMessage'
+            )
+            ->sms()
+            ->deliverNow()
+            ->create(),
+        EngagementDisplayStatus::Failed,
+    ],
+    'sms | dispatched, sent, delivered' => [
+        fn () => Engagement::factory()
+            ->has(
+                SmsMessage::factory()
+                    ->has(
+                        SmsMessageEvent::factory()
+                            ->count(3)
+                            ->sequence(
+                                ['type' => SmsMessageEventType::Dispatched],
+                                ['type' => SmsMessageEventType::Sent],
+                                ['type' => SmsMessageEventType::Delivered],
+                            ),
+                        'events'
+                    ),
+                'latestSmsMessage'
+            )
+            ->sms()
+            ->deliverNow()
+            ->create(),
+        EngagementDisplayStatus::Delivered,
+    ],
+    'sms | dispatched, sent, undelivered' => [
+        fn () => Engagement::factory()
+            ->has(
+                SmsMessage::factory()
+                    ->has(
+                        SmsMessageEvent::factory()
+                            ->count(3)
+                            ->sequence(
+                                ['type' => SmsMessageEventType::Dispatched],
+                                ['type' => SmsMessageEventType::Sent],
+                                ['type' => SmsMessageEventType::Undelivered],
+                            ),
+                        'events'
+                    ),
+                'latestSmsMessage'
+            )
+            ->sms()
+            ->deliverNow()
+            ->create(),
+        EngagementDisplayStatus::Failed,
+    ],
+    'sms | dispatched, sent, delivered, read' => [
+        fn () => Engagement::factory()
+            ->has(
+                SmsMessage::factory()
+                    ->has(
+                        SmsMessageEvent::factory()
+                            ->count(4)
+                            ->sequence(
+                                ['type' => SmsMessageEventType::Dispatched],
+                                ['type' => SmsMessageEventType::Sent],
+                                ['type' => SmsMessageEventType::Delivered],
+                                ['type' => SmsMessageEventType::Read],
+                            ),
+                        'events'
+                    ),
+                'latestSmsMessage'
+            )
+            ->sms()
+            ->deliverNow()
+            ->create(),
+        EngagementDisplayStatus::Read,
+    ],
 ]);
