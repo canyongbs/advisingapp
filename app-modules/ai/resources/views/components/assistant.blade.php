@@ -33,6 +33,7 @@
 --}}
 @php
     use Filament\Support\Enums\ActionSize;
+    use App\Features\SubmitAiChatOnEnterFlag;
 @endphp
 
 <div class="h-[calc(100dvh-4rem)]">
@@ -682,7 +683,7 @@
                                     placeholder="Type here..."
                                     required
                                     maxlength="25000"
-                                    @if (auth()->user()->is_submit_ai_chat_on_enter_enabled) x-on:keydown.enter.prevent="sendMessage()" @endif
+                                    @if (SubmitAiChatOnEnterFlag::active() && auth()->user()->is_submit_ai_chat_on_enter_enabled) x-on:keydown.enter.prevent="sendMessage()" @endif
                                 >                                
                                 </textarea>
                             </div>

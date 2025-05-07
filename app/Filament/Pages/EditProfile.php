@@ -39,6 +39,7 @@ namespace App\Filament\Pages;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\MeetingCenter\Managers\CalendarManager;
 use App\Features\EmailSignature;
+use App\Features\SubmitAiChatOnEnterFlag;
 use App\Models\User;
 use App\Settings\CollegeBrandingSettings;
 use App\Settings\DisplaySettings;
@@ -243,15 +244,15 @@ class EditProfile extends Page
                     ->aside()
                     ->schema([
                         Select::make('is_submit_ai_chat_on_enter_enabled')
-                            ->default(false)
                             ->label('Enter Key')
+                            ->selectablePlaceholder(false)
                             ->hint('Decide below if you would prefer the enter key to create a new line or submit the prompt you typed in the AI chat interface.')
                             ->options([
                                 false => 'New Line',
                                 true => 'Enter',
-                            ])
-                            ->native(false),
-                    ]),
+                            ]),
+                    ])
+                    ->visible(SubmitAiChatOnEnterFlag::active()),
                 Section::make('Account Information')
                     ->description("Update your account's information.")
                     ->aside()
