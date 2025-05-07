@@ -49,7 +49,6 @@ use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptO1MiniService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptO3MiniService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptO4MiniService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptTestService;
-use App\Features\GPTO4MiniFeature;
 use Filament\Support\Contracts\HasLabel;
 
 enum AiModel: string implements HasLabel
@@ -147,6 +146,7 @@ enum AiModel: string implements HasLabel
 
         return app($service);
     }
+
     public function supportsAssistantFileUploads(): bool
     {
         // TODO: Not actually sure mini supports files, need to confirm
