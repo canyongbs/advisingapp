@@ -36,23 +36,23 @@
 
 namespace AdvisingApp\Ai\Filament\Pages;
 
-use App\Models\User;
-use Filament\Forms\Form;
-use Filament\Actions\Action;
-use Illuminate\Validation\Rule;
-use Filament\Pages\SettingsPage;
+use AdvisingApp\Ai\Actions\ResetAiServiceIdsForModel;
 use AdvisingApp\Ai\Enums\AiModel;
-use App\Features\GPTO4MiniFeature;
-use Illuminate\Support\Facades\DB;
-use Filament\Support\Enums\MaxWidth;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TextInput;
+use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Jobs\ReInitializeAiModel;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
-use AdvisingApp\Ai\Actions\ResetAiServiceIdsForModel;
-use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
+use App\Features\GPTO4MiniFeature;
 use App\Filament\Clusters\GlobalArtificialIntelligence;
+use App\Models\User;
+use Filament\Actions\Action;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Pages\SettingsPage;
+use Filament\Support\Enums\MaxWidth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class ManageAiIntegrationsSettings extends SettingsPage
 {
