@@ -34,39 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Actions;
+namespace App\Features;
 
-use AdvisingApp\Campaign\Models\CampaignAction;
-use AdvisingApp\Campaign\Models\Scopes\CampaignActionNotCancelled;
-use App\Models\Tenant;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\Middleware\WithoutOverlapping;
+use App\Support\AbstractFeatureFlag;
 
-class ExecuteCampaignActions implements ShouldQueue
+class CancelCampaignAction extends AbstractFeatureFlag
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-
-    public function middleware(): array
+    public function resolve(mixed $scope): mixed
     {
-        return [(new WithoutOverlapping(Tenant::current()->id))->dontRelease()->expireAfter(180)];
-    }
-
-    public function handle(): void
-    {
-        CampaignAction::query()
-            ->where('execute_at', '<=', now())
-            ->whereNull('last_execution_attempt_at')
-            ->tap(new CampaignActionNotCancelled())
-            ->hasNotBeenExecuted()
-            ->campaignEnabled()
-            ->cursor()
-            ->each(function (CampaignAction $action) {
-                ExecuteCampaignAction::dispatch($action);
-            });
+        return false;
     }
 }

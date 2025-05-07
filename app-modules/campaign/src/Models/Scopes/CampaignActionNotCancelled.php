@@ -34,39 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Actions;
+namespace AdvisingApp\Campaign\Models\Scopes;
 
 use AdvisingApp\Campaign\Models\CampaignAction;
-use AdvisingApp\Campaign\Models\Scopes\CampaignActionNotCancelled;
-use App\Models\Tenant;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\Middleware\WithoutOverlapping;
+use App\Features\CancelCampaignAction;
+use Illuminate\Database\Eloquent\Builder;
 
-class ExecuteCampaignActions implements ShouldQueue
+class CampaignActionNotCancelled
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-
-    public function middleware(): array
+    /**
+     * @param Builder<CampaignAction> $query
+     */
+    public function __invoke(Builder $query): void
     {
-        return [(new WithoutOverlapping(Tenant::current()->id))->dontRelease()->expireAfter(180)];
-    }
-
-    public function handle(): void
-    {
-        CampaignAction::query()
-            ->where('execute_at', '<=', now())
-            ->whereNull('last_execution_attempt_at')
-            ->tap(new CampaignActionNotCancelled())
-            ->hasNotBeenExecuted()
-            ->campaignEnabled()
-            ->cursor()
-            ->each(function (CampaignAction $action) {
-                ExecuteCampaignAction::dispatch($action);
-            });
+        if (CancelCampaignAction::active()) {
+            $query->whereNull('cancelled_at');
+        }
     }
 }

@@ -1822,6 +1822,7 @@ namespace AdvisingApp\Campaign\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property \Illuminate\Support\Carbon|null $cancelled_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \AdvisingApp\Campaign\Models\Campaign $campaign
@@ -1835,6 +1836,7 @@ namespace AdvisingApp\Campaign\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignAction onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignAction query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignAction whereCampaignId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignAction whereCancelledAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignAction whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignAction whereData($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignAction whereDeletedAt($value)

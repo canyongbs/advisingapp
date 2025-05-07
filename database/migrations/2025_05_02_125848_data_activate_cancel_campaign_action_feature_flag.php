@@ -34,39 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Actions;
+use App\Features\CancelCampaignAction;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\Campaign\Models\CampaignAction;
-use AdvisingApp\Campaign\Models\Scopes\CampaignActionNotCancelled;
-use App\Models\Tenant;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\Middleware\WithoutOverlapping;
-
-class ExecuteCampaignActions implements ShouldQueue
-{
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-
-    public function middleware(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [(new WithoutOverlapping(Tenant::current()->id))->dontRelease()->expireAfter(180)];
+        CancelCampaignAction::activate();
     }
 
-    public function handle(): void
+    public function down(): void
     {
-        CampaignAction::query()
-            ->where('execute_at', '<=', now())
-            ->whereNull('last_execution_attempt_at')
-            ->tap(new CampaignActionNotCancelled())
-            ->hasNotBeenExecuted()
-            ->campaignEnabled()
-            ->cursor()
-            ->each(function (CampaignAction $action) {
-                ExecuteCampaignAction::dispatch($action);
-            });
+        CancelCampaignAction::deactivate();
     }
-}
+};

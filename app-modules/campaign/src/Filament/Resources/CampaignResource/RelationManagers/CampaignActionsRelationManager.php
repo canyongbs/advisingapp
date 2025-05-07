@@ -41,10 +41,12 @@ use AdvisingApp\Campaign\Filament\Blocks\CampaignActionBlock;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
+use App\Features\CancelCampaignAction;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkActionGroup;
@@ -77,11 +79,20 @@ class CampaignActionsRelationManager extends RelationManager
 
     public function table(Table $table): Table
     {
+        /** @var Campaign $campaign */
+        $campaign = $this->getOwnerRecord();
+
         return $table
             ->recordTitleAttribute('id')
             ->modifyQueryUsing(fn (QueryBuilder $query) => $query->orderBy('execute_at', 'ASC'))
             ->columns([
                 TextColumn::make('type')->label('Step Type'),
+                TextColumn::make('cancelled_at')
+                    ->label('')
+                    ->formatStateUsing(fn () => 'Cancelled')
+                    ->color('danger')
+                    ->hidden(fn (?CampaignAction $record) => ! CancelCampaignAction::active() || $record?->cancelled_at !== null)
+                    ->badge(),
                 TextColumn::make('execute_at')->label('Schedule')
                     ->dateTime(timezone: app(CampaignSettings::class)->getActionExecutionTimezone()),
             ])
@@ -114,21 +125,40 @@ class CampaignActionsRelationManager extends RelationManager
                             }),
                     ])
                     ->action(fn () => null)
-                    ->hidden(fn () => $this->getOwnerRecord()->hasBeenExecuted() === true),
+                    ->hidden(fn () => $campaign->hasBeenExecuted() === true),
             ])
             ->actions([
+                Action::make('cancel')
+                    ->requiresConfirmation()
+                    ->color('danger')
+                    ->icon('heroicon-o-x-circle')
+                    ->modalHeading('Cancel Journey Step')
+                    ->modalDescription('Are you sure you wish to cancel this journey step? This action cannot be reversed.')
+                    ->modalSubmitActionLabel('Cancel Step')
+                    ->modalCancelActionLabel('Go Back')
+                    ->hidden(fn (CampaignAction $record) => ! CancelCampaignAction::active() || $record->cancelled_at !== null || $record->hasBeenExecuted())
+                    ->action(function ($record) {
+                        $record->cancelled_at = now();
+                        $record->save();
+
+                        Notification::make()
+                            ->title('Step Cancelled')
+                            ->body('The journey step has been successfully cancelled.')
+                            ->success()
+                            ->send();
+                    }),
                 EditAction::make()
                     ->modalHeading(fn (CampaignAction $action) => 'Edit ' . $action->type->getLabel())
-                    ->hidden(fn () => $this->getOwnerRecord()->hasBeenExecuted() === true),
+                    ->hidden(fn (CampaignAction $record) => $campaign->hasBeenExecuted() === true || ! CancelCampaignAction::active() || $record->cancelled_at !== null),
                 DeleteAction::make()
                     ->modalHeading(fn (CampaignAction $action) => 'Delete ' . $action->type->getLabel())
-                    ->hidden(fn () => $this->getOwnerRecord()->hasBeenExecuted() === true),
+                    ->hidden(fn (CampaignAction $record) => $campaign->hasBeenExecuted() === true || ! CancelCampaignAction::active() || $record->cancelled_at !== null),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ])
-                    ->hidden(fn () => $this->getOwnerRecord()->hasBeenExecuted() === true),
+                    ->hidden(fn () => $campaign->hasBeenExecuted() === true),
             ]);
     }
 }
