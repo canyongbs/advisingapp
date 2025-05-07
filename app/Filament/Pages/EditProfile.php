@@ -239,7 +239,7 @@ class EditProfile extends Page
                             ->live(),
                     ]),
                 Section::make('Artificial Intelligence')
-                    ->description("Select options for how you work with AI.")
+                    ->description('Select options for how you work with AI.')
                     ->aside()
                     ->schema([
                         Select::make('is_submit_ai_chat_on_enter_enabled')
