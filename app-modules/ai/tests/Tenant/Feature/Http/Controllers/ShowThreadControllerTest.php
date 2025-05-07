@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Enums\AiApplication;
+use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
@@ -50,7 +50,7 @@ it('fetches information about a thread', function () {
 
     $thread = AiThread::factory()
         ->for(AiAssistant::factory()->create([
-            'application' => AiApplication::Test,
+            'application' => AiAssistantApplication::Test,
             'is_default' => true,
             'model' => AiModel::Test,
         ]), 'assistant')
@@ -66,7 +66,7 @@ it('lists messages in a thread', function () {
 
     $thread = AiThread::factory()
         ->for(AiAssistant::factory()->create([
-            'application' => AiApplication::Test,
+            'application' => AiAssistantApplication::Test,
             'is_default' => true,
             'model' => AiModel::Test,
         ]), 'assistant')
@@ -83,7 +83,7 @@ it('converts new lines to HTML in messages sent by users', function () {
 
     $thread = AiThread::factory()
         ->for(AiAssistant::factory()->create([
-            'application' => AiApplication::Test,
+            'application' => AiAssistantApplication::Test,
             'is_default' => true,
             'model' => AiModel::Test,
         ]), 'assistant')
@@ -104,7 +104,7 @@ it('removes HTML tags from messages sent by users', function () {
 
     $thread = AiThread::factory()
         ->for(AiAssistant::factory()->create([
-            'application' => AiApplication::Test,
+            'application' => AiAssistantApplication::Test,
             'is_default' => true,
             'model' => AiModel::Test,
         ]), 'assistant')
@@ -125,7 +125,7 @@ it('converts messages sent by assistants into Markdown', function () {
 
     $thread = AiThread::factory()
         ->for(AiAssistant::factory()->create([
-            'application' => AiApplication::Test,
+            'application' => AiAssistantApplication::Test,
             'is_default' => true,
             'model' => AiModel::Test,
         ]), 'assistant')
@@ -147,7 +147,7 @@ it('removes unsafe HTML from messages sent by assistants', function () {
 
     $thread = AiThread::factory()
         ->for(AiAssistant::factory()->create([
-            'application' => AiApplication::Test,
+            'application' => AiAssistantApplication::Test,
             'is_default' => true,
             'model' => AiModel::Test,
         ]), 'assistant')
@@ -169,7 +169,7 @@ it('lists users involved in a thread once', function () {
 
     $thread = AiThread::factory()
         ->for(AiAssistant::factory()->create([
-            'application' => AiApplication::Test,
+            'application' => AiAssistantApplication::Test,
             'is_default' => true,
             'model' => AiModel::Test,
         ]), 'assistant')
@@ -195,7 +195,7 @@ it('prevents users who do not own the thread from fetching it', function () {
 
     $thread = AiThread::factory()
         ->for(AiAssistant::factory()->create([
-            'application' => AiApplication::Test,
+            'application' => AiAssistantApplication::Test,
             'is_default' => true,
             'model' => AiModel::Test,
         ]), 'assistant')

@@ -34,22 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Settings;
+namespace AdvisingApp\Notification\Database\Factories;
 
-use AdvisingApp\Ai\Enums\AiModel;
-use Spatie\LaravelSettings\Settings;
+use AdvisingApp\Notification\Enums\SmsMessageEventType;
+use AdvisingApp\Notification\Models\SmsMessageEvent;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class AiIntegratedAssistantSettings extends Settings
+/**
+ * @extends Factory<SmsMessageEvent>
+ */
+class SmsMessageEventFactory extends Factory
 {
-    public ?AiModel $default_model = null;
-
-    public static function group(): string
+    public function definition(): array
     {
-        return 'ai-integrated-assistant';
-    }
-
-    public function getDefaultModel(): AiModel
-    {
-        return $this->default_model ?? AiModel::OpenAiGpt4o;
+        return [
+            'type' => fake()->randomElement(SmsMessageEventType::cases()),
+            'payload' => [],
+            'occurred_at' => now(),
+        ];
     }
 }

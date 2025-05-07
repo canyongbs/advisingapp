@@ -48,6 +48,11 @@ class AiIntegrationsSettings extends Settings
 
     public ?string $open_ai_gpt_35_model = null;
 
+    /**
+     * @var array<string>
+     */
+    public array $open_ai_gpt_35_applicable_features = [];
+
     public ?string $open_ai_gpt_4_model_name = null;
 
     public ?string $open_ai_gpt_4_base_uri = null;
@@ -55,6 +60,11 @@ class AiIntegrationsSettings extends Settings
     public ?string $open_ai_gpt_4_api_key = null;
 
     public ?string $open_ai_gpt_4_model = null;
+
+    /**
+     * @var array<string>
+     */
+    public array $open_ai_gpt_4_applicable_features = [];
 
     public ?string $open_ai_gpt_4o_model_name = null;
 
@@ -64,6 +74,11 @@ class AiIntegrationsSettings extends Settings
 
     public ?string $open_ai_gpt_4o_model = null;
 
+    /**
+     * @var array<string>
+     */
+    public array $open_ai_gpt_4o_applicable_features = [];
+
     public ?string $open_ai_gpt_4o_mini_model_name = null;
 
     public ?string $open_ai_gpt_4o_mini_base_uri = null;
@@ -71,6 +86,11 @@ class AiIntegrationsSettings extends Settings
     public ?string $open_ai_gpt_4o_mini_api_key = null;
 
     public ?string $open_ai_gpt_4o_mini_model = null;
+
+    /**
+     * @var array<string>
+     */
+    public array $open_ai_gpt_4o_mini_applicable_features = [];
 
     public ?string $open_ai_gpt_o1_mini_model_name = null;
 
@@ -80,6 +100,11 @@ class AiIntegrationsSettings extends Settings
 
     public ?string $open_ai_gpt_o1_mini_model = null;
 
+    /**
+     * @var array<string>
+     */
+    public array $open_ai_gpt_o1_mini_applicable_features = [];
+
     public ?string $open_ai_gpt_o3_mini_model_name = null;
 
     public ?string $open_ai_gpt_o3_mini_base_uri = null;
@@ -87,6 +112,11 @@ class AiIntegrationsSettings extends Settings
     public ?string $open_ai_gpt_o3_mini_api_key = null;
 
     public ?string $open_ai_gpt_o3_mini_model = null;
+
+    /**
+     * @var array<string>
+     */
+    public array $open_ai_gpt_o3_mini_applicable_features = [];
 
     public ?string $open_ai_gpt_41_mini_model_name = null;
 
@@ -96,6 +126,11 @@ class AiIntegrationsSettings extends Settings
 
     public ?string $open_ai_gpt_41_mini_model = null;
 
+    /**
+     * @var array<string>
+     */
+    public array $open_ai_gpt_41_mini_applicable_features = [];
+
     public ?string $open_ai_gpt_41_nano_model_name = null;
 
     public ?string $open_ai_gpt_41_nano_base_uri = null;
@@ -103,6 +138,24 @@ class AiIntegrationsSettings extends Settings
     public ?string $open_ai_gpt_41_nano_api_key = null;
 
     public ?string $open_ai_gpt_41_nano_model = null;
+
+    /**
+     * @var array<string>
+     */
+    public array $open_ai_gpt_41_nano_applicable_features = [];
+
+    public ?string $open_ai_gpt_o4_mini_model_name = null;
+
+    public ?string $open_ai_gpt_o4_mini_base_uri = null;
+
+    public ?string $open_ai_gpt_o4_mini_api_key = null;
+
+    public ?string $open_ai_gpt_o4_mini_model = null;
+
+    /**
+     * @var array<string>
+     */
+    public array $open_ai_gpt_o4_mini_applicable_features = [];
 
     public static function group(): string
     {
@@ -136,6 +189,9 @@ class AiIntegrationsSettings extends Settings
             'open_ai_gpt_41_nano_base_uri',
             'open_ai_gpt_41_nano_api_key',
             'open_ai_gpt_41_nano_model',
+            'open_ai_gpt_o4_mini_base_uri',
+            'open_ai_gpt_o4_mini_api_key',
+            'open_ai_gpt_o4_mini_model',
         ];
     }
 }

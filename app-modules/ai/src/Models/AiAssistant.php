@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Ai\Models;
 
-use AdvisingApp\Ai\Enums\AiApplication;
+use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Exceptions\DefaultAssistantLockedPropertyException;
 use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
@@ -76,7 +76,7 @@ class AiAssistant extends BaseModel implements HasMedia, Auditable
     ];
 
     protected $casts = [
-        'application' => AiApplication::class,
+        'application' => AiAssistantApplication::class,
         'archived_at' => 'datetime',
         'is_default' => 'bool',
         'model' => AiModel::class,
@@ -88,7 +88,7 @@ class AiAssistant extends BaseModel implements HasMedia, Auditable
     {
         $this->addMediaCollection('avatar')
             ->acceptsFile(function (File $file) {
-                if ($this->application === AiApplication::PersonalAssistant && $this->is_default) {
+                if ($this->application === AiAssistantApplication::PersonalAssistant && $this->is_default) {
                     throw new DefaultAssistantLockedPropertyException('avatar');
                 }
 

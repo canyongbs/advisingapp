@@ -36,8 +36,9 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Forms;
 
-use AdvisingApp\Ai\Enums\AiApplication;
+use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiModel;
+use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Models\AiAssistant;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Component;
@@ -78,38 +79,21 @@ class AiAssistantForm
                     ->columnSpanFull(),
                 Select::make('application')
                     ->options([
-                        AiApplication::PersonalAssistant->value => 'Custom Advisor',
+                        AiAssistantApplication::PersonalAssistant->value => 'Custom Advisor',
                     ])
-                    ->default(AiApplication::getDefault())
+                    ->default(AiAssistantApplication::getDefault())
                     ->live()
-                    ->afterStateUpdated(fn (Set $set, $state) => filled(AiApplication::parse($state)) ? $set('model', AiApplication::parse($state)->getDefaultModel()->value) : null)
+                    ->afterStateUpdated(fn (Set $set, $state) => filled(AiAssistantApplication::parse($state)) ? $set('model', AiAssistantApplication::parse($state)->getDefaultModel()->value) : null)
                     ->required()
-                    ->enum(AiApplication::class)
+                    ->enum(AiAssistantApplication::class)
                     ->columnStart(1)
                     ->disabledOn('edit'),
                 Select::make('model')
                     ->reactive()
-                    ->options(
-                        fn (Get $get): array => filled(AiApplication::parse($get('application')))
-                            ? collect(AiApplication::parse($get('application'))
-                                ->getCustomAssistantModels())
-                                ->mapWithKeys(fn (AiModel $model): array => [$model->value => $model->getLabel()])
-                                ->all()
-                            : []
-                    )
+                    ->options(AiModelApplicabilityFeature::CustomAdvisors->getModelsAsSelectOptions())
                     ->searchable()
                     ->required()
-                    ->rules(
-                        fn (Get $get): array => filled(AiApplication::parse($get('application')))
-                            ? [
-                                Rule::enum(AiModel::class)
-                                    ->only(
-                                        AiApplication::parse($get('application'))
-                                            ->getCustomAssistantModels()
-                                    ),
-                            ]
-                            : []
-                    )
+                    ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::CustomAdvisors->getModels()))
                     ->visible(fn (Get $get): bool => filled($get('application'))),
                 Textarea::make('description')
                     ->columnSpanFull()
@@ -120,7 +104,7 @@ class AiAssistantForm
                         Textarea::make('instructions')
                             ->reactive()
                             ->required()
-                            ->maxLength(fn (Get $get): int => (AiModel::parse($get('model')) ?? AiModel::OpenAiGpt35)->getService()->getMaxAssistantInstructionsLength()),
+                            ->maxLength(fn (Get $get): int => (AiModel::parse($get('model')) ?? AiModel::OpenAiGpt4o)->getService()->getMaxAssistantInstructionsLength()),
                     ]),
                 Section::make('Additional Knowledge')
                     ->description('Add additional knowledge to your custom AI Assistant to improve its responses.')

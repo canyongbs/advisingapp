@@ -34,22 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Settings;
+namespace App\Features;
 
-use AdvisingApp\Ai\Enums\AiModel;
-use Spatie\LaravelSettings\Settings;
+use App\Support\AbstractFeatureFlag;
 
-class AiIntegratedAssistantSettings extends Settings
+class GPTO4MiniFeature extends AbstractFeatureFlag
 {
-    public ?AiModel $default_model = null;
-
-    public static function group(): string
+    public function resolve(mixed $scope): mixed
     {
-        return 'ai-integrated-assistant';
-    }
-
-    public function getDefaultModel(): AiModel
-    {
-        return $this->default_model ?? AiModel::OpenAiGpt4o;
+        return false;
     }
 }

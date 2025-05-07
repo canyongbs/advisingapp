@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
+use AdvisingApp\Engagement\Enums\EngagementDisplayStatus;
 use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
 use AdvisingApp\Engagement\Filament\Actions\RelationManagerSendEngagementAction;
 use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
@@ -87,7 +88,7 @@ class EngagementsRelationManager extends RelationManager
                             ->schema([
                                 TextEntry::make('user.name')
                                     ->label('Created By')
-                                    ->getStateUsing(fn (Timeline $record): string => $record->timelineable->user->name),
+                                    ->getStateUsing(fn (Timeline $record): string => $record->timelineable->user->name ?? 'N/A'),
                                 InfolistFieldset::make('Content')
                                     ->schema([
                                         TextEntry::make('subject')
@@ -173,15 +174,27 @@ class EngagementsRelationManager extends RelationManager
             ->emptyStateHeading('No email or text messages.')
             ->emptyStateDescription('Create an email or text message to get started.')
             ->defaultSort('record_sortable_date', 'desc')
-            ->modifyQueryUsing(fn (Builder $query) => $query->whereHasMorph('timelineable', [
-                ...($canAccessEngagements ? [Engagement::class] : []),
-                ...($canAccessEngagements ? [EngagementResponse::class] : []),
-            ]))
+            ->modifyQueryUsing(
+                fn (Builder $query) => $query
+                    ->whereHasMorph('timelineable', [
+                        ...($canAccessEngagements ? [Engagement::class] : []),
+                        ...($canAccessEngagementResponses ? [EngagementResponse::class] : []),
+                    ])
+                    ->with([
+                        'timelineable' => function ($morphQuery) use ($canAccessEngagements) {
+                            $morphQuery->when(
+                                $canAccessEngagements && $morphQuery->getModel() instanceof Engagement,
+                                fn (Builder $query) => $query->with(['latestEmailMessage.events', 'latestSmsMessage.events'])
+                            );
+                        },
+                    ])
+            )
             ->columns([
                 TextColumn::make('direction')
                     ->getStateUsing(fn (Timeline $record) => match ($record->timelineable::class) {
                         Engagement::class => 'Outbound',
                         EngagementResponse::class => 'Inbound',
+                        default => '',
                     })
                     ->icon(fn (string $state) => match ($state) {
                         'Outbound' => 'heroicon-o-arrow-up-tray',
@@ -190,7 +203,7 @@ class EngagementsRelationManager extends RelationManager
                 TextColumn::make('status')
                     ->getStateUsing(fn (Timeline $record) => match ($record->timelineable::class) {
                         EngagementResponse::class => $record->timelineable->status,
-                        default => ''
+                        Engagement::class => EngagementDisplayStatus::getStatus($record->timelineable),
                     })
                     ->badge(),
                 TextColumn::make('type')

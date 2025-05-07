@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Ai\Models;
 
-use AdvisingApp\Ai\Enums\AiApplication;
+use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 use App\Models\BaseModel;
 use App\Models\User;
@@ -59,7 +59,7 @@ class AiThreadFolder extends BaseModel
     ];
 
     protected $casts = [
-        'application' => AiApplication::class,
+        'application' => AiAssistantApplication::class,
     ];
 
     /**

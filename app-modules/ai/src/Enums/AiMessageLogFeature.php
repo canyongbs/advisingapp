@@ -34,22 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Settings;
+namespace AdvisingApp\Ai\Enums;
 
-use AdvisingApp\Ai\Enums\AiModel;
-use Spatie\LaravelSettings\Settings;
+use Filament\Support\Contracts\HasLabel;
 
-class AiIntegratedAssistantSettings extends Settings
+enum AiMessageLogFeature: string implements HasLabel
 {
-    public ?AiModel $default_model = null;
+    case DraftWithAi = 'draft_with_ai';
 
-    public static function group(): string
+    case Conversations = 'conversations';
+
+    public function getLabel(): string
     {
-        return 'ai-integrated-assistant';
+        return match ($this) {
+            self::DraftWithAi => 'Draft With AI',
+            self::Conversations => 'Conversations',
+        };
     }
 
-    public function getDefaultModel(): AiModel
+    public static function parse(string | self | null $value): ?self
     {
-        return $this->default_model ?? AiModel::OpenAiGpt4o;
+        if ($value instanceof self) {
+            return $value;
+        }
+
+        return self::tryFrom($value);
     }
 }

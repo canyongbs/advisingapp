@@ -66,6 +66,7 @@ class EmailMessage extends BaseModel implements Message
             name: 'related',
             type: 'related_type',
             id: 'related_id',
+            ownerKey: 'id',
         );
     }
 
