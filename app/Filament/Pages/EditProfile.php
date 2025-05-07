@@ -239,17 +239,18 @@ class EditProfile extends Page
                             ->live(),
                     ]),
                 Section::make('Artificial Intelligence')
-                    ->description("Update your account's information.")
+                    ->description("Select options for how you work with AI.")
                     ->aside()
                     ->schema([
                         Select::make('is_submit_ai_chat_on_enter_enabled')
                             ->default(false)
-                            ->label('Enter')
+                            ->label('Enter Key')
                             ->hint('Decide below if you would prefer the enter key to create a new line or submit the prompt you typed in the AI chat interface.')
                             ->options([
                                 false => 'New Line',
                                 true => 'Enter',
-                            ]),
+                            ])
+                            ->native(false),
                     ]),
                 Section::make('Account Information')
                     ->description("Update your account's information.")
