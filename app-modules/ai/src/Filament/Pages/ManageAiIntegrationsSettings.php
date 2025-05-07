@@ -51,6 +51,7 @@ use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class ManageAiIntegrationsSettings extends SettingsPage
 {
@@ -102,7 +103,8 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                 Select::make('open_ai_gpt_35_applicable_features')
                                     ->label('Applicability')
                                     ->options(AiModelApplicabilityFeature::class)
-                                    ->multiple(),
+                                    ->multiple()
+                                    ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
                             ]),
                         Section::make('GPT 4')
                             ->collapsible()
@@ -126,7 +128,8 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                 Select::make('open_ai_gpt_4_applicable_features')
                                     ->label('Applicability')
                                     ->options(AiModelApplicabilityFeature::class)
-                                    ->multiple(),
+                                    ->multiple()
+                                    ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
                             ]),
                         Section::make('GPT 4o')
                             ->collapsible()
@@ -150,7 +153,8 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                 Select::make('open_ai_gpt_4o_applicable_features')
                                     ->label('Applicability')
                                     ->options(AiModelApplicabilityFeature::class)
-                                    ->multiple(),
+                                    ->multiple()
+                                    ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
                             ]),
                         Section::make('GPT 4o mini')
                             ->collapsible()
@@ -174,7 +178,8 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                 Select::make('open_ai_gpt_4o_mini_applicable_features')
                                     ->label('Applicability')
                                     ->options(AiModelApplicabilityFeature::class)
-                                    ->multiple(),
+                                    ->multiple()
+                                    ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
                             ]),
                         Section::make('GPT o1 mini')
                             ->collapsible()
@@ -198,7 +203,8 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                 Select::make('open_ai_gpt_o1_mini_applicable_features')
                                     ->label('Applicability')
                                     ->options(AiModelApplicabilityFeature::class)
-                                    ->multiple(),
+                                    ->multiple()
+                                    ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
                             ]),
                         Section::make('GPT o3 mini')
                             ->collapsible()
@@ -222,7 +228,8 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                 Select::make('open_ai_gpt_o3_mini_applicable_features')
                                     ->label('Applicability')
                                     ->options(AiModelApplicabilityFeature::class)
-                                    ->multiple(),
+                                    ->multiple()
+                                    ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
                             ]),
                         Section::make('GPT 4.1 mini')
                             ->collapsible()
@@ -246,7 +253,8 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                 Select::make('open_ai_gpt_41_mini_applicable_features')
                                     ->label('Applicability')
                                     ->options(AiModelApplicabilityFeature::class)
-                                    ->multiple(),
+                                    ->multiple()
+                                    ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
                             ]),
                         Section::make('GPT 4.1 nano')
                             ->collapsible()
@@ -270,7 +278,8 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                 Select::make('open_ai_gpt_41_nano_applicable_features')
                                     ->label('Applicability')
                                     ->options(AiModelApplicabilityFeature::class)
-                                    ->multiple(),
+                                    ->multiple()
+                                    ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
                             ]),
                     ]),
             ]);
