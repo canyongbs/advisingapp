@@ -1,7 +1,6 @@
 <?php
 
 use Database\Migrations\Concerns\CanModifySettings;
-use Exception;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 
@@ -57,7 +56,7 @@ return new class () extends Migration {
             DB::table('ai_assistants')
                 ->eachById(fn (object $assistant) => $logApplicableFeature(
                     $assistant->model,
-                    feature: $assistant->is_default ? 'custom_advisors' : 'institutional_advisor',
+                    feature: $assistant->is_default ? 'institutional_advisor' : 'custom_advisors',
                 ));
 
             $this->updateSettings('ai', 'open_ai_gpt_35_applicable_features', fn (): array => array_keys($openAiGpt35ApplicableFeatures));
