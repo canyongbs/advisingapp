@@ -277,10 +277,14 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                 TextInput::make('open_ai_gpt_41_nano_model')
                                     ->label('Model'),
                             ]),
-                        Section::make('Jina DeepSearch')
+                    ]),
+                    Section::make('Jina AI')
+                        ->collapsible()
+                        ->schema([
+                            Section::make('Jina DeepSearch')
                             ->collapsible()
                             ->schema([
-                                TextInput::make('open_ai_gpt_41_nano_base_uri')
+                                TextInput::make('jina_deepsearch_ai_api_key')
                                     ->label('API Key'),
                             ]),
                     ]),

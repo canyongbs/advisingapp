@@ -34,43 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Filament\Pages;
+use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use App\Models\User;
-use Filament\Forms\Form;
-use Filament\Pages\SettingsPage;
-use Filament\Forms\Components\Textarea;
-use App\Filament\Clusters\GlobalArtificialIntelligence;
-use AdvisingApp\Ai\Settings\AiResearchAssistantSettings;
-
-class ManageResearchAssistantSettings extends SettingsPage
-{
-    protected static string $settings = AiResearchAssistantSettings::class;
-
-    protected static ?string $title = 'Research Advisor Settings';
-
-    protected static ?string $navigationLabel = 'Research Advisor';
-
-    protected static ?int $navigationSort = 25;
-
-    protected static ?string $cluster = GlobalArtificialIntelligence::class;
-
-    public static function canAccess(): bool
+return new class () extends SettingsMigration {
+    public function up(): void
     {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->isSuperAdmin();
+        try {
+            $this->migrator->add('ai.jina_deepsearch_ai_api_key');
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
     }
 
-    public function form(Form $form): Form
+    public function down(): void
     {
-        return $form
-            ->schema([
-                Textarea::make('context')
-                    ->rows(10)
-                    ->label('Institutional Context'),
-            ])
-            ->columns(1);
+        $this->migrator->deleteIfExists('ai.jina_deepsearch_ai_api_key');
     }
-}
+};

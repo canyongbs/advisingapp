@@ -34,43 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Filament\Pages;
+namespace AdvisingApp\Ai\Settings;
 
-use App\Models\User;
-use Filament\Forms\Form;
-use Filament\Pages\SettingsPage;
-use Filament\Forms\Components\Textarea;
-use App\Filament\Clusters\GlobalArtificialIntelligence;
-use AdvisingApp\Ai\Settings\AiResearchAssistantSettings;
+use AdvisingApp\Ai\Enums\AiModel;
+use Spatie\LaravelSettings\Settings;
 
-class ManageResearchAssistantSettings extends SettingsPage
+class AiResearchAssistantSettings extends Settings
 {
-    protected static string $settings = AiResearchAssistantSettings::class;
+    public ?AiModel $ai_model = null;
+    public ?string $context = null;
 
-    protected static ?string $title = 'Research Advisor Settings';
-
-    protected static ?string $navigationLabel = 'Research Advisor';
-
-    protected static ?int $navigationSort = 25;
-
-    protected static ?string $cluster = GlobalArtificialIntelligence::class;
-
-    public static function canAccess(): bool
+    public static function group(): string
     {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->isSuperAdmin();
-    }
-
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                Textarea::make('context')
-                    ->rows(10)
-                    ->label('Institutional Context'),
-            ])
-            ->columns(1);
+        return 'ai_research_assistant';
     }
 }
