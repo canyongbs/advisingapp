@@ -42,6 +42,11 @@ return new class () extends SettingsMigration {
     {
         try {
             $this->migrator->add('ai_research_assistant.ai_model');
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
+
+        try {
             $this->migrator->add('ai_research_assistant.context');
         } catch (SettingAlreadyExists $exception) {
             // do nothing
