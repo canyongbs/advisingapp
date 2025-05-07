@@ -98,14 +98,6 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
     public function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(function (Builder $query) {
-                $query
-                    ->leftJoinRelationship('concern', morphable: Student::class)
-                    ->leftJoin('prospects', function ($join) {
-                        $join->on('tasks.concern_id', '=', DB::raw('CAST(prospects.id AS TEXT)'))
-                            ->where('tasks.concern_type', '=', (new Prospect())->getMorphClass());
-                    });
-            })
             ->recordTitleAttribute('description')
             ->defaultSort('created_at', 'desc')
             ->columns([
@@ -124,22 +116,14 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
                     ->sortable(),
                 TextColumn::make('assignedTo.name')
                     ->label('Assigned To')
-                    ->url(fn (Task $record) => $record->assignedTo ? UserResource::getUrl('view', ['record' => $record->assignedTo]) : null),
+                    ->url(fn (Task $record) => $record->assignedTo ? UserResource::getUrl('view', ['record' => $record->assignedTo]) : null)
+                    ->sortable(),
                 TextColumn::make('concern.full_name')
                     ->label('Related To')
                     ->url(fn (Task $record) => match ($record->concern ? $record->concern::class : null) {
                         Student::class => StudentResource::getUrl('view', ['record' => $record->concern]),
                         Prospect::class => ProspectResource::getUrl('view', ['record' => $record->concern]),
                         default => null,
-                    })
-                    ->sortable(query: function (Builder $query, string $direction): Builder {
-                        return $query->orderByRaw("
-                            CASE
-                                WHEN tasks.concern_type = 'prospect' THEN prospects.full_name
-                                WHEN tasks.concern_type = 'student' THEN students.full_name
-                                ELSE NULL
-                            END {$direction}
-                        ");
                     }),
             ])
             ->filters([
