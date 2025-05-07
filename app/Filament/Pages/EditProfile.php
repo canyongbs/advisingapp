@@ -220,7 +220,7 @@ class EditProfile extends Page
                             ->visible($hasCrmLicense),
                         Placeholder::make('teams')
                             ->label('Team')
-                            ->content($user->team->name)
+                            ->content(fn () => $user->team->name)
                             ->hidden(! $user->team)
                             ->hint(fn (Get $get): string => $get('are_teams_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
                         //TODO: Right now this is not passed to the frontend
@@ -237,6 +237,19 @@ class EditProfile extends Page
                             ->label('Show Division on profile')
                             ->hidden(! $user->team?->division()->exists())
                             ->live(),
+                    ]),
+                    Section::make('Artificial Intelligence')
+                    ->description("Update your account's information.")
+                    ->aside()
+                    ->schema([
+                        Select::make('is_submit_ai_chat_on_enter_enabled')
+                        ->default(false)
+                        ->label('Enter')
+                        ->hint('Decide below if you would prefer the enter key to create a new line or submit the prompt you typed in the AI chat interface.')
+                        ->options([
+                            false => 'New Line',
+                            true => 'Enter',
+                        ])
                     ]),
                 Section::make('Account Information')
                     ->description("Update your account's information.")
