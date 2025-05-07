@@ -45,7 +45,7 @@ return new class () extends SettingsMigration {
         } catch (SettingAlreadyExists $exception) {
             // do nothing
         }
-        
+
         try {
             $this->migrator->add('ai.open_ai_gpt_o4_mini_base_uri', config('integration-open-ai.gpt_o4_mini_base_uri'), encrypted: true);
         } catch (SettingAlreadyExists $exception) {
