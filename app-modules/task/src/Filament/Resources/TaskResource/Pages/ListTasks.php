@@ -65,6 +65,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 class ListTasks extends ListRecords
 {
@@ -86,6 +87,14 @@ class ListTasks extends ListRecords
     public function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function (Builder $query) {
+                $query
+                    ->leftJoinRelationship('concern', morphable: Student::class)
+                    ->leftJoin('prospects', function ($join) {
+                        $join->on('tasks.concern_id', '=', DB::raw('CAST(prospects.id AS TEXT)'))
+                            ->where('tasks.concern_type', '=', (new Prospect())->getMorphClass());
+                    });
+            })
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('title')
@@ -94,7 +103,8 @@ class ListTasks extends ListRecords
                     ->limit(50),
                 TextColumn::make('status')
                     ->formatStateUsing(fn (TaskStatus $state): string => str($state->value)->title()->headline())
-                    ->badge(),
+                    ->badge()
+                    ->sortable(),
                 TextColumn::make('due')
                     ->label('Due Date')
                     ->sortable(),
@@ -112,6 +122,15 @@ class ListTasks extends ListRecords
                         Student::class => StudentResource::getUrl('view', ['record' => $record->concern]),
                         Prospect::class => ProspectResource::getUrl('view', ['record' => $record->concern]),
                         default => null,
+                    })
+                    ->sortable(query: function (Builder $query, string $direction): Builder {
+                        return $query->orderByRaw("
+                            CASE
+                                WHEN tasks.concern_type = 'prospect' THEN prospects.full_name
+                                WHEN tasks.concern_type = 'student' THEN students.full_name
+                                ELSE NULL
+                            END {$direction}
+                        ");
                     }),
             ])
             ->filters([
