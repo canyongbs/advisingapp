@@ -34,56 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Models;
+namespace AdvisingApp\Notification\Database\Factories;
 
-use AdvisingApp\Notification\Models\Contracts\Message;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
+use AdvisingApp\Notification\Enums\EmailMessageEventType;
+use AdvisingApp\Notification\Models\EmailMessageEvent;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @mixin IdeHelperEmailMessage
+ * @extends Factory<EmailMessageEvent>
  */
-class EmailMessage extends BaseModel implements Message
+class EmailMessageEventFactory extends Factory
 {
-    protected $fillable = [
-        'notification_class',
-        'external_reference_id',
-        'content',
-        'quota_usage',
-        'recipient_id',
-        'recipient_type',
-        'recipient_address',
-    ];
-
-    protected $casts = [
-        'content' => 'array',
-    ];
-
-    public function related(): MorphTo
+    public function definition(): array
     {
-        return $this->morphTo(
-            name: 'related',
-            type: 'related_type',
-            id: 'related_id',
-            ownerKey: 'id',
-        );
-    }
-
-    public function recipient(): MorphTo
-    {
-        return $this->morphTo(
-            name: 'recipient',
-            type: 'recipient_type',
-            id: 'recipient_id',
-        );
-    }
-
-    /**
-     * @return HasMany<EmailMessageEvent, $this>
-     */
-    public function events(): HasMany
-    {
-        return $this->hasMany(EmailMessageEvent::class);
+        return [
+            'type' => fake()->randomElement(EmailMessageEventType::cases()),
+            'payload' => [],
+            'occurred_at' => now(),
+        ];
     }
 }
