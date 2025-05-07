@@ -36,22 +36,23 @@
 
 namespace AdvisingApp\Ai\Filament\Pages;
 
-use AdvisingApp\Ai\Actions\ResetAiServiceIdsForModel;
+use App\Models\User;
+use Filament\Forms\Form;
+use Filament\Actions\Action;
+use Illuminate\Validation\Rule;
+use Filament\Pages\SettingsPage;
 use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
+use App\Features\GPTO4MiniFeature;
+use Illuminate\Support\Facades\DB;
+use Filament\Support\Enums\MaxWidth;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
 use AdvisingApp\Ai\Jobs\ReInitializeAiModel;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use AdvisingApp\Ai\Actions\ResetAiServiceIdsForModel;
+use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use App\Filament\Clusters\GlobalArtificialIntelligence;
-use App\Models\User;
-use Filament\Actions\Action;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Pages\SettingsPage;
-use Filament\Support\Enums\MaxWidth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rule;
 
 class ManageAiIntegrationsSettings extends SettingsPage
 {
@@ -275,7 +276,38 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->autocomplete(false),
                                 TextInput::make('open_ai_gpt_41_nano_model')
                                     ->label('Model'),
+                                Select::make('open_ai_gpt_41_nano_applicable_features')
+                                    ->label('Applicability')
+                                    ->options(AiModelApplicabilityFeature::class)
+                                    ->multiple()
+                                    ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
                             ]),
+                        Section::make('GPT o4 mini')
+                            ->collapsible()
+                            ->schema([
+                                TextInput::make('open_ai_gpt_o4_mini_model_name')
+                                    ->label('Model Name')
+                                    ->placeholder('Canyon o4 mini')
+                                    ->string()
+                                    ->maxLength(255)
+                                    ->nullable(),
+                                TextInput::make('open_ai_gpt_o4_mini_base_uri')
+                                    ->label('Base URI')
+                                    ->placeholder('https://example.openai.azure.com/openai')
+                                    ->url(),
+                                TextInput::make('open_ai_gpt_o4_mini_api_key')
+                                    ->label('API Key')
+                                    ->password()
+                                    ->autocomplete(false),
+                                TextInput::make('open_ai_gpt_o4_mini_model')
+                                    ->label('Model'),
+                                Select::make('open_ai_gpt_o4_mini_applicable_features')
+                                    ->label('Applicability')
+                                    ->options(AiModelApplicabilityFeature::class)
+                                    ->multiple()
+                                    ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
+                            ])
+                            ->visible(GPTO4MiniFeature::active()),
                     ]),
                 Section::make('Jina AI')
                     ->collapsible()
