@@ -37,7 +37,6 @@
 namespace AdvisingApp\Ai\Enums;
 
 use AdvisingApp\Ai\Settings\AiSettings;
-use App\Features\GPTO4MiniFeature;
 use Filament\Support\Contracts\HasLabel;
 
 enum AiAssistantApplication: string implements HasLabel

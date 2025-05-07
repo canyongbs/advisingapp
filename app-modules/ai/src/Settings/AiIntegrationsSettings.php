@@ -149,7 +149,7 @@ class AiIntegrationsSettings extends Settings
     public ?string $open_ai_gpt_o4_mini_api_key = null;
 
     public ?string $open_ai_gpt_o4_mini_model = null;
-    
+
     /**
      * @var array<string>
      */
