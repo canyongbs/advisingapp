@@ -98,4 +98,12 @@ return [
     'gpt_41_nano_api_version' => env('OPEN_AI_GPT_41_NANO_API_VERSION'),
 
     'gpt_41_nano_model' => env('OPEN_AI_GPT_41_NANO_MODEL'),
+
+    'gpt_o4_mini_base_uri' => env('OPEN_AI_GPT_O4_MINI_BASE_URI'),
+
+    'gpt_o4_mini_api_key' => env('OPEN_AI_GPT_O4_MINI_API_KEY'),
+
+    'gpt_o4_mini_api_version' => env('OPEN_AI_GPT_O4_MINI_API_VERSION'),
+
+    'gpt_o4_mini_model' => env('OPEN_AI_GPT_O4_MINI_MODEL'),
 ];
