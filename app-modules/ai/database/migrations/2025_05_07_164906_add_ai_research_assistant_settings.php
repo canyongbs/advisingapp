@@ -41,6 +41,7 @@ return new class () extends SettingsMigration {
     public function up(): void
     {
         try {
+            $this->migrator->add('ai_research_assistant.ai_model');
             $this->migrator->add('ai_research_assistant.context');
         } catch (SettingAlreadyExists $exception) {
             // do nothing
@@ -49,6 +50,7 @@ return new class () extends SettingsMigration {
 
     public function down(): void
     {
+        $this->migrator->deleteIfExists('ai_research_assistant.ai_model');
         $this->migrator->deleteIfExists('ai_research_assistant.context');
     }
 };
