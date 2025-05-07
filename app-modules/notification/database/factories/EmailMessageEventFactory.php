@@ -39,7 +39,6 @@ namespace AdvisingApp\Notification\Database\Factories;
 use AdvisingApp\Notification\Enums\EmailMessageEventType;
 use AdvisingApp\Notification\Models\EmailMessageEvent;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use TestEmailNotification;
 
 /**
  * @extends Factory<EmailMessageEvent>
