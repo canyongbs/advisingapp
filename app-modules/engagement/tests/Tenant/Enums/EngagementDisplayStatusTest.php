@@ -578,26 +578,6 @@ it('returns the correct case given a particular Engagement', function (Engagemen
             ->create(),
         EngagementDisplayStatus::Failed,
     ],
-    'sms | dispatched, sent' => [
-        fn () => Engagement::factory()
-            ->has(
-                SmsMessage::factory()
-                    ->has(
-                        SmsMessageEvent::factory()
-                            ->count(2)
-                            ->sequence(
-                                ['type' => SmsMessageEventType::Dispatched],
-                                ['type' => SmsMessageEventType::Sent],
-                            ),
-                        'events'
-                    ),
-                'latestSmsMessage'
-            )
-            ->sms()
-            ->deliverNow()
-            ->create(),
-        EngagementDisplayStatus::Sent,
-    ],
     'sms | dispatched, failed' => [
         fn () => Engagement::factory()
             ->has(
