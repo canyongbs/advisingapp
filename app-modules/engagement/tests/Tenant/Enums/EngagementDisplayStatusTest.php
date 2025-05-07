@@ -43,15 +43,15 @@ use AdvisingApp\Notification\Models\EmailMessageEvent;
 it('returns the correct case given a particular Engagement', function (Engagement $engagement, EngagementDisplayStatus $expectedStatus) {
     expect(EngagementDisplayStatus::getStatus($engagement))->toBe($expectedStatus);
 })->with([
-    'email, not scheduled' => [
+    'email | not scheduled' => [
         fn () => Engagement::factory()->email()->deliverNow()->create(),
         EngagementDisplayStatus::Pending,
     ],
-    'email, scheduled' => [
+    'email | scheduled' => [
         fn () => Engagement::factory()->email()->deliverLater()->create(),
         EngagementDisplayStatus::Scheduled,
     ],
-    'email, dispatched' => [
+    'email | dispatched' => [
         fn () => Engagement::factory()
             ->has(
                 EmailMessage::factory()
@@ -66,5 +66,29 @@ it('returns the correct case given a particular Engagement', function (Engagemen
             ->deliverNow()
             ->create(),
         EngagementDisplayStatus::Pending,
+    ],
+    'email | dispatched, send' => [
+        fn () => Engagement::factory()
+            ->has(
+                EmailMessage::factory()
+                    ->has(
+                        EmailMessageEvent::factory()
+                            ->count(2)
+                            ->sequence(
+                                [
+                                    'type' => EmailMessageEventType::Dispatched,
+                                ],
+                                [
+                                    'type' => EmailMessageEventType::Send,
+                                ],
+                            ),
+                        'events'
+                    ),
+                relationship: 'emailMessages'
+            )
+            ->email()
+            ->deliverNow()
+            ->create(),
+        EngagementDisplayStatus::Sent,
     ],
 ]);

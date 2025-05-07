@@ -103,29 +103,31 @@ enum EngagementDisplayStatus implements HasLabel, HasColor
         // TODO: this can probably be improved to reduce the number of queries
         $events = $engagement->latestEmailMessage?->events()->orderBy('occurred_at', 'asc')->get();
 
-        $events?->each(fn ($event) => match ($event->type) {
-            // This is needed due to a bug where sometimes the Dispatched event isn't saved
-            // until some of the other external events have already come in
-            EmailMessageEventType::Dispatched => $status = ($status === self::Pending) ? self::Pending : $status,
+        $events?->each(function ($event) use (&$status) {
+            match ($event->type) {
+                // This is needed due to a bug where sometimes the Dispatched event isn't saved
+                // until some of the other external events have already come in
+                EmailMessageEventType::Dispatched => $status = ($status === self::Pending) ? self::Pending : $status,
 
-            EmailMessageEventType::FailedDispatch => $status = self::Failed,
-            EmailMessageEventType::RateLimited => $status = self::Failed,
+                EmailMessageEventType::FailedDispatch => $status = self::Failed,
+                EmailMessageEventType::RateLimited => $status = self::Failed,
 
-            // We will consider the message "delivered" if blocked by demo mode
-            // for visual demo purposes
-            EmailMessageEventType::BlockedByDemoMode => $status = self::Delivered,
+                // We will consider the message "delivered" if blocked by demo mode
+                // for visual demo purposes
+                EmailMessageEventType::BlockedByDemoMode => $status = self::Delivered,
 
-            EmailMessageEventType::Bounce => $status = self::Bounced,
-            EmailMessageEventType::Complaint => $status = self::Complaint,
-            EmailMessageEventType::Delivery => $status = self::Delivered,
-            EmailMessageEventType::Send => $status = self::Sent,
-            EmailMessageEventType::Reject => $status = self::Failed,
-            // @phpstan-ignore identical.alwaysFalse (This is not actually an error because PHPStan doesn't realized the loop can affect the status here.)
-            EmailMessageEventType::Open => $status = ($status === self::Clicked) ? self::Clicked : self::Read,
-            EmailMessageEventType::Click => $status = self::Clicked,
-            EmailMessageEventType::RenderingFailure => $status = self::Failed,
-            EmailMessageEventType::Subscription => $status = self::Unsubscribed,
-            EmailMessageEventType::DeliveryDelay => $status = self::Delayed,
+                EmailMessageEventType::Bounce => $status = self::Bounced,
+                EmailMessageEventType::Complaint => $status = self::Complaint,
+                EmailMessageEventType::Delivery => $status = self::Delivered,
+                EmailMessageEventType::Send => $status = self::Sent,
+                EmailMessageEventType::Reject => $status = self::Failed,
+                // @phpstan-ignore identical.alwaysFalse (This is not actually an error because PHPStan doesn't realized the loop can affect the status here.)
+                EmailMessageEventType::Open => $status = ($status === self::Clicked) ? self::Clicked : self::Read,
+                EmailMessageEventType::Click => $status = self::Clicked,
+                EmailMessageEventType::RenderingFailure => $status = self::Failed,
+                EmailMessageEventType::Subscription => $status = self::Unsubscribed,
+                EmailMessageEventType::DeliveryDelay => $status = self::Delayed,
+            };
         });
 
         return $status;
