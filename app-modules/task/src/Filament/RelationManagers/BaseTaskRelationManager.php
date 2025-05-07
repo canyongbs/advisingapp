@@ -107,14 +107,16 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
                     ->limit(50),
                 TextColumn::make('status')
                     ->formatStateUsing(fn (TaskStatus $state): string => str($state->value)->title()->headline())
-                    ->badge(),
+                    ->badge()
+                    ->sortable(),
                 TextColumn::make('due')
                     ->label('Due Date')
                     ->dateTime()
                     ->sortable(),
                 TextColumn::make('assignedTo.name')
                     ->label('Assigned To')
-                    ->url(fn (Task $record) => $record->assignedTo ? UserResource::getUrl('view', ['record' => $record->assignedTo]) : null),
+                    ->url(fn (Task $record) => $record->assignedTo ? UserResource::getUrl('view', ['record' => $record->assignedTo]) : null)
+                    ->sortable(),
                 TextColumn::make('concern.full_name')
                     ->label('Related To')
                     ->url(fn (Task $record) => match ($record->concern ? $record->concern::class : null) {
