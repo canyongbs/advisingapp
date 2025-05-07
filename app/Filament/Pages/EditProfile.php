@@ -238,18 +238,18 @@ class EditProfile extends Page
                             ->hidden(! $user->team?->division()->exists())
                             ->live(),
                     ]),
-                    Section::make('Artificial Intelligence')
+                Section::make('Artificial Intelligence')
                     ->description("Update your account's information.")
                     ->aside()
                     ->schema([
                         Select::make('is_submit_ai_chat_on_enter_enabled')
-                        ->default(false)
-                        ->label('Enter')
-                        ->hint('Decide below if you would prefer the enter key to create a new line or submit the prompt you typed in the AI chat interface.')
-                        ->options([
-                            false => 'New Line',
-                            true => 'Enter',
-                        ])
+                            ->default(false)
+                            ->label('Enter')
+                            ->hint('Decide below if you would prefer the enter key to create a new line or submit the prompt you typed in the AI chat interface.')
+                            ->options([
+                                false => 'New Line',
+                                true => 'Enter',
+                            ]),
                     ]),
                 Section::make('Account Information')
                     ->description("Update your account's information.")
