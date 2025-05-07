@@ -333,4 +333,69 @@ it('returns the correct case given a particular Engagement', function (Engagemen
             ->create(),
         EngagementDisplayStatus::Clicked,
     ],
+    'email | dispatched, RenderingFailure' => [
+        fn () => Engagement::factory()
+            ->has(
+                EmailMessage::factory()
+                    ->has(
+                        EmailMessageEvent::factory()
+                            ->count(2)
+                            ->sequence(
+                                ['type' => EmailMessageEventType::Dispatched],
+                                ['type' => EmailMessageEventType::RenderingFailure],
+                            ),
+                        'events'
+                    ),
+                'latestEmailMessage'
+            )
+            ->email()
+            ->deliverNow()
+            ->create(),
+        EngagementDisplayStatus::Failed,
+    ],
+    'email | dispatched, send, delivery, open, click, subscription' => [
+        fn () => Engagement::factory()
+            ->has(
+                EmailMessage::factory()
+                    ->has(
+                        EmailMessageEvent::factory()
+                            ->count(6)
+                            ->sequence(
+                                ['type' => EmailMessageEventType::Dispatched],
+                                ['type' => EmailMessageEventType::Send],
+                                ['type' => EmailMessageEventType::Delivery],
+                                ['type' => EmailMessageEventType::Open],
+                                ['type' => EmailMessageEventType::Click],
+                                ['type' => EmailMessageEventType::Subscription],
+                            ),
+                        'events'
+                    ),
+                'latestEmailMessage'
+            )
+            ->email()
+            ->deliverNow()
+            ->create(),
+        EngagementDisplayStatus::Unsubscribed,
+    ],
+    'email | dispatched, send, DeliveryDelay' => [
+        fn () => Engagement::factory()
+            ->has(
+                EmailMessage::factory()
+                    ->has(
+                        EmailMessageEvent::factory()
+                            ->count(3)
+                            ->sequence(
+                                ['type' => EmailMessageEventType::Dispatched],
+                                ['type' => EmailMessageEventType::Send],
+                                ['type' => EmailMessageEventType::DeliveryDelay],
+                            ),
+                        'events'
+                    ),
+                'latestEmailMessage'
+            )
+            ->email()
+            ->deliverNow()
+            ->create(),
+        EngagementDisplayStatus::Delayed,
+    ],
 ]);
