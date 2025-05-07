@@ -281,7 +281,7 @@ class ManageAiIntegrationsSettings extends SettingsPage
                             ->collapsible()
                             ->schema([
                                 TextInput::make('open_ai_gpt_41_nano_base_uri')
-                                    ->label('API Key')
+                                    ->label('API Key'),
                             ]),
                     ]),
             ]);

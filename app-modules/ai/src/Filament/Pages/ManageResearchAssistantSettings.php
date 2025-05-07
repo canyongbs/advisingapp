@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Ai\Filament\Pages;
 
-use App\Models\User;
-use Filament\Forms\Form;
-use Filament\Pages\SettingsPage;
-use Filament\Forms\Components\Textarea;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use App\Filament\Clusters\GlobalArtificialIntelligence;
+use App\Models\User;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Form;
+use Filament\Pages\SettingsPage;
 
 class ManageResearchAssistantSettings extends SettingsPage
 {
@@ -69,7 +69,7 @@ class ManageResearchAssistantSettings extends SettingsPage
             ->schema([
                 Textarea::make('Institutional Context')
                     ->rows(10)
-                    ->label('Institutional Context')
+                    ->label('Institutional Context'),
             ])
             ->columns(1);
     }
