@@ -282,11 +282,11 @@ class ManageAiIntegrationsSettings extends SettingsPage
                         ->collapsible()
                         ->schema([
                             Section::make('Jina DeepSearch')
-                            ->collapsible()
-                            ->schema([
-                                TextInput::make('jina_deepsearch_ai_api_key')
-                                    ->label('API Key'),
-                            ]),
+                                ->collapsible()
+                                ->schema([
+                                    TextInput::make('jina_deepsearch_ai_api_key')
+                                        ->label('API Key'),
+                                ]),
                     ]),
             ]);
     }
