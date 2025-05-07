@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Enums\AiApplication;
+use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Jobs\EmailAiThread;
 use AdvisingApp\Ai\Models\AiAssistant;
@@ -52,7 +52,7 @@ it('can send a notification containing a thread transcript', function () {
     $recipient = User::factory()->licensed(LicenseType::cases())->create();
 
     $assistant = AiAssistant::factory()->create([
-        'application' => AiApplication::Test,
+        'application' => AiAssistantApplication::Test,
         'is_default' => true,
         'model' => AiModel::Test,
     ]);

@@ -56,9 +56,4 @@ class AiSettings extends Settings
     {
         return 'ai';
     }
-
-    public function getDefaultModel(): AiModel
-    {
-        return $this->default_model ?? AiModel::OpenAiGpt35;
-    }
 }

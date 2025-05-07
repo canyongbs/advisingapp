@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Ai\Actions;
 
-use AdvisingApp\Ai\Enums\AiApplication;
+use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Settings\AiSettings;
@@ -44,7 +44,7 @@ use App\Models\Tenant;
 
 class CreateThread
 {
-    public function __invoke(AiApplication $application, ?AiAssistant $assistant = null): AiThread
+    public function __invoke(AiAssistantApplication $application, ?AiAssistant $assistant = null): AiThread
     {
         $assistant ??= $this->getDefaultAiAssistant($application);
 
@@ -69,7 +69,7 @@ class CreateThread
         return $thread;
     }
 
-    protected function getDefaultAiAssistant(AiApplication $application): AiAssistant
+    protected function getDefaultAiAssistant(AiAssistantApplication $application): AiAssistant
     {
         $assistant = AiAssistant::query()
             ->where('application', $application)
@@ -85,7 +85,7 @@ class CreateThread
 
         $assistant = new AiAssistant();
 
-        if ($application === AiApplication::PersonalAssistant) {
+        if ($application === AiAssistantApplication::PersonalAssistant) {
             $assistant->name = 'Institutional Advisor';
             $assistant->description = 'Using the most powerful models available, the primary Institutional Assistant has robust general intelligence, and is designed to serve your college or university.';
         } else {

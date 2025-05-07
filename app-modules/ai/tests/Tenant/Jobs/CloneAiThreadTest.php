@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Enums\AiApplication;
+use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Jobs\CloneAiThread;
 use AdvisingApp\Ai\Models\AiAssistant;
@@ -55,7 +55,7 @@ it('can clone a thread and its messages', function () {
     expect($recipient->aiThreads)->toHaveCount(0);
 
     $assistant = AiAssistant::factory()->create([
-        'application' => AiApplication::Test,
+        'application' => AiAssistantApplication::Test,
         'is_default' => true,
         'model' => AiModel::Test,
     ]);
@@ -63,7 +63,7 @@ it('can clone a thread and its messages', function () {
     $folder = AiThreadFolder::factory()
         ->for($sender, 'user')
         ->create([
-            'application' => AiApplication::PersonalAssistant,
+            'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
     $thread = AiThread::factory()

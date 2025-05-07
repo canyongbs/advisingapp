@@ -91,6 +91,29 @@ enum AiModel: string implements HasLabel
     }
 
     /**
+     * @return array<AiModelApplicabilityFeature>
+     */
+    public function getApplicableFeatures(): array
+    {
+        $aiIntegrationSettings = app(AiIntegrationsSettings::class);
+
+        $features = match ($this) {
+            self::OpenAiGpt35 => $aiIntegrationSettings->open_ai_gpt_35_applicable_features,
+            self::OpenAiGpt4 => $aiIntegrationSettings->open_ai_gpt_4_applicable_features,
+            self::OpenAiGpt4o => $aiIntegrationSettings->open_ai_gpt_4o_applicable_features,
+            self::OpenAiGpt4oMini => $aiIntegrationSettings->open_ai_gpt_4o_mini_applicable_features,
+            self::OpenAiGptO1Mini => $aiIntegrationSettings->open_ai_gpt_o1_mini_applicable_features,
+            self::OpenAiGptO3Mini => $aiIntegrationSettings->open_ai_gpt_o3_mini_applicable_features,
+            self::OpenAiGpt41Mini => $aiIntegrationSettings->open_ai_gpt_41_mini_applicable_features,
+            self::OpenAiGpt41Nano => $aiIntegrationSettings->open_ai_gpt_41_nano_applicable_features,
+            self::OpenAiGptTest => app()->hasDebugModeEnabled() ? AiModelApplicabilityFeature::cases() : [],
+            self::Test => app()->hasDebugModeEnabled() ? AiModelApplicabilityFeature::cases() : [],
+        };
+
+        return array_map(AiModelApplicabilityFeature::parse(...), $features);
+    }
+
+    /**
      * @return class-string<AiService>
      */
     public function getServiceClass(): string
@@ -109,23 +132,6 @@ enum AiModel: string implements HasLabel
         };
     }
 
-    public static function getDefaultModels(): array
-    {
-        $models = self::cases();
-
-        if (app()->hasDebugModeEnabled()) {
-            return array_filter(
-                $models,
-                fn (AiModel $model): bool => $model !== self::OpenAiGptTest,
-            );
-        }
-
-        return array_filter(
-            $models,
-            fn (AiModel $model): bool => ! in_array($model, [self::Test, self::OpenAiGptTest]),
-        );
-    }
-
     public function getService(): AiService
     {
         $service = $this->getServiceClass();
@@ -133,16 +139,6 @@ enum AiModel: string implements HasLabel
         app()->scopedIf($service);
 
         return app($service);
-    }
-
-    public function isVisibleForApplication(AiApplication $aiApplication): bool
-    {
-        return match ($this) {
-            self::OpenAiGpt35, self::OpenAiGpt4o, self::OpenAiGpt4oMini, self::OpenAiGptO1Mini, self::OpenAiGptO3Mini, self::OpenAiGpt41Mini, self::OpenAiGpt41Nano => $aiApplication === AiApplication::PersonalAssistant,
-            self::OpenAiGpt4 => false,
-            self::OpenAiGptTest => false,
-            self::Test => true,
-        };
     }
 
     public function supportsAssistantFileUploads(): bool

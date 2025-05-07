@@ -35,7 +35,7 @@
 */
 
 use AdvisingApp\Ai\Actions\SendMessage;
-use AdvisingApp\Ai\Enums\AiApplication;
+use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
 use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
@@ -53,7 +53,7 @@ it('sends a message', function () {
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
-        'application' => AiApplication::Test,
+        'application' => AiAssistantApplication::Test,
         'is_default' => true,
         'model' => AiModel::Test,
     ]);
@@ -99,7 +99,7 @@ it('sends a message with a file', function () {
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
-        'application' => AiApplication::Test,
+        'application' => AiAssistantApplication::Test,
         'is_default' => true,
         'model' => AiModel::Test,
     ]);
@@ -162,7 +162,7 @@ it('throws an exception if the assistant is archived', function () {
 
     $thread = AiThread::factory()
         ->for(AiAssistant::factory()->state([
-            'application' => AiApplication::Test,
+            'application' => AiAssistantApplication::Test,
             'archived_at' => now(),
             'model' => AiModel::Test,
         ]), 'assistant')
@@ -180,7 +180,7 @@ it('dispatches tracking for AiExchange for both sent message and response', func
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
-        'application' => AiApplication::Test,
+        'application' => AiAssistantApplication::Test,
         'is_default' => true,
         'model' => AiModel::Test,
     ]);

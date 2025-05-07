@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Ai\Actions;
 
-use AdvisingApp\Ai\Enums\AiFeature;
+use AdvisingApp\Ai\Enums\AiMessageLogFeature;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Models\LegacyAiMessageLog;
 use Illuminate\Support\Arr;
@@ -65,7 +65,7 @@ class CompletePrompt
             'sent_at' => now(),
             'user_id' => auth()->id(),
             'ai_assistant_name' => 'Institutional Advisor',
-            'feature' => AiFeature::DraftWithAi,
+            'feature' => AiMessageLogFeature::DraftWithAi,
         ]);
 
         return $completion;

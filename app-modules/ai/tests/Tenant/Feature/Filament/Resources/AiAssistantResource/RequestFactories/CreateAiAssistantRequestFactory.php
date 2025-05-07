@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Ai\Tests\Tenant\Feature\Filament\Resources\AiAssistantResource\RequestFactories;
 
-use AdvisingApp\Ai\Enums\AiApplication;
+use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiModel;
 use Illuminate\Http\UploadedFile;
 use Worksome\RequestFactories\RequestFactory;
@@ -48,7 +48,7 @@ class CreateAiAssistantRequestFactory extends RequestFactory
         return [
             'avatar' => UploadedFile::fake()->image(fake()->word . '.png'),
             'name' => fake()->word(),
-            'application' => AiApplication::PersonalAssistant,
+            'application' => AiAssistantApplication::PersonalAssistant,
             'model' => AiModel::Test,
             'description' => fake()->sentence(),
             'instructions' => fake()->sentence(),

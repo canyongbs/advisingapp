@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Ai\Filament\Pages;
 
-use AdvisingApp\Ai\Enums\AiModel;
+use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
 use AdvisingApp\Authorization\Enums\LicenseType;
@@ -77,9 +77,7 @@ class ManageAiIntegratedAssistantSettings extends SettingsPage
         return $form
             ->schema([
                 Select::make('default_model')
-                    ->options(collect(AiModel::getDefaultModels())
-                        ->mapWithKeys(fn (AiModel $model): array => [$model->value => $model->getLabel()])
-                        ->all())
+                    ->options(AiModelApplicabilityFeature::IntegratedAdvisor->getModelsAsSelectOptions())
                     ->searchable()
                     ->helperText('Used for general purposes like generating content when an assistant is not being used.')
                     ->required(),

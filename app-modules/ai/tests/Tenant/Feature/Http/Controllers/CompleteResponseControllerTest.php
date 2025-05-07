@@ -35,7 +35,7 @@
 */
 
 use AdvisingApp\Ai\Actions\CompleteResponse;
-use AdvisingApp\Ai\Enums\AiApplication;
+use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
 use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
@@ -65,7 +65,7 @@ it('completes the last response in a thread', function () {
 
     $thread = AiThread::factory()
         ->for(AiAssistant::factory()->create([
-            'application' => AiApplication::Test,
+            'application' => AiAssistantApplication::Test,
             'is_default' => true,
             'model' => AiModel::Test,
         ]), 'assistant')
@@ -90,7 +90,7 @@ it('returns a message if the assistant fails', function () {
 
     $thread = AiThread::factory()
         ->for(AiAssistant::factory()->create([
-            'application' => AiApplication::Test,
+            'application' => AiAssistantApplication::Test,
             'is_default' => true,
             'model' => AiModel::Test,
         ]), 'assistant')
@@ -119,7 +119,7 @@ it('returns a message if the thread is locked', function () {
 
     $thread = AiThread::factory()
         ->for(AiAssistant::factory()->create([
-            'application' => AiApplication::Test,
+            'application' => AiAssistantApplication::Test,
             'is_default' => true,
             'model' => AiModel::Test,
         ]), 'assistant')
@@ -149,7 +149,7 @@ it('returns a message if the assistant is archived', function () {
 
     $thread = AiThread::factory()
         ->for(AiAssistant::factory()->create([
-            'application' => AiApplication::Test,
+            'application' => AiAssistantApplication::Test,
             'is_default' => true,
             'model' => AiModel::Test,
         ]), 'assistant')
@@ -168,7 +168,7 @@ it('prevents users who do not own the thread from completing the latest assistan
 
     $thread = AiThread::factory()
         ->for(AiAssistant::factory()->create([
-            'application' => AiApplication::Test,
+            'application' => AiAssistantApplication::Test,
             'is_default' => true,
             'model' => AiModel::Test,
         ]), 'assistant')

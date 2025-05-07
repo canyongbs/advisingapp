@@ -36,74 +36,56 @@
 
 namespace AdvisingApp\Ai\Enums;
 
-use AdvisingApp\Ai\Settings\AiSettings;
 use Filament\Support\Contracts\HasLabel;
 
-enum AiApplication: string implements HasLabel
+enum AiModelApplicabilityFeature: string implements HasLabel
 {
-    case PersonalAssistant = 'personal_assistant';
+    case InstitutionalAdvisor = 'institutional_advisor';
 
-    case Test = 'test';
+    case CustomAdvisors = 'custom_advisors';
+
+    case ResearchAdvisor = 'research_advisor';
+
+    case QuestionAndAnswerAdvisor = 'question_and_answer_advisor';
+
+    case IntegratedAdvisor = 'integrated_advisor';
 
     public function getLabel(): string
     {
         return match ($this) {
-            self::PersonalAssistant => 'Personal Assistant',
-            self::Test => 'Test',
+            self::InstitutionalAdvisor => 'Institutional Advisor',
+            self::CustomAdvisors => 'Custom Advisors',
+            self::ResearchAdvisor => 'Research Advisor',
+            self::QuestionAndAnswerAdvisor => 'QnA Advisor',
+            self::IntegratedAdvisor => 'Integrated Advisor',
         };
     }
 
-    public static function getDefault(): self
-    {
-        return self::PersonalAssistant;
-    }
-
-    public function getCustomAssistantModels(): array
-    {
-        return [
-            ...match ($this) {
-                self::PersonalAssistant => [
-                    AiModel::OpenAiGpt35,
-                    AiModel::OpenAiGpt4o,
-                    AiModel::OpenAiGpt4oMini,
-                ],
-                self::Test => [
-                    AiModel::OpenAiGptTest,
-                ],
-            },
-            ...(app()->hasDebugModeEnabled() ? [AiModel::Test] : []),
-        ];
-    }
-
+    /**
+     * @return array<AiModel>
+     */
     public function getModels(): array
     {
-        return [
-            ...match ($this) {
-                self::PersonalAssistant => [
-                    AiModel::OpenAiGpt35,
-                    AiModel::OpenAiGpt4o,
-                    AiModel::OpenAiGpt4oMini,
-                    AiModel::OpenAiGptO1Mini,
-                    AiModel::OpenAiGptO3Mini,
-                    AiModel::OpenAiGpt41Mini,
-                    AiModel::OpenAiGpt41Nano,
-                ],
-                self::Test => [
-                    AiModel::OpenAiGptTest,
-                ],
-            },
-            ...(app()->hasDebugModeEnabled() ? [AiModel::Test] : []),
-        ];
+        return array_filter(
+            AiModel::cases(),
+            fn (AiModel $model): bool => in_array($this, $model->getApplicableFeatures()),
+        );
     }
 
-    public function getDefaultModel(): AiModel
+    /**
+     * @return array<string, string>
+     */
+    public function getModelsAsSelectOptions(): array
     {
-        $settings = app(AiSettings::class);
+        return array_reduce(
+            $this->getModels(),
+            function (array $carry, AiModel $model): array {
+                $carry[$model->value] = $model->getLabel();
 
-        return $settings->default_model ?? match ($this) {
-            self::PersonalAssistant => AiModel::OpenAiGpt4o,
-            self::Test => AiModel::Test,
-        };
+                return $carry;
+            },
+            initial: [],
+        );
     }
 
     public static function parse(string | self | null $value): ?self
