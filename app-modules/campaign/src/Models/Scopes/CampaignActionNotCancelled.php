@@ -46,6 +46,6 @@ class CampaignActionNotCancelled
      */
     public function __invoke(Builder $query): void
     {
-          $query->whereNull('cancelled_at');
+        $query->whereNull('cancelled_at');
     }
 }
