@@ -157,6 +157,8 @@ class AiIntegrationsSettings extends Settings
      */
     public array $open_ai_gpt_o4_mini_applicable_features = [];
 
+    public ?string $jina_deepsearch_ai_api_key = null;
+
     public static function group(): string
     {
         return 'ai';
@@ -192,6 +194,7 @@ class AiIntegrationsSettings extends Settings
             'open_ai_gpt_o4_mini_base_uri',
             'open_ai_gpt_o4_mini_api_key',
             'open_ai_gpt_o4_mini_model',
+            'jina_deepsearch_ai_api_key',
         ];
     }
 }

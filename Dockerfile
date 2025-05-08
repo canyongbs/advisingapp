@@ -201,11 +201,13 @@ RUN chown -R "$PUID":"$PGID" /var/www/html \
 
 FROM web-base AS web-deploy
 
-COPY --chown=$PUID:$PGID . /var/www/html
+COPY . /var/www/html
+
+RUN chown -R $(id -un):$(id -gn) /var/www/html
 
 RUN npm ci --ignore-scripts \
     && rm -rf /var/www/html/vendor \
-    && composer install --no-dev --no-interaction --no-progress --no-suggest --optimize-autoloader --apcu-autoloader \
+    && composer install --no-dev --no-interaction --no-progress --optimize-autoloader --apcu-autoloader \
     && npm run build \
     && npm ci --ignore-scripts --omit=dev
 
@@ -264,11 +266,13 @@ RUN /generate-queues.sh "default" "\$SQS_QUEUE" \
 
 RUN rm /generate-queues.sh
 
-COPY --chown=$PUID:$PGID . /var/www/html
+COPY . /var/www/html
+
+RUN chown -R $(id -un):$(id -gn) /var/www/html
 
 RUN npm ci --ignore-scripts \
     && rm -rf /var/www/html/vendor \
-    && composer install --no-dev --no-interaction --no-progress --no-suggest --optimize-autoloader --apcu-autoloader \
+    && composer install --no-dev --no-interaction --no-progress --optimize-autoloader --apcu-autoloader \
     && npm run build:vite \
     && npm ci --ignore-scripts --omit=dev
 
@@ -306,11 +310,13 @@ RUN chown -R "$PUID":"$PGID" /var/www/html \
 
 FROM scheduler-base AS scheduler-deploy
 
-COPY --chown=$PUID:$PGID . /var/www/html
+COPY . /var/www/html
+
+RUN chown -R $(id -un):$(id -gn) /var/www/html
 
 RUN npm ci --ignore-scripts \
     && rm -rf /var/www/html/vendor \
-    && composer install --no-dev --no-interaction --no-progress --no-suggest --optimize-autoloader --apcu-autoloader \
+    && composer install --no-dev --no-interaction --no-progress --optimize-autoloader --apcu-autoloader \
     && npm run build:vite \
     && npm ci --ignore-scripts --omit=dev
 
@@ -325,10 +331,12 @@ FROM base AS release-automation
 
 COPY --chmod=755 ./docker/release-automation/s6-overlay/ /etc/s6-overlay/
 
-COPY --chown=$PUID:$PGID . /var/www/html
+COPY . /var/www/html
+
+RUN chown -R $(id -un):$(id -gn) /var/www/html
 
 RUN rm -rf /var/www/html/vendor \
-    && composer install --no-dev --no-interaction --no-progress --no-suggest --optimize-autoloader --apcu-autoloader
+    && composer install --no-dev --no-interaction --no-progress --optimize-autoloader --apcu-autoloader
 
 RUN chown -R "$PUID":"$PGID" /var/www/html \
     && chgrp "$PGID" /var/www/html/storage/logs \
