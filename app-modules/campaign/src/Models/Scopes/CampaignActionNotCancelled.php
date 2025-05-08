@@ -37,7 +37,6 @@
 namespace AdvisingApp\Campaign\Models\Scopes;
 
 use AdvisingApp\Campaign\Models\CampaignAction;
-use App\Features\CancelCampaignAction;
 use Illuminate\Database\Eloquent\Builder;
 
 class CampaignActionNotCancelled
@@ -47,8 +46,6 @@ class CampaignActionNotCancelled
      */
     public function __invoke(Builder $query): void
     {
-        if (CancelCampaignAction::active()) {
-            $query->whereNull('cancelled_at');
-        }
+          $query->whereNull('cancelled_at');
     }
 }
