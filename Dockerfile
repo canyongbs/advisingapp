@@ -205,7 +205,7 @@ COPY --chown=$PUID:$PGID . /var/www/html
 
 RUN npm ci --ignore-scripts \
     && rm -rf /var/www/html/vendor \
-    && composer install --no-dev --no-interaction --no-progress --no-suggest --optimize-autoloader --apcu-autoloader \
+    && composer install --no-dev --no-interaction --no-progress --optimize-autoloader --apcu-autoloader \
     && npm run build \
     && npm ci --ignore-scripts --omit=dev
 
@@ -268,7 +268,7 @@ COPY --chown=$PUID:$PGID . /var/www/html
 
 RUN npm ci --ignore-scripts \
     && rm -rf /var/www/html/vendor \
-    && composer install --no-dev --no-interaction --no-progress --no-suggest --optimize-autoloader --apcu-autoloader \
+    && composer install --no-dev --no-interaction --no-progress --optimize-autoloader --apcu-autoloader \
     && npm run build:vite \
     && npm ci --ignore-scripts --omit=dev
 
@@ -310,7 +310,7 @@ COPY --chown=$PUID:$PGID . /var/www/html
 
 RUN npm ci --ignore-scripts \
     && rm -rf /var/www/html/vendor \
-    && composer install --no-dev --no-interaction --no-progress --no-suggest --optimize-autoloader --apcu-autoloader \
+    && composer install --no-dev --no-interaction --no-progress --optimize-autoloader --apcu-autoloader \
     && npm run build:vite \
     && npm ci --ignore-scripts --omit=dev
 
@@ -328,7 +328,7 @@ COPY --chmod=755 ./docker/release-automation/s6-overlay/ /etc/s6-overlay/
 COPY --chown=$PUID:$PGID . /var/www/html
 
 RUN rm -rf /var/www/html/vendor \
-    && composer install --no-dev --no-interaction --no-progress --no-suggest --optimize-autoloader --apcu-autoloader
+    && composer install --no-dev --no-interaction --no-progress --optimize-autoloader --apcu-autoloader
 
 RUN chown -R "$PUID":"$PGID" /var/www/html \
     && chgrp "$PGID" /var/www/html/storage/logs \
