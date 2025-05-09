@@ -39,7 +39,6 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concerns\HasStudentHeader;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\StudentGender;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
@@ -127,8 +126,7 @@ class EditStudent extends EditRecord
                             ->numeric(),
                         TextInput::make('gender')
                             ->nullable()
-                            ->maxLength(255)
-                            ->visible(StudentGender::active()),
+                            ->maxLength(255),
                     ])
                     ->columns(3),
                 Section::make('Contact Information')
