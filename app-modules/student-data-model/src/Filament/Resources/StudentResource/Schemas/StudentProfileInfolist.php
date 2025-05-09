@@ -97,11 +97,11 @@ class StudentProfileInfolist
                                 ))
                                 ->listWithLineBreaks()
                                 ->visible(fn (?array $state): bool => filled($state)),
+                        ]),
+                        Subsection::make([
                             TextEntry::make('gender')
                                 ->placeholder('-')
                                 ->visible(StudentGender::active()),
-                        ]),
-                        Subsection::make([
                             TextEntry::make('ethnicity')
                                 ->placeholder('-'),
                             TextEntry::make('birthdate')

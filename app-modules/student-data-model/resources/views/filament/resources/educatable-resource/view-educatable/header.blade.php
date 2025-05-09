@@ -63,7 +63,7 @@
                         <div
                             class="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm font-medium text-gray-600 dark:text-gray-400 lg:gap-x-6 lg:gap-y-2">
                             @foreach ($details as [$detail, $detailIcon])
-                                 @if ($detail instanceof StudentPhoneNumber || $detail instanceof ProspectPhoneNumber)
+                                @if ($detail instanceof StudentPhoneNumber || $detail instanceof ProspectPhoneNumber)
                                     @include(
                                         'student-data-model::components.filament.resources.educatable-resource.view-educatable.phone-number-detail',
                                         ['phoneNumber' => $detail]

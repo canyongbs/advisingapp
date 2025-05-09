@@ -41,7 +41,6 @@ use AdvisingApp\Campaign\Filament\Blocks\CampaignActionBlock;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
-use App\Features\CancelCampaignAction;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\TextInput;
@@ -91,7 +90,7 @@ class CampaignActionsRelationManager extends RelationManager
                     ->label('')
                     ->formatStateUsing(fn () => 'Cancelled')
                     ->color('danger')
-                    ->hidden(fn (?CampaignAction $record) => ! CancelCampaignAction::active() || $record?->cancelled_at !== null)
+                    ->hidden(fn (?CampaignAction $record) => $record?->cancelled_at !== null)
                     ->badge(),
                 TextColumn::make('execute_at')->label('Schedule')
                     ->dateTime(timezone: app(CampaignSettings::class)->getActionExecutionTimezone()),
@@ -136,7 +135,7 @@ class CampaignActionsRelationManager extends RelationManager
                     ->modalDescription('Are you sure you wish to cancel this journey step? This action cannot be reversed.')
                     ->modalSubmitActionLabel('Cancel Step')
                     ->modalCancelActionLabel('Go Back')
-                    ->hidden(fn (CampaignAction $record) => ! CancelCampaignAction::active() || $record->cancelled_at !== null || $record->hasBeenExecuted())
+                    ->hidden(fn (CampaignAction $record) => $record->cancelled_at !== null || $record->hasBeenExecuted())
                     ->action(function ($record) {
                         $record->cancelled_at = now();
                         $record->save();
@@ -149,10 +148,10 @@ class CampaignActionsRelationManager extends RelationManager
                     }),
                 EditAction::make()
                     ->modalHeading(fn (CampaignAction $action) => 'Edit ' . $action->type->getLabel())
-                    ->hidden(fn (CampaignAction $record) => $campaign->hasBeenExecuted() === true || ! CancelCampaignAction::active() || $record->cancelled_at !== null),
+                    ->hidden(fn (CampaignAction $record) => $campaign->hasBeenExecuted() === true || $record->cancelled_at !== null),
                 DeleteAction::make()
                     ->modalHeading(fn (CampaignAction $action) => 'Delete ' . $action->type->getLabel())
-                    ->hidden(fn (CampaignAction $record) => $campaign->hasBeenExecuted() === true || ! CancelCampaignAction::active() || $record->cancelled_at !== null),
+                    ->hidden(fn (CampaignAction $record) => $campaign->hasBeenExecuted() === true || $record->cancelled_at !== null),
             ])
             ->bulkActions([
                 BulkActionGroup::make([

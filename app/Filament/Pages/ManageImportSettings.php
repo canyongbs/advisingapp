@@ -36,7 +36,6 @@
 
 namespace App\Filament\Pages;
 
-use App\Features\ImportSettingsFeature;
 use App\Filament\Clusters\ProductIntegrations;
 use App\Models\User;
 use App\Settings\ImportSettings;
@@ -60,7 +59,7 @@ class ManageImportSettings extends SettingsPage
         /** @var User $user */
         $user = auth()->user();
 
-        return ImportSettingsFeature::active() && $user->isSuperAdmin();
+        return $user->isSuperAdmin();
     }
 
     public function form(Form $form): Form

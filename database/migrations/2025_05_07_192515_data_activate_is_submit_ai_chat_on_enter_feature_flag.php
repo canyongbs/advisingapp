@@ -34,17 +34,17 @@
 </COPYRIGHT>
 */
 
-use App\Features\GPTO4MiniFeature;
+use App\Features\SubmitAiChatOnEnterFlag;
 use Illuminate\Database\Migrations\Migration;
 
 return new class () extends Migration {
     public function up(): void
     {
-        GPTO4MiniFeature::activate();
+        SubmitAiChatOnEnterFlag::activate();
     }
 
     public function down(): void
     {
-        GPTO4MiniFeature::deactivate();
+        SubmitAiChatOnEnterFlag::deactivate();
     }
 };
