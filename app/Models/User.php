@@ -158,6 +158,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'password_last_updated_at' => 'datetime',
         'is_signature_enabled' => 'boolean',
         'signature' => 'array',
+        'is_submit_ai_chat_on_enter_enabled' => 'boolean',
     ];
 
     protected $fillable = [
@@ -199,6 +200,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'password_last_updated_at',
         'is_signature_enabled',
         'signature',
+        'is_submit_ai_chat_on_enter_enabled',
     ];
 
     /** @var array<int, string> */
