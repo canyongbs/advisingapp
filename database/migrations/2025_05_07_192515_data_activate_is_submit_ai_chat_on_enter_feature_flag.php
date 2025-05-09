@@ -34,14 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+use App\Features\SubmitAiChatOnEnterFlag;
+use Illuminate\Database\Migrations\Migration;
 
-use App\Support\AbstractFeatureFlag;
-
-class GPTO4MiniFeature extends AbstractFeatureFlag
-{
-    public function resolve(mixed $scope): mixed
+return new class () extends Migration {
+    public function up(): void
     {
-        return false;
+        SubmitAiChatOnEnterFlag::activate();
     }
-}
+
+    public function down(): void
+    {
+        SubmitAiChatOnEnterFlag::deactivate();
+    }
+};

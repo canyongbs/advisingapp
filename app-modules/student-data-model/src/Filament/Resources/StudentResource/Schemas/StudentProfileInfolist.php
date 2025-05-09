@@ -81,9 +81,6 @@ class StudentProfileInfolist
                                 ))
                                 ->listWithLineBreaks()
                                 ->visible(fn (?array $state): bool => filled($state)),
-                            TextEntry::make('gender')
-                                ->placeholder('-')
-                                ->visible(StudentGender::active()),
                             TextEntry::make('additionalPhoneNumbers')
                                 ->label(fn (?array $state): string => Str::plural('Other phone number', count($state ?? [])))
                                 ->state(fn (Student $record): array => array_map(
@@ -94,6 +91,9 @@ class StudentProfileInfolist
                                 ->visible(fn (?array $state): bool => filled($state)),
                         ]),
                         Subsection::make([
+                            TextEntry::make('gender')
+                                ->placeholder('-')
+                                ->visible(StudentGender::active()),
                             TextEntry::make('ethnicity')
                                 ->placeholder('-'),
                             TextEntry::make('birthdate')
