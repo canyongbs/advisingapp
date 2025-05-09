@@ -48,7 +48,6 @@ use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use App\Features\RefactorEngagementCampaignSubjectToJsonb;
-use App\Features\RoutedEngagements;
 use Filament\Actions\StaticAction;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action as FormComponentAction;
@@ -136,7 +135,6 @@ class RelationManagerSendEngagementAction extends CreateAction
                                     ->all(),
                             })
                             ->default(fn (): ?string => $livewire->getOwnerRecord()->primaryEmailAddress?->getKey())
-                            ->visible(RoutedEngagements::active())
                             ->required(),
                     ]),
                 Fieldset::make('Content')

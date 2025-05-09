@@ -39,7 +39,6 @@ namespace AdvisingApp\Engagement\Actions;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Notifications\EngagementNotification;
-use App\Features\RoutedEngagements;
 use Illuminate\Support\Facades\DB;
 
 class CreateEngagement
@@ -53,9 +52,7 @@ class CreateEngagement
         $engagement->subject = $data->subject;
         $engagement->scheduled_at = $data->scheduledAt;
 
-        if (RoutedEngagements::active()) {
-            $engagement->recipient_route = $data->recipientRoute;
-        }
+        $engagement->recipient_route = $data->recipientRoute;
 
         if (! $engagement->scheduled_at) {
             $engagement->dispatched_at = now();
