@@ -94,7 +94,7 @@
                 prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl prose-h4:text-lg prose-h5:text-base prose-h6:text-sm
                 prose-h1:font-bold prose-h5:font-medium prose-h6:font-medium
                 prose-h5:text-[--tw-prose-headings] prose-h6:text-[--tw-prose-headings]
-                prose-hr:mt-4 prose-hr:mb-4
+                prose-hr:my-4
                 dark:prose-invert"
                         >
                 {{ $record->getBody() }}
