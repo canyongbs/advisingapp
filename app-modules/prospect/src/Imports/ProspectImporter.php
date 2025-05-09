@@ -39,7 +39,6 @@ namespace AdvisingApp\Prospect\Imports;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
-use App\Features\ImportSettingsFeature;
 use App\Models\User;
 use App\Settings\ImportSettings;
 use Filament\Actions\Imports\ImportColumn;
@@ -75,7 +74,7 @@ class ProspectImporter extends Importer
                 // Do not use invalid phone numbers.
             }
 
-            $defaultCountry = ImportSettingsFeature::active() ? app(ImportSettings::class)->default_country : 'us';
+            $defaultCountry = app(ImportSettings::class)->default_country;
 
             try {
                 return $phoneNumberUtil->format(
