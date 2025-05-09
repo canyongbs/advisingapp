@@ -41,7 +41,6 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentAddress;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
-use App\Features\StudentGender;
 use App\Infolists\Components\Subsection;
 use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\Section;
@@ -92,8 +91,7 @@ class StudentProfileInfolist
                         ]),
                         Subsection::make([
                             TextEntry::make('gender')
-                                ->placeholder('-')
-                                ->visible(StudentGender::active()),
+                                ->placeholder('-'),
                             TextEntry::make('ethnicity')
                                 ->placeholder('-'),
                             TextEntry::make('birthdate')
