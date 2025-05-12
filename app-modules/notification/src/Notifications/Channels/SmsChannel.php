@@ -91,7 +91,7 @@ class SmsChannel
             'content' => $message->toArray(),
             'recipient_id' => $recipientId,
             'recipient_type' => $recipientType,
-            ...(['recipient_number' => is_array($recipientNumber) ? null : $recipientNumber]),
+            'recipient_number' => is_array($recipientNumber) ? null : $recipientNumber,
         ]);
 
         if ($notification instanceof HasBeforeSendHook) {

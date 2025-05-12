@@ -89,7 +89,7 @@ class MailChannel extends BaseMailChannel
             'content' => $message->toArray(),
             'recipient_id' => $recipientId,
             'recipient_type' => $recipientType,
-            ...(['recipient_address' => is_array($recipientAddress) ? null : $recipientAddress]),
+            'recipient_address' => is_array($recipientAddress) ? null : $recipientAddress,
         ]);
 
         if ($notification instanceof HasBeforeSendHook) {
