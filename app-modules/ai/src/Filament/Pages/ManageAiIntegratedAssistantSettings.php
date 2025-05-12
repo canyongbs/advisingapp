@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\Ai\Filament\Pages;
 
+use AdvisingApp\Ai\Enums\AiModel;
+use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
-use AdvisingApp\Ai\Enums\AiModel;
-use Filament\Forms\Components\Select;
-use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
-use App\Filament\Clusters\GlobalArtificialIntelligence;
-use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
 
 /**
  * @property-read ?AiAssistant $defaultAssistant
@@ -86,15 +86,6 @@ class ManageAiIntegratedAssistantSettings extends SettingsPage
             ->disabled(! auth()->user()->isSuperAdmin());
     }
 
-    protected function mutateFormDataBeforeSave(array $data): array
-    {
-        if (filled($data['default_model'] ?? null)) {
-            $data['default_model'] = AiModel::parse($data['default_model']);
-        }
-
-        return parent::mutateFormDataBeforeSave($data);
-    }
-
     public function save(): void
     {
         if (! auth()->user()->isSuperAdmin()) {
@@ -114,5 +105,14 @@ class ManageAiIntegratedAssistantSettings extends SettingsPage
         }
 
         return parent::getFormActions();
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        if (filled($data['default_model'] ?? null)) {
+            $data['default_model'] = AiModel::parse($data['default_model']);
+        }
+
+        return parent::mutateFormDataBeforeSave($data);
     }
 }
