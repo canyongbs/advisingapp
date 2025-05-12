@@ -58,11 +58,13 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\Split;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
@@ -605,26 +607,48 @@ class EditProfile extends Page
             'friday',
             'saturday',
         ])->map(
-            fn ($day) => Grid::make()
-                ->columns([
-                    'sm' => 1,
-                    'md' => 1,
-                    'lg' => 1,
-                    'xl' => 3,
-                    '2xl' => 3,
-                ])
-                ->schema([
-                    Toggle::make("{$key}.{$day}.enabled")
-                        ->label(str($day)->ucfirst())
-                        ->inline(false)
-                        ->live(),
+            fn ($day) => Split::make([
+                Toggle::make("{$key}.{$day}.enabled")
+                    ->label(str($day)->ucfirst())
+                    ->inline(false)
+                    ->live(),
+                Split::make([
                     TimePicker::make("{$key}.{$day}.starts_at")
                         ->required()
                         ->visible(fn (Get $get) => $get("{$key}.{$day}.enabled")),
                     TimePicker::make("{$key}.{$day}.ends_at")
                         ->required()
                         ->visible(fn (Get $get) => $get("{$key}.{$day}.enabled")),
+                ]),
+
+                Actions::make([
+                    FormAction::make("copy_time_from_{$day}")
+                        ->label('Copy time to all')
+                        ->icon('heroicon-o-clipboard')
+                        ->visible(fn (Get $get) => $get("{$key}.{$day}.enabled"))
+                        ->size('sm')
+                        ->action(function (Get $get, Set $set) use ($day, $key) {
+                            $start = $get("{$key}.{$day}.starts_at");
+                            $end = $get("{$key}.{$day}.ends_at");
+
+                            collect(['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'])
+                                ->filter(fn ($targetDay) => $targetDay !== $day)
+                                ->each(function ($targetDay) use ($get, $set, $key, $start, $end) {
+                                    if ($get("{$key}.{$targetDay}.enabled") === false) {
+                                        return;
+                                    }
+                                    $set("{$key}.{$targetDay}.starts_at", $start);
+                                    $set("{$key}.{$targetDay}.ends_at", $end);
+                                });
+
+                            Notification::make()
+                                ->title('Copied time to all days')
+                                ->success()
+                                ->send();
+                        }),
                 ])
+                    ->visible(fn () => $key === 'working_hours'),
+            ])
         )->toArray();
     }
 }
