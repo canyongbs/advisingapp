@@ -2753,16 +2753,16 @@
         },
         {
             "name": "canyongbs/common",
-            "version": "1.2.0",
+            "version": "1.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/canyongbs/common.git",
-                "reference": "805f827434fefb7cbcac085ab73c44569e3179d3"
+                "reference": "d1ac8f8b1670d211b87e8f1188c4468664e3c837"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/canyongbs/common/zipball/805f827434fefb7cbcac085ab73c44569e3179d3",
-                "reference": "805f827434fefb7cbcac085ab73c44569e3179d3",
+                "url": "https://api.github.com/repos/canyongbs/common/zipball/d1ac8f8b1670d211b87e8f1188c4468664e3c837",
+                "reference": "d1ac8f8b1670d211b87e8f1188c4468664e3c837",
                 "shasum": ""
             },
             "require": {
@@ -2797,9 +2797,9 @@
             ],
             "support": {
                 "issues": "https://github.com/canyongbs/common/issues",
-                "source": "https://github.com/canyongbs/common/tree/1.2.0"
+                "source": "https://github.com/canyongbs/common/tree/1.5.0"
             },
-            "time": "2025-04-10T19:30:30+00:00"
+            "time": "2025-05-12T16:51:32+00:00"
         },
         {
             "name": "canyongbs/filament-tiptap-editor",
