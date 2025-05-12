@@ -46,7 +46,7 @@ use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiSettings;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Filament\Clusters\GlobalArtificialIntelligence;
-use App\Filament\Forms\Components\Slider;
+use CanyonGBS\Common\Filament\Forms\Components\Slider;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Section;

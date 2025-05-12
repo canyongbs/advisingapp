@@ -43,7 +43,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
 
-class ManageResearchAssistantSettings extends SettingsPage
+class ManageAiResearchAssistantSettings extends SettingsPage
 {
     protected static string $settings = AiResearchAssistantSettings::class;
 
@@ -51,7 +51,7 @@ class ManageResearchAssistantSettings extends SettingsPage
 
     protected static ?string $navigationLabel = 'Research Advisor';
 
-    protected static ?int $navigationSort = 25;
+    protected static ?int $navigationSort = 30;
 
     protected static ?string $cluster = GlobalArtificialIntelligence::class;
 
