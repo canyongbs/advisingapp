@@ -39,7 +39,6 @@ namespace AdvisingApp\Form\Filament\Resources\FormResource\Pages;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Form\Filament\Resources\FormResource;
 use AdvisingApp\Form\Models\Form;
-use App\Features\RefactorEngagementCampaignSubjectToJsonb;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
 use Filament\Forms\Components\Actions\Action;
@@ -90,15 +89,7 @@ class ManageFormEmailAutoReply extends EditRecord
                         Toggle::make('is_enabled')
                             ->label('Enabled')
                             ->live(),
-                        TextInput::make('subject')
-                            ->required(fn (Get $get) => $get('is_enabled'))
-                            ->placeholder('Subject')
-                            ->columnSpanFull()
-                            ->visible(! RefactorEngagementCampaignSubjectToJsonb::active()),
-                        /**
-                         * @todo Remove 'temp_subject' name once `RefactorEngagementCampaignSubjectToJsonb` is removed.
-                         */
-                        TiptapEditor::make(RefactorEngagementCampaignSubjectToJsonb::active() ? 'subject' : 'temp_subject')
+                        TiptapEditor::make('subject')
                             ->mergeTags([
                                 'recipient first name',
                                 'recipient last name',
@@ -111,8 +102,7 @@ class ManageFormEmailAutoReply extends EditRecord
                             ->helperText('You can insert recipient information by typing {{ and choosing a merge value to insert.')
                             ->columnSpanFull()
                             ->placeholder('Enter the email subject here...')
-                            ->showMergeTagsInBlocksPanel(false)
-                            ->visible(RefactorEngagementCampaignSubjectToJsonb::active()),
+                            ->showMergeTagsInBlocksPanel(false),
                         TiptapEditor::make('body')
                             ->disk('s3-public')
                             ->mergeTags([

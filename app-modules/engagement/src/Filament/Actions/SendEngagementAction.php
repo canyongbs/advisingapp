@@ -48,7 +48,6 @@ use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
-use App\Features\RefactorEngagementCampaignSubjectToJsonb;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\StaticAction;
@@ -166,13 +165,6 @@ class SendEngagementAction extends Action
                     ]),
                 Fieldset::make('Content')
                     ->schema([
-                        TextInput::make('subject')
-                            ->autofocus()
-                            ->required()
-                            ->placeholder(__('Subject'))
-                            ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
-                            ->columnSpanFull()
-                            ->visible(! RefactorEngagementCampaignSubjectToJsonb::active()),
                         TiptapEditor::make('subject')
                             ->label('Subject')
                             ->mergeTags([
@@ -193,8 +185,7 @@ class SendEngagementAction extends Action
                             ->profile('sms')
                             ->required()
                             ->placeholder('Enter the email subject here...')
-                            ->columnSpanFull()
-                            ->visible(RefactorEngagementCampaignSubjectToJsonb::active()),
+                            ->columnSpanFull(),
                         TiptapEditor::make('body')
                             ->disk('s3-public')
                             ->label('Body')
@@ -305,14 +296,10 @@ class SendEngagementAction extends Action
             ->action(function (array $data, Form $form, Page $livewire) {
                 /** @var Student | Prospect $recipient */
                 $recipient = $this->getEducatable();
-
-                if (RefactorEngagementCampaignSubjectToJsonb::active()) {
-                    $data['subject'] ??= ['type' => 'doc', 'content' => []];
-                    $data['subject']['content'] = [
+                $data['subject'] ??= ['type' => 'doc', 'content' => []];
+                $data['subject']['content'] = [
                         ...($data['subject']['content'] ?? []),
                     ];
-                }
-
                 $data['body'] ??= ['type' => 'doc', 'content' => []];
                 $data['body']['content'] = [
                     ...($data['body']['content'] ?? []),

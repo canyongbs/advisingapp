@@ -39,7 +39,6 @@ namespace AdvisingApp\Engagement\Notifications;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use App\Features\RefactorEngagementCampaignSubjectToJsonb;
 use App\Models\NotificationSetting;
 use App\Models\User;
 use Filament\Notifications\Notification as FilamentNotification;
@@ -69,13 +68,7 @@ class EngagementFailedNotification extends Notification implements ShouldQueue
             ->settings($this->resolveNotificationSetting($notifiable))
             ->subject('An engagement failed to deliver')
             ->line("The engagement {$this->engagement->channel->getLabel()} failed to be delivered to {$this->engagement->recipient->display_name}:")
-            ->line(
-                'Subject: ' . (
-                    RefactorEngagementCampaignSubjectToJsonb::active()
-                      ? $this->engagement->getSubject()
-                      : ($this->engagement->subject ?? 'n/a')
-                )
-            )
+            ->line('Subject: ' . $this->engagement->getSubject())
             ->line('Body: ' . $this->engagement->getBody());
     }
 

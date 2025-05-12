@@ -42,7 +42,6 @@ use AdvisingApp\Engagement\Filament\Forms\Components\EngagementSmsBodyInput;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
-use App\Features\RefactorEngagementCampaignSubjectToJsonb;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
@@ -85,13 +84,6 @@ class BulkEngagementAction
                 Step::make('Engagement Details')
                     ->description("Add the details that will be sent to the selected {$context}")
                     ->schema([
-                        TextInput::make('subject')
-                            ->autofocus()
-                            ->required()
-                            ->placeholder(__('Subject'))
-                            ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
-                            ->columnSpanFull()
-                            ->visible(! RefactorEngagementCampaignSubjectToJsonb::active()),
                         TiptapEditor::make('subject')
                             ->label('Subject')
                             ->mergeTags([
@@ -107,8 +99,7 @@ class BulkEngagementAction
                             ->profile('sms')
                             ->required()
                             ->placeholder('Enter the email subject here...')
-                            ->columnSpanFull()
-                            ->visible(RefactorEngagementCampaignSubjectToJsonb::active()),
+                            ->columnSpanFull(),
                         TiptapEditor::make('body')
                             ->disk('s3-public')
                             ->label('Body')

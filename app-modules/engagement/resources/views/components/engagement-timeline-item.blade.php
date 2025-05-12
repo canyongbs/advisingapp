@@ -34,7 +34,6 @@
 @php
     use App\Filament\Resources\UserResource;
     use AdvisingApp\Notification\Enums\NotificationChannel;
-    use App\Features\RefactorEngagementCampaignSubjectToJsonb;
 @endphp
 
 <div>
@@ -75,11 +74,9 @@
         @if (!blank($record->subject))
             <div class="mb-2 flex flex-col">
                 <p class="text-xs text-gray-400 dark:text-gray-500">Subject:</p>
-                @if (RefactorEngagementCampaignSubjectToJsonb::active())
+            
                     <p>{{ $record->getSubject() }}</p>
-                @else
-                    <p>{{ $record->subject }}</p>
-                @endif
+              
             </div>
         @endif
         <div class="flex flex-col">

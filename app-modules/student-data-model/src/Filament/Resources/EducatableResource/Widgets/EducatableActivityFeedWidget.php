@@ -47,7 +47,6 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Histories\TaskHistory;
 use AdvisingApp\Timeline\Livewire\Concerns\CanLoadTimelineRecords;
 use AdvisingApp\Timeline\Livewire\Concerns\HasTimelineRecords;
-use App\Features\RefactorEngagementCampaignSubjectToJsonb;
 use App\Models\User;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
@@ -108,12 +107,7 @@ class EducatableActivityFeedWidget extends Widget implements HasActions, HasForm
     {
         return (string) str(match ($record->getMorphClass()) {
             'interaction' => "Subject: {$record->subject}",
-            'engagement' => RefactorEngagementCampaignSubjectToJsonb::active()
-            ? $this->getEngagementDescription($record)
-            : match ($record->getDeliveryMethod()) {
-                NotificationChannel::Sms => "Preview: {$record->getBodyMarkdown()}",
-                default => "Subject: {$record->subject}",
-            },
+            'engagement' => $this->getEngagementDescription($record),
             'engagement_response' => 'Preview: ' . str($record->getBody())->stripTags(),
             'task_history' => "Title: {$record->subject?->title}",
             'alert_history' => "{$record->subject?->severity->getLabel()} severity, " . str($record->subject?->description)->limit(200),

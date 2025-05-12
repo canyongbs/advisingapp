@@ -40,7 +40,6 @@ use AdvisingApp\Campaign\Filament\Blocks\Actions\DraftCampaignEngagementBlockWit
 use AdvisingApp\Campaign\Settings\CampaignSettings;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Notification\Enums\NotificationChannel;
-use App\Features\RefactorEngagementCampaignSubjectToJsonb;
 use Carbon\CarbonImmutable;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
@@ -71,11 +70,6 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
         return [
             Hidden::make($fieldPrefix . 'channel')
                 ->default(NotificationChannel::Email->value),
-            TextInput::make($fieldPrefix . 'subject')
-                ->columnSpanFull()
-                ->placeholder(__('Subject'))
-                ->required()
-                ->visible(! RefactorEngagementCampaignSubjectToJsonb::active()),
             TiptapEditor::make($fieldPrefix . 'subject')
                 ->recordAttribute('data.subject')
                 ->label('Subject')
@@ -91,8 +85,7 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
                 ->showMergeTagsInBlocksPanel(false)
                 ->required()
                 ->helperText('You can insert recipient information by typing {{ and choosing a merge value to insert.')
-                ->columnSpanFull()
-                ->visible(RefactorEngagementCampaignSubjectToJsonb::active()),
+                ->columnSpanFull(),
             TiptapEditor::make($fieldPrefix . 'body')
                 ->recordAttribute('data.body')
                 ->disk('s3-public')
