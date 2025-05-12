@@ -108,6 +108,7 @@ class FormEmailAutoReply extends BaseModel implements HasMedia
             'student preferred name' => $author->getAttribute($author->displayPreferredNameKey()),
         ];
     }
+
     protected function casts(): array
     {
         return [

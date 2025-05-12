@@ -48,7 +48,6 @@ class GenerateEngagementSubjectContent
      */
     public function __invoke(string|array $content, array $mergeData, Model $record, string $recordAttribute): HtmlString
     {
-
         $html = tiptap_converter()
             ->mergeTagsMap($mergeData)
             ->record($record, $recordAttribute)

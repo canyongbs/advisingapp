@@ -291,6 +291,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     {
         return $this->channel;
     }
+
     protected function casts(): array
     {
         return [

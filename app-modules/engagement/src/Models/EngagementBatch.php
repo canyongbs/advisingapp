@@ -130,6 +130,7 @@ class EngagementBatch extends BaseModel implements ExecutableFromACampaignAction
 
         return $dom->saveHTML();
     }
+
     protected function casts(): array
     {
         return [

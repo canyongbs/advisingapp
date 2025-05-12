@@ -58,7 +58,6 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -298,8 +297,8 @@ class SendEngagementAction extends Action
                 $recipient = $this->getEducatable();
                 $data['subject'] ??= ['type' => 'doc', 'content' => []];
                 $data['subject']['content'] = [
-                        ...($data['subject']['content'] ?? []),
-                    ];
+                    ...($data['subject']['content'] ?? []),
+                ];
                 $data['body'] ??= ['type' => 'doc', 'content' => []];
                 $data['body']['content'] = [
                     ...($data['body']['content'] ?? []),

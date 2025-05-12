@@ -74,9 +74,9 @@
         @if (!blank($record->subject))
             <div class="mb-2 flex flex-col">
                 <p class="text-xs text-gray-400 dark:text-gray-500">Subject:</p>
-            
-                    <p>{{ $record->getSubject() }}</p>
-              
+
+                <p>{{ $record->getSubject() }}</p>
+
             </div>
         @endif
         <div class="flex flex-col">
