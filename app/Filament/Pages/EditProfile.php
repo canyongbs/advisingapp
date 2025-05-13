@@ -38,7 +38,6 @@ namespace App\Filament\Pages;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\MeetingCenter\Managers\CalendarManager;
-use App\Features\EmailSignature;
 use App\Features\SubmitAiChatOnEnterFlag;
 use App\Models\User;
 use App\Settings\CollegeBrandingSettings;
@@ -326,7 +325,7 @@ class EditProfile extends Page
                     ]),
                 Section::make('Email Signature')
                     ->aside()
-                    ->visible(EmailSignature::active() && $hasCrmLicense)
+                    ->visible($hasCrmLicense)
                     ->schema([
                         Toggle::make('is_signature_enabled')
                             ->label('Enable Email Signature')
