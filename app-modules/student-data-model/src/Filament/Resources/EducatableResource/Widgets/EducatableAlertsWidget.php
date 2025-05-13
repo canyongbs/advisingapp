@@ -43,12 +43,7 @@ use AdvisingApp\Alert\Models\Alert;
 use Illuminate\Database\Eloquent\Model;
 use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
-use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
-use Filament\Widgets\Widget;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
-use Livewire\Attributes\Locked;
 
 class EducatableAlertsWidget extends Widget
 {
