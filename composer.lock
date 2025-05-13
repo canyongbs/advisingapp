@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "166fbdd0b09f0133be0edd506fdc4785",
+    "content-hash": "0bcf459bc0e3f4415c6172c8f17143ac",
     "packages": [
         {
             "name": "amphp/amp",
@@ -2706,6 +2706,41 @@
                     "AdvisingApp\\MultifactorAuthentication\\Tests\\": "tests/",
                     "AdvisingApp\\MultifactorAuthentication\\Database\\Factories\\": "database/factories/",
                     "AdvisingApp\\MultifactorAuthentication\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/research",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/research",
+                "reference": "9679cdf48e29f9b03fb16948023f31755c9d1d55"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AdvisingApp\\Research\\Providers\\ResearchServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AdvisingApp\\Research\\": "src/",
+                    "AdvisingApp\\Research\\Tests\\": "tests/",
+                    "AdvisingApp\\Research\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Research\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
