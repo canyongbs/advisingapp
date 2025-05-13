@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Research\Providers;
 
+use AdvisingApp\Research\ResearchPlugin;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
-use AdvisingApp\Research\ResearchPlugin;
 
 class ResearchServiceProvider extends ServiceProvider
 {

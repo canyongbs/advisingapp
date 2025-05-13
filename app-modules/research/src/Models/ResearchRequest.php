@@ -37,10 +37,10 @@
 namespace AdvisingApp\Research\Models;
 
 use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
 use Database\Factories\ResearchRequestFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ResearchRequest extends Model
 {
