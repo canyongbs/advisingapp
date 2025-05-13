@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use Database\Migrations\Concerns\CanModifySettings;
+use CanyonGBS\Common\Database\Migrations\Concerns\CanModifySettings;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 return new class () extends SettingsMigration {

@@ -15,7 +15,7 @@ Permissions in the application are created and managed through special Data Migr
 Permission Migrations operate much the same as regular Data Migrations but adhere to a few slightly different or additional rules:
 
 1. Prepend the name of the migration with `seed_permissions_` to differentiate it from schema migrations and Data Migrations.
-2. Use the helpers in the `Database\Migrations\Concerns\CanModifyPermissions` trait.
+2. Use the helpers in the `CanyonGBS\Common\Database\Migrations\Concerns\CanModifyPermissions` trait.
 3. Any other queries you write should be surrounded by both a database transaction and a `try`/`catch` block to catch any SQL errors such as a `UniqueConstraintViolation`.
 
 ### What permissions to create

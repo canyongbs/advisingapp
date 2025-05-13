@@ -61,7 +61,7 @@ class ManageAiIntegrationsSettings extends SettingsPage
 
     protected static ?string $navigationLabel = 'Cognitive Services';
 
-    protected static ?int $navigationSort = 30;
+    protected static ?int $navigationSort = 40;
 
     protected static ?string $cluster = GlobalArtificialIntelligence::class;
 
