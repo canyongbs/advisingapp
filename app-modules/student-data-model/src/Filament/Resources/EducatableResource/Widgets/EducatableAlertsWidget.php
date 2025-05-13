@@ -61,7 +61,7 @@ class EducatableAlertsWidget extends Widget
     }
 
     /**
-     * @return Collection<string, string, int>
+     * @return Collection<int, array{id: string|null, classification: string, alert_count: mixed}>
     */
     protected function getStatusCounts(): Collection
     {
