@@ -622,11 +622,11 @@ class EditProfile extends Page
                 ]),
 
                 Actions::make([
-                    FormAction::make("copy_time_from_{$day}")
-                        ->label('Copy time to all')
-                        ->icon('heroicon-o-clipboard')
+                    FormAction::make("copy_time_from_{$day}_{$key}")
+                        ->label('Copy to All')
                         ->visible(fn (Get $get) => $get("{$key}.{$day}.enabled"))
                         ->size('sm')
+                        ->link()
                         ->action(function (Get $get, Set $set) use ($day, $key) {
                             $start = $get("{$key}.{$day}.starts_at");
                             $end = $get("{$key}.{$day}.ends_at");
@@ -646,9 +646,8 @@ class EditProfile extends Page
                                 ->success()
                                 ->send();
                         }),
-                ])
-                    ->visible(fn () => $key === 'working_hours'),
-            ])
+                ]),
+            ])->from('md')
         )->toArray();
     }
 }
