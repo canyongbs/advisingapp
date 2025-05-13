@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Filament\Pages;
 
+use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
@@ -104,5 +105,14 @@ class ManageAiIntegratedAssistantSettings extends SettingsPage
         }
 
         return parent::getFormActions();
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        if (filled($data['default_model'] ?? null)) {
+            $data['default_model'] = AiModel::parse($data['default_model']);
+        }
+
+        return parent::mutateFormDataBeforeSave($data);
     }
 }

@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use Database\Migrations\Concerns\CanModifyPermissions;
+use CanyonGBS\Common\Database\Migrations\Concerns\CanModifyPermissions;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;

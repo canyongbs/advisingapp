@@ -34,50 +34,43 @@
 </COPYRIGHT>
 */
 
-namespace Database\Migrations\Concerns;
+namespace AdvisingApp\Ai\Filament\Pages;
 
-use Closure;
-use Illuminate\Support\Facades\DB;
+use AdvisingApp\Ai\Settings\AiResearchAssistantSettings;
+use App\Filament\Clusters\GlobalArtificialIntelligence;
+use App\Models\User;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Form;
+use Filament\Pages\SettingsPage;
 
-trait CanModifySettings
+class ManageAiResearchAssistantSettings extends SettingsPage
 {
-    /**
-     * @param Closure(mixed): mixed $modifyPayload
-     */
-    public function updateSettings(string $group, string $name, Closure $modifyPayload, bool $isEncrypted = false): void
+    protected static string $settings = AiResearchAssistantSettings::class;
+
+    protected static ?string $title = 'Research Advisor Settings';
+
+    protected static ?string $navigationLabel = 'Research Advisor';
+
+    protected static ?int $navigationSort = 30;
+
+    protected static ?string $cluster = GlobalArtificialIntelligence::class;
+
+    public static function canAccess(): bool
     {
-        $payload = $this->getSetting($group, $name, $isEncrypted);
+        /** @var User $user */
+        $user = auth()->user();
 
-        $payload = $modifyPayload($payload);
-
-        if ($isEncrypted) {
-            $payload = encrypt($payload);
-        }
-
-        $payload = json_encode($payload);
-
-        DB::table('settings')
-            ->where('group', $group)
-            ->where('name', $name)
-            ->update([
-                'payload' => $payload,
-                'updated_at' => now(),
-            ]);
+        return $user->isSuperAdmin();
     }
 
-    public function getSetting(string $group, string $name, bool $isEncrypted = false): mixed
+    public function form(Form $form): Form
     {
-        $payload = DB::table('settings')
-            ->where('group', $group)
-            ->where('name', $name)
-            ->value('payload');
-
-        $payload = json_decode($payload);
-
-        if ($isEncrypted) {
-            $payload = decrypt($payload);
-        }
-
-        return $payload;
+        return $form
+            ->schema([
+                Textarea::make('context')
+                    ->rows(10)
+                    ->label('Institutional Context'),
+            ])
+            ->columns(1);
     }
 }
