@@ -60,6 +60,9 @@ class EducatableAlertsWidget extends Widget
         return auth()->user()->can('viewAny', Alert::class);
     }
 
+    /**
+     * @return Collection<string, string, int>
+    */
     protected function getStatusCounts(): Collection
     {
         $counts = $this->educatable->alerts()
