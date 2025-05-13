@@ -72,9 +72,9 @@ class EducatableAlertsWidget extends Widget
 
         return collect(SystemAlertStatusClassification::cases())
             ->map(fn (SystemAlertStatusClassification $classification) => [
-                'id' => AlertStatus::where('classification', $classification->value)->first()?->id ?? null,
+                'id' => AlertStatus::where('classification', $classification->value)->first()?->id,
                 'classification' => $classification->value,
-                'alert_count' => $counts->where('classification', $classification->value)->first()?->alert_count ?? 0,
+                'alert_count' => $counts->where('classification', $classification->value)->first()->alert_count ?? 0,
             ]);
     }
 
