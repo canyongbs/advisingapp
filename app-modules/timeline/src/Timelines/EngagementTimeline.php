@@ -39,6 +39,7 @@ namespace AdvisingApp\Timeline\Timelines;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Timeline\Models\CustomTimeline;
+use App\Infolists\Components\EngagementBody;
 use Exception;
 use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\Fieldset;
@@ -88,7 +89,7 @@ class EngagementTimeline extends CustomTimeline
                             ->hidden(fn ($state): bool => blank($state))
                             ->getStateUsing(fn (Engagement $engagement): HtmlString => $engagement->getSubject())
                             ->columnSpanFull(),
-                        TextEntry::make('body')
+                        EngagementBody::make('body')
                             ->getStateUsing(fn (Engagement $engagement): HtmlString => $engagement->getBody())
                             ->columnSpanFull(),
                     ]),

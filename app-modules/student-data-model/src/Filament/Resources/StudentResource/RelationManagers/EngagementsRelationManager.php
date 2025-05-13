@@ -46,6 +46,7 @@ use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\EmailMessageEvent;
 use AdvisingApp\Notification\Models\SmsMessageEvent;
 use AdvisingApp\Timeline\Models\Timeline;
+use App\Infolists\Components\EngagementBody;
 use Filament\Infolists\Components\Fieldset as InfolistFieldset;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Section;
@@ -101,7 +102,7 @@ class EngagementsRelationManager extends RelationManager
                                                 return null;
                                             })
                                             ->columnSpanFull(),
-                                        TextEntry::make('body')
+                                        EngagementBody::make('body')
                                             ->getStateUsing(fn (Timeline $record): HtmlString => $record->timelineable->getBody())
                                             ->columnSpanFull(),
                                     ]),
@@ -142,7 +143,7 @@ class EngagementsRelationManager extends RelationManager
                             ->getStateUsing(fn (Timeline $record): ?string => $record->timelineable->subject)
                             ->hidden(fn ($state): bool => blank($state))
                             ->columnSpanFull(),
-                        TextEntry::make('body')
+                        EngagementBody::make('body')
                             ->getStateUsing(fn (Timeline $record): HtmlString => $record->timelineable->getBody())
                             ->columnSpanFull(),
                     ]),

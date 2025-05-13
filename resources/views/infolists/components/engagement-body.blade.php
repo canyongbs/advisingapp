@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -32,19 +30,14 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+<x-dynamic-component
+    :component="$getEntryWrapperView()"
+    :entry="$entry"
+>
+    <div
+        class="prose dark:prose-invert prose-h1:my-4 prose-h1:text-3xl prose-h1:font-bold prose-h2:my-4 prose-h2:text-2xl prose-h3:my-4 prose-h3:text-xl prose-h4:my-4 prose-h4:text-lg prose-h5:my-4 prose-h5:text-base prose-h5:font-medium prose-h5:text-gray-900 prose-h6:my-4 prose-h6:text-sm prose-h6:font-medium prose-h6:text-gray-900 prose-hr:my-4">
+        {{ $getState() }}
+    </div>
 
-use App\Features\EmailSignature;
-use Illuminate\Database\Migrations\Migration;
-
-return new class () extends Migration {
-    public function up(): void
-    {
-        EmailSignature::activate();
-    }
-
-    public function down(): void
-    {
-        EmailSignature::deactivate();
-    }
-};
+</x-dynamic-component>

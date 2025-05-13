@@ -34,14 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+namespace App\Infolists\Components;
 
-use App\Support\AbstractFeatureFlag;
+use Filament\Infolists\Components\Entry;
 
-class EmailSignature extends AbstractFeatureFlag
+class EngagementBody extends Entry
 {
-    public function resolve(mixed $scope): mixed
-    {
-        return false;
-    }
+    protected string $view = 'infolists.components.engagement-body';
 }

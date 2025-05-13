@@ -81,7 +81,8 @@
         @endif
         <div class="flex flex-col">
             <p class="text-xs text-gray-400 dark:text-gray-500">Body:</p>
-            <div class="prose dark:prose-invert">
+            <div
+                class="prose dark:prose-invert prose-h1:my-4 prose-h1:text-3xl prose-h1:font-bold prose-h2:my-4 prose-h2:text-2xl prose-h3:my-4 prose-h3:text-xl prose-h4:my-4 prose-h4:text-lg prose-h5:my-4 prose-h5:text-base prose-h5:font-medium prose-h5:text-gray-900 prose-h6:my-4 prose-h6:text-sm prose-h6:font-medium prose-h6:text-gray-900 prose-hr:my-4">
                 {{ $record->getBody() }}
             </div>
         </div>
