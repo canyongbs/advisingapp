@@ -240,3 +240,7 @@
 .fi-wi-stats-overview-stat-primary .fi-wi-stats-overview-stat-value {
     @apply text-white;
 }
+
+.fi-action-copytime-link span {
+    @apply leading-9;
+}
