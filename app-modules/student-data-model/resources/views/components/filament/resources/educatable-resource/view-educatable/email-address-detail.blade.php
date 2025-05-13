@@ -37,7 +37,7 @@
 @endphp
 
 <button
-    class="flex items-center gap-2"
+    class="flex items-start gap-2"
     type="button"
     x-data="{ isLoading: false }"
     x-on:engage-action-finished-loading.window="isLoading = false"
@@ -49,7 +49,9 @@
                 $emailAddress instanceof ProspectEmailAddress ? $emailAddress->prospect : null,
             ]))
 >
-    @svg('heroicon-m-envelope', 'size-5', ['x-show' => '! isLoading'])
+    <div class="mt-1">
+        @svg('heroicon-m-envelope', 'size-5', ['x-show' => '! isLoading'])
+    </div>
 
     <x-filament::loading-indicator
         class="size-5"
