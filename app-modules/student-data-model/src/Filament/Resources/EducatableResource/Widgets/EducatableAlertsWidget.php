@@ -61,7 +61,7 @@ class EducatableAlertsWidget extends Widget
     }
 
     /**
-     * @return \Illuminate\Support\Collection<int, array<string, mixed>>
+     * @return Collection<int, array<string, mixed>>
     */
     protected function getStatusCounts(): Collection
     {
