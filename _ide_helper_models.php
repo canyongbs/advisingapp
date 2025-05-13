@@ -192,11 +192,41 @@ namespace App\Models{
 /**
  * 
  *
+ * @property string $id
+ * @property string $name
+ * @property string|null $type
+ * @property string $cron_expression
+ * @property string|null $timezone
+ * @property string|null $ping_url
+ * @property \Illuminate\Support\Carbon|null $last_started_at
+ * @property \Illuminate\Support\Carbon|null $last_finished_at
+ * @property \Illuminate\Support\Carbon|null $last_failed_at
+ * @property \Illuminate\Support\Carbon|null $last_skipped_at
+ * @property \Illuminate\Support\Carbon|null $registered_on_oh_dear_at
+ * @property \Illuminate\Support\Carbon|null $last_pinged_at
+ * @property int $grace_time_in_minutes
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\MonitoredScheduledTaskLogItem> $logItems
  * @property-read int|null $log_items_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTask newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTask newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTask query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTask whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTask whereCronExpression($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTask whereGraceTimeInMinutes($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTask whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTask whereLastFailedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTask whereLastFinishedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTask whereLastPingedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTask whereLastSkippedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTask whereLastStartedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTask whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTask wherePingUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTask whereRegisteredOnOhDearAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTask whereTimezone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTask whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTask whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -207,10 +237,22 @@ namespace App\Models{
 /**
  * 
  *
- * @property-read \App\Models\MonitoredScheduledTask|null $monitoredScheduledTask
+ * @property string $id
+ * @property string $monitored_scheduled_task_id
+ * @property string $type
+ * @property array<array-key, mixed>|null $meta
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\MonitoredScheduledTask $monitoredScheduledTask
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTaskLogItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTaskLogItem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTaskLogItem query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTaskLogItem whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTaskLogItem whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTaskLogItem whereMeta($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTaskLogItem whereMonitoredScheduledTaskId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTaskLogItem whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MonitoredScheduledTaskLogItem whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -5655,10 +5697,25 @@ namespace AdvisingApp\Webhook\Models{
 /**
  * 
  *
+ * @property string $id
  * @property \AdvisingApp\Webhook\Enums\InboundWebhookSource $source
+ * @property string $event
+ * @property string $url
+ * @property string $payload
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LandlordInboundWebhook newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LandlordInboundWebhook newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LandlordInboundWebhook query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandlordInboundWebhook whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandlordInboundWebhook whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandlordInboundWebhook whereEvent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandlordInboundWebhook whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandlordInboundWebhook wherePayload($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandlordInboundWebhook whereSource($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandlordInboundWebhook whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LandlordInboundWebhook whereUrl($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
