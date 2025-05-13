@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets;
 
-use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
-use AdvisingApp\Alert\Models\Alert;
-use AdvisingApp\Alert\Models\AlertStatus;
-use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use Filament\Widgets\Widget;
-use Illuminate\Database\Eloquent\Model;
 use Livewire\Attributes\Locked;
+use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Model;
+use AdvisingApp\Alert\Models\AlertStatus;
+use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 
 class EducatableAlertsWidget extends Widget
 {
@@ -59,7 +59,7 @@ class EducatableAlertsWidget extends Widget
         return auth()->user()->can('viewAny', Alert::class);
     }
 
-    protected function getStatusCounts()
+    protected function getStatusCounts(): Collection
     {
         $counts = $this->educatable->alerts()
             ->select('alert_statuses.classification')
