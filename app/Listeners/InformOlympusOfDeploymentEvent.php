@@ -38,13 +38,25 @@ namespace App\Listeners;
 
 use App\Multitenancy\Events\NewTenantSetupComplete;
 use App\Services\Olympus;
+use App\Settings\OlympusSettings;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Spatie\Multitenancy\Jobs\NotTenantAware;
+use Spatie\Multitenancy\Landlord;
 
 class InformOlympusOfDeploymentEvent implements ShouldQueue, NotTenantAware
 {
     public function handle(NewTenantSetupComplete $event): void
     {
+        $isConfigured = Landlord::execute(function (): bool {
+            $settings = app(OlympusSettings::class);
+
+            return ! is_null($settings->key);
+        });
+
+        if (! $isConfigured) {
+            return;
+        }
+
         $tenantId = $event->tenant->getKey();
 
         app(Olympus::class)->makeRequest()
