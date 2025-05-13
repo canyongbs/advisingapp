@@ -69,6 +69,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\VerticalAlignment;
 use Filament\Support\Exceptions\Halt;
 use FilamentTiptapEditor\Enums\TiptapOutput;
 use FilamentTiptapEditor\TiptapEditor;
@@ -625,8 +626,9 @@ class EditProfile extends Page
                     FormAction::make("copy_time_from_{$day}_{$key}")
                         ->label('Copy to All')
                         ->visible(fn (Get $get) => $get("{$key}.{$day}.enabled"))
-                        ->size('sm')
                         ->link()
+                        ->color('blue')
+                        ->extraAttributes(['class' => 'fi-action-copytime-link'])
                         ->action(function (Get $get, Set $set) use ($day, $key) {
                             $start = $get("{$key}.{$day}.starts_at");
                             $end = $get("{$key}.{$day}.ends_at");
@@ -647,7 +649,9 @@ class EditProfile extends Page
                                 ->send();
                         }),
                 ]),
-            ])->from('md')
+            ])
+                ->from('md')
+                ->verticalAlignment(VerticalAlignment::End)
         )->toArray();
     }
 }
