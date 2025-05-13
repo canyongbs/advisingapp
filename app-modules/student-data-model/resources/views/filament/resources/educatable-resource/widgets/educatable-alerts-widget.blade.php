@@ -41,12 +41,16 @@
         </x-slot>
 
         <x-slot name="headerActions">
-            <x-filament::button color="gray" tag="a" :href="$this->getAlertsUrl()">
+            <x-filament::button
+                color="gray"
+                tag="a"
+                :href="$this->getAlertsUrl()"
+            >
                 Manage
             </x-filament::button>
         </x-slot>
 
-        @if($statusCounts = $this->getStatusCounts())
+        @if ($statusCounts = $this->getStatusCounts())
             <dl class="flex flex-wrap gap-3">
                 @foreach ($statusCounts as $count)
                     @php
