@@ -70,26 +70,65 @@ a img {
 
 /* Typography */
 
-h1 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     color: #3d4852;
-    font-size: 18px;
-    font-weight: bold;
-    margin-top: 0;
     text-align: left;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
 }
 
-h2 {
-    font-size: 16px;
-    font-weight: bold;
-    margin-top: 0;
-    text-align: left;
+h1 { 
+    font-size: 1.875rem; 
+    line-height: 2.25rem; 
 }
 
-h3 {
-    font-size: 14px;
-    font-weight: bold;
-    margin-top: 0;
-    text-align: left;
+h2 { 
+    font-size: 1.5rem; 
+    line-height: 2rem; 
+}
+
+h3 { 
+    font-size: 1.25rem; 
+    line-height: 1.75rem;
+}
+
+h4 { 
+    font-size: 1.125rem; 
+    line-height: 1.75rem;
+}
+
+h5 { 
+    font-size: 1rem; 
+    line-height: 1.5rem;
+}
+
+h6 { 
+    font-size: 0.875rem; 
+    line-height: 1.25rem;
+}
+
+/* Font weight */
+h1,
+h2
+{
+    font-weight: 700;
+}
+
+h3,
+h4
+{
+    font-weight: 600;
+}
+
+h5,
+h6
+{
+    font-weight: 500;
 }
 
 p {

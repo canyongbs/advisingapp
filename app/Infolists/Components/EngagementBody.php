@@ -34,17 +34,11 @@
 </COPYRIGHT>
 */
 
-use App\Features\GPTO4MiniFeature;
-use Illuminate\Database\Migrations\Migration;
+namespace App\Infolists\Components;
 
-return new class () extends Migration {
-    public function up(): void
-    {
-        GPTO4MiniFeature::activate();
-    }
+use Filament\Infolists\Components\Entry;
 
-    public function down(): void
-    {
-        GPTO4MiniFeature::deactivate();
-    }
-};
+class EngagementBody extends Entry
+{
+    protected string $view = 'infolists.components.engagement-body';
+}

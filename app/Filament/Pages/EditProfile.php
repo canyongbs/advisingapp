@@ -38,7 +38,7 @@ namespace App\Filament\Pages;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\MeetingCenter\Managers\CalendarManager;
-use App\Features\EmailSignature;
+use App\Features\SubmitAiChatOnEnterFlag;
 use App\Models\User;
 use App\Settings\CollegeBrandingSettings;
 use App\Settings\DisplaySettings;
@@ -220,7 +220,7 @@ class EditProfile extends Page
                             ->visible($hasCrmLicense),
                         Placeholder::make('teams')
                             ->label('Team')
-                            ->content($user->team->name)
+                            ->content(fn () => $user->team->name)
                             ->hidden(! $user->team)
                             ->hint(fn (Get $get): string => $get('are_teams_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
                         //TODO: Right now this is not passed to the frontend
@@ -238,6 +238,20 @@ class EditProfile extends Page
                             ->hidden(! $user->team?->division()->exists())
                             ->live(),
                     ]),
+                Section::make('Artificial Intelligence')
+                    ->description('Select options for how you work with AI.')
+                    ->aside()
+                    ->schema([
+                        Select::make('is_submit_ai_chat_on_enter_enabled')
+                            ->label('Enter Key')
+                            ->selectablePlaceholder(false)
+                            ->hint('Decide below if you would prefer the enter key to create a new line or submit the prompt you typed in the AI chat interface.')
+                            ->options([
+                                false => 'New Line',
+                                true => 'Enter',
+                            ]),
+                    ])
+                    ->visible(SubmitAiChatOnEnterFlag::active()),
                 Section::make('Account Information')
                     ->description("Update your account's information.")
                     ->aside()
@@ -311,7 +325,7 @@ class EditProfile extends Page
                     ]),
                 Section::make('Email Signature')
                     ->aside()
-                    ->visible(EmailSignature::active() && $hasCrmLicense)
+                    ->visible($hasCrmLicense)
                     ->schema([
                         Toggle::make('is_signature_enabled')
                             ->label('Enable Email Signature')

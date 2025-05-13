@@ -41,7 +41,6 @@ use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Jobs\ReInitializeAiModel;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
-use App\Features\GPTO4MiniFeature;
 use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -62,7 +61,7 @@ class ManageAiIntegrationsSettings extends SettingsPage
 
     protected static ?string $navigationLabel = 'Cognitive Services';
 
-    protected static ?int $navigationSort = 30;
+    protected static ?int $navigationSort = 40;
 
     protected static ?string $cluster = GlobalArtificialIntelligence::class;
 
@@ -306,8 +305,7 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->options(AiModelApplicabilityFeature::class)
                                     ->multiple()
                                     ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
-                            ])
-                            ->visible(GPTO4MiniFeature::active()),
+                            ]),
                     ]),
                 Section::make('Jina AI')
                     ->collapsible()

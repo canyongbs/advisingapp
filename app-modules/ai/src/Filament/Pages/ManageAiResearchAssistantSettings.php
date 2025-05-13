@@ -34,17 +34,43 @@
 </COPYRIGHT>
 */
 
-use App\Features\RoutedEngagements;
-use Illuminate\Database\Migrations\Migration;
+namespace AdvisingApp\Ai\Filament\Pages;
 
-return new class () extends Migration {
-    public function up(): void
+use AdvisingApp\Ai\Settings\AiResearchAssistantSettings;
+use App\Filament\Clusters\GlobalArtificialIntelligence;
+use App\Models\User;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Form;
+use Filament\Pages\SettingsPage;
+
+class ManageAiResearchAssistantSettings extends SettingsPage
+{
+    protected static string $settings = AiResearchAssistantSettings::class;
+
+    protected static ?string $title = 'Research Advisor Settings';
+
+    protected static ?string $navigationLabel = 'Research Advisor';
+
+    protected static ?int $navigationSort = 30;
+
+    protected static ?string $cluster = GlobalArtificialIntelligence::class;
+
+    public static function canAccess(): bool
     {
-        RoutedEngagements::activate();
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->isSuperAdmin();
     }
 
-    public function down(): void
+    public function form(Form $form): Form
     {
-        RoutedEngagements::deactivate();
+        return $form
+            ->schema([
+                Textarea::make('context')
+                    ->rows(10)
+                    ->label('Institutional Context'),
+            ])
+            ->columns(1);
     }
-};
+}

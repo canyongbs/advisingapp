@@ -47,7 +47,6 @@ use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\OnDemandNotification;
 use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
-use App\Features\RoutedEngagements;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Exception;
@@ -92,7 +91,7 @@ class SmsChannel
             'content' => $message->toArray(),
             'recipient_id' => $recipientId,
             'recipient_type' => $recipientType,
-            ...(RoutedEngagements::active() ? ['recipient_number' => is_array($recipientNumber) ? null : $recipientNumber] : []),
+            'recipient_number' => is_array($recipientNumber) ? null : $recipientNumber,
         ]);
 
         if ($notification instanceof HasBeforeSendHook) {

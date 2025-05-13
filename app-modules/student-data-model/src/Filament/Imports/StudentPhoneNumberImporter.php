@@ -37,7 +37,6 @@
 namespace AdvisingApp\StudentDataModel\Filament\Imports;
 
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
-use App\Features\ImportSettingsFeature;
 use App\Settings\ImportSettings;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
@@ -86,7 +85,7 @@ class StudentPhoneNumberImporter extends Importer
                         // Do not use invalid phone numbers.
                     }
 
-                    $defaultCountry = ImportSettingsFeature::active() ? app(ImportSettings::class)->default_country : 'us';
+                    $defaultCountry = app(ImportSettings::class)->default_country;
 
                     try {
                         return $phoneNumberUtil->format(

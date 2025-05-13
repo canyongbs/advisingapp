@@ -35,7 +35,7 @@
 */
 
 use App\Models\Tenant;
-use Database\Migrations\Concerns\CanModifySettings;
+use CanyonGBS\Common\Database\Migrations\Concerns\CanModifySettings;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 

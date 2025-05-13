@@ -37,7 +37,6 @@
 namespace AdvisingApp\Campaign\Actions;
 
 use AdvisingApp\Campaign\Models\CampaignAction;
-use App\Features\CancelCampaignAction;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -66,7 +65,7 @@ class ExecuteCampaignAction implements ShouldQueue, ShouldBeUnique
 
     public function handle(): void
     {
-        if (CancelCampaignAction::active() && $this->action->cancelled_at !== null) {
+        if ($this->action->cancelled_at !== null) {
             return;
         }
 

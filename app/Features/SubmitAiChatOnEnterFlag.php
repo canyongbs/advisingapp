@@ -34,17 +34,14 @@
 </COPYRIGHT>
 */
 
-use App\Features\EmailSignature;
-use Illuminate\Database\Migrations\Migration;
+namespace App\Features;
 
-return new class () extends Migration {
-    public function up(): void
-    {
-        EmailSignature::activate();
-    }
+use App\Support\AbstractFeatureFlag;
 
-    public function down(): void
+class SubmitAiChatOnEnterFlag extends AbstractFeatureFlag
+{
+    public function resolve(mixed $scope): mixed
     {
-        EmailSignature::deactivate();
+        return false;
     }
-};
+}
