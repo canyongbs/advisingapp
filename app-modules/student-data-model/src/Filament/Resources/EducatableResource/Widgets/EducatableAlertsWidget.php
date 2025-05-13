@@ -36,6 +36,12 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets;
 
+use Filament\Widgets\Widget;
+use Livewire\Attributes\Locked;
+use Illuminate\Support\Collection;
+use AdvisingApp\Alert\Models\Alert;
+use Illuminate\Database\Eloquent\Model;
+use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
