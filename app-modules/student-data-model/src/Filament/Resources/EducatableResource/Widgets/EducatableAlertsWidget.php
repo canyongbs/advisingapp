@@ -61,9 +61,9 @@ class EducatableAlertsWidget extends Widget
     }
 
     /**
-     * @return Collection<int, array{mixed, string, int}>
+     * @return Collection<int, array{id: int|null, classification: string, alert_count: mixed}>
     */
-    protected function getStatusCounts(): Collection
+    protected function getStatusCounts()
     {
         $counts = $this->educatable->alerts()
             ->select('alert_statuses.classification')
