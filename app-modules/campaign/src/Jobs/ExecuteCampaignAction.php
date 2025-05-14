@@ -37,11 +37,15 @@
 namespace AdvisingApp\Campaign\Jobs;
 
 use AdvisingApp\Campaign\Models\CampaignAction;
+use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use App\Models\Tenant;
 use App\Models\User;
+use Exception;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
 use Illuminate\Support\Facades\Auth;
@@ -88,6 +92,23 @@ class ExecuteCampaignAction implements ShouldQueue, ShouldBeUnique
 
         // TODO: Dispatch each individual educatable as a job added to this batch of this job
 
-        $this->action->execute();
+        app(TranslateSegmentFilters::class)
+            ->applyFilterToQuery(
+                $this->action->campaign->segment,
+                $this->action->campaign->segment->model->query()
+            )
+            ->lazyById(
+                1000,
+                $this->action->campaign->segment->model->instance()->getKeyName(),
+            )
+            ->each(function (Model $educatable) {
+                throw_if(
+                    ! $educatable instanceof Educatable,
+                    new Exception('Educatable is not an instance of ' . Educatable::class)
+                );
+                // Create a CampaignActionEducatable
+
+                // Dispatch a job on this batch to perform the action on this educatable, passing in the CampaignActionEducatable to be updated when it completes
+            });
     }
 }
