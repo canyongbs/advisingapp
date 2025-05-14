@@ -71,7 +71,7 @@ class EducatableAlertsWidget extends Widget
             ->join('alert_statuses', 'alerts.status_id', '=', 'alert_statuses.id')
             ->groupBy('alert_statuses.classification')
             ->get();
-
+  
         return collect(SystemAlertStatusClassification::cases())
             ->map(fn (SystemAlertStatusClassification $classification) => [
                 'id' => AlertStatus::where('classification', $classification->value)->first()?->id,
