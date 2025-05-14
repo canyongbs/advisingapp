@@ -61,7 +61,7 @@ class InformOlympusOfDeploymentEvent implements ShouldQueue, NotTenantAware
 
         app(Olympus::class)->makeRequest()
             ->asJson()
-            ->post("/api/deployment/{$tenantId}/status-event-inform", [
+            ->post("/api/deployment/{$tenantId}/report-event", [
                 'type' => 'deployment_complete',
                 'occurred_at' => now()->toDateTimeString('millisecond'),
             ])
