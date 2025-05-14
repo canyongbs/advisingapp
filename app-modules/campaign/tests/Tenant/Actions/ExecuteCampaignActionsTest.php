@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Campaign\Actions\ExecuteCampaignAction;
 use AdvisingApp\Campaign\Actions\ExecuteCampaignActions;
+use AdvisingApp\Campaign\Jobs\ExecuteCampaignAction;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use Illuminate\Support\Facades\Queue;
 
