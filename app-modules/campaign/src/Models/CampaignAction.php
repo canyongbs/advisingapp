@@ -100,7 +100,7 @@ class CampaignAction extends BaseModel implements Auditable, HasMedia
         return ! is_null(
             CampaignActionTimestampColumnChanges::active()
                 ? $this->execution_finished_at
-                : $this->successfully_executed_at
+                : $this->successfully_executed_at // @phpstan-ignore-line property.notFound
         );
     }
 }

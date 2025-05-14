@@ -36,15 +36,18 @@
 
 namespace AdvisingApp\Campaign\Actions;
 
+use AdvisingApp\Campaign\Jobs\ExecuteCampaignAction;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Models\Scopes\CampaignActionNotCancelled;
 use App\Features\CampaignActionTimestampColumnChanges;
 use App\Models\Tenant;
+use Illuminate\Bus\Batch;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
+use Illuminate\Support\Facades\Bus;
 
 class ExecuteCampaignActions implements ShouldQueue
 {
@@ -70,10 +73,17 @@ class ExecuteCampaignActions implements ShouldQueue
             ->campaignEnabled()
             ->cursor()
             ->each(function (CampaignAction $action) {
-                // TODO: Dispatch this job as a batch job, finishing and other events should notify the creator
-                ExecuteCampaignAction::dispatch($action);
+                Bus::batch([
+                    new ExecuteCampaignAction($action),
+                ])
+                    ->name('Execute Campaign Action: ' . $action->getKey())
+                    ->allowFailures()
+                    ->finally(function (Batch $batch) use ($action) {
+                        // TODO: Dispatch a notice to the creator of the campaign action
 
-                // TODO: set execution_dispatched_at or last_execution_attempt_at
+                        // TODO: Update the action execution_finished_at
+                    })
+                    ->dispatch();
             });
     }
 }
