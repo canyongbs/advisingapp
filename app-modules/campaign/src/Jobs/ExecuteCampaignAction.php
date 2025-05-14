@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Actions;
+namespace AdvisingApp\Campaign\Jobs;
 
 use AdvisingApp\Campaign\Models\CampaignAction;
 use App\Models\Tenant;
