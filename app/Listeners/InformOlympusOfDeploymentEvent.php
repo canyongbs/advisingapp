@@ -34,32 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Console\Commands;
+namespace App\Listeners;
 
-use AdvisingApp\Authorization\Models\Role;
-use App\Models\Authenticatable;
-use Illuminate\Console\Command;
-use Spatie\Multitenancy\Commands\Concerns\TenantAware;
+use App\Multitenancy\Events\NewTenantSetupComplete;
+use App\Services\Olympus;
+use App\Settings\OlympusSettings;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Spatie\Multitenancy\Jobs\NotTenantAware;
+use Spatie\Multitenancy\Landlord;
 
-class SetupRoles extends Command
+class InformOlympusOfDeploymentEvent implements ShouldQueue, NotTenantAware
 {
-    use TenantAware;
-
-    protected $signature = 'roles:setup {--tenant=*}';
-
-    protected $description = 'This command will create all of the roles defined in the roles config directories.';
-
-    public function handle(): int
+    public function handle(NewTenantSetupComplete $event): void
     {
-        $this->line('Creating roles...');
+        $isConfigured = Landlord::execute(function (): bool {
+            $settings = app(OlympusSettings::class);
 
-        Role::query()->firstOrCreate([
-            'name' => Authenticatable::SUPER_ADMIN_ROLE,
-            'guard_name' => 'web',
-        ]);
+            return ! is_null($settings->key);
+        });
 
-        $this->info('Roles created successfully!');
+        if (! $isConfigured) {
+            return;
+        }
 
-        return static::SUCCESS;
+        $tenantId = $event->tenant->getKey();
+
+        app(Olympus::class)->makeRequest()
+            ->asJson()
+            ->post("/api/deployment/{$tenantId}/report-event", [
+                'type' => 'complete',
+                'occurred_at' => now()->toDateTimeString('millisecond'),
+            ])
+            ->throw();
     }
 }
