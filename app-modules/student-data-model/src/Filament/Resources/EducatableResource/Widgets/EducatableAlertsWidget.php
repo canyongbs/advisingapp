@@ -42,7 +42,6 @@ use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use Filament\Widgets\Widget;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 use Livewire\Attributes\Locked;
 
 class EducatableAlertsWidget extends Widget
@@ -71,7 +70,7 @@ class EducatableAlertsWidget extends Widget
             ->join('alert_statuses', 'alerts.status_id', '=', 'alert_statuses.id')
             ->groupBy('alert_statuses.classification')
             ->get();
-  
+
         return collect(SystemAlertStatusClassification::cases())
             ->map(fn (SystemAlertStatusClassification $classification) => [
                 'id' => AlertStatus::where('classification', $classification->value)->first()?->id,
