@@ -61,7 +61,6 @@ class CampaignAction extends BaseModel implements Auditable, HasMedia
         'data',
         'execute_at',
         'last_execution_attempt_at',
-        'last_execution_attempt_error',
         'successfully_executed_at',
         'cancelled_at',
     ];
@@ -100,10 +99,10 @@ class CampaignAction extends BaseModel implements Auditable, HasMedia
     {
         $this->update([
             'last_execution_attempt_at' => now(),
-            'last_execution_attempt_error' => $response,
         ]);
     }
 
+    // TODO: Change this to be `dispatched_at`
     public function scopeHasNotBeenExecuted(Builder $query): void
     {
         $query->whereNull('successfully_executed_at');

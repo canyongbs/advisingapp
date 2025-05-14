@@ -73,7 +73,6 @@ class CampaignActionFactory extends Factory
         return $this->state([
             'execute_at' => $at ?? now(),
             'last_execution_attempt_at' => $at ?? now(),
-            'last_execution_attempt_error' => fake()->sentence(),
         ]);
     }
 
