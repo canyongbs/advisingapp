@@ -61,8 +61,8 @@ class EducatableAlertsWidget extends Widget
     }
 
     /**
-     * @return Collection<int, array{id: int|null, classification: string, alert_count: mixed}>
-    */
+     * @return array<string, mixed>
+     */
     protected function getStatusCounts()
     {
         $counts = $this->educatable->alerts()
@@ -77,7 +77,7 @@ class EducatableAlertsWidget extends Widget
                 'id' => AlertStatus::where('classification', $classification->value)->first()?->id,
                 'classification' => $classification->value,
                 'alert_count' => $counts->where('classification', $classification->value)->first()->alert_count ?? 0,
-            ]);
+            ])->toArray();
     }
 
     /**
