@@ -10,6 +10,9 @@ return new class extends Migration
     {
         Schema::create('research_request_questions', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->text('content');
+            $table->text('response')->nullable();
+            $table->foreignUuid('research_request_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();
         });
