@@ -38,6 +38,7 @@ namespace AdvisingApp\Campaign\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Campaign\Enums\CampaignActionType;
+use App\Features\CampaignActionTimestampColumnChanges;
 use App\Models\BaseModel;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -60,9 +61,11 @@ class CampaignAction extends BaseModel implements Auditable, HasMedia
         'type',
         'data',
         'execute_at',
-        'last_execution_attempt_at',
-        'successfully_executed_at',
+        'last_execution_attempt_at', // TODO: CampaignActionTimestampColumnChanges, remove when removing this Feature Flag
+        'successfully_executed_at', // TODO: CampaignActionTimestampColumnChanges, remove when removing this Feature Flag
         'cancelled_at',
+        'execution_dispatched_at',
+        'execution_finished_at',
     ];
 
     protected $casts = [
@@ -70,6 +73,8 @@ class CampaignAction extends BaseModel implements Auditable, HasMedia
         'data' => 'array',
         'execute_at' => 'datetime',
         'cancelled_at' => 'datetime',
+        'execution_dispatched_at' => 'datetime',
+        'execution_finished_at' => 'datetime',
     ];
 
     /**
@@ -83,29 +88,6 @@ class CampaignAction extends BaseModel implements Auditable, HasMedia
     public function execute(): void
     {
         $response = $this->type->executeAction($this);
-
-        $response === true ? $this->markAsSuccessfullyExecuted() : $this->markAsUnsuccessfullyExecuted($response);
-    }
-
-    public function markAsSuccessfullyExecuted(): void
-    {
-        $this->update([
-            'last_execution_attempt_at' => now(),
-            'successfully_executed_at' => now(),
-        ]);
-    }
-
-    public function markAsUnsuccessfullyExecuted(string $response): void
-    {
-        $this->update([
-            'last_execution_attempt_at' => now(),
-        ]);
-    }
-
-    // TODO: Change this to be `dispatched_at`
-    public function scopeHasNotBeenExecuted(Builder $query): void
-    {
-        $query->whereNull('successfully_executed_at');
     }
 
     public function scopeCampaignEnabled(Builder $query): void
@@ -115,6 +97,10 @@ class CampaignAction extends BaseModel implements Auditable, HasMedia
 
     public function hasBeenExecuted(): bool
     {
-        return ! is_null($this->successfully_executed_at);
+        return ! is_null(
+            CampaignActionTimestampColumnChanges::active()
+                ? $this->execution_finished_at
+                : $this->successfully_executed_at
+        );
     }
 }

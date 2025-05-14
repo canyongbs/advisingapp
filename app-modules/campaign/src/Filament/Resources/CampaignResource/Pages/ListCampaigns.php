@@ -38,6 +38,7 @@ namespace AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages;
 
 use AdvisingApp\Campaign\Filament\Resources\CampaignResource;
 use AdvisingApp\Campaign\Models\Campaign;
+use App\Features\CampaignActionTimestampColumnChanges;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\User;
 use Filament\Actions\CreateAction;
@@ -91,7 +92,11 @@ class ListCampaigns extends ListRecords
                 Filter::make('Completed')
                     ->query(function (Builder $query) {
                         $query->whereDoesntHave('actions', function (Builder $query) {
-                            $query->whereNull('successfully_executed_at');
+                            $query->whereNull(
+                                CampaignActionTimestampColumnChanges::active()
+                                    ? 'execution_finished_at'
+                                    : 'successfully_executed_at'
+                            );
                         });
                     }),
             ]);

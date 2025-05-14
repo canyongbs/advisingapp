@@ -1,5 +1,6 @@
 <?php
 
+use App\Features\CampaignActionTimestampColumnChanges;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
@@ -18,6 +19,8 @@ return new class () extends Migration {
 
                 $table->dropColumn('last_execution_attempt_error');
             });
+
+            CampaignActionTimestampColumnChanges::activate();
         });
     }
 
@@ -33,6 +36,8 @@ return new class () extends Migration {
 
                 $table->string('last_execution_attempt_error')->nullable();
             });
+
+            CampaignActionTimestampColumnChanges::deactivate();
         });
     }
 };
