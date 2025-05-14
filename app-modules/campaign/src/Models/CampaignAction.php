@@ -85,11 +85,6 @@ class CampaignAction extends BaseModel implements Auditable, HasMedia
         return $this->belongsTo(Campaign::class);
     }
 
-    public function execute(): void
-    {
-        $response = $this->type->executeAction($this);
-    }
-
     public function scopeCampaignEnabled(Builder $query): void
     {
         $query->whereRelation('campaign', 'enabled', true);

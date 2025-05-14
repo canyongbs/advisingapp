@@ -103,6 +103,7 @@ class Segment extends BaseModel
         $query->where('model', $model);
     }
 
+    // TODO: Remove this, it is extremely inefficient and prone to break in large sets
     public function retrieveRecords(): Collection
     {
         if (count($this->subjects) > 0) {
