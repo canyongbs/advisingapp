@@ -70,7 +70,10 @@ class ExecuteCampaignActions implements ShouldQueue
             ->campaignEnabled()
             ->cursor()
             ->each(function (CampaignAction $action) {
+                // TODO: Dispatch this job as a batch job, finishing and other events should notify the creator
                 ExecuteCampaignAction::dispatch($action);
+
+                // TODO: set execution_dispatched_at or last_execution_attempt_at
             });
     }
 }
