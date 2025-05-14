@@ -38,6 +38,7 @@ namespace AdvisingApp\Timeline\Models;
 
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
@@ -48,44 +49,47 @@ use Illuminate\Support\Collection;
  */
 abstract class History extends BaseModel
 {
-    use SoftDeletes;
+  use SoftDeletes;
 
-    protected $table = 'histories';
+  protected $table = 'histories';
 
-    protected $fillable = [
-        'event',
-        'old',
-        'new',
+  protected $fillable = [
+    'event',
+    'old',
+    'new',
+  ];
+
+  protected $casts = [
+    'old' => 'array',
+    'new' => 'array',
+  ];
+
+  /**
+   * @return MorphTo<Model, $this>
+   */
+  public function subject(): MorphTo
+  {
+    return $this->morphTo();
+  }
+
+  public function getFormattedValueForKey(string $key): array
+  {
+    return [
+      'key' => str($key)->headline()->toString(),
+      'old' => $this->old[$key] ?? null,
+      'new' => $this->new[$key],
     ];
+  }
 
-    protected $casts = [
-        'old' => 'array',
-        'new' => 'array',
-    ];
+  public function getFormattedValues(): Collection
+  {
+    return collect($this->new)
+      ->keys()
+      ->mapWithKeys(fn(string $key) => [$key => $this->getFormattedValueForKey($key)]);
+  }
 
-    public function subject(): MorphTo
-    {
-        return $this->morphTo();
-    }
-
-    public function getFormattedValueForKey(string $key): array
-    {
-        return [
-            'key' => str($key)->headline()->toString(),
-            'old' => $this->old[$key] ?? null,
-            'new' => $this->new[$key],
-        ];
-    }
-
-    public function getFormattedValues(): Collection
-    {
-        return collect($this->new)
-            ->keys()
-            ->mapWithKeys(fn (string $key) => [$key => $this->getFormattedValueForKey($key)]);
-    }
-
-    public function formatted(): Attribute
-    {
-        return Attribute::get(fn () => $this->getFormattedValues()->filter());
-    }
+  public function formatted(): Attribute
+  {
+    return Attribute::get(fn() => $this->getFormattedValues()->filter());
+  }
 }

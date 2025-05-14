@@ -47,24 +47,27 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Timeline extends BaseModel
 {
-    use SoftDeletes;
+  use SoftDeletes;
 
-    protected $fillable = [
-        'entity_type',
-        'entity_id',
-        'timelineable_type',
-        'timelineable_id',
-        'record_sortable_date',
-    ];
+  protected $fillable = [
+    'entity_type',
+    'entity_id',
+    'timelineable_type',
+    'timelineable_id',
+    'record_sortable_date',
+  ];
 
-    public function timelineable(): MorphTo
-    {
-        return $this->morphTo();
-    }
+  /**
+   * @return MorphTo<Model, $this>
+   */
+  public function timelineable(): MorphTo
+  {
+    return $this->morphTo();
+  }
 
-    public function scopeForEntity(Builder $query, Model $entity)
-    {
-        return $query->where('entity_type', $entity->getMorphClass())
-            ->where('entity_id', $entity->getKey());
-    }
+  public function scopeForEntity(Builder $query, Model $entity)
+  {
+    return $query->where('entity_type', $entity->getMorphClass())
+      ->where('entity_id', $entity->getKey());
+  }
 }

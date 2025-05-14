@@ -40,5 +40,5 @@ use Exception;
 
 class TenantAppKeyIsNull extends Exception
 {
-    protected $message = 'Tenant app key is null';
+  protected $message = 'Tenant app key is null';
 }

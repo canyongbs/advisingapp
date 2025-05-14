@@ -37,6 +37,7 @@
 namespace AdvisingApp\Segment\Models;
 
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -46,23 +47,26 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class SegmentSubject extends BaseModel
 {
-    use SoftDeletes;
+  use SoftDeletes;
 
-    protected $fillable = [
-        'subject_id',
-        'subject_type',
-    ];
+  protected $fillable = [
+    'subject_id',
+    'subject_type',
+  ];
 
-    /**
-     * @return BelongsTo<Segment, $this>
-     */
-    public function segment(): BelongsTo
-    {
-        return $this->belongsTo(Segment::class);
-    }
+  /**
+   * @return BelongsTo<Segment, $this>
+   */
+  public function segment(): BelongsTo
+  {
+    return $this->belongsTo(Segment::class);
+  }
 
-    public function subject(): MorphTo
-    {
-        return $this->morphTo();
-    }
+  /**
+   * @return MorphTo<Model, $this>
+   */
+  public function subject(): MorphTo
+  {
+    return $this->morphTo();
+  }
 }
