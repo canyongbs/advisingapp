@@ -1,39 +1,5 @@
 <?php
 
-/*
-<COPYRIGHT>
-
-    Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
-
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
-    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
-
-    Notice:
-
-    - You may not provide the software to third parties as a hosted or managed
-      service, where the service provides users with access to any substantial set of
-      the features or functionality of the software.
-    - You may not move, change, disable, or circumvent the license key functionality
-      in the software, and you may not remove or obscure any functionality in the
-      software that is protected by the license key.
-    - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
-      to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
-      vigorously.
-    - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
-    - Use of this software implies agreement to the license terms and conditions as stated
-      in the Elastic License 2.0.
-
-    For more information or inquiries please visit our website at
-    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
-
-</COPYRIGHT>
-*/
-
 // @formatter:off
 // phpcs:ignoreFile
 /**
@@ -1824,9 +1790,8 @@ namespace AdvisingApp\Campaign\Models{
  * @property \AdvisingApp\Campaign\Enums\CampaignActionType $type
  * @property array<array-key, mixed> $data
  * @property \Illuminate\Support\Carbon $execute_at
- * @property string|null $last_execution_attempt_at
- * @property string|null $last_execution_attempt_error
- * @property string|null $successfully_executed_at
+ * @property \Illuminate\Support\Carbon|null $execution_dispatched_at
+ * @property \Illuminate\Support\Carbon|null $execution_finished_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -1838,7 +1803,6 @@ namespace AdvisingApp\Campaign\Models{
  * @property-read int|null $media_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignAction campaignEnabled()
  * @method static \AdvisingApp\Campaign\Database\Factories\CampaignActionFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignAction hasNotBeenExecuted()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignAction newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignAction newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignAction onlyTrashed()
@@ -1849,10 +1813,9 @@ namespace AdvisingApp\Campaign\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignAction whereData($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignAction whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignAction whereExecuteAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignAction whereExecutionDispatchedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignAction whereExecutionFinishedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignAction whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignAction whereLastExecutionAttemptAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignAction whereLastExecutionAttemptError($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignAction whereSuccessfullyExecutedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignAction whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignAction whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignAction withTrashed()
@@ -1861,6 +1824,42 @@ namespace AdvisingApp\Campaign\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperCampaignAction {}
+}
+
+namespace AdvisingApp\Campaign\Models{
+/**
+ * 
+ *
+ * @property string $id
+ * @property string $campaign_action_id
+ * @property string $educatable_type
+ * @property string $educatable_id
+ * @property \Illuminate\Support\Carbon|null $succeeded_at
+ * @property \Illuminate\Support\Carbon|null $last_failed_at
+ * @property string|null $related_type
+ * @property string|null $related_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \AdvisingApp\Campaign\Models\CampaignAction $campaignAction
+ * @property-read \Illuminate\Database\Eloquent\Model $educatable
+ * @property-read \Illuminate\Database\Eloquent\Model|null $related
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignActionEducatable newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignActionEducatable newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignActionEducatable query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignActionEducatable whereCampaignActionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignActionEducatable whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignActionEducatable whereEducatableId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignActionEducatable whereEducatableType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignActionEducatable whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignActionEducatable whereLastFailedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignActionEducatable whereRelatedId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignActionEducatable whereRelatedType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignActionEducatable whereSucceededAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignActionEducatable whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperCampaignActionEducatable {}
 }
 
 namespace AdvisingApp\CareTeam\Models{
