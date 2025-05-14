@@ -75,6 +75,8 @@ class ExecuteCampaignAction implements ShouldQueue, ShouldBeUnique
             Auth::setUser($this->action->campaign->createdBy);
         }
 
+        // TODO: Dispatch each individual educatable as a job added to this batch of this job
+
         $this->action->execute();
     }
 }
