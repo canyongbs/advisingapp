@@ -38,6 +38,7 @@ namespace AdvisingApp\Campaign\Actions;
 
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Models\Scopes\CampaignActionNotCancelled;
+use App\Features\CampaignActionTimestampColumnChanges;
 use App\Models\Tenant;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -60,9 +61,12 @@ class ExecuteCampaignActions implements ShouldQueue
     {
         CampaignAction::query()
             ->where('execute_at', '<=', now())
-            ->whereNull('last_execution_attempt_at')
+            ->whereNull(
+                CampaignActionTimestampColumnChanges::active()
+                    ? 'execution_dispatched_at'
+                    : 'last_execution_attempt_at'
+            )
             ->tap(new CampaignActionNotCancelled())
-            ->hasNotBeenExecuted()
             ->campaignEnabled()
             ->cursor()
             ->each(function (CampaignAction $action) {

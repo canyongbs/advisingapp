@@ -38,11 +38,12 @@ namespace AdvisingApp\Campaign\Database\Factories;
 
 use AdvisingApp\Campaign\Enums\CampaignActionType;
 use AdvisingApp\Campaign\Models\Campaign;
+use AdvisingApp\Campaign\Models\CampaignAction;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Campaign\Models\CampaignAction>
+ * @extends Factory<CampaignAction>
  */
 class CampaignActionFactory extends Factory
 {
@@ -59,20 +60,18 @@ class CampaignActionFactory extends Factory
         ];
     }
 
-    public function successfulExecution(?Carbon $at = null): self
+    public function dispatchedAt(?Carbon $at = null): self
     {
         return $this->state([
-            'execute_at' => $at ?? now(),
-            'last_execution_attempt_at' => $at ?? now(),
-            'successfully_executed_at' => $at ?? now(),
+            'execution_dispatched_at' => $at ?? now(),
         ]);
     }
 
-    public function failedExecution(?Carbon $at = null): self
+    public function finishedAt(?Carbon $at = null): self
     {
         return $this->state([
-            'execute_at' => $at ?? now(),
-            'last_execution_attempt_at' => $at ?? now(),
+            'execution_dispatched_at' => $at ?? now(),
+            'execution_finished_at' => $at ?? now(),
         ]);
     }
 

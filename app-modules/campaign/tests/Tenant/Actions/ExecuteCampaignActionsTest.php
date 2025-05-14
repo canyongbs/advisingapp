@@ -45,7 +45,7 @@ it('will only dispatch jobs for actions that are scheduled and have not yet been
     ]);
 
     CampaignAction::factory()
-        ->successfulExecution(now()->subMinute());
+        ->finishedAt(now()->subMinute());
 
     Queue::fake([ExecuteCampaignAction::class]);
 
