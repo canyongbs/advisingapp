@@ -47,26 +47,26 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class SegmentSubject extends BaseModel
 {
-  use SoftDeletes;
+    use SoftDeletes;
 
-  protected $fillable = [
-    'subject_id',
-    'subject_type',
-  ];
+    protected $fillable = [
+        'subject_id',
+        'subject_type',
+    ];
 
-  /**
-   * @return BelongsTo<Segment, $this>
-   */
-  public function segment(): BelongsTo
-  {
-    return $this->belongsTo(Segment::class);
-  }
+    /**
+     * @return BelongsTo<Segment, $this>
+     */
+    public function segment(): BelongsTo
+    {
+        return $this->belongsTo(Segment::class);
+    }
 
-  /**
-   * @return MorphTo<Model, $this>
-   */
-  public function subject(): MorphTo
-  {
-    return $this->morphTo();
-  }
+    /**
+     * @return MorphTo<Model, $this>
+     */
+    public function subject(): MorphTo
+    {
+        return $this->morphTo();
+    }
 }

@@ -37,7 +37,6 @@
 namespace AdvisingApp\StudentDataModel\Models\Contracts;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -53,22 +52,22 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
  */
 interface Educatable extends Identifiable, CanBeNotified
 {
-  public static function getLabel(): string;
+    public static function getLabel(): string;
 
-  public static function displayNameKey(): string;
+    public static function displayNameKey(): string;
 
-  public static function displayEmailKey(): string;
+    public static function displayEmailKey(): string;
 
-  public function careTeam(): MorphToMany;
+    public function careTeam(): MorphToMany;
 
-  public static function getLicenseType(): LicenseType;
+    public static function getLicenseType(): LicenseType;
 
-  public function eventAttendeeRecords(): HasMany;
+    public function eventAttendeeRecords(): HasMany;
 
-  public function canReceiveSms(): bool;
+    public function canReceiveSms(): bool;
 
-  /**
-   * @return MorphToMany<Tag, covariant Student|Prospect, covariant Taggable>
-   */
-  public function tags(): MorphToMany;
+    /**
+     * @return MorphToMany<Tag, covariant Student|Prospect, covariant Taggable>
+     */
+    public function tags(): MorphToMany;
 }

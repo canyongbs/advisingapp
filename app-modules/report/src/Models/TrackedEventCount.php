@@ -46,22 +46,22 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  */
 class TrackedEventCount extends BaseModel
 {
-  protected $fillable = [
-    'type',
-    'count',
-    'last_occurred_at',
-  ];
+    protected $fillable = [
+        'type',
+        'count',
+        'last_occurred_at',
+    ];
 
-  protected $casts = [
-    'type' => TrackedEventType::class,
-    'last_occurred_at' => 'datetime',
-  ];
+    protected $casts = [
+        'type' => TrackedEventType::class,
+        'last_occurred_at' => 'datetime',
+    ];
 
-  /**
-   * @return MorphTo<Model, $this>
-   */
-  public function relatedTo(): MorphTo
-  {
-    return $this->morphTo();
-  }
+    /**
+     * @return MorphTo<Model, $this>
+     */
+    public function relatedTo(): MorphTo
+    {
+        return $this->morphTo();
+    }
 }
