@@ -36,21 +36,18 @@
 
 namespace AdvisingApp\Research\Jobs;
 
-use Throwable;
-use App\Models\User;
-use Illuminate\Support\Facades\Http;
+use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
+use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use AdvisingApp\Ai\Settings\AiResearchAssistantSettings;
 use AdvisingApp\Ai\Settings\AiSettings;
-use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use AdvisingApp\Research\Models\ResearchRequest;
-use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
-use AdvisingApp\Research\Actions\GenerateResearchTitle;
-use AdvisingApp\Ai\Settings\AiResearchAssistantSettings;
 use AdvisingApp\Research\Models\ResearchRequestQuestion;
-use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
 use GuzzleHttp\Client;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
+use Throwable;
 
 class Research implements ShouldQueue
 {
@@ -118,13 +115,13 @@ class Research implements ShouldQueue
                 if (blank($content)) {
                     continue;
                 }
-                
+
                 $counter++;
 
                 $this->researchRequest->results .= $content;
 
                 info($this->researchRequest->results);
-                
+
                 if ($counter > 100) {
                     $this->researchRequest->save();
 

@@ -35,7 +35,7 @@
     @if (filled($researchRequest?->results))
         <section class="prose max-w-none dark:prose-invert">
             @if (filled($researchRequest->title))
-                <h1>{{ $researchRequest->title}}</h1>
+                <h1>{{ $researchRequest->title }}</h1>
             @endif
 
             {!! str($researchRequest->results)->markdown()->sanitizeHtml() !!}

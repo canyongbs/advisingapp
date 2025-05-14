@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Research\Actions;
 
-use App\Models\User;
-use AdvisingApp\Research\Models\ResearchRequest;
-use AdvisingApp\Ai\Settings\AiResearchAssistantSettings;
-use AdvisingApp\Research\Models\ResearchRequestQuestion;
 use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
+use AdvisingApp\Ai\Settings\AiResearchAssistantSettings;
+use AdvisingApp\Research\Models\ResearchRequest;
+use AdvisingApp\Research\Models\ResearchRequestQuestion;
+use App\Models\User;
 
 class GenerateResearchQuestion
 {

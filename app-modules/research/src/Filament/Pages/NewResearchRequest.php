@@ -36,24 +36,19 @@
 
 namespace AdvisingApp\Research\Filament\Pages;
 
+use AdvisingApp\Research\Actions\GenerateResearchQuestion;
+use AdvisingApp\Research\Jobs\Research;
+use AdvisingApp\Research\Models\ResearchRequest;
 use App\Models\User;
-use Filament\Forms\Form;
-use Filament\Pages\Page;
 use Filament\Actions\Action;
-use Livewire\Attributes\Url;
-use Livewire\Attributes\Computed;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\View;
 use Filament\Forms\Components\Wizard;
-use AdvisingApp\Research\Jobs\Research;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Wizard\Step;
-use Illuminate\Contracts\Support\Htmlable;
-use AdvisingApp\Research\Models\ResearchRequest;
-use AdvisingApp\Research\Actions\GenerateResearch;
-use AdvisingApp\Research\Actions\GenerateResearchTitle;
-use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
-use AdvisingApp\Research\Actions\GenerateResearchQuestion;
+use Filament\Forms\Form;
+use Filament\Pages\Page;
+use Livewire\Attributes\Computed;
+use Livewire\Attributes\Url;
 
 /**
  * @property-read bool $hasResearchStarted
