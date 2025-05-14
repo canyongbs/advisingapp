@@ -39,14 +39,17 @@ namespace AdvisingApp\Campaign\Jobs;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use App\Models\Tenant;
 use App\Models\User;
+use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
 use Illuminate\Support\Facades\Auth;
 
 class ExecuteCampaignAction implements ShouldQueue, ShouldBeUnique
 {
-    use Dispatchable;
+    use Batchable;
+    use Queueable;
 
     public int $tries = 3;
 
@@ -61,6 +64,14 @@ class ExecuteCampaignAction implements ShouldQueue, ShouldBeUnique
     public function uniqueId(): string
     {
         return Tenant::current()->getKey() . ':' . $this->action->getKey();
+    }
+
+    /**
+     * @return array<object>
+     */
+    public function middleware(): array
+    {
+        return [new SkipIfBatchCancelled()];
     }
 
     public function handle(): void
