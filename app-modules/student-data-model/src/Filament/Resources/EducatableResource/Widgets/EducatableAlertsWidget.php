@@ -36,12 +36,11 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets;
 
-use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Alert\Models\Alert;
+use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use Filament\Widgets\Widget;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Attributes\Locked;
 
@@ -60,28 +59,24 @@ class EducatableAlertsWidget extends Widget
         return auth()->user()->can('viewAny', Alert::class);
     }
 
-    protected function getActiveCount(): int
-    {
-        return $this->educatable->alerts()
-            ->whereHas('status', function (Builder $query) {
-                $query->where('classification', SystemAlertStatusClassification::Active);
-            })
-            ->count();
-    }
-
-    protected function getSeverityCounts(): array
+    /**
+     * @return array<string, mixed>
+     */
+    protected function getStatusCounts(): array
     {
         $counts = $this->educatable->alerts()
-            ->toBase()
-            ->selectRaw('count(*) as alert_count, severity')
-            ->groupBy('severity')
-            ->pluck('alert_count', 'severity');
+            ->select('alert_statuses.classification')
+            ->selectRaw('count(*) as alert_count')
+            ->join('alert_statuses', 'alerts.status_id', '=', 'alert_statuses.id')
+            ->groupBy('alert_statuses.classification')
+            ->get();
 
-        return collect(AlertSeverity::cases())
-            ->reverse()
-            ->mapWithKeys(fn (AlertSeverity $alertSeverity): array => [$alertSeverity->value => $counts[$alertSeverity->value] ?? 0])
-            ->filter()
-            ->all();
+        return collect(SystemAlertStatusClassification::cases())
+            ->map(fn (SystemAlertStatusClassification $classification) => [
+                'id' => AlertStatus::where('classification', $classification->value)->first()?->id,
+                'classification' => $classification->value,
+                'alert_count' => $counts->where('classification', $classification->value)->first()->alert_count ?? 0,
+            ])->toArray();
     }
 
     /**
