@@ -36,14 +36,9 @@
 
 namespace AdvisingApp\Engagement\Models;
 
-use AdvisingApp\Campaign\Models\CampaignAction;
-use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
-use AdvisingApp\Engagement\Actions\CreateEngagementBatch;
-use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Engagement\Models\Concerns\HasManyEngagements;
 use AdvisingApp\Engagement\Observers\EngagementBatchObserver;
 use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use App\Models\BaseModel;
 use App\Models\User;
 use DOMDocument;
@@ -52,13 +47,12 @@ use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use Throwable;
 
 /**
  * @mixin IdeHelperEngagementBatch
  */
 #[ObservedBy([EngagementBatchObserver::class])]
-class EngagementBatch extends BaseModel implements ExecutableFromACampaignAction, HasMedia
+class EngagementBatch extends BaseModel implements HasMedia
 {
     use HasManyEngagements;
     use InteractsWithMedia;
@@ -90,28 +84,6 @@ class EngagementBatch extends BaseModel implements ExecutableFromACampaignAction
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    public static function executeFromCampaignAction(CampaignAction $action): bool|string
-    {
-        try {
-            $channel = NotificationChannel::parse($action->data['channel']);
-            $records = $action->campaign->segment->retrieveRecords();
-
-            app(CreateEngagementBatch::class)->execute(new EngagementCreationData(
-                user: $action->campaign->createdBy,
-                recipient: ($channel === NotificationChannel::Sms) ? $records->filter(fn (CanBeNotified $record) => $record->canReceiveSms()) : $records,
-                channel: $channel,
-                subject: $action->data['subject'] ?? null,
-                body: $action->data['body'] ?? null,
-            ));
-
-            return true;
-        } catch (Throwable $e) {
-            return $e->getMessage();
-        }
-
-        // Do we need to be able to relate campaigns/actions to the RESULT of their actions?
     }
 
     public static function renderWithMergeTags(string $html): string
