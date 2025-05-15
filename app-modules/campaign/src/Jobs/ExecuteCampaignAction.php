@@ -93,10 +93,8 @@ class ExecuteCampaignAction implements ShouldQueue, ShouldBeUnique
         }
 
         app(TranslateSegmentFilters::class)
-            ->applyFilterToQuery(
-                $this->action->campaign->segment,
-                $this->action->campaign->segment->model->query()
-            )
+            // TODO: Change this to execute in the class
+            ->handle($this->action->campaign->segment)
             ->lazyById(
                 1000,
                 $this->action->campaign->segment->model->instance()->getKeyName(),

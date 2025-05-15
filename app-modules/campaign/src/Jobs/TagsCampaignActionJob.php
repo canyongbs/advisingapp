@@ -2,31 +2,11 @@
 
 namespace AdvisingApp\Campaign\Jobs;
 
-use AdvisingApp\Campaign\Models\CampaignActionEducatable;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use Exception;
-use Illuminate\Bus\Batchable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
 
-class TagsCampaignActionJob implements ShouldQueue
+class TagsCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
 {
-    use Queueable;
-    use Batchable;
-
-    public function __construct(
-        public CampaignActionEducatable $actionEducatable,
-    ) {}
-
-    /**
-     * @return array<object>
-     */
-    public function middleware(): array
-    {
-        return [new SkipIfBatchCancelled()];
-    }
-
     public function handle(): void
     {
         $educatable = $this->actionEducatable->educatable;
