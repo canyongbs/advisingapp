@@ -37,8 +37,6 @@
 namespace AdvisingApp\CaseManagement\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Campaign\Models\CampaignAction;
-use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
 use AdvisingApp\CaseManagement\Cases\CaseNumber\Contracts\CaseNumberGenerator;
 use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
 use AdvisingApp\CaseManagement\Enums\CaseUpdateDirection;
@@ -59,10 +57,8 @@ use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\BaseModel;
 use App\Models\User;
-use App\Settings\LicenseSettings;
 use Carbon\CarbonInterface;
 use DateTimeInterface;
-use Exception;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -82,7 +78,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @mixin IdeHelperCaseModel
  */
 #[ObservedBy([CaseObserver::class])]
-class CaseModel extends BaseModel implements Auditable, CanTriggerAutoSubscription, Identifiable, ExecutableFromACampaignAction
+class CaseModel extends BaseModel implements Auditable, CanTriggerAutoSubscription, Identifiable
 {
     use BelongsToEducatable;
     use SoftDeletes;
@@ -257,45 +253,6 @@ class CaseModel extends BaseModel implements Auditable, CanTriggerAutoSubscripti
             'status_id',
             CaseStatus::where('classification', SystemCaseClassification::Open)->pluck('id')
         );
-    }
-
-    public static function executeFromCampaignAction(CampaignAction $action): bool|string
-    {
-        if (app(LicenseSettings::class)->data->addons->caseManagement) {
-            try {
-                $action
-                    ->campaign
-                    ->segment
-                    ->retrieveRecords()
-                    ->each(function (Educatable $educatable) use ($action) {
-                        $request = CaseModel::create([
-                            'respondent_type' => $educatable->getMorphClass(),
-                            'respondent_id' => $educatable->getKey(),
-                            'close_details' => $action->data['close_details'],
-                            'res_details' => $action->data['res_details'],
-                            'division_id' => $action->data['division_id'],
-                            'status_id' => $action->data['status_id'],
-                            'priority_id' => $action->data['priority_id'],
-                            'created_by_id' => $action->campaign->user->id,
-                        ]);
-
-                        if ($action->data['assigned_to_id']) {
-                            $request->assignments()->create([
-                                'user_id' => $action->data['assigned_to_id'],
-                                'assigned_by_id' => $action->campaign->user->id,
-                                'assigned_at' => now(),
-                                'status' => CaseAssignmentStatus::Active,
-                            ]);
-                        }
-                    });
-
-                return true;
-            } catch (Exception $e) {
-                return $e->getMessage();
-            }
-        }
-
-        return false;
     }
 
     /**
