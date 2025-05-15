@@ -70,11 +70,7 @@ class ExecuteCampaignActions implements ShouldQueue
 
         CampaignAction::query()
             ->where('execute_at', '<=', now())
-            ->whereNull(
-                CampaignActionTimestampColumnChanges::active()
-                    ? 'execution_dispatched_at'
-                    : 'last_execution_attempt_at'
-            )
+            ->whereNull('execution_dispatched_at')
             ->tap(new CampaignActionNotCancelled())
             ->campaignEnabled()
             ->cursor()
@@ -87,7 +83,8 @@ class ExecuteCampaignActions implements ShouldQueue
                     ->finally(function (Batch $batch) use ($action) {
                         // TODO: Dispatch a notice to the creator of the campaign action
 
-                        // TODO: Update the action execution_finished_at
+                        $action->execution_finished_at = now();
+                        $action->save();
                     })
                     ->dispatch();
             });
