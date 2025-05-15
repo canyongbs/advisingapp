@@ -25,7 +25,7 @@ class InteractionCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
 
             $action = $this->actionEducatable->campaignAction;
 
-            $interaction = Interaction::create([
+            $interaction = Interaction::query()->create([
                 'user_id' => $action->campaign->createdBy instanceof User
                     ? $action->campaign->createdBy->getKey()
                     : null,

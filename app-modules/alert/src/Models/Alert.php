@@ -40,20 +40,16 @@ use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\Alert\Histories\AlertHistory;
 use AdvisingApp\Alert\Observers\AlertObserver;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Campaign\Models\CampaignAction;
-use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
-use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Timeline\Models\Concerns\InteractsWithHistory;
 use AdvisingApp\Timeline\Models\Contracts\HasHistory;
 use App\Models\BaseModel;
 use App\Models\User;
-use Exception;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -69,7 +65,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @mixin IdeHelperAlert
  */
 #[ObservedBy([AlertObserver::class])]
-class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription, ExecutableFromACampaignAction, HasHistory
+class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription, HasHistory
 {
     use SoftDeletes;
     use AuditableTrait;
@@ -125,32 +121,6 @@ class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription, 
     public function status(): BelongsTo
     {
         return $this->belongsTo(AlertStatus::class, 'status_id');
-    }
-
-    public static function executeFromCampaignAction(CampaignAction $action): bool|string
-    {
-        try {
-            $action
-                ->campaign
-                ->segment
-                ->retrieveRecords()
-                ->each(function (Educatable $educatable) use ($action) {
-                    Alert::create([
-                        'concern_type' => $educatable->getMorphClass(),
-                        'concern_id' => $educatable->getKey(),
-                        'description' => $action->data['description'],
-                        'severity' => $action->data['severity'],
-                        'status_id' => $action->data['status_id'],
-                        'suggested_intervention' => $action->data['suggested_intervention'],
-                    ]);
-                });
-
-            return true;
-        } catch (Exception $e) {
-            return $e->getMessage();
-        }
-
-        // Do we need to be able to relate campaigns/actions to the RESULT of their actions?
     }
 
     public function createdBy()

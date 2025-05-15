@@ -62,6 +62,12 @@ class ExecuteCampaignActions implements ShouldQueue
 
     public function handle(): void
     {
+        if (! CampaignActionTimestampColumnChanges::active()) {
+            // So much of the changes to the way we handle campaign actions now rely on
+            // the new column names. If this is not active, we should not run this job.
+            return;
+        }
+
         CampaignAction::query()
             ->where('execute_at', '<=', now())
             ->whereNull(
