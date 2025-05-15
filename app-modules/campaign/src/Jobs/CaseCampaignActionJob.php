@@ -17,7 +17,7 @@ class CaseCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
     {
         try {
             if (! app(LicenseSettings::class)->data->addons->caseManagement) {
-                // Throw an exception if the Case Management addon is not enabled.
+                throw new Exception('The Case Management addon is not enabled.');
             }
 
             DB::beginTransaction();
