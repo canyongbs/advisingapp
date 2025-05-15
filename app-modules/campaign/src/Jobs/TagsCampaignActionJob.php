@@ -31,6 +31,8 @@ class TagsCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
             // Because we are just attaching tags, we don't create anything other than the pivot record.
             // So we don't need to relate any records.
             $this->actionEducatable->markSucceeded();
+
+            DB::commit();
         } catch (Throwable $e) {
             DB::rollBack();
 

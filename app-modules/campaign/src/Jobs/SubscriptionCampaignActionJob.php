@@ -38,6 +38,8 @@ class SubscriptionCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
             // Because we are attaching multiple Subscriptions, which just creates pivot Models,
             // we don't need to relate any records.
             $this->actionEducatable->markSucceeded();
+
+            DB::commit();
         } catch (Throwable $e) {
             DB::rollBack();
 

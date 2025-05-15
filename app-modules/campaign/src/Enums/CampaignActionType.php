@@ -175,8 +175,6 @@ enum CampaignActionType: string implements HasLabel
             CampaignActionType::Case => CaseModel::executeFromCampaignAction($action),
             CampaignActionType::ProactiveAlert => Alert::executeFromCampaignAction($action),
             CampaignActionType::Interaction => Interaction::executeFromCampaignAction($action),
-            CampaignActionType::CareTeam => CareTeam::executeFromCampaignAction($action),
-            CampaignActionType::Task => Task::executeFromCampaignAction($action),
             CampaignActionType::Event => Event::executeFromCampaignAction($action),
         };
     }
