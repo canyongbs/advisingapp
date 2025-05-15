@@ -63,6 +63,7 @@ class FormEmailAutoReply extends BaseModel implements HasMedia
     protected $casts = [
         'body' => 'array',
         'is_enabled' => 'boolean',
+        'subject' => 'array',
     ];
 
     /**
@@ -106,13 +107,6 @@ class FormEmailAutoReply extends BaseModel implements HasMedia
             'student full name' => $author->getAttribute($author->displayNameKey()),
             'student email' => $author->primaryEmailAddress?->address,
             'student preferred name' => $author->getAttribute($author->displayPreferredNameKey()),
-        ];
-    }
-
-    protected function casts(): array
-    {
-        return [
-            'subject' => 'array',
         ];
     }
 }

@@ -104,6 +104,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         'scheduled_at' => 'datetime',
         'dispatched_at' => 'datetime',
         'channel' => NotificationChannel::class,
+        'subject' => 'array',
     ];
 
     // TODO Consider changing this relationship if we ever needed to timeline something else where records might be shared across entities
@@ -290,13 +291,6 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     public function getDeliveryMethod(): NotificationChannel
     {
         return $this->channel;
-    }
-
-    protected function casts(): array
-    {
-        return [
-            'subject' => 'array',
-        ];
     }
 
     protected static function booted(): void

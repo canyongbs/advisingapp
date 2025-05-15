@@ -81,6 +81,7 @@ class EngagementBatch extends BaseModel implements ExecutableFromACampaignAction
         'total_engagements' => 'integer',
         'processed_engagements' => 'integer',
         'successful_engagements' => 'integer',
+        'subject' => 'array',
     ];
 
     /**
@@ -129,12 +130,5 @@ class EngagementBatch extends BaseModel implements ExecutableFromACampaignAction
         }
 
         return $dom->saveHTML();
-    }
-
-    protected function casts(): array
-    {
-        return [
-            'subject' => 'array',
-        ];
     }
 }
