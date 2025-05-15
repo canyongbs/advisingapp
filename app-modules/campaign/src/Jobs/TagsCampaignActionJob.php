@@ -10,7 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
 
-class TagCampaignActionJob implements ShouldQueue
+class TagsCampaignActionJob implements ShouldQueue
 {
     use Queueable;
     use Batchable;
