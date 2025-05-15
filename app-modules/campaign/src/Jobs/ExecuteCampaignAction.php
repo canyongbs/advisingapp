@@ -36,7 +36,9 @@
 
 namespace AdvisingApp\Campaign\Jobs;
 
+use AdvisingApp\Campaign\Enums\CampaignActionType;
 use AdvisingApp\Campaign\Models\CampaignAction;
+use AdvisingApp\Campaign\Models\CampaignActionEducatable;
 use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use App\Models\Tenant;
@@ -90,8 +92,6 @@ class ExecuteCampaignAction implements ShouldQueue, ShouldBeUnique
             Auth::setUser($this->action->campaign->createdBy);
         }
 
-        // TODO: Dispatch each individual educatable as a job added to this batch of this job
-
         app(TranslateSegmentFilters::class)
             ->applyFilterToQuery(
                 $this->action->campaign->segment,
@@ -106,9 +106,19 @@ class ExecuteCampaignAction implements ShouldQueue, ShouldBeUnique
                     ! $educatable instanceof Educatable,
                     new Exception('Educatable is not an instance of ' . Educatable::class)
                 );
-                // Create a CampaignActionEducatable
 
-                // Dispatch a job on this batch to perform the action on this educatable, passing in the CampaignActionEducatable to be updated when it completes
+                $campaignActionEducatable = CampaignActionEducatable::query()
+                    ->firstOrCreate([
+                        'campaign_action_id' => $this->action->getKey(),
+                        'educatable_id' => $educatable->getKey(),
+                        'educatable_type' => $educatable->getMorphClass(),
+                    ]);
+
+                $job = match ($this->action->type) {
+                    CampaignActionType::Tags => new TagCampaignActionJob($campaignActionEducatable),
+                };
+
+                $this->batch()->add($job);
             });
     }
 }

@@ -55,7 +55,6 @@ use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\Task\Models\Task;
-use App\Models\Tag;
 use App\Settings\LicenseSettings;
 use Filament\Support\Contracts\HasLabel;
 
@@ -180,7 +179,6 @@ enum CampaignActionType: string implements HasLabel
             CampaignActionType::Task => Task::executeFromCampaignAction($action),
             CampaignActionType::Subscription => Subscription::executeFromCampaignAction($action),
             CampaignActionType::Event => Event::executeFromCampaignAction($action),
-            CampaignActionType::Tags => Tag::executeFromCampaignAction($action),
         };
     }
 }
