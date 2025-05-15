@@ -14,18 +14,18 @@ class SubscriptionCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
 {
     public function handle(): void
     {
-        $educatable = $this->actionEducatable->educatable;
-
-        throw_if(
-            ! $educatable instanceof Subscribable,
-            new Exception('The educatable model must implement the Subscribable contract.')
-        );
-        /** @var Subscribable&Model $educatable */
-        $action = $this->actionEducatable->campaignAction;
-
-        DB::beginTransaction();
-
         try {
+            DB::beginTransaction();
+
+            $educatable = $this->actionEducatable->educatable;
+
+            throw_if(
+                ! $educatable instanceof Subscribable,
+                new Exception('The educatable model must implement the Subscribable contract.')
+            );
+            /** @var Subscribable&Model $educatable */
+            $action = $this->actionEducatable->campaignAction;
+
             if ($action->data['remove_prior']) {
                 $educatable->subscriptions()->delete();
             }
@@ -34,8 +34,14 @@ class SubscriptionCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
                 resolve(SubscriptionCreate::class)
                     ->handle(User::find($userId), $educatable, false);
             }
+
+            // Because we are attaching multiple Subscriptions, which just creates pivot Models,
+            // we don't need to relate any records.
+            $this->actionEducatable->markSucceeded();
         } catch (Throwable $e) {
             DB::rollBack();
+
+            $this->actionEducatable->markFailed();
 
             throw $e;
         }

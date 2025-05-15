@@ -2,6 +2,7 @@
 
 namespace AdvisingApp\Campaign\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -48,5 +49,19 @@ class CampaignActionEducatable extends Model
     public function related(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    public function markSucceeded(?Carbon $at = null): void
+    {
+        $this->update([
+            'succeeded_at' => $at ?? now(),
+        ]);
+    }
+
+    public function markFailed(?Carbon $at = null): void
+    {
+        $this->update([
+            'last_failed_at' => $at ?? now(),
+        ]);
     }
 }
