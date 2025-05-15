@@ -36,14 +36,16 @@
 
 namespace AdvisingApp\Research\Models;
 
+use AdvisingApp\Research\Database\Factories\ResearchRequestFactory;
 use App\Models\BaseModel;
 use App\Models\User;
-use Database\Factories\ResearchRequestFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @mixin IdeHelperResearchRequest
+ */
 class ResearchRequest extends BaseModel
 {
     /** @use HasFactory<ResearchRequestFactory> */
@@ -54,6 +56,11 @@ class ResearchRequest extends BaseModel
         'topic',
         'results',
         'user_id',
+        'finished_at',
+    ];
+
+    protected $casts = [
+        'finished_at' => 'immutable_datetime',
     ];
 
     /**

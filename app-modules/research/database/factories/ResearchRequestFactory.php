@@ -36,10 +36,12 @@
 
 namespace AdvisingApp\Research\Database\Factories;
 
+use AdvisingApp\Research\Models\ResearchRequest;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Research\Models\ResearchRequest>
+ * @extends Factory<ResearchRequest>
  */
 class ResearchRequestFactory extends Factory
 {
@@ -51,6 +53,11 @@ class ResearchRequestFactory extends Factory
     public function definition(): array
     {
         return [
+            'title' => $this->faker->sentence(),
+            'topic' => $this->faker->sentence(),
+            'results' => $this->faker->sentence(),
+            'user_id' => User::factory(),
+            'finished_at' => $this->faker->dateTime(),
         ];
     }
 }

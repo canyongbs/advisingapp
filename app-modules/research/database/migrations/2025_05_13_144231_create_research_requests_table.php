@@ -47,6 +47,7 @@ return new class () extends Migration {
             $table->text('topic');
             $table->longText('results')->nullable();
             $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
+            $table->timestamp('finished_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

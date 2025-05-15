@@ -53,9 +53,9 @@ class Research implements ShouldQueue
 {
     use Queueable;
 
-    public $timeout = 600;
+    public int $timeout = 600;
 
-    public $tries = 3;
+    public int $tries = 3;
 
     public function __construct(
         protected ResearchRequest $researchRequest,
@@ -81,55 +81,66 @@ class Research implements ShouldQueue
                     'temperature' => app(AiSettings::class)->temperature,
                 ],
                 'stream' => true,
+                'no_direct_answer' => true,
             ]);
 
             $body = $response->getBody();
 
-            $counter = 100;
-            $stream = '';
+            $counter = 0;
+            $buffer = '';
+            $eventJoinPattern = "/\r\n\r\n|\n\n|\r\r/";
 
             while (! $body->eof()) {
-                $chunk = $body->read(1024);
-                $stream .= $chunk;
+                $buffer .= $body->read(1024);
 
-                info($stream);
+                while (preg_match($eventJoinPattern, $buffer)) {
+                    $parts = preg_split($eventJoinPattern, $buffer, 2);
 
-                $content = null;
+                    $rawEvent = $parts[0] ?? '';
+                    $remaining = $parts[1] ?? '';
 
-                if (json_validate($stream)) {
-                    $content = json_decode($stream, associative: true)['choices'][0]['delta']['content'] ?? null;
-                    $stream = '';
-                }
+                    $buffer = $remaining;
 
-                $firstObjectInStream = '';
+                    $matched = preg_match('/(?P<name>[^:]*):?( ?(?P<value>.*))?/', $rawEvent, $matches);
 
-                if (str($stream)->contains('}{')) {
-                    $firstObjectInStream = (string) str($stream)->before('}{') . '}';
-                }
+                    if (! $matched) {
+                        continue;
+                    }
 
-                if (json_validate($firstObjectInStream)) {
-                    $content = json_decode($firstObjectInStream, associative: true)['choices'][0]['delta']['content'] ?? null;
-                    $stream = '{' . ((string) str($stream)->after('}{'));
-                }
+                    if (
+                        blank($matches['name']) ||
+                        blank($matches['value'])
+                    ) {
+                        continue;
+                    }
 
-                if (blank($content)) {
-                    continue;
-                }
+                    if ($matches['name'] !== 'data') {
+                        continue;
+                    }
 
-                $counter++;
+                    if (! json_validate($matches['value'])) {
+                        continue;
+                    }
 
-                $this->researchRequest->results .= $content;
+                    $data = json_decode($matches['value'], associative: true);
 
-                info($this->researchRequest->results);
+                    $content = $data['choices'][0]['delta']['content'] ?? null;
 
-                if ($counter > 100) {
-                    $this->researchRequest->save();
+                    $this->researchRequest->results .= $content;
 
-                    $counter = 0;
+                    if (blank($content)) {
+                        continue;
+                    }
+
+                    $counter++;
+
+                    if ($counter >= 20) {
+                        $this->researchRequest->save();
+
+                        $counter = 0;
+                    }
                 }
             }
-
-            $this->researchRequest->save();
 
             dispatch(new RecordTrackedEvent(
                 type: TrackedEventType::AiExchange,
@@ -137,28 +148,25 @@ class Research implements ShouldQueue
             ));
 
             if (blank($this->researchRequest->results)) {
-                $this->researchRequest->update([
-                    'results' => 'The artificial intelligence service was unavailable. Please try again later.',
-                ]);
+                $this->researchRequest->results = 'The artificial intelligence service was unavailable. Please try again later.';
+                $this->researchRequest->touch('finished_at');
 
                 return;
             }
 
-            $this->researchRequest->update([
-                'title' => app(AiIntegratedAssistantSettings::class)
-                    ->getDefaultModel()
-                    ->getService()
-                    ->complete(
-                        prompt: $this->researchRequest->results,
-                        content: 'Generate a title for this research, in 5 words or less. Do not respond with any greetings or salutations, and do not include any additional information or context. Just respond with the title:',
-                    ),
-            ]);
+            $this->researchRequest->title = app(AiIntegratedAssistantSettings::class)
+                ->getDefaultModel()
+                ->getService()
+                ->complete(
+                    prompt: $this->researchRequest->results,
+                    content: 'Generate a title for this research, in 5 words or less. Do not respond with any greetings or salutations, and do not include any additional information or context. Just respond with the title:',
+                );
+            $this->researchRequest->touch('finished_at');
         } catch (Throwable $exception) {
-            $this->researchRequest->update([
-                'results' => 'The artificial intelligence service was unavailable. Please try again later.',
-            ]);
+            $this->researchRequest->results = 'The artificial intelligence service was unavailable. Please try again later.';
+            $this->researchRequest->touch('finished_at');
 
-            throw $exception;
+            report($exception);
         }
     }
 
@@ -183,7 +191,7 @@ class Research implements ShouldQueue
 
             **Instructions:**
             
-            Using the context and clarifications above, conduct the requested research and present your findings accordingly. Do not respond with any greetings or salutations, and do not include any additional information or context. Just respond with your research in Markdown format, without a title:
+            Using the context and clarifications above, conduct the requested research and present your findings accordingly. Do not respond with any greetings or salutations, and do not include any additional information or context. Cite your sources and provide footnotes with references in the research. Just respond with your research in Markdown format, without a title:
             EOD;
     }
 

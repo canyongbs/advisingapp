@@ -34,32 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Research\Models;
+use App\Features\ResearchRequests;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\Research\Database\Factories\ResearchRequestQuestionFactory;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
-/**
- * @mixin IdeHelperResearchRequestQuestion
- */
-class ResearchRequestQuestion extends BaseModel
-{
-    /** @use HasFactory<ResearchRequestQuestionFactory> */
-    use HasFactory;
-
-    protected $fillable = [
-        'content',
-        'response',
-        'research_request_id',
-    ];
-
-    /**
-     * @return BelongsTo<ResearchRequest, $this>
-     */
-    public function researchRequest(): BelongsTo
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->belongsTo(ResearchRequest::class);
+        ResearchRequests::activate();
     }
-}
+
+    public function down(): void
+    {
+        ResearchRequests::deactivate();
+    }
+};

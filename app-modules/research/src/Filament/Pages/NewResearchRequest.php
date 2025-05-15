@@ -36,9 +36,11 @@
 
 namespace AdvisingApp\Research\Filament\Pages;
 
+use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use AdvisingApp\Research\Actions\GenerateResearchQuestion;
 use AdvisingApp\Research\Jobs\Research;
 use AdvisingApp\Research\Models\ResearchRequest;
+use App\Features\ResearchRequests;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
@@ -51,6 +53,7 @@ use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 
 /**
+ * @property-read Form $form
  * @property-read bool $hasResearchStarted
  * @property-read ?ResearchRequest $researchRequest
  */
@@ -67,6 +70,15 @@ class NewResearchRequest extends Page
      * @var array<string, mixed>
      */
     public ?array $data = null;
+
+    public static function canAccess(): bool
+    {
+        if (blank(app(AiIntegrationsSettings::class)->jina_deepsearch_ai_api_key)) {
+            return false;
+        }
+
+        return ResearchRequests::active();
+    }
 
     public function mount(): void
     {
@@ -116,6 +128,12 @@ class NewResearchRequest extends Page
                                 $researchRequest->save();
 
                                 $this->researchRequestId = $researchRequest->getKey();
+
+                                unset($this->researchRequest);
+
+                                if (! $this->researchRequest) {
+                                    return;
+                                }
 
                                 $this->researchRequest->questions()->create([
                                     'content' => app(GenerateResearchQuestion::class)->execute($this->researchRequest),
@@ -206,6 +224,8 @@ class NewResearchRequest extends Page
                                 dispatch(app(Research::class, [
                                     'researchRequest' => $this->researchRequest,
                                 ]));
+
+                                unset($this->hasResearchStarted);
                             })
                             ->disabled(fn (): bool => $this->hasResearchStarted),
                         Step::make('Results')
@@ -221,7 +241,7 @@ class NewResearchRequest extends Page
     #[Computed]
     public function hasResearchStarted(): bool
     {
-        return filled($this->researchRequest?->results) || filled($this->researchRequest?->questions->get(3)?->response);
+        return $this->researchRequest?->finished_at || filled($this->researchRequest?->results) || filled($this->researchRequest?->questions->get(3)?->response);
     }
 
     #[Computed]

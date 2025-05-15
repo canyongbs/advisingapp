@@ -43,12 +43,12 @@ use Illuminate\Support\ServiceProvider;
 
 class ResearchServiceProvider extends ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new ResearchPlugin()));
     }
 
-    public function boot()
+    public function boot(): void
     {
         Relation::morphMap([]);
     }
