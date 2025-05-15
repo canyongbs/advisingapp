@@ -37,8 +37,6 @@
 namespace AdvisingApp\Task\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Campaign\Models\CampaignAction;
-use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -55,7 +53,6 @@ use AdvisingApp\Timeline\Models\Contracts\HasHistory;
 use App\Models\BaseModel;
 use App\Models\User;
 use Bvtterfly\ModelStateMachine\HasStateMachine;
-use Exception;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
@@ -65,7 +62,6 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
@@ -74,7 +70,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @mixin IdeHelperTask
  */
 #[ObservedBy([TaskObserver::class])]
-class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription, ExecutableFromACampaignAction, HasHistory
+class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription, HasHistory
 {
     use BelongsToEducatable;
 
@@ -168,40 +164,6 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription, E
     {
         $query->where('status', '=', TaskStatus::Pending)
             ->orWhere('status', '=', TaskStatus::InProgress);
-    }
-
-    public static function executeFromCampaignAction(CampaignAction $action): bool|string
-    {
-        try {
-            DB::beginTransaction();
-
-            $action
-                ->campaign
-                ->segment
-                ->retrieveRecords()
-                ->each(function (Educatable $educatable) use ($action) {
-                    $task = new Task([
-                        'title' => $action->data['title'],
-                        'description' => $action->data['description'],
-                        'due' => $action->data['due'],
-                    ]);
-
-                    $task->assignedTo()->associate($action->data['assigned_to']);
-                    $task->createdBy()->associate($action->data['created_by']);
-                    $task->concern()->associate($educatable);
-                    $task->save();
-                });
-
-            DB::commit();
-
-            return true;
-        } catch (Exception $e) {
-            DB::rollBack();
-
-            return $e->getMessage();
-        }
-
-        // Do we need to be able to relate campaigns/actions to the RESULT of their actions?
     }
 
     protected static function booted(): void

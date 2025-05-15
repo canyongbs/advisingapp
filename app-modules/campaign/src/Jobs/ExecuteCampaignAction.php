@@ -113,6 +113,8 @@ class ExecuteCampaignAction implements ShouldQueue, ShouldBeUnique
                     ]);
 
                 $job = match ($this->action->type) {
+                    CampaignActionType::CareTeam => new CareTeamCampaignActionJob($campaignActionEducatable),
+                    CampaignActionType::Task => new TaskCampaignActionJob($campaignActionEducatable),
                     CampaignActionType::Subscription => new SubscriptionCampaignActionJob($campaignActionEducatable),
                     CampaignActionType::Tags => new TagsCampaignActionJob($campaignActionEducatable),
                 };
