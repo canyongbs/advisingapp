@@ -1,38 +1,6 @@
 <?php
 
-/*
-<COPYRIGHT>
-
-    Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
-
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
-    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
-
-    Notice:
-
-    - You may not provide the software to third parties as a hosted or managed
-      service, where the service provides users with access to any substantial set of
-      the features or functionality of the software.
-    - You may not move, change, disable, or circumvent the license key functionality
-      in the software, and you may not remove or obscure any functionality in the
-      software that is protected by the license key.
-    - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
-      to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
-      vigorously.
-    - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
-    - Use of this software implies agreement to the license terms and conditions as stated
-      in the Elastic License 2.0.
-
-    For more information or inquiries please visit our website at
-    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
-
-</COPYRIGHT>
-*/ declare(strict_types = 1);
+declare(strict_types = 1);
 
 $ignoreErrors = [];
 $ignoreErrors[] = [
@@ -66,28 +34,10 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/ai/src/Console/Commands/DeleteUnsavedAiThreads.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Enums\\\\AiApplication\\:\\:getCustomAssistantModels\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Enums/AiApplication.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Enums\\\\AiApplication\\:\\:getModels\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Enums/AiApplication.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Ai\\\\Enums\\\\AiMaxTokens\\:\\:getLabel\\(\\) never returns null so it can be removed from the return type\\.$#',
     'identifier' => 'return.unusedType',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/ai/src/Enums/AiMaxTokens.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Enums\\\\AiModel\\:\\:getDefaultModels\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Enums/AiModel.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Ai\\\\Enums\\\\AiModel\\:\\:getLabel\\(\\) never returns null so it can be removed from the return type\\.$#',
@@ -496,66 +446,6 @@ $ignoreErrors[] = [
     'identifier' => 'method.notFound',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/ai/src/Observers/AiAssistantFileObserver.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Policies\\\\AiAssistantPolicy\\:\\:hasAnyLicense\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Policies/AiAssistantPolicy.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Policies\\\\AiAssistantPolicy\\:\\:hasLicenses\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Policies/AiAssistantPolicy.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Policies\\\\AiMessagePolicy\\:\\:hasAnyLicense\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Policies/AiMessagePolicy.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Policies\\\\AiMessagePolicy\\:\\:hasLicenses\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Policies/AiMessagePolicy.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Policies\\\\LegacyAiMessageLogPolicy\\:\\:hasAnyLicense\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Policies/LegacyAiMessageLogPolicy.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Policies\\\\LegacyAiMessageLogPolicy\\:\\:hasLicenses\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Policies/LegacyAiMessageLogPolicy.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Policies\\\\PromptPolicy\\:\\:hasAnyLicense\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Policies/PromptPolicy.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Policies\\\\PromptPolicy\\:\\:hasLicenses\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Policies/PromptPolicy.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Policies\\\\PromptTypePolicy\\:\\:hasAnyLicense\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Policies/PromptTypePolicy.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Policies\\\\PromptTypePolicy\\:\\:hasLicenses\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Policies/PromptTypePolicy.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Property AdvisingApp\\\\Ai\\\\Providers\\\\AiServiceProvider\\:\\:\\$listen has no type specified\\.$#',
@@ -1300,18 +1190,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/application/src/Notifications/AuthorLinkedApplicationSubmissionCreatedNotification.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Application\\\\Policies\\\\ApplicationPolicy\\:\\:hasAnyLicense\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/application/src/Policies/ApplicationPolicy.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Application\\\\Policies\\\\ApplicationPolicy\\:\\:hasLicenses\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/application/src/Policies/ApplicationPolicy.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Application\\\\Providers\\\\ApplicationServiceProvider\\:\\:boot\\(\\) has no return type specified\\.$#',
@@ -2076,18 +1954,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/campaign/src/Filament/Resources/CampaignResource/Pages/CreateCampaign.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:hasBeenExecuted\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 4,
-    'path' => __DIR__ . '/app-modules/campaign/src/Filament/Resources/CampaignResource/RelationManagers/CampaignActionsRelationManager.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Campaign\\\\Models\\\\Campaign\\:\\:createdBy\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo does not specify its types\\: TRelatedModel, TDeclaringModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/campaign/src/Models/Campaign.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Campaign\\\\Models\\\\Campaign\\:\\:newMorphToMany\\(\\) return type with generic class AdvisingApp\\\\Audit\\\\Overrides\\\\MorphToMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
@@ -2116,18 +1982,6 @@ $ignoreErrors[] = [
     'identifier' => 'booleanAnd.alwaysFalse',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/campaign/src/Observers/CampaignObserver.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Campaign\\\\Policies\\\\CampaignPolicy\\:\\:hasAnyLicense\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/campaign/src/Policies/CampaignPolicy.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Campaign\\\\Policies\\\\CampaignPolicy\\:\\:hasLicenses\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/campaign/src/Policies/CampaignPolicy.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Campaign\\\\Providers\\\\CampaignServiceProvider\\:\\:boot\\(\\) has no return type specified\\.$#',
@@ -2254,42 +2108,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.property',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/care-team/src/Rules/UniqueCareTeamRule.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\CareTeam\\\\Models\\\\CareTeamRole\\:\\:\\$name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/care-team/tests/Tenant/ProspectCareTeamRole/EditProspectCareTeamRoleTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\CareTeam\\\\Models\\\\CareTeamRole\\:\\:\\$name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/care-team/tests/Tenant/ProspectCareTeamRole/ListProspectCareTeamRoleTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\CareTeam\\\\Models\\\\CareTeamRole\\:\\:\\$name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/care-team/tests/Tenant/ProspectCareTeamRole/ViewProspectCareTeamRoleTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\CareTeam\\\\Models\\\\CareTeamRole\\:\\:\\$name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/care-team/tests/Tenant/StudentCareTeamRole/EditStudentCareTeamRoleTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\CareTeam\\\\Models\\\\CareTeamRole\\:\\:\\$name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/care-team/tests/Tenant/StudentCareTeamRole/ListStudentCareTeamRoleTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\CareTeam\\\\Models\\\\CareTeamRole\\:\\:\\$name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/care-team/tests/Tenant/StudentCareTeamRole/ViewStudentCareTeamRoleTest.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Using nullsafe property access "\\?\\-\\>id" on left side of \\?\\? is unnecessary\\. Use \\-\\> instead\\.$#',
@@ -2748,12 +2566,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/case-management/src/Models/CaseAssignment.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Models\\\\CaseFeedback\\:\\:assignee\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo does not specify its types\\: TRelatedModel, TDeclaringModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Models/CaseFeedback.php',
-];
-$ignoreErrors[] = [
     'message' => '#^PHPDoc tag @property\\-read for property AdvisingApp\\\\CaseManagement\\\\Models\\\\CaseFeedback\\:\\:\\$assignee contains unknown class AdvisingApp\\\\CaseManagement\\\\Models\\\\Educatable\\.$#',
     'identifier' => 'class.notFound',
     'count' => 1,
@@ -3078,18 +2890,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/case-management/src/Policies/CaseAssignmentPolicy.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Policies\\\\CaseFormPolicy\\:\\:hasAnyLicense\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Policies/CaseFormPolicy.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Policies\\\\CaseFormPolicy\\:\\:hasLicenses\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Policies/CaseFormPolicy.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Policies\\\\CaseHistoryPolicy\\:\\:requiredFeatures\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -3282,7 +3082,7 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/engagement/database/migrations/2024_12_24_030206_seed_permissions_remove_engagement_deliverable_permissions.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$model of method Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo\\<Illuminate\\\\Database\\\\Eloquent\\\\Model,Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:associate\\(\\) expects Illuminate\\\\Database\\\\Eloquent\\\\Model\\|null, AdvisingApp\\\\Notification\\\\Models\\\\Contracts\\\\CanBeNotified\\|Illuminate\\\\Database\\\\Eloquent\\\\Collection given\\.$#',
+    'message' => '#^Parameter \\#1 \\$model of method Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo\\<Illuminate\\\\Database\\\\Eloquent\\\\Model,AdvisingApp\\\\Engagement\\\\Models\\\\Engagement\\>\\:\\:associate\\(\\) expects Illuminate\\\\Database\\\\Eloquent\\\\Model\\|null, AdvisingApp\\\\Notification\\\\Models\\\\Contracts\\\\CanBeNotified\\|Illuminate\\\\Database\\\\Eloquent\\\\Collection given\\.$#',
     'identifier' => 'argument.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/engagement/src/Actions/CreateEngagement.php',
@@ -3732,7 +3532,7 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/engagement/src/Http/Requests/EngagementFileDownloadRequest.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$model of method Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo\\<Illuminate\\\\Database\\\\Eloquent\\\\Model,Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:associate\\(\\) expects Illuminate\\\\Database\\\\Eloquent\\\\Model\\|null, AdvisingApp\\\\Notification\\\\Models\\\\Contracts\\\\CanBeNotified given\\.$#',
+    'message' => '#^Parameter \\#1 \\$model of method Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo\\<Illuminate\\\\Database\\\\Eloquent\\\\Model,AdvisingApp\\\\Engagement\\\\Models\\\\Engagement\\>\\:\\:associate\\(\\) expects Illuminate\\\\Database\\\\Eloquent\\\\Model\\|null, AdvisingApp\\\\Notification\\\\Models\\\\Contracts\\\\CanBeNotified given\\.$#',
     'identifier' => 'argument.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/engagement/src/Jobs/CreateBatchedEngagement.php',
@@ -3810,12 +3610,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/engagement/src/Models/Engagement.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Engagement\\\\Models\\\\Engagement\\:\\:recipient\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo does not specify its types\\: TRelatedModel, TDeclaringModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Models/Engagement.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Engagement\\\\Models\\\\Engagement\\:\\:scopeIsNotPartOfABatch\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
@@ -3870,12 +3664,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/engagement/src/Models/EngagementBatch.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFile\\:\\:createdBy\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo does not specify its types\\: TRelatedModel, TDeclaringModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Models/EngagementFile.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFile\\:\\:newMorphToMany\\(\\) return type with generic class AdvisingApp\\\\Audit\\\\Overrides\\\\MorphToMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
@@ -3886,12 +3674,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/engagement/src/Models/EngagementFile.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFileEntities\\:\\:entity\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo does not specify its types\\: TRelatedModel, TDeclaringModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Models/EngagementFileEntities.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:orderedEngagementResponses\\(\\)\\.$#',
@@ -3907,12 +3689,6 @@ $ignoreErrors[] = [
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Engagement\\\\Models\\\\EngagementResponse\\:\\:newMorphToMany\\(\\) return type with generic class AdvisingApp\\\\Audit\\\\Overrides\\\\MorphToMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Models/EngagementResponse.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Engagement\\\\Models\\\\EngagementResponse\\:\\:sender\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo does not specify its types\\: TRelatedModel, TDeclaringModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/engagement/src/Models/EngagementResponse.php',
@@ -5022,16 +4798,10 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/form/src/Notifications/AuthorLinkedFormSubmissionCreatedNotification.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Policies\\\\FormPolicy\\:\\:hasAnyLicense\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
+    'message' => '#^Parameter \\#1 \\$subject of method Illuminate\\\\Notifications\\\\Messages\\\\SimpleMessage\\:\\:subject\\(\\) expects string, array\\<mixed\\>\\|null given\\.$#',
+    'identifier' => 'argument.type',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Policies/FormPolicy.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Policies\\\\FormPolicy\\:\\:hasLicenses\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Policies/FormPolicy.php',
+    'path' => __DIR__ . '/app-modules/form/src/Notifications/FormSubmissionAutoReplyNotification.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Form\\\\Providers\\\\FormServiceProvider\\:\\:boot\\(\\) has no return type specified\\.$#',
@@ -5706,12 +5476,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/interaction/src/Models/Interaction.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Interaction\\\\Models\\\\Interaction\\:\\:interactable\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo does not specify its types\\: TRelatedModel, TDeclaringModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/interaction/src/Models/Interaction.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Interaction\\\\Models\\\\Interaction\\:\\:newMorphToMany\\(\\) return type with generic class AdvisingApp\\\\Audit\\\\Overrides\\\\MorphToMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
@@ -5810,18 +5574,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$student_id\\.$#',
     'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/interaction/src/Policies/InteractionPolicy.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Interaction\\\\Policies\\\\InteractionPolicy\\:\\:hasAnyLicense\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/interaction/src/Policies/InteractionPolicy.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Interaction\\\\Policies\\\\InteractionPolicy\\:\\:hasLicenses\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/interaction/src/Policies/InteractionPolicy.php',
 ];
@@ -6162,42 +5914,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/meeting-center/src/Observers/CalendarEventObserver.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\MeetingCenter\\\\Policies\\\\CalendarEventPolicy\\:\\:hasAnyLicense\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Policies/CalendarEventPolicy.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\MeetingCenter\\\\Policies\\\\CalendarEventPolicy\\:\\:hasLicenses\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Policies/CalendarEventPolicy.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\MeetingCenter\\\\Policies\\\\EventAttendeePolicy\\:\\:hasAnyLicense\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Policies/EventAttendeePolicy.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\MeetingCenter\\\\Policies\\\\EventAttendeePolicy\\:\\:hasLicenses\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Policies/EventAttendeePolicy.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\MeetingCenter\\\\Policies\\\\EventPolicy\\:\\:hasAnyLicense\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Policies/EventPolicy.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\MeetingCenter\\\\Policies\\\\EventPolicy\\:\\:hasLicenses\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Policies/EventPolicy.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\MeetingCenter\\\\Services\\\\AzureGraph\\:\\:setAccessToken\\(\\) should return AdvisingApp\\\\MeetingCenter\\\\Services\\\\AzureGraph but returns Microsoft\\\\Graph\\\\Graph\\.$#',
     'identifier' => 'return.type',
     'count' => 1,
@@ -6504,42 +6220,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/notification/src/Models/Contracts/Subscribable.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Notification\\\\Models\\\\DatabaseMessage\\:\\:recipient\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo does not specify its types\\: TRelatedModel, TDeclaringModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/notification/src/Models/DatabaseMessage.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Notification\\\\Models\\\\DatabaseMessage\\:\\:related\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo does not specify its types\\: TRelatedModel, TDeclaringModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/notification/src/Models/DatabaseMessage.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Notification\\\\Models\\\\EmailMessage\\:\\:recipient\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo does not specify its types\\: TRelatedModel, TDeclaringModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/notification/src/Models/EmailMessage.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Notification\\\\Models\\\\EmailMessage\\:\\:related\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo does not specify its types\\: TRelatedModel, TDeclaringModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/notification/src/Models/EmailMessage.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Notification\\\\Models\\\\SmsMessage\\:\\:recipient\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo does not specify its types\\: TRelatedModel, TDeclaringModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/notification/src/Models/SmsMessage.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Notification\\\\Models\\\\SmsMessage\\:\\:related\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo does not specify its types\\: TRelatedModel, TDeclaringModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/notification/src/Models/SmsMessage.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Notification\\\\Models\\\\Subscription\\:\\:scopeLicensedToEducatable\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
@@ -6547,12 +6227,6 @@ $ignoreErrors[] = [
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Notification\\\\Models\\\\Subscription\\:\\:scopeLicensedToEducatable\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/notification/src/Models/Subscription.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Notification\\\\Models\\\\Subscription\\:\\:subscribable\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo does not specify its types\\: TRelatedModel, TDeclaringModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/notification/src/Models/Subscription.php',
@@ -6766,12 +6440,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/portal/src/Http/Requests/ResourceHubPortalAuthenticationRequest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Portal\\\\Models\\\\PortalAuthentication\\:\\:educatable\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo does not specify its types\\: TRelatedModel, TDeclaringModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/portal/src/Models/PortalAuthentication.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Portal\\\\Models\\\\PortalAuthentication\\:\\:prunable\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
@@ -7162,12 +6830,6 @@ $ignoreErrors[] = [
     'identifier' => 'argument.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Pages/ManageProspectAlerts.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\CareTeam\\\\Models\\\\CareTeamRole\\|Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, AdvisingApp\\\\CareTeam\\\\Models\\\\CareTeamRole\\>\\:\\:\\$name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Pages/ManageProspectCareTeam.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\ProspectResource\\\\Pages\\\\ManageProspectCareTeam\\:\\:boot\\(\\) has no return type specified\\.$#',
@@ -8004,30 +7666,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/UsersLoginCountTable.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Report\\\\Models\\\\TrackedEvent\\:\\:relatedTo\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo does not specify its types\\: TRelatedModel, TDeclaringModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Models/TrackedEvent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Report\\\\Models\\\\TrackedEventCount\\:\\:relatedTo\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo does not specify its types\\: TRelatedModel, TDeclaringModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Models/TrackedEventCount.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Report\\\\Policies\\\\ReportPolicy\\:\\:hasAnyLicense\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Policies/ReportPolicy.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Report\\\\Policies\\\\ReportPolicy\\:\\:hasLicenses\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Policies/ReportPolicy.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Report\\\\Providers\\\\ReportServiceProvider\\:\\:boot\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
     'count' => 1,
@@ -8238,54 +7876,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/resource-hub/src/Models/ResourceHubStatus.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\ResourceHub\\\\Policies\\\\ResourceHubArticlePolicy\\:\\:hasAnyLicense\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/resource-hub/src/Policies/ResourceHubArticlePolicy.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\ResourceHub\\\\Policies\\\\ResourceHubArticlePolicy\\:\\:hasLicenses\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/resource-hub/src/Policies/ResourceHubArticlePolicy.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\ResourceHub\\\\Policies\\\\ResourceHubCategoryPolicy\\:\\:hasAnyLicense\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/resource-hub/src/Policies/ResourceHubCategoryPolicy.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\ResourceHub\\\\Policies\\\\ResourceHubCategoryPolicy\\:\\:hasLicenses\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/resource-hub/src/Policies/ResourceHubCategoryPolicy.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\ResourceHub\\\\Policies\\\\ResourceHubQualityPolicy\\:\\:hasAnyLicense\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/resource-hub/src/Policies/ResourceHubQualityPolicy.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\ResourceHub\\\\Policies\\\\ResourceHubQualityPolicy\\:\\:hasLicenses\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/resource-hub/src/Policies/ResourceHubQualityPolicy.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\ResourceHub\\\\Policies\\\\ResourceHubStatusPolicy\\:\\:hasAnyLicense\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/resource-hub/src/Policies/ResourceHubStatusPolicy.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\ResourceHub\\\\Policies\\\\ResourceHubStatusPolicy\\:\\:hasLicenses\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/resource-hub/src/Policies/ResourceHubStatusPolicy.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Using nullsafe property access "\\?\\-\\>id" on left side of \\?\\? is unnecessary\\. Use \\-\\> instead\\.$#',
     'identifier' => 'nullsafe.neverNull',
     'count' => 4,
@@ -8458,24 +8048,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/segment/src/Models/Segment.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Segment\\\\Models\\\\SegmentSubject\\:\\:subject\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo does not specify its types\\: TRelatedModel, TDeclaringModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/segment/src/Models/SegmentSubject.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Segment\\\\Policies\\\\SegmentPolicy\\:\\:hasAnyLicense\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/segment/src/Policies/SegmentPolicy.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Segment\\\\Policies\\\\SegmentPolicy\\:\\:hasLicenses\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/segment/src/Policies/SegmentPolicy.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Using nullsafe method call on non\\-nullable type AdvisingApp\\\\Segment\\\\Enums\\\\SegmentModel\\. Use \\-\\> instead\\.$#',
@@ -8816,12 +8388,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable&Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:alerts\\(\\)\\.$#',
     'identifier' => 'method.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/EducatableResource/Widgets/EducatableAlertsWidget.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Resources\\\\EducatableResource\\\\Widgets\\\\EducatableAlertsWidget\\:\\:getSeverityCounts\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/EducatableResource/Widgets/EducatableAlertsWidget.php',
 ];
@@ -9142,12 +8708,6 @@ $ignoreErrors[] = [
     'identifier' => 'property.notFound',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/StudentResource/Pages/ManageStudentAlerts.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\CareTeam\\\\Models\\\\CareTeamRole\\|Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, AdvisingApp\\\\CareTeam\\\\Models\\\\CareTeamRole\\>\\:\\:\\$name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/StudentResource/Pages/ManageStudentCareTeam.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$dfw\\.$#',
@@ -9585,12 +9145,6 @@ $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$subject\\.$#',
     'identifier' => 'property.notFound',
     'count' => 2,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/StudentResource/RelationManagers/EngagementsRelationManager.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$user\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/StudentResource/RelationManagers/EngagementsRelationManager.php',
 ];
 $ignoreErrors[] = [
@@ -10140,18 +9694,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/survey/src/Models/SurveySubmission.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Survey\\\\Policies\\\\SurveyPolicy\\:\\:hasAnyLicense\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/survey/src/Policies/SurveyPolicy.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Survey\\\\Policies\\\\SurveyPolicy\\:\\:hasLicenses\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/survey/src/Policies/SurveyPolicy.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Survey\\\\Providers\\\\SurveyServiceProvider\\:\\:boot\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
     'count' => 1,
@@ -10446,18 +9988,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/task/src/Observers/TaskHistoryObserver.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Task\\\\Policies\\\\TaskPolicy\\:\\:hasAnyLicense\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/task/src/Policies/TaskPolicy.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Task\\\\Policies\\\\TaskPolicy\\:\\:hasLicenses\\(\\) has parameter \\$licenses with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/task/src/Policies/TaskPolicy.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Using nullsafe method call on non\\-nullable type AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\|AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\. Use \\-\\> instead\\.$#',
     'identifier' => 'nullsafe.neverNull',
     'count' => 5,
@@ -10674,12 +10204,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/timeline/src/Models/History.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Timeline\\\\Models\\\\History\\:\\:subject\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo does not specify its types\\: TRelatedModel, TDeclaringModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/timeline/src/Models/History.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Timeline\\\\Models\\\\Timeline\\:\\:scopeForEntity\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
     'count' => 1,
@@ -10687,12 +10211,6 @@ $ignoreErrors[] = [
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Timeline\\\\Models\\\\Timeline\\:\\:scopeForEntity\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/timeline/src/Models/Timeline.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Timeline\\\\Models\\\\Timeline\\:\\:timelineable\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo does not specify its types\\: TRelatedModel, TDeclaringModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/timeline/src/Models/Timeline.php',
@@ -10960,30 +10478,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.property',
     'count' => 1,
     'path' => __DIR__ . '/app/Exceptions/SoftDeleteContraintViolationException.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\$value of method App\\\\Filament\\\\Forms\\\\Components\\\\Slider\\:\\:maxValue\\(\\) has invalid type App\\\\Filament\\\\Forms\\\\Components\\\\Closure\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Filament/Forms/Components/Slider.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\$value of method App\\\\Filament\\\\Forms\\\\Components\\\\Slider\\:\\:minValue\\(\\) has invalid type App\\\\Filament\\\\Forms\\\\Components\\\\Closure\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Filament/Forms/Components/Slider.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property App\\\\Filament\\\\Forms\\\\Components\\\\Slider\\:\\:\\$maxValue has unknown class App\\\\Filament\\\\Forms\\\\Components\\\\Closure as its type\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Filament/Forms/Components/Slider.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property App\\\\Filament\\\\Forms\\\\Components\\\\Slider\\:\\:\\$minValue has unknown class App\\\\Filament\\\\Forms\\\\Components\\\\Closure as its type\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Filament/Forms/Components/Slider.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method App\\\\Filament\\\\Pages\\\\AmazonS3\\:\\:mutateFormDataBeforeFill\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#',
@@ -11478,12 +10972,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Models/BaseModel.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method App\\\\Models\\\\NotificationSettingPivot\\:\\:relatedTo\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo does not specify its types\\: TRelatedModel, TDeclaringModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/NotificationSettingPivot.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method App\\\\Models\\\\Pronouns\\:\\:newMorphToMany\\(\\) return type with generic class AdvisingApp\\\\Audit\\\\Overrides\\\\MorphToMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
@@ -11872,18 +11360,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/database/migrations/2024_07_31_202514_data_rename_checkbox_form_fields.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Class AdvisingApp\\\\Team\\\\Observers\\\\TeamUserObserver not found\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/database/migrations/2025_04_30_201831_drop_team_user_table.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^PHPDoc tag @mixin contains unknown class AdvisingApp\\\\Team\\\\Models\\\\IdeHelperTeamUser\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/database/migrations/2025_04_30_201831_drop_team_user_table.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Pest\\\\PendingCalls\\\\TestCall\\|Pest\\\\Support\\\\HigherOrderTapProxy\\:\\:actingAs\\(\\)\\.$#',
