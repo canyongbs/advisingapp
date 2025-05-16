@@ -36,22 +36,22 @@
 
 namespace AdvisingApp\Research\Filament\Pages;
 
-use App\Models\User;
-use Filament\Forms\Form;
-use Filament\Pages\Page;
-use Filament\Actions\Action;
-use Livewire\Attributes\Url;
-use Livewire\Attributes\Computed;
+use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Research\Actions\GenerateResearchQuestion;
+use AdvisingApp\Research\Jobs\Research;
+use AdvisingApp\Research\Models\ResearchRequest;
 use App\Features\ResearchRequests;
+use App\Models\User;
+use Filament\Actions\Action;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\View;
 use Filament\Forms\Components\Wizard;
-use AdvisingApp\Research\Jobs\Research;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Wizard\Step;
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Research\Models\ResearchRequest;
-use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
-use AdvisingApp\Research\Actions\GenerateResearchQuestion;
+use Filament\Forms\Form;
+use Filament\Pages\Page;
+use Livewire\Attributes\Computed;
+use Livewire\Attributes\Url;
 
 /**
  * @property-read Form $form

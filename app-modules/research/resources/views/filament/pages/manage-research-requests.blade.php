@@ -71,7 +71,7 @@
                                     'bg-gray-100 dark:bg-white/5': request.id === $wire.request?.id
                                 }"
                             >
-                                <div class="flex flex-1 min-w-0 items-center gap-3">
+                                <div class="flex min-w-0 flex-1 items-center gap-3">
                                     <template x-if="$wire.folders.length">
                                         <button
                                             type="button"
@@ -81,21 +81,24 @@
                                             :class="{
                                                 'flex items-center cursor-move': true,
                                                 'text-gray-700 dark:text-gray-200': request.id !== $wire.request?.id,
-                                                'text-primary-600 dark:text-primary-400': request.id === $wire.request?.id
+                                                'text-primary-600 dark:text-primary-400': request.id === $wire.request
+                                                    ?.id
                                             }"
                                         >
-                                            <template x-if="loading.type !== 'request' || loading.identifier !== request.id">
+                                            <template
+                                                x-if="loading.type !== 'request' || loading.identifier !== request.id">
                                                 <x-heroicon-m-bars-2 class="h-5 w-5" />
                                             </template>
 
-                                            <template x-if="loading.type === 'request' && loading.identifier === request.id">
+                                            <template
+                                                x-if="loading.type === 'request' && loading.identifier === request.id">
                                                 <x-filament::loading-indicator class="h-5 w-5" />
                                             </template>
                                         </button>
                                     </template>
 
                                     <button
-                                        class="relative min-w-0 flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-left text-sm"
+                                        class="relative flex min-w-0 flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-left text-sm"
                                         type="button"
                                         x-on:click="selectRequest(request)"
                                     >
@@ -115,7 +118,8 @@
 
                                 <div class="flex items-center gap-1">
                                     <template
-                                        x-if="loading.type !== 'moveRequestAction' || loading.identifier !== request.id">
+                                        x-if="loading.type !== 'moveRequestAction' || loading.identifier !== request.id"
+                                    >
                                         <x-filament::icon-button
                                             class="relative hidden h-5 w-5 group-hover:inline-flex"
                                             icon="heroicon-m-arrow-down-on-square"
@@ -126,14 +130,16 @@
                                         />
                                     </template>
                                     <template
-                                        x-if="loading.type === 'moveRequestAction' && loading.identifier === request.id">
+                                        x-if="loading.type === 'moveRequestAction' && loading.identifier === request.id"
+                                    >
                                         <x-filament::loading-indicator
                                             class="relative hidden h-5 w-5 group-hover:inline-flex"
                                         />
                                     </template>
 
                                     <template
-                                        x-if="loading.type !== 'editRequestAction' || loading.identifier !== request.id">
+                                        x-if="loading.type !== 'editRequestAction' || loading.identifier !== request.id"
+                                    >
                                         <x-filament::icon-button
                                             class="relative hidden h-5 w-5 group-hover:inline-flex"
                                             icon="heroicon-m-pencil"
@@ -144,7 +150,8 @@
                                         />
                                     </template>
                                     <template
-                                        x-if="loading.type === 'editRequestAction' && loading.identifier === request.id">
+                                        x-if="loading.type === 'editRequestAction' && loading.identifier === request.id"
+                                    >
                                         <x-filament::loading-indicator
                                             class="relative hidden h-5 w-5 group-hover:inline-flex"
                                         />
@@ -205,26 +212,26 @@
                                     class="group flex w-full cursor-move items-center rounded-lg px-2 outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5"
                                 >
                                     <x-filament::icon-button
+                                        class="flex-shrink-0"
                                         icon="heroicon-o-folder-open"
                                         x-show="expanded(folder.id)"
                                         x-on:click="expand(folder.id)"
-                                        class="flex-shrink-0"
                                     />
                                     <x-filament::icon-button
+                                        class="flex-shrink-0"
                                         icon="heroicon-o-folder"
                                         x-show="! expanded(folder.id)"
                                         x-on:click="expand(folder.id)"
-                                        class="flex-shrink-0"
                                     />
 
                                     <div
                                         class="group flex w-full cursor-pointer items-center gap-x-1 rounded-lg px-2 outline-none transition duration-75 focus:bg-gray-100 dark:focus:bg-white/5">
                                         <div
-                                            class="relative min-w-0 flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-sm"
+                                            class="relative flex min-w-0 flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-sm"
                                             x-on:click="expand(folder.id)"
                                         >
                                             <div
-                                                class="flex-1 truncate min-w-0"
+                                                class="min-w-0 flex-1 truncate"
                                                 x-bind:class="{
                                                     'text-primary-600 dark:text-primary-400': expanded(folder.id)
                                                 }"
@@ -287,7 +294,7 @@
                                             'bg-gray-100 dark:bg-white/5': request.id === $wire.request?.id
                                         }"
                                     >
-                                        <div class="flex flex-1 min-w-0 items-center gap-3">
+                                        <div class="flex min-w-0 flex-1 items-center gap-3">
                                             <button
                                                 type="button"
                                                 draggable="true"
@@ -295,8 +302,10 @@
                                                 x-on:dragend="end"
                                                 :class="{
                                                     'flex items-center cursor-move': true,
-                                                    'text-gray-700 dark:text-gray-200': request.id !== $wire.request?.id,
-                                                    'text-primary-600 dark:text-primary-400': request.id === $wire.request
+                                                    'text-gray-700 dark:text-gray-200': request.id !== $wire.request
+                                                        ?.id,
+                                                    'text-primary-600 dark:text-primary-400': request.id === $wire
+                                                        .request
                                                         ?.id
                                                 }"
                                             >
@@ -314,7 +323,7 @@
                                             </button>
 
                                             <button
-                                                class="relative min-w-0 flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-left text-sm"
+                                                class="relative flex min-w-0 flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-left text-sm"
                                                 type="button"
                                                 x-on:click="selectRequest(request)"
                                             >

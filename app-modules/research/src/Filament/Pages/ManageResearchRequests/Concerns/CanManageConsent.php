@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Research\Filament\Pages\ManageResearchRequests\Concerns;
 
-use AdvisingApp\Research\Models\ResearchRequestFolder;
 use AdvisingApp\Consent\Enums\ConsentAgreementType;
 use AdvisingApp\Consent\Models\ConsentAgreement;
 use App\Filament\Pages\Dashboard;
