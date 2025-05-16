@@ -91,35 +91,19 @@ it('will execute appropriately on each educatable in the segment', function (Edu
     ])
     ->with(
         [
-            'no prior care team | prospects | remove prior false' => [
+            'no prior care team | remove prior false' => [
                 [],
                 false,
             ],
-            'no prior care team | prospects | remove prior true' => [
-                [],
-                true,
-            ],
-            'prior care team | prospects | remove prior false' => [
-                fn () => User::factory()->licensed(LicenseType::cases())->count(3)->create()->pluck('id')->toArray(),
-                false,
-            ],
-            'prior care team | prospects | remove prior true' => [
-                fn () => User::factory()->licensed(LicenseType::cases())->count(3)->create()->pluck('id')->toArray(),
-                true,
-            ],
-            'no prior care team | students | remove prior false' => [
-                [],
-                false,
-            ],
-            'no prior care team | students | remove prior true' => [
+            'no prior care team | remove prior true' => [
                 [],
                 true,
             ],
-            'prior care team | students | remove prior false' => [
+            'prior care team | remove prior false' => [
                 fn () => User::factory()->licensed(LicenseType::cases())->count(3)->create()->pluck('id')->toArray(),
                 false,
             ],
-            'prior care team | students | remove prior true' => [
+            'prior care team | remove prior true' => [
                 fn () => User::factory()->licensed(LicenseType::cases())->count(3)->create()->pluck('id')->toArray(),
                 true,
             ],
