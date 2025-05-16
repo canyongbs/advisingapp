@@ -36,9 +36,8 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use AdvisingApp\Prospect\Models\Prospect;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class ProspectReportLineChart extends ChartReportWidget
 {
@@ -69,23 +68,31 @@ class ProspectReportLineChart extends ChartReportWidget
     protected function getData(): array
     {
         $runningTotalPerMonth = Cache::tags([$this->cacheTag])->remember('total-prospects_line_chart', now()->addHours(24), function (): array {
-            $totalCreatedPerMonth = Prospect::query()
-                ->toBase()
-                ->selectRaw('date_trunc(\'month\', created_at) as month')
-                ->selectRaw('count(*) as total')
-                ->where('created_at', '>', now()->subYear())
-                ->groupBy('month')
-                ->orderBy('month')
-                ->pluck('total', 'month');
+            $runningTotalPerMonth = DB::select("WITH months AS (
+                SELECT generate_series(
+                    date_trunc('month', CURRENT_DATE) - INTERVAL '11 months',
+                    date_trunc('month', CURRENT_DATE),
+                    interval '1 month'
+                ) AS month
+            ),
+            monthly_data AS (
+                SELECT
+                    date_trunc('month', created_at) AS month,
+                    COUNT(*) AS monthly_total
+                FROM prospects
+                WHERE created_at >= date_trunc('month', CURRENT_DATE) - INTERVAL '11 months'
+                GROUP BY date_trunc('month', created_at)
+            )
+            SELECT
+                to_char(m.month, 'Mon YYYY') as label,
+                COALESCE(d.monthly_total, 0) AS monthly_total,
+                SUM(COALESCE(d.monthly_total, 0)) OVER (ORDER BY m.month) AS running_total
+            FROM months m
+            LEFT JOIN monthly_data d ON m.month = d.month
+            ORDER BY m.month
+        ");
 
-            $runningTotalPerMonth = [];
-
-            foreach (range(11, 0) as $month) {
-                $month = Carbon::now()->subMonths($month);
-                $runningTotalPerMonth[$month->format('M Y')] = $totalCreatedPerMonth[$month->startOfMonth()->toDateTimeString()] ?? 0;
-            }
-
-            return $runningTotalPerMonth;
+            return collect($runningTotalPerMonth)->pluck('running_total', 'label')->toArray();
         });
 
         return [
