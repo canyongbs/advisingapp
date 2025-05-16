@@ -114,14 +114,12 @@ return [
     'stubs' => [
         'composer.json' => base_path('stubs/app-modules/composer-stub.json'),
         'src/Providers/StubClassNamePrefixServiceProvider.php' => base_path('stubs/app-modules/app/ServiceProvider.php'),
-        'src/Registries/StubClassNamePrefixRbacRegistry.php' => base_path('stubs/app-modules/app/Registries/RbacRegistry.php'),
         'src/StubClassNamePrefixPlugin.php' => base_path('stubs/app-modules/app/Plugin.php'),
         'src/Models/.gitkeep' => base_path('stubs/app-modules/.gitkeep'),
         'tests/.gitkeep' => base_path('stubs/app-modules/.gitkeep'),
         'database/factories/.gitkeep' => base_path('stubs/app-modules/.gitkeep'),
         'database/migrations/.gitkeep' => base_path('stubs/app-modules/.gitkeep'),
         'database/seeders/.gitkeep' => base_path('stubs/app-modules/.gitkeep'),
-        'config/roles/api/StubModuleName_roles.php' => base_path('stubs/app-modules/config/roles/api/module_roles.php'),
-        'config/roles/web/StubModuleName_roles.php' => base_path('stubs/app-modules/config/roles/web/module_roles.php'),
+        'config/.gitkeep' => base_path('stubs/app-modules/.gitkeep'),
     ],
 ];

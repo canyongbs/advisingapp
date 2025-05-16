@@ -34,4 +34,30 @@
 </COPYRIGHT>
 */
 
-return [];
+namespace AdvisingApp\Research\Database\Factories;
+
+use AdvisingApp\Research\Models\ResearchRequest;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends Factory<ResearchRequest>
+ */
+class ResearchRequestFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'title' => $this->faker->sentence(),
+            'topic' => $this->faker->sentence(),
+            'results' => $this->faker->sentence(),
+            'user_id' => User::factory(),
+            'finished_at' => $this->faker->dateTime(),
+        ];
+    }
+}

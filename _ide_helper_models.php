@@ -654,6 +654,8 @@ namespace App\Models{
  * @property-read int|null $prospect_care_teams_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Prospect\Models\Prospect> $prospectSubscriptions
  * @property-read int|null $prospect_subscriptions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Research\Models\ResearchRequest> $researchRequests
+ * @property-read int|null $research_requests_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Authorization\Models\Role> $roles
  * @property-read int|null $roles_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Segment\Models\Segment> $segments
@@ -4655,6 +4657,70 @@ namespace AdvisingApp\Report\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperTrackedEventCount {}
+}
+
+namespace AdvisingApp\Research\Models{
+/**
+ * 
+ *
+ * @property string $id
+ * @property string|null $title
+ * @property string $topic
+ * @property string|null $results
+ * @property string $user_id
+ * @property \Carbon\CarbonImmutable|null $finished_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Research\Models\ResearchRequestQuestion> $questions
+ * @property-read int|null $questions_count
+ * @property-read \App\Models\User $user
+ * @method static \AdvisingApp\Research\Database\Factories\ResearchRequestFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereFinishedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereResults($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereTopic($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereUserId($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperResearchRequest {}
+}
+
+namespace AdvisingApp\Research\Models{
+/**
+ * 
+ *
+ * @property string $id
+ * @property string $content
+ * @property string|null $response
+ * @property string $research_request_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \AdvisingApp\Research\Models\ResearchRequest $researchRequest
+ * @method static \AdvisingApp\Research\Database\Factories\ResearchRequestQuestionFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestQuestion newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestQuestion newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestQuestion query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestQuestion whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestQuestion whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestQuestion whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestQuestion whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestQuestion whereResearchRequestId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestQuestion whereResponse($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestQuestion whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperResearchRequestQuestion {}
 }
 
 namespace AdvisingApp\ResourceHub\Models{
