@@ -36,68 +36,69 @@
 
 namespace App\Models;
 
-use AdvisingApp\Ai\Models\AiAssistantUpvote;
-use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\AiThreadFolder;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Authorization\Models\License;
-use AdvisingApp\Authorization\Models\Role;
-use AdvisingApp\CareTeam\Models\CareTeam;
-use AdvisingApp\CareTeam\Models\CareTeamRole;
-use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
-use AdvisingApp\CaseManagement\Models\CaseAssignment;
-use AdvisingApp\Consent\Models\Concerns\CanConsent;
-use AdvisingApp\Engagement\Models\Concerns\HasManyEngagementBatches;
-use AdvisingApp\Engagement\Models\Concerns\HasManyEngagements;
-use AdvisingApp\InAppCommunication\Models\TwilioConversation;
-use AdvisingApp\InAppCommunication\Models\TwilioConversationUser;
-use AdvisingApp\MeetingCenter\Models\Calendar;
-use AdvisingApp\MeetingCenter\Models\CalendarEvent;
-use AdvisingApp\MultifactorAuthentication\Traits\MultifactorAuthenticatable;
-use AdvisingApp\Notification\Models\Concerns\NotifiableViaSms;
-use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
-use AdvisingApp\Notification\Models\Subscription;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Report\Enums\TrackedEventType;
-use AdvisingApp\Report\Models\TrackedEvent;
-use AdvisingApp\Report\Models\TrackedEventCount;
-use AdvisingApp\Research\Models\ResearchRequest;
-use AdvisingApp\Segment\Models\Segment;
-use AdvisingApp\StudentDataModel\Models\Student;
+use Filament\Panel;
+use DateTimeInterface;
+use Illuminate\Support\Arr;
+use App\Observers\UserObserver;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Team\Models\Team;
-use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
-use App\Filament\Resources\UserResource;
-use App\Observers\UserObserver;
-use App\Support\HasAdvancedFilter;
-use Database\Factories\UserFactory;
-use DateTimeInterface;
-use Filament\Models\Contracts\FilamentUser;
-use Filament\Models\Contracts\HasAvatar;
-use Filament\Panel;
-use Illuminate\Contracts\Translation\HasLocalePreference;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Arr;
-use Lab404\Impersonate\Models\Impersonate;
-use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\MediaLibrary\HasMedia;
+use App\Support\HasAdvancedFilter;
+use AdvisingApp\Ai\Models\AiThread;
+use Database\Factories\UserFactory;
+use AdvisingApp\Segment\Models\Segment;
+use Illuminate\Database\Eloquent\Model;
+use App\Filament\Resources\UserResource;
+use Filament\Models\Contracts\HasAvatar;
+use Illuminate\Notifications\Notifiable;
+use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Ai\Models\AiThreadFolder;
+use AdvisingApp\CareTeam\Models\CareTeam;
+use AdvisingApp\Prospect\Models\Prospect;
+use Illuminate\Database\Eloquent\Builder;
+use AdvisingApp\Authorization\Models\Role;
+use Lab404\Impersonate\Models\Impersonate;
+use AdvisingApp\Report\Models\TrackedEvent;
+use Filament\Models\Contracts\FilamentUser;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use AdvisingApp\Ai\Models\AiAssistantUpvote;
+use AdvisingApp\Authorization\Models\License;
+use AdvisingApp\CareTeam\Models\CareTeamRole;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use AdvisingApp\MeetingCenter\Models\Calendar;
+use AdvisingApp\Report\Enums\TrackedEventType;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Report\Models\TrackedEventCount;
+use AdvisingApp\Research\Models\ResearchRequest;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
+use AdvisingApp\Notification\Models\Subscription;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use AdvisingApp\Consent\Models\Concerns\CanConsent;
+use AdvisingApp\MeetingCenter\Models\CalendarEvent;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use AdvisingApp\CaseManagement\Models\CaseAssignment;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
+use AdvisingApp\Research\Models\ResearchRequestFolder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Contracts\Translation\HasLocalePreference;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
+use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
+use AdvisingApp\InAppCommunication\Models\TwilioConversation;
+use AdvisingApp\Engagement\Models\Concerns\HasManyEngagements;
+use AdvisingApp\Notification\Models\Concerns\NotifiableViaSms;
+use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
+use AdvisingApp\InAppCommunication\Models\TwilioConversationUser;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Engagement\Models\Concerns\HasManyEngagementBatches;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use AdvisingApp\MultifactorAuthentication\Traits\MultifactorAuthenticatable;
 
 /**
  * @property CareTeamRole $careTeamRole
@@ -501,6 +502,14 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function researchRequests(): HasMany
     {
         return $this->hasMany(ResearchRequest::class);
+    }
+
+    /**
+     * @return HasMany<ResearchRequestFolder, $this>
+     */
+    public function researchRequestFolders(): HasMany
+    {
+        return $this->hasMany(ResearchRequestFolder::class);
     }
 
     public function canAccessPanel(Panel $panel): bool

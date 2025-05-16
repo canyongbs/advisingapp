@@ -36,47 +36,29 @@
 
 namespace AdvisingApp\Research\Models;
 
-use AdvisingApp\Research\Database\Factories\ResearchRequestFactory;
+use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 use App\Models\BaseModel;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-/**
- * @mixin IdeHelperResearchRequest
- */
-class ResearchRequest extends BaseModel
+class ResearchRequestFolder extends BaseModel
 {
-    /** @use HasFactory<ResearchRequestFactory> */
-    use HasFactory;
+    use CanAddAssistantLicenseGlobalScope;
+    use SoftDeletes;
 
     protected $fillable = [
-        'title',
-        'topic',
-        'results',
+        'name',
         'user_id',
-        'finished_at',
-    ];
-
-    protected $casts = [
-        'finished_at' => 'immutable_datetime',
     ];
 
     /**
-     * @return HasMany<ResearchRequestQuestion, $this>
+     * @return HasMany<ResearchRequest, $this>
      */
-    public function questions(): HasMany
+    public function requests(): HasMany
     {
-        return $this->hasMany(ResearchRequestQuestion::class);
-    }
-
-    /**
-     * @return BelongsTo<ResearchRequestFolder, $this>
-     */
-    public function folder(): BelongsTo
-    {
-        return $this->belongsTo(ResearchRequestFolder::class, 'folder_id');
+        return $this->hasMany(ResearchRequest::class, 'folder_id');
     }
 
     /**

@@ -34,19 +34,43 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Filament\Pages;
+namespace AdvisingApp\Research\Filament\Pages;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use Filament\Pages\Page;
+use Filament\Actions\Action;
+use App\Features\ResearchRequests;
+use Filament\Navigation\NavigationItem;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use AdvisingApp\Research\Filament\Pages\ManageResearchRequests\Concerns\CanManageRequests;
+use AdvisingApp\Research\Filament\Pages\ManageResearchRequests\Concerns\CanManageConsent;
+use AdvisingApp\Research\Filament\Pages\ManageResearchRequests\Concerns\CanManageFolders;
 
-class ResearchRequests extends Page
+class ManageResearchRequests extends Page
 {
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
+    use CanManageConsent;
+    use CanManageFolders;
+    use CanManageRequests;
 
-    protected static ?int $navigationSort = 30;
+    protected static string $view = 'research::filament.pages.manage-research-requests';
 
-    protected static string $view = 'filament.pages.coming-soon';
+    protected static ?string $title = 'Research Requests';
+
+    /**
+     * @return array<NavigationItem>
+     */
+    public static function getNavigationItems(): array
+    {
+        return [
+            NavigationItem::make('Research Requests')
+                ->group('Artificial Intelligence')
+                ->isActiveWhen(fn (): bool => request()->routeIs(static::getRouteName(), NewResearchRequest::getRouteName()))
+                ->sort(30)
+                ->url(static::getUrl()),
+        ];
+    }
+
 
     public static function canAccess(): bool
     {
@@ -57,6 +81,10 @@ class ResearchRequests extends Page
             return false;
         }
 
-        return $user->can(['assistant.view-any', 'assistant.*.view']);
+        if (blank(app(AiIntegrationsSettings::class)->jina_deepsearch_ai_api_key)) {
+            return false;
+        }
+
+        return ResearchRequests::active();
     }
 }
