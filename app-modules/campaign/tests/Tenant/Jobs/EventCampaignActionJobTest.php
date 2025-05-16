@@ -87,7 +87,8 @@ it('will execute appropriately on each educatable in the segment', function (Edu
     $campaignActionEducatable->refresh();
 
     expect($campaignActionEducatable->succeeded_at)->not()->toBeNull()
-        ->and($campaignActionEducatable->last_failed_at)->toBeNull();
+        ->and($campaignActionEducatable->last_failed_at)->toBeNull()
+        ->and($campaignActionEducatable->related)->toEqual($attendee);
 })
     ->with([
         'student' => [
