@@ -112,11 +112,11 @@
                                     }
                                 }"
                                 :class="{
-                                    'px-2 group flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1': true,
+                                    'px-2 group flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 gap-x-1': true,
                                     'bg-gray-100 dark:bg-white/5': thread.id === $wire.thread?.id
                                 }"
                             >
-                                <div class="flex flex-1 items-center gap-3">
+                                <div class="flex flex-1 min-w-0 items-center gap-3">
                                     <template x-if="$wire.folders.length">
                                         <button
                                             type="button"
@@ -140,7 +140,7 @@
                                     </template>
 
                                     <button
-                                        class="relative flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-left text-sm"
+                                        class="relative min-w-0 flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-left text-sm"
                                         type="button"
                                         x-on:click="selectThread(thread)"
                                     >
@@ -253,21 +253,23 @@
                                         icon="heroicon-o-folder-open"
                                         x-show="expanded(folder.id)"
                                         x-on:click="expand(folder.id)"
+                                        class="flex-shrink-0"
                                     />
                                     <x-filament::icon-button
                                         icon="heroicon-o-folder"
                                         x-show="! expanded(folder.id)"
                                         x-on:click="expand(folder.id)"
+                                        class="flex-shrink-0"
                                     />
 
                                     <div
-                                        class="group flex w-full cursor-pointer items-center space-x-1 rounded-lg px-2 outline-none transition duration-75 focus:bg-gray-100 dark:focus:bg-white/5">
+                                        class="group flex w-full cursor-pointer items-center gap-x-1 rounded-lg px-2 outline-none transition duration-75 focus:bg-gray-100 dark:focus:bg-white/5">
                                         <div
-                                            class="relative flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-sm"
+                                            class="relative min-w-0 flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-sm"
                                             x-on:click="expand(folder.id)"
                                         >
                                             <div
-                                                class="flex-1 truncate"
+                                                class="flex-1 truncate min-w-0"
                                                 x-bind:class="{
                                                     'text-primary-600 dark:text-primary-400': expanded(folder.id)
                                                 }"
@@ -275,7 +277,7 @@
                                             ></div>
                                         </div>
 
-                                        <div class="flex items-center gap-1">
+                                        <div class="flex flex-shrink-0 items-center gap-1">
                                             <template
                                                 x-if="loading.type !== 'renameFolderAction' || loading.identifier !== folder.id"
                                             >
@@ -344,11 +346,11 @@
                                         }"
                                         x-show="expanded(folder.id)"
                                         :class="{
-                                            'px-2 group flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1': true,
+                                            'px-2 group flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 gap-x-1': true,
                                             'bg-gray-100 dark:bg-white/5': thread.id === $wire.thread?.id
                                         }"
                                     >
-                                        <div class="flex flex-1 items-center gap-3">
+                                        <div class="flex flex-1 min-w-0 items-center gap-3">
                                             <button
                                                 type="button"
                                                 draggable="true"
@@ -375,7 +377,7 @@
                                             </button>
 
                                             <button
-                                                class="relative flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-left text-sm"
+                                                class="relative min-w-0 flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-left text-sm"
                                                 type="button"
                                                 x-on:click="selectThread(thread)"
                                             >

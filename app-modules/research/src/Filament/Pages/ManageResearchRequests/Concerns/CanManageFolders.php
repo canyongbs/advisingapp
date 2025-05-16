@@ -97,6 +97,8 @@ trait CanManageFolders
                 $folder->name = $data['name'];
                 $folder->user()->associate(auth()->user());
                 $folder->save();
+
+                $this->folders = $this->getFolders();
             })
             ->icon('heroicon-m-folder-plus')
             ->color('primary')
@@ -146,7 +148,7 @@ trait CanManageFolders
         return Action::make('deleteFolder')
             ->size(ActionSize::ExtraSmall)
             ->requiresConfirmation()
-            ->modalDescription('Are you sure you wish to delete this folder? Any requests stored within this folder will also be deleted and this action is not reversible.')
+            ->modalDescription('Are you sure you wish to delete this folder?')
             ->action(function (array $arguments) {
                 auth()->user()->researchRequestFolders()
                     ->find($arguments['folder'])
