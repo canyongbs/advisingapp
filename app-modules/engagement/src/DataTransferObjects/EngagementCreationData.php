@@ -54,10 +54,7 @@ class EngagementCreationData extends Data
         public User $user,
         public CanBeNotified | Collection $recipient,
         public NotificationChannel $channel,
-        /**
-         * @todo RefactorEngagementCampaignSubjectToJsonb: Change this to `?array` once full migration to JSONB subject is complete.
-         */
-        public string|array|null $subject = null,
+        public ?array $subject = null,
         public ?array $body = null,
         public array $temporaryBodyImages = [],
         public ?CarbonInterface $scheduledAt = null,

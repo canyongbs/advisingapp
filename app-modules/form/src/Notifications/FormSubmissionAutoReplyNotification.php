@@ -70,7 +70,7 @@ class FormSubmissionAutoReplyNotification extends Notification implements Should
         $author = $this->submission->author;
 
         return MailMessage::make()
-            ->subject($form->emailAutoReply->subject)
+            ->subject($form->emailAutoReply->getSubject($author))
             ->content($form->emailAutoReply->getBody($author));
     }
 }
