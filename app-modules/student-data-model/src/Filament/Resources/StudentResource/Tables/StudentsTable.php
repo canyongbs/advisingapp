@@ -218,7 +218,7 @@ class StudentsTable
                             ->icon('heroicon-m-arrow-uturn-left')
                             ->nullable(),
                         ExistingValuesSelectConstraint::make('f_e_term')
-                            ->label('First Enrolled Semester')
+                            ->label('First Enrolled Term')
                             ->icon('heroicon-m-user-circle')
                             ->multiple(),
                     ])
