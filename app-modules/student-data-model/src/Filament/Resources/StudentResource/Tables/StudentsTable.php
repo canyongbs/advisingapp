@@ -217,6 +217,10 @@ class StudentsTable
                         BooleanConstraint::make('email_bounce')
                             ->icon('heroicon-m-arrow-uturn-left')
                             ->nullable(),
+                        ExistingValuesSelectConstraint::make('f_e_term')
+                            ->label('First Enrolled Semester')
+                            ->icon('heroicon-m-user-circle')
+                            ->multiple(),
                     ])
                     ->constraintPickerColumns([
                         'md' => 2,
