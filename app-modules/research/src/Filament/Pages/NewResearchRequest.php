@@ -37,6 +37,7 @@
 namespace AdvisingApp\Research\Filament\Pages;
 
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Research\Actions\GenerateResearchQuestion;
 use AdvisingApp\Research\Jobs\Research;
 use AdvisingApp\Research\Models\ResearchRequest;
@@ -73,6 +74,13 @@ class NewResearchRequest extends Page
 
     public static function canAccess(): bool
     {
+        /** @var User $user */
+        $user = auth()->user();
+
+        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
+            return false;
+        }
+
         if (blank(app(AiIntegrationsSettings::class)->jina_deepsearch_ai_api_key)) {
             return false;
         }
@@ -93,6 +101,17 @@ class NewResearchRequest extends Page
         } else {
             $this->form->fill();
         }
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getBreadcrumbs(): array
+    {
+        return [
+            ManageResearchRequests::getUrl() => 'Research Requests',
+            'New',
+        ];
     }
 
     public function form(Form $form): Form
@@ -264,7 +283,7 @@ class NewResearchRequest extends Page
     {
         return [
             Action::make('restart')
-                ->label('New request')
+                ->label('New Request')
                 ->requiresConfirmation()
                 ->modalHeading('Restart this research request from scratch')
                 ->color('gray')

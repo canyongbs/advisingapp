@@ -34,56 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Research\Models;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Research\Database\Factories\ResearchRequestFactory;
-use App\Models\BaseModel;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-
-/**
- * @mixin IdeHelperResearchRequest
- */
-class ResearchRequest extends BaseModel
-{
-    /** @use HasFactory<ResearchRequestFactory> */
-    use HasFactory;
-
-    protected $fillable = [
-        'title',
-        'topic',
-        'results',
-        'user_id',
-        'finished_at',
-    ];
-
-    protected $casts = [
-        'finished_at' => 'immutable_datetime',
-    ];
-
-    /**
-     * @return HasMany<ResearchRequestQuestion, $this>
-     */
-    public function questions(): HasMany
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->hasMany(ResearchRequestQuestion::class);
+        Schema::create('research_request_folders', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('name');
+            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
+            $table->timestamps();
+            $table->softDeletes();
+        });
     }
 
-    /**
-     * @return BelongsTo<ResearchRequestFolder, $this>
-     */
-    public function folder(): BelongsTo
+    public function down(): void
     {
-        return $this->belongsTo(ResearchRequestFolder::class, 'folder_id');
+        Schema::dropIfExists('research_request_folders');
     }
-
-    /**
-     * @return BelongsTo<User, $this>
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-}
+};

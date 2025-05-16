@@ -34,56 +34,55 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Research\Models;
+namespace AdvisingApp\Research\Filament\Pages;
 
-use AdvisingApp\Research\Database\Factories\ResearchRequestFactory;
-use App\Models\BaseModel;
+use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Research\Filament\Pages\ManageResearchRequests\Concerns\CanManageConsent;
+use AdvisingApp\Research\Filament\Pages\ManageResearchRequests\Concerns\CanManageFolders;
+use AdvisingApp\Research\Filament\Pages\ManageResearchRequests\Concerns\CanManageRequests;
+use App\Features\ResearchRequests;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Filament\Navigation\NavigationItem;
+use Filament\Pages\Page;
 
-/**
- * @mixin IdeHelperResearchRequest
- */
-class ResearchRequest extends BaseModel
+class ManageResearchRequests extends Page
 {
-    /** @use HasFactory<ResearchRequestFactory> */
-    use HasFactory;
+    use CanManageConsent;
+    use CanManageFolders;
+    use CanManageRequests;
 
-    protected $fillable = [
-        'title',
-        'topic',
-        'results',
-        'user_id',
-        'finished_at',
-    ];
+    protected static string $view = 'research::filament.pages.manage-research-requests';
 
-    protected $casts = [
-        'finished_at' => 'immutable_datetime',
-    ];
+    protected static ?string $title = 'Research Requests';
 
     /**
-     * @return HasMany<ResearchRequestQuestion, $this>
+     * @return array<NavigationItem>
      */
-    public function questions(): HasMany
+    public static function getNavigationItems(): array
     {
-        return $this->hasMany(ResearchRequestQuestion::class);
+        return [
+            NavigationItem::make('Research Requests')
+                ->group('Artificial Intelligence')
+                ->isActiveWhen(fn (): bool => request()->routeIs(static::getRouteName(), NewResearchRequest::getRouteName()))
+                ->sort(30)
+                ->url(static::getUrl()),
+        ];
     }
 
-    /**
-     * @return BelongsTo<ResearchRequestFolder, $this>
-     */
-    public function folder(): BelongsTo
+    public static function canAccess(): bool
     {
-        return $this->belongsTo(ResearchRequestFolder::class, 'folder_id');
-    }
+        /** @var User $user */
+        $user = auth()->user();
 
-    /**
-     * @return BelongsTo<User, $this>
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
+        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
+            return false;
+        }
+
+        if (blank(app(AiIntegrationsSettings::class)->jina_deepsearch_ai_api_key)) {
+            return false;
+        }
+
+        return ResearchRequests::active();
     }
 }

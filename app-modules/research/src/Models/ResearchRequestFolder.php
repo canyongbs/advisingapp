@@ -34,29 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Filament\Pages;
+namespace AdvisingApp\Research\Models;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
+use App\Models\BaseModel;
 use App\Models\User;
-use Filament\Pages\Page;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ResearchRequests extends Page
+class ResearchRequestFolder extends BaseModel
 {
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
+    use CanAddAssistantLicenseGlobalScope;
+    use SoftDeletes;
 
-    protected static ?int $navigationSort = 30;
+    protected $fillable = [
+        'name',
+        'user_id',
+    ];
 
-    protected static string $view = 'filament.pages.coming-soon';
-
-    public static function canAccess(): bool
+    /**
+     * @return HasMany<ResearchRequest, $this>
+     */
+    public function requests(): HasMany
     {
-        /** @var User $user */
-        $user = auth()->user();
+        return $this->hasMany(ResearchRequest::class, 'folder_id');
+    }
 
-        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
-            return false;
-        }
-
-        return $user->can(['assistant.view-any', 'assistant.*.view']);
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }
