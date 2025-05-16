@@ -73,6 +73,7 @@ it('dispatches the correct job based on the CampaignAction type into the batch',
         ])
     );
 })
+    // TODO: Determine how to make a dynamic segment in tests and add a dataset between static and dynamic here
     ->with([
         'prospects' => [
             SegmentModel::Prospect,
@@ -122,4 +123,102 @@ it('dispatches the correct job based on the CampaignAction type into the batch',
         ],
     ]);
 
-// Test when the CampaignActionEducatable already exists
+it('re-uses the same CampaignActionEducatable if it already exists', function (SegmentModel $segmentModel, Collection $educatables, CampaignActionType $actionType) {
+    Bus::fake();
+
+    $segment = Segment::factory()->create([
+        'type' => SegmentType::Static,
+        'model' => $segmentModel,
+    ]);
+
+    $educatables->each(function (Model $educatable) use ($segment) {
+        $segment->subjects()->create([
+            'subject_id' => $educatable->getKey(),
+            'subject_type' => $educatable->getMorphClass(),
+        ]);
+    });
+
+    $campaign = Campaign::factory()
+        ->for($segment, 'segment')
+        ->for(User::factory()->licensed(LicenseType::cases()), 'createdBy')
+        ->create();
+
+    /** @var CampaignAction $action */
+    $action = CampaignAction::factory()
+        ->for($campaign, 'campaign')
+        ->create([
+            'type' => $actionType,
+        ]);
+
+    $educatables->each(function (Model $educatable) use ($action) {
+        CampaignActionEducatable::factory()->create([
+            'campaign_action_id' => $action->getKey(),
+            'educatable_id' => $educatable->getKey(),
+            'educatable_type' => $educatable->getMorphClass(),
+        ]);
+    });
+
+    [$job] = new ExecuteCampaignAction($action)->withFakeBatch();
+
+    assertDatabaseCount(CampaignActionEducatable::class, $educatables->count());
+
+    $job->handle();
+
+    assertDatabaseCount(CampaignActionEducatable::class, $educatables->count());
+
+    $educatables->each(
+        fn (Model $educatable) => assertDatabaseHas(CampaignActionEducatable::class, [
+            'campaign_action_id' => $action->getKey(),
+            'educatable_id' => $educatable->getKey(),
+            'educatable_type' => $educatable->getMorphClass(),
+        ])
+    );
+})
+    ->with([
+        'prospects' => [
+            SegmentModel::Prospect,
+            fn () => Prospect::factory()->count(rand(1, 10))->create(),
+        ],
+        'students' => [
+            SegmentModel::Student,
+            fn () => Student::factory()->count(rand(1, 10))->create(),
+        ],
+    ])
+    ->with([
+        'Engagement Email' => [
+            CampaignActionType::BulkEngagementEmail,
+            EngagementCampaignActionJob::class,
+        ],
+        'Engagement SMS' => [
+            CampaignActionType::BulkEngagementSms,
+            EngagementCampaignActionJob::class,
+        ],
+        'Event' => [
+            CampaignActionType::Event,
+            EventCampaignActionJob::class,
+        ],
+        'Alert' => [
+            CampaignActionType::ProactiveAlert,
+            ProactiveAlertCampaignActionJob::class,
+        ],
+        'Interaction' => [
+            CampaignActionType::Interaction,
+            InteractionCampaignActionJob::class,
+        ],
+        'Care Team' => [
+            CampaignActionType::CareTeam,
+            CareTeamCampaignActionJob::class,
+        ],
+        'Task' => [
+            CampaignActionType::Task,
+            TaskCampaignActionJob::class,
+        ],
+        'Subscription' => [
+            CampaignActionType::Subscription,
+            SubscriptionCampaignActionJob::class,
+        ],
+        'Tags' => [
+            CampaignActionType::Tags,
+            TagsCampaignActionJob::class,
+        ],
+    ]);
