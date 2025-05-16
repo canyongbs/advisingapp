@@ -39,6 +39,7 @@ namespace AdvisingApp\Engagement\Jobs;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Engagement\Notifications\EngagementNotification;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use DateTimeInterface;
 use Illuminate\Bus\Batchable;
@@ -100,7 +101,11 @@ class CreateBatchedEngagement implements ShouldQueue
                 return;
             }
 
-            if (! $engagement->recipient->canReceiveEmail()) {
+            if ($engagement->channel === NotificationChannel::Email && ! $engagement->recipient->canReceiveEmail()) {
+                return;
+            }
+
+            if ($engagement->channel === NotificationChannel::Sms && ! $engagement->recipient->canReceiveSms()) {
                 return;
             }
 

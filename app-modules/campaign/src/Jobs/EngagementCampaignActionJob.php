@@ -2,13 +2,36 @@
 
 namespace AdvisingApp\Campaign\Jobs;
 
+use AdvisingApp\Engagement\Actions\CreateEngagement;
+use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use App\Models\User;
+use DateTimeInterface;
 use Exception;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Queue\Middleware\RateLimitedWithRedis;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
 class EngagementCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
 {
+    /**
+     * @return array<object>
+     */
+    public function middleware(): array
+    {
+        return [
+            ...parent::middleware(),
+            new RateLimitedWithRedis('notification'),
+        ];
+    }
+
+    public function retryUntil(): DateTimeInterface
+    {
+        return now()->addHours(2);
+    }
+
     public function handle(): void
     {
         try {
@@ -21,25 +44,41 @@ class EngagementCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
                 new Exception('The educatable model must implement the Educatable contract.')
             );
 
+            /** @var Educatable&Model $educatable */
             $action = $this->actionEducatable->campaignAction;
 
-            // TODO: Change this to send individual Engagements
-            // Add the notifications middleware to this job
-            // and work with Dan to figure out temporaryBodyImages
-
             $channel = NotificationChannel::parse($action->data['channel']);
-            $records = $action->campaign->segment->retrieveRecords();
 
-            app(CreateEngagementBatch::class)->execute(new EngagementCreationData(
-                user: $action->campaign->createdBy,
-                recipient: ($channel === NotificationChannel::Sms) ? $records->filter(fn (CanBeNotified $record) => $record->canReceiveSms()) : $records,
-                channel: $channel,
-                subject: $action->data['subject'] ?? null,
-                body: $action->data['body'] ?? null,
-            ));
+            throw_if(
+                ! match ($channel) {
+                    NotificationChannel::Email => $educatable->canReceiveEmail(),
+                    NotificationChannel::Sms => $educatable->canReceiveSms(),
+                    default => throw new Exception('Invalid engagement channel'),
+                },
+                new Exception('The educatable cannot receive notifications on this channel.')
+            );
+
+            $user = $action->campaign->createdBy;
+
+            throw_if(
+                ! $user instanceof User,
+                new Exception('The user must be an instance of User.')
+            );
+
+            $engagement = app(CreateEngagement::class)
+                ->execute(
+                    data: new EngagementCreationData(
+                        user: $user,
+                        recipient: $educatable,
+                        channel: $channel,
+                        subject: $action->data['subject'] ?? null,
+                        body: $action->data['body'] ?? null,
+                    ),
+                    notifyNow: true,
+                );
 
             $this->actionEducatable->succeeded_at = now();
-            $this->actionEducatable->related()->associate($case);
+            $this->actionEducatable->related()->associate($engagement);
             $this->actionEducatable->save();
 
             DB::commit();
