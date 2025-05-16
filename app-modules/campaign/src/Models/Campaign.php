@@ -42,6 +42,7 @@ use AdvisingApp\Segment\Models\Segment;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -95,6 +96,9 @@ class Campaign extends BaseModel implements Auditable
         return $this->actions->contains(fn (CampaignAction $action) => $action->hasBeenExecuted());
     }
 
+    /**
+     * @return MorphTo<Model, $this>
+     */
     public function createdBy(): MorphTo
     {
         return $this->morphTo();

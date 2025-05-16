@@ -41,6 +41,7 @@ use App\Models\Attributes\NoPermissions;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\MassPrunable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Carbon;
 
@@ -69,6 +70,9 @@ class PortalAuthentication extends BaseModel
             ->where('created_at', '<', now()->subMonth());
     }
 
+    /**
+     * @return MorphTo<Model, $this>
+     */
     public function educatable(): MorphTo
     {
         return $this->morphTo();

@@ -40,6 +40,7 @@ use AdvisingApp\Engagement\Observers\EngagementFileEntitiesObserver;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -57,6 +58,9 @@ class EngagementFileEntities extends MorphPivot implements CanTriggerAutoSubscri
         return $this->entity instanceof Subscribable ? $this->entity : null;
     }
 
+    /**
+     * @return MorphTo<Model, $this>
+     */
     public function entity(): MorphTo
     {
         return $this->morphTo();

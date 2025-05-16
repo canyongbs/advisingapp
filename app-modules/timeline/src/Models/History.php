@@ -38,6 +38,7 @@ namespace AdvisingApp\Timeline\Models;
 
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
@@ -63,6 +64,9 @@ abstract class History extends BaseModel
         'new' => 'array',
     ];
 
+    /**
+     * @return MorphTo<Model, $this>
+     */
     public function subject(): MorphTo
     {
         return $this->morphTo();

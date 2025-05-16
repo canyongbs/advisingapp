@@ -57,6 +57,9 @@ class Timeline extends BaseModel
         'record_sortable_date',
     ];
 
+    /**
+     * @return MorphTo<Model, $this>
+     */
     public function timelineable(): MorphTo
     {
         return $this->morphTo();

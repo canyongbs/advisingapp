@@ -42,6 +42,9 @@ use Illuminate\Auth\Access\Response;
 
 trait PerformsLicenseChecks
 {
+    /**
+     * @param LicenseType|string|array<LicenseType|string> $licenses
+     */
     public function hasLicenses(Authenticatable $authenticatable, LicenseType | string | array $licenses): ?Response
     {
         return $authenticatable->hasLicense($licenses)
@@ -49,6 +52,9 @@ trait PerformsLicenseChecks
             : Response::deny('You are not licensed to access this resource.');
     }
 
+    /**
+     * @param LicenseType|string|array<LicenseType|string> $licenses
+     */
     public function hasAnyLicense(Authenticatable $authenticatable, LicenseType | string | array $licenses): ?Response
     {
         return $authenticatable->hasAnyLicense($licenses)

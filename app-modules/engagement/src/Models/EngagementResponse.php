@@ -129,6 +129,9 @@ class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeli
             ->toHtmlString();
     }
 
+    /**
+     * @return MorphTo<Model, $this>
+     */
     public function sender(): MorphTo
     {
         return $this->morphTo(

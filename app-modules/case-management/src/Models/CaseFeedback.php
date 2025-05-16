@@ -37,6 +37,7 @@
 namespace AdvisingApp\CaseManagement\Models;
 
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -58,6 +59,9 @@ class CaseFeedback extends BaseModel
         'assignee_type',
     ];
 
+    /**
+     * @return MorphTo<Model, $this>
+     */
     public function assignee(): MorphTo
     {
         return $this->morphTo(

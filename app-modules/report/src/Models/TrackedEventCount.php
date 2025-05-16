@@ -38,6 +38,7 @@ namespace AdvisingApp\Report\Models;
 
 use AdvisingApp\Report\Enums\TrackedEventType;
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
@@ -56,6 +57,9 @@ class TrackedEventCount extends BaseModel
         'last_occurred_at' => 'datetime',
     ];
 
+    /**
+     * @return MorphTo<Model, $this>
+     */
     public function relatedTo(): MorphTo
     {
         return $this->morphTo();

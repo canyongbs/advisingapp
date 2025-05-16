@@ -38,6 +38,7 @@ namespace AdvisingApp\Notification\Models;
 
 use AdvisingApp\Notification\Models\Contracts\Message;
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
@@ -57,6 +58,9 @@ class DatabaseMessage extends BaseModel implements Message
         'content' => 'array',
     ];
 
+    /**
+     * @return MorphTo<Model, $this>
+     */
     public function related(): MorphTo
     {
         return $this->morphTo(
@@ -66,6 +70,9 @@ class DatabaseMessage extends BaseModel implements Message
         );
     }
 
+    /**
+     * @return MorphTo<Model, $this>
+     */
     public function recipient(): MorphTo
     {
         return $this->morphTo(

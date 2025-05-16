@@ -37,6 +37,7 @@
 namespace AdvisingApp\Segment\Models;
 
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -61,6 +62,9 @@ class SegmentSubject extends BaseModel
         return $this->belongsTo(Segment::class);
     }
 
+    /**
+     * @return MorphTo<Model, $this>
+     */
     public function subject(): MorphTo
     {
         return $this->morphTo();
