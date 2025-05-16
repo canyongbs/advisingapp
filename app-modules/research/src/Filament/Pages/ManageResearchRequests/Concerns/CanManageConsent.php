@@ -34,56 +34,51 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Research\Models;
+namespace AdvisingApp\Research\Filament\Pages\ManageResearchRequests\Concerns;
 
-use AdvisingApp\Research\Database\Factories\ResearchRequestFactory;
-use App\Models\BaseModel;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use AdvisingApp\Research\Models\ResearchRequestFolder;
+use AdvisingApp\Consent\Enums\ConsentAgreementType;
+use AdvisingApp\Consent\Models\ConsentAgreement;
+use App\Filament\Pages\Dashboard;
+use Livewire\Attributes\Computed;
 
 /**
- * @mixin IdeHelperResearchRequest
+ * @property-read ConsentAgreement $consentAgreement
+ * @property-read bool $isConsented
  */
-class ResearchRequest extends BaseModel
+trait CanManageConsent
 {
-    /** @use HasFactory<ResearchRequestFactory> */
-    use HasFactory;
-
-    protected $fillable = [
-        'title',
-        'topic',
-        'results',
-        'user_id',
-        'finished_at',
-    ];
-
-    protected $casts = [
-        'finished_at' => 'immutable_datetime',
-    ];
-
-    /**
-     * @return HasMany<ResearchRequestQuestion, $this>
-     */
-    public function questions(): HasMany
+    #[Computed]
+    public function consentAgreement(): ConsentAgreement
     {
-        return $this->hasMany(ResearchRequestQuestion::class);
+        return ConsentAgreement::query()
+            ->where('type', ConsentAgreementType::AzureOpenAI)
+            ->first();
     }
 
-    /**
-     * @return BelongsTo<ResearchRequestFolder, $this>
-     */
-    public function folder(): BelongsTo
+    #[Computed]
+    public function isConsented(): bool
     {
-        return $this->belongsTo(ResearchRequestFolder::class, 'folder_id');
+        return auth()->user()->hasConsentedTo($this->consentAgreement);
     }
 
-    /**
-     * @return BelongsTo<User, $this>
-     */
-    public function user(): BelongsTo
+    public function confirmConsent(): void
     {
-        return $this->belongsTo(User::class);
+        $user = auth()->user();
+
+        if ($this->isConsented) {
+            return;
+        }
+
+        $user->consentTo($this->consentAgreement);
+
+        unset($this->isConsented);
+
+        $this->dispatch('close-modal', id: 'consent-agreement');
+    }
+
+    public function denyConsent(): void
+    {
+        $this->redirect(Dashboard::getUrl());
     }
 }
