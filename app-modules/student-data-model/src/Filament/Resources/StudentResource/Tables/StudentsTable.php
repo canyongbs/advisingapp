@@ -222,7 +222,7 @@ class StudentsTable
                             ->icon('heroicon-m-calendar-days')
                             ->multiple(),
                         ExistingValuesSelectConstraint::make('mr_e_term')
-                            ->label('Most Recent Enrolled Semester')
+                            ->label('Most Recent Enrolled Term')
                             ->icon('heroicon-m-user-circle')
                             ->multiple(),
                     ])
