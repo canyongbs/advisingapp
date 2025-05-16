@@ -43,6 +43,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
+use AdvisingApp\Task\Models\Task;
 use App\Models\Tag;
 use App\Models\Taggable;
 use App\Models\User;
@@ -63,6 +64,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
  * @property-read Collection<int, User> $careTeam
  * @property-read ProspectEmailAddress|StudentEmailAddress|null $primaryEmailAddress
  * @property-read Collection<int, Alert> $alerts
+ * @property-read Collection<int, Task> $tasks
  */
 interface Educatable extends Identifiable, CanBeNotified
 {
@@ -89,6 +91,11 @@ interface Educatable extends Identifiable, CanBeNotified
      * @return MorphMany<Alert, covariant Model>
      */
     public function alerts(): MorphMany;
+
+    /**
+     * @return MorphMany<Task, covariant Model>
+     */
+    public function tasks(): MorphMany;
 
     /**
      * @return BelongsTo<covariant Model, covariant Model>
