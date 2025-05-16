@@ -36,6 +36,7 @@
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Campaign\Enums\CampaignActionType;
+use AdvisingApp\Campaign\Jobs\ExecuteCampaignAction;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -60,9 +61,10 @@ it('will create the appropriate records for educatables in the segment', functio
         $educatable->careTeam()->sync($priorCareTeam);
     });
 
-    $campaign = Campaign::factory()->create([
-        'segment_id' => $segment->id,
-    ]);
+    $campaign = Campaign::factory()
+        ->for($segment, 'segment')
+        ->for(User::factory()->licensed(LicenseType::cases()), 'createdBy')
+        ->create();
 
     $users = User::factory()->licensed(LicenseType::cases())->count(3)->create();
 
@@ -72,6 +74,7 @@ it('will create the appropriate records for educatables in the segment', functio
         $careTeam[] = ['user_id' => $user->id, 'care_team_role_id' => null];
     }
 
+    /** @var CampaignAction $action */
     $action = CampaignAction::factory()
         ->for($campaign, 'campaign')
         ->create([
@@ -82,8 +85,10 @@ it('will create the appropriate records for educatables in the segment', functio
             ],
         ]);
 
+    // dd($action->campaign->segment);
+
     // When that action runs
-    $action->execute();
+    dispatch_sync(new ExecuteCampaignAction($action));
 
     $educatables->each(
         fn (Educatable $educatable) => expect(

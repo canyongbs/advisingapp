@@ -106,11 +106,19 @@ class ExecuteCampaignAction implements ShouldQueue, ShouldBeUnique
                 );
 
                 $campaignActionEducatable = CampaignActionEducatable::query()
-                    ->firstOrCreate([
+                    ->where([
                         'campaign_action_id' => $this->action->getKey(),
                         'educatable_id' => $educatable->getKey(),
                         'educatable_type' => $educatable->getMorphClass(),
-                    ]);
+                    ])
+                    ->first();
+
+                if (! $campaignActionEducatable) {
+                    $campaignActionEducatable = new CampaignActionEducatable();
+                    $campaignActionEducatable->educatable()->associate($educatable);
+                    $campaignActionEducatable->campaignAction()->associate($this->action);
+                    $campaignActionEducatable->save();
+                }
 
                 $job = match ($this->action->type) {
                     CampaignActionType::BulkEngagementEmail, CampaignActionType::BulkEngagementSms => new EngagementCampaignActionJob($campaignActionEducatable),

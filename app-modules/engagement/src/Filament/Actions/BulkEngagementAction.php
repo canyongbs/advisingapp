@@ -188,7 +188,10 @@ class BulkEngagementAction
 
                 app(CreateEngagementBatch::class)->execute(new EngagementCreationData(
                     user: auth()->user(),
-                    recipient: ($channel === NotificationChannel::Sms) ? $records->filter(fn (CanBeNotified $record) => $record->canReceiveSms()) : $records,
+                    recipient: match ($channel) {
+                        NotificationChannel::Email => $records->filter(fn (CanBeNotified $record) => $record->canReceiveEmail()),
+                        NotificationChannel::Sms => $records->filter(fn (CanBeNotified $record) => $record->canReceiveSms()),
+                    },
                     channel: $channel,
                     subject: $data['subject'] ?? null,
                     body: $data['body'] ?? null,
