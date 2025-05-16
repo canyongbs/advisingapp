@@ -36,16 +36,15 @@
 
 namespace AdvisingApp\Research\Filament\Pages;
 
-use App\Models\User;
-use Filament\Pages\Page;
-use Filament\Actions\Action;
-use App\Features\ResearchRequests;
-use Filament\Navigation\NavigationItem;
-use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
-use AdvisingApp\Research\Filament\Pages\ManageResearchRequests\Concerns\CanManageRequests;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Research\Filament\Pages\ManageResearchRequests\Concerns\CanManageConsent;
 use AdvisingApp\Research\Filament\Pages\ManageResearchRequests\Concerns\CanManageFolders;
+use AdvisingApp\Research\Filament\Pages\ManageResearchRequests\Concerns\CanManageRequests;
+use App\Features\ResearchRequests;
+use App\Models\User;
+use Filament\Navigation\NavigationItem;
+use Filament\Pages\Page;
 
 class ManageResearchRequests extends Page
 {
@@ -70,7 +69,6 @@ class ManageResearchRequests extends Page
                 ->url(static::getUrl()),
         ];
     }
-
 
     public static function canAccess(): bool
     {
