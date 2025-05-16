@@ -608,6 +608,7 @@ namespace App\Models{
  * @property bool $is_signature_enabled
  * @property array<array-key, mixed>|null $signature
  * @property string|null $team_id
+ * @property bool $is_submit_ai_chat_on_enter_enabled
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\AiAssistantUpvote> $aiAssistantUpvotes
  * @property-read int|null $ai_assistant_upvotes_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\AiThreadFolder> $aiThreadFolders
@@ -703,6 +704,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereIsExternal($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereIsPhoneNumberVisibleOnProfile($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereIsSignatureEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereIsSubmitAiChatOnEnterEnabled($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereJobTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereLastChatPingAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereLastLoggedInAt($value)
