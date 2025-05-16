@@ -48,8 +48,8 @@ trait PerformsLicenseChecks
     public function hasLicenses(Authenticatable $authenticatable, LicenseType | string | array $licenses): ?Response
     {
         return $authenticatable->hasLicense($licenses)
-          ? null
-          : Response::deny('You are not licensed to access this resource.');
+            ? null
+            : Response::deny('You are not licensed to access this resource.');
     }
 
     /**
@@ -58,7 +58,7 @@ trait PerformsLicenseChecks
     public function hasAnyLicense(Authenticatable $authenticatable, LicenseType | string | array $licenses): ?Response
     {
         return $authenticatable->hasAnyLicense($licenses)
-          ? null
-          : Response::deny('You are not licensed to access this resource.');
+            ? null
+            : Response::deny('You are not licensed to access this resource.');
     }
 }
