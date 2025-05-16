@@ -65,6 +65,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
  * @property-read ProspectEmailAddress|StudentEmailAddress|null $primaryEmailAddress
  * @property-read Collection<int, Alert> $alerts
  * @property-read Collection<int, Task> $tasks
+ * @property-read Collection<int, Tag> $tags
  */
 interface Educatable extends Identifiable, CanBeNotified
 {
