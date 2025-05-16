@@ -95,6 +95,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @property string $display_name
  *
  * @implements Educatable<Prospect>
+ * @implements Subscribable<Prospect>
  *
  * @mixin IdeHelperProspect
  */

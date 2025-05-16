@@ -36,17 +36,23 @@
 
 namespace AdvisingApp\Notification\Models\Contracts;
 
+use AdvisingApp\Notification\Models\Subscription;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
- * Interface Subscribable
+ * @template T of Student|Prospect
  *
- * @property string $id
+ * @phpstan-require-extends Model
  *
  * @mixin Model
  */
 interface Subscribable
 {
+    /**
+     * @return MorphMany<Subscription, covariant Model>
+     */
     public function subscriptions(): MorphMany;
 }

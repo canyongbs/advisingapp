@@ -93,6 +93,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @property string $mobile
  *
  * @implements Educatable<Student>
+ * @implements Subscribable<Student>
  *
  * @mixin IdeHelperStudent
  */
