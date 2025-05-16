@@ -43,7 +43,7 @@ use Illuminate\Support\Facades\DB;
 
 class CreateEngagement
 {
-    public function execute(EngagementCreationData $data): Engagement
+    public function execute(EngagementCreationData $data, bool $notifyNow = false): Engagement
     {
         $engagement = new Engagement();
         $engagement->user()->associate($data->user);
@@ -58,7 +58,7 @@ class CreateEngagement
             $engagement->dispatched_at = now();
         }
 
-        DB::transaction(function () use ($data, $engagement) {
+        DB::transaction(function () use ($data, $engagement, $notifyNow) {
             $engagement->save();
 
             [$engagement->body] = tiptap_converter()->saveImages(
@@ -71,8 +71,12 @@ class CreateEngagement
             $engagement->save();
 
             if (! $engagement->scheduled_at) {
-                if ($engagement->recipient->canReceiveEmail()) {
-                    $engagement->recipient->notify(new EngagementNotification($engagement));
+                $notification = new EngagementNotification($engagement)->afterCommit();
+
+                if ($notifyNow) {
+                    $engagement->recipient->notifyNow($notification);
+                } else {
+                    $engagement->recipient->notify($notification);
                 }
             }
         });
