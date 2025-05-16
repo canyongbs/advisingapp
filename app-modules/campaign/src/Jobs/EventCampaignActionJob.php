@@ -18,6 +18,7 @@ class EventCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
     {
         try {
             if (! app(LicenseSettings::class)->data->addons->eventManagement) {
+                // TODO: Change this to a custom execption and test it.
                 throw new Exception('The Event Management addon is not enabled.');
             }
 
