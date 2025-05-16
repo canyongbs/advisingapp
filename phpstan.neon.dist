@@ -2,6 +2,7 @@ includes:
     - ./vendor/larastan/larastan/extension.neon
     - ./vendor/tpetry/laravel-postgresql-enhanced/phpstan-extension.neon
     - ./phpstan-baseline.php
+    - ./vendor/pestphp/pest/extension.neon
 
 parameters:
     # This can be removed once we have fixed all errors in our baseline. But need to be here now, so we don't have to rebuild it in every new PR.
@@ -47,3 +48,10 @@ parameters:
             message: '#Call to an undefined method Pest\\PendingCalls\\TestCall::expect\(\)#'
             identifier: method.notFound
             path: tests/Tenant/Unit/ArchTest.php
+
+        -
+            message: '#Access to an undefined property Pest\\Mixins\\Expectation<array\|null>::\$each#'
+            identifier: property.notFound
+            paths:
+                - tests/*
+                - app-modules/*/tests/*
