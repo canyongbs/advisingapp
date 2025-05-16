@@ -5,7 +5,9 @@ namespace AdvisingApp\Campaign\Jobs;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Notifications\RegistrationLinkToEventAttendeeNotification;
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Exception;
@@ -30,7 +32,7 @@ class EventCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
                 new Exception('The educatable model must implement the Educatable contract.')
             );
 
-            /** @var Educatable $educatable */
+            /** @var Educatable<Student|Prospect> $educatable */
             $email = $educatable->primaryEmailAddress()->first();
 
             throw_if(
