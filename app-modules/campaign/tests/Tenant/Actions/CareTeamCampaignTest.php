@@ -85,8 +85,6 @@ it('will create the appropriate records for educatables in the segment', functio
             ],
         ]);
 
-    // dd($action->campaign->segment);
-
     // When that action runs
     dispatch_sync(new ExecuteCampaignAction($action));
 

@@ -16,8 +16,6 @@ class CareTeamCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
 
             $educatable = $this->actionEducatable->educatable;
 
-            dump('here');
-
             throw_if(
                 ! $educatable instanceof Educatable,
                 new Exception('The educatable model must implement the Educatable contract.')
