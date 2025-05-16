@@ -81,6 +81,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as BaseAuthenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\HasApiTokens;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
@@ -478,12 +479,12 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     protected static function booted(): void
     {
         static::addGlobalScope('licensed', function (Builder $builder) {
-            if (! auth()->check()) {
+            if (! Auth::check()) {
                 return;
             }
 
             /** @var Authenticatable $user */
-            $user = auth()->user();
+            $user = Auth::user();
 
             if (! $user->hasLicense(Student::getLicenseType())) {
                 $builder->whereRaw('1 = 0');
