@@ -112,18 +112,6 @@ trait CanManageRequests
     public function loadFirstRequest(): void
     {
         $this->selectRequest(collect($this->requestsWithoutAFolder)->whereNull('assistant.archived_at')->first());
-
-        if ($this->request) {
-            $service = $this->request->assistant->model->getService();
-
-            if ($service instanceof AiServiceLifecycleHooks) {
-                $service->afterLoadFirstRequest($this->request);
-            }
-
-            return;
-        }
-
-        $this->createRequest();
     }
 
     public function selectRequest(?array $request): void
@@ -146,8 +134,6 @@ trait CanManageRequests
         }
 
         $this->request = $request;
-
-        $service = $this->request->assistant->model->getService();
     }
 
     public function deleteRequestAction(): Action
@@ -164,10 +150,6 @@ trait CanManageRequests
                 }
 
                 $request->delete();
-
-                if ($request->is($this->request)) {
-                    $this->createRequest();
-                }
 
                 $this->requestsWithoutAFolder = $this->getRequestsWithoutAFolder();
                 $this->folders = $this->getFolders();

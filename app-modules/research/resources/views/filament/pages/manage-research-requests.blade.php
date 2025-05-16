@@ -40,18 +40,16 @@
     @if ($this->isConsented && $this->request)
         @capture($sidebarContent)
             <div class="flex select-none flex-col gap-y-2">
-                <div class="relative">
-                    <div class="flex flex-col gap-2">
-                        <div class="grid w-full grid-cols-2 gap-2">
-                            <x-filament::button
-                                icon="heroicon-m-plus"
-                                tag="a"
-                                :href="NewResearchRequest::getUrl()"
-                            >
-                                New Research Request
-                            </x-filament::button>
-                        </div>
-                    </div>
+                <div class="grid w-full grid-cols-2 gap-2">
+                    <x-filament::button
+                        icon="heroicon-m-plus"
+                        tag="a"
+                        :href="NewResearchRequest::getUrl()"
+                    >
+                        New Request
+                    </x-filament::button>
+
+                    {{ $this->newFolderAction }}
                 </div>
 
                 <template x-if="$wire.requestsWithoutAFolder.length">
@@ -73,7 +71,7 @@
                                     'bg-gray-100 dark:bg-white/5': request.id === $wire.request?.id
                                 }"
                             >
-                                <div class="flex flex-1 items-center gap-3">
+                                <div class="flex flex-1 min-w-0 items-center gap-3">
                                     <template x-if="$wire.folders.length">
                                         <button
                                             type="button"
@@ -97,7 +95,7 @@
                                     </template>
 
                                     <button
-                                        class="relative flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-left text-sm"
+                                        class="relative min-w-0 flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-left text-sm"
                                         type="button"
                                         x-on:click="selectRequest(request)"
                                     >
@@ -210,21 +208,23 @@
                                         icon="heroicon-o-folder-open"
                                         x-show="expanded(folder.id)"
                                         x-on:click="expand(folder.id)"
+                                        class="flex-shrink-0"
                                     />
                                     <x-filament::icon-button
                                         icon="heroicon-o-folder"
                                         x-show="! expanded(folder.id)"
                                         x-on:click="expand(folder.id)"
+                                        class="flex-shrink-0"
                                     />
 
                                     <div
-                                        class="group flex w-full cursor-pointer items-center space-x-1 rounded-lg px-2 outline-none transition duration-75 focus:bg-gray-100 dark:focus:bg-white/5">
+                                        class="group flex w-full cursor-pointer items-center gap-x-1 rounded-lg px-2 outline-none transition duration-75 focus:bg-gray-100 dark:focus:bg-white/5">
                                         <div
-                                            class="relative flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-sm"
+                                            class="relative min-w-0 flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-sm"
                                             x-on:click="expand(folder.id)"
                                         >
                                             <div
-                                                class="flex-1 truncate"
+                                                class="flex-1 truncate min-w-0"
                                                 x-bind:class="{
                                                     'text-primary-600 dark:text-primary-400': expanded(folder.id)
                                                 }"
@@ -232,7 +232,7 @@
                                             ></div>
                                         </div>
 
-                                        <div class="flex items-center gap-1">
+                                        <div class="flex flex-shrink-0 items-center gap-1">
                                             <template
                                                 x-if="loading.type !== 'renameFolderAction' || loading.identifier !== folder.id"
                                             >
@@ -287,7 +287,7 @@
                                             'bg-gray-100 dark:bg-white/5': request.id === $wire.request?.id
                                         }"
                                     >
-                                        <div class="flex flex-1 items-center gap-3">
+                                        <div class="flex flex-1 min-w-0 items-center gap-3">
                                             <button
                                                 type="button"
                                                 draggable="true"
@@ -314,7 +314,7 @@
                                             </button>
 
                                             <button
-                                                class="relative flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-left text-sm"
+                                                class="relative min-w-0 flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-left text-sm"
                                                 type="button"
                                                 x-on:click="selectRequest(request)"
                                             >
