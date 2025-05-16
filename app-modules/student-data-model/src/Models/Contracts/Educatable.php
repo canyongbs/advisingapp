@@ -39,7 +39,9 @@ namespace AdvisingApp\StudentDataModel\Models\Contracts;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use App\Models\Tag;
 use App\Models\Taggable;
 use App\Models\User;
@@ -54,7 +56,10 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
  *
  * @phpstan-require-extends Model
  *
+ * @mixin Model
+ *
  * @property-read Collection<int, User> $careTeam
+ * @property-read ProspectEmailAddress|StudentEmailAddress|null $primaryEmailAddress
  */
 interface Educatable extends Identifiable, CanBeNotified
 {
