@@ -13,10 +13,9 @@ use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Bus;
 
-it('will execute appropriately on each educatable in the segment', function (Model&Educatable $educatable, array $priorCareTeam, bool $removePrior) {
+it('will execute appropriately on each educatable in the segment', function (Educatable $educatable, array $priorCareTeam, bool $removePrior) {
     Bus::fake();
 
     /** @var Segment $segment */
@@ -57,6 +56,7 @@ it('will execute appropriately on each educatable in the segment', function (Mod
 
     $campaignActionEducatable = CampaignActionEducatable::factory()
         ->for($action, 'campaignAction')
+        // @phpstan-ignore argument.type
         ->for($educatable, 'educatable')
         ->create();
 
