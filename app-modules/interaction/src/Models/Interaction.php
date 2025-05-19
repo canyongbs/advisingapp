@@ -117,6 +117,9 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
         return $this->interactable instanceof Subscribable ? $this->interactable : null;
     }
 
+    /**
+     * @return MorphTo<Model, $this>
+     */
     public function interactable(): MorphTo
     {
         return $this->morphTo(

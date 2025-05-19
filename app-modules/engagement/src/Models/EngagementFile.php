@@ -43,6 +43,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -137,6 +138,9 @@ class EngagementFile extends BaseModel implements HasMedia, Auditable
         );
     }
 
+    /**
+     * @return MorphTo<Model, $this>
+     */
     public function createdBy(): MorphTo
     {
         return $this->morphTo(
