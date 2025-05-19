@@ -91,6 +91,9 @@ class ExecuteCampaignActions implements ShouldQueue
                         $action->save();
                     })
                     ->dispatch();
+
+                $action->execution_dispatched_at = now();
+                $action->save();
             });
     }
 }
