@@ -47,7 +47,7 @@ it('will execute appropriately on each educatable in the segment', function (Edu
     $action = CampaignAction::factory()
         ->for($campaign, 'campaign')
         ->create([
-            'type' => CampaignActionType::Interaction,
+            'type' => CampaignActionType::Case,
             'data' => [
                 'close_details' => $closeDetails,
                 'res_details' => $resDetails,
