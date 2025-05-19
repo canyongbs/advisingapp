@@ -219,7 +219,7 @@ class StudentsTable
                             ->nullable(),
                         ExistingValuesSelectConstraint::make('f_e_term')
                             ->label('First Enrolled Term')
-                            ->icon('heroicon-m-user-circle')
+                            ->icon('heroicon-m-calendar-days')
                             ->multiple(),
                     ])
                     ->constraintPickerColumns([
