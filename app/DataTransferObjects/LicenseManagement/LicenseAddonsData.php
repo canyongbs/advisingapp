@@ -54,6 +54,7 @@ class LicenseAddonsData extends Data
         public bool $mobileApps = false,
         public bool $scheduleAndAppointments = false,
         public bool $customAiAssistants = false,
+        public bool $researchAdvisors = false,
         public bool $qnaAdvisor = false,
     ) {}
 }
