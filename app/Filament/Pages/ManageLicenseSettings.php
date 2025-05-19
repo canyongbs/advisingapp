@@ -162,6 +162,8 @@ class ManageLicenseSettings extends SettingsPage
                                 ->label('Schedule & Appointments'),
                             Toggle::make('data.addons.customAiAssistants')
                                 ->label('Custom AI Assistants'),
+                            Toggle::make('data.addons.researchAdvisors')
+                                ->label('Research Advisors'),
                             Toggle::make('data.addons.qnaAdvisor')
                                 ->label('QnA Advisors'),
                         ]
