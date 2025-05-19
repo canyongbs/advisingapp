@@ -80,8 +80,10 @@
                                             x-on:dragend="end"
                                             :class="{
                                                 'flex items-center cursor-move': true,
-                                                'text-gray-700 dark:text-gray-200': request.id !== $wire.selectedRequestId,
-                                                'text-primary-600 dark:text-primary-400': request.id === $wire.selectedRequestId
+                                                'text-gray-700 dark:text-gray-200': request.id !== $wire
+                                                    .selectedRequestId,
+                                                'text-primary-600 dark:text-primary-400': request.id === $wire
+                                                    .selectedRequestId
                                             }"
                                         >
                                             <template
@@ -105,8 +107,10 @@
                                             x-text="request.title"
                                             :class="{
                                                 'flex-1 truncate': true,
-                                                'text-gray-700 dark:text-gray-200': request.id !== $wire.selectedRequestId,
-                                                'text-primary-600 dark:text-primary-400': request.id === $wire.selectedRequestId
+                                                'text-gray-700 dark:text-gray-200': request.id !== $wire
+                                                    .selectedRequestId,
+                                                'text-primary-600 dark:text-primary-400': request.id === $wire
+                                                    .selectedRequestId
                                             }"
                                         >
                                         </span>
@@ -299,8 +303,10 @@
                                                 x-on:dragend="end"
                                                 :class="{
                                                     'flex items-center cursor-move': true,
-                                                    'text-gray-700 dark:text-gray-200': request.id !== $wire.selectedRequestId,
-                                                    'text-primary-600 dark:text-primary-400': request.id === $wire.selectedRequestId
+                                                    'text-gray-700 dark:text-gray-200': request.id !== $wire
+                                                        .selectedRequestId,
+                                                    'text-primary-600 dark:text-primary-400': request.id === $wire
+                                                        .selectedRequestId
                                                 }"
                                             >
                                                 <template
@@ -325,8 +331,10 @@
                                                     x-text="request.title"
                                                     :class="{
                                                         'flex-1 truncate': true,
-                                                        'text-gray-700 dark:text-gray-200': request.id !== $wire.selectedRequestId,
-                                                        'text-primary-600 dark:text-primary-400': request.id === $wire.selectedRequestId,
+                                                        'text-gray-700 dark:text-gray-200': request.id !== $wire
+                                                            .selectedRequestId,
+                                                        'text-primary-600 dark:text-primary-400': request.id === $wire
+                                                            .selectedRequestId,
                                                     }"
                                                 >
                                                 </span>
