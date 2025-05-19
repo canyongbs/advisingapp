@@ -21,8 +21,6 @@ use Illuminate\Support\Facades\Notification;
 
 use function Pest\Laravel\assertDatabaseCount;
 
-// TODO: Tests for canRecieve checks
-
 it('will execute appropriately on each educatable in the segment', function (Educatable $educatable, NotificationChannel $channel) {
     Bus::fake();
     Notification::fake();
@@ -110,3 +108,102 @@ it('will execute appropriately on each educatable in the segment', function (Edu
             fn () => NotificationChannel::Sms,
         ],
     ]);
+
+it('will throw an exception if a canRecieve check fails', function (Educatable $educatable, NotificationChannel $channel) {
+    Bus::fake();
+    Notification::fake();
+
+    match ($channel) {
+        NotificationChannel::Email => $educatable->primaryEmailAddress()->delete(),
+        NotificationChannel::Sms => $educatable->primaryPhoneNumber()->delete(),
+        default => throw new Exception('Invalid channel type'),
+    };
+
+    $educatable->refresh();
+
+    /** @var Segment $segment */
+    $segment = Segment::factory()->create([
+        'type' => SegmentType::Static,
+        'model' => match ($educatable::class) {
+            Student::class => SegmentModel::Student,
+            Prospect::class => SegmentModel::Prospect,
+            default => throw new Exception('Invalid model type'),
+        },
+    ]);
+
+    $campaign = Campaign::factory()
+        ->for($segment, 'segment')
+        ->for(User::factory()->licensed(LicenseType::cases()), 'createdBy')
+        ->create();
+
+    $subject = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->sentence]]]]];
+    $body = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->paragraph]]]]];
+
+    /** @var CampaignAction $action */
+    $action = CampaignAction::factory()
+        ->for($campaign, 'campaign')
+        ->create([
+            'type' => match ($channel) {
+                NotificationChannel::Email => CampaignActionType::BulkEngagementEmail,
+                NotificationChannel::Sms => CampaignActionType::BulkEngagementSms,
+                default => throw new Exception('Invalid channel type'),
+            },
+            'data' => [
+                'channel' => $channel->value,
+                'subject' => $subject,
+                'body' => $body,
+            ],
+        ]);
+
+    $campaignActionEducatable = CampaignActionEducatable::factory()
+        ->for($action, 'campaignAction')
+        // @phpstan-ignore argument.type
+        ->for($educatable, 'educatable')
+        ->create();
+
+    expect($campaignActionEducatable->succeeded_at)->toBeNull()
+        ->and($campaignActionEducatable->last_failed_at)->toBeNull();
+
+    [$job] = new EngagementCampaignActionJob($campaignActionEducatable)->withFakeBatch();
+
+    $job->handle();
+
+    assertDatabaseCount(
+        Engagement::class,
+        0,
+    );
+
+    /** @var Engagement $engagement */
+    $engagement = Engagement::query()->first();
+
+    expect($engagement->channel->value)->toEqual($channel->value)
+        ->and($engagement->subject)->toEqual($subject)
+        ->and($engagement->body)->toEqual($body);
+
+    Notification::assertNotSentTo($educatable, EngagementNotification::class);
+
+    $campaignActionEducatable->refresh();
+
+    expect($campaignActionEducatable->succeeded_at)->toBeNull()
+        ->and($campaignActionEducatable->last_failed_at)->not->toBeNull();
+})
+    ->with([
+        'student' => [
+            fn () => Student::factory()->create(),
+        ],
+        'prospect' => [
+            fn () => Prospect::factory()->create(),
+        ],
+    ])
+    ->with([
+        'email' => [
+            fn () => NotificationChannel::Email,
+        ],
+        'sms' => [
+            fn () => NotificationChannel::Sms,
+        ],
+    ])
+    ->throws(
+        Exception::class,
+        'The educatable cannot receive notifications on this channel.'
+    );

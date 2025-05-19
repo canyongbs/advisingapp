@@ -409,7 +409,10 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         return $this->belongsTo(StudentEmailAddress::class, 'primary_email_id');
     }
 
-    public function primaryPhoneNumber()
+    /**
+     * @return BelongsTo<StudentPhoneNumber, $this>
+     */
+    public function primaryPhoneNumber(): BelongsTo
     {
         return $this->belongsTo(StudentPhoneNumber::class, 'primary_phone_id');
     }

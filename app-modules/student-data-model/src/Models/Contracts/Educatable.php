@@ -108,6 +108,11 @@ interface Educatable extends Identifiable, CanBeNotified
     public function primaryEmailAddress(): BelongsTo;
 
     /**
+     * @return BelongsTo<covariant Model, covariant Model>
+     */
+    public function primaryPhoneNumber(): BelongsTo;
+
+    /**
      * @return MorphMany<Interaction, covariant Model>
      */
     public function interactions(): MorphMany;
