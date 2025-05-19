@@ -83,7 +83,7 @@ it('will execute appropriately on each educatable in the segment', function (Edu
     );
 
     /** @var Engagement $engagement */
-    $engagement = Engagement::query()->get()->first();
+    $engagement = Engagement::query()->first();
 
     expect($engagement->channel->value)->toEqual($channel->value)
         ->and($engagement->subject)->toEqual($subject)
