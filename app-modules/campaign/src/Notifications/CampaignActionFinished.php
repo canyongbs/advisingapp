@@ -27,6 +27,9 @@ class CampaignActionFinished extends Notification
         return ['database'];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toDatabase(object $notifiable): array
     {
         $campaignUrl = CampaignResource::getUrl('view', ['record' => $this->action->campaign]);
