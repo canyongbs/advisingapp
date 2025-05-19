@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Ai\Filament\Pages;
 
-use App\Models\User;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Enums\Feature;
+use App\Models\User;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Gate;
-use AdvisingApp\Authorization\Enums\LicenseType;
 
 class QnAAdvisors extends Page
 {
