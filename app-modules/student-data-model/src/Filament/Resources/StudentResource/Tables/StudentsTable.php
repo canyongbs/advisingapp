@@ -221,6 +221,10 @@ class StudentsTable
                             ->label('First Enrolled Term')
                             ->icon('heroicon-m-calendar-days')
                             ->multiple(),
+                        ExistingValuesSelectConstraint::make('mr_e_term')
+                            ->label('Most Recent Enrolled Term')
+                            ->icon('heroicon-m-calendar-days')
+                            ->multiple(),
                     ])
                     ->constraintPickerColumns([
                         'md' => 2,
