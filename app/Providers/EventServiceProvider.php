@@ -39,6 +39,7 @@ namespace App\Providers;
 use AdvisingApp\Audit\Listeners\AuditingListener;
 use AdvisingApp\Report\Listeners\ProcessUserUniqueLoginTrackedEvent;
 use App\Listeners\ClearSentryUser;
+use App\Listeners\InformOlympusOfDeploymentEvent;
 use App\Listeners\LoadSettingsDefaults;
 use App\Listeners\SetSentryUser;
 use App\Listeners\SyncScheduleMonitor;
@@ -95,6 +96,7 @@ class EventServiceProvider extends ServiceProvider
         ],
         NewTenantSetupComplete::class => [
             SyncScheduleMonitor::class,
+            InformOlympusOfDeploymentEvent::class,
         ],
     ];
 

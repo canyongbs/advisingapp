@@ -54,7 +54,6 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Timeline\Models\Timeline;
 use AdvisingApp\Timeline\Timelines\EngagementTimeline;
-use App\Features\RefactorEngagementCampaignSubjectToJsonb;
 use App\Models\BaseModel;
 use App\Models\User;
 use Exception;
@@ -105,6 +104,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         'scheduled_at' => 'datetime',
         'dispatched_at' => 'datetime',
         'channel' => NotificationChannel::class,
+        'subject' => 'array',
     ];
 
     // TODO Consider changing this relationship if we ever needed to timeline something else where records might be shared across entities
@@ -174,6 +174,9 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         return $this->morphOne(SmsMessage::class, 'related')->latestOfMany();
     }
 
+    /**
+     * @return MorphTo<Model, $this>
+     */
     public function recipient(): MorphTo
     {
         return $this->morphTo(
@@ -291,17 +294,6 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     public function getDeliveryMethod(): NotificationChannel
     {
         return $this->channel;
-    }
-
-    /**
-     * @todo Remove this dynamic cast once `RefactorEngagementCampaignSubjectToJsonb` is removed.
-     *       Move 'subject' casting to the static `$casts` array: protected $casts = ['subject' => 'array'];
-     */
-    protected function casts(): array
-    {
-        return [
-            'subject' => ! RefactorEngagementCampaignSubjectToJsonb::active() ? 'string' : 'array',
-        ];
     }
 
     protected static function booted(): void

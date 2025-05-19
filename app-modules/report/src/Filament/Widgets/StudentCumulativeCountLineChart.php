@@ -36,9 +36,8 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use AdvisingApp\StudentDataModel\Models\Student;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class StudentCumulativeCountLineChart extends LineChartReportWidget
 {
@@ -69,23 +68,31 @@ class StudentCumulativeCountLineChart extends LineChartReportWidget
     protected function getData(): array
     {
         $runningTotalPerMonth = Cache::tags([$this->cacheTag])->remember('student-cumulative-count-line-chart', now()->addHours(24), function (): array {
-            $totalCreatedPerMonth = Student::query()
-                ->toBase()
-                ->selectRaw('date_trunc(\'month\', created_at_source) as month')
-                ->selectRaw('count(*) as total')
-                ->where('created_at_source', '>', now()->subYear())
-                ->groupBy('month')
-                ->orderBy('month')
-                ->pluck('total', 'month');
+            $totalCreatedPerMonth = DB::select("WITH months AS (
+                                        SELECT generate_series(
+                                            date_trunc('month', CURRENT_DATE) - INTERVAL '11 months',
+                                            date_trunc('month', CURRENT_DATE),
+                                            interval '1 month'
+                                        ) AS month
+                                    ),
+                                    monthly_data AS (
+                                        SELECT
+                                            date_trunc('month', created_at_source) AS month,
+                                            COUNT(*) AS monthly_total
+                                        FROM students
+                                        WHERE created_at_source >= date_trunc('month', CURRENT_DATE) - INTERVAL '11 months'
+                                        GROUP BY date_trunc('month', created_at_source)
+                                    )
+                                    SELECT
+                                        to_char(m.month, 'Mon YYYY') as label,
+                                        COALESCE(d.monthly_total, 0) AS monthly_total,
+                                        SUM(COALESCE(d.monthly_total, 0)) OVER (ORDER BY m.month) AS running_total
+                                    FROM months m
+                                    LEFT JOIN monthly_data d ON m.month = d.month
+                                    ORDER BY m.month
+                                ");
 
-            $runningTotalPerMonth = [];
-
-            foreach (range(11, 0) as $month) {
-                $month = Carbon::now()->subMonths($month);
-                $runningTotalPerMonth[$month->format('M Y')] = $totalCreatedPerMonth[$month->startOfMonth()->toDateTimeString()] ?? 0;
-            }
-
-            return $runningTotalPerMonth;
+            return collect($totalCreatedPerMonth)->pluck('running_total', 'label')->toArray();
         });
 
         return [

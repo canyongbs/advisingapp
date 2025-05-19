@@ -53,7 +53,7 @@ class SetupRoles extends Command
     {
         $this->line('Creating roles...');
 
-        Role::create([
+        Role::query()->firstOrCreate([
             'name' => Authenticatable::SUPER_ADMIN_ROLE,
             'guard_name' => 'web',
         ]);

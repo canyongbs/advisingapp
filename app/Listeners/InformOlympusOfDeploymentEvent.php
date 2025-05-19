@@ -34,14 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+namespace App\Listeners;
 
-use App\Support\AbstractFeatureFlag;
+use App\Multitenancy\Events\NewTenantSetupComplete;
+use App\Services\Olympus;
+use App\Settings\OlympusSettings;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Spatie\Multitenancy\Jobs\NotTenantAware;
+use Spatie\Multitenancy\Landlord;
 
-class RefactorEngagementCampaignSubjectToJsonb extends AbstractFeatureFlag
+class InformOlympusOfDeploymentEvent implements ShouldQueue, NotTenantAware
 {
-    public function resolve(mixed $scope): mixed
+    public function handle(NewTenantSetupComplete $event): void
     {
-        return false;
+        $isConfigured = Landlord::execute(function (): bool {
+            $settings = app(OlympusSettings::class);
+
+            return ! is_null($settings->key);
+        });
+
+        if (! $isConfigured) {
+            return;
+        }
+
+        $tenantId = $event->tenant->getKey();
+
+        app(Olympus::class)->makeRequest()
+            ->asJson()
+            ->post("/api/deployment/{$tenantId}/report-event", [
+                'type' => 'complete',
+                'occurred_at' => now()->toDateTimeString('millisecond'),
+            ])
+            ->throw();
     }
 }
