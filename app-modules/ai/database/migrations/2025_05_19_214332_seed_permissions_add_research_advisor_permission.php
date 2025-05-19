@@ -34,14 +34,13 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Database\Migrations\Migration;
 use CanyonGBS\Common\Database\Migrations\Concerns\CanModifyPermissions;
+use Illuminate\Database\Migrations\Migration;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     use CanModifyPermissions;
 
-    /** @var array<string, string>*/
+    /** @var array<string, string> */
     private array $permissions = [
         'research_advisors.view-any' => 'Research Advisors',
         'research_advisors.create' => 'Research Advisors',
@@ -51,7 +50,8 @@ return new class extends Migration
         'research_advisors.*.restore' => 'Research Advisors',
         'research_advisors.*.force-delete' => 'Research Advisors',
     ];
-    /** @var array<string>*/
+
+    /** @var array<string> */
     private array $guards = [
         'web',
         'api',
