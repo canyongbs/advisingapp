@@ -23,7 +23,7 @@ use function Pest\Laravel\assertDatabaseCount;
 
 // TODO: Tests for canRecieve checks
 
-it('will execute appropriately on each educatable in the segment', function (Educatable $educatable) {
+it('will execute appropriately on each educatable in the segment', function (Educatable $educatable, NotificationChannel $channel) {
     Bus::fake();
     Notification::fake();
 
@@ -41,9 +41,6 @@ it('will execute appropriately on each educatable in the segment', function (Edu
         ->for($segment, 'segment')
         ->for(User::factory()->licensed(LicenseType::cases()), 'createdBy')
         ->create();
-
-    // TODO: Change this to a dataset
-    $channel = fake()->randomElement([NotificationChannel::Email, NotificationChannel::Sms]);
 
     $subject = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->sentence]]]]];
     $body = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->paragraph]]]]];
@@ -103,5 +100,13 @@ it('will execute appropriately on each educatable in the segment', function (Edu
         ],
         'prospect' => [
             fn () => Prospect::factory()->create(),
+        ],
+    ])
+    ->with([
+        'email' => [
+            fn () => NotificationChannel::Email,
+        ],
+        'sms' => [
+            fn () => NotificationChannel::Sms,
         ],
     ]);
