@@ -35,7 +35,7 @@
     use League\CommonMark\Extension\Footnote\FootnoteExtension;
 @endphp
 
-<div @if ($this->hasResearchStarted && !$researchRequest?->finished_at) wire:poll.3s @endif>
+<div @if ($researchRequest?->hasStarted() && !$researchRequest?->finished_at) wire:poll.3s @endif>
     @if (!$researchRequest?->finished_at)
         <div class="flex items-center gap-2">
             <x-filament::loading-indicator class="h-5 w-5" /> Researching...

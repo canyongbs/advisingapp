@@ -37,7 +37,7 @@
 @endphp
 
 <div class="h-[calc(100dvh-4rem)]">
-    @if ($this->isConsented && $this->request)
+    @if ($this->isConsented)
         @capture($sidebarContent)
             <div class="flex select-none flex-col gap-y-2">
                 <div class="grid w-full grid-cols-2 gap-2">
@@ -68,7 +68,7 @@
                                 :id="`request-${request.id}`"
                                 :class="{
                                     'px-2 group flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1': true,
-                                    'bg-gray-100 dark:bg-white/5': request.id === $wire.request?.id
+                                    'bg-gray-100 dark:bg-white/5': request.id === $wire.selectedRequestId
                                 }"
                             >
                                 <div class="flex min-w-0 flex-1 items-center gap-3">
@@ -80,9 +80,8 @@
                                             x-on:dragend="end"
                                             :class="{
                                                 'flex items-center cursor-move': true,
-                                                'text-gray-700 dark:text-gray-200': request.id !== $wire.request?.id,
-                                                'text-primary-600 dark:text-primary-400': request.id === $wire.request
-                                                    ?.id
+                                                'text-gray-700 dark:text-gray-200': request.id !== $wire.selectedRequestId,
+                                                'text-primary-600 dark:text-primary-400': request.id === $wire.selectedRequestId
                                             }"
                                         >
                                             <template
@@ -106,10 +105,8 @@
                                             x-text="request.title"
                                             :class="{
                                                 'flex-1 truncate': true,
-                                                'text-gray-700 dark:text-gray-200': request.id !== $wire
-                                                    .selectedRequestId,
-                                                'text-primary-600 dark:text-primary-400': request.id === $wire
-                                                    .selectedRequestId
+                                                'text-gray-700 dark:text-gray-200': request.id !== $wire.selectedRequestId,
+                                                'text-primary-600 dark:text-primary-400': request.id === $wire.selectedRequestId
                                             }"
                                         >
                                         </span>
@@ -291,7 +288,7 @@
                                         x-show="expanded(folder.id)"
                                         :class="{
                                             'px-2 group flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1': true,
-                                            'bg-gray-100 dark:bg-white/5': request.id === $wire.request?.id
+                                            'bg-gray-100 dark:bg-white/5': request.id === $wire.selectedRequestId
                                         }"
                                     >
                                         <div class="flex min-w-0 flex-1 items-center gap-3">
@@ -302,11 +299,8 @@
                                                 x-on:dragend="end"
                                                 :class="{
                                                     'flex items-center cursor-move': true,
-                                                    'text-gray-700 dark:text-gray-200': request.id !== $wire.request
-                                                        ?.id,
-                                                    'text-primary-600 dark:text-primary-400': request.id === $wire
-                                                        .request
-                                                        ?.id
+                                                    'text-gray-700 dark:text-gray-200': request.id !== $wire.selectedRequestId,
+                                                    'text-primary-600 dark:text-primary-400': request.id === $wire.selectedRequestId
                                                 }"
                                             >
                                                 <template
@@ -331,10 +325,8 @@
                                                     x-text="request.title"
                                                     :class="{
                                                         'flex-1 truncate': true,
-                                                        'text-gray-700 dark:text-gray-200': request.id !== $wire
-                                                            .selectedRequestId,
-                                                        'text-primary-600 dark:text-primary-400': request.id === $wire
-                                                            .selectedRequestId
+                                                        'text-gray-700 dark:text-gray-200': request.id !== $wire.selectedRequestId,
+                                                        'text-primary-600 dark:text-primary-400': request.id === $wire.selectedRequestId,
                                                     }"
                                                 >
                                                 </span>
@@ -419,11 +411,30 @@
                 {{ $sidebarContent() }}
             </div>
 
-            <div
-                class="col-span-1 flex flex-col gap-2 overflow-hidden pt-3 lg:col-span-2 lg:pt-6 2xl:col-span-3"
-                wire:key="request{{ $this->request->id }}"
-            >
-                Content
+            <div class="col-span-1 flex flex-col gap-2 overflow-y-auto pt-3 lg:col-span-2 lg:pt-6 2xl:col-span-3">
+                <div class="lg:hidden">
+                    <x-filament::dropdown
+                        shift
+                        placement="bottom-start"
+                        width="lg"
+                        x-on:close-assistant-sidebar.window="close"
+                    >
+                        <x-slot name="trigger">
+                            <x-filament::icon-button
+                                label="Open menu"
+                                icon="heroicon-s-bars-3"
+                            />
+                        </x-slot>
+
+                        <div class="p-3">
+                            {{ $sidebarContent() }}
+                        </div>
+                    </x-filament::dropdown>
+                </div>
+
+                @if ($this->request)
+                    @include('research::results', ['researchRequest' => $this->request])
+                @endif
             </div>
 
             <div class="col-span-full hidden md:block">
@@ -489,13 +500,6 @@
                     </form>
                 </x-slot>
             </x-filament::modal>
-        </div>
-    @elseif (!$this->request)
-        <div
-            class="flex h-full w-full items-center justify-center"
-            wire:init="loadFirstRequest"
-        >
-            <x-filament::loading-indicator class="h-12 w-12" />
         </div>
     @endif
 

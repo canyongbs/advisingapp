@@ -50,16 +50,18 @@ trait CanManageRequests
     #[Locked]
     public ?ResearchRequest $request = null;
 
+    public ?string $selectedRequestId = null;
+
     #[Locked]
     public array $requestsWithoutAFolder = [];
 
     public function mount(): void
     {
-        if (request()->request) {
-            if (! Str::isUuid(request()->request)) {
+        if (request()->researchRequest) {
+            if (! Str::isUuid(request()->researchRequest)) {
                 $this->dispatch('remove-request-param');
             } else {
-                $researchRequest = ResearchRequest::where('id', request()->request)->where('user_id', auth()->id())->first()?->toArray();
+                $researchRequest = ResearchRequest::where('id', request()->researchRequest)->where('user_id', auth()->id())->first()?->toArray();
 
                 if ($researchRequest) {
                     $this->selectRequest($researchRequest);
@@ -73,6 +75,10 @@ trait CanManageRequests
     public function mountCanManageRequests(): void
     {
         $this->requestsWithoutAFolder = $this->getRequestsWithoutAFolder();
+
+        if (! $this->request) {
+            $this->loadFirstRequest();
+        }
     }
 
     public function getRequestsWithoutAFolder(): array
@@ -91,7 +97,7 @@ trait CanManageRequests
 
     public function loadFirstRequest(): void
     {
-        $this->selectRequest(collect($this->requestsWithoutAFolder)->whereNull('assistant.archived_at')->first());
+        $this->selectRequest(collect($this->requestsWithoutAFolder)->first());
     }
 
     public function selectRequest(?array $request): void
@@ -114,6 +120,7 @@ trait CanManageRequests
         }
 
         $this->request = $request;
+        $this->selectedRequestId = $this->request->getKey();
     }
 
     public function deleteRequestAction(): Action

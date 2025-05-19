@@ -55,7 +55,6 @@ use Livewire\Attributes\Url;
 
 /**
  * @property-read Form $form
- * @property-read bool $hasResearchStarted
  * @property-read ?ResearchRequest $researchRequest
  */
 class NewResearchRequest extends Page
@@ -119,7 +118,7 @@ class NewResearchRequest extends Page
         return $form
             ->schema([
                 Wizard::make()
-                    ->startOnStep($this->hasResearchStarted ? 6 : ($this->researchRequest?->questions?->count() ?? 0) + 1)
+                    ->startOnStep($this->researchRequest?->hasStarted() ? 6 : ($this->researchRequest?->questions?->count() ?? 0) + 1)
                     ->steps([
                         Step::make('Topic')
                             ->schema([
@@ -159,7 +158,7 @@ class NewResearchRequest extends Page
                                 ]);
                                 $this->researchRequest->load('questions');
                             })
-                            ->disabled(fn (): bool => $this->hasResearchStarted),
+                            ->disabled(fn (): bool => $this->researchRequest?->hasStarted() ?? false),
                         Step::make('Question 1')
                             ->schema([
                                 Textarea::make('question_1')
@@ -180,7 +179,7 @@ class NewResearchRequest extends Page
                                     $this->researchRequest->load('questions');
                                 }
                             })
-                            ->disabled(fn (): bool => $this->hasResearchStarted),
+                            ->disabled(fn (): bool => $this->researchRequest?->hasStarted() ?? false),
                         Step::make('Question 2')
                             ->schema([
                                 Textarea::make('question_2')
@@ -201,7 +200,7 @@ class NewResearchRequest extends Page
                                     $this->researchRequest->load('questions');
                                 }
                             })
-                            ->disabled(fn (): bool => $this->hasResearchStarted),
+                            ->disabled(fn (): bool => $this->researchRequest?->hasStarted() ?? false),
                         Step::make('Question 3')
                             ->schema([
                                 Textarea::make('question_3')
@@ -222,7 +221,7 @@ class NewResearchRequest extends Page
                                     $this->researchRequest->load('questions');
                                 }
                             })
-                            ->disabled(fn (): bool => $this->hasResearchStarted),
+                            ->disabled(fn (): bool => $this->researchRequest?->hasStarted() ?? false),
                         Step::make('Question 4')
                             ->schema([
                                 Textarea::make('question_4')
@@ -232,7 +231,7 @@ class NewResearchRequest extends Page
                                     ->maxLength(2000),
                             ])
                             ->afterValidation(function (array $state) {
-                                if ($this->hasResearchStarted) {
+                                if ($this->researchRequest->hasStarted()) {
                                     return;
                                 }
 
@@ -243,24 +242,21 @@ class NewResearchRequest extends Page
                                 dispatch(app(Research::class, [
                                     'researchRequest' => $this->researchRequest,
                                 ]));
-
-                                unset($this->hasResearchStarted);
                             })
-                            ->disabled(fn (): bool => $this->hasResearchStarted),
+                            ->disabled(fn (): bool => $this->researchRequest?->hasStarted() ?? false),
                         Step::make('Results')
                             ->schema([
                                 View::make('research::results')
                                     ->viewData(['researchRequest' => $this->researchRequest]),
                             ]),
-                    ]),
+                    ])
+                    ->submitAction(filled($this->researchRequest?->title) ? Action::make('view')
+                        ->label('Continue')
+                        ->icon('heroicon-m-arrow-right')
+                        ->iconPosition('after')
+                        ->url(ManageResearchRequests::getUrl(['researchRequest' => $this->researchRequestId])) : null),
             ])
             ->statePath('data');
-    }
-
-    #[Computed]
-    public function hasResearchStarted(): bool
-    {
-        return $this->researchRequest?->finished_at || filled($this->researchRequest?->results) || filled($this->researchRequest?->questions->get(3)?->response);
     }
 
     #[Computed]

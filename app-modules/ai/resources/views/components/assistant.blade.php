@@ -113,7 +113,7 @@
                                 }"
                                 :class="{
                                     'px-2 group flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 gap-x-1': true,
-                                    'bg-gray-100 dark:bg-white/5': thread.id === $wire.thread?.id
+                                    'bg-gray-100 dark:bg-white/5': thread.id === $wire.selectedThreadId
                                 }"
                             >
                                 <div class="flex min-w-0 flex-1 items-center gap-3">
@@ -125,8 +125,8 @@
                                             x-on:dragend="end"
                                             :class="{
                                                 'flex items-center cursor-move': true,
-                                                'text-gray-700 dark:text-gray-200': thread.id !== $wire.thread?.id,
-                                                'text-primary-600 dark:text-primary-400': thread.id === $wire.thread?.id
+                                                'text-gray-700 dark:text-gray-200': thread.id !== $wire.selectedThreadId,
+                                                'text-primary-600 dark:text-primary-400': thread.id === $wire.selectedThreadId
                                             }"
                                         >
                                             <template x-if="loading.type !== 'thread' || loading.identifier !== thread.id">
@@ -148,10 +148,8 @@
                                             x-text="thread.name"
                                             :class="{
                                                 'flex-1 truncate': true,
-                                                'text-gray-700 dark:text-gray-200': thread.id !== $wire
-                                                    .selectedThreadId,
-                                                'text-primary-600 dark:text-primary-400': thread.id === $wire
-                                                    .selectedThreadId
+                                                'text-gray-700 dark:text-gray-200': thread.id !== $wire.selectedThreadId,
+                                                'text-primary-600 dark:text-primary-400': thread.id === $wire.selectedThreadId
                                             }"
                                         >
                                         </span>
@@ -347,7 +345,7 @@
                                         x-show="expanded(folder.id)"
                                         :class="{
                                             'px-2 group flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 gap-x-1': true,
-                                            'bg-gray-100 dark:bg-white/5': thread.id === $wire.thread?.id
+                                            'bg-gray-100 dark:bg-white/5': thread.id === $wire.selectedThreadId
                                         }"
                                     >
                                         <div class="flex min-w-0 flex-1 items-center gap-3">
@@ -358,9 +356,8 @@
                                                 x-on:dragend="end"
                                                 :class="{
                                                     'flex items-center cursor-move': true,
-                                                    'text-gray-700 dark:text-gray-200': thread.id !== $wire.thread?.id,
-                                                    'text-primary-600 dark:text-primary-400': thread.id === $wire.thread
-                                                        ?.id
+                                                    'text-gray-700 dark:text-gray-200': thread.id !== $wire.selectedThreadId,
+                                                    'text-primary-600 dark:text-primary-400': thread.id === $wire.selectedThreadId,
                                                 }"
                                             >
                                                 <template
@@ -385,10 +382,8 @@
                                                     x-text="thread.name"
                                                     :class="{
                                                         'flex-1 truncate': true,
-                                                        'text-gray-700 dark:text-gray-200': thread.id !== $wire
-                                                            .selectedThreadId,
-                                                        'text-primary-600 dark:text-primary-400': thread.id === $wire
-                                                            .selectedThreadId
+                                                        'text-gray-700 dark:text-gray-200': thread.id !== $wire.selectedThreadId,
+                                                        'text-primary-600 dark:text-primary-400': thread.id === $wire.selectedThreadId,
                                                     }"
                                                 >
                                                 </span>

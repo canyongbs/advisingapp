@@ -86,4 +86,17 @@ class ResearchRequest extends BaseModel
     {
         return $this->belongsTo(User::class);
     }
+
+    public function hasStarted(): bool
+    {
+        if ($this->finished_at) {
+            return true;
+        }
+
+        if (filled($this->results)) {
+            return true;
+        }
+
+        return filled($this->questions->get(3)?->response);
+    }
 }
