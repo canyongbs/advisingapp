@@ -39,8 +39,10 @@ namespace AdvisingApp\Campaign\Actions;
 use AdvisingApp\Campaign\Jobs\ExecuteCampaignAction;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Models\Scopes\CampaignActionNotCancelled;
+use AdvisingApp\Campaign\Notifications\CampaignActionFinished;
 use App\Features\CampaignActionTimestampColumnChanges;
 use App\Models\Tenant;
+use App\Models\User;
 use Illuminate\Bus\Batch;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -81,7 +83,9 @@ class ExecuteCampaignActions implements ShouldQueue
                     ->name('Execute Campaign Action: ' . $action->getKey())
                     ->allowFailures()
                     ->finally(function (Batch $batch) use ($action) {
-                        // TODO: Dispatch a notice to the creator of the campaign action
+                        if ($action->campaign->createdBy instanceof User) {
+                            $action->campaign->createdBy->notify(new CampaignActionFinished($action));
+                        }
 
                         $action->execution_finished_at = now();
                         $action->save();

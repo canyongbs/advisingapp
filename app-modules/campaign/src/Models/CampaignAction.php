@@ -42,6 +42,7 @@ use App\Features\CampaignActionTimestampColumnChanges;
 use App\Models\BaseModel;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\MediaLibrary\HasMedia;
@@ -83,6 +84,14 @@ class CampaignAction extends BaseModel implements Auditable, HasMedia
     public function campaign(): BelongsTo
     {
         return $this->belongsTo(Campaign::class);
+    }
+
+    /**
+     * @return HasMany<CampaignActionEducatable, $this>
+     */
+    public function campaignActionEducatables(): HasMany
+    {
+        return $this->hasMany(CampaignActionEducatable::class);
     }
 
     public function scopeCampaignEnabled(Builder $query): void
