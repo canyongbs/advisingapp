@@ -223,7 +223,7 @@ class StudentsTable
                             ->multiple(),
                         ExistingValuesSelectConstraint::make('mr_e_term')
                             ->label('Most Recent Enrolled Term')
-                            ->icon('heroicon-m-user-circle')
+                            ->icon('heroicon-m-calendar-days')
                             ->multiple(),
                     ])
                     ->constraintPickerColumns([
