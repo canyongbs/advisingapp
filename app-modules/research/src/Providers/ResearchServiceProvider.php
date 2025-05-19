@@ -37,6 +37,7 @@
 namespace AdvisingApp\Research\Providers;
 
 use AdvisingApp\Research\Models\ResearchRequest;
+use AdvisingApp\Research\Models\ResearchRequestFolder;
 use AdvisingApp\Research\Models\ResearchRequestQuestion;
 use AdvisingApp\Research\ResearchPlugin;
 use Filament\Panel;
@@ -54,6 +55,7 @@ class ResearchServiceProvider extends ServiceProvider
     {
         Relation::morphMap([
             'research_request' => ResearchRequest::class,
+            'research_request_folder' => ResearchRequestFolder::class,
             'research_request_question' => ResearchRequestQuestion::class,
         ]);
     }
