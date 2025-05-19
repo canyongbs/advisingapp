@@ -48,7 +48,7 @@
                 <h1>{{ $researchRequest->title }}</h1>
             @endif
 
-            {!! str($researchRequest->results)->replace('<think>', '<details wire:ignore.self><summary>Reasoning</summary>')->replace('</think>', '</details>')->markdown(extensions: [app(FootnoteExtension::class)]) !!}
+            {!! str($researchRequest->results)->replace('<think>', '<details wire:ignore.self><summary>Reasoning</summary>')->replace('</think>', '</details>')->markdown(extensions: [app(FootnoteExtension::class)])->sanitizeHtml() !!}
         </section>
     @endif
 </div>

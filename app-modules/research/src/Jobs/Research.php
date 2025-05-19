@@ -154,13 +154,20 @@ class Research implements ShouldQueue
                 return;
             }
 
-            $this->researchRequest->title = app(AiIntegratedAssistantSettings::class)
-                ->getDefaultModel()
-                ->getService()
-                ->complete(
-                    prompt: $this->researchRequest->results,
-                    content: 'Generate a title for this research, in 5 words or less. Do not respond with any greetings or salutations, and do not include any additional information or context. Just respond with the title:',
-                );
+            try {
+                $this->researchRequest->title = app(AiIntegratedAssistantSettings::class)
+                    ->getDefaultModel()
+                    ->getService()
+                    ->complete(
+                        prompt: $this->researchRequest->results,
+                        content: 'Generate a title for this research, in 5 words or less. Do not respond with any greetings or salutations, and do not include any additional information or context. Just respond with the title:',
+                    );
+            } catch (Throwable $exception) {
+                report($exception);
+
+                $this->researchRequest->title = 'Untitled Research';
+            }
+
             $this->researchRequest->touch('finished_at');
         } catch (Throwable $exception) {
             $this->researchRequest->results = 'The artificial intelligence service was unavailable. Please try again later.';

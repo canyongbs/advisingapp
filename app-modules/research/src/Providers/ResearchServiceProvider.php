@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Research\Providers;
 
+use AdvisingApp\Research\Models\ResearchRequest;
+use AdvisingApp\Research\Models\ResearchRequestQuestion;
 use AdvisingApp\Research\ResearchPlugin;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -50,6 +52,9 @@ class ResearchServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        Relation::morphMap([]);
+        Relation::morphMap([
+            'research_request' => ResearchRequest::class,
+            'research_request_question' => ResearchRequestQuestion::class,
+        ]);
     }
 }
