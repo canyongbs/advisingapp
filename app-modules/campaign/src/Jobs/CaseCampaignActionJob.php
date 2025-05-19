@@ -46,7 +46,7 @@ class CaseCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
                 'created_by_id' => $userId,
             ]);
 
-            if ($action->data['assigned_to_id']) {
+            if (isset($action->data['assigned_to_id'])) {
                 $case->assignments()->create([
                     'user_id' => $action->data['assigned_to_id'],
                     'assigned_by_id' => $userId,
