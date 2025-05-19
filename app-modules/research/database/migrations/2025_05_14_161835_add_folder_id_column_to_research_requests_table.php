@@ -49,7 +49,7 @@ return new class () extends Migration {
     public function down(): void
     {
         Schema::table('research_requests', function (Blueprint $table) {
-            $table->dropForeignId(['folder_id']);
+            $table->dropConstrainedForeignId('folder_id');
         });
     }
 };

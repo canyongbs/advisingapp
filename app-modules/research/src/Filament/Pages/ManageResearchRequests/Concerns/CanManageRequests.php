@@ -52,6 +52,9 @@ trait CanManageRequests
 
     public ?string $selectedRequestId = null;
 
+    /**
+     * @var array<mixed>
+     */
     #[Locked]
     public array $requestsWithoutAFolder = [];
 
@@ -81,6 +84,9 @@ trait CanManageRequests
         }
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getRequestsWithoutAFolder(): array
     {
         /** @var User $user */
@@ -100,6 +106,9 @@ trait CanManageRequests
         $this->selectRequest(collect($this->requestsWithoutAFolder)->first());
     }
 
+    /**
+     * @param array<mixed> $request
+     */
     public function selectRequest(?array $request): void
     {
         if (! $request) {

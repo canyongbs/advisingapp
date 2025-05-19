@@ -53,6 +53,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 trait CanManageFolders
 {
+    /**
+     * @var array<mixed>
+     */
     #[Locked]
     public array $folders = [];
 
@@ -61,6 +64,9 @@ trait CanManageFolders
         $this->folders = $this->getFolders();
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getFolders(): array
     {
         /** @var User $user */
@@ -68,7 +74,7 @@ trait CanManageFolders
 
         return $user
             ->researchRequestFolders()
-            ->with([
+            ->with([/** @phpstan-ignore argument.type */
                 'requests' => fn (HasMany $query) => $query
                     ->latest('updated_at'),
             ])
