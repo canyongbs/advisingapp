@@ -49,4 +49,16 @@ enum InteractionStatusColorOptions: string
     case Primary = 'primary';
 
     case Gray = 'gray';
+
+    public function getRgbString(): string
+    {
+        return match ($this) {
+            self::Success => 'rgb(22, 163, 74)',
+            self::Danger => 'rgb(220, 38, 38)',
+            self::Warning => 'rgb(202, 138, 4)',
+            self::Info => 'rgb(37, 99, 235)',
+            self::Primary => 'rgb(79, 70, 229)',
+            self::Gray => 'rgb(75, 85, 99)',
+        };
+    }
 }

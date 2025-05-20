@@ -52,6 +52,7 @@ use AdvisingApp\Engagement\Models\Concerns\HasManyEngagementBatches;
 use AdvisingApp\Engagement\Models\Concerns\HasManyEngagements;
 use AdvisingApp\InAppCommunication\Models\TwilioConversation;
 use AdvisingApp\InAppCommunication\Models\TwilioConversationUser;
+use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MultifactorAuthentication\Traits\MultifactorAuthenticatable;
@@ -636,6 +637,14 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function canReceiveEmail(): bool
     {
         return true;
+    }
+
+    /**
+    * @return HasMany<Interaction, $this>
+    */
+    public function interactions(): HasMany
+    {
+        return $this->hasMany(Interaction::class, 'user_id');
     }
 
     protected function serializeDate(DateTimeInterface $date): string
