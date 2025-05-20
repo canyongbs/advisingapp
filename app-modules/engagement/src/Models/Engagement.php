@@ -174,6 +174,9 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         return $this->morphOne(SmsMessage::class, 'related')->latestOfMany();
     }
 
+    /**
+     * @return MorphTo<Model, $this>
+     */
     public function recipient(): MorphTo
     {
         return $this->morphTo(

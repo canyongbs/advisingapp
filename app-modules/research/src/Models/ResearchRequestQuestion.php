@@ -34,29 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Filament\Pages;
+namespace AdvisingApp\Research\Models;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use App\Models\User;
-use Filament\Pages\Page;
+use AdvisingApp\Research\Database\Factories\ResearchRequestQuestionFactory;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class ResearchRequests extends Page
+/**
+ * @mixin IdeHelperResearchRequestQuestion
+ */
+class ResearchRequestQuestion extends BaseModel
 {
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
+    /** @use HasFactory<ResearchRequestQuestionFactory> */
+    use HasFactory;
 
-    protected static ?int $navigationSort = 30;
+    protected $fillable = [
+        'content',
+        'response',
+        'research_request_id',
+    ];
 
-    protected static string $view = 'filament.pages.coming-soon';
-
-    public static function canAccess(): bool
+    /**
+     * @return BelongsTo<ResearchRequest, $this>
+     */
+    public function researchRequest(): BelongsTo
     {
-        /** @var User $user */
-        $user = auth()->user();
-
-        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
-            return false;
-        }
-
-        return $user->can(['assistant.view-any', 'assistant.*.view']);
+        return $this->belongsTo(ResearchRequest::class);
     }
 }

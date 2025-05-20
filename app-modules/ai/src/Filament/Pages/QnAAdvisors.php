@@ -34,4 +34,39 @@
 </COPYRIGHT>
 */
 
-return [];
+namespace AdvisingApp\Ai\Filament\Pages;
+
+use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Enums\Feature;
+use App\Models\User;
+use Filament\Pages\Page;
+use Illuminate\Support\Facades\Gate;
+
+class QnAAdvisors extends Page
+{
+    protected static ?string $navigationGroup = 'Artificial Intelligence';
+
+    protected static ?string $title = 'QnA Advisors';
+
+    protected static ?string $slug = 'qna-advisors';
+
+    protected static ?int $navigationSort = 30;
+
+    protected static string $view = 'filament.pages.coming-soon';
+
+    public static function canAccess(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
+            return false;
+        }
+
+        if (! Gate::check(Feature::QnAAdvisor->getGateName())) {
+            return false;
+        }
+
+        return $user->can(['qna_advisor.view-any', 'qna_advisor.*.view']);
+    }
+}

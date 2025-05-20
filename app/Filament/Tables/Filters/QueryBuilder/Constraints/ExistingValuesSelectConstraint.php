@@ -66,6 +66,7 @@ class ExistingValuesSelectConstraint extends SelectConstraint
 
         $this->options(fn (SelectConstraint $constraint): array => $constraint->getFilter()->getTable()->getQuery()
             ->distinct(new Expression("lower({$constraint->getAttribute()})"))
+            ->orderBy(new Expression("lower({$constraint->getAttribute()})"))
             ->pluck($constraint->getAttribute())
             ->mapWithKeys(fn (?string $option): array => $option ? [Str::lower($option) => Str::title($option)] : [])
             ->all());
