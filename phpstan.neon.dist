@@ -50,7 +50,7 @@ parameters:
             path: tests/Tenant/Unit/ArchTest.php
 
         -
-            message: '#Access to an undefined property Pest\\Mixins\\Expectation<array\|null>::\$each#'
+            message: '#Access to an undefined property Pest\\Mixins\\Expectation.*#'
             identifier: property.notFound
             paths:
                 - tests/*
