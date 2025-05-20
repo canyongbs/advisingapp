@@ -42,13 +42,13 @@ return new class () extends Migration {
 
     /** @var array<string, string> */
     private array $permissions = [
-        'qna_advisor.view-any' => 'QnA Advisors',
-        'qna_advisor.create' => 'QnA Advisors',
-        'qna_advisor.*.view' => 'QnA Advisors',
-        'qna_advisor.*.update' => 'QnA Advisors',
-        'qna_advisor.*.delete' => 'QnA Advisors',
-        'qna_advisor.*.restore' => 'QnA Advisors',
-        'qna_advisor.*.force-delete' => 'QnA Advisors',
+        'qna_advisor.view-any' => 'QnA Advisor',
+        'qna_advisor.create' => 'QnA Advisor',
+        'qna_advisor.*.view' => 'QnA Advisor',
+        'qna_advisor.*.update' => 'QnA Advisor',
+        'qna_advisor.*.delete' => 'QnA Advisor',
+        'qna_advisor.*.restore' => 'QnA Advisor',
+        'qna_advisor.*.force-delete' => 'QnA Advisor',
     ];
 
     /** @var array<string> */
