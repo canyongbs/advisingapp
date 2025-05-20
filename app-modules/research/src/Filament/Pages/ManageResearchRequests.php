@@ -36,15 +36,17 @@
 
 namespace AdvisingApp\Research\Filament\Pages;
 
-use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use App\Models\User;
+use App\Enums\Feature;
+use Filament\Pages\Page;
+use App\Features\ResearchRequests;
+use Illuminate\Support\Facades\Gate;
+use Filament\Navigation\NavigationItem;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use AdvisingApp\Research\Filament\Pages\ManageResearchRequests\Concerns\CanManageConsent;
 use AdvisingApp\Research\Filament\Pages\ManageResearchRequests\Concerns\CanManageFolders;
 use AdvisingApp\Research\Filament\Pages\ManageResearchRequests\Concerns\CanManageRequests;
-use App\Features\ResearchRequests;
-use App\Models\User;
-use Filament\Navigation\NavigationItem;
-use Filament\Pages\Page;
 
 class ManageResearchRequests extends Page
 {
@@ -79,10 +81,14 @@ class ManageResearchRequests extends Page
             return false;
         }
 
+        if (! Gate::check(Feature::ResearchAdvisor->getGateName())) {
+            return false;
+        }
+
         if (blank(app(AiIntegrationsSettings::class)->jina_deepsearch_ai_api_key)) {
             return false;
         }
 
-        return ResearchRequests::active();
+        return ResearchRequests::active() && $user->can(['research_advisor.view-any', 'research_advisor.*.view']);
     }
 }
