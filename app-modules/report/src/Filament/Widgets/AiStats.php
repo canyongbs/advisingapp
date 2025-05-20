@@ -58,29 +58,29 @@ class AiStats extends StatsOverviewReportWidget
     {
         return [
             Stat::make('Licensed Users', Number::abbreviate(
-                Cache::tags([$this->cacheTag])->remember('licensed-ai-users-count', now()->addHours(24), function (): int {
+                Cache::tags(["{{ {$this->cacheTag} }}"])->remember('licensed-ai-users-count', now()->addHours(24), function (): int {
                     return LicenseType::ConversationalAi->getSeatsInUse();
                 }),
                 maxPrecision: 2,
             )),
             Stat::make('Available Licenses', Number::abbreviate(
-                Cache::tags([$this->cacheTag])->remember('available-ai-licenses', now()->addHours(24), function (): int {
+                Cache::tags(["{{ {$this->cacheTag} }}"])->remember('available-ai-licenses', now()->addHours(24), function (): int {
                     return LicenseType::ConversationalAi->getAvailableSeats();
                 }),
                 maxPrecision: 2,
             )),
             Stat::make('Number of Assistants', Number::abbreviate(
-                Cache::tags([$this->cacheTag])->remember('ai-assistants-count', now()->addHours(24), function (): int {
+                Cache::tags(["{{ {$this->cacheTag} }}"])->remember('ai-assistants-count', now()->addHours(24), function (): int {
                     return AiAssistant::count();
                 }),
                 maxPrecision: 2,
             )),
-            Stat::make('Exchanges', Cache::tags([$this->cacheTag])->remember('ai-exchanges', now()->addHours(24), function (): int|string {
+            Stat::make('Exchanges', Cache::tags(["{{ {$this->cacheTag} }}"])->remember('ai-exchanges', now()->addHours(24), function (): int|string {
                 $count = TrackedEventCount::where('type', TrackedEventType::AiExchange)->first()?->count;
 
                 return ! is_null($count) ? Number::abbreviate($count, maxPrecision: 2) : 'N/A';
             })),
-            Stat::make('New Exchanges', Cache::tags([$this->cacheTag])->remember('ai-new-exchanges', now()->addHours(24), function (): int|string {
+            Stat::make('New Exchanges', Cache::tags(["{{ {$this->cacheTag} }}"])->remember('ai-new-exchanges', now()->addHours(24), function (): int|string {
                 return Number::abbreviate(
                     TrackedEvent::query()
                         ->where('type', TrackedEventType::AiExchange)
@@ -89,7 +89,7 @@ class AiStats extends StatsOverviewReportWidget
                     maxPrecision: 2
                 );
             })),
-            Stat::make('Saved Conversations', Cache::tags([$this->cacheTag])->remember('ai-saved-conversations', now()->addHours(24), function (): int|string {
+            Stat::make('Saved Conversations', Cache::tags(["{{ {$this->cacheTag} }}"])->remember('ai-saved-conversations', now()->addHours(24), function (): int|string {
                 $count = TrackedEventCount::where('type', TrackedEventType::AiThreadSaved)->first()?->count;
 
                 return ! is_null($count) ? Number::abbreviate($count, maxPrecision: 2) : 'N/A';

@@ -66,15 +66,15 @@ class StudentSmsOptInOptOutPieChart extends PieChartReportWidget
 
     public function getData(): array
     {
-        $smsOptInCount = Cache::tags([$this->cacheTag])->remember('sms_opt_in_count', now()->addHours(24), function (): int {
+        $smsOptInCount = Cache::tags(["{{ {$this->cacheTag} }}"])->remember('sms_opt_in_count', now()->addHours(24), function (): int {
             return Student::where('sms_opt_out', false)->count();
         });
 
-        $smsOptOutCount = Cache::tags([$this->cacheTag])->remember('sms_opt_out_count', now()->addHours(24), function (): int {
+        $smsOptOutCount = Cache::tags(["{{ {$this->cacheTag} }}"])->remember('sms_opt_out_count', now()->addHours(24), function (): int {
             return Student::where('sms_opt_out', true)->count();
         });
 
-        $smsNullCount = Cache::tags([$this->cacheTag])->remember('sms_null_count', now()->addHours(24), function (): int {
+        $smsNullCount = Cache::tags(["{{ {$this->cacheTag} }}"])->remember('sms_null_count', now()->addHours(24), function (): int {
             return Student::whereNull('sms_opt_out')->count();
         });
 

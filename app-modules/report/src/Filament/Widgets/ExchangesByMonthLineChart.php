@@ -65,7 +65,7 @@ class ExchangesByMonthLineChart extends LineChartReportWidget
 
     protected function getData(): array
     {
-        $runningTotalPerMonth = Cache::tags([$this->cacheTag])->remember('exchanges_by_month_data', now()->addHours(24), function (): array {
+        $runningTotalPerMonth = Cache::tags(["{{ {$this->cacheTag} }}"])->remember('exchanges_by_month_data', now()->addHours(24), function (): array {
             $totalCreatedPerMonth = TrackedEvent::query()
                 ->toBase()
                 ->selectRaw("date_trunc('month', occurred_at) as month")

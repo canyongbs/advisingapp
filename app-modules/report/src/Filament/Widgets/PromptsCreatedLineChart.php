@@ -64,7 +64,7 @@ class PromptsCreatedLineChart extends LineChartReportWidget
 
     protected function getData(): array
     {
-        $runningTotalPerMonth = Cache::tags([$this->cacheTag])->remember('prompts_created_line_chart', now()->addHours(24), function (): array {
+        $runningTotalPerMonth = Cache::tags(["{{ {$this->cacheTag} }}"])->remember('prompts_created_line_chart', now()->addHours(24), function (): array {
             $totalCreatedPerMonth = Prompt::query()
                 ->toBase()
                 ->selectRaw('date_trunc(\'month\', created_at) as month')

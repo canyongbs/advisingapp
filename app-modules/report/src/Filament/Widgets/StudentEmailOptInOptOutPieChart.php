@@ -66,15 +66,15 @@ class StudentEmailOptInOptOutPieChart extends PieChartReportWidget
 
     public function getData(): array
     {
-        $emailOptInPercentage = Cache::tags([$this->cacheTag])->remember('email_opt_in_count', now()->addHours(24), function (): int {
+        $emailOptInPercentage = Cache::tags(["{{ {$this->cacheTag} }}"])->remember('email_opt_in_count', now()->addHours(24), function (): int {
             return Student::where('email_bounce', false)->count();
         });
 
-        $emailOptOutPercentage = Cache::tags([$this->cacheTag])->remember('email_opt_out_count', now()->addHours(24), function (): int {
+        $emailOptOutPercentage = Cache::tags(["{{ {$this->cacheTag} }}"])->remember('email_opt_out_count', now()->addHours(24), function (): int {
             return Student::where('email_bounce', true)->count();
         });
 
-        $emailNullPercentage = Cache::tags([$this->cacheTag])->remember('email_null_count', now()->addHours(24), function (): int {
+        $emailNullPercentage = Cache::tags(["{{ {$this->cacheTag} }}"])->remember('email_null_count', now()->addHours(24), function (): int {
             return Student::whereNull('email_bounce')->count();
         });
 
@@ -101,7 +101,7 @@ class StudentEmailOptInOptOutPieChart extends PieChartReportWidget
 
     /**
      * @return array<string, mixed>
-    */
+     */
     protected function getOptions(): array
     {
         return [

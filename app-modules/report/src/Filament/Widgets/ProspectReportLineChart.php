@@ -67,7 +67,7 @@ class ProspectReportLineChart extends ChartReportWidget
 
     protected function getData(): array
     {
-        $runningTotalPerMonth = Cache::tags([$this->cacheTag])->remember('total-prospects_line_chart', now()->addHours(24), function (): array {
+        $runningTotalPerMonth = Cache::tags(["{{ {$this->cacheTag} }}"])->remember('total-prospects_line_chart', now()->addHours(24), function (): array {
             $runningTotalPerMonth = DB::select("WITH months AS (
                 SELECT generate_series(
                     date_trunc('month', CURRENT_DATE) - INTERVAL '11 months',

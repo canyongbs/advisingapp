@@ -56,13 +56,13 @@ class ProspectEngagementState extends StatsOverviewReportWidget
     {
         return [
             Stat::make('Total Prospects', Number::abbreviate(
-                Cache::tags([$this->cacheTag])->remember('total-prospects-count', now()->addHours(24), function (): int {
+                Cache::tags(["{{ {$this->cacheTag} }}"])->remember('total-prospects-count', now()->addHours(24), function (): int {
                     return Prospect::count();
                 }),
                 maxPrecision: 2,
             )),
             Stat::make('Total Emails Sent', Number::abbreviate(
-                Cache::tags([$this->cacheTag])->remember('total-emails-sent', now()->addHours(24), function (): int {
+                Cache::tags(["{{ {$this->cacheTag} }}"])->remember('total-emails-sent', now()->addHours(24), function (): int {
                     return Engagement::query()
                         ->whereHasMorph('recipient', Prospect::class)
                         ->where('channel', NotificationChannel::Email)
@@ -71,7 +71,7 @@ class ProspectEngagementState extends StatsOverviewReportWidget
                 maxPrecision: 2,
             )),
             Stat::make('Total Texts Sent', Number::abbreviate(
-                Cache::tags([$this->cacheTag])->remember('total-texts-sent', now()->addHours(24), function (): int {
+                Cache::tags(["{{ {$this->cacheTag} }}"])->remember('total-texts-sent', now()->addHours(24), function (): int {
                     return Engagement::query()
                         ->whereHasMorph('recipient', Prospect::class)
                         ->where('channel', NotificationChannel::Sms)
@@ -80,7 +80,7 @@ class ProspectEngagementState extends StatsOverviewReportWidget
                 maxPrecision: 2,
             )),
             Stat::make('Staff Sending Enagements', Number::abbreviate(
-                Cache::tags([$this->cacheTag])->remember('staff-sending-engagement-count', now()->addHours(24), function (): int {
+                Cache::tags(["{{ {$this->cacheTag} }}"])->remember('staff-sending-engagement-count', now()->addHours(24), function (): int {
                     return User::whereHas('engagements', function ($q) {
                         return $q->whereHasMorph('recipient', Prospect::class);
                     })->count();

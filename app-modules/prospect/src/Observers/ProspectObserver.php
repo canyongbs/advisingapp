@@ -53,11 +53,11 @@ class ProspectObserver
 
     public function created(): void
     {
-        Cache::tags('prospects')->flush();
+        Cache::tags('{prospects}')->flush();
     }
 
     public function deleted(): void
     {
-        Cache::tags('prospects')->flush();
+        Cache::tags('{prospects}')->flush();
     }
 }
