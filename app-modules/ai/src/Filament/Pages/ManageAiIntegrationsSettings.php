@@ -315,6 +315,11 @@ class ManageAiIntegrationsSettings extends SettingsPage
                             ->schema([
                                 TextInput::make('jina_deepsearch_ai_api_key')
                                     ->label('API Key'),
+                                Select::make('jina_deepsearch_ai_applicable_features')
+                                    ->label('Applicability')
+                                    ->options(AiModelApplicabilityFeature::class)
+                                    ->multiple()
+                                    ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
                             ]),
                     ]),
             ]);

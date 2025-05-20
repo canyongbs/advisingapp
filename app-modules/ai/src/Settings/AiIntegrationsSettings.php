@@ -159,6 +159,11 @@ class AiIntegrationsSettings extends Settings
 
     public ?string $jina_deepsearch_ai_api_key = null;
 
+    /**
+     * @var array<string>
+     */
+    public array $jina_deepsearch_ai_applicable_features = [];
+
     public static function group(): string
     {
         return 'ai';
