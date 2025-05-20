@@ -47,11 +47,11 @@ return new class () extends Migration {
             $table->foreignUuid('campaign_action_id')->constrained('campaign_actions')->cascadeOnDelete();
             $table->string('educatable_type');
             $table->string('educatable_id');
-            $table->timestampTz('succeeded_at')->nullable();
-            $table->timestampTz('last_failed_at')->nullable();
+            $table->timestamp('succeeded_at')->nullable();
+            $table->timestamp('last_failed_at')->nullable();
             $table->nullableUuidMorphs('related');
 
-            $table->timestampsTz();
+            $table->timestamps();
 
             $table->uniqueIndex(['educatable_type', 'educatable_id', 'campaign_action_id']);
         });

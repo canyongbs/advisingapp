@@ -46,10 +46,8 @@ return new class () extends Migration {
         DB::transaction(function () {
             Schema::table('campaign_actions', function (Blueprint $table) {
                 $table->renameColumn('last_execution_attempt_at', 'execution_dispatched_at');
-                $table->timestampTz('execution_dispatched_at')->nullable()->change();
 
                 $table->renameColumn('successfully_executed_at', 'execution_finished_at');
-                $table->timestampTz('execution_finished_at')->nullable()->change();
 
                 $table->dropColumn('last_execution_attempt_error');
             });
@@ -63,10 +61,8 @@ return new class () extends Migration {
         DB::transaction(function () {
             Schema::table('campaign_actions', function (Blueprint $table) {
                 $table->renameColumn('execution_dispatched_at', 'last_execution_attempt_at');
-                $table->timestamp('last_execution_attempt_at')->nullable()->change();
 
                 $table->renameColumn('execution_finished_at', 'successfully_executed_at');
-                $table->timestamp('successfully_executed_at')->nullable()->change();
 
                 $table->string('last_execution_attempt_error')->nullable();
             });
