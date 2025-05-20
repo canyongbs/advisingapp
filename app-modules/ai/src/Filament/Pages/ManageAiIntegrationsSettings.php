@@ -313,6 +313,12 @@ class ManageAiIntegrationsSettings extends SettingsPage
                         Section::make('Jina DeepSearch')
                             ->collapsible()
                             ->schema([
+                                TextInput::make('jina_deepsearch_ai_model_name')
+                                    ->label('Model Name')
+                                    ->placeholder('Canyon Deep Search')
+                                    ->string()
+                                    ->maxLength(255)
+                                    ->nullable(),
                                 TextInput::make('jina_deepsearch_ai_api_key')
                                     ->label('API Key'),
                                 Select::make('jina_deepsearch_ai_applicable_features')

@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Filament\Pages;
 
+use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Settings\AiResearchAssistantSettings;
 use App\Filament\Clusters\GlobalArtificialIntelligence;
@@ -84,5 +85,18 @@ class ManageAiResearchAssistantSettings extends SettingsPage
                     ->label('Institutional Context'),
             ])
             ->columns(1);
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        if (filled($data['discovery_model'] ?? null)) {
+            $data['discovery_model'] = AiModel::parse($data['discovery_model']);
+        }
+
+        if (filled($data['research_model'] ?? null)) {
+            $data['research_model'] = AiModel::parse($data['research_model']);
+        }
+
+        return parent::mutateFormDataBeforeSave($data);
     }
 }

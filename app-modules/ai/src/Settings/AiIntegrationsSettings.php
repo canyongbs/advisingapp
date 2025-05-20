@@ -157,6 +157,8 @@ class AiIntegrationsSettings extends Settings
      */
     public array $open_ai_gpt_o4_mini_applicable_features = [];
 
+    public ?string $jina_deepsearch_ai_model_name = null;
+
     public ?string $jina_deepsearch_ai_api_key = null;
 
     /**

@@ -41,13 +41,7 @@ return new class () extends SettingsMigration {
     public function up(): void
     {
         try {
-            $this->migrator->rename('ai_research_assistant.ai_model', 'ai_research_assistant.discovery_model');
-        } catch (SettingAlreadyExists $exception) {
-            $this->migrator->deleteIfExists('ai_research_assistant.ai_model');
-        }
-
-        try {
-            $this->migrator->add('ai_research_assistant.research_model');
+            $this->migrator->add('ai.jina_deepsearch_ai_model_name');
         } catch (SettingAlreadyExists $exception) {
             // do nothing
         }
@@ -55,7 +49,6 @@ return new class () extends SettingsMigration {
 
     public function down(): void
     {
-        $this->migrator->deleteIfExists('ai_research_assistant.discovery_model');
-        $this->migrator->deleteIfExists('ai_research_assistant.research_model');
+        $this->migrator->deleteIfExists('ai.jina_deepsearch_ai_model_name');
     }
 };
