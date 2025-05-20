@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -30,25 +32,26 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
-@php
-    use League\CommonMark\Extension\Footnote\FootnoteExtension;
-@endphp
+*/
 
-<div @if ($researchRequest?->hasStarted() && !$researchRequest?->finished_at) wire:poll.3s @endif>
-    @if (!$researchRequest?->finished_at)
-        <div class="flex items-center gap-2">
-            <x-filament::loading-indicator class="h-5 w-5" /> Researching...
-        </div>
-    @endif
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-    @if (filled($researchRequest?->results))
-        <section class="prose max-w-none dark:prose-invert">
-            @if (filled($researchRequest->title))
-                <h1>{{ $researchRequest->title }}</h1>
-            @endif
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::create('research_request_folders', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('name');
+            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
+            $table->timestamps();
+            $table->softDeletes();
+        });
+    }
 
-            {!! str($researchRequest->results)->replace('<think>', '<details wire:ignore.self><summary>Reasoning</summary>')->replace('</think>', '</details>')->markdown(extensions: [app(FootnoteExtension::class)])->sanitizeHtml() !!}
-        </section>
-    @endif
-</div>
+    public function down(): void
+    {
+        Schema::dropIfExists('research_request_folders');
+    }
+};

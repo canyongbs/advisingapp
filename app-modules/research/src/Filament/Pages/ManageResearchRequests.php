@@ -34,29 +34,55 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Research\Providers;
+namespace AdvisingApp\Research\Filament\Pages;
 
-use AdvisingApp\Research\Models\ResearchRequest;
-use AdvisingApp\Research\Models\ResearchRequestFolder;
-use AdvisingApp\Research\Models\ResearchRequestQuestion;
-use AdvisingApp\Research\ResearchPlugin;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Research\Filament\Pages\ManageResearchRequests\Concerns\CanManageConsent;
+use AdvisingApp\Research\Filament\Pages\ManageResearchRequests\Concerns\CanManageFolders;
+use AdvisingApp\Research\Filament\Pages\ManageResearchRequests\Concerns\CanManageRequests;
+use App\Features\ResearchRequests;
+use App\Models\User;
+use Filament\Navigation\NavigationItem;
+use Filament\Pages\Page;
 
-class ResearchServiceProvider extends ServiceProvider
+class ManageResearchRequests extends Page
 {
-    public function register(): void
+    use CanManageConsent;
+    use CanManageFolders;
+    use CanManageRequests;
+
+    protected static string $view = 'research::filament.pages.manage-research-requests';
+
+    protected static ?string $title = 'Research Requests';
+
+    /**
+     * @return array<NavigationItem>
+     */
+    public static function getNavigationItems(): array
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new ResearchPlugin()));
+        return [
+            NavigationItem::make('Research Requests')
+                ->group('Artificial Intelligence')
+                ->isActiveWhen(fn (): bool => request()->routeIs(static::getRouteName(), NewResearchRequest::getRouteName()))
+                ->sort(30)
+                ->url(static::getUrl()),
+        ];
     }
 
-    public function boot(): void
+    public static function canAccess(): bool
     {
-        Relation::morphMap([
-            'research_request' => ResearchRequest::class,
-            'research_request_folder' => ResearchRequestFolder::class,
-            'research_request_question' => ResearchRequestQuestion::class,
-        ]);
+        /** @var User $user */
+        $user = auth()->user();
+
+        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
+            return false;
+        }
+
+        if (blank(app(AiIntegrationsSettings::class)->jina_deepsearch_ai_api_key)) {
+            return false;
+        }
+
+        return ResearchRequests::active();
     }
 }

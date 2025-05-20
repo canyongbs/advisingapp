@@ -654,6 +654,8 @@ namespace App\Models{
  * @property-read int|null $prospect_care_teams_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Prospect\Models\Prospect> $prospectSubscriptions
  * @property-read int|null $prospect_subscriptions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Research\Models\ResearchRequestFolder> $researchRequestFolders
+ * @property-read int|null $research_request_folders_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Research\Models\ResearchRequest> $researchRequests
  * @property-read int|null $research_requests_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Authorization\Models\Role> $roles
@@ -4672,6 +4674,8 @@ namespace AdvisingApp\Research\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
+ * @property string|null $folder_id
+ * @property-read \AdvisingApp\Research\Models\ResearchRequestFolder|null $folder
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Research\Models\ResearchRequestQuestion> $questions
  * @property-read int|null $questions_count
  * @property-read \App\Models\User $user
@@ -4682,6 +4686,7 @@ namespace AdvisingApp\Research\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereFinishedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereFolderId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereResults($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereTitle($value)
@@ -4692,6 +4697,37 @@ namespace AdvisingApp\Research\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperResearchRequest {}
+}
+
+namespace AdvisingApp\Research\Models{
+/**
+ * 
+ *
+ * @property string $id
+ * @property string $name
+ * @property string $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Research\Models\ResearchRequest> $requests
+ * @property-read int|null $requests_count
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestFolder newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestFolder newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestFolder onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestFolder query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestFolder whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestFolder whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestFolder whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestFolder whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestFolder whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestFolder whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestFolder withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestFolder withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperResearchRequestFolder {}
 }
 
 namespace AdvisingApp\Research\Models{

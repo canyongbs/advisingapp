@@ -34,29 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Filament\Pages;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use App\Models\User;
-use Filament\Pages\Page;
-
-class ResearchRequests extends Page
-{
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
-
-    protected static ?int $navigationSort = 30;
-
-    protected static string $view = 'filament.pages.coming-soon';
-
-    public static function canAccess(): bool
+return new class () extends Migration {
+    public function up(): void
     {
-        /** @var User $user */
-        $user = auth()->user();
-
-        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
-            return false;
-        }
-
-        return $user->can(['assistant.view-any', 'assistant.*.view']);
+        Schema::table('research_requests', function (Blueprint $table) {
+            $table->foreignUuid('folder_id')->nullable()->constrained('research_request_folders')->nullOnDelete();
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('research_requests', function (Blueprint $table) {
+            $table->dropConstrainedForeignId('folder_id');
+        });
+    }
+};

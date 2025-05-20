@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Filament\Pages\Assistant\Concerns;
+namespace AdvisingApp\Research\Filament\Pages\ManageResearchRequests\Concerns;
 
-use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\AiThreadFolder;
+use AdvisingApp\Research\Models\ResearchRequest;
+use AdvisingApp\Research\Models\ResearchRequestFolder;
 use App\Models\User;
 use Exception;
 use Filament\Actions\Action;
@@ -53,6 +53,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 trait CanManageFolders
 {
+    /**
+     * @var array<mixed>
+     */
     #[Locked]
     public array $folders = [];
 
@@ -61,18 +64,19 @@ trait CanManageFolders
         $this->folders = $this->getFolders();
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getFolders(): array
     {
         /** @var User $user */
         $user = auth()->user();
 
         return $user
-            ->aiThreadFolders()
-            ->where('application', static::APPLICATION)
-            ->with([
-                'threads' => fn (HasMany $query) => $query
-                    ->latest('updated_at')
-                    ->withMax('messages', 'created_at'),
+            ->researchRequestFolders()
+            ->with([/** @phpstan-ignore argument.type */
+                'requests' => fn (HasMany $query) => $query
+                    ->latest('updated_at'),
             ])
             ->orderBy('name')
             ->get()
@@ -89,16 +93,14 @@ trait CanManageFolders
                 TextInput::make('name')
                     ->autocomplete(false)
                     ->required()
-                    ->unique(AiThreadFolder::class, modifyRuleUsing: function (Unique $rule) {
+                    ->unique(ResearchRequestFolder::class, modifyRuleUsing: function (Unique $rule) {
                         return $rule
-                            ->where('user_id', auth()->id())
-                            ->where('application', static::APPLICATION);
+                            ->where('user_id', auth()->id());
                     }),
             ])
             ->action(function (array $arguments, array $data) {
-                $folder = new AiThreadFolder();
+                $folder = new ResearchRequestFolder();
                 $folder->name = $data['name'];
-                $folder->application = static::APPLICATION;
                 $folder->user()->associate(auth()->user());
                 $folder->save();
 
@@ -116,8 +118,7 @@ trait CanManageFolders
             ->modalWidth('md')
             ->size(ActionSize::ExtraSmall)
             ->fillForm(fn (array $arguments) => [
-                'name' => auth()->user()->aiThreadFolders()
-                    ->where('application', static::APPLICATION)
+                'name' => auth()->user()->researchRequestFolders()
                     ->find($arguments['folder'])
                     ?->name,
             ])
@@ -127,15 +128,13 @@ trait CanManageFolders
                     ->autocomplete(false)
                     ->placeholder('Rename this folder')
                     ->required()
-                    ->unique(AiThreadFolder::class, modifyRuleUsing: function (Unique $rule) {
+                    ->unique(ResearchRequestFolder::class, modifyRuleUsing: function (Unique $rule) {
                         return $rule
-                            ->where('user_id', auth()->id())
-                            ->where('application', static::APPLICATION);
+                            ->where('user_id', auth()->id());
                     }),
             ])
             ->action(function (array $arguments, array $data) {
-                auth()->user()->aiThreadFolders()
-                    ->where('application', static::APPLICATION)
+                auth()->user()->researchRequestFolders()
                     ->find($arguments['folder'])
                     ?->update(['name' => $data['name']]);
 
@@ -155,10 +154,9 @@ trait CanManageFolders
         return Action::make('deleteFolder')
             ->size(ActionSize::ExtraSmall)
             ->requiresConfirmation()
-            ->modalDescription('Are you sure you wish to delete this folder? Any chats stored within this folder will also be deleted and this action is not reversible.')
+            ->modalDescription('Are you sure you wish to delete this folder?')
             ->action(function (array $arguments) {
-                auth()->user()->aiThreadFolders()
-                    ->where('application', static::APPLICATION)
+                auth()->user()->researchRequestFolders()
                     ->find($arguments['folder'])
                     ?->delete();
 
@@ -172,10 +170,10 @@ trait CanManageFolders
             ]);
     }
 
-    public function moveThreadAction(): Action
+    public function moveRequestAction(): Action
     {
-        return Action::make('moveThread')
-            ->label('Move chat to a different folder')
+        return Action::make('moveRequest')
+            ->label('Move request to a different folder')
             ->modalSubmitActionLabel('Move')
             ->modalWidth('md')
             ->size(ActionSize::ExtraSmall)
@@ -183,19 +181,17 @@ trait CanManageFolders
                 $this->folderSelect(),
             ])
             ->action(function (array $arguments, array $data) {
-                $thread = auth()->user()->aiThreads()
-                    ->whereRelation('assistant', 'application', static::APPLICATION)
-                    ->find($arguments['thread']);
+                $request = auth()->user()->researchRequests()
+                    ->find($arguments['request']);
 
-                if (! $thread) {
+                if (! $request) {
                     return;
                 }
 
-                $folder = auth()->user()->aiThreadFolders()
-                    ->where('application', static::APPLICATION)
+                $folder = auth()->user()->researchRequestFolders()
                     ->find($data['folder']);
 
-                $this->moveThread($thread, $folder);
+                $this->moveRequest($request, $folder);
             })
             ->icon('heroicon-m-arrow-down-on-square')
             ->color('warning')
@@ -206,43 +202,41 @@ trait CanManageFolders
             ]);
     }
 
-    public function movedThread(?string $threadId, ?string $folderId): ?JsonResponse
+    public function movedRequest(?string $requestId, ?string $folderId): ?JsonResponse
     {
-        if (blank($threadId)) {
+        if (blank($requestId)) {
             return null;
         }
 
-        $thread = auth()->user()->aiThreads()
-            ->whereRelation('assistant', 'application', static::APPLICATION)
-            ->find($threadId);
+        $request = auth()->user()->researchRequests()
+            ->find($requestId);
 
-        if (! $thread) {
+        if (! $request) {
             return response()->json([
                 'success' => false,
-                'message' => 'Chat could not be found.',
+                'message' => 'Request could not be found.',
             ], Response::HTTP_NOT_FOUND);
         }
 
         $folder = filled($folderId) ?
-            auth()->user()->aiThreadFolders()
-                ->where('application', static::APPLICATION)
+            auth()->user()->researchRequestFolders()
                 ->find($folderId) :
             null;
 
         try {
-            $this->moveThread($thread, $folder);
+            $this->moveRequest($request, $folder);
         } catch (Exception $exception) {
             report($exception);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Chat could not be moved. Something went wrong, if this continues please contact support.',
+                'message' => 'Request could not be moved. Something went wrong, if this continues please contact support.',
             ], Response::HTTP_BAD_REQUEST);
         }
 
         return response()->json([
             'success' => true,
-            'message' => 'Chat moved successfully.',
+            'message' => 'Request moved successfully.',
         ], Response::HTTP_OK);
     }
 
@@ -250,27 +244,26 @@ trait CanManageFolders
     {
         return Select::make('folder')
             ->options(fn (): array => auth()->user()
-                ->aiThreadFolders()
-                ->where('application', static::APPLICATION)
+                ->researchRequestFolders()
                 ->orderBy('name')
                 ->pluck('name', 'id')
                 ->all())
             ->placeholder('-');
     }
 
-    protected function moveThread(AiThread $thread, ?AiThreadFolder $folder): void
+    protected function moveRequest(ResearchRequest $request, ?ResearchRequestFolder $folder): void
     {
         if ($folder) {
-            $thread->folder()
+            $request->folder()
                 ->associate($folder)
                 ->save();
         } else {
-            $thread->folder()
+            $request->folder()
                 ->disassociate()
                 ->save();
         }
 
-        $this->threadsWithoutAFolder = $this->getThreadsWithoutAFolder();
+        $this->requestsWithoutAFolder = $this->getRequestsWithoutAFolder();
         $this->folders = $this->getFolders();
     }
 }

@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -30,25 +32,43 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
-@php
-    use League\CommonMark\Extension\Footnote\FootnoteExtension;
-@endphp
+*/
 
-<div @if ($researchRequest?->hasStarted() && !$researchRequest?->finished_at) wire:poll.3s @endif>
-    @if (!$researchRequest?->finished_at)
-        <div class="flex items-center gap-2">
-            <x-filament::loading-indicator class="h-5 w-5" /> Researching...
-        </div>
-    @endif
+namespace AdvisingApp\Research\Models;
 
-    @if (filled($researchRequest?->results))
-        <section class="prose max-w-none dark:prose-invert">
-            @if (filled($researchRequest->title))
-                <h1>{{ $researchRequest->title }}</h1>
-            @endif
+use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
+use App\Models\BaseModel;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-            {!! str($researchRequest->results)->replace('<think>', '<details wire:ignore.self><summary>Reasoning</summary>')->replace('</think>', '</details>')->markdown(extensions: [app(FootnoteExtension::class)])->sanitizeHtml() !!}
-        </section>
-    @endif
-</div>
+/**
+ * @mixin IdeHelperResearchRequestFolder
+ */
+class ResearchRequestFolder extends BaseModel
+{
+    use CanAddAssistantLicenseGlobalScope;
+    use SoftDeletes;
+
+    protected $fillable = [
+        'name',
+        'user_id',
+    ];
+
+    /**
+     * @return HasMany<ResearchRequest, $this>
+     */
+    public function requests(): HasMany
+    {
+        return $this->hasMany(ResearchRequest::class, 'folder_id');
+    }
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+}

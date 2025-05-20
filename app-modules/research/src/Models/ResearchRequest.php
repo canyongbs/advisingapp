@@ -72,10 +72,31 @@ class ResearchRequest extends BaseModel
     }
 
     /**
+     * @return BelongsTo<ResearchRequestFolder, $this>
+     */
+    public function folder(): BelongsTo
+    {
+        return $this->belongsTo(ResearchRequestFolder::class, 'folder_id');
+    }
+
+    /**
      * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function hasStarted(): bool
+    {
+        if ($this->finished_at) {
+            return true;
+        }
+
+        if (filled($this->results)) {
+            return true;
+        }
+
+        return filled($this->questions->get(3)?->response);
     }
 }
