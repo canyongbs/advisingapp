@@ -91,7 +91,7 @@ enum AiModel: string implements HasLabel
             self::OpenAiGpt41Mini => $aiIntegrationSettings->open_ai_gpt_41_mini_model_name ?? 'Canyon 4.1 mini',
             self::OpenAiGpt41Nano => $aiIntegrationSettings->open_ai_gpt_41_nano_model_name ?? 'Canyon 4.1 nano',
             self::OpenAiGptO4Mini => $aiIntegrationSettings->open_ai_gpt_o4_mini_model_name ?? 'Canyon o4 mini',
-            self::JinaAiDeepSearch => $aiIntegrationSettings->jina_deepsearch_ai_model_name ?? 'Canyon Deep Search',
+            self::JinaAiDeepSearch => $aiIntegrationSettings->jina_deepsearch_v1_model_name ?? 'Canyon Deep Search',
             self::OpenAiGptTest => 'Canyon Test',
             self::Test => 'Test',
         };
@@ -114,7 +114,7 @@ enum AiModel: string implements HasLabel
             self::OpenAiGpt41Mini => $aiIntegrationSettings->open_ai_gpt_41_mini_applicable_features,
             self::OpenAiGpt41Nano => $aiIntegrationSettings->open_ai_gpt_41_nano_applicable_features,
             self::OpenAiGptO4Mini => $aiIntegrationSettings->open_ai_gpt_o4_mini_applicable_features,
-            self::JinaAiDeepSearch => $aiIntegrationSettings->jina_deepsearch_ai_applicable_features,
+            self::JinaAiDeepSearch => $aiIntegrationSettings->jina_deepsearch_v1_applicable_features,
             self::OpenAiGptTest => app()->hasDebugModeEnabled() ? AiModelApplicabilityFeature::cases() : [],
             self::Test => app()->hasDebugModeEnabled() ? AiModelApplicabilityFeature::cases() : [],
         };

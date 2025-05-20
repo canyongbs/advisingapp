@@ -67,7 +67,7 @@ class Research implements ShouldQueue
             $client = new Client();
             $response = $client->post('https://deepsearch.jina.ai/v1/chat/completions', [
                 'headers' => [
-                    'Authorization' => 'Bearer ' . app(AiIntegrationsSettings::class)->jina_deepsearch_ai_api_key,
+                    'Authorization' => 'Bearer ' . app(AiIntegrationsSettings::class)->jina_deepsearch_v1_api_key,
                     'Content-Type' => 'application/json',
                 ],
                 'json' => [

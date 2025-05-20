@@ -55,7 +55,8 @@ return new class () extends SettingsMigration {
 
     public function down(): void
     {
-        $this->migrator->deleteIfExists('ai_research_assistant.discovery_model');
+        $this->migrator->rename('ai_research_assistant.discovery_model', 'ai_research_assistant.ai_model');
+
         $this->migrator->deleteIfExists('ai_research_assistant.research_model');
     }
 };

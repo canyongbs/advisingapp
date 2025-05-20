@@ -41,14 +41,30 @@ return new class () extends SettingsMigration {
     public function up(): void
     {
         try {
-            $this->migrator->add('ai.jina_deepsearch_ai_model_name');
+            $this->migrator->add('ai.jina_deepsearch_v1_model_name');
         } catch (SettingAlreadyExists $exception) {
             // do nothing
+        }
+
+        try {
+            $this->migrator->add('ai.jina_deepsearch_v1_applicable_features', []);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
+
+        try {
+            $this->migrator->rename('ai.jina_deepsearch_ai_api_key', 'ai.jina_deepsearch_v1_api_key');
+        } catch (SettingAlreadyExists $exception) {
+            $this->migrator->deleteIfExists('ai.jina_deepsearch_ai_api_key');
         }
     }
 
     public function down(): void
     {
-        $this->migrator->deleteIfExists('ai.jina_deepsearch_ai_model_name');
+        $this->migrator->deleteIfExists('ai.jina_deepsearch_v1_model_name');
+
+        $this->migrator->deleteIfExists('ai.jina_deepsearch_v1_applicable_features');
+
+        $this->migrator->rename('ai.jina_deepsearch_v1_api_key', 'ai.jina_deepsearch_ai_api_key');
     }
 };
