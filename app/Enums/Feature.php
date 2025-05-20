@@ -61,7 +61,7 @@ enum Feature: string
 
     case CustomAiAssistants = 'custom-ai-assistants';
 
-    case ResearchAdvisors = 'research-advisors';
+    case ResearchAdvisors = 'research-advisor';
 
     case QnAAdvisor = 'qna-advisor';
 
