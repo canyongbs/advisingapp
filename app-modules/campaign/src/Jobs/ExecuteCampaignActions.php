@@ -34,9 +34,8 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Actions;
+namespace AdvisingApp\Campaign\Jobs;
 
-use AdvisingApp\Campaign\Jobs\ExecuteCampaignAction;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Models\Scopes\CampaignActionNotCancelled;
 use AdvisingApp\Campaign\Notifications\CampaignActionFinished;
