@@ -34,14 +34,13 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Database\Migrations\Migration;
 use CanyonGBS\Common\Database\Migrations\Concerns\CanModifyPermissions;
+use Illuminate\Database\Migrations\Migration;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     use CanModifyPermissions;
 
-    /** @var array<string, string>*/
+    /** @var array<string, string> */
     private array $permissions = [
         'research_advisors.view-any' => 'Research Advisor',
         'research_advisors.create' => 'Research Advisor',
