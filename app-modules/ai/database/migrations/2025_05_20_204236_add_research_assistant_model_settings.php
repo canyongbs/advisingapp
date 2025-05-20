@@ -34,21 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Settings;
+use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use AdvisingApp\Ai\Enums\AiModel;
-use Spatie\LaravelSettings\Settings;
-
-class AiResearchAssistantSettings extends Settings
-{
-    public ?AiModel $discovery_model = null;
-
-    public ?AiModel $research_model = null;
-
-    public ?string $context = null;
-
-    public static function group(): string
+return new class () extends SettingsMigration {
+    public function up(): void
     {
-        return 'ai_research_assistant';
+        try {
+            $this->migrator->rename('ai_research_assistant.ai_model', 'ai_research_assistant.discovery_model');
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
+
+        try {
+            $this->migrator->add('ai_research_assistant.research_model');
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
     }
-}
+
+    public function down(): void
+    {
+        $this->migrator->deleteIfExists('ai_research_assistant.discovery_model');
+        $this->migrator->deleteIfExists('ai_research_assistant.research_model');
+    }
+};

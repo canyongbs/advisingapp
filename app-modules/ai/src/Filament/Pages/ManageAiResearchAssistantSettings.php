@@ -36,9 +36,11 @@
 
 namespace AdvisingApp\Ai\Filament\Pages;
 
+use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Settings\AiResearchAssistantSettings;
 use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
@@ -67,6 +69,16 @@ class ManageAiResearchAssistantSettings extends SettingsPage
     {
         return $form
             ->schema([
+                Select::make('discovery_model')
+                    ->options(AiModelApplicabilityFeature::IntegratedAdvisor->getModelsAsSelectOptions())
+                    ->searchable()
+                    ->helperText('Used for the generation of the pre-research questions.')
+                    ->required(),
+                Select::make('research_model')
+                    ->options(AiModelApplicabilityFeature::ResearchAdvisor->getModelsAsSelectOptions())
+                    ->searchable()
+                    ->helperText('Used for the generation of the research report.')
+                    ->required(),
                 Textarea::make('context')
                     ->rows(10)
                     ->label('Institutional Context'),
