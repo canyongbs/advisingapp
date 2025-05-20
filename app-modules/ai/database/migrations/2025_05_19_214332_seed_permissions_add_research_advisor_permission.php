@@ -42,13 +42,13 @@ return new class () extends Migration {
 
     /** @var array<string, string> */
     private array $permissions = [
-        'research_advisors.view-any' => 'Research Advisors',
-        'research_advisors.create' => 'Research Advisors',
-        'research_advisors.*.view' => 'Research Advisors',
-        'research_advisors.*.update' => 'Research Advisors',
-        'research_advisors.*.delete' => 'Research Advisors',
-        'research_advisors.*.restore' => 'Research Advisors',
-        'research_advisors.*.force-delete' => 'Research Advisors',
+        'research_advisors.view-any' => 'Research Advisor',
+        'research_advisors.create' => 'Research Advisor',
+        'research_advisors.*.view' => 'Research Advisor',
+        'research_advisors.*.update' => 'Research Advisor',
+        'research_advisors.*.delete' => 'Research Advisor',
+        'research_advisors.*.restore' => 'Research Advisor',
+        'research_advisors.*.force-delete' => 'Research Advisor',
     ];
 
     /** @var array<string> */
