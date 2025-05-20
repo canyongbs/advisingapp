@@ -44,6 +44,7 @@ use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Illuminate\Support\Facades\Auth;
 
 class TaskBlock extends CampaignActionBlock
 {
@@ -76,7 +77,7 @@ class TaskBlock extends CampaignActionBlock
                         ->model(Task::class)
                         ->nullable()
                         ->searchable()
-                        ->default(auth()->id()),
+                        ->default(Auth::id()),
                 ]),
             DateTimePicker::make('execute_at')
                 ->label('When should the journey step be executed?')

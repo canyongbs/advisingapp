@@ -4,6 +4,7 @@ namespace AdvisingApp\Campaign\Jobs;
 
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Task\Models\Task;
+use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -31,7 +32,11 @@ class TaskCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
             ]);
 
             $task->assignedTo()->associate($action->data['assigned_to']);
-            $task->createdBy()->associate($action->data['created_by']);
+
+            if ($action->campaign->createdBy instanceof User) {
+                $task->createdBy()->associate($action->campaign->createdBy);
+            }
+
             $task->concern()->associate($educatable);
             $task->save();
 

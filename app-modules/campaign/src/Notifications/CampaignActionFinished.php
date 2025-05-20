@@ -38,15 +38,15 @@ class CampaignActionFinished extends Notification
 
         $counts = $this->action->campaignActionEducatables()
             ->selectRaw('
-                COUNT(*) as totalExecutions,
-                COUNT(CASE WHEN succeeded_at IS NOT NULL THEN 1 END) as totalSucceeded,
-                COUNT(CASE WHEN last_failed_at IS NOT NULL AND succeeded_at IS NULL THEN 1 END) as totalFailed
+                COUNT(*) as total_executions,
+                COUNT(CASE WHEN succeeded_at IS NOT NULL THEN 1 END) as total_succeeded,
+                COUNT(CASE WHEN last_failed_at IS NOT NULL AND succeeded_at IS NULL THEN 1 END) as total_failed
             ')
             ->first();
 
-        $totalExecutions = $counts['totalExecutions'];
-        $totalSucceeded = $counts['totalSucceeded'];
-        $totalFailed = $counts['totalFailed'];
+        $totalExecutions = $counts->total_executions; // @phpstan-ignore property.notFound
+        $totalSucceeded = $counts->total_succeeded; // @phpstan-ignore property.notFound
+        $totalFailed = $counts->total_failed; // @phpstan-ignore property.notFound
 
         throw_if(
             $totalExecutions != $totalSucceeded + $totalFailed,

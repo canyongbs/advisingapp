@@ -37,7 +37,6 @@ it('will execute appropriately on each educatable in the segment', function (Edu
     $description = fake()->sentence();
     $due = now()->addDay();
     $assignedTo = User::factory()->create();
-    $createdBy = User::factory()->create();
 
     /** @var CampaignAction $action */
     $action = CampaignAction::factory()
@@ -49,7 +48,6 @@ it('will execute appropriately on each educatable in the segment', function (Edu
                 'description' => $description,
                 'due' => $due,
                 'assigned_to' => $assignedTo->getKey(),
-                'created_by' => $createdBy->getKey(),
             ],
         ]);
 
@@ -73,7 +71,7 @@ it('will execute appropriately on each educatable in the segment', function (Edu
         ->and($tasks->first()->description)->toEqual($description)
         ->and($tasks->first()->due->toString())->toEqual($due->toString())
         ->and($tasks->first()->assignedTo->is($assignedTo))->toBeTrue()
-        ->and($tasks->first()->createdBy->is($createdBy))->toBeTrue();
+        ->and($tasks->first()->createdBy->is($campaign->createdBy))->toBeTrue();
 
     expect($campaignActionEducatable->succeeded_at)->not()->toBeNull()
         ->and($campaignActionEducatable->last_failed_at)->toBeNull()
