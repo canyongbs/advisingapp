@@ -82,7 +82,7 @@ class GenerateResearchQuestion
 
             **Instructions:**
             
-            Before the research is conducted, you need to help improve the changes that it will be relevant and useful to me. Using my research topic, respond with one relevant question that will help to clarify it. You will be able to ask four questions in total, and you will know the answer to the previous question/s before you ask the next one. Do not respond with any greetings or salutations, and do not include any additional information or context. Just respond with your question:
+            Before the research is conducted, you need to help improve the chances that it will be relevant and useful to me. Using my research topic, respond with one relevant question that will help to clarify it. You will be able to ask four questions in total, and you will know the answer to the previous question/s before you ask the next one. Do not respond with any greetings or salutations, and do not include any additional information or context. Just respond with your question:
             EOD;
     }
 
