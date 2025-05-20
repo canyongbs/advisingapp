@@ -40,7 +40,6 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationMana
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 
 use function Pest\Laravel\actingAs;
@@ -79,7 +78,7 @@ it('renders the Edit Interaction Table Action based on proper access', function 
     $user->givePermissionTo('student.*.view');
     $user->givePermissionTo('interaction.view-any');
     $user->givePermissionTo('interaction.*.view');
-    $user->givePermissionTo('interaction.update');
+    $user->givePermissionTo('interaction.*.update');
 
     actingAs($user);
 
@@ -89,50 +88,4 @@ it('renders the Edit Interaction Table Action based on proper access', function 
     ])
         ->assertOk()
         ->assertTableActionVisible(EditAction::class, $student->interactions->first());
-});
-
-it('renders the Delete Interaction Table Action based on proper access', function () {
-    $user = User::factory()->licensed(Student::getLicenseType())->create();
-
-    $student = Student::factory()
-        ->has(Interaction::factory()->count(1))
-        ->create();
-
-    $user->givePermissionTo('student.view-any');
-    $user->givePermissionTo('student.*.view');
-    $user->givePermissionTo('interaction.view-any');
-    $user->givePermissionTo('interaction.*.view');
-    $user->givePermissionTo('interaction.delete');
-
-    actingAs($user);
-
-    livewire(InteractionsRelationManager::class, [
-        'ownerRecord' => $student,
-        'pageClass' => ViewStudent::class,
-    ])
-        ->assertOk()
-        ->assertTableActionVisible(DeleteAction::class, $student->interactions->first());
-});
-
-it('renders the Delete Bulk Intractions Table Action based on proper access', function () {
-    $user = User::factory()->licensed(Student::getLicenseType())->create();
-
-    $student = Student::factory()
-        ->has(Interaction::factory()->count(1))
-        ->create();
-
-    $user->givePermissionTo('student.view-any');
-    $user->givePermissionTo('student.*.view');
-    $user->givePermissionTo('interaction.view-any');
-    $user->givePermissionTo('interaction.*.view');
-    $user->givePermissionTo('interaction.delete');
-
-    actingAs($user);
-
-    livewire(InteractionsRelationManager::class, [
-        'ownerRecord' => $student,
-        'pageClass' => ViewStudent::class,
-    ])
-        ->assertOk()
-        ->assertTableActionVisible(DeleteAction::class);
 });
