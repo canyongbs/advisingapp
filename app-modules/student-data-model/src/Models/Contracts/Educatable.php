@@ -57,8 +57,6 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 /**
- * @template T of Student|Prospect
- *
  * @phpstan-require-extends Model
  *
  * @mixin Model

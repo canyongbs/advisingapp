@@ -42,6 +42,7 @@ use AdvisingApp\Engagement\Filament\Forms\Components\EngagementSmsBodyInput;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
+use Exception;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
@@ -191,6 +192,7 @@ class BulkEngagementAction
                     recipient: match ($channel) {
                         NotificationChannel::Email => $records->filter(fn (CanBeNotified $record) => $record->canReceiveEmail()),
                         NotificationChannel::Sms => $records->filter(fn (CanBeNotified $record) => $record->canReceiveSms()),
+                        default => throw new Exception('Invalid engagement channel'),
                     },
                     channel: $channel,
                     subject: $data['subject'] ?? null,

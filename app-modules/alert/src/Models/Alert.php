@@ -60,7 +60,7 @@ use Illuminate\Support\Collection;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
- * @property-read Student|Prospect $concern
+ * @property-read (Subscribable&(Student|Prospect))|null $concern
  *
  * @mixin IdeHelperAlert
  */

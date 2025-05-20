@@ -5,13 +5,10 @@ namespace AdvisingApp\Campaign\Jobs;
 use AdvisingApp\Engagement\Actions\CreateEngagement;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
-use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use DateTimeInterface;
 use Exception;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Queue\Middleware\RateLimitedWithRedis;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -46,7 +43,7 @@ class EngagementCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
                 new Exception('The educatable model must implement the Educatable contract.')
             );
 
-            /** @var Educatable<Student|Prospect>&Model $educatable */
+            /** @var Educatable $educatable */
             $action = $this->actionEducatable->campaignAction;
 
             $channel = NotificationChannel::parse($action->data['channel']);

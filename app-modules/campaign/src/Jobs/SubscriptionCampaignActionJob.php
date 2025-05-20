@@ -4,8 +4,6 @@ namespace AdvisingApp\Campaign\Jobs;
 
 use AdvisingApp\Notification\Actions\SubscriptionCreate;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -24,7 +22,7 @@ class SubscriptionCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
                 ! $educatable instanceof Subscribable,
                 new Exception('The educatable model must implement the Subscribable contract.')
             );
-            /** @var Subscribable<Student|Prospect> $educatable */
+            /** @var Subscribable $educatable */
             $action = $this->actionEducatable->campaignAction;
 
             if ($action->data['remove_prior']) {

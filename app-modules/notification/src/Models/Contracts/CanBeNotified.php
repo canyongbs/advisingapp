@@ -36,6 +36,13 @@
 
 namespace AdvisingApp\Notification\Models\Contracts;
 
+use Illuminate\Database\Eloquent\Model;
+
+/**
+ * @phpstan-require-extends Model
+ *
+ * @mixin Model
+ */
 interface CanBeNotified
 {
     public function notify($instance);

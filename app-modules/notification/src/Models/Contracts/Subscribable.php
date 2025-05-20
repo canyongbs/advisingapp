@@ -37,14 +37,10 @@
 namespace AdvisingApp\Notification\Models\Contracts;
 
 use AdvisingApp\Notification\Models\Subscription;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
- * @template T of Student|Prospect
- *
  * @phpstan-require-extends Model
  *
  * @mixin Model

@@ -308,7 +308,7 @@ namespace App\Models{
  * @property string $related_to_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $relatedTo
+ * @property-read \Illuminate\Database\Eloquent\Model $relatedTo
  * @property-read \App\Models\NotificationSetting $setting
  * @method static \Illuminate\Database\Eloquent\Builder<static>|NotificationSettingPivot newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|NotificationSettingPivot newQuery()
@@ -1174,7 +1174,7 @@ namespace AdvisingApp\Alert\Models{
 /**
  * 
  *
- * @property-read Student|Prospect $concern
+ * @property-read (Subscribable&(Student|Prospect))|null $concern
  * @property string $id
  * @property string $concern_type
  * @property string $concern_id
@@ -1756,7 +1756,7 @@ namespace AdvisingApp\Campaign\Models{
  * @property-read int|null $actions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $createdBy
+ * @property-read \Illuminate\Database\Eloquent\Model $createdBy
  * @property-read \AdvisingApp\Segment\Models\Segment $segment
  * @method static \AdvisingApp\Campaign\Database\Factories\CampaignFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign hasNotBeenExecuted()
@@ -1799,6 +1799,8 @@ namespace AdvisingApp\Campaign\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \AdvisingApp\Campaign\Models\Campaign $campaign
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Campaign\Models\CampaignActionEducatable> $campaignActionEducatables
+ * @property-read int|null $campaign_action_educatables_count
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignAction campaignEnabled()
@@ -1843,6 +1845,7 @@ namespace AdvisingApp\Campaign\Models{
  * @property-read \AdvisingApp\Campaign\Models\CampaignAction $campaignAction
  * @property-read \Illuminate\Database\Eloquent\Model $educatable
  * @property-read \Illuminate\Database\Eloquent\Model|null $related
+ * @method static \AdvisingApp\Campaign\Database\Factories\CampaignActionEducatableFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignActionEducatable newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignActionEducatable newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignActionEducatable query()
@@ -1874,7 +1877,7 @@ namespace AdvisingApp\CareTeam\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \AdvisingApp\CareTeam\Models\CareTeamRole|null $careTeamRole
- * @property-read \AdvisingApp\StudentDataModel\Models\Contracts\Educatable $educatable
+ * @property-read \Illuminate\Database\Eloquent\Model $educatable
  * @property-read \AdvisingApp\CareTeam\Models\CareTeamRole|null $prospectCareTeamRole
  * @property-read \AdvisingApp\CareTeam\Models\CareTeamRole|null $studentCareTeamRole
  * @property-read \App\Models\User $user
@@ -2780,7 +2783,7 @@ namespace AdvisingApp\Engagement\Models{
  * @property string|null $created_by_id
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent|null $createdBy
+ * @property-read \Illuminate\Database\Eloquent\Model|null $createdBy
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
  * @property-read \AdvisingApp\Engagement\Models\EngagementFileEntities|null $pivot
@@ -2816,7 +2819,7 @@ namespace AdvisingApp\Engagement\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \AdvisingApp\Engagement\Models\EngagementFile $engagementFile
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $entity
+ * @property-read \Illuminate\Database\Eloquent\Model $entity
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementFileEntities newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementFileEntities newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementFileEntities query()
@@ -2851,7 +2854,7 @@ namespace AdvisingApp\Engagement\Models{
  * @property-read int|null $audits_count
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent|null $sender
+ * @property-read \Illuminate\Database\Eloquent\Model|null $sender
  * @property-read \AdvisingApp\Timeline\Models\Timeline|null $timelineRecord
  * @method static \AdvisingApp\Engagement\Database\Factories\EngagementResponseFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EngagementResponse newModelQuery()
@@ -3296,7 +3299,7 @@ namespace AdvisingApp\Interaction\Models{
  * @property-read \AdvisingApp\Division\Models\Division|null $division
  * @property-read \AdvisingApp\Interaction\Models\InteractionDriver|null $driver
  * @property-read \AdvisingApp\Interaction\Models\InteractionInitiative|null $initiative
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent|null $interactable
+ * @property-read \Illuminate\Database\Eloquent\Model|null $interactable
  * @property-read \AdvisingApp\Interaction\Models\InteractionOutcome|null $outcome
  * @property-read \AdvisingApp\Interaction\Models\InteractionRelation|null $relation
  * @property-read \AdvisingApp\Interaction\Models\InteractionStatus|null $status
@@ -3916,8 +3919,8 @@ namespace AdvisingApp\Notification\Models{
  * @property string|null $recipient_type
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent|null $recipient
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent|null $related
+ * @property-read \Illuminate\Database\Eloquent\Model|null $recipient
+ * @property-read \Illuminate\Database\Eloquent\Model|null $related
  * @method static \AdvisingApp\Notification\Database\Factories\DatabaseMessageFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DatabaseMessage newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DatabaseMessage newQuery()
@@ -3956,8 +3959,8 @@ namespace AdvisingApp\Notification\Models{
  * @property string|null $recipient_address
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Notification\Models\EmailMessageEvent> $events
  * @property-read int|null $events_count
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent|null $recipient
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent|null $related
+ * @property-read \Illuminate\Database\Eloquent\Model|null $recipient
+ * @property-read \Illuminate\Database\Eloquent\Model|null $related
  * @method static \AdvisingApp\Notification\Database\Factories\EmailMessageFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailMessage newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailMessage newQuery()
@@ -4027,8 +4030,8 @@ namespace AdvisingApp\Notification\Models{
  * @property string|null $recipient_number
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Notification\Models\SmsMessageEvent> $events
  * @property-read int|null $events_count
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent|null $recipient
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent|null $related
+ * @property-read \Illuminate\Database\Eloquent\Model|null $recipient
+ * @property-read \Illuminate\Database\Eloquent\Model|null $related
  * @method static \AdvisingApp\Notification\Database\Factories\SmsMessageFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SmsMessage newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SmsMessage newQuery()
@@ -4113,7 +4116,7 @@ namespace AdvisingApp\Notification\Models{
  * @property string $subscribable_type
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $subscribable
+ * @property-read \Illuminate\Database\Eloquent\Model $subscribable
  * @property-read \App\Models\User $user
  * @method static \AdvisingApp\Notification\Database\Factories\SubscriptionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Subscription licensedToEducatable(string $relationship)
@@ -4143,7 +4146,7 @@ namespace AdvisingApp\Portal\Models{
  * @property string|null $code
  * @property \AdvisingApp\Portal\Enums\PortalType|null $portal_type
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent|null $educatable
+ * @property-read \Illuminate\Database\Eloquent\Model|null $educatable
  * @method static \AdvisingApp\Portal\Database\Factories\PortalAuthenticationFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PortalAuthentication newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PortalAuthentication newQuery()
@@ -4610,7 +4613,7 @@ namespace AdvisingApp\Report\Models{
  * @property string|null $deleted_at
  * @property string|null $related_to_type
  * @property string|null $related_to_id
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent|null $relatedTo
+ * @property-read \Illuminate\Database\Eloquent\Model|null $relatedTo
  * @method static \AdvisingApp\Report\Database\Factories\TrackedEventFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TrackedEvent newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TrackedEvent newQuery()
@@ -4640,7 +4643,7 @@ namespace AdvisingApp\Report\Models{
  * @property string|null $deleted_at
  * @property string|null $related_to_type
  * @property string|null $related_to_id
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent|null $relatedTo
+ * @property-read \Illuminate\Database\Eloquent\Model|null $relatedTo
  * @method static \AdvisingApp\Report\Database\Factories\TrackedEventCountFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TrackedEventCount newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TrackedEventCount newQuery()
@@ -5019,7 +5022,7 @@ namespace AdvisingApp\Segment\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \AdvisingApp\Segment\Models\Segment $segment
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $subject
+ * @property-read \Illuminate\Database\Eloquent\Model $subject
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SegmentSubject newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SegmentSubject newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SegmentSubject onlyTrashed()
@@ -5776,7 +5779,7 @@ namespace AdvisingApp\Timeline\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $timelineable
+ * @property-read \Illuminate\Database\Eloquent\Model $timelineable
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Timeline forEntity(\Illuminate\Database\Eloquent\Model $entity)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Timeline newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Timeline newQuery()

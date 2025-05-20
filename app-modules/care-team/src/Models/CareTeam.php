@@ -39,11 +39,11 @@ namespace AdvisingApp\CareTeam\Models;
 use AdvisingApp\CareTeam\Observers\CareTeamObserver;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
-use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use App\Enums\CareTeamRoleType;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -86,7 +86,7 @@ class CareTeam extends MorphPivot implements CanTriggerAutoSubscription
         return $this->careTeamRole()->where('type', CareTeamRoleType::Student);
     }
 
-    /** @return MorphTo<Educatable> */
+    /** @return MorphTo<Model, $this> */
     public function educatable(): MorphTo
     {
         return $this->morphTo();

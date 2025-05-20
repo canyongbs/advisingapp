@@ -37,9 +37,7 @@
 namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets;
 
 use AdvisingApp\CareTeam\Models\CareTeam;
-use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
-use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Exception;
 use Filament\Widgets\Widget;
@@ -50,9 +48,6 @@ class EducatableCareTeamWidget extends Widget
 {
     protected static string $view = 'student-data-model::filament.resources.educatable-resource.widgets.educatable-care-team-widget';
 
-    /**
-     * @var Educatable<Student|Prospect>&Model
-     */
     #[Locked]
     public Educatable&Model $educatable;
 
