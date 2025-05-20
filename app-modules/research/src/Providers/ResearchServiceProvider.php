@@ -34,4 +34,27 @@
 </COPYRIGHT>
 */
 
-return [];
+namespace AdvisingApp\Research\Providers;
+
+use AdvisingApp\Research\Models\ResearchRequest;
+use AdvisingApp\Research\Models\ResearchRequestQuestion;
+use AdvisingApp\Research\ResearchPlugin;
+use Filament\Panel;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\ServiceProvider;
+
+class ResearchServiceProvider extends ServiceProvider
+{
+    public function register(): void
+    {
+        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new ResearchPlugin()));
+    }
+
+    public function boot(): void
+    {
+        Relation::morphMap([
+            'research_request' => ResearchRequest::class,
+            'research_request_question' => ResearchRequestQuestion::class,
+        ]);
+    }
+}
