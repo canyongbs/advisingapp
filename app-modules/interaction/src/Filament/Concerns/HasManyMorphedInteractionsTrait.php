@@ -165,8 +165,7 @@ trait HasManyMorphedInteractionsTrait
                 SelectFilter::make('interactable_type')
                     ->label('Type')
                     ->relationship('type', 'name')
-                    ->multiple()
-                    ->preload(),
+                    ->multiple(),
                 SelectFilter::make('interaction_status_id')
                     ->relationship('status', 'name')
                     ->label('Status')
