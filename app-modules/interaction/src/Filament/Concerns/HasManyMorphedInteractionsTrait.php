@@ -104,11 +104,13 @@ trait HasManyMorphedInteractionsTrait
                     ->description(fn ($record) => $record->initiative->name . ' (' . $record->driver->name . ')')
                     ->icon(fn ($record) => $record->is_confidential ? 'heroicon-m-lock-closed' : null)
                     ->tooltip(fn ($record) => $record->is_confidential ? 'Confidential' : null),
-                TextColumn::make('interactable_type')
+                TextColumn::make('type.name')
                     ->label('Type')
+                    ->toggleable()
                     ->sortable(),
                 TextColumn::make('status.name')
                     ->label('Status')
+                    ->toggleable()
                     ->sortable(),
                 TextColumn::make('start_datetime')
                     ->label('Start Time')
@@ -130,10 +132,6 @@ trait HasManyMorphedInteractionsTrait
                 TextColumn::make('outcome.name')
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('relation.name')
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('status.name')
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('type.name')
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->headerActions([
@@ -164,10 +162,11 @@ trait HasManyMorphedInteractionsTrait
                     ->relationship('driver', 'name')
                     ->label('Driver')
                     ->multiple(),
-                // SelectFilter::make('interactable_type')
-                //     ->label('Type')
-                //     ->multiple()
-                //     ->preload()
+                SelectFilter::make('interactable_type')
+                    ->label('Type')
+                    ->relationship('type', 'name')
+                    ->multiple()
+                    ->preload(),
                 SelectFilter::make('interaction_status_id')
                     ->relationship('status', 'name')
                     ->label('Status')
