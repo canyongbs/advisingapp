@@ -36,18 +36,24 @@
 
 namespace AdvisingApp\Research\Actions;
 
-use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
 use AdvisingApp\Ai\Settings\AiResearchAssistantSettings;
 use AdvisingApp\Research\Models\ResearchRequest;
 use AdvisingApp\Research\Models\ResearchRequestQuestion;
 use App\Models\User;
+use Exception;
 
 class GenerateResearchQuestion
 {
     public function execute(ResearchRequest $researchRequest): string
     {
-        return app(AiIntegratedAssistantSettings::class)
-            ->getDefaultModel()
+        $settings = app(AiResearchAssistantSettings::class);
+
+        throw_if(
+            ! $settings->discovery_model,
+            new Exception('Discovery model is not set in the settings.')
+        );
+
+        return $settings->discovery_model
             ->getService()
             ->complete(
                 prompt: $this->getPrompt($researchRequest),
