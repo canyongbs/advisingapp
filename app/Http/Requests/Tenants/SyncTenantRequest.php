@@ -62,7 +62,7 @@ class SyncTenantRequest extends FormRequest
             'addons.mobileApps' => ['required', 'boolean'],
             'addons.scheduleAndAppointments' => ['required', 'boolean'],
             'addons.customAiAssistants' => ['required', 'boolean'],
-            'addons.researchAdvisors' => ['required', 'boolean'],
+            'addons.researchAdvisor' => ['required', 'boolean'],
             'addons.qnaAdvisor' => ['required', 'boolean'],
             'smartPrompts' => ['nullable', 'array'],
             'smartPrompts.*.title' => ['required', 'string'],
