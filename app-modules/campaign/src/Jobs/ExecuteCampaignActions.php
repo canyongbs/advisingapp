@@ -56,6 +56,9 @@ class ExecuteCampaignActions implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
 
+    /**
+     * @return array<object>
+     */
     public function middleware(): array
     {
         return [(new WithoutOverlapping(Tenant::current()->id))->dontRelease()->expireAfter(180)];
