@@ -39,6 +39,7 @@ namespace AdvisingApp\CareTeam\Models;
 use AdvisingApp\CareTeam\Observers\CareTeamObserver;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use App\Enums\CareTeamRoleType;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -50,6 +51,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * @property string $care_team_role_id
+ * @property Educatable $educatable
  *
  * @mixin IdeHelperCareTeam
  */

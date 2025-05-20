@@ -59,6 +59,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class BulkEngagementAction
@@ -185,10 +186,11 @@ class BulkEngagementAction
                     ]),
             ])
             ->action(function (Collection $records, array $data, Form $form) {
+                /** @var Collection<int, CanBeNotified> $records */
                 $channel = NotificationChannel::parse($data['channel']);
 
                 app(CreateEngagementBatch::class)->execute(new EngagementCreationData(
-                    user: auth()->user(),
+                    user: Auth::user(),
                     recipient: match ($channel) {
                         NotificationChannel::Email => $records->filter(fn (CanBeNotified $record) => $record->canReceiveEmail()),
                         NotificationChannel::Sms => $records->filter(fn (CanBeNotified $record) => $record->canReceiveSms()),

@@ -39,6 +39,8 @@ namespace AdvisingApp\Engagement\Actions;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Notifications\EngagementNotification;
+use Exception;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 class CreateEngagement
@@ -47,7 +49,14 @@ class CreateEngagement
     {
         $engagement = new Engagement();
         $engagement->user()->associate($data->user);
+
+        throw_if(
+            ! $data->recipient instanceof Model,
+            new Exception('Recipient must be a single user, not a collection.')
+        );
+
         $engagement->recipient()->associate($data->recipient);
+
         $engagement->channel = $data->channel;
         $engagement->subject = $data->subject;
         $engagement->scheduled_at = $data->scheduledAt;
