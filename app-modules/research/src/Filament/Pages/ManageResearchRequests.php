@@ -36,17 +36,17 @@
 
 namespace AdvisingApp\Research\Filament\Pages;
 
-use App\Models\User;
-use App\Enums\Feature;
-use Filament\Pages\Page;
-use App\Features\ResearchRequests;
-use Illuminate\Support\Facades\Gate;
-use Filament\Navigation\NavigationItem;
-use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Research\Filament\Pages\ManageResearchRequests\Concerns\CanManageConsent;
 use AdvisingApp\Research\Filament\Pages\ManageResearchRequests\Concerns\CanManageFolders;
 use AdvisingApp\Research\Filament\Pages\ManageResearchRequests\Concerns\CanManageRequests;
+use App\Enums\Feature;
+use App\Features\ResearchRequests;
+use App\Models\User;
+use Filament\Navigation\NavigationItem;
+use Filament\Pages\Page;
+use Illuminate\Support\Facades\Gate;
 
 class ManageResearchRequests extends Page
 {
