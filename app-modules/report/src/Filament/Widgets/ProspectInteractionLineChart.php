@@ -49,7 +49,7 @@ class ProspectInteractionLineChart extends LineChartReportWidget
 
     public function getData(): array
     {
-        $runningTotalPerMonth = Cache::tags([$this->cacheTag])->remember('prospect_interactions_line_chart', now()->addHours(24), function (): array {
+        $runningTotalPerMonth = Cache::tags(["{{$this->cacheTag}}"])->remember('prospect_interactions_line_chart', now()->addHours(24), function (): array {
             $totalInteractionPerMonth = Interaction::query()
                 ->whereHasMorph('interactable', Prospect::class)
                 ->toBase()

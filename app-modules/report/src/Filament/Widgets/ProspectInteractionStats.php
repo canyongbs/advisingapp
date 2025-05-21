@@ -48,7 +48,7 @@ class ProspectInteractionStats extends StatsOverviewReportWidget
     {
         return [
             Stat::make('Total Interactions', Number::abbreviate(
-                Cache::tags([$this->cacheTag])->remember('total-prospect-interactions-count', now()->addHours(24), function (): int {
+                Cache::tags(["{{$this->cacheTag}}"])->remember('total-prospect-interactions-count', now()->addHours(24), function (): int {
                     return Interaction::query()
                         ->whereHasMorph('interactable', Prospect::class)
                         ->count();
@@ -56,11 +56,10 @@ class ProspectInteractionStats extends StatsOverviewReportWidget
                 maxPrecision: 2,
             )),
             Stat::make('Prospects with Interactions', Number::abbreviate(
-                Cache::tags([$this->cacheTag])->remember('prospects-with-interactions', now()->addHours(24), function (): int {
-                    return Interaction::query()
-                        ->whereHasMorph('interactable', Prospect::class)
-                        ->distinct('interactable_id')
-                        ->count('interactable_id');
+                Cache::tags(["{{$this->cacheTag}}"])->remember('prospects-with-interactions', now()->addHours(24), function (): int {
+                    return Prospect::query()
+                        ->whereHas('interactions')
+                        ->count();
                 }),
                 maxPrecision: 2,
             )),
