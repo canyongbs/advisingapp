@@ -84,11 +84,14 @@ class ProspectInteractionUsersTable extends BaseWidget
             ->query(
                 function () {
                     return User::query()
-                        ->whereHas('interactions')
+                        ->whereHas('interactions', function ($query) {
+                            $query->whereHasMorph(
+                                'interactable',
+                                Prospect::class,
+                            );
+                        })
                         ->with([
-                            'interactions' => function ($query) {
-                                $query->whereHasMorph('interactable', Prospect::class);
-                            },
+                            'interactions',
                             'team',
                         ]);
                 }
@@ -125,27 +128,53 @@ class ProspectInteractionUsersTable extends BaseWidget
                 TextColumn::make('first_interaction_at')
                     ->label('First')
                     ->getStateUsing(function ($record) {
-                        $first = $record->interactions->sortBy('created_at')->first();
+                        $first = $record
+                            ->interactions()
+                            ->whereHasMorph(
+                                'interactable',
+                                Prospect::class,
+                            )
+                            ->sortBy('created_at')
+                            ->first();
 
                         return $first ? $first->created_at->format('M d, Y') : null;
                     }),
                 TextColumn::make('most_recent_interaction_at')
                     ->label('Most Recent')
                     ->getStateUsing(function ($record) {
-                        $last = $record->interactions->sortByDesc('created_at')->first();
+                        $last = $record
+                            ->interactions()
+                            ->whereHasMorph(
+                                'interactable',
+                                Prospect::class,
+                            )
+                            ->sortByDesc('created_at')
+                            ->first();
 
                         return $last ? $last->created_at->format('M d, Y') : null;
                     }),
                 TextColumn::make('total_interactions')
                     ->label('Total')
                     ->getStateUsing(function ($record) {
-                        return $record->interactions->count();
+                        return $record
+                            ->interactions()
+                            ->whereHasMorph(
+                                'interactable',
+                                Prospect::class,
+                            )
+                            ->count();
                     }),
                 TextColumn::make('total_interactions_percent')
                     ->label('Total %')
                     ->getStateUsing(function ($record) {
                         $allInteractions = Interaction::whereHasMorph('interactable', Prospect::class)->count();
-                        $userInteractionsCount = $record->interactions->count();
+                        $userInteractionsCount = $record
+                            ->interactions()
+                            ->whereHasMorph(
+                                'interactable',
+                                Prospect::class,
+                            )
+                            ->count();
 
                         if ($allInteractions > 0) {
                             $percent = round(($userInteractionsCount / $allInteractions) * 100);
@@ -158,10 +187,16 @@ class ProspectInteractionUsersTable extends BaseWidget
                 TextColumn::make('avg_interaction_duration')
                     ->label('Avg. Duration')
                     ->getStateUsing(function ($record) {
-                        $durations = $record->interactions->map(function ($interaction) {
-                            return Carbon::parse($interaction->end_datetime)
-                                ->diffInMinutes(Carbon::parse($interaction->start_datetime), true);
-                        })->filter();
+                        $durations = $record
+                            ->interactions()
+                            ->whereHasMorph(
+                                'interactable',
+                                Prospect::class,
+                            )
+                            ->map(function ($interaction) {
+                                return Carbon::parse($interaction->end_datetime)
+                                    ->diffInMinutes(Carbon::parse($interaction->start_datetime), true);
+                            })->filter();
 
                         if ($durations->count() > 0) {
                             $avg = round($durations->avg());
