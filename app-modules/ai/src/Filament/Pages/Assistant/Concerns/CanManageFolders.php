@@ -101,6 +101,8 @@ trait CanManageFolders
                 $folder->application = static::APPLICATION;
                 $folder->user()->associate(auth()->user());
                 $folder->save();
+
+                $this->folders = $this->getFolders();
             })
             ->icon('heroicon-m-folder-plus')
             ->color('primary')

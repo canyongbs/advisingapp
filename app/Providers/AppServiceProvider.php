@@ -79,6 +79,9 @@ use Rector\Caching\CacheFactory;
 use function Sentry\configureScope;
 
 use Sentry\State\Scope;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -111,6 +114,20 @@ class AppServiceProvider extends ServiceProvider
                 return $app->make(CacheFactory::class);
             });
         });
+
+        $this->app->scoped(
+            HtmlSanitizerInterface::class,
+            fn (): HtmlSanitizer => new HtmlSanitizer(
+                (new HtmlSanitizerConfig())
+                    ->allowSafeElements()
+                    ->allowRelativeLinks()
+                    ->allowRelativeMedias()
+                    ->allowAttribute('class', allowedElements: '*')
+                    ->allowAttribute('style', allowedElements: '*')
+                    ->allowAttribute('wire:ignore.self', allowedElements: '*')
+                    ->withMaxInputLength(500000),
+            ),
+        );
 
         $this->loadMigrationsFrom(database_path('migrations/Legacy'));
     }

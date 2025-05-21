@@ -37,12 +37,18 @@
 namespace AdvisingApp\Ai\Filament\Pages;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Enums\Feature;
 use App\Models\User;
 use Filament\Pages\Page;
+use Illuminate\Support\Facades\Gate;
 
-class ResearchRequests extends Page
+class QnAAdvisors extends Page
 {
     protected static ?string $navigationGroup = 'Artificial Intelligence';
+
+    protected static ?string $title = 'QnA Advisors';
+
+    protected static ?string $slug = 'qna-advisors';
 
     protected static ?int $navigationSort = 30;
 
@@ -57,6 +63,10 @@ class ResearchRequests extends Page
             return false;
         }
 
-        return $user->can(['assistant.view-any', 'assistant.*.view']);
+        if (! Gate::check(Feature::QnAAdvisor->getGateName())) {
+            return false;
+        }
+
+        return $user->can(['qna_advisor.view-any', 'qna_advisor.*.view']);
     }
 }

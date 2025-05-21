@@ -73,6 +73,8 @@ trait CanManageThreads
     #[Locked]
     public ?AiThread $thread = null;
 
+    public ?string $selectedThreadId = null;
+
     public $assistantSwitcher = null;
 
     public $assistantSwitcherMobile = null;
@@ -193,6 +195,7 @@ trait CanManageThreads
         }
 
         $this->thread = app(CreateThread::class)(static::APPLICATION, $assistant);
+        $this->selectedThreadId = $this->thread->getKey();
     }
 
     public function getThreadsWithoutAFolder(): array
@@ -250,6 +253,7 @@ trait CanManageThreads
         }
 
         $this->thread = $thread;
+        $this->selectedThreadId = $this->thread->getKey();
 
         $service = $this->thread->assistant->model->getService();
 

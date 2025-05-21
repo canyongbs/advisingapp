@@ -34,14 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+namespace AdvisingApp\Research\Models;
 
-use App\Support\AbstractFeatureFlag;
+use AdvisingApp\Research\Database\Factories\ResearchRequestQuestionFactory;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class RefactorEngagementCampaignSubjectToJsonb extends AbstractFeatureFlag
+/**
+ * @mixin IdeHelperResearchRequestQuestion
+ */
+class ResearchRequestQuestion extends BaseModel
 {
-    public function resolve(mixed $scope): mixed
+    /** @use HasFactory<ResearchRequestQuestionFactory> */
+    use HasFactory;
+
+    protected $fillable = [
+        'content',
+        'response',
+        'research_request_id',
+    ];
+
+    /**
+     * @return BelongsTo<ResearchRequest, $this>
+     */
+    public function researchRequest(): BelongsTo
     {
-        return false;
+        return $this->belongsTo(ResearchRequest::class);
     }
 }
