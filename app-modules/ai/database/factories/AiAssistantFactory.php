@@ -55,7 +55,12 @@ class AiAssistantFactory extends Factory
         return [
             'name' => fake()->word(),
             'application' => AiAssistantApplication::PersonalAssistant,
-            'model' => fake()->randomElement(AiModel::cases()),
+            'model' => fake()->randomElement(
+                array_filter(
+                    AiModel::cases(),
+                    fn (AiModel $case) => $case !== AiModel::JinaDeepSearchV1
+                )
+            ),
         ];
     }
 }
