@@ -49,7 +49,6 @@ return new class () extends Migration {
             $table->string('educatable_id');
             $table->timestamp('succeeded_at')->nullable();
             $table->timestamp('last_failed_at')->nullable();
-            $table->nullableUuidMorphs('related');
 
             $table->timestamps();
 

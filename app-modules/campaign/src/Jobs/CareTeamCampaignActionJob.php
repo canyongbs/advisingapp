@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Campaign\Jobs;
 
+use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -55,24 +56,46 @@ class CareTeamCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
                 new Exception('The educatable model must implement the Educatable contract.')
             );
 
+            /** @var Educatable $educatable */
             $action = $this->actionEducatable->campaignAction;
 
             if ($action->data['remove_prior']) {
                 $educatable->careTeam()->detach();
             }
 
+            $addedOrUpdatedPivotModels = [];
+
             foreach ($action->data['careTeam'] as $careTeam) {
-                $educatable
+                $sync = $educatable
                     ->careTeam()
                     ->syncWithPivotValues(
                         ids: $careTeam['user_id'],
                         values: ['care_team_role_id' => $careTeam['care_team_role_id']],
                         detaching: false,
                     );
+
+                $addedOrUpdatedPivotModels[] = $sync['attached'];
+                $addedOrUpdatedPivotModels[] = $sync['updated'];
             }
 
-            // Because we are updating multiple pivots to add Users to the Educatable's care team,
-            // we do not relate any record to the actionEducatable.
+            collect($addedOrUpdatedPivotModels)
+                ->flatten()
+                ->unique()
+                ->each(function (string $addedOrUpdatedPivotModel) {
+                    $careTeam = CareTeam::query()
+                        ->where('user_id', $addedOrUpdatedPivotModel)
+                        ->where('educatable_type', $this->actionEducatable->educatable_type)
+                        ->where('educatable_id', $this->actionEducatable->educatable_id)
+                        ->first();
+
+                    $this->actionEducatable
+                        ->related()
+                        ->make()
+                        ->related()
+                        ->associate($careTeam)
+                        ->save();
+                });
+
             $this->actionEducatable->markSucceeded();
 
             DB::commit();

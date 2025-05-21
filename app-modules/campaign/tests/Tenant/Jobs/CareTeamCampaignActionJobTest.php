@@ -40,6 +40,8 @@ use AdvisingApp\Campaign\Jobs\CareTeamCampaignActionJob;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Models\CampaignActionEducatable;
+use AdvisingApp\Campaign\Models\CampaignActionEducatableRelated;
+use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Enums\SegmentType;
@@ -114,6 +116,20 @@ it('will execute appropriately on each educatable in the segment', function (Edu
 
     expect($campaignActionEducatable->succeeded_at)->not()->toBeNull()
         ->and($campaignActionEducatable->last_failed_at)->toBeNull();
+
+    expect($campaignActionEducatable->related)->toHaveCount($users->count());
+
+    $campaignActionEducatable->related
+        // @phpstan-ignore argument.type
+        ->each(function (CampaignActionEducatableRelated $related) use ($users) {
+            $relatedRelated = $related->related;
+
+            expect($relatedRelated)->toBeInstanceOf(CareTeam::class);
+
+            /** @var CareTeam $relatedRelated */
+            expect($relatedRelated->user->getKey())->toBeIn($users->pluck('id'))
+                ->and($relatedRelated->educatable->is($related->campaignActionEducatable->educatable))->toBeTrue();
+        });
 })
     ->with([
         'student' => [

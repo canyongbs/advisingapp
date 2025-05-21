@@ -26,6 +26,11 @@ class CampaignActionEducatableRelated extends Model
      */
     public function related(): MorphTo
     {
-        return $this->morphTo();
+        return $this->morphTo(
+            'related',
+            'related_type',
+            'related_id',
+            'id'
+        );
     }
 }
