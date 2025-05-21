@@ -44,7 +44,6 @@ use Illuminate\Support\Number;
 
 class StudentInteractionStats extends StatsOverviewReportWidget
 {
-
     public function getStats(): array
     {
         return [
