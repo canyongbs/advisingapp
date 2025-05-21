@@ -70,7 +70,6 @@ class TestAzureAvatarFetch extends Command
 
         try {
             $request = Http::withToken('test')
-                        // ->retry(3, 500)
                 ->get('https://graph.microsoft.com/v1.0/me/photo/$value')
                 ->throwIf(fn (Response $response) => $response->failed() && $response->status() !== 404);
 
