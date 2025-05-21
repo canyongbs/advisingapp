@@ -34,31 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Enums;
+use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Report\Filament\Widgets\ProspectInteractionLineChart;
 
-enum InteractionStatusColorOptions: string
-{
-    case Success = 'success';
+it('checks prospect interactions monthly line chart', function () {
+    $prospectCount = 5;
 
-    case Danger = 'danger';
+    Prospect::factory()->count($prospectCount)->has(Interaction::factory()->count(5)->state([
+        'created_at' => now()->subMonths(1),
+    ]), 'interactions')->create();
+    Prospect::factory()->count($prospectCount)->has(Interaction::factory()->count(5)->state([
+        'created_at' => now()->subMonths(6),
+    ]), 'interactions')->create();
 
-    case Warning = 'warning';
+    $widgetInstance = new ProspectInteractionLineChart();
+    $widgetInstance->cacheTag = 'report-prospect-interaction';
 
-    case Info = 'info';
-
-    case Primary = 'primary';
-
-    case Gray = 'gray';
-
-    public function getRgbString(): string
-    {
-        return match ($this) {
-            self::Success => 'rgb(22, 163, 74)',
-            self::Danger => 'rgb(220, 38, 38)',
-            self::Warning => 'rgb(202, 138, 4)',
-            self::Info => 'rgb(37, 99, 235)',
-            self::Primary => 'rgb(79, 70, 229)',
-            self::Gray => 'rgb(75, 85, 99)',
-        };
-    }
-}
+    expect($widgetInstance->getData())->toMatchSnapshot();
+});

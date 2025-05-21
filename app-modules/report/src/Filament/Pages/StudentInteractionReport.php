@@ -36,33 +36,35 @@
 
 namespace AdvisingApp\Report\Filament\Pages;
 
-use AdvisingApp\Report\Abstract\ProspectReport;
-use AdvisingApp\Report\Filament\Widgets\MostEngagedProspectsTable;
-use AdvisingApp\Report\Filament\Widgets\ProspectEngagementLineChart;
-use AdvisingApp\Report\Filament\Widgets\ProspectEngagementState;
+use AdvisingApp\Report\Abstract\StudentReport;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
+use AdvisingApp\Report\Filament\Widgets\StudentInteractionLineChart;
+use AdvisingApp\Report\Filament\Widgets\StudentInteractionStats;
+use AdvisingApp\Report\Filament\Widgets\StudentInteractionStatusPolarAreaChart;
+use AdvisingApp\Report\Filament\Widgets\StudentInteractionTypeDoughnutChart;
+use AdvisingApp\Report\Filament\Widgets\StudentInteractionUsersTable;
 use App\Filament\Clusters\ReportLibrary;
 
-class ProspectEnagagementReport extends ProspectReport
+class StudentInteractionReport extends StudentReport
 {
+    protected static ?string $title = 'Interactions';
+
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static ?string $navigationGroup = 'Prospects';
+    protected static string $routePath = 'student-interaction-report';
 
-    protected static ?string $title = 'Engagement';
+    protected static ?string $navigationGroup = 'Students';
 
-    protected static string $routePath = 'prospect-enagement-report';
+    protected string $cacheTag = 'report-student-interaction';
 
-    protected $cacheTag = 'report-prospect-engagement';
-
-    protected static ?int $navigationSort = 30;
+    protected static ?int $navigationSort = 3;
 
     public function getColumns(): int | string | array
     {
         return [
-            'sm' => 2,
-            'md' => 4,
-            'lg' => 4,
+            'sm' => 12,
+            'md' => 12,
+            'lg' => 12,
         ];
     }
 
@@ -70,9 +72,11 @@ class ProspectEnagagementReport extends ProspectReport
     {
         return [
             RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-            ProspectEngagementState::make(['cacheTag' => $this->cacheTag]),
-            ProspectEngagementLineChart::make(['cacheTag' => $this->cacheTag]),
-            MostEngagedProspectsTable::make(['cacheTag' => $this->cacheTag]),
+            StudentInteractionStats::make(['cacheTag' => $this->cacheTag]),
+            StudentInteractionLineChart::make(['cacheTag' => $this->cacheTag]),
+            StudentInteractionTypeDoughnutChart::make(['cacheTag' => $this->cacheTag]),
+            StudentInteractionStatusPolarAreaChart::make(['cacheTag' => $this->cacheTag]),
+            StudentInteractionUsersTable::make(['cacheTag' => $this->cacheTag]),
         ];
     }
 }

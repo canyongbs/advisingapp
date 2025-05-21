@@ -34,31 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Enums;
+use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\Interaction\Models\InteractionStatus;
+use AdvisingApp\Report\Filament\Widgets\StudentInteractionStatusPolarAreaChart;
+use AdvisingApp\StudentDataModel\Models\Student;
 
-enum InteractionStatusColorOptions: string
-{
-    case Success = 'success';
+it('checks student interaction status polar area chart', function () {
+    $interactionsCount = rand(1, 10);
 
-    case Danger = 'danger';
+    $interactionStatusFirst = InteractionStatus::factory()->create();
+    $interactionStatusSecond = InteractionStatus::factory()->create();
+    $interactionStatusThird = InteractionStatus::factory()->create();
 
-    case Warning = 'warning';
+    Student::factory()->has(Interaction::factory()->count($interactionsCount)->for($interactionStatusFirst, 'status'), 'interactions')->create();
+    Student::factory()->has(Interaction::factory()->count($interactionsCount)->for($interactionStatusSecond, 'status'), 'interactions')->create();
+    Student::factory()->has(Interaction::factory()->count($interactionsCount)->for($interactionStatusThird, 'status'), 'interactions')->create();
 
-    case Info = 'info';
+    $widgetInstance = new StudentInteractionStatusPolarAreaChart();
+    $widgetInstance->cacheTag = 'report-student-interaction';
 
-    case Primary = 'primary';
+    $stats = $widgetInstance->getData()['datasets'][0]['data'];
 
-    case Gray = 'gray';
-
-    public function getRgbString(): string
-    {
-        return match ($this) {
-            self::Success => 'rgb(22, 163, 74)',
-            self::Danger => 'rgb(220, 38, 38)',
-            self::Warning => 'rgb(202, 138, 4)',
-            self::Info => 'rgb(37, 99, 235)',
-            self::Primary => 'rgb(79, 70, 229)',
-            self::Gray => 'rgb(75, 85, 99)',
-        };
-    }
-}
+    expect($interactionsCount)->toEqual($stats[0])
+        ->and($interactionsCount)->toEqual($stats[1])
+        ->and($interactionsCount)->toEqual($stats[2]);
+});

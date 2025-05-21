@@ -34,31 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Enums;
+use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\Report\Filament\Widgets\StudentInteractionLineChart;
+use AdvisingApp\StudentDataModel\Models\Student;
 
-enum InteractionStatusColorOptions: string
-{
-    case Success = 'success';
+it('checks student interactions monthly line chart', function () {
+    $studentCount = 5;
 
-    case Danger = 'danger';
+    Student::factory()->count($studentCount)->has(Interaction::factory()->count(5)->state([
+        'created_at' => now()->subMonths(1),
+    ]), 'interactions')->create();
+    Student::factory()->count($studentCount)->has(Interaction::factory()->count(5)->state([
+        'created_at' => now()->subMonths(6),
+    ]), 'interactions')->create();
 
-    case Warning = 'warning';
+    $widgetInstance = new StudentInteractionLineChart();
+    $widgetInstance->cacheTag = 'report-student-interaction';
 
-    case Info = 'info';
-
-    case Primary = 'primary';
-
-    case Gray = 'gray';
-
-    public function getRgbString(): string
-    {
-        return match ($this) {
-            self::Success => 'rgb(22, 163, 74)',
-            self::Danger => 'rgb(220, 38, 38)',
-            self::Warning => 'rgb(202, 138, 4)',
-            self::Info => 'rgb(37, 99, 235)',
-            self::Primary => 'rgb(79, 70, 229)',
-            self::Gray => 'rgb(75, 85, 99)',
-        };
-    }
-}
+    expect($widgetInstance->getData())->toMatchSnapshot();
+});

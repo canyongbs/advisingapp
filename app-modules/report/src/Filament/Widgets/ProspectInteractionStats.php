@@ -34,31 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Enums;
+namespace AdvisingApp\Report\Filament\Widgets;
 
-enum InteractionStatusColorOptions: string
+use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\Prospect\Models\Prospect;
+use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Number;
+
+class ProspectInteractionStats extends StatsOverviewReportWidget
 {
-    case Success = 'success';
-
-    case Danger = 'danger';
-
-    case Warning = 'warning';
-
-    case Info = 'info';
-
-    case Primary = 'primary';
-
-    case Gray = 'gray';
-
-    public function getRgbString(): string
+    public function getStats(): array
     {
-        return match ($this) {
-            self::Success => 'rgb(22, 163, 74)',
-            self::Danger => 'rgb(220, 38, 38)',
-            self::Warning => 'rgb(202, 138, 4)',
-            self::Info => 'rgb(37, 99, 235)',
-            self::Primary => 'rgb(79, 70, 229)',
-            self::Gray => 'rgb(75, 85, 99)',
-        };
+        return [
+            Stat::make('Total Interactions', Number::abbreviate(
+                Cache::tags(["{{$this->cacheTag}}"])->remember('total-prospect-interactions-count', now()->addHours(24), function (): int {
+                    return Interaction::query()
+                        ->whereHasMorph('interactable', Prospect::class)
+                        ->count();
+                }),
+                maxPrecision: 2,
+            )),
+            Stat::make('Prospects with Interactions', Number::abbreviate(
+                Cache::tags(["{{$this->cacheTag}}"])->remember('prospects-with-interactions', now()->addHours(24), function (): int {
+                    return Prospect::query()
+                        ->whereHas('interactions')
+                        ->count();
+                }),
+                maxPrecision: 2,
+            )),
+        ];
     }
 }

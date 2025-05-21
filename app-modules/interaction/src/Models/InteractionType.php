@@ -41,6 +41,7 @@ use AdvisingApp\Interaction\Models\Concerns\HasManyInteractions;
 use AdvisingApp\Interaction\Observers\InteractionTypesObserver;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
@@ -58,4 +59,12 @@ class InteractionType extends BaseModel implements Auditable
         'name',
         'is_default',
     ];
+
+    /**
+    * @return HasMany<Interaction, $this>
+    */
+    public function interactions(): HasMany
+    {
+        return $this->hasMany(Interaction::class, 'interaction_type_id');
+    }
 }
