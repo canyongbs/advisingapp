@@ -41,6 +41,7 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Research\Actions\GenerateResearchQuestion;
 use AdvisingApp\Research\Jobs\Research;
 use AdvisingApp\Research\Models\ResearchRequest;
+use App\Enums\Feature;
 use App\Features\ResearchRequests;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -50,6 +51,7 @@ use Filament\Forms\Components\Wizard;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 
@@ -80,11 +82,15 @@ class NewResearchRequest extends Page
             return false;
         }
 
+        if (! Gate::check(Feature::ResearchAdvisor->getGateName())) {
+            return false;
+        }
+
         if (blank(app(AiIntegrationsSettings::class)->jina_deepsearch_ai_api_key)) {
             return false;
         }
 
-        return ResearchRequests::active();
+        return ResearchRequests::active() && $user->can(['research_advisor.view-any', 'research_advisor.*.view']);
     }
 
     public function mount(): void

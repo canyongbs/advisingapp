@@ -34,27 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace App\DataTransferObjects\LicenseManagement;
+use CanyonGBS\Common\Database\Migrations\Concerns\CanModifyPermissions;
+use Illuminate\Database\Migrations\Migration;
 
-use Spatie\LaravelData\Attributes\MapInputName;
-use Spatie\LaravelData\Data;
-use Spatie\LaravelData\Mappers\SnakeCaseMapper;
+return new class () extends Migration {
+    use CanModifyPermissions;
 
-#[MapInputName(SnakeCaseMapper::class)]
-class LicenseAddonsData extends Data
-{
-    public function __construct(
-        public bool $onlineForms = false,
-        public bool $onlineSurveys = false,
-        public bool $onlineAdmissions = false,
-        public bool $caseManagement = false,
-        public bool $resourceHub = false,
-        public bool $eventManagement = false,
-        public bool $realtimeChat = false,
-        public bool $mobileApps = false,
-        public bool $scheduleAndAppointments = false,
-        public bool $customAiAssistants = false,
-        public bool $researchAdvisor = false,
-        public bool $qnaAdvisor = false,
-    ) {}
-}
+    /** @var array<string, string> */
+    private array $permissions = [
+        'research_advisor.view-any' => 'Research Advisor',
+        'research_advisor.*.view' => 'Research Advisor',
+    ];
+
+    /** @var array<string> */
+    private array $guards = [
+        'web',
+        'api',
+    ];
+
+    public function up(): void
+    {
+        foreach ($this->guards as $guard) {
+            $this->createPermissions($this->permissions, $guard);
+        }
+    }
+
+    public function down(): void
+    {
+        foreach ($this->guards as $guard) {
+            $this->deletePermissions(array_keys($this->permissions), $guard);
+        }
+    }
+};

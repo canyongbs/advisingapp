@@ -61,6 +61,8 @@ enum Feature: string
 
     case CustomAiAssistants = 'custom-ai-assistants';
 
+    case ResearchAdvisor = 'research-advisor';
+
     case QnAAdvisor = 'qna-advisor';
 
     public function generateGate(): void
