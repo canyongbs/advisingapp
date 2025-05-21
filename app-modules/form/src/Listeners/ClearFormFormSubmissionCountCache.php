@@ -44,7 +44,7 @@ class ClearFormFormSubmissionCountCache implements ShouldQueue
 {
     public function handle(FormSubmissionCreated $event): void
     {
-        Cache::tags('{form-submission-count}')
+        Cache::tags('{{form-submission-count}}')
             ->forget(
                 "form-submission-count-{$event->submission->submissible->getKey()}"
             );
