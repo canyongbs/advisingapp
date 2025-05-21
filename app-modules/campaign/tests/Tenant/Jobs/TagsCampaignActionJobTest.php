@@ -40,6 +40,7 @@ use AdvisingApp\Campaign\Jobs\TagsCampaignActionJob;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Models\CampaignActionEducatable;
+use AdvisingApp\Campaign\Models\CampaignActionEducatableRelated;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Enums\SegmentType;
@@ -48,6 +49,7 @@ use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\TagType;
 use App\Models\Tag;
+use App\Models\Taggable;
 use App\Models\User;
 use Illuminate\Support\Facades\Bus;
 
@@ -126,6 +128,21 @@ it('will execute appropriately on each educatable in the segment', function (Edu
 
     expect($campaignActionEducatable->succeeded_at)->not()->toBeNull()
         ->and($campaignActionEducatable->last_failed_at)->toBeNull();
+
+    expect($campaignActionEducatable->related)->toHaveCount($tags->count());
+
+    $campaignActionEducatable->related
+        // @phpstan-ignore argument.type
+        ->each(function (CampaignActionEducatableRelated $related) use ($tags, $educatable) {
+            $relatedRelated = $related->related;
+
+            expect($relatedRelated)->toBeInstanceOf(Taggable::class);
+
+            /** @var Taggable $relatedRelated */
+            expect($relatedRelated->tag->getKey())->toBeIn($tags->pluck('id'))
+                ->and($relatedRelated->taggable_type)->toEqual($educatable->getMorphClass())
+                ->and($relatedRelated->taggable_id)->toEqual($educatable->getKey());
+        });
 })
     ->with([
         'student' => [
