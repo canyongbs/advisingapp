@@ -44,11 +44,6 @@ use Illuminate\Support\Number;
 
 class ProspectInteractionStats extends StatsOverviewReportWidget
 {
-    protected int | string | array $columnSpan = [
-        'sm' => 12,
-        'md' => 6,
-        'lg' => 6,
-    ];
 
     public function getStats(): array
     {
