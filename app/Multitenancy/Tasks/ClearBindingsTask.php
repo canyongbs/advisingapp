@@ -56,6 +56,10 @@ class ClearBindingsTask implements SwitchTenantTask
     {
         // Clear AI Service class bindings
         foreach (AiModel::cases() as $aiModel) {
+            if ($aiModel === AiModel::JinaDeepSearchV1) {
+                continue;
+            }
+
             app()->forgetInstance($aiModel->getServiceClass());
         }
     }

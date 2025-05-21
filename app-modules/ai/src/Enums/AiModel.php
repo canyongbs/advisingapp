@@ -49,6 +49,7 @@ use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptO1MiniService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptO3MiniService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptO4MiniService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptTestService;
+use Exception;
 use Filament\Support\Contracts\HasLabel;
 
 enum AiModel: string implements HasLabel
@@ -137,10 +138,9 @@ enum AiModel: string implements HasLabel
             self::OpenAiGpt41Mini => OpenAiGpt41MiniService::class,
             self::OpenAiGpt41Nano => OpenAiGpt41NanoService::class,
             self::OpenAiGptO4Mini => OpenAiGptO4MiniService::class,
-            // We don't have a service for this yet, but we can use the test service for now
-            self::JinaDeepSearchV1 => TestAiService::class,
             self::OpenAiGptTest => OpenAiGptTestService::class,
             self::Test => TestAiService::class,
+            default => throw new Exception('No Service class found for this model.'),
         };
     }
 
