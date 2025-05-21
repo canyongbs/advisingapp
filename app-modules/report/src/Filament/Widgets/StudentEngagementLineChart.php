@@ -66,7 +66,7 @@ class StudentEngagementLineChart extends LineChartReportWidget
 
     protected function getData(): array
     {
-        $runningTotalPerMonth = Cache::tags(["{{ {$this->cacheTag} }}"])->remember('student_engagements_line_chart', now()->addHours(24), function (): array {
+        $runningTotalPerMonth = Cache::tags(["{$this->cacheTag}"])->remember('student_engagements_line_chart', now()->addHours(24), function (): array {
             $totalEmailEngagementsPerMonth = Engagement::query()
                 ->whereHasMorph('recipient', Student::class)
                 ->toBase()

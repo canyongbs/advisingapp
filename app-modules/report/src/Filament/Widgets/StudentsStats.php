@@ -55,7 +55,7 @@ class StudentsStats extends StatsOverviewReportWidget
 
     protected function getStats(): array
     {
-        $studentsCount = Cache::tags(["{{ {$this->cacheTag} }}"])->remember('total-students-count', now()->addHours(24), function (): int {
+        $studentsCount = Cache::tags(["{$this->cacheTag}"])->remember('total-students-count', now()->addHours(24), function (): int {
             return Student::count();
         });
 
@@ -67,19 +67,19 @@ class StudentsStats extends StatsOverviewReportWidget
                     : Number::format($studentsCount, maxPrecision: 2)
             ),
             Stat::make('Total Alerts', Number::abbreviate(
-                Cache::tags(["{{ {$this->cacheTag} }}"])->remember('total-student-alerts-count', now()->addHours(24), function (): int {
+                Cache::tags(["{$this->cacheTag}"])->remember('total-student-alerts-count', now()->addHours(24), function (): int {
                     return Alert::where('concern_type', (new Student())->getMorphClass())->count();
                 }),
                 maxPrecision: 2,
             )),
             Stat::make('Total Segments', Number::abbreviate(
-                Cache::tags(["{{ {$this->cacheTag} }}"])->remember('total-student-segments-count', now()->addHours(24), function (): int {
+                Cache::tags(["{$this->cacheTag}"])->remember('total-student-segments-count', now()->addHours(24), function (): int {
                     return Segment::where('model', SegmentModel::Student)->count();
                 }),
                 maxPrecision: 2,
             )),
             Stat::make('Total Tasks', Number::abbreviate(
-                Cache::tags(["{{ {$this->cacheTag} }}"])->remember('total-student-tasks-count', now()->addHours(24), function (): int {
+                Cache::tags(["{$this->cacheTag}"])->remember('total-student-tasks-count', now()->addHours(24), function (): int {
                     return Task::where('concern_type', (new Student())->getMorphClass())->count();
                 }),
                 maxPrecision: 2,
