@@ -55,7 +55,7 @@ class RefreshWidget extends StatsOverviewReportWidget
         $timezone = app(DisplaySettings::class)->getTimezone();
 
         $this->lastRefreshTime = Carbon::parse(
-            Cache::tags(["{$this->cacheTag}"])->remember(
+            Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'updated-time',
                 now()->addHours(24),
                 fn () => now()
@@ -67,7 +67,7 @@ class RefreshWidget extends StatsOverviewReportWidget
 
     public function removeWidgetCache($cacheTag)
     {
-        Cache::tags(["{$cacheTag}"])->flush();
+        Cache::tags(["{{$cacheTag}}"])->flush();
 
         $this->dispatch('refresh-widgets');
 

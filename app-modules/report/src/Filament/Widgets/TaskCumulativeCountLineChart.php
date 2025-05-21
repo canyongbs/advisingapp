@@ -66,7 +66,7 @@ class TaskCumulativeCountLineChart extends LineChartReportWidget
 
     protected function getData(): array
     {
-        $runningTotalPerMonth = Cache::tags(["{$this->cacheTag}"])->remember('task_cumulative_count_line_chart', now()->addHours(24), function (): array {
+        $runningTotalPerMonth = Cache::tags(["{{$this->cacheTag}}"])->remember('task_cumulative_count_line_chart', now()->addHours(24), function (): array {
             $totalStudentTasksPerMonth = Task::query()
                 ->whereHasMorph('concern', Student::class)
                 ->toBase()

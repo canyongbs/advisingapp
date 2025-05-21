@@ -88,7 +88,7 @@ class PromptsByCategoryDoughnutChart extends ChartReportWidget
 
     protected function getData(): array
     {
-        $promptsByCategory = Cache::tags(["{$this->cacheTag}"])->remember('prompt_by_category_chart', now()->addHours(24), function (): Collection {
+        $promptsByCategory = Cache::tags(["{{$this->cacheTag}}"])->remember('prompt_by_category_chart', now()->addHours(24), function (): Collection {
             $promptsByCategoryData = PromptType::withCount(['prompts'])->get(['id', 'title']);
 
             $promptsByCategoryData = $promptsByCategoryData->map(function (PromptType $promptType) {
