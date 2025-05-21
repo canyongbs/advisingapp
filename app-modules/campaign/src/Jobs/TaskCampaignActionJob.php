@@ -75,7 +75,13 @@ class TaskCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
             $task->save();
 
             $this->actionEducatable->succeeded_at = now();
-            $this->actionEducatable->related()->associate($task);
+            $this->actionEducatable
+                ->related()
+                ->make()
+                ->related()
+                ->associate($task)
+                ->save();
+
             $this->actionEducatable->save();
 
             DB::commit();

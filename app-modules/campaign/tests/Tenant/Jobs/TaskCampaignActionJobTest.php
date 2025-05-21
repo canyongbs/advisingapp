@@ -40,6 +40,7 @@ use AdvisingApp\Campaign\Jobs\TaskCampaignActionJob;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Models\CampaignActionEducatable;
+use AdvisingApp\Campaign\Models\CampaignActionEducatableRelated;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Enums\SegmentType;
@@ -109,7 +110,12 @@ it('will execute appropriately on each educatable in the segment', function (Edu
 
     expect($campaignActionEducatable->succeeded_at)->not()->toBeNull()
         ->and($campaignActionEducatable->last_failed_at)->toBeNull()
-        ->and($campaignActionEducatable->related->is($tasks->first()))->toBeTrue();
+        ->and($campaignActionEducatable->related)->toHaveCount(1);
+
+    /** @var CampaignActionEducatableRelated $campaignActionEducatableRelated */
+    $campaignActionEducatableRelated = $campaignActionEducatable->related->first();
+
+    expect($campaignActionEducatableRelated->related->is($tasks->first()))->toBeTrue();
 })
     ->with([
         'student' => [
