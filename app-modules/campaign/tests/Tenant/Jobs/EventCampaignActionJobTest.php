@@ -40,6 +40,7 @@ use AdvisingApp\Campaign\Jobs\EventCampaignActionJob;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Models\CampaignActionEducatable;
+use AdvisingApp\Campaign\Models\CampaignActionEducatableRelated;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
@@ -122,7 +123,12 @@ it('will execute appropriately on each educatable in the segment', function (Edu
 
     expect($campaignActionEducatable->succeeded_at)->not()->toBeNull()
         ->and($campaignActionEducatable->last_failed_at)->toBeNull()
-        ->and($campaignActionEducatable->related)->toEqual($attendee);
+        ->and($campaignActionEducatable->related)->toHaveCount(1);
+
+    /** @var CampaignActionEducatableRelated $campaignActionEducatableRelated */
+    $campaignActionEducatableRelated = $campaignActionEducatable->related->first();
+
+    expect($campaignActionEducatableRelated->related->is($attendee))->toBeTrue();
 })
     ->with([
         'student' => [
@@ -205,7 +211,7 @@ it('will not duplicate an invite if the segment educatable was already invited',
 
     expect($campaignActionEducatable->succeeded_at)->not()->toBeNull()
         ->and($campaignActionEducatable->last_failed_at)->toBeNull()
-        ->and($campaignActionEducatable->related)->toBeNull();
+        ->and($campaignActionEducatable->related()->count())->toEqual(0);
 })
     ->with([
         'student' => [

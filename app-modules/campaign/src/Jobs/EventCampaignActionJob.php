@@ -101,7 +101,13 @@ class EventCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
             $attendee->notify(new RegistrationLinkToEventAttendeeNotification($event, $user));
 
             $this->actionEducatable->succeeded_at = now();
-            $this->actionEducatable->related()->associate($attendee);
+            $this->actionEducatable
+                ->related()
+                ->make()
+                ->related()
+                ->associate($attendee)
+                ->save();
+
             $this->actionEducatable->save();
 
             DB::commit();
