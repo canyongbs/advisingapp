@@ -69,7 +69,7 @@ class StudentInteractionTypeDoughnutChart extends ChartReportWidget
 
     public function getData(): array
     {
-        $interactionsByType = Cache::tags([$this->cacheTag])->remember('student_interactions_by_type', now()->addHours(24), function (): Collection {
+        $interactionsByType = Cache::tags(["{{$this->cacheTag}}"])->remember('student_interactions_by_type', now()->addHours(24), function (): Collection {
             $interactionsByTypeData = InteractionType::withCount([
                 'interactions' => function ($query) {
                     $query->whereHasMorph(

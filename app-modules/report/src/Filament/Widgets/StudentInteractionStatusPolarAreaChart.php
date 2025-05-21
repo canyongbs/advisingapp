@@ -69,7 +69,7 @@ class StudentInteractionStatusPolarAreaChart extends ChartReportWidget
 
     public function getData(): array
     {
-        $interactionsByStatus = Cache::tags([$this->cacheTag])->remember('student_interactions_by_status', now()->addHours(24), function (): Collection {
+        $interactionsByStatus = Cache::tags(["{{$this->cacheTag}}"])->remember('student_interactions_by_status', now()->addHours(24), function (): Collection {
             $interactionsByStatusData = InteractionStatus::withCount([
                 'interactions' => function ($query) {
                     $query->whereHasMorph(

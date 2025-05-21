@@ -48,7 +48,7 @@ class StudentInteractionStats extends StatsOverviewReportWidget
     {
         return [
             Stat::make('Total Interactions', Number::abbreviate(
-                Cache::tags([$this->cacheTag])->remember('total-student-interactions-count', now()->addHours(24), function (): int {
+                Cache::tags(["{{$this->cacheTag}}"])->remember('total-student-interactions-count', now()->addHours(24), function (): int {
                     return Interaction::query()
                         ->whereHasMorph('interactable', Student::class)
                         ->count();
@@ -56,11 +56,10 @@ class StudentInteractionStats extends StatsOverviewReportWidget
                 maxPrecision: 2,
             )),
             Stat::make('Students with Interactions', Number::abbreviate(
-                Cache::tags([$this->cacheTag])->remember('students-with-interactions', now()->addHours(24), function (): int {
-                    return Interaction::query()
-                        ->whereHasMorph('interactable', Student::class)
-                        ->distinct('interactable_id')
-                        ->count('interactable_id');
+                Cache::tags(["{{$this->cacheTag}}"])->remember('students-with-interactions', now()->addHours(24), function (): int {
+                    return Student::query()
+                        ->whereHas('interactions')
+                        ->count();
                 }),
                 maxPrecision: 2,
             )),
