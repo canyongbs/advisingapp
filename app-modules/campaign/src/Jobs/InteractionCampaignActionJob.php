@@ -75,7 +75,13 @@ class InteractionCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
             ]);
 
             $this->actionEducatable->succeeded_at = now();
-            $this->actionEducatable->related()->associate($interaction);
+            $this->actionEducatable
+                ->related()
+                ->make()
+                ->related()
+                ->associate($interaction)
+                ->save();
+
             $this->actionEducatable->save();
 
             DB::commit();

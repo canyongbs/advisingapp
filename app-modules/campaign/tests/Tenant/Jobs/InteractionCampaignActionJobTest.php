@@ -40,6 +40,7 @@ use AdvisingApp\Campaign\Jobs\InteractionCampaignActionJob;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Models\CampaignActionEducatable;
+use AdvisingApp\Campaign\Models\CampaignActionEducatableRelated;
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
@@ -124,7 +125,12 @@ it('will execute appropriately on each educatable in the segment', function (Edu
 
     expect($campaignActionEducatable->succeeded_at)->not()->toBeNull()
         ->and($campaignActionEducatable->last_failed_at)->toBeNull()
-        ->and($campaignActionEducatable->related->is($interactions->first()))->toBeTrue();
+        ->and($campaignActionEducatable->related)->toHaveCount(1);
+
+    /** @var CampaignActionEducatableRelated $campaignActionEducatableRelated */
+    $campaignActionEducatableRelated = $campaignActionEducatable->related->first();
+
+    expect($campaignActionEducatableRelated->related->is($interactions->first()))->toBeTrue();
 })
     ->with([
         'student' => [
