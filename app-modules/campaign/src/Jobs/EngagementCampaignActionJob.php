@@ -110,8 +110,16 @@ class EngagementCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
                     notifyNow: true,
                 );
 
+            $engagement->refresh();
+
             $this->actionEducatable->succeeded_at = now();
-            $this->actionEducatable->related()->associate($engagement);
+            $this->actionEducatable
+                ->related()
+                ->make()
+                ->related()
+                ->associate($engagement)
+                ->save();
+
             $this->actionEducatable->save();
 
             DB::commit();
