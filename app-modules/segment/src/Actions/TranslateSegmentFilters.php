@@ -45,7 +45,10 @@ use function Livewire\trigger;
 
 class TranslateSegmentFilters
 {
-    public function handle(Segment | string $segment): Builder
+    /**
+     * @return Builder<Model>
+     */
+    public function execute(Segment | string $segment): Builder
     {
         // Create a fake Livewire component to replicate the table on the EditSegment page.
         $page = app('livewire')->new(GetSegmentQuery::class);

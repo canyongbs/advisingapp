@@ -69,7 +69,7 @@ class ProspectPipelineKanban extends Component implements HasForms, HasActions
     {
         $currentPipeline = $this->pipeline;
 
-        $pipelineEducatables = app(TranslateSegmentFilters::class)->handle($currentPipeline->segment)
+        $pipelineEducatables = app(TranslateSegmentFilters::class)->execute($currentPipeline->segment)
             ->with(['educatablePipelineStages' => fn (MorphToMany $query) => $query->where('pipelines.id', $currentPipeline->getKey())])
             ->get()
             ->groupBy(fn (Prospect $prospect) => $prospect->educatablePipelineStages->first()?->pivot->pipeline_stage_id);
