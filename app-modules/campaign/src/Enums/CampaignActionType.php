@@ -47,6 +47,17 @@ use AdvisingApp\Campaign\Filament\Blocks\ProactiveAlertBlock;
 use AdvisingApp\Campaign\Filament\Blocks\SubscriptionBlock;
 use AdvisingApp\Campaign\Filament\Blocks\TagsBlock;
 use AdvisingApp\Campaign\Filament\Blocks\TaskBlock;
+use AdvisingApp\Campaign\Jobs\CareTeamCampaignActionJob;
+use AdvisingApp\Campaign\Jobs\CaseCampaignActionJob;
+use AdvisingApp\Campaign\Jobs\EngagementCampaignActionJob;
+use AdvisingApp\Campaign\Jobs\EventCampaignActionJob;
+use AdvisingApp\Campaign\Jobs\ExecuteCampaignActionOnEducatableJob;
+use AdvisingApp\Campaign\Jobs\InteractionCampaignActionJob;
+use AdvisingApp\Campaign\Jobs\ProactiveAlertCampaignActionJob;
+use AdvisingApp\Campaign\Jobs\SubscriptionCampaignActionJob;
+use AdvisingApp\Campaign\Jobs\TagsCampaignActionJob;
+use AdvisingApp\Campaign\Jobs\TaskCampaignActionJob;
+use AdvisingApp\Campaign\Models\CampaignActionEducatable;
 use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Engagement\Models\EngagementBatch;
@@ -163,6 +174,21 @@ enum CampaignActionType: string implements HasLabel
             CampaignActionType::Subscription => 'filament.forms.components.campaigns.actions.subscription',
             CampaignActionType::Event => 'filament.forms.components.campaigns.actions.event',
             CampaignActionType::Tags => 'filament.forms.components.campaigns.actions.tags',
+        };
+    }
+
+    public function getActionExecutionJob(CampaignActionEducatable $campaignActionEducatable): ExecuteCampaignActionOnEducatableJob
+    {
+        return match ($this) {
+            CampaignActionType::BulkEngagementEmail, CampaignActionType::BulkEngagementSms => new EngagementCampaignActionJob($campaignActionEducatable),
+            CampaignActionType::Event => new EventCampaignActionJob($campaignActionEducatable),
+            CampaignActionType::Case => new CaseCampaignActionJob($campaignActionEducatable),
+            CampaignActionType::ProactiveAlert => new ProactiveAlertCampaignActionJob($campaignActionEducatable),
+            CampaignActionType::Interaction => new InteractionCampaignActionJob($campaignActionEducatable),
+            CampaignActionType::CareTeam => new CareTeamCampaignActionJob($campaignActionEducatable),
+            CampaignActionType::Task => new TaskCampaignActionJob($campaignActionEducatable),
+            CampaignActionType::Subscription => new SubscriptionCampaignActionJob($campaignActionEducatable),
+            CampaignActionType::Tags => new TagsCampaignActionJob($campaignActionEducatable),
         };
     }
 }

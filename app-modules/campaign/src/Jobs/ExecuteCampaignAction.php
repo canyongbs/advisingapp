@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Campaign\Jobs;
 
-use AdvisingApp\Campaign\Enums\CampaignActionType;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Models\CampaignActionEducatable;
 use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
@@ -120,19 +119,14 @@ class ExecuteCampaignAction implements ShouldQueue, ShouldBeUnique
                     $campaignActionEducatable->save();
                 }
 
-                $job = match ($this->action->type) {
-                    CampaignActionType::BulkEngagementEmail, CampaignActionType::BulkEngagementSms => new EngagementCampaignActionJob($campaignActionEducatable),
-                    CampaignActionType::Event => new EventCampaignActionJob($campaignActionEducatable),
-                    CampaignActionType::Case => new CaseCampaignActionJob($campaignActionEducatable),
-                    CampaignActionType::ProactiveAlert => new ProactiveAlertCampaignActionJob($campaignActionEducatable),
-                    CampaignActionType::Interaction => new InteractionCampaignActionJob($campaignActionEducatable),
-                    CampaignActionType::CareTeam => new CareTeamCampaignActionJob($campaignActionEducatable),
-                    CampaignActionType::Task => new TaskCampaignActionJob($campaignActionEducatable),
-                    CampaignActionType::Subscription => new SubscriptionCampaignActionJob($campaignActionEducatable),
-                    CampaignActionType::Tags => new TagsCampaignActionJob($campaignActionEducatable),
-                };
-
-                $this->batch()->add($job);
+                $this
+                    ->batch()
+                    ->add(
+                        $this
+                            ->action
+                            ->type
+                            ->getActionExecutionJob($campaignActionEducatable)
+                    );
             });
     }
 }
