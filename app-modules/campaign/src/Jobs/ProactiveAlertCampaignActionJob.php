@@ -68,7 +68,13 @@ class ProactiveAlertCampaignActionJob extends ExecuteCampaignActionOnEducatableJ
             ]);
 
             $this->actionEducatable->succeeded_at = now();
-            $this->actionEducatable->related()->associate($alert);
+            $this->actionEducatable
+                ->related()
+                ->make()
+                ->related()
+                ->associate($alert)
+                ->save();
+
             $this->actionEducatable->save();
 
             DB::commit();
