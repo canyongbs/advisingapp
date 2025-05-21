@@ -34,33 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace App\Multitenancy\Tasks;
+use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use AdvisingApp\Ai\Enums\AiModel;
-use Spatie\Multitenancy\Contracts\IsTenant;
-use Spatie\Multitenancy\Tasks\SwitchTenantTask;
-
-class ClearBindingsTask implements SwitchTenantTask
-{
-    public function makeCurrent(IsTenant $tenant): void
+return new class () extends SettingsMigration {
+    public function up(): void
     {
-        $this->clearBindings();
-    }
+        try {
+            $this->migrator->add('ai.jina_deepsearch_v1_model_name');
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
 
-    public function forgetCurrent(): void
-    {
-        $this->clearBindings();
-    }
+        try {
+            $this->migrator->add('ai.jina_deepsearch_v1_applicable_features', []);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
 
-    public function clearBindings(): void
-    {
-        // Clear AI Service class bindings
-        foreach (AiModel::cases() as $aiModel) {
-            if ($aiModel === AiModel::JinaDeepSearchV1) {
-                continue;
-            }
-
-            app()->forgetInstance($aiModel->getServiceClass());
+        try {
+            $this->migrator->rename('ai.jina_deepsearch_ai_api_key', 'ai.jina_deepsearch_v1_api_key');
+        } catch (SettingAlreadyExists $exception) {
+            $this->migrator->deleteIfExists('ai.jina_deepsearch_ai_api_key');
         }
     }
-}
+
+    public function down(): void
+    {
+        $this->migrator->deleteIfExists('ai.jina_deepsearch_v1_model_name');
+
+        $this->migrator->deleteIfExists('ai.jina_deepsearch_v1_applicable_features');
+
+        $this->migrator->rename('ai.jina_deepsearch_v1_api_key', 'ai.jina_deepsearch_ai_api_key');
+    }
+};

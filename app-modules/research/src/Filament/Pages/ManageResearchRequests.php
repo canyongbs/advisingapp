@@ -85,7 +85,7 @@ class ManageResearchRequests extends Page
             return false;
         }
 
-        if (blank(app(AiIntegrationsSettings::class)->jina_deepsearch_ai_api_key)) {
+        if (blank(app(AiIntegrationsSettings::class)->jina_deepsearch_v1_api_key)) {
             return false;
         }
 

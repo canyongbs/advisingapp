@@ -49,6 +49,7 @@ use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptO1MiniService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptO3MiniService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptO4MiniService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptTestService;
+use Exception;
 use Filament\Support\Contracts\HasLabel;
 
 enum AiModel: string implements HasLabel
@@ -73,6 +74,8 @@ enum AiModel: string implements HasLabel
 
     case OpenAiGptTest = 'openai_gpt_test';
 
+    case JinaDeepSearchV1 = 'jina_deepsearch_v1';
+
     case Test = 'test';
 
     public function getLabel(): ?string
@@ -89,6 +92,7 @@ enum AiModel: string implements HasLabel
             self::OpenAiGpt41Mini => $aiIntegrationSettings->open_ai_gpt_41_mini_model_name ?? 'Canyon 4.1 mini',
             self::OpenAiGpt41Nano => $aiIntegrationSettings->open_ai_gpt_41_nano_model_name ?? 'Canyon 4.1 nano',
             self::OpenAiGptO4Mini => $aiIntegrationSettings->open_ai_gpt_o4_mini_model_name ?? 'Canyon o4 mini',
+            self::JinaDeepSearchV1 => $aiIntegrationSettings->jina_deepsearch_v1_model_name ?? 'Canyon Deep Search',
             self::OpenAiGptTest => 'Canyon Test',
             self::Test => 'Test',
         };
@@ -111,6 +115,7 @@ enum AiModel: string implements HasLabel
             self::OpenAiGpt41Mini => $aiIntegrationSettings->open_ai_gpt_41_mini_applicable_features,
             self::OpenAiGpt41Nano => $aiIntegrationSettings->open_ai_gpt_41_nano_applicable_features,
             self::OpenAiGptO4Mini => $aiIntegrationSettings->open_ai_gpt_o4_mini_applicable_features,
+            self::JinaDeepSearchV1 => $aiIntegrationSettings->jina_deepsearch_v1_applicable_features,
             self::OpenAiGptTest => app()->hasDebugModeEnabled() ? AiModelApplicabilityFeature::cases() : [],
             self::Test => app()->hasDebugModeEnabled() ? AiModelApplicabilityFeature::cases() : [],
         };
@@ -135,6 +140,7 @@ enum AiModel: string implements HasLabel
             self::OpenAiGptO4Mini => OpenAiGptO4MiniService::class,
             self::OpenAiGptTest => OpenAiGptTestService::class,
             self::Test => TestAiService::class,
+            default => throw new Exception('No Service class found for this model.'),
         };
     }
 

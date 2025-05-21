@@ -41,7 +41,9 @@ use Spatie\LaravelSettings\Settings;
 
 class AiResearchAssistantSettings extends Settings
 {
-    public ?AiModel $ai_model = null;
+    public ?AiModel $discovery_model = null;
+
+    public ?AiModel $research_model = null;
 
     public ?string $context = null;
 

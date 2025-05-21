@@ -157,7 +157,14 @@ class AiIntegrationsSettings extends Settings
      */
     public array $open_ai_gpt_o4_mini_applicable_features = [];
 
-    public ?string $jina_deepsearch_ai_api_key = null;
+    public ?string $jina_deepsearch_v1_model_name = null;
+
+    public ?string $jina_deepsearch_v1_api_key = null;
+
+    /**
+     * @var array<string>
+     */
+    public array $jina_deepsearch_v1_applicable_features = [];
 
     public static function group(): string
     {
@@ -194,7 +201,7 @@ class AiIntegrationsSettings extends Settings
             'open_ai_gpt_o4_mini_base_uri',
             'open_ai_gpt_o4_mini_api_key',
             'open_ai_gpt_o4_mini_model',
-            'jina_deepsearch_ai_api_key',
+            'jina_deepsearch_v1_api_key',
         ];
     }
 }

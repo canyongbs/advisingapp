@@ -34,33 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace App\Multitenancy\Tasks;
+use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use AdvisingApp\Ai\Enums\AiModel;
-use Spatie\Multitenancy\Contracts\IsTenant;
-use Spatie\Multitenancy\Tasks\SwitchTenantTask;
-
-class ClearBindingsTask implements SwitchTenantTask
-{
-    public function makeCurrent(IsTenant $tenant): void
+return new class () extends SettingsMigration {
+    public function up(): void
     {
-        $this->clearBindings();
-    }
+        try {
+            $this->migrator->rename('ai_research_assistant.ai_model', 'ai_research_assistant.discovery_model');
+        } catch (SettingAlreadyExists $exception) {
+            $this->migrator->deleteIfExists('ai_research_assistant.ai_model');
+        }
 
-    public function forgetCurrent(): void
-    {
-        $this->clearBindings();
-    }
-
-    public function clearBindings(): void
-    {
-        // Clear AI Service class bindings
-        foreach (AiModel::cases() as $aiModel) {
-            if ($aiModel === AiModel::JinaDeepSearchV1) {
-                continue;
-            }
-
-            app()->forgetInstance($aiModel->getServiceClass());
+        try {
+            $this->migrator->add('ai_research_assistant.research_model');
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
         }
     }
-}
+
+    public function down(): void
+    {
+        $this->migrator->rename('ai_research_assistant.discovery_model', 'ai_research_assistant.ai_model');
+
+        $this->migrator->deleteIfExists('ai_research_assistant.research_model');
+    }
+};
