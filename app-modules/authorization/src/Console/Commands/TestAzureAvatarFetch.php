@@ -26,7 +26,7 @@ class TestAzureAvatarFetch extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): int
     {
         Http::fake([
             'graph.microsoft.com/v1.0/me/photo/$value' => Http::response('', 404),
@@ -53,5 +53,7 @@ class TestAzureAvatarFetch extends Command
         if (! $exceptionThrown) {
             $this->info('Test passed. No exception was thrown for 404.');
         }
+
+        return 0;
     }
 }
