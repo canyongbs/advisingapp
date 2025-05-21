@@ -34,24 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Console\Commands;
+use App\Features\CampaignActionTimestampColumnChanges;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Campaign\Actions\ExecuteCampaignActions as ExecuteCampaignActionsJob;
-use Illuminate\Console\Command;
-use Spatie\Multitenancy\Commands\Concerns\TenantAware;
-
-class ExecuteCampaignActions extends Command
-{
-    use TenantAware;
-
-    protected $signature = 'campaign-actions:execute {--tenant=*}';
-
-    protected $description = 'Execute campaign actions that are scheduled to be executed.';
-
-    public function handle(): int
+return new class () extends Migration {
+    public function up(): void
     {
-        dispatch(new ExecuteCampaignActionsJob());
+        DB::transaction(function () {
+            Schema::table('campaign_actions', function (Blueprint $table) {
+                $table->renameColumn('last_execution_attempt_at', 'execution_dispatched_at');
 
-        return static::SUCCESS;
+                $table->renameColumn('successfully_executed_at', 'execution_finished_at');
+
+                $table->dropColumn('last_execution_attempt_error');
+            });
+
+            CampaignActionTimestampColumnChanges::activate();
+        });
     }
-}
+
+    public function down(): void
+    {
+        DB::transaction(function () {
+            Schema::table('campaign_actions', function (Blueprint $table) {
+                $table->renameColumn('execution_dispatched_at', 'last_execution_attempt_at');
+
+                $table->renameColumn('execution_finished_at', 'successfully_executed_at');
+
+                $table->string('last_execution_attempt_error')->nullable();
+            });
+
+            CampaignActionTimestampColumnChanges::deactivate();
+        });
+    }
+};

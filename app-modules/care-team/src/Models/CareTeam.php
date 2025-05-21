@@ -36,29 +36,27 @@
 
 namespace AdvisingApp\CareTeam\Models;
 
-use AdvisingApp\Campaign\Models\CampaignAction;
-use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
 use AdvisingApp\CareTeam\Observers\CareTeamObserver;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use App\Enums\CareTeamRoleType;
 use App\Models\User;
-use Exception;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Support\Facades\DB;
 
 /**
  * @property string $care_team_role_id
+ * @property Educatable $educatable
  *
  * @mixin IdeHelperCareTeam
  */
 #[ObservedBy([CareTeamObserver::class])]
-class CareTeam extends MorphPivot implements ExecutableFromACampaignAction, CanTriggerAutoSubscription
+class CareTeam extends MorphPivot implements CanTriggerAutoSubscription
 {
     use HasUuids;
 
@@ -90,7 +88,7 @@ class CareTeam extends MorphPivot implements ExecutableFromACampaignAction, CanT
         return $this->careTeamRole()->where('type', CareTeamRoleType::Student);
     }
 
-    /** @return MorphTo<Educatable> */
+    /** @return MorphTo<Model, $this> */
     public function educatable(): MorphTo
     {
         return $this->morphTo();
@@ -102,43 +100,6 @@ class CareTeam extends MorphPivot implements ExecutableFromACampaignAction, CanT
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    public static function executeFromCampaignAction(CampaignAction $action): bool|string
-    {
-        try {
-            DB::beginTransaction();
-
-            $action
-                ->campaign
-                ->segment
-                ->retrieveRecords()
-                ->each(function (Educatable $educatable) use ($action) {
-                    if ($action->data['remove_prior']) {
-                        $educatable->careTeam()->detach();
-                    }
-
-                    foreach ($action->data['careTeam'] as $careTeam) {
-                        $educatable
-                            ->careTeam()
-                            ->syncWithPivotValues(
-                                ids: $careTeam['user_id'],
-                                values: ['care_team_role_id' => $careTeam['care_team_role_id']],
-                                detaching: false,
-                            );
-                    }
-                });
-
-            DB::commit();
-
-            return true;
-        } catch (Exception $e) {
-            DB::rollBack();
-
-            return $e->getMessage();
-        }
-
-        // Do we need to be able to relate campaigns/actions to the RESULT of their actions?
     }
 
     public function getSubscribable(): ?Subscribable

@@ -41,6 +41,7 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Exception;
 use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\HtmlString;
@@ -66,6 +67,7 @@ class AlertCreatedNotification extends Notification
         [$target, $targetRoute] = match ($concern::class) {
             Prospect::class => [ProspectResource::class, 'alerts'],
             Student::class => [StudentResource::class, 'view'],
+            default => throw new Exception('Unsupported concern type'),
         };
 
         $alertUrl = $target::getUrl($targetRoute, ['record' => $concern]);

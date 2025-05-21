@@ -36,10 +36,11 @@
 
 namespace AdvisingApp\Interaction\Database\Factories;
 
+use AdvisingApp\Interaction\Models\InteractionRelation;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Interaction\Models\InteractionRelation>
+ * @extends Factory<InteractionRelation>
  */
 class InteractionRelationFactory extends Factory
 {

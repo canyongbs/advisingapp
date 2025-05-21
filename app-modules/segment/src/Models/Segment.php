@@ -37,7 +37,6 @@
 namespace AdvisingApp\Segment\Models;
 
 use AdvisingApp\Campaign\Models\Campaign;
-use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Enums\SegmentType;
 use AdvisingApp\Segment\Observers\SegmentObserver;
@@ -49,7 +48,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Collection;
 
 /**
  * @mixin IdeHelperSegment
@@ -101,28 +99,6 @@ class Segment extends BaseModel
     public function scopeModel(Builder $query, SegmentModel $model): void
     {
         $query->where('model', $model);
-    }
-
-    public function retrieveRecords(): Collection
-    {
-        if (count($this->subjects) > 0) {
-            return $this->subjects->map(function (SegmentSubject $subject) {
-                return $subject->subject;
-            });
-        }
-
-        /** @var Builder $modelQueryBuilder */
-        $modelQueryBuilder = $this->model->query();
-
-        $class = $this->model->class();
-
-        return $modelQueryBuilder
-            ->whereKey(
-                resolve(TranslateSegmentFilters::class)
-                    ->handle($this)
-                    ->pluck(resolve($class)->getKeyName()),
-            )
-            ->get();
     }
 
     protected static function booted(): void

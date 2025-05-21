@@ -36,17 +36,12 @@
 
 namespace AdvisingApp\Notification\Models;
 
-use AdvisingApp\Campaign\Models\CampaignAction;
-use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
-use AdvisingApp\Notification\Actions\SubscriptionCreate;
 use AdvisingApp\Notification\Database\Factories\SubscriptionFactory;
-use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Notification\Observers\SubscriptionObserver;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
 use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 use App\Models\User;
 use DateTimeInterface;
-use Exception;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
@@ -55,13 +50,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Support\Facades\DB;
 
 /**
  * @mixin IdeHelperSubscription
  */
 #[ObservedBy([SubscriptionObserver::class])]
-class Subscription extends MorphPivot implements ExecutableFromACampaignAction
+class Subscription extends MorphPivot
 {
     use BelongsToEducatable;
 
@@ -94,39 +88,6 @@ class Subscription extends MorphPivot implements ExecutableFromACampaignAction
     public function subscribable(): MorphTo
     {
         return $this->morphTo();
-    }
-
-    public static function executeFromCampaignAction(CampaignAction $action): bool|string
-    {
-        try {
-            DB::beginTransaction();
-
-            $action
-                ->campaign
-                ->segment
-                ->retrieveRecords()
-                ->each(function (Subscribable $subscribable) use ($action) {
-                    if ($action->data['remove_prior']) {
-                        $subscribable->subscriptions()->delete();
-                    }
-
-                    collect($action->data['user_ids'])
-                        ->each(
-                            fn ($userId) => resolve(SubscriptionCreate::class)
-                                ->handle(User::find($userId), $subscribable, false)
-                        );
-                });
-
-            DB::commit();
-
-            return true;
-        } catch (Exception $e) {
-            DB::rollBack();
-
-            return $e->getMessage();
-        }
-
-        // Do we need to be able to relate campaigns/actions to the RESULT of their actions?
     }
 
     protected static function booted(): void

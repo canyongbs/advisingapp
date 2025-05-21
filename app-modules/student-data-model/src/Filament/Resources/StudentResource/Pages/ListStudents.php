@@ -243,7 +243,7 @@ class ListStudents extends ListRecords
 
         $query->whereKey(
             app(TranslateSegmentFilters::class)
-                ->handle($data['value'])
+                ->execute($data['value'])
                 ->pluck($query->getModel()->getQualifiedKeyName()),
         );
     }

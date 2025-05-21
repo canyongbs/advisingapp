@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Campaign\Actions\ExecuteCampaignAction;
-use AdvisingApp\Campaign\Actions\ExecuteCampaignActions;
+use AdvisingApp\Campaign\Jobs\ExecuteCampaignAction;
+use AdvisingApp\Campaign\Jobs\ExecuteCampaignActions;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use Illuminate\Support\Facades\Queue;
 
@@ -45,7 +45,7 @@ it('will only dispatch jobs for actions that are scheduled and have not yet been
     ]);
 
     CampaignAction::factory()
-        ->successfulExecution(now()->subMinute());
+        ->finishedAt(now()->subMinute());
 
     Queue::fake([ExecuteCampaignAction::class]);
 

@@ -32,9 +32,7 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
-
-declare(strict_types = 1);
+*/ declare(strict_types = 1);
 
 $ignoreErrors = [];
 $ignoreErrors[] = [
@@ -542,22 +540,10 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/ai/src/Settings/AiIntegrationsSettings.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Pest\\\\Expectation\\<AdvisingApp\\\\Ai\\\\Models\\\\LegacyAiMessageLog\\|null\\>\\:\\:\\$message\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Feature/Actions/CompletePromptTest.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to an undefined method Mockery\\\\ExpectationInterface\\|Mockery\\\\HigherOrderMessage\\:\\:once\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 2,
     'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Feature/Actions/CompletePromptTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Pest\\\\Mixins\\\\Expectation\\<mixed\\>\\:\\:\\$each\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Feature/Actions/CompleteResponseTest.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Unable to resolve the template type TValue in call to function expect$#',
@@ -566,64 +552,16 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Feature/Actions/CompleteResponseTest.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Pest\\\\Expectation\\<AdvisingApp\\\\Ai\\\\Models\\\\AiAssistant\\|null\\>\\:\\:\\$name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Feature/Actions/CreateThreadTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Pest\\\\Expectation\\<AdvisingApp\\\\Ai\\\\Models\\\\AiThread\\|null\\>\\:\\:\\$assistant\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Feature/Actions/CreateThreadTest.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to an undefined method Mockery\\\\ExpectationInterface\\|Mockery\\\\HigherOrderMessage\\:\\:once\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 2,
     'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Feature/Actions/CreateThreadTest.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Pest\\\\Expectation\\<AdvisingApp\\\\Ai\\\\Models\\\\AiMessage\\|null\\>\\:\\:\\$content\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Feature/Actions/RetryMessageTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Pest\\\\Expectation\\<AdvisingApp\\\\Ai\\\\Models\\\\AiMessage\\|null\\>\\:\\:\\$thread\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Feature/Actions/RetryMessageTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Pest\\\\Mixins\\\\Expectation\\<mixed\\>\\:\\:\\$each\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 5,
-    'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Feature/Actions/RetryMessageTest.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Unable to resolve the template type TValue in call to function expect$#',
     'identifier' => 'argument.templateType',
     'count' => 5,
     'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Feature/Actions/RetryMessageTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Pest\\\\Expectation\\<AdvisingApp\\\\Ai\\\\Models\\\\AiMessage\\|null\\>\\:\\:\\$content\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Feature/Actions/SendMessageTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Pest\\\\Expectation\\<AdvisingApp\\\\Ai\\\\Models\\\\AiMessage\\|null\\>\\:\\:\\$thread\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Feature/Actions/SendMessageTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Pest\\\\Mixins\\\\Expectation\\<mixed\\>\\:\\:\\$each\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Feature/Actions/SendMessageTest.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Unable to resolve the template type TValue in call to function expect$#',
@@ -722,18 +660,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/alert/src/Filament/Resources/AlertResource/Pages/ListAlerts.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Ternary operator condition is always true\\.$#',
-    'identifier' => 'ternary.alwaysTrue',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/alert/src/Filament/Resources/AlertResource/Pages/ListAlerts.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Using nullsafe property access on non\\-nullable type AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\|AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\. Use \\-\\> instead\\.$#',
-    'identifier' => 'nullsafe.neverNull',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/alert/src/Filament/Resources/AlertResource/Pages/ListAlerts.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Access to an undefined property AdvisingApp\\\\Alert\\\\Models\\\\AlertStatus\\:\\:\\$is_default\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
@@ -774,24 +700,6 @@ $ignoreErrors[] = [
     'identifier' => 'nullsafe.neverNull',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/alert/src/Listeners/NotifySubscribersOfAlertCreated.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\:\\:getKey\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Models/Alert.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\:\\:getMorphClass\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Models/Alert.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Instanceof between AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\|AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student and AdvisingApp\\\\Notification\\\\Models\\\\Contracts\\\\Subscribable will always evaluate to true\\.$#',
-    'identifier' => 'instanceof.alwaysTrue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Models/Alert.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Alert\\\\Models\\\\Alert\\:\\:concern\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo does not specify its types\\: TRelatedModel, TDeclaringModel$#',
@@ -878,12 +786,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/alert/src/Models/Alert.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Match expression does not handle remaining values\\: \\(class\\-string\\<AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\>&literal\\-string\\)\\|\\(class\\-string\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\>&literal\\-string\\)$#',
-    'identifier' => 'match.unhandled',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Notifications/AlertCreatedNotification.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Alert\\\\Notifications\\\\AlertCreatedNotification\\:\\:toDatabase\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -900,12 +802,6 @@ $ignoreErrors[] = [
     'identifier' => 'property.notFound',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/alert/src/Observers/AlertStatusObserver.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Using nullsafe method call on non\\-nullable type AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\|AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\. Use \\-\\> instead\\.$#',
-    'identifier' => 'nullsafe.neverNull',
-    'count' => 5,
-    'path' => __DIR__ . '/app-modules/alert/src/Policies/AlertPolicy.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Alert\\\\Rules\\\\ConcernIdExistsRule\\:\\:setData\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#',
@@ -1754,22 +1650,10 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/authorization/src/View/Components/Login.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Pest\\\\Expectation\\<App\\\\Models\\\\User\\|null\\>\\:\\:\\$password\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/authorization/tests/Tenant/Feature/Filament/Pages/SetPasswordTest.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\.\\.\\.\\$data of method Pest\\\\PendingCalls\\\\TestCall\\:\\:with\\(\\) expects array\\<Closure\\|iterable\\<int\\|string, mixed\\>\\|string\\>\\|Closure\\|string, array\\{AdvisingApp\\\\Authorization\\\\Enums\\\\LicenseType\\:\\:ConversationalAi, AdvisingApp\\\\Authorization\\\\Enums\\\\LicenseType\\:\\:RetentionCrm, AdvisingApp\\\\Authorization\\\\Enums\\\\LicenseType\\:\\:RecruitmentCrm\\} given\\.$#',
     'identifier' => 'argument.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/authorization/tests/Tenant/Feature/Filament/Resources/User/Actions/AssignLicensesBulkActionTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Pest\\\\Expectation\\<App\\\\Models\\\\User\\|null\\>\\:\\:\\$deleted_at\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/authorization/tests/Tenant/Feature/Filament/Resources/User/RestoreUserTest.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\.\\.\\.\\$data of method Pest\\\\PendingCalls\\\\TestCall\\:\\:with\\(\\) expects array\\<Closure\\|iterable\\<int\\|string, mixed\\>\\|string\\>\\|Closure\\|string, array\\{AdvisingApp\\\\Authorization\\\\Enums\\\\LicenseType\\:\\:ConversationalAi, AdvisingApp\\\\Authorization\\\\Enums\\\\LicenseType\\:\\:RetentionCrm, AdvisingApp\\\\Authorization\\\\Enums\\\\LicenseType\\:\\:RecruitmentCrm\\} given\\.$#',
@@ -1838,28 +1722,10 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/basic-needs/src/Providers/BasicNeedsServiceProvider.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Pest\\\\Expectation\\<AdvisingApp\\\\BasicNeeds\\\\Models\\\\BasicNeedsCategory\\|null\\>\\:\\:\\$name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/basic-needs/tests/Tenant/BasicNeedsCategory/BasicNeedsCategoryTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Pest\\\\Expectation\\<AdvisingApp\\\\BasicNeeds\\\\Models\\\\BasicNeedsProgram\\|null\\>\\:\\:\\$name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/basic-needs/tests/Tenant/BasicNeedsProgram/BasicNeedsProgramTest.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to an undefined method Faker\\\\Generator\\:\\:catchPhrase\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/campaign/database/factories/CampaignFactory.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Campaign\\\\Actions\\\\ExecuteCampaignActions\\:\\:middleware\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/campaign/src/Actions/ExecuteCampaignActions.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Campaign\\\\DataTransferObjects\\\\CampaignActionCreationData\\:\\:__construct\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#',
@@ -2024,88 +1890,10 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/campaign/src/Providers/CampaignServiceProvider.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable&Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$careTeam\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/campaign/tests/Tenant/Actions/CareTeamCampaignTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$callback of method Illuminate\\\\Support\\\\Collection\\<\\(int\\|string\\),Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:each\\(\\) expects callable\\(Illuminate\\\\Database\\\\Eloquent\\\\Model, int\\|string\\)\\: mixed, Closure\\(AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\)\\: Pest\\\\Mixins\\\\Expectation\\<mixed\\> given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/campaign/tests/Tenant/Actions/CareTeamCampaignTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$callback of method Illuminate\\\\Support\\\\Collection\\<\\(int\\|string\\),Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:each\\(\\) expects callable\\(Illuminate\\\\Database\\\\Eloquent\\\\Model, int\\|string\\)\\: mixed, Closure\\(AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\)\\: void given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/campaign/tests/Tenant/Actions/CareTeamCampaignTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$callback of method Illuminate\\\\Support\\\\Collection\\<\\(int\\|string\\),Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:each\\(\\) expects callable\\(Illuminate\\\\Database\\\\Eloquent\\\\Model, int\\|string\\)\\: mixed, Closure\\(AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\)\\: void given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/campaign/tests/Tenant/Actions/EventCampaignTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Anonymous function should return Pest\\\\Mixins\\\\Expectation\\<array\\<mixed\\>\\|null\\> but returns Pest\\\\Mixins\\\\Expectation\\<array\\<mixed\\>\\|null\\>\\.$#',
-    'identifier' => 'return.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/campaign/tests/Tenant/Actions/SubscriptionCampaignTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$callback of method Illuminate\\\\Support\\\\Collection\\<\\(int\\|string\\),Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:each\\(\\) expects callable\\(Illuminate\\\\Database\\\\Eloquent\\\\Model, int\\|string\\)\\: mixed, Closure\\(AdvisingApp\\\\Notification\\\\Models\\\\Contracts\\\\Subscribable\\)\\: Pest\\\\Mixins\\\\Expectation\\<array\\<mixed\\>\\|null\\> given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/campaign/tests/Tenant/Actions/SubscriptionCampaignTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$callback of method Illuminate\\\\Support\\\\Collection\\<\\(int\\|string\\),Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:each\\(\\) expects callable\\(Illuminate\\\\Database\\\\Eloquent\\\\Model, int\\|string\\)\\: mixed, Closure\\(AdvisingApp\\\\Notification\\\\Models\\\\Contracts\\\\Subscribable\\)\\: void given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/campaign/tests/Tenant/Actions/SubscriptionCampaignTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable&Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:tasks\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/campaign/tests/Tenant/Actions/TaskCampaignTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$callback of method Illuminate\\\\Support\\\\Collection\\<\\(int\\|string\\),Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:each\\(\\) expects callable\\(Illuminate\\\\Database\\\\Eloquent\\\\Model, int\\|string\\)\\: mixed, Closure\\(AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\)\\: void given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/campaign/tests/Tenant/Actions/TaskCampaignTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\> in PHPDoc tag @return does not specify all template types of class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo\\: TRelatedModel, TDeclaringModel$#',
-    'identifier' => 'generics.lessTypes',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/care-team/src/Models/CareTeam.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\CareTeam\\\\Models\\\\CareTeam\\:\\:educatable\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo\\<Illuminate\\\\Database\\\\Eloquent\\\\Model, \\$this\\(AdvisingApp\\\\CareTeam\\\\Models\\\\CareTeam\\)\\>\\.$#',
-    'identifier' => 'return.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/care-team/src/Models/CareTeam.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Type AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable in generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\> in PHPDoc tag @return is not subtype of template type TRelatedModel of Illuminate\\\\Database\\\\Eloquent\\\\Model of class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo\\.$#',
-    'identifier' => 'generics.notSubtype',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/care-team/src/Models/CareTeam.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\CareTeam\\\\Models\\\\CareTeamRole\\:\\:newMorphToMany\\(\\) return type with generic class AdvisingApp\\\\Audit\\\\Overrides\\\\MorphToMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/care-team/src/Models/CareTeamRole.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\:\\:getMorphClass\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/care-team/src/Observers/CareTeamObserver.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Instanceof between App\\\\Models\\\\User and App\\\\Models\\\\User will always evaluate to true\\.$#',
@@ -2720,24 +2508,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/case-management/src/Models/CaseHistory.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Campaign\\\\Models\\\\Campaign\\:\\:\\$user\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/case-management/src/Models/CaseModel.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\:\\:getKey\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Models/CaseModel.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\:\\:getMorphClass\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Models/CaseModel.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\> in PHPDoc tag @return does not specify all template types of class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo\\: TRelatedModel, TDeclaringModel$#',
     'identifier' => 'generics.lessTypes',
     'count' => 1,
@@ -2763,12 +2533,6 @@ $ignoreErrors[] = [
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Models\\\\CaseModel\\:\\:newMorphToMany\\(\\) return type with generic class AdvisingApp\\\\Audit\\\\Overrides\\\\MorphToMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Models/CaseModel.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Models\\\\CaseModel\\:\\:orderedInteractions\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/case-management/src/Models/CaseModel.php',
@@ -3116,22 +2880,10 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/engagement/database/migrations/2024_12_24_030206_seed_permissions_remove_engagement_deliverable_permissions.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$model of method Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo\\<Illuminate\\\\Database\\\\Eloquent\\\\Model,AdvisingApp\\\\Engagement\\\\Models\\\\Engagement\\>\\:\\:associate\\(\\) expects Illuminate\\\\Database\\\\Eloquent\\\\Model\\|null, AdvisingApp\\\\Notification\\\\Models\\\\Contracts\\\\CanBeNotified\\|Illuminate\\\\Database\\\\Eloquent\\\\Collection given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Actions/CreateEngagement.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Property AdvisingApp\\\\Engagement\\\\Models\\\\IdeHelperEngagement\\:\\:\\$scheduled_at \\(Illuminate\\\\Support\\\\Carbon\\|null\\) does not accept Carbon\\\\CarbonInterface\\|null\\.$#',
     'identifier' => 'assign.propertyType',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/engagement/src/Actions/CreateEngagement.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$callback of method Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<\\(int\\|string\\),Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:map\\(\\) expects callable\\(Illuminate\\\\Database\\\\Eloquent\\\\Model, int\\|string\\)\\: AdvisingApp\\\\Engagement\\\\Jobs\\\\CreateBatchedEngagement, Closure\\(AdvisingApp\\\\Notification\\\\Models\\\\Contracts\\\\CanBeNotified\\)\\: AdvisingApp\\\\Engagement\\\\Jobs\\\\CreateBatchedEngagement given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Actions/CreateEngagementBatch.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Property AdvisingApp\\\\Engagement\\\\Models\\\\IdeHelperEngagementBatch\\:\\:\\$scheduled_at \\(Illuminate\\\\Support\\\\Carbon\\|null\\) does not accept Carbon\\\\CarbonInterface\\|null\\.$#',
@@ -3188,12 +2940,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/engagement/src/Actions/GenerateTipTapBodyJson.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Engagement\\\\DataTransferObjects\\\\EngagementCreationData\\:\\:__construct\\(\\) has parameter \\$recipient with generic class Illuminate\\\\Database\\\\Eloquent\\\\Collection but does not specify its types\\: TKey, TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/DataTransferObjects/EngagementCreationData.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Engagement\\\\Filament\\\\Actions\\\\BulkDraftWithAiAction\\:\\:getMergeTags\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -3220,12 +2966,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Engagement\\\\Filament\\\\Actions\\\\BulkEngagementAction\\:\\:make\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Actions/BulkEngagementAction.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\$recipient of class AdvisingApp\\\\Engagement\\\\DataTransferObjects\\\\EngagementCreationData constructor expects AdvisingApp\\\\Notification\\\\Models\\\\Contracts\\\\CanBeNotified\\|Illuminate\\\\Database\\\\Eloquent\\\\Collection, Illuminate\\\\Support\\\\Collection given\\.$#',
-    'identifier' => 'argument.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/engagement/src/Filament/Actions/BulkEngagementAction.php',
 ];
@@ -3284,6 +3024,18 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/engagement/src/Filament/Actions/RelationManagerDraftWithAiAction.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\|Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$address\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Actions/RelationManagerSendEngagementAction.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\|Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$number\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Actions/RelationManagerSendEngagementAction.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$emailAddresses\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
@@ -3304,13 +3056,13 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:emailAddresses\\(\\)\\.$#',
     'identifier' => 'method.notFound',
-    'count' => 2,
+    'count' => 1,
     'path' => __DIR__ . '/app-modules/engagement/src/Filament/Actions/RelationManagerSendEngagementAction.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:phoneNumbers\\(\\)\\.$#',
     'identifier' => 'method.notFound',
-    'count' => 4,
+    'count' => 3,
     'path' => __DIR__ . '/app-modules/engagement/src/Filament/Actions/RelationManagerSendEngagementAction.php',
 ];
 $ignoreErrors[] = [
@@ -3323,12 +3075,6 @@ $ignoreErrors[] = [
     'message' => '#^Match expression does not handle remaining values\\: AdvisingApp\\\\Notification\\\\Enums\\\\NotificationChannel\\:\\:Database\\|null$#',
     'identifier' => 'match.unhandled',
     'count' => 4,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Actions/RelationManagerSendEngagementAction.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\$recipient of class AdvisingApp\\\\Engagement\\\\DataTransferObjects\\\\EngagementCreationData constructor expects AdvisingApp\\\\Notification\\\\Models\\\\Contracts\\\\CanBeNotified\\|Illuminate\\\\Database\\\\Eloquent\\\\Collection, Illuminate\\\\Database\\\\Eloquent\\\\Model given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
     'path' => __DIR__ . '/app-modules/engagement/src/Filament/Actions/RelationManagerSendEngagementAction.php',
 ];
 $ignoreErrors[] = [
@@ -3686,18 +3432,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/engagement/src/Models/EngagementBatch.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\$recipient of class AdvisingApp\\\\Engagement\\\\DataTransferObjects\\\\EngagementCreationData constructor expects AdvisingApp\\\\Notification\\\\Models\\\\Contracts\\\\CanBeNotified\\|Illuminate\\\\Database\\\\Eloquent\\\\Collection, Illuminate\\\\Support\\\\Collection given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Models/EngagementBatch.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\$user of class AdvisingApp\\\\Engagement\\\\DataTransferObjects\\\\EngagementCreationData constructor expects App\\\\Models\\\\User, Illuminate\\\\Database\\\\Eloquent\\\\Model given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Models/EngagementBatch.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Engagement\\\\Models\\\\EngagementFile\\:\\:newMorphToMany\\(\\) return type with generic class AdvisingApp\\\\Audit\\\\Overrides\\\\MorphToMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
@@ -3788,22 +3522,10 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/engagement/src/Policies/EngagementPolicy.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Pest\\\\Expectation\\<AdvisingApp\\\\Engagement\\\\Models\\\\EngagementBatch\\|null\\>\\:\\:\\$user\\.$#',
-    'identifier' => 'property.notFound',
+    'message' => '#^Parameter \\$recipient of class AdvisingApp\\\\Engagement\\\\DataTransferObjects\\\\EngagementCreationData constructor expects AdvisingApp\\\\Notification\\\\Models\\\\Contracts\\\\CanBeNotified\\|Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, AdvisingApp\\\\Notification\\\\Models\\\\Contracts\\\\CanBeNotified&Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\> given\\.$#',
+    'identifier' => 'argument.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/engagement/tests/Tenant/Feature/Actions/CreateEngagementBatchTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Pest\\\\Expectation\\<AdvisingApp\\\\Engagement\\\\Models\\\\Engagement\\|null\\>\\:\\:\\$user\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/engagement/tests/Tenant/Feature/Actions/CreateEngagementTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Pest\\\\Expectation\\<AdvisingApp\\\\Engagement\\\\Models\\\\Engagement\\|null\\>\\:\\:\\$engagementBatch\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/engagement/tests/Tenant/Feature/Jobs/CreateBatchedEngagementTest.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$callback of method Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int,AdvisingApp\\\\Form\\\\Models\\\\SubmissibleField\\>\\:\\:map\\(\\) expects callable\\(AdvisingApp\\\\Form\\\\Models\\\\SubmissibleField, int\\)\\: array\\{type\\: \'tiptapBlock\', attrs\\: array\\{id\\: string, type\\: string, data\\: non\\-empty\\-array\\}\\}, Closure\\(AdvisingApp\\\\Form\\\\Models\\\\FormField\\)\\: array\\{type\\: \'tiptapBlock\', attrs\\: array\\{id\\: string, type\\: string, data\\: non\\-empty\\-array\\}\\} given\\.$#',
@@ -4832,12 +4554,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/form/src/Notifications/AuthorLinkedFormSubmissionCreatedNotification.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$subject of method Illuminate\\\\Notifications\\\\Messages\\\\SimpleMessage\\:\\:subject\\(\\) expects string, array\\<mixed\\>\\|null given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Notifications/FormSubmissionAutoReplyNotification.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Form\\\\Providers\\\\FormServiceProvider\\:\\:boot\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
     'count' => 1,
@@ -5324,18 +5040,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/integration-open-ai/tests/Tenant/Feature/Services/OpenAiGpt4oServiceTest.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Pest\\\\Expectation\\<AdvisingApp\\\\Ai\\\\Models\\\\AiMessage\\|null\\>\\:\\:\\$message_id\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/tests/Tenant/Feature/Services/OpenAiGptTestServiceTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Pest\\\\Mixins\\\\Expectation\\<mixed\\>\\:\\:\\$each\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/tests/Tenant/Feature/Services/OpenAiGptTestServiceTest.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$responseClass of class OpenAI\\\\Responses\\\\StreamResponse constructor expects class\\-string\\<\\>, string given\\.$#',
     'identifier' => 'argument.type',
     'count' => 3,
@@ -5478,24 +5182,6 @@ $ignoreErrors[] = [
     'identifier' => 'match.unhandled',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/interaction/src/Imports/InteractionsImporter.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Campaign\\\\Models\\\\Campaign\\:\\:\\$user_id\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/interaction/src/Models/Interaction.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\:\\:getKey\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/interaction/src/Models/Interaction.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\:\\:getMorphClass\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/interaction/src/Models/Interaction.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:orderedInteractions\\(\\)\\.$#',
@@ -5918,12 +5604,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/meeting-center/src/Managers/OutlookCalendarManager.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#3 \\$sender of class AdvisingApp\\\\MeetingCenter\\\\Jobs\\\\CreateEventAttendees constructor expects App\\\\Models\\\\User, Illuminate\\\\Database\\\\Eloquent\\\\Model given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Models/Event.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Access to an undefined property AdvisingApp\\\\Form\\\\Models\\\\Submissible\\:\\:\\$event\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
@@ -6248,12 +5928,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/notification/src/Models/Contracts/Message.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Notification\\\\Models\\\\Contracts\\\\Subscribable\\:\\:subscriptions\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/notification/src/Models/Contracts/Subscribable.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Notification\\\\Models\\\\Subscription\\:\\:scopeLicensedToEducatable\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
@@ -6262,18 +5936,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Notification\\\\Models\\\\Subscription\\:\\:scopeLicensedToEducatable\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
     'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/notification/src/Models/Subscription.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Unable to resolve the template type TKey in call to function collect$#',
-    'identifier' => 'argument.templateType',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/notification/src/Models/Subscription.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Unable to resolve the template type TValue in call to function collect$#',
-    'identifier' => 'argument.templateType',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/notification/src/Models/Subscription.php',
 ];
@@ -7040,12 +6702,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/prospect/src/Models/Prospect.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\:\\:orderedInteractions\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Models/Prospect.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\:\\:subscribedUsers\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<App\\\\Models\\\\User, \\$this\\(AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\), Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphPivot, \'pivot\'\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<App\\\\Models\\\\User, \\$this\\(AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\), AdvisingApp\\\\Notification\\\\Models\\\\Subscription, \'pivot\'\\>\\.$#',
     'identifier' => 'return.type',
     'count' => 1,
@@ -7148,18 +6804,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/prospect/tests/Tenant/Prospect/CreateProspectTest.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Pest\\\\Expectation\\<AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\|null\\>\\:\\:\\$status\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/tests/Tenant/Prospect/EditProspectTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Pest\\\\Expectation\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\|null\\>\\:\\:\\$sisid\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/tests/Tenant/Prospect/EditProspectTest.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to an undefined method Faker\\\\Generator\\:\\:state\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 1,
@@ -7170,18 +6814,6 @@ $ignoreErrors[] = [
     'identifier' => 'nullsafe.neverNull',
     'count' => 2,
     'path' => __DIR__ . '/app-modules/prospect/tests/Tenant/Prospect/RequestFactories/EditProspectRequestFactory.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Pest\\\\Expectation\\<AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\|null\\>\\:\\:\\$status\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/prospect/tests/Tenant/Prospect/ViewProspectTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Pest\\\\Expectation\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\|null\\>\\:\\:\\$sisid\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/tests/Tenant/Prospect/ViewProspectTest.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to function PHPUnit\\\\Framework\\\\assertEmpty\\(\\) with Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, AdvisingApp\\\\Prospect\\\\Models\\\\ProspectSource\\> will always evaluate to false\\.$#',
@@ -7706,18 +7338,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/report/src/Providers/ReportServiceProvider.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Pest\\\\Expectation\\<AdvisingApp\\\\Report\\\\Models\\\\TrackedEventCount\\|null\\>\\:\\:\\$type\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 3,
-    'path' => __DIR__ . '/app-modules/report/tests/Tenant/Unit/Jobs/RecordTrackedEventTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Pest\\\\Expectation\\<AdvisingApp\\\\Report\\\\Models\\\\TrackedEvent\\|null\\>\\:\\:\\$type\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/tests/Tenant/Unit/Jobs/RecordTrackedEventTest.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to an undefined method Pest\\\\PendingCalls\\\\TestCall\\|Pest\\\\Support\\\\HigherOrderTapProxy\\:\\:travelTo\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 1,
@@ -8066,19 +7686,7 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/segment/src/Filament/Resources/SegmentResourceForProcesses.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Segment\\\\Models\\\\Segment\\:\\:retrieveRecords\\(\\) return type with generic class Illuminate\\\\Support\\\\Collection does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/segment/src/Models/Segment.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Segment\\\\Models\\\\Segment\\:\\:scopeModel\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/segment/src/Models/Segment.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^PHPDoc tag @var for variable \\$modelQueryBuilder contains generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/segment/src/Models/Segment.php',
@@ -8350,7 +7958,7 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$subject\\.$#',
     'identifier' => 'property.notFound',
-    'count' => 6,
+    'count' => 5,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/EducatableResource/Widgets/EducatableActivityFeedWidget.php',
 ];
 $ignoreErrors[] = [
@@ -8366,15 +7974,9 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/EducatableResource/Widgets/EducatableActivityFeedWidget.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:getBodyMarkdown\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/EducatableResource/Widgets/EducatableActivityFeedWidget.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:getDeliveryMethod\\(\\)\\.$#',
     'identifier' => 'method.notFound',
-    'count' => 2,
+    'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/EducatableResource/Widgets/EducatableActivityFeedWidget.php',
 ];
 $ignoreErrors[] = [
@@ -8420,12 +8022,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/EducatableResource/Widgets/EducatableActivityFeedWidget.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Call to an undefined method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable&Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:alerts\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/EducatableResource/Widgets/EducatableAlertsWidget.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Resources\\\\EducatableResource\\\\Widgets\\\\EducatableCareTeamWidget\\:\\:getCareTeam\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -8442,12 +8038,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/EducatableResource/Widgets/EducatableSubscriptionsWidget.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable&Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:tasks\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/EducatableResource/Widgets/EducatableTasksWidget.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Resources\\\\EducatableResource\\\\Widgets\\\\EducatableTasksWidget\\:\\:getStatusCounts\\(\\) return type has no value type specified in iterable type array\\.$#',
@@ -9178,7 +8768,7 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$subject\\.$#',
     'identifier' => 'property.notFound',
-    'count' => 2,
+    'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/StudentResource/RelationManagers/EngagementsRelationManager.php',
 ];
 $ignoreErrors[] = [
@@ -9302,12 +8892,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Contracts/Educatable.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^PHPDoc tag @property\\-read for property AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\:\\:\\$careTeam contains generic class Illuminate\\\\Database\\\\Eloquent\\\\Collection but does not specify its types\\: TKey, TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Contracts/Educatable.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Scopes\\\\EducatableSearch\\:\\:__invoke\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
@@ -9380,19 +8964,7 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Student.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\:\\:orderedInteractions\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Student.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\:\\:primaryAddress\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Student.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\:\\:primaryPhoneNumber\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Student.php',

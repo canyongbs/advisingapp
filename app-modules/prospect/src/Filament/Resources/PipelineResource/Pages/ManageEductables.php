@@ -71,7 +71,7 @@ class ManageEductables extends ManageRelatedRecords implements HasTable
     public function mount(int | string $record): void
     {
         parent::mount($record);
-        $this->segmentCount = app(TranslateSegmentFilters::class)->handle($this->getRecord()->segment)->count();
+        $this->segmentCount = app(TranslateSegmentFilters::class)->execute($this->getRecord()->segment)->count();
 
         if ($this->segmentCount >= 100) {
             session(['pipeline-view-type' => 'table']);
@@ -125,7 +125,7 @@ class ManageEductables extends ManageRelatedRecords implements HasTable
         $table = $pipeline->segment->model
             ->table($table);
 
-        $table->query(fn () => app(TranslateSegmentFilters::class)->handle($pipeline->segment));
+        $table->query(fn () => app(TranslateSegmentFilters::class)->execute($pipeline->segment));
 
         return $table;
     }

@@ -86,11 +86,11 @@ it('can filter campaigns by `Completed`', function () {
     asSuperAdmin();
 
     $completeCampaign = Campaign::factory()
-        ->has(CampaignAction::factory()->successfulExecution(), 'actions')
+        ->has(CampaignAction::factory()->finishedAt(), 'actions')
         ->create();
 
     $partiallyCompleteCampaign = Campaign::factory()
-        ->has(CampaignAction::factory()->successfulExecution(), 'actions')
+        ->has(CampaignAction::factory()->finishedAt(), 'actions')
         ->has(CampaignAction::factory(), 'actions')
         ->create();
 
@@ -98,22 +98,16 @@ it('can filter campaigns by `Completed`', function () {
         ->has(CampaignAction::factory(), 'actions')
         ->create();
 
-    $failedCampaign = Campaign::factory()
-        ->has(CampaignAction::factory()->failedExecution(), 'actions')
-        ->create();
-
     livewire(ListCampaigns::class)
         ->assertCanSeeTableRecords([
             $completeCampaign,
             $partiallyCompleteCampaign,
             $incompleteCampaign,
-            $failedCampaign,
         ])
         ->filterTable('Completed')
         ->assertCanSeeTableRecords([$completeCampaign])
         ->assertCanNotSeeTableRecords([
             $partiallyCompleteCampaign,
             $incompleteCampaign,
-            $failedCampaign,
         ]);
 });

@@ -34,39 +34,63 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Actions;
+namespace AdvisingApp\Campaign\Jobs;
 
-use AdvisingApp\Campaign\Models\CampaignAction;
-use AdvisingApp\Campaign\Models\Scopes\CampaignActionNotCancelled;
-use App\Models\Tenant;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\Middleware\WithoutOverlapping;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\Task\Models\Task;
+use App\Models\User;
+use Exception;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
-class ExecuteCampaignActions implements ShouldQueue
+class TaskCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-
-    public function middleware(): array
-    {
-        return [(new WithoutOverlapping(Tenant::current()->id))->dontRelease()->expireAfter(180)];
-    }
-
     public function handle(): void
     {
-        CampaignAction::query()
-            ->where('execute_at', '<=', now())
-            ->whereNull('last_execution_attempt_at')
-            ->tap(new CampaignActionNotCancelled())
-            ->hasNotBeenExecuted()
-            ->campaignEnabled()
-            ->cursor()
-            ->each(function (CampaignAction $action) {
-                ExecuteCampaignAction::dispatch($action);
-            });
+        try {
+            DB::beginTransaction();
+
+            $educatable = $this->actionEducatable->educatable;
+
+            throw_if(
+                ! $educatable instanceof Educatable,
+                new Exception('The educatable model must implement the Educatable contract.')
+            );
+
+            $action = $this->actionEducatable->campaignAction;
+
+            $task = Task::query()->make([
+                'title' => $action->data['title'],
+                'description' => $action->data['description'],
+                'due' => $action->data['due'],
+            ]);
+
+            $task->assignedTo()->associate($action->data['assigned_to']);
+
+            if ($action->campaign->createdBy instanceof User) {
+                $task->createdBy()->associate($action->campaign->createdBy);
+            }
+
+            $task->concern()->associate($educatable);
+            $task->save();
+
+            $this->actionEducatable->succeeded_at = now();
+            $this->actionEducatable
+                ->related()
+                ->make()
+                ->related()
+                ->associate($task)
+                ->save();
+
+            $this->actionEducatable->save();
+
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollBack();
+
+            $this->actionEducatable->markFailed();
+
+            throw $e;
+        }
     }
 }

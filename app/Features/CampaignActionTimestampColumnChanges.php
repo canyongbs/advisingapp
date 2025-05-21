@@ -34,47 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Actions;
+namespace App\Features;
 
-use AdvisingApp\Campaign\Models\CampaignAction;
-use App\Models\Tenant;
-use App\Models\User;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Support\Facades\Auth;
+use App\Support\AbstractFeatureFlag;
 
-class ExecuteCampaignAction implements ShouldQueue, ShouldBeUnique
+class CampaignActionTimestampColumnChanges extends AbstractFeatureFlag
 {
-    use Dispatchable;
-
-    public int $tries = 3;
-
-    public int $timeout = 600;
-
-    public int $uniqueFor = 600 * 3;
-
-    public function __construct(
-        public CampaignAction $action
-    ) {}
-
-    public function uniqueId(): string
+    public function resolve(mixed $scope): mixed
     {
-        return Tenant::current()->getKey() . ':' . $this->action->getKey();
-    }
-
-    public function handle(): void
-    {
-        if ($this->action->cancelled_at !== null) {
-            return;
-        }
-
-        // Required as some segment filters apply based on the logged in User.
-        // The campaign creator is the one who will be logged in.
-        if ($this->action->campaign->createdBy instanceof User) {
-            Auth::setUser($this->action->campaign->createdBy);
-        }
-
-        $this->action->execute();
+        return false;
     }
 }

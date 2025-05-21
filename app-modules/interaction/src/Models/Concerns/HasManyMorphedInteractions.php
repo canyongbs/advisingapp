@@ -54,6 +54,9 @@ trait HasManyMorphedInteractions
         );
     }
 
+    /**
+     * @return MorphMany<Interaction, $this>
+     */
     public function orderedInteractions(): MorphMany
     {
         return $this->interactions()

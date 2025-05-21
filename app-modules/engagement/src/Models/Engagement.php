@@ -224,6 +224,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         return app(GenerateEngagementBodyContent::class)(
             $this->body,
             $this->getMergeData(),
+            // TODO: Add a relationship to Campaign Action, save the temporary body images to the Campaign Action and relate it
             $this->batch ?? $this,
             'body',
         );

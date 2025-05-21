@@ -34,63 +34,49 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Campaign\Enums\CampaignActionType;
-use AdvisingApp\Campaign\Models\Campaign;
+namespace AdvisingApp\Campaign\Database\Factories;
+
 use AdvisingApp\Campaign\Models\CampaignAction;
-use AdvisingApp\MeetingCenter\Models\Event;
+use AdvisingApp\Campaign\Models\CampaignActionEducatable;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Segment\Enums\SegmentType;
-use AdvisingApp\Segment\Models\Segment;
-use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Event as FakeEvent;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-use function PHPUnit\Framework\assertCount;
-use function PHPUnit\Framework\assertTrue;
+/**
+ * @extends Factory<CampaignActionEducatable>
+ */
+class CampaignActionEducatableFactory extends Factory
+{
+    public function definition(): array
+    {
+        return [
+            'campaign_action_id' => CampaignAction::factory(),
+            'educatable_type' => fake()->randomElement([
+                new Student()->getMorphClass(),
+                new Prospect()->getMorphClass(),
+            ]),
+            'educatable_id' => function (array $attributes) {
+                return match ($attributes['educatable_type']) {
+                    new Student()->getMorphClass() => Student::factory(),
+                    new Prospect()->getMorphClass() => Prospect::factory(),
+                    default => null,
+                };
+            },
+        ];
+    }
 
-use Spatie\LaravelSettings\Events\LoadingSettings;
-
-it('will create the event records for segment', function (Collection $educatables) {
-    $segment = Segment::factory()->create([
-        'type' => SegmentType::Static,
-    ]);
-
-    $educatables->each(function (Educatable $prospect) use ($segment) {
-        $segment->subjects()->create([
-            'subject_id' => $prospect->getKey(),
-            'subject_type' => $prospect->getMorphClass(),
+    public function succeeded(?Carbon $at = null): self
+    {
+        return $this->state([
+            'succeeded_at' => $at ?? now(),
         ]);
-    });
+    }
 
-    $campaign = Campaign::factory()->create([
-        'segment_id' => $segment->id,
-    ]);
-
-    $event = Event::factory()->create();
-
-    $action = CampaignAction::factory()
-        ->for($campaign, 'campaign')
-        ->create([
-            'type' => CampaignActionType::Event,
-            'data' => [
-                'event' => $event->id,
-            ],
+    public function lastFailed(?Carbon $at = null): self
+    {
+        return $this->state([
+            'last_failed_at' => $at ?? now(),
         ]);
-
-    FakeEvent::fake()->except([
-        LoadingSettings::class,
-    ]);
-
-    $action->execute();
-
-    assertCount(3, $segment->subjects); // Check if 3 subjects were created for the segment
-    assertTrue($campaign->hasBeenExecuted());
-})->with([
-    'prospects' => [
-        fn () => Prospect::factory()->count(3)->create(),
-    ],
-    'students' => [
-        fn () => Student::factory()->count(3)->create(),
-    ],
-]);
+    }
+}

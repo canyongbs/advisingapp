@@ -37,8 +37,6 @@
 namespace AdvisingApp\Interaction\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Campaign\Models\CampaignAction;
-use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Interaction\Models\Scopes\InteractionConfidentialScope;
@@ -47,7 +45,6 @@ use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
-use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Team\Models\Team;
@@ -57,7 +54,6 @@ use AdvisingApp\Timeline\Timelines\InteractionTimeline;
 use App\Models\Authenticatable;
 use App\Models\BaseModel;
 use App\Models\User;
-use Exception;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Builder;
@@ -74,7 +70,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @mixin IdeHelperInteraction
  */
 #[ObservedBy([InteractionObserver::class])] #[ScopedBy(InteractionConfidentialScope::class)]
-class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscription, ExecutableFromACampaignAction, ProvidesATimeline
+class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscription, ProvidesATimeline
 {
     use AuditableTrait;
     use BelongsToEducatable;
@@ -198,38 +194,6 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
     public function type(): BelongsTo
     {
         return $this->belongsTo(InteractionType::class, 'interaction_type_id');
-    }
-
-    public static function executeFromCampaignAction(CampaignAction $action): bool|string
-    {
-        try {
-            $action
-                ->campaign
-                ->segment
-                ->retrieveRecords()
-                ->each(function (Educatable $educatable) use ($action) {
-                    $interactionData = [
-                        'user_id' => $action->campaign->user_id,
-                        'interactable_type' => $educatable->getMorphClass(),
-                        'interactable_id' => $educatable->getKey(),
-                        'interaction_type_id' => $action->data['interaction_type_id'],
-                        'interaction_initiative_id' => $action->data['interaction_initiative_id'],
-                        'interaction_relation_id' => $action->data['interaction_relation_id'],
-                        'interaction_driver_id' => $action->data['interaction_driver_id'],
-                        'interaction_status_id' => $action->data['interaction_status_id'],
-                        'interaction_outcome_id' => $action->data['interaction_outcome_id'],
-                        'division_id' => $action->data['division_id'],
-                    ];
-
-                    Interaction::create($interactionData);
-                });
-
-            return true;
-        } catch (Exception $e) {
-            return $e->getMessage();
-        }
-
-        // Do we need to be able to relate campaigns/actions to the RESULT of their actions?
     }
 
     /**

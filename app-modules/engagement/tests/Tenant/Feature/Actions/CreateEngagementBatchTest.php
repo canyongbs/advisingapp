@@ -63,6 +63,7 @@ it('will create an engagement batch', function () {
 
     assertDatabaseCount(EngagementBatch::class, 1);
 
+    // @phpstan-ignore method.nonObject
     expect(EngagementBatch::first())
         ->user->is($data['user'])->toBeTrue()
         ->channel->toBe($data['channel'])

@@ -45,8 +45,10 @@ use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
+use Exception;
 use Filament\Actions\StaticAction;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action as FormComponentAction;
@@ -267,6 +269,12 @@ class RelationManagerSendEngagementAction extends CreateAction
             ]))
             ->action(function (array $data, Form $form, RelationManager $livewire) {
                 $recipient = $livewire->getOwnerRecord();
+
+                throw_if(
+                    ! $recipient instanceof Educatable,
+                    new Exception('Recipient must implement Educatable interface.'),
+                );
+
                 $data['subject'] ??= ['type' => 'doc', 'content' => []];
                 $data['subject']['content'] = [
                     ...($data['subject']['content'] ?? []),

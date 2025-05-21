@@ -78,6 +78,11 @@ enum SegmentModel: string implements HasLabel
         };
     }
 
+    public function instance(): Student | Prospect
+    {
+        return new ($this->class());
+    }
+
     public function table(Table $table): Table
     {
         return (match ($this) {

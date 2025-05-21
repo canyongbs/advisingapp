@@ -214,7 +214,7 @@ class ListAlerts extends ListRecords
         $query->whereIn(
             'concern_id',
             app(TranslateSegmentFilters::class)
-                ->handle($data['value'])
+                ->execute($data['value'])
                 ->pluck($model->getQualifiedKeyName()),
         );
     }

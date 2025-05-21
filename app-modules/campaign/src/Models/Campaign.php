@@ -39,6 +39,7 @@ namespace AdvisingApp\Campaign\Models;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Campaign\Observers\CampaignObserver;
 use AdvisingApp\Segment\Models\Segment;
+use App\Features\CampaignActionTimestampColumnChanges;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
@@ -87,7 +88,11 @@ class Campaign extends BaseModel implements Auditable
     public function scopeHasNotBeenExecuted(Builder $query): void
     {
         $query->whereDoesntHave('actions', function (Builder $query) {
-            $query->whereNotNull('successfully_executed_at');
+            $query->whereNotNull(
+                CampaignActionTimestampColumnChanges::active()
+                            ? 'execution_finished_at'
+                            : 'successfully_executed_at'
+            );
         });
     }
 

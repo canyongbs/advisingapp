@@ -36,19 +36,38 @@
 
 namespace AdvisingApp\StudentDataModel\Models\Contracts;
 
+use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
+use AdvisingApp\Task\Models\Task;
 use App\Models\Tag;
 use App\Models\Taggable;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 /**
- * @property-read Collection $careTeam
- * @property string $email
+ * @phpstan-require-extends Model
+ *
+ * @mixin Model
+ *
+ * @property-read Collection<int, User> $careTeam
+ * @property-read ProspectEmailAddress|StudentEmailAddress|null $primaryEmailAddress
+ * @property-read Collection<int, Alert> $alerts
+ * @property-read Collection<int, Task> $tasks
+ * @property-read Collection<int, Tag> $tags
+ * @property-read Collection<int, Interaction> $interactions
+ * @property-read Collection<int, CaseModel> $cases
  */
 interface Educatable extends Identifiable, CanBeNotified
 {
@@ -70,4 +89,44 @@ interface Educatable extends Identifiable, CanBeNotified
      * @return MorphToMany<Tag, covariant Student|Prospect, covariant Taggable>
      */
     public function tags(): MorphToMany;
+
+    /**
+     * @return MorphMany<Alert, covariant Model>
+     */
+    public function alerts(): MorphMany;
+
+    /**
+     * @return MorphMany<Task, covariant Model>
+     */
+    public function tasks(): MorphMany;
+
+    /**
+     * @return BelongsTo<covariant Model, covariant Model>
+     */
+    public function primaryEmailAddress(): BelongsTo;
+
+    /**
+     * @return HasMany<covariant Model, covariant Model>
+     */
+    public function emailAddresses(): HasMany;
+
+    /**
+     * @return BelongsTo<covariant Model, covariant Model>
+     */
+    public function primaryPhoneNumber(): BelongsTo;
+
+    /**
+     * @return HasMany<covariant Model, covariant Model>
+     */
+    public function phoneNumbers(): HasMany;
+
+    /**
+     * @return MorphMany<Interaction, covariant Model>
+     */
+    public function interactions(): MorphMany;
+
+    /**
+     * @return MorphMany<CaseModel, covariant Model>
+     */
+    public function cases(): MorphMany;
 }

@@ -41,6 +41,7 @@ use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use App\Models\User;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\LaravelData\Data;
 
 class EngagementCreationData extends Data
@@ -52,6 +53,7 @@ class EngagementCreationData extends Data
      */
     public function __construct(
         public User $user,
+        /** @var CanBeNotified | Collection<int, CanBeNotified&Model> $recipient */
         public CanBeNotified | Collection $recipient,
         public NotificationChannel $channel,
         public ?array $subject = null,

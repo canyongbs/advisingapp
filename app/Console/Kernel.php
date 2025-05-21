@@ -40,7 +40,7 @@ use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Audit\Models\Audit;
-use AdvisingApp\Campaign\Actions\ExecuteCampaignActions;
+use AdvisingApp\Campaign\Jobs\ExecuteCampaignActions;
 use AdvisingApp\Engagement\Jobs\DeliverEngagements as DeliverEngagementsJob;
 use AdvisingApp\Engagement\Jobs\GatherAndDispatchSesS3InboundEmails;
 use AdvisingApp\Engagement\Models\EngagementFile;

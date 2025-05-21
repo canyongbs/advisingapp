@@ -273,10 +273,10 @@ it('checks the API returns Journey Steps Executed', function () {
 
     CampaignAction::factory()->count($randomRecords)->create();
 
-    $softDeleteCampaignAction = CampaignAction::factory()->successfulExecution()->create();
+    $softDeleteCampaignAction = CampaignAction::factory()->finishedAt()->create();
     $softDeleteCampaignAction->delete();
 
-    CampaignAction::factory()->count($randomRecords)->successfulExecution()->create();
+    CampaignAction::factory()->count($randomRecords)->finishedAt()->create();
 
     $response = get(route('utilization-metrics'));
 

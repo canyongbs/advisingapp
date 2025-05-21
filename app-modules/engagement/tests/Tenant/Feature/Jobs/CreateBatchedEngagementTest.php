@@ -61,6 +61,7 @@ it('will create and send an engagement immediately', function () {
 
     assertDatabaseCount(Engagement::class, 1);
 
+    // @phpstan-ignore method.nonObject
     expect(Engagement::first())
         ->engagementBatch->is($engagementBatch)->toBeTrue()
         ->user->is($engagementBatch->user)->toBeTrue()
@@ -94,6 +95,7 @@ it('will create but not dispatch a scheduled engagement', function () {
 
     assertDatabaseCount(Engagement::class, 1);
 
+    // @phpstan-ignore method.nonObject
     expect(Engagement::first())
         ->engagementBatch->is($engagementBatch)->toBeTrue()
         ->user->is($engagementBatch->user)->toBeTrue()

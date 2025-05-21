@@ -42,6 +42,7 @@ use AdvisingApp\Engagement\Filament\Forms\Components\EngagementSmsBodyInput;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
+use Exception;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
@@ -58,6 +59,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class BulkEngagementAction
@@ -184,11 +186,16 @@ class BulkEngagementAction
                     ]),
             ])
             ->action(function (Collection $records, array $data, Form $form) {
+                /** @var Collection<int, CanBeNotified> $records */
                 $channel = NotificationChannel::parse($data['channel']);
 
                 app(CreateEngagementBatch::class)->execute(new EngagementCreationData(
-                    user: auth()->user(),
-                    recipient: ($channel === NotificationChannel::Sms) ? $records->filter(fn (CanBeNotified $record) => $record->canReceiveSms()) : $records,
+                    user: Auth::user(),
+                    recipient: match ($channel) {
+                        NotificationChannel::Email => $records->filter(fn (CanBeNotified $record) => $record->canReceiveEmail()),
+                        NotificationChannel::Sms => $records->filter(fn (CanBeNotified $record) => $record->canReceiveSms()),
+                        default => throw new Exception('Invalid engagement channel'),
+                    },
                     channel: $channel,
                     subject: $data['subject'] ?? null,
                     body: $data['body'] ?? null,

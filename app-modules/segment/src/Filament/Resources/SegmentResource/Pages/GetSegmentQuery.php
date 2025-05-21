@@ -70,6 +70,7 @@ class GetSegmentQuery extends EditRecord implements HasTable
         $table = $segment->model->table($table);
 
         if ($segment->type === SegmentType::Static) {
+            // TODO: Look into changing this. It is inefficient and may break with large datasets.
             $keys = $segment->subjects()->pluck('subject_id');
 
             $table->modifyQueryUsing(fn (Builder $query) => $query->whereKey($keys));
