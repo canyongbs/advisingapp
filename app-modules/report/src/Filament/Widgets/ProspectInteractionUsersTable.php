@@ -134,7 +134,7 @@ class ProspectInteractionUsersTable extends BaseWidget
                                 'interactable',
                                 Prospect::class,
                             )
-                            ->sortBy('created_at')
+                            ->orderBy('created_at')
                             ->first();
 
                         return $first ? $first->created_at->format('M d, Y') : null;
@@ -148,7 +148,7 @@ class ProspectInteractionUsersTable extends BaseWidget
                                 'interactable',
                                 Prospect::class,
                             )
-                            ->sortByDesc('created_at')
+                            ->orderByDesc('created_at')
                             ->first();
 
                         return $last ? $last->created_at->format('M d, Y') : null;
@@ -193,6 +193,7 @@ class ProspectInteractionUsersTable extends BaseWidget
                                 'interactable',
                                 Prospect::class,
                             )
+                            ->get()
                             ->map(function ($interaction) {
                                 return Carbon::parse($interaction->end_datetime)
                                     ->diffInMinutes(Carbon::parse($interaction->start_datetime), true);
