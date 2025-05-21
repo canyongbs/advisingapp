@@ -66,6 +66,9 @@ class ProspectInteractionStatusPolarAreaChart extends ChartReportWidget
         ];
     }
 
+    /**
+    * @return array<string, mixed>
+    */
     protected function getOptions(): array
     {
         return [

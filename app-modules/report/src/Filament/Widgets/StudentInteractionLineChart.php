@@ -46,6 +46,9 @@ class StudentInteractionLineChart extends LineChartReportWidget
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function getOptions(): array
     {
         return [

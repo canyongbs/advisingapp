@@ -21,7 +21,7 @@ class StudentInteractionReport extends StudentReport
 
     protected static ?string $navigationGroup = 'Students';
 
-    protected $cacheTag = 'report-student-interaction';
+    protected string $cacheTag = 'report-student-interaction';
 
     protected static ?int $navigationSort = 3;
 

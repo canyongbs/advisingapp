@@ -13,22 +13,6 @@ class ProspectInteractionLineChart extends LineChartReportWidget
 
     protected int | string | array $columnSpan = 'full';
 
-    public function getOptions(): array
-    {
-        return [
-            'plugins' => [
-                'legend' => [
-                    'display' => false,
-                ],
-            ],
-            'scales' => [
-                'y' => [
-                    'min' => 0,
-                ],
-            ],
-        ];
-    }
-
     public function getData(): array
     {
         $runningTotalPerMonth = Cache::tags([$this->cacheTag])->remember('prospect_interactions_line_chart', now()->addHours(24), function (): array {
@@ -59,6 +43,25 @@ class ProspectInteractionLineChart extends LineChartReportWidget
                 ],
             ],
             'labels' => array_keys($runningTotalPerMonth),
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function getOptions(): array
+    {
+        return [
+            'plugins' => [
+                'legend' => [
+                    'display' => false,
+                ],
+            ],
+            'scales' => [
+                'y' => [
+                    'min' => 0,
+                ],
+            ],
         ];
     }
 }

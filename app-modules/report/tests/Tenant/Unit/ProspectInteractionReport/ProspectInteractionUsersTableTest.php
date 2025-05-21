@@ -47,14 +47,14 @@ it('can see prospect interaction users table', function () {
 
     $durationsUser1 = $user1->interactions->map(function ($interaction) {
         return Carbon::parse($interaction->end_datetime)
-            ->diffInMinutes(Carbon::parse($interaction->start_datetime), Carbon::DIFF_ABSOLUTE);
+            ->diffInMinutes(Carbon::parse($interaction->start_datetime), true);
     })->filter();
 
     $avgUser1 = round($durationsUser1->avg());
 
     $durationsUser2 = $user2->interactions->map(function ($interaction) {
         return Carbon::parse($interaction->end_datetime)
-            ->diffInMinutes(Carbon::parse($interaction->start_datetime), Carbon::DIFF_ABSOLUTE);
+            ->diffInMinutes(Carbon::parse($interaction->start_datetime), true);
     })->filter();
 
     $avgUser2 = round($durationsUser2->avg());

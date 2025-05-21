@@ -66,6 +66,9 @@ class StudentInteractionTypeDoughnutChart extends ChartReportWidget
         ];
     }
 
+    /**
+    * @return array<string, mixed>
+    */
     protected function getOptions(): array
     {
         return [

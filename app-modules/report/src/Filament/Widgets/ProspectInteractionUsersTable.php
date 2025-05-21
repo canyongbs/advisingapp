@@ -33,13 +33,13 @@ class ProspectInteractionUsersTable extends BaseWidget
         'lg' => 12,
     ];
 
-    public function mount(string $cacheTag)
+    public function mount(string $cacheTag): void
     {
         $this->cacheTag = $cacheTag;
     }
 
     #[On('refresh-widgets')]
-    public function refreshWidget()
+    public function refreshWidget(): void
     {
         $this->dispatch('$refresh');
     }
@@ -64,7 +64,7 @@ class ProspectInteractionUsersTable extends BaseWidget
                     ->label('Name')
                     ->description(function ($record) {
                         $jobTitle = $record->job_title ?? null;
-                        $teamName = $record->team?->name ?? null;
+                        $teamName = $record->team->name ?? null;
 
                         if ($jobTitle && $teamName) {
                             return "{$jobTitle} ({$teamName})";
@@ -126,7 +126,7 @@ class ProspectInteractionUsersTable extends BaseWidget
                     ->getStateUsing(function ($record) {
                         $durations = $record->interactions->map(function ($interaction) {
                             return Carbon::parse($interaction->end_datetime)
-                                ->diffInMinutes(Carbon::parse($interaction->start_datetime), Carbon::DIFF_ABSOLUTE);
+                                ->diffInMinutes(Carbon::parse($interaction->start_datetime), true);
                         })->filter();
 
                         if ($durations->count() > 0) {

@@ -21,7 +21,7 @@ class ProspectInteractionReport extends ProspectReport
 
     protected static ?string $navigationGroup = 'Prospects';
 
-    protected $cacheTag = 'report-prospect-interaction';
+    protected string $cacheTag = 'report-prospect-interaction';
 
     protected static ?int $navigationSort = 20;
 
