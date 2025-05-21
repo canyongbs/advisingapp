@@ -42,6 +42,7 @@ use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
@@ -83,11 +84,11 @@ class CampaignActionEducatable extends Model
     }
 
     /**
-     * @return MorphTo<Model, $this>
+     * @return HasMany<CampaignActionEducatableRelated, $this>
      */
-    public function related(): MorphTo
+    public function related(): HasMany
     {
-        return $this->morphTo();
+        return $this->hasMany(CampaignActionEducatableRelated::class, 'campaign_action_educatable_id');
     }
 
     public function markSucceeded(?Carbon $at = null): void
