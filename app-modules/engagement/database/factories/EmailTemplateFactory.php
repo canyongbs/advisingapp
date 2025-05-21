@@ -47,9 +47,9 @@ class EmailTemplateFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->word(),
-            'description' => fake()->sentence(),
-            'content' => fake()->paragraph(),
+            'name' => $this->faker->word(),
+            'description' => $this->faker->sentence(),
+            'content' => $this->faker->paragraph(),
         ];
     }
 }

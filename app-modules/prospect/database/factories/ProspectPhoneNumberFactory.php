@@ -52,10 +52,10 @@ class ProspectPhoneNumberFactory extends Factory
     public function definition(): array
     {
         return [
-            'number' => fake()->phoneNumber(),
+            'number' => $this->faker->phoneNumber(),
             'ext' => null,
-            'type' => fake()->randomElement(['Mobile', 'Home', 'Work']),
-            'can_receive_sms' => fake()->boolean(),
+            'type' => $this->faker->randomElement(['Mobile', 'Home', 'Work']),
+            'can_receive_sms' => $this->faker->boolean(),
         ];
     }
 
@@ -81,7 +81,7 @@ class ProspectPhoneNumberFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'ext' => fake()->randomNumber(),
+                'ext' => $this->faker->randomNumber(),
             ];
         });
     }

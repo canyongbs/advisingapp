@@ -52,7 +52,7 @@ class CampaignActionEducatableFactory extends Factory
     {
         return [
             'campaign_action_id' => CampaignAction::factory(),
-            'educatable_type' => fake()->randomElement([
+            'educatable_type' => $this->faker->randomElement([
                 new Student()->getMorphClass(),
                 new Prospect()->getMorphClass(),
             ]),

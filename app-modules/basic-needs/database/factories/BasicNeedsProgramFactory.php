@@ -52,16 +52,16 @@ class BasicNeedsProgramFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
-            'description' => fake()->realText(255),
+            'name' => $this->faker->name(),
+            'description' => $this->faker->realText(255),
             'basic_needs_category_id' => BasicNeedsCategory::factory(),
-            'contact_person' => fake()->name(),
-            'contact_email' => fake()->email(),
-            'contact_phone' => fake()->e164PhoneNumber(),
-            'location' => fake()->city(),
-            'availability' => fake()->realText(255),
-            'eligibility_criteria' => fake()->realText(255),
-            'application_process' => fake()->realText(255),
+            'contact_person' => $this->faker->name(),
+            'contact_email' => $this->faker->email(),
+            'contact_phone' => $this->faker->e164PhoneNumber(),
+            'location' => $this->faker->city(),
+            'availability' => $this->faker->realText(255),
+            'eligibility_criteria' => $this->faker->realText(255),
+            'application_process' => $this->faker->realText(255),
         ];
     }
 }

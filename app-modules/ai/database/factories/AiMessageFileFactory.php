@@ -53,10 +53,10 @@ class AiMessageFileFactory extends Factory
     {
         return [
             'message_id' => AiMessage::factory(),
-            'file_id' => fake()->uuid(),
-            'name' => fake()->word(),
-            'temporary_url' => fake()->url(),
-            'mime_type' => fake()->mimeType(),
+            'file_id' => $this->faker->uuid(),
+            'name' => $this->faker->word(),
+            'temporary_url' => $this->faker->url(),
+            'mime_type' => $this->faker->mimeType(),
         ];
     }
 }

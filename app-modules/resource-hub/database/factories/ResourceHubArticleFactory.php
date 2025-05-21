@@ -51,10 +51,10 @@ class ResourceHubArticleFactory extends Factory
     public function definition(): array
     {
         return [
-            'public' => fake()->boolean(),
-            'title' => fake()->sentence(),
-            'article_details' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->paragraph()]]]]],
-            'notes' => fake()->paragraph(),
+            'public' => $this->faker->boolean(),
+            'title' => $this->faker->sentence(),
+            'article_details' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $this->faker->paragraph()]]]]],
+            'notes' => $this->faker->paragraph(),
             'quality_id' => ResourceHubQuality::inRandomOrder()->first() ?? ResourceHubQuality::factory(),
             'status_id' => ResourceHubStatus::inRandomOrder()->first() ?? ResourceHubStatus::factory(),
             'category_id' => ResourceHubCategory::inRandomOrder()->first() ?? ResourceHubCategory::factory(),

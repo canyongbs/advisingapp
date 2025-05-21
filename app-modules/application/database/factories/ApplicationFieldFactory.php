@@ -49,7 +49,7 @@ class ApplicationFieldFactory extends Factory
      */
     public function definition(): array
     {
-        $type = fake()->randomElement(['text_input', 'text_area', 'select']);
+        $type = $this->faker->randomElement(['text_input', 'text_area', 'select']);
 
         $config = match ($type) {
             'select' => json_decode('{"options":{"us":"United States","ca":"Canada","uk":"United Kingdom"}}'),
@@ -57,8 +57,8 @@ class ApplicationFieldFactory extends Factory
         };
 
         return [
-            'label' => fake()->words(asText: true),
-            'is_required' => fake()->boolean(),
+            'label' => $this->faker->words(asText: true),
+            'is_required' => $this->faker->boolean(),
             'type' => $type,
             'config' => $config,
         ];

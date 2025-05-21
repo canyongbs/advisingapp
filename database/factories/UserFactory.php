@@ -55,11 +55,11 @@ class UserFactory extends Factory
         return [
             'default_assistant_chat_folders_created' => false,
             'email_verified_at' => now(),
-            'email' => fake()->unique()->safeEmail(),
+            'email' => $this->faker->unique()->safeEmail(),
             'is_external' => false,
-            'name' => fake()->name(),
+            'name' => $this->faker->name(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
-            'phone_number' => fake()->phoneNumber(),
+            'phone_number' => $this->faker->phoneNumber(),
             'remember_token' => Str::random(10),
         ];
     }

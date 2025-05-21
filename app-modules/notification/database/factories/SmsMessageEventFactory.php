@@ -48,7 +48,7 @@ class SmsMessageEventFactory extends Factory
     public function definition(): array
     {
         return [
-            'type' => fake()->randomElement(SmsMessageEventType::cases()),
+            'type' => $this->faker->randomElement(SmsMessageEventType::cases()),
             'payload' => [],
             'occurred_at' => now(),
         ];

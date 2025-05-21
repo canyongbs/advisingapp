@@ -48,7 +48,7 @@ class InteractionStatusFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->word(),
+            'name' => $this->faker->word(),
             'color' => $this->faker->randomElement(ColumnColorOptions::cases())->value,
         ];
     }

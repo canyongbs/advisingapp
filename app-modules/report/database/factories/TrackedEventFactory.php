@@ -48,8 +48,8 @@ class TrackedEventFactory extends Factory
     public function definition(): array
     {
         return [
-            'type' => fake()->randomElement(TrackedEventType::cases()),
-            'occurred_at' => fake()->dateTime(),
+            'type' => $this->faker->randomElement(TrackedEventType::cases()),
+            'occurred_at' => $this->faker->dateTime(),
         ];
     }
 }

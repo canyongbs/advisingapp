@@ -48,9 +48,9 @@ class TrackedEventCountFactory extends Factory
     public function definition(): array
     {
         return [
-            'type' => fake()->unique()->randomElement(TrackedEventType::cases()),
-            'count' => fake()->numberBetween(1, 100),
-            'last_occurred_at' => fake()->dateTime(),
+            'type' => $this->faker->unique()->randomElement(TrackedEventType::cases()),
+            'count' => $this->faker->numberBetween(1, 100),
+            'last_occurred_at' => $this->faker->dateTime(),
         ];
     }
 }

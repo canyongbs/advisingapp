@@ -53,9 +53,9 @@ class AiAssistantFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->word(),
+            'name' => $this->faker->word(),
             'application' => AiAssistantApplication::PersonalAssistant,
-            'model' => fake()->randomElement(
+            'model' => $this->faker->randomElement(
                 array_filter(
                     AiModel::cases(),
                     fn (AiModel $case) => $case !== AiModel::JinaDeepSearchV1

@@ -55,7 +55,7 @@ class SurveySubmissionFactory extends Factory
     {
         return [
             'survey_id' => Survey::factory(),
-            'author_type' => fake()->randomElement([(new Student())->getMorphClass(), (new Prospect())->getMorphClass()]),
+            'author_type' => $this->faker->randomElement([(new Student())->getMorphClass(), (new Prospect())->getMorphClass()]),
             'author_id' => function (array $attributes) {
                 $authorClass = Relation::getMorphedModel($attributes['author_type']);
 
