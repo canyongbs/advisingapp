@@ -90,8 +90,12 @@ class CaseCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
             }
 
             $this->actionEducatable->succeeded_at = now();
-            $this->actionEducatable->related()->associate($case);
-            $this->actionEducatable->save();
+            $this->actionEducatable
+                ->related()
+                ->make()
+                ->related()
+                ->associate($case)
+                ->save();
 
             DB::commit();
         } catch (Throwable $e) {

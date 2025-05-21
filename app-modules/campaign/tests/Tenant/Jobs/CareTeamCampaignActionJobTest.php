@@ -157,5 +157,6 @@ it('will execute appropriately on each educatable in the segment', function (Edu
                 fn () => User::factory()->licensed(LicenseType::cases())->count(3)->create()->pluck('id')->toArray(),
                 true,
             ],
+            // TODO: We could use a test where some users are already in the care team and some are not.
         ]
     );

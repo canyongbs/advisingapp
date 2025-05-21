@@ -40,6 +40,7 @@ use AdvisingApp\Campaign\Jobs\CaseCampaignActionJob;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Models\CampaignActionEducatable;
+use AdvisingApp\Campaign\Models\CampaignActionEducatableRelated;
 use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
 use AdvisingApp\CaseManagement\Models\CasePriority;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
@@ -116,7 +117,12 @@ it('will execute appropriately on each educatable in the segment', function (Edu
 
     expect($campaignActionEducatable->succeeded_at)->not()->toBeNull()
         ->and($campaignActionEducatable->last_failed_at)->toBeNull()
-        ->and($campaignActionEducatable->related->is($cases->first()))->toBeTrue();
+        ->and($campaignActionEducatable->related)->toHaveCount(1);
+
+    /** @var CampaignActionEducatableRelated $campaignActionEducatableRelated */
+    $campaignActionEducatableRelated = $campaignActionEducatable->related->first();
+
+    expect($campaignActionEducatableRelated->related->is($cases->first()))->toBeTrue();
 })
     ->with([
         'student' => [
@@ -190,7 +196,12 @@ it('will create the proper assignment if provided', function (Educatable $educat
 
     expect($campaignActionEducatable->succeeded_at)->not()->toBeNull()
         ->and($campaignActionEducatable->last_failed_at)->toBeNull()
-        ->and($campaignActionEducatable->related->is($cases->first()))->toBeTrue();
+        ->and($campaignActionEducatable->related)->toHaveCount(1);
+
+    /** @var CampaignActionEducatableRelated $campaignActionEducatableRelated */
+    $campaignActionEducatableRelated = $campaignActionEducatable->related->first();
+
+    expect($campaignActionEducatableRelated->related->is($cases->first()))->toBeTrue();
 })
     ->with([
         'student' => [
