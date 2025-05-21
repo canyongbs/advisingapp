@@ -36,30 +36,18 @@
 
 namespace AdvisingApp\Notification\Actions;
 
-use AdvisingApp\Notification\Exceptions\SubscriptionAlreadyExistsException;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
+use AdvisingApp\Notification\Models\Subscription;
 use App\Models\User;
-use Illuminate\Database\UniqueConstraintViolationException;
-use Illuminate\Support\Facades\DB;
 
 class SubscriptionCreate
 {
-    public function handle(User $user, Subscribable $subscribable, bool $throwUniqueException = true): void
+    public function handle(User $user, Subscribable $subscribable): Subscription
     {
-        try {
-            DB::transaction(
-                fn () => $user->subscriptions()
-                    ->create([
-                        'subscribable_id' => $subscribable->getKey(),
-                        'subscribable_type' => $subscribable->getMorphClass(),
-                    ])
-            );
-        } catch (UniqueConstraintViolationException $exception) {
-            if ($throwUniqueException) {
-                throw new SubscriptionAlreadyExistsException(
-                    previous: $exception,
-                );
-            }
-        }
+        return $user->subscriptions()
+            ->firstOrCreate([
+                'subscribable_id' => $subscribable->getKey(),
+                'subscribable_type' => $subscribable->getMorphClass(),
+            ]);
     }
 }

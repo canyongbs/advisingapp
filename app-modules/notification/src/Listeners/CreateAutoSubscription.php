@@ -48,6 +48,6 @@ class CreateAutoSubscription implements ShouldQueue
             return;
         }
 
-        resolve(SubscriptionCreate::class)->handle($event->user, $event->subscribable, false);
+        resolve(SubscriptionCreate::class)->handle($event->user, $event->subscribable);
     }
 }

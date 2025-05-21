@@ -61,7 +61,7 @@ class AlertObserver
 
         if ($user instanceof User) {
             // Creating the subscription directly so that the alert can be sent to this User as well
-            resolve(SubscriptionCreate::class)->handle($user, $alert->getSubscribable(), false);
+            resolve(SubscriptionCreate::class)->handle($user, $alert->getSubscribable());
         }
 
         AlertCreated::dispatch($alert);

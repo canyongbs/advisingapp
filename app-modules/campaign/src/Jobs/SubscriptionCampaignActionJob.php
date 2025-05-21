@@ -38,6 +38,7 @@ namespace AdvisingApp\Campaign\Jobs;
 
 use AdvisingApp\Notification\Actions\SubscriptionCreate;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
+use AdvisingApp\Notification\Models\Subscription;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -63,13 +64,23 @@ class SubscriptionCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
                 $educatable->subscriptions()->delete();
             }
 
+            /** @var array<Subscription> $subscriptions */
+            $subscriptions = [];
+
             foreach ($action->data['user_ids'] as $userId) {
-                resolve(SubscriptionCreate::class)
-                    ->handle(User::find($userId), $educatable, false);
+                $subscriptions[] = resolve(SubscriptionCreate::class)
+                    ->handle(User::find($userId), $educatable);
             }
 
-            // Because we are attaching multiple Subscriptions, which just creates pivot Models,
-            // we don't need to relate any records.
+            foreach ($subscriptions as $subscription) {
+                $this->actionEducatable
+                    ->related()
+                    ->make()
+                    ->related()
+                    ->associate($subscription)
+                    ->save();
+            }
+
             $this->actionEducatable->markSucceeded();
 
             DB::commit();
