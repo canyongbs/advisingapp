@@ -43,7 +43,7 @@ use App\Models\User;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Query\Expression;
-use Illuminate\Http\Client\Response;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -96,9 +96,8 @@ class SocialiteController extends Controller
         if ($provider === SocialiteProvider::Azure) {
             try {
                 $request = Http::withToken($socialiteUser->token)
-                    ->retry(3, 500)
                     ->get('https://graph.microsoft.com/v1.0/me/photo/$value')
-                    ->throwIf(fn (Response $response) => $response->failed() && $response->status() !== 404);
+                    ->throw();
 
                 $mimeType = $request->header('Content-Type');
 
@@ -112,6 +111,10 @@ class SocialiteController extends Controller
                     }
                 } else {
                     throw new InvalidUserAvatarMimeType($mimeType, $user);
+                }
+            } catch (RequestException $e) {
+                if (! str_contains($e->getMessage(), 'Microsoft.Fast.Profile.Core.Exception.ImageNotFoundException')) {
+                    report($e);
                 }
             } catch (Throwable $e) {
                 report($e);
