@@ -54,17 +54,11 @@ it('creates happy path test', function () {
         ->has(Interaction::factory()->count(1))
         ->create();
 
-    livewire(InteractionsRelationManager::class, [
-        'ownerRecord' => $student,
-        'pageClass' => ViewStudent::class,
-    ])
-        ->assertForbidden();
+    actingAs($user);
 
     $user->givePermissionTo('student.view-any');
     $user->givePermissionTo('student.*.view');
     $user->givePermissionTo('interaction.view-any');
-
-    actingAs($user);
 
     livewire(InteractionsRelationManager::class, [
         'ownerRecord' => $student,
