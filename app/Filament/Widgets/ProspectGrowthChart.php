@@ -67,7 +67,7 @@ class ProspectGrowthChart extends ChartWidget
 
     protected function getData(): array
     {
-        $runningTotalPerMonth = Cache::tags(['{{prospects}}'])
+        $runningTotalPerMonth = Cache::tags(['{prospects}'])
             ->remember('prospect-growth-chart-data', now()->addHour(), function (): array {
                 $totalCreatedPerMonth = Prospect::query()
                     ->toBase()
