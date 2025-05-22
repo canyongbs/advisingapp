@@ -116,7 +116,7 @@ trait HasManyMorphedInteractionsTrait
                     ->label('Start Time')
                     ->dateTime()
                     ->sortable(),
-                TextColumn::make('created_at')
+                TextColumn::make('duration')
                     ->state(fn ($record) => $record->end_datetime ? $record->end_datetime->diffForHumans($record->start_datetime, CarbonInterface::DIFF_ABSOLUTE, true, 6) : '-')
                     ->label('Duration'),
                 TextColumn::make('user.name')
@@ -139,7 +139,7 @@ trait HasManyMorphedInteractionsTrait
                     ->authorize(function () {
                         $ownerRecord = $this->getOwnerRecord();
 
-                        return auth()->user()->can('create', [Interaction::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
+                        return auth()->user()?->can('create', [Interaction::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
                     }),
             ])
             ->actions([
@@ -162,7 +162,7 @@ trait HasManyMorphedInteractionsTrait
                     ->relationship('driver', 'name')
                     ->label('Driver')
                     ->multiple(),
-                SelectFilter::make('interactable_type')
+                SelectFilter::make('interaction_type_id')
                     ->label('Type')
                     ->relationship('type', 'name')
                     ->multiple(),
