@@ -56,19 +56,19 @@ class UsersStats extends StatsOverviewReportWidget
     {
         return [
             Stat::make('Total Users', Number::abbreviate(
-                Cache::tags([$this->cacheTag])->remember('total-users-count', now()->addHours(24), function (): int {
+                Cache::tags(["{{$this->cacheTag}}"])->remember('total-users-count', now()->addHours(24), function (): int {
                     return User::count();
                 }),
                 maxPrecision: 2,
             )),
             Stat::make('New Users', Number::abbreviate(
-                Cache::tags([$this->cacheTag])->remember('new-users-count', now()->addHours(24), function (): int {
+                Cache::tags(["{{$this->cacheTag}}"])->remember('new-users-count', now()->addHours(24), function (): int {
                     return User::where('created_at', '>=', Carbon::now()->subDays(30))->count();
                 }),
                 maxPrecision: 2,
             )),
             Stat::make('Unique Logins', Number::abbreviate(
-                Cache::tags([$this->cacheTag])->remember('unique-logins-count', now()->addHours(24), function (): int {
+                Cache::tags(["{{$this->cacheTag}}"])->remember('unique-logins-count', now()->addHours(24), function (): int {
                     return TrackedEventCount::where('type', TrackedEventType::UserLogin)->sum('count');
                 }),
                 maxPrecision: 2,
