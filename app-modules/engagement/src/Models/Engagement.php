@@ -74,7 +74,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use TheIconic\NameParser\Parser;
 
 /**
- * @property-read Educatable $recipient
+ * @property-read ?Educatable $recipient
  *
  * @mixin IdeHelperEngagement
  */

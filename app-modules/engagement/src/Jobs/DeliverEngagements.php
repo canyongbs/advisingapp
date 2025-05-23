@@ -38,7 +38,6 @@ namespace AdvisingApp\Engagement\Jobs;
 
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Notifications\EngagementNotification;
-use AdvisingApp\Notification\Enums\NotificationChannel;
 use App\Models\Tenant;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Database\Eloquent\Builder;
@@ -64,20 +63,20 @@ class DeliverEngagements implements ShouldQueue
             ->with('recipient')
             ->eachById(
                 fn (Engagement $engagement) => DB::transaction(function () use ($engagement) {
+                    if (is_null($engagement->recipient)) {
+                        // If the Engagement recipient no longer exists, delete the Engagement
+                        // and skip sending the notification.
+                        $engagement->delete();
+
+                        return;
+                    }
+
                     $updatedEngagementsCount = Engagement::query()
                         ->whereNull('dispatched_at')
                         ->whereKey($engagement)
                         ->update(['dispatched_at' => now()]);
 
                     if (! $updatedEngagementsCount) {
-                        return;
-                    }
-
-                    if ($engagement->channel === NotificationChannel::Email && ! $engagement->recipient->canReceiveEmail()) {
-                        return;
-                    }
-
-                    if ($engagement->channel === NotificationChannel::Sms && ! $engagement->recipient->canReceiveSms()) {
                         return;
                     }
 

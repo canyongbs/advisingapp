@@ -41,6 +41,7 @@ use AdvisingApp\Notification\DataTransferObjects\EmailChannelResultData;
 use AdvisingApp\Notification\Enums\EmailMessageEventType;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
+use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\EmailMessage;
 use AdvisingApp\Notification\Models\StoredAnonymousNotifiable;
 use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
@@ -101,6 +102,16 @@ class MailChannel extends BaseMailChannel
         }
 
         $emailMessage->save();
+
+        if ($notifiable instanceof CanBeNotified && ! $notifiable->canReceiveEmail()) {
+            $emailMessage->events()->create([
+                'type' => EmailMessageEventType::FailedDispatch,
+                'payload' => ['message' => 'System determined recipient cannot receive emails.'],
+                'occurred_at' => now(),
+            ]);
+
+            return;
+        }
 
         $tenant = Tenant::current();
         $tenantMailConfig = $tenant?->config->mail;
