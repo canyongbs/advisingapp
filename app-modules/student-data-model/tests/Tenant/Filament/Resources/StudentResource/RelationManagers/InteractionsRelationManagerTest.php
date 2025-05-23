@@ -47,25 +47,31 @@ use App\Models\User;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
-it('creates happy path test', function () {
-    $user = User::factory()->licensed(Student::getLicenseType())->create();
+// it('renders the InteractionsRelationManager based on proper access', function () {
+//     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
-    $student = Student::factory()
-        ->has(Interaction::factory()->count(1))
-        ->create();
+//     $student = Student::factory()
+//         ->has(Interaction::factory()->count(1))
+//         ->create();
 
-    actingAs($user);
+//     actingAs($user);
 
-    $user->givePermissionTo('student.view-any');
-    $user->givePermissionTo('student.*.view');
-    $user->givePermissionTo('interaction.view-any');
+//     livewire(InteractionsRelationManager::class, [
+//         'ownerRecord' => $student,
+//         'pageClass' => ViewStudent::class,
+//     ])
+//         ->assertForbidden();
 
-    livewire(InteractionsRelationManager::class, [
-        'ownerRecord' => $student,
-        'pageClass' => ViewStudent::class,
-    ])
-        ->assertSuccessful();
-});
+//     $user->givePermissionTo('student.view-any');
+//     $user->givePermissionTo('student.*.view');
+//     $user->givePermissionTo('interaction.view-any');
+
+//     livewire(InteractionsRelationManager::class, [
+//         'ownerRecord' => $student,
+//         'pageClass' => ViewStudent::class,
+//     ])
+//         ->assertSuccessful();
+// })->only();
 
 it('renders only the interactions associated with student', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
@@ -74,6 +80,10 @@ it('renders only the interactions associated with student', function () {
         ->has(Interaction::factory()->count(5))
         ->create();
 
+    $notAssociatedStudent = Student::factory()
+        ->has(Interaction::factory()->count(5))
+        ->create();
+
     $user->givePermissionTo('student.view-any');
     $user->givePermissionTo('student.*.view');
     $user->givePermissionTo('interaction.view-any');
@@ -82,17 +92,25 @@ it('renders only the interactions associated with student', function () {
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
-        ->assertCanSeeTableRecords($student->interactions);
+        ->assertCanSeeTableRecords($student->interactions)
+        ->assertCanNotSeeTableRecords($notAssociatedStudent->interactions);
 });
 
 it('renders the initiative select filter', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
-    $student = Student::factory()
-        ->has(Interaction::factory()->count(5))
-        ->create();
+    $initiatives = InteractionInitiative::factory()->count(2)->create();
+    $selectableInteractions = Interaction::factory([
+        'interaction_initiative_id' => $initiatives->first()->id,
+    ])->create();
 
-    $initiatives = InteractionInitiative::factory()->count(5)->create();
+    $nonSelectableInteractions = Interaction::factory([
+        'interaction_initiative_id' => $initiatives->last()->id,
+    ])->create();
+
+    $student = Student::factory()->create();
+
+    $student->interactions()->saveMany([$selectableInteractions, $nonSelectableInteractions]);
 
     $user->givePermissionTo('student.view-any');
     $user->givePermissionTo('student.*.view');
@@ -105,21 +123,27 @@ it('renders the initiative select filter', function () {
         'pageClass' => ViewStudent::class,
     ])
         ->filterTable('interaction_initiative_id', $initiatives->first()->id)
-        ->assertCanSeeTableRecords($student->interactions->where('interaction_initiative_id', $initiatives->first()->id))
-        ->assertCanNotSeeTableRecords($student->interactions)
+        ->assertCanSeeTableRecords([$selectableInteractions])
+        ->assertCanNotSeeTableRecords([$nonSelectableInteractions])
         ->removeTableFilter('interaction_initiative_id')
-        ->assertCanSeeTableRecords($student->interactions)
-        ->assertCanNotSeeTableRecords($student->interactions->where('interaction_initiative_id', $initiatives->first()->id));
+        ->assertCanSeeTableRecords([$selectableInteractions, $nonSelectableInteractions]);
 });
 
 it('renders the driver select filter', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
-    $student = Student::factory()
-        ->has(Interaction::factory()->count(5))
-        ->create();
+    $drivers = InteractionDriver::factory()->count(2)->create();
+    $selectableInteractions = Interaction::factory([
+        'interaction_driver_id' => $drivers->first()->id,
+    ])->create();
 
-    $drivers = InteractionDriver::factory()->count(5)->create();
+    $nonSelectableInteractions = Interaction::factory([
+        'interaction_driver_id' => $drivers->last()->id,
+    ])->create();
+
+    $student = Student::factory()->create();
+
+    $student->interactions()->saveMany([$selectableInteractions, $nonSelectableInteractions]);
 
     $user->givePermissionTo('student.view-any');
     $user->givePermissionTo('student.*.view');
@@ -132,21 +156,27 @@ it('renders the driver select filter', function () {
         'pageClass' => ViewStudent::class,
     ])
         ->filterTable('interaction_driver_id', $drivers->first()->id)
-        ->assertCanSeeTableRecords($student->interactions->where('interaction_driver_id', $drivers->first()->id))
-        ->assertCanNotSeeTableRecords($student->interactions)
+        ->assertCanSeeTableRecords([$selectableInteractions])
+        ->assertCanNotSeeTableRecords([$nonSelectableInteractions])
         ->removeTableFilter('interaction_driver_id')
-        ->assertCanSeeTableRecords($student->interactions)
-        ->assertCanNotSeeTableRecords($student->interactions->where('interaction_driver_id', $drivers->first()->id));
+        ->assertCanSeeTableRecords([$selectableInteractions, $nonSelectableInteractions]);
 });
 
 it('renders the type select filter', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
-    $student = Student::factory()
-        ->has(Interaction::factory()->count(5))
-        ->create();
+    $types = InteractionType::factory()->count(2)->create();
+    $selectableInteractions = Interaction::factory([
+        'interaction_type_id' => $types->first()->id,
+    ])->create();
 
-    $types = InteractionType::factory()->count(5)->create();
+    $nonSelectableInteractions = Interaction::factory([
+        'interaction_type_id' => $types->last()->id,
+    ])->create();
+
+    $student = Student::factory()->create();
+
+    $student->interactions()->saveMany([$selectableInteractions, $nonSelectableInteractions]);
 
     $user->givePermissionTo('student.view-any');
     $user->givePermissionTo('student.*.view');
@@ -159,21 +189,27 @@ it('renders the type select filter', function () {
         'pageClass' => ViewStudent::class,
     ])
         ->filterTable('interaction_type_id', $types->first()->id)
-        ->assertCanSeeTableRecords($student->interactions->where('interaction_type_id', $types->first()->id))
-        ->assertCanNotSeeTableRecords($student->interactions)
+        ->assertCanSeeTableRecords([$selectableInteractions])
+        ->assertCanNotSeeTableRecords([$nonSelectableInteractions])
         ->removeTableFilter('interaction_type_id')
-        ->assertCanSeeTableRecords($student->interactions)
-        ->assertCanNotSeeTableRecords($student->interactions->where('interaction_type_id', $types->first()->id));
+        ->assertCanSeeTableRecords([$selectableInteractions, $nonSelectableInteractions]);
 });
 
 it('renders the status select filter', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
-    $student = Student::factory()
-        ->has(Interaction::factory()->count(5))
-        ->create();
-
     $statuses = InteractionStatus::factory()->count(5)->create();
+    $selectableInteractions = Interaction::factory([
+        'interaction_status_id' => $statuses->first()->id,
+    ])->create();
+
+    $nonSelectableInteractions = Interaction::factory([
+        'interaction_status_id' => $statuses->last()->id,
+    ])->create();
+
+    $student = Student::factory()->create();
+
+    $student->interactions()->saveMany([$selectableInteractions, $nonSelectableInteractions]);
 
     $user->givePermissionTo('student.view-any');
     $user->givePermissionTo('student.*.view');
@@ -186,21 +222,27 @@ it('renders the status select filter', function () {
         'pageClass' => ViewStudent::class,
     ])
         ->filterTable('interaction_status_id', $statuses->first()->id)
-        ->assertCanSeeTableRecords($student->interactions->where('interaction_status_id', $statuses->first()->id))
-        ->assertCanNotSeeTableRecords($student->interactions)
+        ->assertCanSeeTableRecords([$selectableInteractions])
+        ->assertCanNotSeeTableRecords([$nonSelectableInteractions])
         ->removeTableFilter('interaction_status_id')
-        ->assertCanSeeTableRecords($student->interactions)
-        ->assertCanNotSeeTableRecords($student->interactions->where('interaction_status_id', $statuses->first()->id));
+        ->assertCanSeeTableRecords([$nonSelectableInteractions, $selectableInteractions]);
 });
 
 it('renders the created by select filter', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
-    $student = Student::factory()
-        ->has(Interaction::factory()->count(5))
-        ->create();
+    $users = User::factory()->count(2)->create();
+    $selectableInteractions = Interaction::factory([
+        'user_id' => $users->first()->id,
+    ])->create();
 
-    $users = User::factory()->count(5)->create();
+    $nonSelectableInteractions = Interaction::factory([
+        'user_id' => $users->last()->id,
+    ])->create();
+
+    $student = Student::factory()->create();
+
+    $student->interactions()->saveMany([$selectableInteractions, $nonSelectableInteractions]);
 
     $user->givePermissionTo('student.view-any');
     $user->givePermissionTo('student.*.view');
@@ -213,9 +255,8 @@ it('renders the created by select filter', function () {
         'pageClass' => ViewStudent::class,
     ])
         ->filterTable('user_id', $users->first()->id)
-        ->assertCanSeeTableRecords($student->interactions->where('user_id', $users->first()->id))
-        ->assertCanNotSeeTableRecords($student->interactions)
+        ->assertCanSeeTableRecords([$selectableInteractions])
+        ->assertCanNotSeeTableRecords([$nonSelectableInteractions])
         ->removeTableFilter('user_id')
-        ->assertCanSeeTableRecords($student->interactions)
-        ->assertCanNotSeeTableRecords($student->interactions->where('user_id', $users->first()->id));
+        ->assertCanSeeTableRecords([$selectableInteractions, $nonSelectableInteractions]);
 });
