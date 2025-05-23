@@ -37,6 +37,7 @@
 namespace App\Jobs;
 
 use App\Models\Tenant;
+use Exception;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -66,14 +67,23 @@ class MigrateTenantDatabase implements ShouldQueue, NotTenantAware
     {
         $this->tenant->execute(function () {
             $currentQueueFailedConnection = config('queue.failed.database');
+            // TODO: Apply this to all of the other jobs in this batch / chain, maybe reset `queue.failer` and what ever in the container refernced the batching config?
+            $currentBatchingConnection = config('queue.batching.database');
 
-            config(['queue.failed.database' => 'landlord']);
+            config([
+                'queue.failed.database' => 'landlord',
+                'queue.batching.database' => 'landlord',
+            ]);
 
+            throw new Exception('test');
             Artisan::call(
                 command: 'migrate:fresh --force'
             );
 
-            config(['queue.failed.database' => $currentQueueFailedConnection]);
+            config([
+                'queue.failed.database' => $currentQueueFailedConnection,
+                'queue.batching.database' => $currentBatchingConnection,
+            ]);
         });
     }
 }
