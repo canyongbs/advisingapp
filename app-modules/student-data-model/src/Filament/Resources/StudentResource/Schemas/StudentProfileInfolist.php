@@ -75,7 +75,7 @@ class StudentProfileInfolist
                             TextEntry::make('primaryEmailAddress')
                                 ->label('Primary Email Address')
                                 ->state(fn (Student $record): View => view('student-data-model::components.filament.resources.educatable-resource.view-educatable.email-address-detail', ['emailAddress' => $record->primaryEmailAddress]))
-                                ->visible(fn (?View $state): bool => filled($state)),
+                                ->visible(fn (Student $record): bool => filled($record->primaryEmailAddress)),
                             TextEntry::make('additionalEmailAddresses')
                                 ->label(fn (?array $state): string => Str::plural('Other Email Address', count($state ?? [])))
                                 ->state(fn (Student $record): array => array_map(
@@ -83,11 +83,11 @@ class StudentProfileInfolist
                                     $record->additionalEmailAddresses->all(),
                                 ))
                                 ->listWithLineBreaks()
-                                ->visible(fn (?array $state): bool => filled($state)),
+                                ->visible(fn (Student $record): bool => filled($record->additionalEmailAddresses)),
                             TextEntry::make('primaryPhoneNumber')
                                 ->label('Primary Phone Number')
                                 ->state(fn (Student $record): View => view('student-data-model::components.filament.resources.educatable-resource.view-educatable.phone-number-detail', ['phoneNumber' => $record->primaryPhoneNumber]))
-                                ->visible(fn (?View $state): bool => filled($state)),
+                                ->visible(fn (Student $record): bool => filled($record->primaryPhoneNumber)),
                             TextEntry::make('additionalPhoneNumbers')
                                 ->label(fn (?array $state): string => Str::plural('Other Phone Number', count($state ?? [])))
                                 ->state(fn (Student $record): array => array_map(
@@ -95,7 +95,7 @@ class StudentProfileInfolist
                                     $record->additionalPhoneNumbers->all(),
                                 ))
                                 ->listWithLineBreaks()
-                                ->visible(fn (?array $state): bool => filled($state)),
+                                ->visible(fn (Student $record): bool => filled($record->additionalPhoneNumbers)),
                         ]),
                         Subsection::make([
                             TextEntry::make('gender')
