@@ -56,7 +56,9 @@ class ManageResearchRequests extends Page
 
     protected static string $view = 'research::filament.pages.manage-research-requests';
 
-    protected static ?string $title = 'Research Requests';
+    protected static ?string $title = 'Research Advisor';
+
+    protected static ?int $navigationSort = 20;
 
     /**
      * @return array<NavigationItem>
@@ -64,7 +66,7 @@ class ManageResearchRequests extends Page
     public static function getNavigationItems(): array
     {
         return [
-            NavigationItem::make('Research Requests')
+            NavigationItem::make('Research Advisor')
                 ->group('Artificial Intelligence')
                 ->isActiveWhen(fn (): bool => request()->routeIs(static::getRouteName(), NewResearchRequest::getRouteName()))
                 ->sort(30)
