@@ -114,7 +114,7 @@ class NewResearchRequest extends Page
     public function getBreadcrumbs(): array
     {
         return [
-            ManageResearchRequests::getUrl() => 'Research Requests',
+            ManageResearchRequests::getUrl() => 'Research Advisor',
             'New',
         ];
     }

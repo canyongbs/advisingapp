@@ -50,7 +50,7 @@ class QnAAdvisors extends Page
 
     protected static ?string $slug = 'qna-advisors';
 
-    protected static ?int $navigationSort = 30;
+    protected static ?int $navigationSort = 40;
 
     protected static string $view = 'filament.pages.coming-soon';
 
