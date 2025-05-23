@@ -50,7 +50,7 @@ class FailIfBatchCancelled
      */
     public function handle(ExecuteCampaignActionOnEducatableJob $job, $next)
     {
-        if (method_exists($job, 'batch') && $job->batch()?->cancelled()) {
+        if ($job->batch()->cancelled()) {
             $job->actionEducatable->markFailed();
 
             return;
