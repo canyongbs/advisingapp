@@ -51,7 +51,7 @@ class EventRegistrationFormStepFactory extends Factory
     public function definition(): array
     {
         return [
-            'label' => str(fake()->word())->ucfirst(),
+            'label' => str($this->faker->word())->ucfirst(),
         ];
     }
 

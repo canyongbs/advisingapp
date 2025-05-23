@@ -52,8 +52,8 @@ class EventAttendeeFactory extends Factory
     public function definition(): array
     {
         return [
-            'status' => fake()->randomElement(EventAttendeeStatus::class),
-            'email' => fake()->unique()->email(),
+            'status' => $this->faker->randomElement(EventAttendeeStatus::class),
+            'email' => $this->faker->unique()->email(),
             'event_id' => Event::inRandomOrder()->first() ?? Event::factory()->create(),
         ];
     }

@@ -49,10 +49,10 @@ class EngagementBatchFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'subject' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->sentence]]]]],
-            'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->paragraph]]]]],
-            'scheduled_at' => fake()->dateTimeBetween('-1 year', '-1 day'),
-            'channel' => fake()->randomElement([NotificationChannel::Email, NotificationChannel::Sms]),
+            'subject' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $this->faker->sentence]]]]],
+            'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $this->faker->paragraph]]]]],
+            'scheduled_at' => $this->faker->dateTimeBetween('-1 year', '-1 day'),
+            'channel' => $this->faker->randomElement([NotificationChannel::Email, NotificationChannel::Sms]),
         ];
     }
 
@@ -66,7 +66,7 @@ class EngagementBatchFactory extends Factory
     public function deliverLater(): self
     {
         return $this->state([
-            'scheduled_at' => fake()->dateTimeBetween('+1 day', '+1 week'),
+            'scheduled_at' => $this->faker->dateTimeBetween('+1 day', '+1 week'),
         ]);
     }
 

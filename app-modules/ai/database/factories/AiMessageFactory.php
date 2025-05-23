@@ -53,10 +53,10 @@ class AiMessageFactory extends Factory
     public function definition(): array
     {
         return [
-            'message_id' => fake()->uuid(),
-            'content' => fake()->sentence(),
-            'context' => fake()->word(),
-            'request' => fake()->word(),
+            'message_id' => $this->faker->uuid(),
+            'content' => $this->faker->sentence(),
+            'context' => $this->faker->word(),
+            'request' => $this->faker->word(),
             'thread_id' => AiThread::factory(),
             'user_id' => User::factory(),
         ];

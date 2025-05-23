@@ -52,7 +52,7 @@ class ApplicationAuthenticationFactory extends Factory
     public function definition(): array
     {
         return [
-            'author_type' => fake()->randomElement([
+            'author_type' => $this->faker->randomElement([
                 (new Student())->getMorphClass(),
                 (new Prospect())->getMorphClass(),
             ]),

@@ -57,14 +57,14 @@ class EventRegistrationFormFactory extends Factory
     public function definition(): array
     {
         return [
-            'embed_enabled' => fake()->boolean(),
+            'embed_enabled' => $this->faker->boolean(),
             'allowed_domains' => fn ($attributes) => $attributes['embed_enabled'] ? [
                 parse_url(config('app.url'), PHP_URL_HOST),
-                parse_url(fake()->url(), PHP_URL_HOST),
+                parse_url($this->faker->url(), PHP_URL_HOST),
             ] : [],
-            'primary_color' => fake()->randomElement(collect(Color::all())->keys()),
-            'rounding' => fake()->randomElement(Rounding::class),
-            'is_wizard' => fake()->boolean(),
+            'primary_color' => $this->faker->randomElement(collect(Color::all())->keys()),
+            'rounding' => $this->faker->randomElement(Rounding::class),
+            'is_wizard' => $this->faker->boolean(),
             'event_id' => fn (array $attributes) => $attributes['event_id'] ??= Event::factory()->create()->getKey(),
         ];
     }

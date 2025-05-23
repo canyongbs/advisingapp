@@ -51,7 +51,7 @@ class TagFactory extends Factory
     {
         return [
             'name' => $this->faker->name,
-            'type' => fake()->randomElement(TagType::cases())->value,
+            'type' => $this->faker->randomElement(TagType::cases())->value,
         ];
     }
 }

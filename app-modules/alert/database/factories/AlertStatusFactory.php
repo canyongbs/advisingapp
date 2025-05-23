@@ -54,7 +54,7 @@ class AlertStatusFactory extends Factory
     {
         return [
             'classification' => SystemAlertStatusClassification::Active,
-            'name' => fake()->word(),
+            'name' => $this->faker->word(),
         ];
     }
 

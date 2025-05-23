@@ -48,15 +48,15 @@ class TeamFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->unique()->catchPhrase(),
-            'description' => fake()->sentence(),
+            'name' => $this->faker->unique()->catchPhrase(),
+            'description' => $this->faker->sentence(),
         ];
     }
 
     public function configure(): TeamFactory|Factory
     {
         return $this->afterMaking(function (Team $team) {
-            $team->division()->associate(fake()->randomElement([Division::inRandomOrder()->first(), null]));
+            $team->division()->associate($this->faker->randomElement([Division::inRandomOrder()->first(), null]));
         });
     }
 }

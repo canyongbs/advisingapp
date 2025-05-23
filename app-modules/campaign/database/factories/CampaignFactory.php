@@ -51,7 +51,7 @@ class CampaignFactory extends Factory
             'created_by_id' => User::factory(),
             'created_by_type' => 'user',
             'segment_id' => Segment::factory(),
-            'name' => fake()->catchPhrase(),
+            'name' => $this->faker->catchPhrase(),
             'enabled' => true,
         ];
     }

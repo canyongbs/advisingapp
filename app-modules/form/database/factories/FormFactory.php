@@ -51,10 +51,10 @@ class FormFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->unique()->word(),
-            'description' => fake()->sentences(asText: true),
-            'embed_enabled' => fake()->boolean(),
-            'allowed_domains' => [fake()->domainName()],
+            'name' => $this->faker->unique()->word(),
+            'description' => $this->faker->sentences(asText: true),
+            'embed_enabled' => $this->faker->boolean(),
+            'allowed_domains' => [$this->faker->domainName()],
         ];
     }
 

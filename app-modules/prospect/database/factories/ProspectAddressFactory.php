@@ -52,14 +52,14 @@ class ProspectAddressFactory extends Factory
     public function definition(): array
     {
         return [
-            'line_1' => fake()->streetAddress(),
-            'line_2' => fake()->optional()->streetAddress(),
-            'line_3' => fake()->optional()->citySuffix(),
-            'city' => fake()->city(),
-            'state' => fake()->state(),
-            'postal' => fake()->postcode(),
-            'country' => fake()->country(),
-            'type' => fake()->randomElement(['Home', 'Institutional', 'Work']),
+            'line_1' => $this->faker->streetAddress(),
+            'line_2' => $this->faker->optional()->streetAddress(),
+            'line_3' => $this->faker->optional()->citySuffix(),
+            'city' => $this->faker->city(),
+            'state' => $this->faker->state(),
+            'postal' => $this->faker->postcode(),
+            'country' => $this->faker->country(),
+            'type' => $this->faker->randomElement(['Home', 'Institutional', 'Work']),
         ];
     }
 }

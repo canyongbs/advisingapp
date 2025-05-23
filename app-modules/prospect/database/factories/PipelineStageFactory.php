@@ -53,9 +53,9 @@ class PipelineStageFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->word(),
+            'name' => $this->faker->word(),
             'pipeline_id' => Pipeline::factory(),
-            'order' => fake()->numberBetween(1, 5),
+            'order' => $this->faker->numberBetween(1, 5),
         ];
     }
 }

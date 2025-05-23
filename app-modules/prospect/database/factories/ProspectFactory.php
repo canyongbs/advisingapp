@@ -52,9 +52,9 @@ class ProspectFactory extends Factory
 {
     public function definition(): array
     {
-        $firstName = fake()->firstName();
-        $lastName = fake()->lastName();
-        $address3 = fake()->optional()->words(asText: true);
+        $firstName = $this->faker->firstName();
+        $lastName = $this->faker->lastName();
+        $address3 = $this->faker->optional()->words(asText: true);
 
         return [
             'status_id' => ProspectStatus::inRandomOrder()->first() ?? ProspectStatus::factory(),
@@ -62,12 +62,12 @@ class ProspectFactory extends Factory
             'first_name' => $firstName,
             'last_name' => $lastName,
             'full_name' => "{$firstName} {$lastName}",
-            'preferred' => fake()->firstName(),
-            'description' => fake()->paragraph(),
-            'sms_opt_out' => fake()->boolean(),
-            'email_bounce' => fake()->boolean(),
-            'birthdate' => fake()->date(),
-            'hsgrad' => fake()->year(),
+            'preferred' => $this->faker->firstName(),
+            'description' => $this->faker->paragraph(),
+            'sms_opt_out' => $this->faker->boolean(),
+            'email_bounce' => $this->faker->boolean(),
+            'birthdate' => $this->faker->date(),
+            'hsgrad' => $this->faker->year(),
             'created_by_id' => User::factory(),
         ];
     }
@@ -77,22 +77,22 @@ class ProspectFactory extends Factory
         return $this->afterCreating(function (Prospect $prospect) {
             $prospect->primaryEmailAddress()->associate(ProspectEmailAddress::factory()->create([
                 'prospect_id' => $prospect->getKey(),
-                'address' => fake()->unique()->email(),
+                'address' => $this->faker->unique()->email(),
                 'order' => 1,
             ]));
             $prospect->primaryPhoneNumber()->associate(ProspectPhoneNumber::factory()->canReceiveSms()->create([
                 'prospect_id' => $prospect->getKey(),
-                'number' => fake()->e164PhoneNumber(),
+                'number' => $this->faker->e164PhoneNumber(),
                 'order' => 1,
             ]));
             $prospect->primaryAddress()->associate(ProspectAddress::factory()->create([
                 'prospect_id' => $prospect->getKey(),
-                'line_1' => fake()->streetAddress(),
-                'line_2' => fake()->secondaryAddress(),
-                'line_3' => fake()->optional()->words(asText: true) ?? null,
-                'city' => fake()->city(),
-                'state' => fake()->stateAbbr(),
-                'postal' => str(fake()->postcode())->before('-')->toString(),
+                'line_1' => $this->faker->streetAddress(),
+                'line_2' => $this->faker->secondaryAddress(),
+                'line_3' => $this->faker->optional()->words(asText: true) ?? null,
+                'city' => $this->faker->city(),
+                'state' => $this->faker->stateAbbr(),
+                'postal' => str($this->faker->postcode())->before('-')->toString(),
                 'order' => 1,
             ]));
 

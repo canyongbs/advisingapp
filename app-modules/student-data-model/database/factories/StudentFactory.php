@@ -91,22 +91,22 @@ class StudentFactory extends Factory
         return $this->afterCreating(function (Student $student) {
             $student->primaryEmailAddress()->associate(StudentEmailAddress::factory()->create([
                 'sisid' => $student->getKey(),
-                'address' => fake()->email(),
+                'address' => $this->faker->email(),
                 'order' => 1,
             ]));
             $student->primaryPhoneNumber()->associate(StudentPhoneNumber::factory()->canReceiveSms()->create([
                 'sisid' => $student->getKey(),
-                'number' => fake()->e164PhoneNumber(),
+                'number' => $this->faker->e164PhoneNumber(),
                 'order' => 1,
             ]));
             $student->primaryAddress()->associate(StudentAddress::factory()->create([
                 'sisid' => $student->getKey(),
-                'line_1' => fake()->buildingNumber() . ' ' . fake()->streetName(),
-                'line_2' => fake()->randomElement([null, Address::secondaryAddress()]),
+                'line_1' => $this->faker->buildingNumber() . ' ' . $this->faker->streetName(),
+                'line_2' => $this->faker->randomElement([null, Address::secondaryAddress()]),
                 'line_3' => null,
-                'city' => fake()->city(),
+                'city' => $this->faker->city(),
                 'state' => Address::stateAbbr(),
-                'postal' => fake()->postcode(),
+                'postal' => $this->faker->postcode(),
                 'order' => 1,
             ]));
 

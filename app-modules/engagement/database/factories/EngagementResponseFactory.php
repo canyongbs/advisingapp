@@ -52,7 +52,7 @@ class EngagementResponseFactory extends Factory
     public function definition(): array
     {
         return [
-            'sender_type' => fake()->randomElement([
+            'sender_type' => $this->faker->randomElement([
                 (new Student())->getMorphClass(),
                 (new Prospect())->getMorphClass(),
             ]),
@@ -68,12 +68,12 @@ class EngagementResponseFactory extends Factory
 
                 return $sender->getKey();
             },
-            'content' => fake()->sentence(),
-            'sent_at' => fake()->dateTimeBetween('-1 year', '-1 day'),
-            'type' => fake()->randomElement(EngagementResponseType::cases()),
+            'content' => $this->faker->sentence(),
+            'sent_at' => $this->faker->dateTimeBetween('-1 year', '-1 day'),
+            'type' => $this->faker->randomElement(EngagementResponseType::cases()),
             'subject' => function ($attributes) {
                 return match ($attributes['type']) {
-                    EngagementResponseType::Email => fake()->sentence(),
+                    EngagementResponseType::Email => $this->faker->sentence(),
                     EngagementResponseType::Sms => null,
                 };
             },

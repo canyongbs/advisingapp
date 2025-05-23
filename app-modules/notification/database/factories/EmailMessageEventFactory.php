@@ -48,7 +48,7 @@ class EmailMessageEventFactory extends Factory
     public function definition(): array
     {
         return [
-            'type' => fake()->randomElement(EmailMessageEventType::cases()),
+            'type' => $this->faker->randomElement(EmailMessageEventType::cases()),
             'payload' => [],
             'occurred_at' => now(),
         ];

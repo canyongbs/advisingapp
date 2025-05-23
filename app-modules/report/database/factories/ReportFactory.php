@@ -52,8 +52,8 @@ class ReportFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->words(asText: true),
-            'model' => fake()->randomElement(ReportModel::cases()),
+            'name' => $this->faker->words(asText: true),
+            'model' => $this->faker->randomElement(ReportModel::cases()),
             'user_id' => User::inRandomOrder()->first()?->getKey() ?? User::factory()->create()?->getKey(),
         ];
     }
