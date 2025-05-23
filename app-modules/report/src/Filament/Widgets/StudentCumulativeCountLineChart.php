@@ -67,7 +67,7 @@ class StudentCumulativeCountLineChart extends LineChartReportWidget
 
     protected function getData(): array
     {
-        $runningTotalPerMonth = Cache::tags([$this->cacheTag])->remember('student-cumulative-count-line-chart', now()->addHours(24), function (): array {
+        $runningTotalPerMonth = Cache::tags(["{{$this->cacheTag}}"])->remember('student-cumulative-count-line-chart', now()->addHours(24), function (): array {
             $totalCreatedPerMonth = DB::select("WITH months AS (
                                         SELECT generate_series(
                                             date_trunc('month', CURRENT_DATE) - INTERVAL '11 months',
