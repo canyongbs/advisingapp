@@ -38,7 +38,6 @@ namespace AdvisingApp\Engagement\Jobs;
 
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Notifications\EngagementNotification;
-use AdvisingApp\Notification\Enums\NotificationChannel;
 use App\Models\Tenant;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Database\Eloquent\Builder;
@@ -70,14 +69,6 @@ class DeliverEngagements implements ShouldQueue
                         ->update(['dispatched_at' => now()]);
 
                     if (! $updatedEngagementsCount) {
-                        return;
-                    }
-
-                    if ($engagement->channel === NotificationChannel::Email && ! $engagement->recipient->canReceiveEmail()) {
-                        return;
-                    }
-
-                    if ($engagement->channel === NotificationChannel::Sms && ! $engagement->recipient->canReceiveSms()) {
                         return;
                     }
 
