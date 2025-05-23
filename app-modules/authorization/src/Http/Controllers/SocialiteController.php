@@ -96,6 +96,7 @@ class SocialiteController extends Controller
         if ($provider === SocialiteProvider::Azure) {
             try {
                 $request = Http::withToken($socialiteUser->token)
+                    ->retry(3, 500)
                     ->get('https://graph.microsoft.com/v1.0/me/photo/$value')
                     ->throw();
 
