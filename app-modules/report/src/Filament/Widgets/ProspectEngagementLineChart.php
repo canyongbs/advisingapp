@@ -66,7 +66,7 @@ class ProspectEngagementLineChart extends LineChartReportWidget
 
     protected function getData(): array
     {
-        $runningTotalPerMonth = Cache::tags([$this->cacheTag])->remember('prospect_engagements_line_chart', now()->addHours(24), function (): array {
+        $runningTotalPerMonth = Cache::tags(["{{$this->cacheTag}}"])->remember('prospect_engagements_line_chart', now()->addHours(24), function (): array {
             $totalEmailEnagagementsPerMonth = Engagement::query()
                 ->whereHasMorph('recipient', Prospect::class)
                 ->toBase()

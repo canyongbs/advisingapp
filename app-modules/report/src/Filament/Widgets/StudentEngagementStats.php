@@ -56,13 +56,13 @@ class StudentEngagementStats extends StatsOverviewReportWidget
     {
         return [
             Stat::make('Total Students', Number::abbreviate(
-                Cache::tags([$this->cacheTag])->remember('total-students-count', now()->addHours(24), function (): int {
+                Cache::tags(["{{$this->cacheTag}}"])->remember('total-students-count', now()->addHours(24), function (): int {
                     return Student::count();
                 }),
                 maxPrecision: 2,
             )),
             Stat::make('Total Emails Sent', Number::abbreviate(
-                Cache::tags([$this->cacheTag])->remember('total-emails-count', now()->addHours(24), function (): int {
+                Cache::tags(["{{$this->cacheTag}}"])->remember('total-emails-count', now()->addHours(24), function (): int {
                     return Engagement::query()
                         ->whereHasMorph('recipient', Student::class)
                         ->where('channel', NotificationChannel::Email)
@@ -71,7 +71,7 @@ class StudentEngagementStats extends StatsOverviewReportWidget
                 maxPrecision: 2,
             )),
             Stat::make('Total Texts Sent', Number::abbreviate(
-                Cache::tags([$this->cacheTag])->remember('total-texts-count', now()->addHours(24), function (): int {
+                Cache::tags(["{{$this->cacheTag}}"])->remember('total-texts-count', now()->addHours(24), function (): int {
                     return Engagement::query()
                         ->whereHasMorph('recipient', Student::class)
                         ->where('channel', NotificationChannel::Sms)
@@ -80,7 +80,7 @@ class StudentEngagementStats extends StatsOverviewReportWidget
                 maxPrecision: 2,
             )),
             Stat::make('Count of Staff Sending Enagements', Number::abbreviate(
-                Cache::tags([$this->cacheTag])->remember('total-staff-sending-count', now()->addHours(24), function (): int {
+                Cache::tags(["{{$this->cacheTag}}"])->remember('total-staff-sending-count', now()->addHours(24), function (): int {
                     return User::whereHas('engagements', function ($q) {
                         return $q->whereHasMorph('recipient', Student::class);
                     })->count();
