@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Campaign\Jobs;
 
+use AdvisingApp\Campaign\Jobs\Middleware\FailIfBatchCancelled;
 use AdvisingApp\Campaign\Models\CampaignActionEducatable;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
 
 abstract class ExecuteCampaignActionOnEducatableJob implements ShouldQueue
 {
@@ -56,7 +56,7 @@ abstract class ExecuteCampaignActionOnEducatableJob implements ShouldQueue
      */
     public function middleware(): array
     {
-        return [new SkipIfBatchCancelled()];
+        return [new FailIfBatchCancelled()];
     }
 
     abstract public function handle(): void;
