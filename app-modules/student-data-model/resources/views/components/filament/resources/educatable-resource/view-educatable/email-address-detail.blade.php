@@ -37,7 +37,7 @@
 @endphp
 
 <button
-    class="flex items-start gap-2"
+    class="flex items-start gap-2 break-all text-left"
     type="button"
     x-data="{ isLoading: false }"
     x-on:engage-action-finished-loading.window="isLoading = false"
