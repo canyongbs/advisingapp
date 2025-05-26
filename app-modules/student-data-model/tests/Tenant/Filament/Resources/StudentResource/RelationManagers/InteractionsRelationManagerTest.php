@@ -47,31 +47,32 @@ use App\Models\User;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
-// it('renders the InteractionsRelationManager based on proper access', function () {
-//     $user = User::factory()->licensed(Student::getLicenseType())->create();
+it('renders the InteractionsRelationManager based on proper access', function () {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
 
-//     $student = Student::factory()
-//         ->has(Interaction::factory()->count(1))
-//         ->create();
+    $student = Student::factory()->create();
 
-//     actingAs($user);
+    $user->givePermissionTo('student.view-any');
+    $user->givePermissionTo('student.*.view');
 
-//     livewire(InteractionsRelationManager::class, [
-//         'ownerRecord' => $student,
-//         'pageClass' => ViewStudent::class,
-//     ])
-//         ->assertForbidden();
+    actingAs($user);
 
-//     $user->givePermissionTo('student.view-any');
-//     $user->givePermissionTo('student.*.view');
-//     $user->givePermissionTo('interaction.view-any');
+    $relationManager = InteractionsRelationManager::class;
 
-//     livewire(InteractionsRelationManager::class, [
-//         'ownerRecord' => $student,
-//         'pageClass' => ViewStudent::class,
-//     ])
-//         ->assertSuccessful();
-// })->only();
+    livewire(ViewStudent::class, [
+        'record' => $student->getKey(),
+    ])
+        ->assertOk()
+        ->assertDontSeeLivewire($relationManager);
+
+    $user->givePermissionTo('interaction.view-any');
+
+    livewire(ViewStudent::class, [
+        'record' => $student->getKey(),
+    ])
+        ->assertOk()
+        ->assertSeeLivewire($relationManager);
+});
 
 it('renders only the interactions associated with student', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
