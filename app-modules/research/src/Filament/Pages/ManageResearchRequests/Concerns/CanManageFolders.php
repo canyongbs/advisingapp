@@ -36,17 +36,28 @@
 
 namespace AdvisingApp\Research\Filament\Pages\ManageResearchRequests\Concerns;
 
+use AdvisingApp\Ai\Jobs\PrepareResearchReportEmailing;
+use AdvisingApp\Ai\Rules\RestrictSuperAdmin;
+use AdvisingApp\Research\Enums\ResearchReportShareTarget;
 use AdvisingApp\Research\Models\ResearchRequest;
 use AdvisingApp\Research\Models\ResearchRequestFolder;
+use AdvisingApp\Team\Models\Team;
+use App\Models\Scopes\WithoutSuperAdmin;
 use App\Models\User;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\StaticAction;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Support\Enums\ActionSize;
+use Filament\Support\Enums\Alignment;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Collection;
 use Illuminate\Validation\Rules\Unique;
 use Livewire\Attributes\Locked;
 use Symfony\Component\HttpFoundation\Response;
@@ -74,8 +85,9 @@ trait CanManageFolders
 
         return $user
             ->researchRequestFolders()
-            ->with([/** @phpstan-ignore argument.type */
-                'requests' => fn (HasMany $query) => $query
+            ->with([
+                /** @phpstan-ignore argument.type */
+                'requests' => fn(HasMany $query) => $query
                     ->latest('updated_at'),
             ])
             ->orderBy('name')
@@ -108,7 +120,79 @@ trait CanManageFolders
             })
             ->icon('heroicon-m-folder-plus')
             ->color('primary')
-            ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'));
+            ->modalSubmitAction(fn(StaticAction $action) => $action->color('primary'));
+    }
+
+    public function emailResearchReportAction(): Action
+    {
+        return Action::make('emailResearchReport')
+            ->label('Email Results')
+            ->modalHeading('Email Results')
+            ->modalSubmitActionLabel('Continue')
+            ->modalFooterActionsAlignment(Alignment::Center)
+            ->modalWidth('md')
+            ->form([
+                Radio::make('targetType')
+                    ->label('To')
+                    ->options(ResearchReportShareTarget::class)
+                    ->enum(ResearchReportShareTarget::class)
+                    ->default(ResearchReportShareTarget::default()->value)
+                    ->required()
+                    ->live()
+                    ->afterStateUpdated(fn(Set $set) => $set('targetIds', [])),
+                Select::make('targetIds')
+                    ->label(fn(Get $get): string => match ($get('targetType')) {
+                        ResearchReportShareTarget::Team->value => 'Select Teams',
+                        ResearchReportShareTarget::User->value => 'Select Users',
+                    })
+                    ->visible(fn(Get $get): bool => filled($get('targetType')))
+                    ->options(function (Get $get): Collection {
+                        return match ($get('targetType')) {
+                            ResearchReportShareTarget::Team->value => Team::orderBy('name')->pluck('name', 'id'),
+                            ResearchReportShareTarget::User->value => User::tap(new WithoutSuperAdmin())->orderBy('name')->pluck('name', 'id'),
+                        };
+                    })
+                    ->searchable()
+                    ->multiple()
+                    ->required()
+                    ->rules([
+                        fn(Get $get) => match ($get('targetType')) {
+                            ResearchReportShareTarget::User->value => new RestrictSuperAdmin('email'),
+                            ResearchReportShareTarget::Team->value => null,
+                        },
+                    ]),
+                // Select::make('targetIds')
+                //     ->label('Select Users')
+                //     // ->visible(fn(Get $get): bool => filled($get('targetType')))
+                //     ->options(function () {
+                //         return User::tap(new WithoutSuperAdmin())->orderBy('name')->pluck('name', 'id');
+                //     })
+                //     ->searchable()
+                //     ->multiple()
+                //     ->required()
+                //     ->rules([
+                //         fn() => new RestrictSuperAdmin('email')
+                //     ]),
+                Textarea::make('note')
+                    ->label('Note')
+                    ->placeholder('Optional note to include with the email.')
+                    ->maxLength(500),
+            ])
+            ->action(function (array $arguments, array $data) {
+                $researchRequest = auth()->user()->researchRequests()
+                    // ->whereRelation('assistant', 'application', static::APPLICATION)
+                    ->find($arguments['researchRequest']);
+
+                if (! $researchRequest) {
+                    return;
+                }
+                // dispatch(new PrepareResearchReportEmailing($researchRequest, $data['targetIds'], auth()->user()));
+            })
+            ->link()
+            ->icon('heroicon-m-envelope')
+            ->color('warning')
+            ->modalSubmitAction(fn(StaticAction $action) => $action->color('primary'))
+        ;
     }
 
     public function renameFolderAction(): Action
@@ -117,7 +201,7 @@ trait CanManageFolders
             ->modalSubmitActionLabel('Rename')
             ->modalWidth('md')
             ->size(ActionSize::ExtraSmall)
-            ->fillForm(fn (array $arguments) => [
+            ->fillForm(fn(array $arguments) => [
                 'name' => auth()->user()->researchRequestFolders()
                     ->find($arguments['folder'])
                     ?->name,
@@ -142,7 +226,7 @@ trait CanManageFolders
             })
             ->icon('heroicon-m-pencil')
             ->color('warning')
-            ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'))
+            ->modalSubmitAction(fn(StaticAction $action) => $action->color('primary'))
             ->iconButton()
             ->extraAttributes([
                 'class' => 'relative inline-flex w-5 h-5 hidden group-hover:inline-flex',
@@ -195,7 +279,7 @@ trait CanManageFolders
             })
             ->icon('heroicon-m-arrow-down-on-square')
             ->color('warning')
-            ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'))
+            ->modalSubmitAction(fn(StaticAction $action) => $action->color('primary'))
             ->iconButton()
             ->extraAttributes([
                 'class' => 'relative inline-flex w-5 h-5 hidden group-hover:inline-flex',
@@ -220,7 +304,7 @@ trait CanManageFolders
 
         $folder = filled($folderId) ?
             auth()->user()->researchRequestFolders()
-                ->find($folderId) :
+            ->find($folderId) :
             null;
 
         try {
@@ -243,7 +327,7 @@ trait CanManageFolders
     protected function folderSelect(): Select
     {
         return Select::make('folder')
-            ->options(fn (): array => auth()->user()
+            ->options(fn(): array => auth()->user()
                 ->researchRequestFolders()
                 ->orderBy('name')
                 ->pluck('name', 'id')
