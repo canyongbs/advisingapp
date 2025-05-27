@@ -43,6 +43,7 @@ use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
@@ -111,6 +112,18 @@ class EventCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
             $this->actionEducatable->save();
 
             DB::commit();
+        } catch (ModelNotFoundException $e) {
+            DB::rollBack();
+
+            $this->actionEducatable->markFailed();
+
+            if ($e->getModel() === Event::class) {
+                $this->batch()->cancel();
+
+                return;
+            }
+
+            throw $e;
         } catch (Throwable $e) {
             DB::rollBack();
 

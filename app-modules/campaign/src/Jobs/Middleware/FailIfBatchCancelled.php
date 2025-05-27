@@ -34,30 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Jobs;
+namespace AdvisingApp\Campaign\Jobs\Middleware;
 
-use AdvisingApp\Campaign\Jobs\Middleware\FailIfBatchCancelled;
-use AdvisingApp\Campaign\Models\CampaignActionEducatable;
-use Illuminate\Bus\Batchable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Queue\Queueable;
+use AdvisingApp\Campaign\Jobs\ExecuteCampaignActionOnEducatableJob;
 
-abstract class ExecuteCampaignActionOnEducatableJob implements ShouldQueue
+class FailIfBatchCancelled
 {
-    use Queueable;
-    use Batchable;
-
-    public function __construct(
-        public CampaignActionEducatable $actionEducatable,
-    ) {}
-
     /**
-     * @return array<object>
+     * Process the job.
+     *
+     * @param  ExecuteCampaignActionOnEducatableJob  $job
+     * @param  callable  $next
+     *
+     * @return mixed
      */
-    public function middleware(): array
+    public function handle(ExecuteCampaignActionOnEducatableJob $job, $next)
     {
-        return [new FailIfBatchCancelled()];
-    }
+        if ($job->batch()->cancelled()) {
+            $job->actionEducatable->markFailed();
 
-    abstract public function handle(): void;
+            return;
+        }
+
+        $next($job);
+    }
 }
