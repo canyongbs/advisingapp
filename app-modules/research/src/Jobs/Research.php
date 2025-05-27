@@ -190,15 +190,17 @@ class Research implements ShouldQueue
             ->implode(PHP_EOL . PHP_EOL);
 
         return <<<EOD
-            ## Requestor Information
+            **Requestor Information**
             
             This request is submitted by **{$userName}** who is an institutional staff member {$userJobTitle}.
 
             ---
 
-            ## Institutional Context
+            **Institutional Context**
 
             {$institutionalContext}
+
+            ---
 
             **Research topic:**
 
