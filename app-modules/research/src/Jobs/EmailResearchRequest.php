@@ -34,52 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Jobs;
+namespace AdvisingApp\Research\Jobs;
 
-use AdvisingApp\Ai\Enums\AiThreadShareTarget;
-use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Research\Jobs\Research;
 use AdvisingApp\Research\Models\ResearchRequest;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Research\Notifications\ResearchTranscriptNotification;
 use App\Models\User;
-use Filament\Notifications\Notification;
-use Filament\Notifications\Notification as FilamentNotification;
+use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Bus;
 
-class PrepareResearchReportEmailing implements ShouldQueue
+class EmailResearchRequest implements ShouldQueue
 {
-    //     use Dispatchable;
-    //     use InteractsWithQueue;
-    //     use Queueable;
-    //     use SerializesModels;
+    use Batchable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
-    //     public function __construct(
-    //         public ResearchRequest $researchRequest,
-    //         public array $targetIds,
-    //         public User $sender,
-    //     ) {}
+    public function __construct(
+        protected ResearchRequest $researchRequest,
+        protected User $sender,
+        protected User $recipient,
+    ) {}
 
-    //     public function handle(): void
-    //     {
-    //         User::query()
-    //             ->whereKey($this->targetIds)
-    //             ->get()
-    //             ->each(function (User $recipient) {
-    //                 // dispatch(new EmailResearchReport($this->researchRequest, $this->sender, $recipient));
+    public function middleware(): array
+    {
+        return [new SkipIfBatchCancelled()];
+    }
 
-    //                 $recipientName = $this->sender->is($recipient) ? 'yourself' : $recipient->name;
-
-    //                 Notification::make()
-    //                     ->success()
-    //                     ->title("You emailed an AI chat to {$recipientName}.")
-    //                     ->sendToDatabase($this->sender);
-    //             });
-
-    //         return;
-    //     }
+    public function handle(): void
+    {
+        $this->recipient->notify(new ResearchTranscriptNotification($this->researchRequest, $this->sender));
+    }
 }
