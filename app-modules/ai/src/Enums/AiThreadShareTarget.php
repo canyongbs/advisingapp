@@ -40,25 +40,25 @@ use Filament\Support\Contracts\HasLabel;
 
 enum AiThreadShareTarget: string implements HasLabel
 {
-  case User = 'user';
-  case Team = 'team';
+    case User = 'user';
+    case Team = 'team';
 
-  public function getLabel(): string
-  {
-    return $this->name;
-  }
-
-  public static function default(): AiThreadShareTarget
-  {
-    return AiThreadShareTarget::User;
-  }
-
-  public static function parse(string | self $value): self
-  {
-    if ($value instanceof self) {
-      return $value;
+    public function getLabel(): string
+    {
+        return $this->name;
     }
 
-    return self::from($value);
-  }
+    public static function default(): AiThreadShareTarget
+    {
+        return AiThreadShareTarget::User;
+    }
+
+    public static function parse(string | self $value): self
+    {
+        if ($value instanceof self) {
+            return $value;
+        }
+
+        return self::from($value);
+    }
 }

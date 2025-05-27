@@ -38,7 +38,7 @@ namespace AdvisingApp\Research\Enums;
 
 use Filament\Support\Contracts\HasLabel;
 
-enum ResearchReportShareTarget: string implements HasLabel
+enum ResearchRequestShareTarget: string implements HasLabel
 {
     case User = 'user';
     case Team = 'team';
@@ -48,9 +48,9 @@ enum ResearchReportShareTarget: string implements HasLabel
         return $this->name;
     }
 
-    public static function default(): ResearchReportShareTarget
+    public static function default(): ResearchRequestShareTarget
     {
-        return ResearchReportShareTarget::User;
+        return ResearchRequestShareTarget::User;
     }
 
     public static function parse(string | self $value): self
