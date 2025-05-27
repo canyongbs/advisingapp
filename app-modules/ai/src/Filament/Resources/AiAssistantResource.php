@@ -52,7 +52,7 @@ class AiAssistantResource extends Resource
 
     protected static ?string $modelLabel = 'Custom Advisor';
 
-    protected static ?int $navigationSort = 20;
+    protected static ?int $navigationSort = 30;
 
     public static function getPages(): array
     {
