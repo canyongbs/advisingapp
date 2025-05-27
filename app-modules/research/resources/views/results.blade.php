@@ -48,11 +48,17 @@
                 <h1>{{ $researchRequest->title }}</h1>
             @endif
 
-            {!! str($researchRequest->results)->replace('<think>', '<details wire:ignore.self><summary>Reasoning</summary>')->replace('</think>', '</details>')->markdown(options: [
-                'footnote' => [
-                    'container_add_hr' => false,
-                ],
-            ], extensions: [app(FootnoteExtension::class)])->replace('<div class="footnotes" role="doc-endnotes">', '<div class="footnotes" role="doc-endnotes"><h2>References</h2>')->sanitizeHtml() !!}
+            {!! str($researchRequest->results)->replace('<think>', '<details wire:ignore.self><summary>Reasoning</summary>')->replace('</think>', '</details>')->markdown(
+                    options: [
+                        'footnote' => [
+                            'container_add_hr' => false,
+                        ],
+                    ],
+                    extensions: [app(FootnoteExtension::class)],
+                )->replace(
+                    '<div class="footnotes" role="doc-endnotes">',
+                    '<div class="footnotes" role="doc-endnotes"><h2>References</h2>',
+                )->sanitizeHtml() !!}
         </section>
     @endif
 </div>
