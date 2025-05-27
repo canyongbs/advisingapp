@@ -115,7 +115,7 @@ trait CanManageThreads
             ->withCount('threads')
             ->withCount('upvotes')
             ->get()
-            ->mapWithKeys(fn (AiAssistant $assistant) => [
+            ->mapWithKeys(fn(AiAssistant $assistant) => [
                 $assistant->id => view('ai::components.options.assistant', ['assistant' => $assistant])->render(),
             ])
             ->all();
@@ -131,7 +131,7 @@ trait CanManageThreads
                     ->searchPrompt('Search')
                     ->hiddenLabel()
                     ->allowHtml()
-                    ->options(fn (): array => $this->customAssistants)
+                    ->options(fn(): array => $this->customAssistants)
                     ->getSearchResultsUsing(function (string $search): array {
                         return AiAssistant::query()
                             ->where('application', static::APPLICATION)
@@ -142,7 +142,7 @@ trait CanManageThreads
                             ->withCount('threads')
                             ->withCount('upvotes')
                             ->get()
-                            ->mapWithKeys(fn (AiAssistant $assistant) => [
+                            ->mapWithKeys(fn(AiAssistant $assistant) => [
                                 $assistant->id => view('ai::components.options.assistant', ['assistant' => $assistant])->render(),
                             ])
                             ->all();
@@ -344,7 +344,7 @@ trait CanManageThreads
             ->modalSubmitActionLabel('Save')
             ->modalWidth('md')
             ->size(ActionSize::ExtraSmall)
-            ->fillForm(fn (array $arguments) => [
+            ->fillForm(fn(array $arguments) => [
                 'name' => auth()->user()->aiThreads()
                     ->whereRelation('assistant', 'application', static::APPLICATION)
                     ->find($arguments['thread'])
@@ -374,7 +374,7 @@ trait CanManageThreads
             })
             ->icon('heroicon-m-pencil')
             ->color('warning')
-            ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'))
+            ->modalSubmitAction(fn(StaticAction $action) => $action->color('primary'))
             ->iconButton()
             ->extraAttributes([
                 'class' => 'relative inline-flex w-5 h-5 hidden group-hover:inline-flex',
@@ -397,13 +397,13 @@ trait CanManageThreads
                     ->default(AiThreadShareTarget::default()->value)
                     ->required()
                     ->live()
-                    ->afterStateUpdated(fn (Set $set) => $set('targetIds', [])),
+                    ->afterStateUpdated(fn(Set $set) => $set('targetIds', [])),
                 Select::make('targetIds')
-                    ->label(fn (Get $get): string => match ($get('targetType')) {
+                    ->label(fn(Get $get): string => match ($get('targetType')) {
                         AiThreadShareTarget::Team->value => 'Select Teams',
                         AiThreadShareTarget::User->value => 'Select Users',
                     })
-                    ->visible(fn (Get $get): bool => filled($get('targetType')))
+                    ->visible(fn(Get $get): bool => filled($get('targetType')))
                     ->options(function (Get $get): Collection {
                         return match ($get('targetType')) {
                             AiThreadShareTarget::Team->value => Team::orderBy('name')->pluck('name', 'id'),
@@ -413,10 +413,11 @@ trait CanManageThreads
                     ->searchable()
                     ->multiple()
                     ->required()
-                    ->rules([fn (Get $get) => match ($get('targetType')) {
-                        AiThreadShareTarget::User->value => new RestrictSuperAdmin('clone'),
-                        AiThreadShareTarget::Team->value => null,
-                    },
+                    ->rules([
+                        fn(Get $get) => match ($get('targetType')) {
+                            AiThreadShareTarget::User->value => new RestrictSuperAdmin('clone'),
+                            AiThreadShareTarget::Team->value => null,
+                        },
                     ]),
             ])
             ->action(function (array $arguments, array $data) {
@@ -433,7 +434,7 @@ trait CanManageThreads
             ->link()
             ->icon('heroicon-m-document-duplicate')
             ->color('warning')
-            ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'));
+            ->modalSubmitAction(fn(StaticAction $action) => $action->color('primary'));
     }
 
     public function emailThreadAction(): Action
@@ -452,13 +453,13 @@ trait CanManageThreads
                     ->default(AiThreadShareTarget::default()->value)
                     ->required()
                     ->live()
-                    ->afterStateUpdated(fn (Set $set) => $set('targetIds', [])),
+                    ->afterStateUpdated(fn(Set $set) => $set('targetIds', [])),
                 Select::make('targetIds')
-                    ->label(fn (Get $get): string => match ($get('targetType')) {
+                    ->label(fn(Get $get): string => match ($get('targetType')) {
                         AiThreadShareTarget::Team->value => 'Select Teams',
                         AiThreadShareTarget::User->value => 'Select Users',
                     })
-                    ->visible(fn (Get $get): bool => filled($get('targetType')))
+                    ->visible(fn(Get $get): bool => filled($get('targetType')))
                     ->options(function (Get $get): Collection {
                         return match ($get('targetType')) {
                             AiThreadShareTarget::Team->value => Team::orderBy('name')->pluck('name', 'id'),
@@ -468,10 +469,11 @@ trait CanManageThreads
                     ->searchable()
                     ->multiple()
                     ->required()
-                    ->rules([fn (Get $get) => match ($get('targetType')) {
-                        AiThreadShareTarget::User->value => new RestrictSuperAdmin('email'),
-                        AiThreadShareTarget::Team->value => null,
-                    },
+                    ->rules([
+                        fn(Get $get) => match ($get('targetType')) {
+                            AiThreadShareTarget::User->value => new RestrictSuperAdmin('email'),
+                            AiThreadShareTarget::Team->value => null,
+                        },
                     ]),
             ])
             ->action(function (array $arguments, array $data) {
@@ -487,7 +489,7 @@ trait CanManageThreads
             ->link()
             ->icon('heroicon-m-envelope')
             ->color('warning')
-            ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'));
+            ->modalSubmitAction(fn(StaticAction $action) => $action->color('primary'));
     }
 
     #[Renderless]
