@@ -75,7 +75,6 @@ class Research implements ShouldQueue
                     'stream' => true,
                     'language_code' => 'en',
                     'messages' => [
-                        ['role' => 'system', 'content' => $this->getPrompt()],
                         ['role' => 'user', 'content' => $this->getContent()],
                     ],
                     'temperature' => app(AiSettings::class)->temperature,
@@ -179,11 +178,28 @@ class Research implements ShouldQueue
 
     protected function getContent(): string
     {
+        $user = $this->researchRequest->user;
+
+        $userName = $user->name;
+        $userJobTitle = filled($user->job_title) ? "with the job title **{$user->job_title}**" : '';
+
+        $institutionalContext = app(AiResearchAssistantSettings::class)->context;
+
         $questions = $this->researchRequest->questions
             ->map(fn (ResearchRequestQuestion $question, int $index) => '**Question ' . ($index + 1) . ":** {$question->content}" . PHP_EOL . '**Answer ' . ($index + 1) . ":** {$question->response}")
             ->implode(PHP_EOL . PHP_EOL);
 
         return <<<EOD
+            ## Requestor Information
+            
+            This request is submitted by **{$userName}** who is an institutional staff member {$userJobTitle}.
+
+            ---
+
+            ## Institutional Context
+
+            {$institutionalContext}
+
             **Research topic:**
 
             {$this->researchRequest->topic}
@@ -198,29 +214,7 @@ class Research implements ShouldQueue
 
             **Instructions:**
             
-            Using the context and clarifications above, conduct the requested research and present your findings accordingly. Do not respond with any greetings or salutations, and do not include any additional information or context. Cite your sources and provide footnotes with references in the research. Just respond with your research in Markdown format, without a title:
-            EOD;
-    }
-
-    protected function getPrompt(): string
-    {
-        $user = $this->researchRequest->user;
-
-        $userName = $user->name;
-        $userJobTitle = filled($user->job_title) ? "with the job title **{$user->job_title}**" : '';
-
-        $institutionalContext = app(AiResearchAssistantSettings::class)->context;
-
-        return <<<EOD
-            ## Requestor Information
-            
-            This request is submitted by **{$userName}** who is an institutional staff member {$userJobTitle}.
-
-            ---
-
-            ## Institutional Context
-
-            {$institutionalContext}
+            Using the context and clarifications above, conduct the requested research and present your findings accordingly. Do not respond with any greetings or salutations, and do not include any additional information or context. Cite your sources and provide footnotes with references in the research. Prioritize sources that are based on peer reviewed journals, articles presented on official government or education domains, or websites that you determine to have a very high credibility rating like the Associated Press (AP), Reuters, Agence France-Presse (AFP) and BBC News, etc. When the research requires data anlsysis, always prioritize official government sources of data, or data directly presented by institutions via official websites with .edu or .gov domain names. For example, in the US, NCES and IPEDS are the best source of enrollment information of colleges. Direct college reporting on their institutional website (e.g., harvard.edu), would be second to that. Just respond with your research in Markdown format, without a title:
             EOD;
     }
 }
