@@ -55,8 +55,8 @@ class EventRegistrationFormSubmissionFactory extends Factory
     public function definition(): array
     {
         return [
-            'attendee_status' => fake()->randomElement(EventAttendeeStatus::class),
-            'submitted_at' => fake()->dateTime(),
+            'attendee_status' => $this->faker->randomElement(EventAttendeeStatus::class),
+            'submitted_at' => $this->faker->dateTime(),
             'form_id' => EventRegistrationForm::inRandomOrder()->first() ?? EventRegistrationForm::factory()->create(),
             'event_attendee_id' => EventAttendee::inRandomOrder()->first() ?? EventAttendee::factory()->create(),
         ];
@@ -73,7 +73,7 @@ class EventRegistrationFormSubmissionFactory extends Factory
                         ->fields()
                         ->attach($eventRegistrationFormField->getKey(), [
                             'id' => Str::orderedUuid(),
-                            'response' => fake()->optional($eventRegistrationFormField->is_required, '')->words(asText: true),
+                            'response' => $this->faker->optional($eventRegistrationFormField->is_required, '')->words(asText: true),
                         ]);
                 });
         });

@@ -57,7 +57,7 @@ class InteractionFactory extends Factory
 {
     public function definition(): array
     {
-        $interactable = fake()->randomElement([
+        $interactable = $this->faker->randomElement([
             Student::class,
             Prospect::class,
             CaseModel::class,
@@ -67,12 +67,12 @@ class InteractionFactory extends Factory
             Student::class => Student::inRandomOrder()->first() ?? Student::factory()->create(),
             Prospect::class => Prospect::factory()->create(),
             CaseModel::class => CaseModel::factory()->create([
-                'case_number' => fake()->randomNumber(8),
+                'case_number' => $this->faker->randomNumber(8),
             ]),
         };
 
         return [
-            'description' => fake()->paragraph(),
+            'description' => $this->faker->paragraph(),
             'division_id' => Division::factory(),
             'end_datetime' => now()->addMinutes(5),
             'interactable_id' => $interactable->getKey(),
@@ -84,7 +84,7 @@ class InteractionFactory extends Factory
             'interaction_status_id' => InteractionStatus::factory(),
             'interaction_type_id' => InteractionType::factory(),
             'start_datetime' => now(),
-            'subject' => fake()->sentence(),
+            'subject' => $this->faker->sentence(),
             'user_id' => User::factory(),
         ];
     }

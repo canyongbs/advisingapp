@@ -48,10 +48,10 @@ class ConsentAgreementFactory extends Factory
     public function definition(): array
     {
         return [
-            'type' => fake()->randomElement(ConsentAgreementType::cases())->value,
-            'title' => fake()->catchPhrase(),
-            'description' => fake()->paragraph(),
-            'body' => fake()->paragraphs(3, true),
+            'type' => $this->faker->randomElement(ConsentAgreementType::cases())->value,
+            'title' => $this->faker->catchPhrase(),
+            'description' => $this->faker->paragraph(),
+            'body' => $this->faker->paragraphs(3, true),
         ];
     }
 }

@@ -53,8 +53,8 @@ class AiThreadFactory extends Factory
     public function definition(): array
     {
         return [
-            'thread_id' => fake()->uuid(),
-            'name' => fake()->word(),
+            'thread_id' => $this->faker->uuid(),
+            'name' => $this->faker->word(),
             'assistant_id' => AiAssistant::factory(),
             'user_id' => User::factory(),
         ];
@@ -64,8 +64,8 @@ class AiThreadFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'name' => fake()->word(),
-                'saved_at' => fake()->dateTime(),
+                'name' => $this->faker->word(),
+                'saved_at' => $this->faker->dateTime(),
             ];
         });
     }

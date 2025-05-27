@@ -52,9 +52,9 @@ class EventRegistrationFormFieldFactory extends Factory
     public function definition(): array
     {
         return [
-            'label' => str(fake()->word())->ucfirst(),
-            'type' => fake()->randomElement(['text_input', 'text_area']),
-            'is_required' => fake()->boolean(),
+            'label' => str($this->faker->word())->ucfirst(),
+            'type' => $this->faker->randomElement(['text_input', 'text_area']),
+            'is_required' => $this->faker->boolean(),
             'config' => [],
         ];
     }

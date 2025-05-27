@@ -52,7 +52,7 @@ class CaseAssignmentFactory extends Factory
             'case_model_id' => CaseModel::factory(),
             'user_id' => User::factory(),
             'assigned_by_id' => User::factory(),
-            'assigned_at' => fake()->dateTimeBetween('-1 year', now()),
+            'assigned_at' => $this->faker->dateTimeBetween('-1 year', now()),
         ];
     }
 

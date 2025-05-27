@@ -52,10 +52,10 @@ class ApplicationSubmissionStateFactory extends Factory
     public function definition(): array
     {
         return [
-            'classification' => fake()->randomElement(ApplicationSubmissionStateClassification::cases()),
-            'name' => fake()->word,
-            'color' => fake()->randomElement(ApplicationSubmissionStateColorOptions::cases()),
-            'description' => fake()->sentence,
+            'classification' => $this->faker->randomElement(ApplicationSubmissionStateClassification::cases()),
+            'name' => $this->faker->word,
+            'color' => $this->faker->randomElement(ApplicationSubmissionStateColorOptions::cases()),
+            'description' => $this->faker->sentence,
         ];
     }
 }

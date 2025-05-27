@@ -46,8 +46,8 @@ class PermissionFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->word,
-            'guard_name' => fake()->randomElement(['web', 'api']),
+            'name' => $this->faker->word,
+            'guard_name' => $this->faker->randomElement(['web', 'api']),
         ];
     }
 }

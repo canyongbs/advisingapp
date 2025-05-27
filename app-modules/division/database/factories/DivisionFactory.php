@@ -51,9 +51,9 @@ class DivisionFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->unique()->company(),
-            'code' => fake()->unique()->word(),
-            'description' => fake()->optional()->sentences(asText: true),
+            'name' => $this->faker->unique()->company(),
+            'code' => $this->faker->unique()->word(),
+            'description' => $this->faker->optional()->sentences(asText: true),
             'is_default' => false,
         ];
     }
@@ -70,8 +70,8 @@ class DivisionFactory extends Factory
     public function configure(): DivisionFactory|Factory
     {
         return $this->afterMaking(function (Division $division) {
-            $division->createdBy()->associate(fake()->randomElement([User::inRandomOrder()->first(), null]));
-            $division->lastUpdatedBy()->associate(fake()->randomElement([User::inRandomOrder()->first(), null]));
+            $division->createdBy()->associate($this->faker->randomElement([User::inRandomOrder()->first(), null]));
+            $division->lastUpdatedBy()->associate($this->faker->randomElement([User::inRandomOrder()->first(), null]));
         });
     }
 }
