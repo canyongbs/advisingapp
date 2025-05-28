@@ -57,8 +57,10 @@ class EmailResearchRequest implements ShouldQueue
 
     public function __construct(
         protected ResearchRequest $researchRequest,
+        protected ?string $note,
         protected User $sender,
         protected User $recipient,
+        protected string $currentLink,
     ) {}
 
     public function middleware(): array
@@ -68,6 +70,6 @@ class EmailResearchRequest implements ShouldQueue
 
     public function handle(): void
     {
-        $this->recipient->notify(new ResearchTranscriptNotification($this->researchRequest, $this->sender));
+        $this->recipient->notify(new ResearchTranscriptNotification($this->researchRequest, $this->note, $this->sender, $this->currentLink));
     }
 }

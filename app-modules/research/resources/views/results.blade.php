@@ -60,8 +60,9 @@
                     '<div class="footnotes" role="doc-endnotes"><h2>References</h2>',
                 )->sanitizeHtml() !!}
         </section>
-    @endif
-    <section class="text-left">
-        {{ ($this->emailResearchReportAction)(['researchRequest' => $this->request->id]) }}
+        <section class="text-left">
+        {{ ($this->emailResearchRequestAction)(['researchRequest' => $this->request->id, 'currentLink' => url()->current()]) }}
     </section>
+    @endif
+    
 </div>
