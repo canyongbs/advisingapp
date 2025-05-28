@@ -41,6 +41,7 @@ use AdvisingApp\Notification\DataTransferObjects\SmsChannelResultData;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Enums\SmsMessageEventType;
 use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
+use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\SmsMessage;
 use AdvisingApp\Notification\Models\StoredAnonymousNotifiable;
 use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
@@ -103,6 +104,18 @@ class SmsChannel
         }
 
         $smsMessage->save();
+
+        if ($notifiable instanceof CanBeNotified && ! $notifiable->canReceiveSms()) {
+            $smsMessage->events()->create([
+                'type' => SmsMessageEventType::FailedDispatch,
+                'payload' => [
+                    'error' => 'System determined recipient cannot receive SMS messages.',
+                ],
+                'occurred_at' => now(),
+            ]);
+
+            return;
+        }
 
         try {
             if (blank($recipientNumber)) {
