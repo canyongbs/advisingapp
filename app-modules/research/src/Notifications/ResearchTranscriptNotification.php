@@ -43,6 +43,7 @@ use AdvisingApp\Notification\Models\Contracts\Message;
 use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Research\Models\ResearchRequest;
+use AdvisingApp\Research\Models\ResearchRequestQuestion;
 use App\Models\NotificationSetting;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
@@ -56,7 +57,9 @@ class ResearchTranscriptNotification extends Notification implements ShouldQueue
 
     public function __construct(
         protected ResearchRequest $researchRequest,
-        protected User $sender
+        protected ?string $note,
+        protected User $sender,
+        protected string $currentLink,
     ) {}
 
     /**
@@ -76,53 +79,29 @@ class ResearchTranscriptNotification extends Notification implements ShouldQueue
         $senderIsNotifiable = $this->sender->is($notifiable);
 
         if ($senderIsNotifiable) {
-            $message->subject("Assistant Chat Transcript: {$this->researchRequest->name}")
-                ->line("Here is a copy of your chat with {$this->researchRequest->assistant->name}:");
+            $message->subject("Research Transcript: {$this->researchRequest->topic}")
+                ->line("Here is a copy of research on: {$this->researchRequest->topic}");
         } else {
-            $message->subject("An Assistant Chat Transcript has been shared with you: {$this->researchRequest->name}")
-                ->line("Here is a copy of {$this->sender->name}'s chat with {$this->researchRequest->assistant->name}:");
+            $message->subject("A Research Transcript has been shared with you: {$this->researchRequest->topic}")
+                ->line("Here is a copy of {$this->sender->name}'s research on: {$this->researchRequest->topic}");
         }
+ 
+        $message->line(str('Reasoning: <br>'.$this->researchRequest->results)
+            ->toHtmlString());
 
-        $this->researchRequest->messages
-            ->each(function (AiMessage $threadMessage) use ($senderIsNotifiable, $message) {
-                if ($threadMessage->prompt) {
-                    return $message->line(str("**Starting smart prompt:** {$threadMessage->prompt->title}")
-                        ->markdown()
-                        ->sanitizeHtml()
-                        ->toHtmlString());
-                }
-
-                if (! $threadMessage->user) {
-                    return $message->line(str(nl2br($threadMessage->content))
-                        ->prepend("**{$this->researchRequest->assistant->name}:** ")
-                        ->markdown()
-                        ->sanitizeHtml()
-                        ->toHtmlString());
-                }
-
-                if ($senderIsNotifiable && $threadMessage->user()->is($this->sender)) {
-                    return $message->line(str(nl2br($threadMessage->content))
-                        ->prepend('**You:** ')
-                        ->markdown()
-                        ->sanitizeHtml()
-                        ->toHtmlString());
-                }
-
-                return $message->line(str(nl2br($threadMessage->content))
-                    ->prepend("**{$threadMessage->user->name}:** ")
-                    ->markdown()
-                    ->sanitizeHtml()
+            if($this->note) {
+                $message->line(str("Note: {$this->note}")
                     ->toHtmlString());
-            });
+            }
+            
+            // ->prepend("Link: <a href='{$this->currentLink}'>View Research</a><br>");
 
         return $message;
     }
 
     public function afterSend(AnonymousNotifiable|CanBeNotified $notifiable, Message $message, NotificationResultData $result): void
     {
-        if ($result->success) {
-            $this->researchRequest->increment('emailed_count');
-        }
+        return;
     }
 
     private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
