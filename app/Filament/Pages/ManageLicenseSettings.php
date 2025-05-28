@@ -113,6 +113,12 @@ class ManageLicenseSettings extends SettingsPage
                                 ->minValue(0)
                                 ->required()
                                 ->disabled(fn (Get $get): bool => (bool) $get('conversationalAiSeats')),
+                            TextInput::make('data.limits.qnaAdvisorsCount')
+                                ->label('QnA Advisors')
+                                ->numeric()
+                                ->minValue(0)
+                                ->required()
+                                ->disabled(fn (Get $get): bool => (bool) $get('qnaAdvisorsCount')),
                             TextInput::make('data.limits.retentionCrmSeats')
                                 ->label('Student Success / Retention Seats')
                                 ->numeric()
