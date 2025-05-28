@@ -61,8 +61,8 @@
                 )->sanitizeHtml() !!}
         </section>
         <section class="text-left">
-        {{ ($this->emailResearchRequestAction)(['researchRequest' => $this->request->id, 'currentLink' => url()->current()]) }}
-    </section>
+            {{ ($this->emailResearchRequestAction)(['researchRequest' => $this->request->id, 'currentLink' => url()->current()]) }}
+        </section>
     @endif
-    
+
 </div>

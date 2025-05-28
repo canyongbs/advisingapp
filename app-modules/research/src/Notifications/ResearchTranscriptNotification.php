@@ -36,14 +36,12 @@
 
 namespace AdvisingApp\Research\Notifications;
 
-use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\Contracts\Message;
 use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Research\Models\ResearchRequest;
-use AdvisingApp\Research\Models\ResearchRequestQuestion;
 use App\Models\NotificationSetting;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
@@ -85,24 +83,21 @@ class ResearchTranscriptNotification extends Notification implements ShouldQueue
             $message->subject("A Research Transcript has been shared with you: {$this->researchRequest->topic}")
                 ->line("Here is a copy of {$this->sender->name}'s research on: {$this->researchRequest->topic}");
         }
- 
-        $message->line(str('Reasoning: <br>'.$this->researchRequest->results)
+
+        $message->line(str('Reasoning: <br>' . $this->researchRequest->results)
             ->toHtmlString());
 
-            if($this->note) {
-                $message->line(str("Note: {$this->note}")
-                    ->toHtmlString());
-            }
-            
-            // ->prepend("Link: <a href='{$this->currentLink}'>View Research</a><br>");
+        if ($this->note) {
+            $message->line(str("Note: {$this->note}")
+                ->toHtmlString());
+        }
+
+        // ->prepend("Link: <a href='{$this->currentLink}'>View Research</a><br>");
 
         return $message;
     }
 
-    public function afterSend(AnonymousNotifiable|CanBeNotified $notifiable, Message $message, NotificationResultData $result): void
-    {
-        return;
-    }
+    public function afterSend(AnonymousNotifiable|CanBeNotified $notifiable, Message $message, NotificationResultData $result): void {}
 
     private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
     {
