@@ -49,7 +49,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Bus;
 
-class PrepareResearchReportEmailing implements ShouldQueue
+class PrepareResearchRequestEmailing implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -60,7 +60,9 @@ class PrepareResearchReportEmailing implements ShouldQueue
         public ResearchRequest $researchRequest,
         public string $targetType,
         public array $targetIds,
+        public ?string $note,
         public User $sender,
+        public string $currentLink,
     ) {}
 
     public function handle(): void
@@ -70,7 +72,9 @@ class PrepareResearchReportEmailing implements ShouldQueue
                 ->whereKey($this->targetIds)
                 ->get()
                 ->each(function (User $recipient) {
-                    dispatch(new EmailResearchRequest($this->researchRequest, $this->sender, $recipient));
+                    dispatch(new EmailResearchRequest($this->researchRequest, $this->note, $this->sender, $recipient, $this->currentLink))
+                        ->onQueue('emails')
+                        ->afterCommit();
 
                     $recipientName = $this->sender->is($recipient) ? 'yourself' : $recipient->name;
 
@@ -93,7 +97,7 @@ class PrepareResearchReportEmailing implements ShouldQueue
                 ->each(function (Team $team) use ($sender) {
                     Bus::batch(
                         $team->users()->whereKeyNot($this->sender)->get()
-                            ->map(fn (User $recipient) => new EmailResearchRequest($this->researchRequest, $this->sender, $recipient))
+                            ->map(fn (User $recipient) => new EmailResearchRequest($this->researchRequest, $this->note, $this->sender, $recipient, $this->currentLink))
                             ->all(),
                     )
                         ->name("PrepareResearchReportEmailing for team {$team->id}")
