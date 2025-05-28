@@ -78,7 +78,6 @@ class CreateTenant
                 ...($licenseData ? [new UpdateTenantLicenseData($tenant, $licenseData)] : []),
                 ...($themeConfig ? [new UpdateTenantTheme($tenant, $themeConfig)] : []),
                 ...($user ? [new CreateTenantUser($tenant, $user)] : []),
-                // TODO: Move this out of a job to a finally
                 new DispatchTenantSetupCompleteEvent($tenant),
             ],
         ])
