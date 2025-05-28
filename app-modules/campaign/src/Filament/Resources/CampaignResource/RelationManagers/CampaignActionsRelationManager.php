@@ -119,6 +119,8 @@ class CampaignActionsRelationManager extends RelationManager
                                         'execute_at' => $itemData['execute_at'],
                                     ]);
 
+                                    $block->afterCreated($action, $item);
+
                                     $item->model($action)->saveRelationships();
                                 }
                             }),
@@ -145,10 +147,12 @@ class CampaignActionsRelationManager extends RelationManager
                             ->body('The journey step has been successfully cancelled.')
                             ->success()
                             ->send();
-                    }),
+                    })
+                    ->databaseTransaction(),
                 EditAction::make()
                     ->modalHeading(fn (CampaignAction $action) => 'Edit ' . $action->type->getLabel())
-                    ->hidden(fn (CampaignAction $record) => $campaign->hasBeenExecuted() === true || $record->cancelled_at !== null),
+                    ->hidden(fn (CampaignAction $record) => $campaign->hasBeenExecuted() === true || $record->cancelled_at !== null)
+                    ->databaseTransaction(),
                 DeleteAction::make()
                     ->modalHeading(fn (CampaignAction $action) => 'Delete ' . $action->type->getLabel())
                     ->hidden(fn (CampaignAction $record) => $campaign->hasBeenExecuted() === true || $record->cancelled_at !== null),

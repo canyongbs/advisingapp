@@ -36,37 +36,38 @@
 
 namespace AdvisingApp\Campaign\Enums;
 
-use AdvisingApp\Alert\Models\Alert;
-use AdvisingApp\Campaign\Filament\Blocks\CareTeamBlock;
-use AdvisingApp\Campaign\Filament\Blocks\CaseBlock;
-use AdvisingApp\Campaign\Filament\Blocks\EngagementBatchEmailBlock;
-use AdvisingApp\Campaign\Filament\Blocks\EngagementBatchSmsBlock;
-use AdvisingApp\Campaign\Filament\Blocks\EventBlock;
-use AdvisingApp\Campaign\Filament\Blocks\InteractionBlock;
-use AdvisingApp\Campaign\Filament\Blocks\ProactiveAlertBlock;
-use AdvisingApp\Campaign\Filament\Blocks\SubscriptionBlock;
-use AdvisingApp\Campaign\Filament\Blocks\TagsBlock;
-use AdvisingApp\Campaign\Filament\Blocks\TaskBlock;
-use AdvisingApp\Campaign\Jobs\CareTeamCampaignActionJob;
-use AdvisingApp\Campaign\Jobs\CaseCampaignActionJob;
-use AdvisingApp\Campaign\Jobs\EngagementCampaignActionJob;
-use AdvisingApp\Campaign\Jobs\EventCampaignActionJob;
-use AdvisingApp\Campaign\Jobs\ExecuteCampaignActionOnEducatableJob;
-use AdvisingApp\Campaign\Jobs\InteractionCampaignActionJob;
-use AdvisingApp\Campaign\Jobs\ProactiveAlertCampaignActionJob;
-use AdvisingApp\Campaign\Jobs\SubscriptionCampaignActionJob;
-use AdvisingApp\Campaign\Jobs\TagsCampaignActionJob;
-use AdvisingApp\Campaign\Jobs\TaskCampaignActionJob;
-use AdvisingApp\Campaign\Models\CampaignActionEducatable;
-use AdvisingApp\CareTeam\Models\CareTeam;
-use AdvisingApp\CaseManagement\Models\CaseModel;
-use AdvisingApp\Engagement\Models\EngagementBatch;
-use AdvisingApp\Interaction\Models\Interaction;
-use AdvisingApp\MeetingCenter\Models\Event;
-use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\Task\Models\Task;
 use App\Settings\LicenseSettings;
+use AdvisingApp\Alert\Models\Alert;
 use Filament\Support\Contracts\HasLabel;
+use AdvisingApp\CareTeam\Models\CareTeam;
+use AdvisingApp\MeetingCenter\Models\Event;
+use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\Notification\Models\Subscription;
+use AdvisingApp\Engagement\Models\EngagementBatch;
+use AdvisingApp\Campaign\Filament\Blocks\CaseBlock;
+use AdvisingApp\Campaign\Filament\Blocks\TagsBlock;
+use AdvisingApp\Campaign\Filament\Blocks\TaskBlock;
+use AdvisingApp\Campaign\Filament\Blocks\EventBlock;
+use AdvisingApp\Campaign\Jobs\CaseCampaignActionJob;
+use AdvisingApp\Campaign\Jobs\TagsCampaignActionJob;
+use AdvisingApp\Campaign\Jobs\TaskCampaignActionJob;
+use AdvisingApp\Campaign\Jobs\EventCampaignActionJob;
+use AdvisingApp\Campaign\Filament\Blocks\CareTeamBlock;
+use AdvisingApp\Campaign\Jobs\CareTeamCampaignActionJob;
+use AdvisingApp\Campaign\Models\CampaignActionEducatable;
+use AdvisingApp\Campaign\Filament\Blocks\InteractionBlock;
+use AdvisingApp\Campaign\Jobs\EngagementCampaignActionJob;
+use AdvisingApp\Campaign\Filament\Blocks\SubscriptionBlock;
+use AdvisingApp\Campaign\Jobs\InteractionCampaignActionJob;
+use AdvisingApp\Campaign\Jobs\SubscriptionCampaignActionJob;
+use AdvisingApp\Campaign\Filament\Blocks\CampaignActionBlock;
+use AdvisingApp\Campaign\Filament\Blocks\ProactiveAlertBlock;
+use AdvisingApp\Campaign\Jobs\ProactiveAlertCampaignActionJob;
+use AdvisingApp\Campaign\Filament\Blocks\EngagementBatchSmsBlock;
+use AdvisingApp\Campaign\Filament\Blocks\EngagementBatchEmailBlock;
+use AdvisingApp\Campaign\Jobs\ExecuteCampaignActionOnEducatableJob;
 
 enum CampaignActionType: string implements HasLabel
 {
@@ -143,9 +144,9 @@ enum CampaignActionType: string implements HasLabel
         };
     }
 
-    public function getEditFields(): array
+    public function getBlock(): CampaignActionBlock
     {
-        $block = match ($this) {
+        return match ($this) {
             CampaignActionType::BulkEngagementEmail => EngagementBatchEmailBlock::make(),
             CampaignActionType::BulkEngagementSms => EngagementBatchSmsBlock::make(),
             CampaignActionType::Case => CaseBlock::make(),
@@ -157,8 +158,11 @@ enum CampaignActionType: string implements HasLabel
             CampaignActionType::Event => EventBlock::make(),
             CampaignActionType::Tags => TagsBlock::make(),
         };
+    }
 
-        return $block->editFields();
+    public function getEditFields(): array
+    {
+        return $this->getBlock()->editFields();
     }
 
     public function getStepSummaryView(): string
