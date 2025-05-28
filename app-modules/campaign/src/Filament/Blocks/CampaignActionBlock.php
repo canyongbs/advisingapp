@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
+use AdvisingApp\Campaign\Models\CampaignAction;
+use AdvisingApp\Campaign\Settings\CampaignSettings;
 use Carbon\CarbonInterface;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Builder\Block;
-use AdvisingApp\Campaign\Models\CampaignAction;
-use AdvisingApp\Campaign\Settings\CampaignSettings;
 
 abstract class CampaignActionBlock extends Block
 {
