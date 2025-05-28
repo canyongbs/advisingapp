@@ -47,6 +47,7 @@ use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 trait HasManyMorphedInteractionsTrait
@@ -100,17 +101,28 @@ trait HasManyMorphedInteractionsTrait
             ->defaultSort('end_datetime', 'desc')
             ->columns([
                 TextColumn::make('subject')
+                    ->description(fn ($record) => $record->initiative->name . ' (' . $record->driver->name . ')')
                     ->icon(fn ($record) => $record->is_confidential ? 'heroicon-m-lock-closed' : null)
                     ->tooltip(fn ($record) => $record->is_confidential ? 'Confidential' : null),
+                TextColumn::make('type.name')
+                    ->label('Type')
+                    ->toggleable()
+                    ->sortable(),
+                TextColumn::make('status.name')
+                    ->label('Status')
+                    ->toggleable()
+                    ->sortable(),
                 TextColumn::make('start_datetime')
                     ->label('Start Time')
-                    ->dateTime(),
-                TextColumn::make('end_datetime')
-                    ->label('End Time')
-                    ->dateTime(),
-                TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable(),
+                TextColumn::make('duration')
                     ->state(fn ($record) => $record->end_datetime ? $record->end_datetime->diffForHumans($record->start_datetime, CarbonInterface::DIFF_ABSOLUTE, true, 6) : '-')
                     ->label('Duration'),
+                TextColumn::make('user.name')
+                    ->label('Created By')
+                    ->description(fn ($record) => $record->user->job_title)
+                    ->sortable(),
                 TextColumn::make('initiative.name')
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('driver.name')
@@ -121,17 +133,13 @@ trait HasManyMorphedInteractionsTrait
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('relation.name')
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('status.name')
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('type.name')
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->headerActions([
                 CreateAction::make()
                     ->authorize(function () {
                         $ownerRecord = $this->getOwnerRecord();
 
-                        return auth()->user()->can('create', [Interaction::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
+                        return auth()->user()?->can('create', [Interaction::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
                     }),
             ])
             ->actions([
@@ -144,6 +152,28 @@ trait HasManyMorphedInteractionsTrait
                     ]),
                 EditAction::make()
                     ->modalHeading('Edit Interaction'),
+            ])
+            ->filters([
+                SelectFilter::make('interaction_initiative_id')
+                    ->relationship('initiative', 'name')
+                    ->label('Initiative')
+                    ->multiple(),
+                SelectFilter::make('interaction_driver_id')
+                    ->relationship('driver', 'name')
+                    ->label('Driver')
+                    ->multiple(),
+                SelectFilter::make('interaction_type_id')
+                    ->label('Type')
+                    ->relationship('type', 'name')
+                    ->multiple(),
+                SelectFilter::make('interaction_status_id')
+                    ->relationship('status', 'name')
+                    ->label('Status')
+                    ->multiple(),
+                SelectFilter::make('user_id')
+                    ->relationship('user', 'name')
+                    ->label('Created By')
+                    ->multiple(),
             ])
             ->emptyStateDescription('Create an interaction to get started');
     }
