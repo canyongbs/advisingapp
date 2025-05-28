@@ -112,7 +112,13 @@ class ManageLicenseSettings extends SettingsPage
                                 ->numeric()
                                 ->minValue(0)
                                 ->required()
-                                ->disabled(fn (Get $get): bool => (bool) $get('conversationalAiSeats')),
+                                ->disabled(fn (Get $get): bool => ! $get('data.addons.customAiAssistants')),
+                            TextInput::make('data.limits.qnaAdvisorsCount')
+                                ->label('QnA Advisors')
+                                ->numeric()
+                                ->minValue(0)
+                                ->required()
+                                ->disabled(fn (Get $get): bool => ! $get('data.addons.qnaAdvisor')),
                             TextInput::make('data.limits.retentionCrmSeats')
                                 ->label('Student Success / Retention Seats')
                                 ->numeric()
@@ -161,11 +167,13 @@ class ManageLicenseSettings extends SettingsPage
                             Toggle::make('data.addons.scheduleAndAppointments')
                                 ->label('Schedule & Appointments'),
                             Toggle::make('data.addons.customAiAssistants')
-                                ->label('Custom AI Assistants'),
+                                ->label('Custom AI Assistants')
+                                ->live(),
                             Toggle::make('data.addons.researchAdvisor')
                                 ->label('Research Advisors'),
                             Toggle::make('data.addons.qnaAdvisor')
-                                ->label('QnA Advisors'),
+                                ->label('QnA Advisors')
+                                ->live(),
                         ]
                     ),
             ])
