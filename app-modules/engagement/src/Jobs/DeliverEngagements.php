@@ -60,17 +60,9 @@ class DeliverEngagements implements ShouldQueue
                 ->whereNull('scheduled_at')
                 ->orWhere('scheduled_at', '<=', now()))
             ->whereNull('dispatched_at')
-            ->with('recipient')
+            ->withWhereHas('recipient')
             ->eachById(
                 fn (Engagement $engagement) => DB::transaction(function () use ($engagement) {
-                    if (is_null($engagement->recipient)) {
-                        // If the Engagement recipient no longer exists, delete the Engagement
-                        // and skip sending the notification.
-                        $engagement->delete();
-
-                        return;
-                    }
-
                     $updatedEngagementsCount = Engagement::query()
                         ->whereNull('dispatched_at')
                         ->whereKey($engagement)
