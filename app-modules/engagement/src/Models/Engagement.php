@@ -236,7 +236,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
             $this->body,
             $this->getMergeData(),
             $this->batch ?? (CampaignEmailImages::active() ? $this->campaignAction : null) ?? $this,
-            (CampaignEmailImages::active() ? ($this->campaignAction ? 'data.body' : 'body') : null),
+            (CampaignEmailImages::active() ? ($this->campaignAction ? 'data.body' : 'body') : 'body'),
         );
     }
 
@@ -246,7 +246,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
             $this->subject,
             $this->getMergeData(),
             $this->batch ?? (CampaignEmailImages::active() ? $this->campaignAction : null) ?? $this,
-            (CampaignEmailImages::active() ? ($this->campaignAction ? 'data.subject' : 'subject') : null),
+            (CampaignEmailImages::active() ? ($this->campaignAction ? 'data.subject' : 'subject') : 'subject'),
         );
     }
 
