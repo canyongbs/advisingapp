@@ -44,6 +44,7 @@ use App\Listeners\LoadSettingsDefaults;
 use App\Listeners\SetSentryUser;
 use App\Listeners\SyncScheduleMonitor;
 use App\Multitenancy\Events\NewTenantSetupComplete;
+use App\Multitenancy\Events\NewTenantSetupFailure;
 use App\Multitenancy\Listeners\RemoveSentryTenantTag;
 use App\Multitenancy\Listeners\SetSentryTenantTag;
 use Illuminate\Auth\Events\Authenticated;
@@ -96,6 +97,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         NewTenantSetupComplete::class => [
             SyncScheduleMonitor::class,
+            InformOlympusOfDeploymentEvent::class,
+        ],
+        NewTenantSetupFailure::class => [
             InformOlympusOfDeploymentEvent::class,
         ],
     ];
