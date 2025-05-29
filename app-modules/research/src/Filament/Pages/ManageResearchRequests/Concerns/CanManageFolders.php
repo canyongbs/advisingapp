@@ -85,7 +85,7 @@ trait CanManageFolders
 
         return $user
             ->researchRequestFolders()
-            ->with([
+            ->with([ // @phpstan-ignore argument.type
                 /** @phpstan-ignore argument.type */
                 'requests' => fn (HasMany $query) => $query
                     ->latest('updated_at'),
@@ -144,12 +144,14 @@ trait CanManageFolders
                     ->label(fn (Get $get): string => match ($get('targetType')) {
                         ResearchRequestShareTarget::Team->value => 'Select Teams',
                         ResearchRequestShareTarget::User->value => 'Select Users',
+                        default => '',
                     })
                     ->visible(fn (Get $get): bool => filled($get('targetType')))
                     ->options(function (Get $get): Collection {
                         return match ($get('targetType')) {
                             ResearchRequestShareTarget::Team->value => Team::orderBy('name')->pluck('name', 'id'),
                             ResearchRequestShareTarget::User->value => User::tap(new WithoutSuperAdmin())->orderBy('name')->pluck('name', 'id'),
+                            default => '',
                         };
                     })
                     ->searchable()
@@ -159,6 +161,7 @@ trait CanManageFolders
                         fn (Get $get) => match ($get('targetType')) {
                             ResearchRequestShareTarget::User->value => new RestrictSuperAdmin('email'),
                             ResearchRequestShareTarget::Team->value => null,
+                            default => '',
                         },
                     ]),
                 Textarea::make('note')
@@ -174,7 +177,7 @@ trait CanManageFolders
                     return;
                 }
 
-                dispatch(new PrepareResearchRequestEmailing($researchRequest, $data['targetType'], $data['targetIds'], $data['note'], auth()->user(), $arguments['currentLink']));
+                dispatch(new PrepareResearchRequestEmailing($researchRequest, $data['targetType'], $data['targetIds'], $data['note'], auth()->user()));
             })
             ->link()
             ->icon('heroicon-m-envelope')

@@ -60,9 +60,11 @@ class EmailResearchRequest implements ShouldQueue
         protected ?string $note,
         protected User $sender,
         protected User $recipient,
-        protected string $currentLink,
     ) {}
 
+    /**
+     * @return array<int, SkipIfBatchCancelled>
+     */
     public function middleware(): array
     {
         return [new SkipIfBatchCancelled()];
@@ -70,6 +72,6 @@ class EmailResearchRequest implements ShouldQueue
 
     public function handle(): void
     {
-        $this->recipient->notify(new ResearchTranscriptNotification($this->researchRequest, $this->note, $this->sender, $this->currentLink));
+        $this->recipient->notify(new ResearchTranscriptNotification($this->researchRequest, $this->note, $this->sender));
     }
 }

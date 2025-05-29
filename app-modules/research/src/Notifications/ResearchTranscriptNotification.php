@@ -41,6 +41,7 @@ use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\Contracts\Message;
 use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use AdvisingApp\Research\Filament\Pages\ManageResearchRequests;
 use AdvisingApp\Research\Models\ResearchRequest;
 use App\Models\NotificationSetting;
 use App\Models\User;
@@ -57,7 +58,6 @@ class ResearchTranscriptNotification extends Notification implements ShouldQueue
         protected ResearchRequest $researchRequest,
         protected ?string $note,
         protected User $sender,
-        protected string $currentLink,
     ) {}
 
     /**
@@ -83,6 +83,7 @@ class ResearchTranscriptNotification extends Notification implements ShouldQueue
             $message->subject("A Research Transcript has been shared with you: {$this->researchRequest->topic}")
                 ->line("Here is a copy of {$this->sender->name}'s research on: {$this->researchRequest->topic}");
         }
+        $link = ManageResearchRequests::getUrl(['researchRequest' => $this->researchRequest]);
 
         $message->line(str('Reasoning: <br>' . $this->researchRequest->results)
             ->toHtmlString());
@@ -92,7 +93,8 @@ class ResearchTranscriptNotification extends Notification implements ShouldQueue
                 ->toHtmlString());
         }
 
-        // ->prepend("Link: <a href='{$this->currentLink}'>View Research</a><br>");
+        $message->line(str("You can view the research request in the <a href='{$link}'>Research Advisor</a>.")
+            ->toHtmlString());
 
         return $message;
     }

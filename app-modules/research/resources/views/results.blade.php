@@ -61,8 +61,8 @@
                 )->sanitizeHtml() !!}
         </section>
         @if ($showEmailResults)
-            <section class="text-left">
-                {{ ($this->emailResearchRequestAction)(['researchRequest' => $researchRequest->id, 'currentLink' => url()->current()]) }}
+            <section class="mt-3 px-3 text-right">
+                {{ ($this->emailResearchRequestAction)(['researchRequest' => $researchRequest->getKey()]) }}
             </section>
         @endif
     @endif
