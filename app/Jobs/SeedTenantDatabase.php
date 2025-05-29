@@ -55,6 +55,9 @@ class SeedTenantDatabase implements ShouldQueue, NotTenantAware
 
     public function __construct(public Tenant $tenant) {}
 
+    /**
+     * @return array<object>
+     */
     public function middleware(): array
     {
         return [new SkipIfBatchCancelled()];

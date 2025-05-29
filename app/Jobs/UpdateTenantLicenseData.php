@@ -57,6 +57,9 @@ class UpdateTenantLicenseData implements ShouldQueue, NotTenantAware
         public LicenseData $data,
     ) {}
 
+    /**
+     * @return array<object>
+     */
     public function middleware(): array
     {
         return [new SkipIfBatchCancelled()];

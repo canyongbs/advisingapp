@@ -57,6 +57,9 @@ class UpdateTenantTheme implements ShouldQueue, NotTenantAware
         public ThemeConfig $config,
     ) {}
 
+    /**
+     * @return array<object>
+     */
     public function middleware(): array
     {
         return [new SkipIfBatchCancelled()];
