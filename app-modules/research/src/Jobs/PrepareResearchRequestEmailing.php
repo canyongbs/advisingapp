@@ -56,13 +56,13 @@ class PrepareResearchRequestEmailing implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    /** @param array<string, mixed> $targetIds */
     public function __construct(
         public ResearchRequest $researchRequest,
         public string $targetType,
         public array $targetIds,
         public ?string $note,
         public User $sender,
-        public string $currentLink,
     ) {}
 
     public function handle(): void
@@ -72,7 +72,7 @@ class PrepareResearchRequestEmailing implements ShouldQueue
                 ->whereKey($this->targetIds)
                 ->get()
                 ->each(function (User $recipient) {
-                    dispatch(new EmailResearchRequest($this->researchRequest, $this->note, $this->sender, $recipient, $this->currentLink));
+                    dispatch(new EmailResearchRequest($this->researchRequest, $this->note, $this->sender, $recipient));
 
                     $recipientName = $this->sender->is($recipient) ? 'yourself' : $recipient->name;
 
@@ -95,10 +95,10 @@ class PrepareResearchRequestEmailing implements ShouldQueue
                 ->each(function (Team $team) use ($sender) {
                     Bus::batch(
                         $team->users()->whereKeyNot($this->sender)->get()
-                            ->map(fn (User $recipient) => new EmailResearchRequest($this->researchRequest, $this->note, $this->sender, $recipient, $this->currentLink))
+                            ->map(fn (User $recipient) => new EmailResearchRequest($this->researchRequest, $this->note, $this->sender, $recipient))
                             ->all(),
                     )
-                        ->name("PrepareResearchReportEmailing for team {$team->id}")
+                        ->name("PrepareResearchReportEmailing for team {$team->getKey()}")
                         ->then(function () use ($sender, $team) {
                             FilamentNotification::make()
                                 ->success()
