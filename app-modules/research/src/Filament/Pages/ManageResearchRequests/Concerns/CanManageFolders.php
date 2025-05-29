@@ -85,8 +85,7 @@ trait CanManageFolders
 
         return $user
             ->researchRequestFolders()
-            ->with([ // @phpstan-ignore argument.type
-                /** @phpstan-ignore argument.type */
+            ->with([/** @phpstan-ignore argument.type */
                 'requests' => fn (HasMany $query) => $query
                     ->latest('updated_at'),
             ])
