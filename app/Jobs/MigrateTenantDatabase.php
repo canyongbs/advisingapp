@@ -36,24 +36,20 @@
 
 namespace App\Jobs;
 
+use App\Jobs\Concerns\UsedDuringNewTenantSetup;
 use App\Models\Tenant;
 use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
-use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Artisan;
 use Spatie\Multitenancy\Jobs\NotTenantAware;
 
 class MigrateTenantDatabase implements ShouldQueue, NotTenantAware
 {
     use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
+    use UsedDuringNewTenantSetup;
     use Queueable;
-    use SerializesModels;
 
     public function __construct(public Tenant $tenant) {}
 

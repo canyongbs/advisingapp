@@ -37,7 +37,6 @@
 namespace App\Multitenancy\Events;
 
 use App\Models\Tenant;
-use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Throwable;
@@ -45,7 +44,6 @@ use Throwable;
 class NewTenantSetupFailure
 {
     use Dispatchable;
-    use InteractsWithSockets;
     use SerializesModels;
 
     public function __construct(

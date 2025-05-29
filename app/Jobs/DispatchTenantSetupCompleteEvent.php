@@ -36,27 +36,21 @@
 
 namespace App\Jobs;
 
+use App\Jobs\Concerns\UsedDuringNewTenantSetup;
 use App\Models\Tenant;
 use App\Multitenancy\Events\NewTenantSetupComplete;
 use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
-use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Event;
 use Spatie\Multitenancy\Jobs\NotTenantAware;
 
 class DispatchTenantSetupCompleteEvent implements ShouldQueue, NotTenantAware
 {
     use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
+    use UsedDuringNewTenantSetup;
     use Queueable;
-    use SerializesModels;
-
-    public int $timeout = 1200;
 
     public function __construct(public Tenant $tenant) {}
 

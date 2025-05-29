@@ -38,27 +38,29 @@ namespace AdvisingApp\Theme\Jobs;
 
 use AdvisingApp\Theme\DataTransferObjects\ThemeConfig;
 use AdvisingApp\Theme\Settings\ThemeSettings;
+use App\Jobs\Concerns\UsedDuringNewTenantSetup;
 use App\Models\Tenant;
 use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
 use Spatie\Multitenancy\Jobs\NotTenantAware;
 
 class UpdateTenantTheme implements ShouldQueue, NotTenantAware
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
     use Batchable;
+    use UsedDuringNewTenantSetup;
+    use Queueable;
 
     public function __construct(
         public Tenant $tenant,
         public ThemeConfig $config,
     ) {}
+
+    public function middleware(): array
+    {
+        return [new SkipIfBatchCancelled()];
+    }
 
     public function handle(): void
     {
