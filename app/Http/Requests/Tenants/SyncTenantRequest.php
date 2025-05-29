@@ -50,7 +50,7 @@ class SyncTenantRequest extends FormRequest
             'limits.recruitmentCrmSeats' => ['required', 'integer', 'min:0'],
             'limits.emails' => ['required', 'integer', 'min:0'],
             'limits.sms' => ['required', 'integer', 'min:0'],
-            'limits.qnaAdvisorCount ' => ['required', 'integer', 'min:0'],
+            'limits.qnaAdvisorsCount' => ['required', 'integer', 'min:0'],
             'limits.resetDate' => ['required', 'string', 'date_format:m-d'],
             'addons' => ['required', 'array'],
             'addons.onlineForms' => ['required', 'boolean'],
