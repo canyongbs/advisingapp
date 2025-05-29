@@ -37,6 +37,7 @@
 namespace App\Listeners;
 
 use App\Multitenancy\Events\NewTenantSetupComplete;
+use App\Multitenancy\Events\NewTenantSetupFailure;
 use App\Services\Olympus;
 use App\Settings\OlympusSettings;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -45,7 +46,7 @@ use Spatie\Multitenancy\Landlord;
 
 class InformOlympusOfDeploymentEvent implements ShouldQueue, NotTenantAware
 {
-    public function handle(NewTenantSetupComplete $event): void
+    public function handle(NewTenantSetupComplete|NewTenantSetupFailure $event): void
     {
         $isConfigured = Landlord::execute(function (): bool {
             $settings = app(OlympusSettings::class);
@@ -61,10 +62,20 @@ class InformOlympusOfDeploymentEvent implements ShouldQueue, NotTenantAware
 
         app(Olympus::class)->makeRequest()
             ->asJson()
-            ->post("/api/deployment/{$tenantId}/report-event", [
-                'type' => 'complete',
-                'occurred_at' => now()->toDateTimeString('millisecond'),
-            ])
+            ->post(
+                url: "/api/deployment/{$tenantId}/report-event",
+                data: match (true) {
+                    $event instanceof NewTenantSetupComplete => [
+                        'type' => 'complete',
+                        'occurred_at' => now()->toDateTimeString('millisecond'),
+                    ],
+                    $event instanceof NewTenantSetupFailure => [
+                        'type' => 'failure',
+                        'occurred_at' => now()->toDateTimeString('millisecond'),
+                        'message' => $event->exception->getMessage(),
+                    ],
+                }
+            )
             ->throw();
     }
 }
