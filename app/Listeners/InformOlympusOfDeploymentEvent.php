@@ -70,7 +70,7 @@ class InformOlympusOfDeploymentEvent implements ShouldQueue, NotTenantAware
                         'occurred_at' => now()->toDateTimeString('millisecond'),
                     ],
                     $event instanceof NewTenantSetupFailure => [
-                        'type' => 'failure',
+                        'type' => 'error',
                         'occurred_at' => now()->toDateTimeString('millisecond'),
                         'message' => $event->exception->getMessage(),
                     ],
