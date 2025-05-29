@@ -51,56 +51,56 @@ use Illuminate\Notifications\Notification;
 
 class ResearchTranscriptNotification extends Notification implements ShouldQueue, HasAfterSendHook
 {
-  use Queueable;
+    use Queueable;
 
-  public function __construct(
-    protected ResearchRequest $researchRequest,
-    protected ?string $note,
-    protected User $sender,
-    protected string $currentLink,
-  ) {}
+    public function __construct(
+        protected ResearchRequest $researchRequest,
+        protected ?string $note,
+        protected User $sender,
+        protected string $currentLink,
+    ) {}
 
-  /**
-   * @return array<int, string>
-   */
-  public function via(object $notifiable): array
-  {
-    return ['mail'];
-  }
-
-  public function toMail(object $notifiable): MailMessage
-  {
-    $message = MailMessage::make()
-      ->settings($this->resolveNotificationSetting($notifiable))
-      ->greeting("Hello {$notifiable->name},");
-
-    $senderIsNotifiable = $this->sender->is($notifiable);
-
-    if ($senderIsNotifiable) {
-      $message->subject("Research Transcript: {$this->researchRequest->topic}")
-        ->line("Here is a copy of research on: {$this->researchRequest->topic}");
-    } else {
-      $message->subject("A Research Transcript has been shared with you: {$this->researchRequest->topic}")
-        ->line("Here is a copy of {$this->sender->name}'s research on: {$this->researchRequest->topic}");
+    /**
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
+    {
+        return ['mail'];
     }
 
-    $message->line(str('Reasoning: <br>' . $this->researchRequest->results)
-      ->toHtmlString());
+    public function toMail(object $notifiable): MailMessage
+    {
+        $message = MailMessage::make()
+            ->settings($this->resolveNotificationSetting($notifiable))
+            ->greeting("Hello {$notifiable->name},");
 
-    if ($this->note) {
-      $message->line(str("Note: {$this->note}")
-        ->toHtmlString());
+        $senderIsNotifiable = $this->sender->is($notifiable);
+
+        if ($senderIsNotifiable) {
+            $message->subject("Research Transcript: {$this->researchRequest->topic}")
+                ->line("Here is a copy of research on: {$this->researchRequest->topic}");
+        } else {
+            $message->subject("A Research Transcript has been shared with you: {$this->researchRequest->topic}")
+                ->line("Here is a copy of {$this->sender->name}'s research on: {$this->researchRequest->topic}");
+        }
+
+        $message->line(str('Reasoning: <br>' . $this->researchRequest->results)
+            ->toHtmlString());
+
+        if ($this->note) {
+            $message->line(str("Note: {$this->note}")
+                ->toHtmlString());
+        }
+
+        // ->prepend("Link: <a href='{$this->currentLink}'>View Research</a><br>");
+
+        return $message;
     }
 
-    // ->prepend("Link: <a href='{$this->currentLink}'>View Research</a><br>");
+    public function afterSend(AnonymousNotifiable|CanBeNotified $notifiable, Message $message, NotificationResultData $result): void {}
 
-    return $message;
-  }
-
-  public function afterSend(AnonymousNotifiable|CanBeNotified $notifiable, Message $message, NotificationResultData $result): void {}
-
-  private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
-  {
-    return $this->sender->team?->division?->notificationSetting?->setting;
-  }
+    private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
+    {
+        return $this->sender->team?->division?->notificationSetting?->setting;
+    }
 }
