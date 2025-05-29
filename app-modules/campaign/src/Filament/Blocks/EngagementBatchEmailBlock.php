@@ -36,26 +36,26 @@
 
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
-use Filament\Forms\Get;
-use Filament\Forms\Set;
+use AdvisingApp\Campaign\Filament\Blocks\Actions\DraftCampaignEngagementBlockWithAi;
+use AdvisingApp\Campaign\Models\CampaignAction;
+use AdvisingApp\Campaign\Settings\CampaignSettings;
+use AdvisingApp\Engagement\Models\EmailTemplate;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use Carbon\CarbonImmutable;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Select;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions;
-use FilamentTiptapEditor\TiptapEditor;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\DateTimePicker;
-use AdvisingApp\Campaign\Models\CampaignAction;
-use AdvisingApp\Engagement\Models\EmailTemplate;
-use AdvisingApp\Campaign\Settings\CampaignSettings;
-use AdvisingApp\Notification\Enums\NotificationChannel;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
-use AdvisingApp\Campaign\Filament\Blocks\Actions\DraftCampaignEngagementBlockWithAi;
 
 class EngagementBatchEmailBlock extends CampaignActionBlock
 {
@@ -180,7 +180,7 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
 
     public function afterCreated(CampaignAction $action, ComponentContainer $componentContainer): void
     {
-        $bodyField = $componentContainer->getComponent(fn (Component $component): bool => ($component instanceof TipTapEditor) && str($component->getName())->endsWith('body'));
+        $bodyField = $componentContainer->getComponent(fn (Component $component): bool => ($component instanceof TiptapEditor) && str($component->getName())->endsWith('body'));
 
         if (! ($bodyField instanceof TiptapEditor)) {
             return;

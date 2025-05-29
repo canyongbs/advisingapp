@@ -39,6 +39,7 @@ namespace AdvisingApp\Engagement\Actions;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Notifications\EngagementNotification;
+use App\Features\CampaignEmailImages;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -67,16 +68,25 @@ class CreateEngagement
             $engagement->dispatched_at = now();
         }
 
+        if (CampaignEmailImages::active() && $data->campaignAction) {
+            $engagement->campaignAction()->associate($data->campaignAction);
+        }
+
         DB::transaction(function () use ($data, $engagement, $notifyNow) {
             $engagement->save();
 
-            [$engagement->body] = tiptap_converter()->saveImages(
-                $data->body,
-                disk: 's3-public',
-                record: $engagement,
-                recordAttribute: 'body',
-                newImages: $data->temporaryBodyImages,
-            );
+            if (CampaignEmailImages::active() && $data->campaignAction) {
+                $engagement->body = $data->body;
+            } else {
+                [$engagement->body] = tiptap_converter()->saveImages(
+                    $data->body,
+                    disk: 's3-public',
+                    record: $engagement,
+                    recordAttribute: 'body',
+                    newImages: $data->temporaryBodyImages,
+                );
+            }
+
             $engagement->save();
 
             if (! $engagement->scheduled_at) {
