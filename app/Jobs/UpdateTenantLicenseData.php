@@ -64,7 +64,7 @@ class UpdateTenantLicenseData implements ShouldQueue, NotTenantAware
     {
         $licenseData = $this->data;
 
-        $this->tenant->execute(function () use ($licenseData) {
+        $this->tenant->executeWithLandlordJobFailureAndBatching(function () use ($licenseData) {
             $licenseSettings = app(LicenseSettings::class);
 
             // TODO: Determine how to handle and retrieve this key

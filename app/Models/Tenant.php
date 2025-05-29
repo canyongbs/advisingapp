@@ -94,4 +94,26 @@ class Tenant extends SpatieTenant
 
         return $current->updated_at->lessThan($this->updated_at);
     }
+
+    public function executeWithLandlordJobFailureAndBatching(callable $callback): void
+    {
+        $this->execute(function () use ($callback) {
+            $currentQueueFailedConnection = config('queue.failed.database');
+            $currentBatchingConnection = config('queue.batching.database');
+
+            config([
+                'queue.failed.database' => 'landlord',
+                'queue.batching.database' => 'landlord',
+            ]);
+
+            try {
+                $callback();
+            } finally {
+                config([
+                    'queue.failed.database' => $currentQueueFailedConnection,
+                    'queue.batching.database' => $currentBatchingConnection,
+                ]);
+            }
+        });
+    }
 }

@@ -74,7 +74,7 @@ class CreateTenantUser implements ShouldQueue, NotTenantAware
 
     public function handle(): void
     {
-        $this->tenant->execute(function () {
+        $this->tenant->executeWithLandlordJobFailureAndBatching(function () {
             $user = User::create($this->data->toArray());
 
             foreach (Arr::wrap(LicenseType::cases()) as $licenseType) {
