@@ -121,7 +121,7 @@ trait HasManyMorphedInteractionsTrait
                     ->label('Duration'),
                 TextColumn::make('user.name')
                     ->label('Created By')
-                    ->description(fn ($record) => $record->user->job_title)
+                    ->description(fn ($record) => $record->user?->job_title)
                     ->sortable(),
                 TextColumn::make('initiative.name')
                     ->toggleable(isToggledHiddenByDefault: true),
