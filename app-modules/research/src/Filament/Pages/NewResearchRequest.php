@@ -163,11 +163,11 @@ class NewResearchRequest extends Page
                                 ]);
                                 $this->researchRequest->load('questions');
                             })
-                            ->disabled(fn (): bool => $this->researchRequest?->hasStarted() ?? false),
+                            ->disabled(fn(): bool => $this->researchRequest?->hasStarted() ?? false),
                         Step::make('Question 1')
                             ->schema([
                                 Textarea::make('question_1')
-                                    ->label(fn (): ?string => $this->researchRequest?->questions->get(0)?->content)
+                                    ->label(fn(): ?string => $this->researchRequest?->questions->get(0)?->content)
                                     ->rows(5)
                                     ->required()
                                     ->maxLength(2000),
@@ -184,11 +184,11 @@ class NewResearchRequest extends Page
                                     $this->researchRequest->load('questions');
                                 }
                             })
-                            ->disabled(fn (): bool => $this->researchRequest?->hasStarted() ?? false),
+                            ->disabled(fn(): bool => $this->researchRequest?->hasStarted() ?? false),
                         Step::make('Question 2')
                             ->schema([
                                 Textarea::make('question_2')
-                                    ->label(fn (): ?string => $this->researchRequest?->questions->get(1)?->content)
+                                    ->label(fn(): ?string => $this->researchRequest?->questions->get(1)?->content)
                                     ->rows(5)
                                     ->required()
                                     ->maxLength(2000),
@@ -205,11 +205,11 @@ class NewResearchRequest extends Page
                                     $this->researchRequest->load('questions');
                                 }
                             })
-                            ->disabled(fn (): bool => $this->researchRequest?->hasStarted() ?? false),
+                            ->disabled(fn(): bool => $this->researchRequest?->hasStarted() ?? false),
                         Step::make('Question 3')
                             ->schema([
                                 Textarea::make('question_3')
-                                    ->label(fn (): ?string => $this->researchRequest?->questions->get(2)?->content)
+                                    ->label(fn(): ?string => $this->researchRequest?->questions->get(2)?->content)
                                     ->rows(5)
                                     ->required()
                                     ->maxLength(2000),
@@ -226,11 +226,11 @@ class NewResearchRequest extends Page
                                     $this->researchRequest->load('questions');
                                 }
                             })
-                            ->disabled(fn (): bool => $this->researchRequest?->hasStarted() ?? false),
+                            ->disabled(fn(): bool => $this->researchRequest?->hasStarted() ?? false),
                         Step::make('Question 4')
                             ->schema([
                                 Textarea::make('question_4')
-                                    ->label(fn (): ?string => $this->researchRequest?->questions->get(3)?->content)
+                                    ->label(fn(): ?string => $this->researchRequest?->questions->get(3)?->content)
                                     ->rows(5)
                                     ->required()
                                     ->maxLength(2000),
@@ -248,11 +248,11 @@ class NewResearchRequest extends Page
                                     'researchRequest' => $this->researchRequest,
                                 ]));
                             })
-                            ->disabled(fn (): bool => $this->researchRequest?->hasStarted() ?? false),
+                            ->disabled(fn(): bool => $this->researchRequest?->hasStarted() ?? false),
                         Step::make('Results')
                             ->schema([
                                 View::make('research::results')
-                                    ->viewData(['researchRequest' => $this->researchRequest]),
+                                    ->viewData(['researchRequest' => $this->researchRequest, 'showEmailResults' => false]),
                             ]),
                     ])
                     ->submitAction(filled($this->researchRequest?->title) ? Action::make('view')
@@ -288,7 +288,7 @@ class NewResearchRequest extends Page
                 ->requiresConfirmation()
                 ->modalHeading('Restart this research request from scratch')
                 ->color('gray')
-                ->action(fn () => redirect(static::getUrl())),
+                ->action(fn() => redirect(static::getUrl())),
         ];
     }
 }

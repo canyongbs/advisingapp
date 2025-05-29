@@ -49,28 +49,39 @@ use Illuminate\Support\Facades\Gate;
 
 class ManageResearchRequests extends Page
 {
-    use CanManageConsent;
-    use CanManageFolders;
-    use CanManageRequests;
+  use CanManageConsent;
+  use CanManageFolders;
+  use CanManageRequests;
 
-    protected static string $view = 'research::filament.pages.manage-research-requests';
+  protected static string $view = 'research::filament.pages.manage-research-requests';
 
-    protected static ?string $title = 'Research Advisor';
+  protected static ?string $title = 'Research Advisor';
 
-    protected static ?int $navigationSort = 20;
+  protected static ?int $navigationSort = 20;
 
-    /**
-     * @return array<NavigationItem>
-     */
-    public static function getNavigationItems(): array
-    {
-        return [
-            NavigationItem::make('Research Advisor')
-                ->group('Artificial Intelligence')
-                ->isActiveWhen(fn (): bool => request()->routeIs(static::getRouteName(), NewResearchRequest::getRouteName()))
-                ->sort(30)
-                ->url(static::getUrl()),
-        ];
+  public bool $showEmailResults = true;
+
+  /**
+   * @return array<NavigationItem>
+   */
+  public static function getNavigationItems(): array
+  {
+    return [
+      NavigationItem::make('Research Advisor')
+        ->group('Artificial Intelligence')
+        ->isActiveWhen(fn(): bool => request()->routeIs(static::getRouteName(), NewResearchRequest::getRouteName()))
+        ->sort(30)
+        ->url(static::getUrl()),
+    ];
+  }
+
+  public static function canAccess(): bool
+  {
+    /** @var User $user */
+    $user = auth()->user();
+
+    if (! $user->hasLicense(LicenseType::ConversationalAi)) {
+      return false;
     }
 
     public static function canAccess(): bool
@@ -92,4 +103,11 @@ class ManageResearchRequests extends Page
 
         return $user->can(['research_advisor.view-any', 'research_advisor.*.view']);
     }
+
+    if (blank(app(AiIntegrationsSettings::class)->jina_deepsearch_v1_api_key)) {
+      return false;
+    }
+
+    return ResearchRequests::active() && $user->can(['research_advisor.view-any', 'research_advisor.*.view']);
+  }
 }

@@ -49,27 +49,27 @@ use Illuminate\Queue\SerializesModels;
 
 class EmailResearchRequest implements ShouldQueue
 {
-    use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
+  use Batchable;
+  use Dispatchable;
+  use InteractsWithQueue;
+  use Queueable;
+  use SerializesModels;
 
-    public function __construct(
-        protected ResearchRequest $researchRequest,
-        protected ?string $note,
-        protected User $sender,
-        protected User $recipient,
-        protected string $currentLink,
-    ) {}
+  public function __construct(
+    protected ResearchRequest $researchRequest,
+    protected ?string $note,
+    protected User $sender,
+    protected User $recipient,
+    protected string $currentLink,
+  ) {}
 
-    public function middleware(): array
-    {
-        return [new SkipIfBatchCancelled()];
-    }
+  public function middleware(): array
+  {
+    return [new SkipIfBatchCancelled()];
+  }
 
-    public function handle(): void
-    {
-        $this->recipient->notify(new ResearchTranscriptNotification($this->researchRequest, $this->note, $this->sender, $this->currentLink));
-    }
+  public function handle(): void
+  {
+    $this->recipient->notify(new ResearchTranscriptNotification($this->researchRequest, $this->note, $this->sender, $this->currentLink));
+  }
 }
