@@ -37,13 +37,16 @@
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
 use AdvisingApp\Campaign\Filament\Blocks\Actions\DraftCampaignEngagementBlockWithAi;
+use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use Carbon\CarbonImmutable;
+use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Component;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
@@ -52,6 +55,7 @@ use Filament\Forms\Set;
 use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class EngagementBatchEmailBlock extends CampaignActionBlock
 {
@@ -172,5 +176,34 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
     public static function type(): string
     {
         return 'bulk_engagement_email';
+    }
+
+    public function afterCreated(CampaignAction $action, ComponentContainer $componentContainer): void
+    {
+        $bodyField = $componentContainer->getComponent(fn (Component $component): bool => ($component instanceof TiptapEditor) && str($component->getName())->endsWith('body'));
+
+        if (! ($bodyField instanceof TiptapEditor)) {
+            return;
+        }
+
+        [$newBody] = tiptap_converter()->saveImages(
+            $action['data']['body'],
+            disk: 's3-public',
+            record: $action,
+            recordAttribute: 'data.body',
+            newImages: array_map(
+                fn (TemporaryUploadedFile $file): array => [
+                    'extension' => $file->getClientOriginalExtension(),
+                    'path' => (fn () => $this->path)->call($file),
+                ],
+                $bodyField->getTemporaryImages(),
+            ),
+        );
+
+        $actionData = $action->data;
+        $actionData['body'] = $newBody;
+
+        $action->data = $actionData;
+        $action->save();
     }
 }

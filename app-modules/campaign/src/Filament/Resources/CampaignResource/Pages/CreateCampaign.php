@@ -58,6 +58,8 @@ class CreateCampaign extends CreateRecord
 {
     use HasWizard;
 
+    protected ?bool $hasDatabaseTransactions = true;
+
     protected static string $resource = CampaignResource::class;
 
     public function getCreateFormAction(): Action
@@ -132,6 +134,8 @@ class CreateCampaign extends CreateRecord
                                     'data' => Arr::except($itemData, ['execute_at']),
                                     'execute_at' => $itemData['execute_at'],
                                 ]);
+
+                                $block->afterCreated($action, $item);
 
                                 $item->model($action)->saveRelationships();
                             }

@@ -34,56 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Filament\Blocks;
+use App\Features\CampaignEmailImages;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\Campaign\Models\CampaignAction;
-use AdvisingApp\Campaign\Settings\CampaignSettings;
-use Carbon\CarbonInterface;
-use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Builder\Block;
-
-abstract class CampaignActionBlock extends Block
-{
-    protected function setUp(): void
+return new class () extends Migration {
+    public function up(): void
     {
-        parent::setUp();
+        CampaignEmailImages::activate();
     }
 
-    public static function make(?string $name = null): static
+    public function down(): void
     {
-        return parent::make($name ?? static::type());
+        CampaignEmailImages::deactivate();
     }
-
-    public function createFields(): array
-    {
-        return $this->generateFields();
-    }
-
-    public function editFields(): array
-    {
-        return $this->generateFields('data.');
-    }
-
-    abstract public function generateFields(string $fieldPrefix = ''): array;
-
-    abstract public static function type(): string;
-
-    public function generateUserTimezoneHint(CarbonInterface $dateTime): ?string
-    {
-        if (blank(auth()->user()->timezone)) {
-            return null;
-        }
-
-        $actionExecutionTimezone = app(CampaignSettings::class)->getActionExecutionTimezone();
-
-        if (auth()->user()->timezone === $actionExecutionTimezone) {
-            return null;
-        }
-
-        return $dateTime
-            ->shiftTimezone($actionExecutionTimezone)
-            ->setTimezone(auth()->user()->timezone)->format('M j, Y H:i:s') . ' in your timezone';
-    }
-
-    public function afterCreated(CampaignAction $action, ComponentContainer $componentContainer): void {}
-}
+};

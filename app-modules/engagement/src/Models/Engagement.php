@@ -37,6 +37,7 @@
 namespace AdvisingApp\Engagement\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Engagement\Actions\GenerateEngagementBodyContent;
 use AdvisingApp\Engagement\Actions\GenerateEngagementSubjectContent;
 use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
@@ -54,6 +55,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Timeline\Models\Timeline;
 use AdvisingApp\Timeline\Timelines\EngagementTimeline;
+use App\Features\CampaignEmailImages;
 use App\Models\BaseModel;
 use App\Models\User;
 use Exception;
@@ -97,6 +99,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         'scheduled_at',
         'dispatched_at',
         'channel',
+        'campaign_action_id',
     ];
 
     protected $casts = [
@@ -187,6 +190,14 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     }
 
     /**
+     * @return BelongsTo<CampaignAction, $this>
+     */
+    public function campaignAction(): BelongsTo
+    {
+        return $this->belongsTo(CampaignAction::class);
+    }
+
+    /**
      * @return BelongsTo<EngagementBatch, $this>
      */
     public function engagementBatch(): BelongsTo
@@ -224,9 +235,8 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         return app(GenerateEngagementBodyContent::class)(
             $this->body,
             $this->getMergeData(),
-            // TODO: Add a relationship to Campaign Action, save the temporary body images to the Campaign Action and relate it
-            $this->batch ?? $this,
-            'body',
+            $this->batch ?? (CampaignEmailImages::active() ? $this->campaignAction : null) ?? $this,
+            (CampaignEmailImages::active() ? ($this->campaignAction ? 'data.body' : 'body') : null),
         );
     }
 
@@ -235,8 +245,8 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         return app(GenerateEngagementSubjectContent::class)(
             $this->subject,
             $this->getMergeData(),
-            $this->batch ?? $this,
-            'subject',
+            $this->batch ?? (CampaignEmailImages::active() ? $this->campaignAction : null) ?? $this,
+            (CampaignEmailImages::active() ? ($this->campaignAction ? 'data.subject' : 'subject') : null),
         );
     }
 

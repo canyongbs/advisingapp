@@ -637,6 +637,8 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\MeetingCenter\Models\CalendarEvent> $events
  * @property-read int|null $events_count
  * @property-read bool $is_admin
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $interactions
+ * @property-read int|null $interactions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Authorization\Models\License> $licenses
  * @property-read int|null $licenses_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Report\Models\TrackedEvent> $logins
@@ -1872,13 +1874,12 @@ namespace AdvisingApp\Campaign\Models{
  * @property string $educatable_id
  * @property \Illuminate\Support\Carbon|null $succeeded_at
  * @property \Illuminate\Support\Carbon|null $last_failed_at
- * @property string|null $related_type
- * @property string|null $related_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \AdvisingApp\Campaign\Models\CampaignAction $campaignAction
  * @property-read \Illuminate\Database\Eloquent\Model $educatable
- * @property-read \Illuminate\Database\Eloquent\Model|null $related
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Campaign\Models\CampaignActionEducatableRelated> $related
+ * @property-read int|null $related_count
  * @method static \AdvisingApp\Campaign\Database\Factories\CampaignActionEducatableFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignActionEducatable newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignActionEducatable newQuery()
@@ -1889,8 +1890,6 @@ namespace AdvisingApp\Campaign\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignActionEducatable whereEducatableType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignActionEducatable whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignActionEducatable whereLastFailedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignActionEducatable whereRelatedId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignActionEducatable whereRelatedType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignActionEducatable whereSucceededAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignActionEducatable whereUpdatedAt($value)
  * @mixin \Eloquent
@@ -1899,11 +1898,39 @@ namespace AdvisingApp\Campaign\Models{
 	class IdeHelperCampaignActionEducatable {}
 }
 
+namespace AdvisingApp\Campaign\Models{
+/**
+ * 
+ *
+ * @property string $id
+ * @property string $campaign_action_educatable_id
+ * @property string $related_id
+ * @property string $related_type
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \AdvisingApp\Campaign\Models\CampaignActionEducatable $campaignActionEducatable
+ * @property-read \Illuminate\Database\Eloquent\Model $related
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignActionEducatableRelated newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignActionEducatableRelated newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignActionEducatableRelated query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignActionEducatableRelated whereCampaignActionEducatableId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignActionEducatableRelated whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignActionEducatableRelated whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignActionEducatableRelated whereRelatedId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignActionEducatableRelated whereRelatedType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignActionEducatableRelated whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperCampaignActionEducatableRelated {}
+}
+
 namespace AdvisingApp\CareTeam\Models{
 /**
  * 
  *
  * @property string $care_team_role_id
+ * @property Educatable $educatable
  * @property string $id
  * @property string $user_id
  * @property string $educatable_id
@@ -1911,7 +1938,6 @@ namespace AdvisingApp\CareTeam\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \AdvisingApp\CareTeam\Models\CareTeamRole|null $careTeamRole
- * @property-read \Illuminate\Database\Eloquent\Model $educatable
  * @property-read \AdvisingApp\CareTeam\Models\CareTeamRole|null $prospectCareTeamRole
  * @property-read \AdvisingApp\CareTeam\Models\CareTeamRole|null $studentCareTeamRole
  * @property-read \App\Models\User $user
@@ -2714,9 +2740,11 @@ namespace AdvisingApp\Engagement\Models{
  * @property \Illuminate\Support\Carbon|null $scheduled_at
  * @property \Illuminate\Support\Carbon|null $dispatched_at
  * @property string|null $recipient_route
+ * @property string|null $campaign_action_id
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \AdvisingApp\Engagement\Models\EngagementBatch|null $batch
+ * @property-read \AdvisingApp\Campaign\Models\CampaignAction|null $campaignAction
  * @property-read \App\Models\User|null $createdBy
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Notification\Models\EmailMessage> $emailMessages
  * @property-read int|null $email_messages_count
@@ -2739,6 +2767,7 @@ namespace AdvisingApp\Engagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Engagement sentToProspect()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Engagement sentToStudent()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Engagement whereBody($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Engagement whereCampaignActionId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Engagement whereChannel($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Engagement whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Engagement whereDeletedAt($value)

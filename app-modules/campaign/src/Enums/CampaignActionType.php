@@ -37,6 +37,7 @@
 namespace AdvisingApp\Campaign\Enums;
 
 use AdvisingApp\Alert\Models\Alert;
+use AdvisingApp\Campaign\Filament\Blocks\CampaignActionBlock;
 use AdvisingApp\Campaign\Filament\Blocks\CareTeamBlock;
 use AdvisingApp\Campaign\Filament\Blocks\CaseBlock;
 use AdvisingApp\Campaign\Filament\Blocks\EngagementBatchEmailBlock;
@@ -143,9 +144,9 @@ enum CampaignActionType: string implements HasLabel
         };
     }
 
-    public function getEditFields(): array
+    public function getBlock(): CampaignActionBlock
     {
-        $block = match ($this) {
+        return match ($this) {
             CampaignActionType::BulkEngagementEmail => EngagementBatchEmailBlock::make(),
             CampaignActionType::BulkEngagementSms => EngagementBatchSmsBlock::make(),
             CampaignActionType::Case => CaseBlock::make(),
@@ -157,8 +158,11 @@ enum CampaignActionType: string implements HasLabel
             CampaignActionType::Event => EventBlock::make(),
             CampaignActionType::Tags => TagsBlock::make(),
         };
+    }
 
-        return $block->editFields();
+    public function getEditFields(): array
+    {
+        return $this->getBlock()->editFields();
     }
 
     public function getStepSummaryView(): string
