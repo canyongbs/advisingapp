@@ -84,30 +84,14 @@ class ManageResearchRequests extends Page
       return false;
     }
 
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
-            return false;
-        }
-
-        if (! Gate::check(Feature::ResearchAdvisor->getGateName())) {
-            return false;
-        }
-
-        if (blank(app(AiIntegrationsSettings::class)->jina_deepsearch_v1_api_key)) {
-            return false;
-        }
-
-        return $user->can(['research_advisor.view-any', 'research_advisor.*.view']);
+    if (! Gate::check(Feature::ResearchAdvisor->getGateName())) {
+      return false;
     }
 
     if (blank(app(AiIntegrationsSettings::class)->jina_deepsearch_v1_api_key)) {
       return false;
     }
 
-    return ResearchRequests::active() && $user->can(['research_advisor.view-any', 'research_advisor.*.view']);
+    return $user->can(['research_advisor.view-any', 'research_advisor.*.view']);
   }
 }
