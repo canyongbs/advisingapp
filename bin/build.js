@@ -104,6 +104,12 @@ compile({
 
 compile({
     ...defaultOptions,
+    entryPoints: ['./app-modules/research/resources/js/results.js'],
+    outfile: './public/js/canyon-gbs/research/results.js',
+})
+
+compile({
+    ...defaultOptions,
     entryPoints: ['./app-modules/in-app-communication/resources/js/userToUserChat.js'],
     outfile: './public/js/canyon-gbs/in-app-communication/userToUserChat.js',
 })
