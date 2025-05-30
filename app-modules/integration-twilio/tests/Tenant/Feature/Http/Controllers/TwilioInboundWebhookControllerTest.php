@@ -34,10 +34,14 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\IntegrationTwilio\Jobs\MessageReceived;
 use AdvisingApp\IntegrationTwilio\Jobs\StatusCallback;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use Illuminate\Support\Facades\Queue;
 
+use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\post;
 use function Pest\Laravel\withoutMiddleware;
 use function Tests\loadFixtureFromModule;
@@ -66,3 +70,25 @@ it('will dispatch the correct job for in inbound twilio webhook', function ($job
         'StatusCallback/sent',
     ],
 ]);
+
+it('will create a proper EngagementResponse record for a matching Student', function () {
+    withoutMiddleware();
+
+    /** @var Student $student */
+    $student = Student::factory()
+        ->has(StudentPhoneNumber::factory()->state(['number' => '+12223334455']), 'phoneNumbers')
+        ->create();
+
+    $response = post(
+        route('inbound.webhook.twilio', 'message_received'),
+        loadFixtureFromModule('integration-twilio', 'MessageReceived/payload'),
+    );
+
+    $response->assertOk();
+
+    assertDatabaseCount(EngagementResponse::class, 1);
+
+    $engagementResponse = EngagementResponse::first();
+
+    expect($engagementResponse->sender->is($student))->toBeTrue();
+});
