@@ -78,6 +78,7 @@ class Research implements ShouldQueue
                         ['role' => 'user', 'content' => $this->getContent()],
                     ],
                     'temperature' => app(AiSettings::class)->temperature,
+                    'reasoning_effort' => app(AiResearchAssistantSettings::class)->reasoning_effort,
                 ],
                 'stream' => true,
                 'no_direct_answer' => true,
