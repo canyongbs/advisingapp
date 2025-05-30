@@ -91,41 +91,46 @@ class ExecuteCampaignAction implements ShouldQueue, ShouldBeUnique
             Auth::setUser($this->action->campaign->createdBy);
         }
 
-        app(TranslateSegmentFilters::class)
-            ->execute($this->action->campaign->segment)
-            ->lazyById(
-                1000,
-                $this->action->campaign->segment->model->instance()->getKeyName(),
-            )
-            ->each(function (Model $educatable) {
-                throw_if(
-                    ! $educatable instanceof Educatable,
-                    new Exception('Educatable is not an instance of ' . Educatable::class)
-                );
-
-                $campaignActionEducatable = CampaignActionEducatable::query()
-                    ->where([
-                        'campaign_action_id' => $this->action->getKey(),
-                        'educatable_id' => $educatable->getKey(),
-                        'educatable_type' => $educatable->getMorphClass(),
-                    ])
-                    ->first();
-
-                if (! $campaignActionEducatable) {
-                    $campaignActionEducatable = new CampaignActionEducatable();
-                    $campaignActionEducatable->educatable()->associate($educatable);
-                    $campaignActionEducatable->campaignAction()->associate($this->action);
-                    $campaignActionEducatable->save();
-                }
-
-                $this
-                    ->batch()
-                    ->add(
-                        $this
-                            ->action
-                            ->type
-                            ->getActionExecutionJob($campaignActionEducatable)
+        try {
+            app(TranslateSegmentFilters::class)
+                ->execute($this->action->campaign->segment)
+                ->lazyById(
+                    1000,
+                    $this->action->campaign->segment->model->instance()->getKeyName(),
+                )
+                ->each(function (Model $educatable) {
+                    throw_if(
+                        ! $educatable instanceof Educatable,
+                        new Exception('Educatable is not an instance of ' . Educatable::class)
                     );
-            });
+
+                    $campaignActionEducatable = CampaignActionEducatable::query()
+                        ->where([
+                            'campaign_action_id' => $this->action->getKey(),
+                            'educatable_id' => $educatable->getKey(),
+                            'educatable_type' => $educatable->getMorphClass(),
+                        ])
+                        ->first();
+
+                    if (! $campaignActionEducatable) {
+                        $campaignActionEducatable = new CampaignActionEducatable();
+                        $campaignActionEducatable->educatable()->associate($educatable);
+                        $campaignActionEducatable->campaignAction()->associate($this->action);
+                        $campaignActionEducatable->save();
+                    }
+
+                    $this
+                        ->batch()
+                        ->add(
+                            $this
+                                ->action
+                                ->type
+                                ->getActionExecutionJob($campaignActionEducatable)
+                        );
+                });
+        } finally {
+            // Reset the Auth user to avoid issues with subsequent jobs
+            Auth::logout();
+        }
     }
 }
