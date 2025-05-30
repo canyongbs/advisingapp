@@ -55,7 +55,6 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Timeline\Models\Timeline;
 use AdvisingApp\Timeline\Timelines\EngagementTimeline;
-use App\Features\CampaignEmailImages;
 use App\Models\BaseModel;
 use App\Models\User;
 use Exception;
@@ -235,8 +234,8 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         return app(GenerateEngagementBodyContent::class)(
             $this->body,
             $this->getMergeData(),
-            $this->batch ?? (CampaignEmailImages::active() ? $this->campaignAction : null) ?? $this,
-            (CampaignEmailImages::active() ? ($this->campaignAction ? 'data.body' : 'body') : 'body'),
+            $this->batch ?? $this->campaignAction ?? $this,
+            $this->campaignAction ? 'data.body' : 'body',
         );
     }
 
@@ -245,8 +244,8 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         return app(GenerateEngagementSubjectContent::class)(
             $this->subject,
             $this->getMergeData(),
-            $this->batch ?? (CampaignEmailImages::active() ? $this->campaignAction : null) ?? $this,
-            (CampaignEmailImages::active() ? ($this->campaignAction ? 'data.subject' : 'subject') : 'subject'),
+            $this->batch ?? $this->campaignAction ?? $this,
+            $this->campaignAction ? 'data.subject' : 'subject',
         );
     }
 
