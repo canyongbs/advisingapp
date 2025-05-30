@@ -2649,11 +2649,11 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/integration-open-ai",
-                "reference": "d0ce161a123ab5dc84105648b7adb32634a1edf3"
+                "reference": "62d3b8d09a947e8b4e2df9a950908e287e18bb74"
             },
             "require": {
                 "filament/filament": "^3.0.0",
-                "openai-php/client": "^v0.10"
+                "openai-php/client": "^v0.13"
             },
             "type": "library",
             "extra": {
@@ -10393,7 +10393,7 @@
         },
         {
             "name": "openai-php/client",
-            "version": "v0.10.3",
+            "version": "v0.13.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/openai-php/client.git",
