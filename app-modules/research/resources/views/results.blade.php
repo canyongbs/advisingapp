@@ -31,10 +31,6 @@
 
 </COPYRIGHT>
 --}}
-@php
-    use League\CommonMark\Extension\Footnote\FootnoteExtension;
-@endphp
-
 <div @if ($researchRequest?->hasStarted() && !$researchRequest?->finished_at) wire:poll.3s @endif>
     @if (!$researchRequest?->finished_at)
         <div class="flex items-center gap-2">
