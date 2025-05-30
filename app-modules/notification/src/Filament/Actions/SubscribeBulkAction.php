@@ -38,26 +38,54 @@ namespace AdvisingApp\Notification\Filament\Actions;
 
 use AdvisingApp\Notification\Actions\SubscriptionToggle;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
+use App\Models\User;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Columns\TextInputColumn;
 use Illuminate\Database\Eloquent\Collection;
 
-class SubscribeBulkAction extends BulkAction
+class SubscribeBulkAction
 {
-    protected function setUp(): void
+    public static function make(string $context): BulkAction
     {
-        parent::setUp();
+        return BulkAction::make('bulkSubscription')
+              ->icon('heroicon-s-bell')
+              ->modalHeading('Create Bulk Subscription')
+              ->modalDescription(fn (Collection $records) => "You have selected {$records->count()} {$context} to subscribe.")
+              ->form([
+                  Select::make('user_ids')
+                        ->label('Who should be subscribed?')
+                        ->options(User::all()->pluck('name', 'id'))
+                        ->multiple()
+                        ->searchable()
+                        ->default([auth()->id()])
+                        ->required()
+                        ->exists('users', 'id'),
+                  Toggle::make('remove_prior')
+                      ->label('Remove all prior subscriptions?')
+                      ->default(false)
+                      ->hintIconTooltip('If checked, all prior care subscriptions will be removed.'),
+              ])
+              ->action(function(array $data, Collection $records) {
+                  $userIds = $data['user_ids'] ?? [];
+                  $removePrior = $data['remove_prior'];
 
-        $this->icon('heroicon-s-bell');
+                  foreach ($records as $record) {
+                      if (! $record instanceof Subscribable) {
+                          continue;
+                      }
 
-        $this->action(function (Collection $records) {
-            return $records->each(function (Subscribable $record) {
-                resolve(SubscriptionToggle::class)->handle(auth()->user(), $record);
-            });
-        });
-    }
+                      if ($removePrior) {
+                          $record->subscriptions()->delete();
+                      }
 
-    public static function getDefaultName(): ?string
-    {
-        return 'toggleSubscription';
+                      foreach ($userIds as $userId) {
+                          resolve(SubscriptionToggle::class)
+                              ->handle(User::find($userId), $record);
+                      }
+                  }
+                });
     }
 }
