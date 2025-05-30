@@ -42,7 +42,6 @@ use AdvisingApp\Research\Filament\Pages\ManageResearchRequests\Concerns\CanManag
 use AdvisingApp\Research\Filament\Pages\ManageResearchRequests\Concerns\CanManageFolders;
 use AdvisingApp\Research\Filament\Pages\ManageResearchRequests\Concerns\CanManageRequests;
 use App\Enums\Feature;
-use App\Features\ResearchRequests;
 use App\Models\User;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
@@ -91,6 +90,6 @@ class ManageResearchRequests extends Page
             return false;
         }
 
-        return ResearchRequests::active() && $user->can(['research_advisor.view-any', 'research_advisor.*.view']);
+        return $user->can(['research_advisor.view-any', 'research_advisor.*.view']);
     }
 }

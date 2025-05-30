@@ -42,7 +42,6 @@ use AdvisingApp\Research\Actions\GenerateResearchQuestion;
 use AdvisingApp\Research\Jobs\Research;
 use AdvisingApp\Research\Models\ResearchRequest;
 use App\Enums\Feature;
-use App\Features\ResearchRequests;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
@@ -90,7 +89,7 @@ class NewResearchRequest extends Page
             return false;
         }
 
-        return ResearchRequests::active() && $user->can(['research_advisor.view-any', 'research_advisor.*.view']);
+        return $user->can(['research_advisor.view-any', 'research_advisor.*.view']);
     }
 
     public function mount(): void
