@@ -423,7 +423,7 @@
                 class="col-span-1 flex flex-col gap-2 overflow-y-auto pt-3 lg:col-span-2 lg:pt-6 2xl:col-span-3"
                 wire:key="request{{ $this->request->id }}"
             >
-                <div class="flex items-center justify-between gap-3 mb-6">
+                <div class="mb-6 flex items-center justify-between gap-3">
                     <div>
                         <x-filament::badge :size="ActionSize::Large">
                             <h1 class="text-xxs uppercase leading-3">
