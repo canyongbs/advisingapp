@@ -182,7 +182,7 @@ class ListProspects extends ListRecords
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    SubscribeBulkAction::make(),
+                    SubscribeBulkAction::make(context: 'prospects'),
                     BulkEngagementAction::make(context: 'prospects'),
                     DeleteBulkAction::make(),
                     AddCareTeamMemberAction::make(CareTeamRoleType::Prospect),

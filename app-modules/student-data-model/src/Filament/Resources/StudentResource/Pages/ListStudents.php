@@ -227,7 +227,7 @@ class ListStudents extends ListRecords
                                 ->body($notification['body'])
                                 ->send();
                         }),
-                    SubscribeBulkAction::make(),
+                    SubscribeBulkAction::make(context: 'students'),
                     BulkEngagementAction::make(context: 'students'),
                     AddCareTeamMemberAction::make(CareTeamRoleType::Student),
                     BulkSegmentAction::make(segmentModel: SegmentModel::Student),
