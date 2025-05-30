@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -30,41 +32,46 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
-@php
-    use League\CommonMark\Extension\Footnote\FootnoteExtension;
-@endphp
+*/
 
-<div @if ($researchRequest?->hasStarted() && !$researchRequest?->finished_at) wire:poll.3s @endif>
-    @if (!$researchRequest?->finished_at)
-        <div class="flex items-center gap-2">
-            <x-filament::loading-indicator class="h-5 w-5" /> Researching...
-        </div>
-    @endif
+namespace AdvisingApp\Research\Jobs;
 
-    @if (filled($researchRequest?->results))
-        <section class="prose max-w-none dark:prose-invert">
-            @if (filled($researchRequest->title))
-                <h1>{{ $researchRequest->title }}</h1>
-            @endif
+use AdvisingApp\Research\Models\ResearchRequest;
+use AdvisingApp\Research\Notifications\ResearchTranscriptNotification;
+use App\Models\User;
+use Illuminate\Bus\Batchable;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
+use Illuminate\Queue\SerializesModels;
 
-            {!! str($researchRequest->results)->replace('<think>', '<details wire:ignore.self><summary>Reasoning</summary>')->replace('</think>', '</details>')->markdown(
-                    options: [
-                        'footnote' => [
-                            'container_add_hr' => false,
-                        ],
-                    ],
-                    extensions: [app(FootnoteExtension::class)],
-                )->replace(
-                    '<div class="footnotes" role="doc-endnotes">',
-                    '<div class="footnotes" role="doc-endnotes"><h2>References</h2>',
-                )->sanitizeHtml() !!}
-        </section>
-        @if ($showEmailResults)
-            <section class="mt-3 px-3 text-right">
-                {{ ($this->emailResearchRequestAction)(['researchRequest' => $researchRequest->getKey()]) }}
-            </section>
-        @endif
-    @endif
+class EmailResearchRequest implements ShouldQueue
+{
+    use Batchable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
-</div>
+    public function __construct(
+        protected ResearchRequest $researchRequest,
+        protected ?string $note,
+        protected User $sender,
+        protected User $recipient,
+    ) {}
+
+    /**
+     * @return array<int, SkipIfBatchCancelled>
+     */
+    public function middleware(): array
+    {
+        return [new SkipIfBatchCancelled()];
+    }
+
+    public function handle(): void
+    {
+        $this->recipient->notify(new ResearchTranscriptNotification($this->researchRequest, $this->note, $this->sender));
+    }
+}

@@ -253,7 +253,7 @@ class NewResearchRequest extends Page
                         Step::make('Results')
                             ->schema([
                                 View::make('research::results')
-                                    ->viewData(['researchRequest' => $this->researchRequest]),
+                                    ->viewData(['researchRequest' => $this->researchRequest, 'showEmailResults' => false]),
                             ]),
                     ])
                     ->submitAction(filled($this->researchRequest?->title) ? Action::make('view')

@@ -43,7 +43,7 @@ enum AiThreadShareTarget: string implements HasLabel
     case User = 'user';
     case Team = 'team';
 
-    public function getLabel(): ?string
+    public function getLabel(): string
     {
         return $this->name;
     }
