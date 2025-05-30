@@ -2649,11 +2649,11 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/integration-open-ai",
-                "reference": "62d3b8d09a947e8b4e2df9a950908e287e18bb74"
+                "reference": "05b30ba3cc4a783f8af5f8bb8225054f830ef5cf"
             },
             "require": {
                 "filament/filament": "^3.0.0",
-                "openai-php/client": "^v0.13"
+                "openai-php/client": "^0.13"
             },
             "type": "library",
             "extra": {

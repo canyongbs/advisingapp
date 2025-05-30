@@ -42,6 +42,7 @@ use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiMaxTokens;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
+use AdvisingApp\Ai\Enums\ReasoningEffort;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiSettings;
 use AdvisingApp\Authorization\Enums\LicenseType;
@@ -138,6 +139,11 @@ class ManageAiSettings extends SettingsPage
                 Select::make('default_model')
                     ->options(AiModelApplicabilityFeature::InstitutionalAdvisor->getModelsAsSelectOptions())
                     ->searchable()
+                    ->required(),
+                Select::make('reasoning_effort')
+                    ->options(collect(ReasoningEffort::cases())->mapWithKeys((fn (ReasoningEffort $effort) => [$effort->value => $effort->name])))
+                    ->default(ReasoningEffort::Medium->getLabel())
+                    ->selectablePlaceholder(false)
                     ->required(),
             ])
             ->disabled(! auth()->user()->isSuperAdmin());
