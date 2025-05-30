@@ -42,23 +42,36 @@
         </div>
     @endif
 
-    @if (filled($researchRequest?->results))
-        <section class="prose max-w-none dark:prose-invert">
-            @if (filled($researchRequest->title))
-                <h1>{{ $researchRequest->title }}</h1>
-            @endif
+    <section
+        class="prose max-w-none dark:prose-invert"
+        x-data="results"
+    >
+        <input
+            type="hidden"
+            value="{{ $researchRequest?->hasStarted() && !$researchRequest?->finished_at ? 1 : 0 }}"
+            x-ref="isStreamingInput"
+        />
+        <input
+            type="hidden"
+            value="{{ base64_encode($researchRequest?->results) }}"
+            x-ref="markdownInput"
+        />
 
-            {!! str($researchRequest->results)->replace('<think>', '<details wire:ignore.self><summary>Reasoning</summary>')->replace('</think>', '</details>')->markdown(
-                    options: [
-                        'footnote' => [
-                            'container_add_hr' => false,
-                        ],
-                    ],
-                    extensions: [app(FootnoteExtension::class)],
-                )->replace(
-                    '<div class="footnotes" role="doc-endnotes">',
-                    '<div class="footnotes" role="doc-endnotes"><h2>References</h2>',
-                )->sanitizeHtml() !!}
-        </section>
-    @endif
+        @if (filled($researchRequest?->title))
+            <h1>{{ $researchRequest->title }}</h1>
+        @endif
+
+        <details
+            class="research-request-reasoning"
+            x-show="reasoningHtml"
+        >
+            <summary>Reasoning</summary>
+
+            <div x-html="reasoningHtml"></div>
+        </details>
+
+        <div x-html="resultsHtml"></div>
+    </section>
+
+    <script src="{{ url('js/canyon-gbs/research/results.js') . '?v=' . app('current-commit') }}"></script>
 </div>

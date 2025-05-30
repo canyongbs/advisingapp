@@ -419,7 +419,10 @@
                 {{ $sidebarContent() }}
             </div>
 
-            <div class="col-span-1 flex flex-col gap-2 overflow-y-auto pt-3 lg:col-span-2 lg:pt-6 2xl:col-span-3">
+            <div
+                class="col-span-1 flex flex-col gap-2 overflow-y-auto pt-3 lg:col-span-2 lg:pt-6 2xl:col-span-3"
+                wire:key="request{{ $this->request->id }}"
+            >
                 <div class="lg:hidden">
                     <x-filament::dropdown
                         shift
