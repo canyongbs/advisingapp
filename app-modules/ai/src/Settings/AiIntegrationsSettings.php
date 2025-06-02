@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Settings;
 
+use AdvisingApp\Ai\Enums\ReasoningEffort;
 use Spatie\LaravelSettings\Settings;
 
 class AiIntegrationsSettings extends Settings
@@ -165,6 +166,8 @@ class AiIntegrationsSettings extends Settings
      * @var array<string>
      */
     public array $jina_deepsearch_v1_applicable_features = [];
+
+    public ReasoningEffort $reasoning_effort = ReasoningEffort::Medium;
 
     public static function group(): string
     {

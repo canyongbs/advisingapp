@@ -41,5 +41,5 @@ use AdvisingApp\Ai\Models\AiThread;
 
 interface HasReasoningEffort
 {
-    public function getReasoningEffort(AiThread $thread): ReasoningEffort;
+    public function getReasoningEffort(): ReasoningEffort;
 }
