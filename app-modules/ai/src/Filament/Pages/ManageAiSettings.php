@@ -151,6 +151,7 @@ class ManageAiSettings extends SettingsPage
                             case AiModel::OpenAiGptO3Mini->getLabel():
                             case AiModel::OpenAiGptO4Mini->getLabel():
                                 return true;
+
                             default:
                                 return false;
                         }
