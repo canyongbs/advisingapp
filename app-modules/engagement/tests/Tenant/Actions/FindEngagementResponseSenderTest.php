@@ -34,61 +34,40 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Engagement\Models\EngagementResponse;
-use AdvisingApp\IntegrationTwilio\Jobs\MessageReceived;
-use AdvisingApp\IntegrationTwilio\Jobs\StatusCallback;
+use AdvisingApp\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
-use Illuminate\Support\Facades\Queue;
 
-use function Pest\Laravel\assertDatabaseCount;
-use function Pest\Laravel\post;
-use function Pest\Laravel\withoutMiddleware;
-use function Tests\loadFixtureFromModule;
-
-it('will dispatch the correct job for in inbound twilio webhook', function ($job, $event, $payload) {
-    Queue::fake();
-    withoutMiddleware();
-
-    $response = post(
-        route('inbound.webhook.twilio', $event),
-        loadFixtureFromModule('integration-twilio', $payload),
-    );
-
-    $response->assertOk();
-
-    Queue::assertPushed($job);
-})->with([
-    'message_received' => [
-        MessageReceived::class,
-        'message_received',
-        'MessageReceived/payload',
-    ],
-    'status_callback' => [
-        StatusCallback::class,
-        'status_callback',
-        'StatusCallback/sent',
-    ],
-]);
-
-it('will create a proper EngagementResponse record for a matching Student', function () {
-    withoutMiddleware();
-
+it('can match to a Student', function () {
     /** @var Student $student */
-    $student = Student::factory()
-        ->has(StudentPhoneNumber::factory()->state(['number' => '+12223334455']), 'phoneNumbers')
-        ->create();
+    $student = Student::factory()->create();
+    $phoneNumber = $student->phoneNumbers->first()->number;
 
-    $response = post(
-        route('inbound.webhook.twilio', 'message_received'),
-        loadFixtureFromModule('integration-twilio', 'MessageReceived/payload'),
-    );
+    $sender = app(EngagementResponseSenderFinder::class)->find($phoneNumber);
 
-    $response->assertOk();
+    expect($student->is($sender))->toBeTrue();
+});
 
-    assertDatabaseCount(EngagementResponse::class, 1);
+it('can match to a Prospect', function () {
+    /** @var Prospect $prospect */
+    $prospect = Prospect::factory()->create();
+    $phoneNumber = $prospect->phoneNumbers->first()->number;
 
-    $engagementResponse = EngagementResponse::first();
+    $sender = app(EngagementResponseSenderFinder::class)->find($phoneNumber);
 
-    expect($engagementResponse->sender->is($student))->toBeTrue();
+    expect($prospect->is($sender))->toBeTrue();
+});
+
+it('returns null when no match is found', function () {
+    /** @var Student $student */
+    $student = Student::factory()->create();
+
+    /** @var Prospect $prospect */
+    $prospect = Prospect::factory()->create();
+
+    $phoneNumber = '1234567890';
+
+    $sender = app(EngagementResponseSenderFinder::class)->find($phoneNumber);
+
+    expect($sender)->toBeNull();
 });
