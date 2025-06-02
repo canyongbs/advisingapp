@@ -37,7 +37,6 @@
 namespace AdvisingApp\Ai\Services\Contracts;
 
 use AdvisingApp\Ai\Enums\ReasoningEffort;
-use AdvisingApp\Ai\Models\AiThread;
 
 interface HasReasoningEffort
 {
