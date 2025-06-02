@@ -38,10 +38,14 @@ namespace AdvisingApp\Notification\Filament\Actions;
 
 use AdvisingApp\Notification\Actions\SubscriptionToggle;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
+use Exception;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Notifications\Notification;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\TextInputColumn;
 use Illuminate\Database\Eloquent\Collection;
@@ -68,24 +72,35 @@ class SubscribeBulkAction
                       ->default(false)
                       ->hintIconTooltip('If checked, all prior care subscriptions will be removed.'),
               ])
-              ->action(function(array $data, Collection $records) {
-                  $userIds = $data['user_ids'] ?? [];
-                  $removePrior = $data['remove_prior'];
+              ->action(function(array $data, Collection $records) use($context) {
+          
+                    $records->each(function ($record) use ($data,$context) {
 
-                  foreach ($records as $record) {
-                      if (! $record instanceof Subscribable) {
-                          continue;
-                      }
+                      throw_unless($record instanceof Student || $record instanceof Prospect, new Exception("Record must be of type {$context}."));
+
+                      $removePrior = $data['remove_prior'];
+                      $userIds = $data['user_ids'] ?? [];
 
                       if ($removePrior) {
                           $record->subscriptions()->delete();
                       }
 
                       foreach ($userIds as $userId) {
-                          resolve(SubscriptionToggle::class)
-                              ->handle(User::find($userId), $record);
+                          $record->subscriptions()
+                              ->firstOrCreate([
+                                  'subscribable_id' => $record->getKey(),
+                                  'subscribable_type' => $record->getMorphClass(),
+                                  'user_id' => $userId,
+                              ]);
                       }
-                  }
-                });
+                      
+                  });
+
+                  Notification::make()
+                        ->title('Subscriptions created successfully.')
+                        ->success()
+                        ->send();
+                })
+                ->deselectRecordsAfterCompletion();
     }
 }
