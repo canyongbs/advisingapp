@@ -139,12 +139,22 @@ class ManageAiSettings extends SettingsPage
                 Select::make('default_model')
                     ->options(AiModelApplicabilityFeature::InstitutionalAdvisor->getModelsAsSelectOptions())
                     ->searchable()
-                    ->required(),
+                    ->required()
+                    ->live(),
                 Select::make('reasoning_effort')
                     ->options(collect(ReasoningEffort::cases())->mapWithKeys((fn (ReasoningEffort $effort) => [$effort->value => $effort->name])))
-                    ->default(ReasoningEffort::Medium->getLabel())
                     ->selectablePlaceholder(false)
-                    ->required(),
+                    ->required()
+                    ->visible(function (Get $get) {
+                        switch ($get('default_model')->getLabel()) {
+                            case AiModel::OpenAiGptO1Mini->getLabel():
+                            case AiModel::OpenAiGptO3Mini->getLabel():
+                            case AiModel::OpenAiGptO4Mini->getLabel():
+                                return true;
+                            default:
+                                return false;
+                        }
+                    }),
             ])
             ->disabled(! auth()->user()->isSuperAdmin());
     }
