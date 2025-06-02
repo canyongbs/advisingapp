@@ -39,6 +39,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Widgets;
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
 use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
+use AdvisingApp\StudentDataModel\Enums\ActionCenterTab;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
@@ -50,6 +51,7 @@ use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Livewire\Attributes\Reactive;
 
 class StudentsActionCenterWidget extends TableWidget
 {
@@ -58,6 +60,9 @@ class StudentsActionCenterWidget extends TableWidget
      */
     protected int | string | array $columnSpan = 'full';
 
+    #[Reactive]
+    public string $activeTab;
+
     public function table(Table $table): Table
     {
         /** @var User $user */
@@ -65,7 +70,18 @@ class StudentsActionCenterWidget extends TableWidget
 
         return $table
             ->heading('Action Center Records')
-            ->relationship(fn (): MorphToMany => $user->studentSubscriptions())
+            // ->relationship(fn (): MorphToMany => $user->studentSubscriptions())
+            ->query(function () use ($user) {
+                $tab = ActionCenterTab::tryFrom($this->activeTab) ?? ActionCenterTab::Subscribed;
+
+                return match ($tab) {
+                    ActionCenterTab::All => Student::query(),
+                    ActionCenterTab::Subscribed => Student::query()
+                        ->whereRelation('subscriptions', 'user_id', $user->getKey()),
+                    ActionCenterTab::CareTeam => Student::query()
+                        ->whereHas('careTeam', fn (Builder $query) => $query->where('user_id', $user->getKey())),
+                };
+            })
             ->columns([
                 TextColumn::make('full_name')
                     ->label('Student Name')

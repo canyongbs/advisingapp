@@ -36,11 +36,13 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Pages;
 
+use AdvisingApp\StudentDataModel\Enums\ActionCenterTab;
 use AdvisingApp\StudentDataModel\Filament\Widgets\StudentsActionCenterWidget;
 use AdvisingApp\StudentDataModel\Filament\Widgets\StudentStats;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Filament\Pages\Dashboard as BaseDashboard;
+use Livewire\Attributes\Url;
 use Symfony\Component\HttpFoundation\Response;
 
 class RetentionCrmDashboard extends BaseDashboard
@@ -56,6 +58,11 @@ class RetentionCrmDashboard extends BaseDashboard
     protected static string $routePath = 'retention-crm-dashboard';
 
     protected static ?string $navigationIcon = '';
+
+    #[Url]
+    public string $activeTab = ActionCenterTab::Subscribed->value;
+
+    protected static string $view = 'student-data-model::filament.pages.dashboard';
 
     public static function shouldRegisterNavigation(): bool
     {
@@ -78,6 +85,13 @@ class RetentionCrmDashboard extends BaseDashboard
         return [
             StudentStats::class,
             StudentsActionCenterWidget::class,
+        ];
+    }
+
+    public function getWidgetData(): array
+    {
+        return [
+            'activeTab' => $this->activeTab,
         ];
     }
 }
