@@ -156,3 +156,22 @@ it('can filter students by alerts', function () {
         ->removeTableFilter('alerts')
         ->assertCanSeeTableRecords($studentsWithoutAlerts->merge([$studentWithStatusActive, $studentWithStatusInprogress]));
 });
+
+it('renders the bulk create interaction action based on proper access', function () {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+
+    $user->givePermissionTo('student.view-any');
+    $user->givePermissionTo('student.*.view');
+
+    actingAs($user);
+
+    livewire(ListStudents::class)
+        ->assertOk()
+        ->assertTableBulkActionHidden('createInteraction');
+
+    $user->givePermissionTo('interaction.create');
+
+    livewire(ListStudents::class)
+        ->assertOk()
+        ->assertTableBulkActionVisible('createInteraction');
+});

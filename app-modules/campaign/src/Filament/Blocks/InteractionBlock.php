@@ -89,7 +89,20 @@ class InteractionBlock extends CampaignActionBlock
                         ->relationship('division', 'name')
                         ->model(Interaction::class)
                         ->preload()
+                        ->default(
+                            fn () => Division::query()
+                                ->where('is_default', true)
+                                ->first()
+                                ?->getKey()
+                        )
                         ->label('Division')
+                        ->visible(function () {
+                            $defaultDivision = Division::query()->where('is_default', true)->count();
+                            $totalDivision = Division::query()->count();
+
+                            return $defaultDivision !== $totalDivision;
+                        })
+                        ->dehydratedWhenHidden()
                         ->required()
                         ->exists((new Division())->getTable(), 'id'),
                     Select::make($fieldPrefix . 'interaction_outcome_id')
