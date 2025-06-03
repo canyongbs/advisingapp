@@ -146,10 +146,10 @@ class ManageAiSettings extends SettingsPage
                     ->selectablePlaceholder(false)
                     ->required()
                     ->visible(function (Get $get) {
-                        switch ($get('default_model')?->getLabel()) {
-                            case AiModel::OpenAiGptO1Mini->getLabel():
-                            case AiModel::OpenAiGptO3Mini->getLabel():
-                            case AiModel::OpenAiGptO4Mini->getLabel():
+                        switch ($get('default_model')) {
+                            case AiModel::OpenAiGptO1Mini->value:
+                            case AiModel::OpenAiGptO3Mini->value:
+                            case AiModel::OpenAiGptO4Mini->value:
                                 return true;
 
                             default:

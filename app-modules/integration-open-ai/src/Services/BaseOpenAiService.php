@@ -59,6 +59,7 @@ use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use Closure;
 use Generator;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use OpenAI\Contracts\ClientContract;
 use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
 use OpenAI\Responses\Threads\ThreadResponse;
@@ -560,6 +561,9 @@ abstract class BaseOpenAiService implements AiService
         if (in_array($model, $reasoningModels)) {
             $runData = [...$runData, 'reasoning_effort' => $aiSettings->reasoning_effort];
         }
+
+        Log::info($message->thread->assistant->model->getLabel());
+        Log::info($runData);
 
         if ($message->thread->messages()->whereHas('files')->exists()) {
             $runData['tools'] = [
