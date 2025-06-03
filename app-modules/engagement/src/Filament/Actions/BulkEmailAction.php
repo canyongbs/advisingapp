@@ -38,7 +38,6 @@ namespace AdvisingApp\Engagement\Filament\Actions;
 
 use AdvisingApp\Engagement\Actions\CreateEngagementBatch;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
-use AdvisingApp\Engagement\Filament\Forms\Components\EngagementSmsBodyInput;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
@@ -62,26 +61,16 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
-class BulkEngagementAction
+class BulkEmailAction
 {
-    public static function make(string $context)
+    public static function make(string $context): BulkAction
     {
-        return BulkAction::make('engage')
-            ->icon('heroicon-o-chat-bubble-bottom-center-text')
-            ->modalHeading('Send Bulk Engagement')
+        return BulkAction::make('send_email')
+            ->label('Send Email')
+            ->icon('heroicon-o-envelope')
+            ->modalHeading('Send Bulk Email')
             ->modalDescription(fn (Collection $records) => "You have selected {$records->count()} {$context} to engage.")
             ->steps([
-                Step::make('Choose your delivery method')
-                    ->description('Select email or sms.')
-                    ->schema([
-                        Select::make('channel')
-                            ->label('How would you like to send this engagement?')
-                            ->options(NotificationChannel::getEngagementOptions())
-                            ->default(NotificationChannel::Email->value)
-                            ->disableOptionWhen(fn (string $value): bool => NotificationChannel::tryFrom($value)?->getCaseDisabled())
-                            ->selectablePlaceholder(false)
-                            ->live(),
-                    ]),
                 Step::make('Engagement Details')
                     ->description("Add the details that will be sent to the selected {$context}")
                     ->schema([
@@ -96,7 +85,6 @@ class BulkEngagementAction
                             ])
                             ->showMergeTagsInBlocksPanel(false)
                             ->helperText('You may use “merge tags” to substitute information about a recipient into your subject line. Insert a “{{“ in the subject line field to see a list of available merge tags')
-                            ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
                             ->profile('sms')
                             ->required()
                             ->placeholder('Enter the email subject here...')
@@ -165,10 +153,8 @@ class BulkEngagementAction
                                         $component->generateImageUrls($template->content),
                                     );
                                 }))
-                            ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
                             ->helperText('You can insert recipient information by typing {{ and choosing a merge value to insert.')
                             ->columnSpanFull(),
-                        EngagementSmsBodyInput::make(context: 'create'),
                         Actions::make([
                             BulkDraftWithAiAction::make()
                                 ->mergeTags($mergeTags),
@@ -187,13 +173,12 @@ class BulkEngagementAction
             ])
             ->action(function (Collection $records, array $data, Form $form) {
                 /** @var Collection<int, CanBeNotified> $records */
-                $channel = NotificationChannel::parse($data['channel']);
+                $channel = NotificationChannel::parse(NotificationChannel::Email->value);
 
                 app(CreateEngagementBatch::class)->execute(new EngagementCreationData(
                     user: Auth::user(),
                     recipient: match ($channel) {
                         NotificationChannel::Email => $records->filter(fn (CanBeNotified $record) => $record->canReceiveEmail()),
-                        NotificationChannel::Sms => $records->filter(fn (CanBeNotified $record) => $record->canReceiveSms()),
                         default => throw new Exception('Invalid engagement channel'),
                     },
                     channel: $channel,

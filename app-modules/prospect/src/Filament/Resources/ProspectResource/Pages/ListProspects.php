@@ -37,7 +37,8 @@
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use AdvisingApp\CareTeam\Filament\Actions\AddCareTeamMemberAction;
-use AdvisingApp\Engagement\Filament\Actions\BulkEngagementAction;
+use AdvisingApp\Engagement\Filament\Actions\BulkEmailAction;
+use AdvisingApp\Engagement\Filament\Actions\BulkTextAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeBulkAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeTableAction;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
@@ -183,7 +184,8 @@ class ListProspects extends ListRecords
             ->bulkActions([
                 BulkActionGroup::make([
                     SubscribeBulkAction::make(),
-                    BulkEngagementAction::make(context: 'prospects'),
+                    BulkTextAction::make(context: 'prospects'),
+                    BulkEmailAction::make(context: 'prospects'),
                     DeleteBulkAction::make(),
                     AddCareTeamMemberAction::make(CareTeamRoleType::Prospect),
                     BulkAction::make('bulk_update')

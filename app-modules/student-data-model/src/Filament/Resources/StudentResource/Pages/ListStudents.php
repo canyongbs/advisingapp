@@ -37,7 +37,8 @@
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
 use AdvisingApp\CareTeam\Filament\Actions\AddCareTeamMemberAction;
-use AdvisingApp\Engagement\Filament\Actions\BulkEngagementAction;
+use AdvisingApp\Engagement\Filament\Actions\BulkEmailAction;
+use AdvisingApp\Engagement\Filament\Actions\BulkTextAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeBulkAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeTableAction;
 use AdvisingApp\Segment\Actions\BulkSegmentAction;
@@ -228,7 +229,8 @@ class ListStudents extends ListRecords
                                 ->send();
                         }),
                     SubscribeBulkAction::make(),
-                    BulkEngagementAction::make(context: 'students'),
+                    BulkTextAction::make(context: 'students'),
+                    BulkEmailAction::make(context: 'students'),
                     AddCareTeamMemberAction::make(CareTeamRoleType::Student),
                     BulkSegmentAction::make(segmentModel: SegmentModel::Student),
                 ]),
