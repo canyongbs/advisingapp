@@ -38,15 +38,16 @@ namespace App\Filament\Widgets;
 
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Enums\ActionCenterTab;
+use App\Models\User;
 use Filament\Widgets\ChartWidget;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Cache;
 use Livewire\Attributes\Reactive;
 
 class ProspectGrowthChart extends ChartWidget
 {
     #[Reactive]
-    public string $activeTab = 'all';
+    public string $activeTab;
 
     protected static ?string $heading = 'Prospects (Cumulative)';
 
@@ -72,43 +73,41 @@ class ProspectGrowthChart extends ChartWidget
 
     protected function getData(): array
     {
+        /** @var User $user */
+        $user = auth()->user();
+
         $tab = ActionCenterTab::tryFrom($this->activeTab) ?? ActionCenterTab::All;
 
         $baseQuery = Prospect::query();
 
         $baseQuery = match ($tab) {
-            ActionCenterTab::Subscribed => $baseQuery->whereHas('subscriptions'),
-            ActionCenterTab::CareTeam => $baseQuery->whereHas('careTeam'),
+            ActionCenterTab::Subscribed => $baseQuery->whereHas('subscriptions', fn (Builder $query) => $query->where('user_id', $user->getKey())),
+            ActionCenterTab::CareTeam => $baseQuery->whereHas('careTeam', fn (Builder $query) => $query->where('user_id', $user->getKey())),
             default => $baseQuery,
         };
 
-        $runningTotalPerMonth = Cache::tags(['{prospects}'])
-            ->remember("prospect-growth-chart-data-{$tab->value}", now()->addHour(), function () use ($baseQuery): array {
-                $totalCreatedPerMonth = (clone $baseQuery)
-                    ->toBase()
-                    ->selectRaw('date_trunc(\'month\', created_at) as month')
-                    ->selectRaw('count(*) as total')
-                    ->where('created_at', '>', now()->subYear())
-                    ->groupBy('month')
-                    ->orderBy('month')
-                    ->pluck('total', 'month');
+        $totalCreatedPerMonth = (clone $baseQuery)
+            ->toBase()
+            ->selectRaw('date_trunc(\'month\', created_at) as month')
+            ->selectRaw('count(*) as total')
+            ->where('created_at', '>', now()->subYear())
+            ->groupBy('month')
+            ->orderBy('month')
+            ->pluck('total', 'month');
 
-                $runningTotal = (clone $baseQuery)
-                    ->where('created_at', '<', now()->subYear())
-                    ->count();
+        $runningTotal = (clone $baseQuery)
+            ->where('created_at', '<', now()->subYear())
+            ->count();
 
-                $runningTotalPerMonth = [];
+        $runningTotalPerMonth = [];
 
-                foreach (range(11, 0) as $month) {
-                    $month = Carbon::now()->subMonths($month);
+        foreach (range(11, 0) as $month) {
+            $month = Carbon::now()->subMonths($month);
 
-                    $runningTotal += $totalCreatedPerMonth[$month->startOfMonth()->toDateTimeString()] ?? 0;
+            $runningTotal += $totalCreatedPerMonth[$month->startOfMonth()->toDateTimeString()] ?? 0;
 
-                    $runningTotalPerMonth[$month->format('M Y')] = $runningTotal;
-                }
-
-                return $runningTotalPerMonth;
-            });
+            $runningTotalPerMonth[$month->format('M Y')] = $runningTotal;
+        }
 
         return [
             'datasets' => [
