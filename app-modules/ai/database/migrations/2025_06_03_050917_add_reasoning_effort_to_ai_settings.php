@@ -35,12 +35,17 @@
 */
 
 use AdvisingApp\Ai\Enums\ReasoningEffort;
+use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 return new class () extends SettingsMigration {
     public function up(): void
     {
-        $this->migrator->add('ai.reasoning_effort', ReasoningEffort::Medium);
+      try {
+            $this->migrator->add('ai.reasoning_effort', ReasoningEffort::Medium);
+      } catch (SettingAlreadyExists $exception) {
+            // do nothing
+      }
     }
 
     public function down(): void
