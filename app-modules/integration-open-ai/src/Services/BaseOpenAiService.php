@@ -91,14 +91,14 @@ abstract class BaseOpenAiService implements AiService
 
         try {
             $data = [
-                    'messages' => [
-                        ['role' => 'system', 'content' => $prompt],
-                        ['role' => 'user', 'content' => $content],
-                    ],
-                    'temperature' => app(AiSettings::class)->temperature,
-                ];
+                'messages' => [
+                    ['role' => 'system', 'content' => $prompt],
+                    ['role' => 'user', 'content' => $content],
+                ],
+                'temperature' => app(AiSettings::class)->temperature,
+            ];
 
-            if(in_array($this->getModel(), $reasoningModels)) {
+            if (in_array($this->getModel(), $reasoningModels)) {
                 $data = [...$data, 'reasoning_effort' => app(AiSettings::class)->reasoning_effort];
             }
 
@@ -557,7 +557,7 @@ abstract class BaseOpenAiService implements AiService
 
         $model = $message->thread->assistant->model->getLabel();
 
-        if(in_array($model, $reasoningModels)) {
+        if (in_array($model, $reasoningModels)) {
             $runData = [...$runData, 'reasoning_effort' => $aiSettings->reasoning_effort];
         }
 
