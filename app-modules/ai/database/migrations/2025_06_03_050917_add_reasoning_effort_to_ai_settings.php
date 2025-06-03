@@ -34,12 +34,13 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Ai\Enums\ReasoningEffort;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 return new class () extends SettingsMigration {
     public function up(): void
     {
-        $this->migrator->add('ai.reasoning_effort');
+        $this->migrator->add('ai.reasoning_effort', ReasoningEffort::Medium);
     }
 
     public function down(): void
