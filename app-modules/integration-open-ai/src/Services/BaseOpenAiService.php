@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Services;
 
+use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Exceptions\AiStreamEndedUnexpectedlyException;
 use AdvisingApp\Ai\Exceptions\MessageResponseException;
 use AdvisingApp\Ai\Exceptions\MessageResponseTimeoutException;
@@ -86,16 +87,24 @@ abstract class BaseOpenAiService implements AiService
 
     public function complete(string $prompt, string $content): string
     {
+        $reasoningModels = [AiModel::OpenAiGptO1Mini->getLabel(), AiModel::OpenAiGptO3Mini->getLabel(), AiModel::OpenAiGptO4Mini->getLabel()];
+
         try {
-            $response = Http::asJson()
-                ->withHeader('api-key', $this->getApiKey())
-                ->post("{$this->getDeployment()}/deployments/{$this->getModel()}/chat/completions?api-version={$this->getApiVersion()}", [
+            $data = [
                     'messages' => [
                         ['role' => 'system', 'content' => $prompt],
                         ['role' => 'user', 'content' => $content],
                     ],
                     'temperature' => app(AiSettings::class)->temperature,
-                ]);
+                ];
+
+            if(in_array($this->getModel(), $reasoningModels)) {
+                $data = [...$data, 'reasoning_effort' => app(AiSettings::class)->reasoning_effort];
+            }
+
+            $response = Http::asJson()
+                ->withHeader('api-key', $this->getApiKey())
+                ->post("{$this->getDeployment()}/deployments/{$this->getModel()}/chat/completions?api-version={$this->getApiVersion()}", $data);
         } catch (Throwable $exception) {
             report($exception);
 
@@ -543,6 +552,14 @@ abstract class BaseOpenAiService implements AiService
             'max_completion_tokens' => $aiSettings->max_tokens->getTokens(),
             'temperature' => $aiSettings->temperature,
         ];
+
+        $reasoningModels = [AiModel::OpenAiGptO1Mini->getLabel(), AiModel::OpenAiGptO3Mini->getLabel(), AiModel::OpenAiGptO4Mini->getLabel()];
+
+        $model = $message->thread->assistant->model->getLabel();
+
+        if(in_array($model, $reasoningModels)) {
+            $runData = [...$runData, 'reasoning_effort' => $aiSettings->reasoning_effort];
+        }
 
         if ($message->thread->messages()->whereHas('files')->exists()) {
             $runData['tools'] = [
