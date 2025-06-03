@@ -62,7 +62,7 @@ class InteractionFactory extends Factory
             Prospect::class,
             CaseModel::class,
         ]);
-        
+
         $interactable = match ($interactable) {
             Student::class => Student::inRandomOrder()->first() ?? Student::factory()->create(),
             Prospect::class => Prospect::factory()->create(),

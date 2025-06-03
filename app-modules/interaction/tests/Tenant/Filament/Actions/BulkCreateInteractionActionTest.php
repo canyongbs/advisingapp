@@ -59,7 +59,7 @@ it('shows the form and validation', function (BulkCreateInteractionActionRequest
         ->callMountedTableBulkAction()
         ->assertHasTableBulkActionErrors($errors);
 
-        assertDatabaseMissing(Interaction::class, $request->toArray());
+    assertDatabaseMissing(Interaction::class, $request->toArray());
 })->with([
     'interaction_initiative_id required' => [
         BulkCreateInteractionActionRequestFactory::new()->without('interaction_initiative_id'),
@@ -130,7 +130,7 @@ it('can successfully create bulk interaction with student', function () {
         ->assertSuccessful()
         ->assertNotified();
 
-        assertDatabaseHas(Interaction::class, $request->toArray());
+    assertDatabaseHas(Interaction::class, $request->toArray());
 });
 
 it('can successfully create bulk interaction with prospect', function () {
@@ -154,5 +154,5 @@ it('can successfully create bulk interaction with prospect', function () {
         ->assertSuccessful()
         ->assertNotified();
 
-        assertDatabaseHas(Interaction::class, $request->toArray());
+    assertDatabaseHas(Interaction::class, $request->toArray());
 });
