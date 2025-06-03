@@ -17,7 +17,8 @@ class AllUsersController extends Controller
             ->where('setup_complete', true)
             ->get()
             ->eachCurrent(function (Tenant $tenant) use (&$users) {
-                User::all()
+                User::query()
+                    ->cursor()
                     ->each(function (User $user) use (&$users, $tenant) {
                         $users[] = [
                             'id' => $user->id,
