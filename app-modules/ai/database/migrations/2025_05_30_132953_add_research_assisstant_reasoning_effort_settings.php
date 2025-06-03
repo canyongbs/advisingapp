@@ -41,7 +41,7 @@ return new class () extends SettingsMigration {
     public function up(): void
     {
         try {
-            $this->migrator->add('ai_research_assistant.reasoning_effort', 'high');
+            $this->migrator->add('ai_research_assistant.reasoning_effort', 'High');
         } catch (SettingAlreadyExists $exception) {
             // do nothing
         }

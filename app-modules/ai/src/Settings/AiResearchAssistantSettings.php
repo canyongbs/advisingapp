@@ -37,6 +37,7 @@
 namespace AdvisingApp\Ai\Settings;
 
 use AdvisingApp\Ai\Enums\AiModel;
+use AdvisingApp\Ai\Enums\AiResearchReasoningEffort;
 use Spatie\LaravelSettings\Settings;
 
 class AiResearchAssistantSettings extends Settings
@@ -47,7 +48,7 @@ class AiResearchAssistantSettings extends Settings
 
     public ?string $context = null;
 
-    public ?string $reasoning_effort = null;
+    public AiResearchReasoningEffort $reasoning_effort = AiResearchReasoningEffort::High;
 
     public static function group(): string
     {
