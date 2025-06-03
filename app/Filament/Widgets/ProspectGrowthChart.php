@@ -37,12 +37,17 @@
 namespace App\Filament\Widgets;
 
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Enums\ActionCenterTab;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
+use Livewire\Attributes\Reactive;
 
 class ProspectGrowthChart extends ChartWidget
 {
+    #[Reactive]
+    public string $activeTab = 'all';
+
     protected static ?string $heading = 'Prospects (Cumulative)';
 
     protected static ?string $maxHeight = '200px';
@@ -67,9 +72,19 @@ class ProspectGrowthChart extends ChartWidget
 
     protected function getData(): array
     {
+        $tab = ActionCenterTab::tryFrom($this->activeTab) ?? ActionCenterTab::All;
+
+        $baseQuery = Prospect::query();
+
+        $baseQuery = match ($tab) {
+            ActionCenterTab::Subscribed => $baseQuery->whereHas('subscriptions'),
+            ActionCenterTab::CareTeam => $baseQuery->whereHas('careTeam'),
+            default => $baseQuery,
+        };
+
         $runningTotalPerMonth = Cache::tags(['{prospects}'])
-            ->remember('prospect-growth-chart-data', now()->addHour(), function (): array {
-                $totalCreatedPerMonth = Prospect::query()
+            ->remember("prospect-growth-chart-data-{$tab->value}", now()->addHour(), function () use ($baseQuery): array {
+                $totalCreatedPerMonth = (clone $baseQuery)
                     ->toBase()
                     ->selectRaw('date_trunc(\'month\', created_at) as month')
                     ->selectRaw('count(*) as total')
@@ -78,7 +93,7 @@ class ProspectGrowthChart extends ChartWidget
                     ->orderBy('month')
                     ->pluck('total', 'month');
 
-                $runningTotal = Prospect::query()
+                $runningTotal = (clone $baseQuery)
                     ->where('created_at', '<', now()->subYear())
                     ->count();
 

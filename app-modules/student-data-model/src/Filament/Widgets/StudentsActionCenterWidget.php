@@ -50,7 +50,6 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Livewire\Attributes\Reactive;
 
 class StudentsActionCenterWidget extends TableWidget
@@ -70,14 +69,13 @@ class StudentsActionCenterWidget extends TableWidget
 
         return $table
             ->heading('Action Center Records')
-            // ->relationship(fn (): MorphToMany => $user->studentSubscriptions())
             ->query(function () use ($user) {
                 $tab = ActionCenterTab::tryFrom($this->activeTab) ?? ActionCenterTab::Subscribed;
 
                 return match ($tab) {
                     ActionCenterTab::All => Student::query(),
                     ActionCenterTab::Subscribed => Student::query()
-                        ->whereRelation('subscriptions', 'user_id', $user->getKey()),
+                        ->whereHas('subscriptions', fn (Builder $query) => $query->where('user_id', $user->getKey())),
                     ActionCenterTab::CareTeam => Student::query()
                         ->whereHas('careTeam', fn (Builder $query) => $query->where('user_id', $user->getKey())),
                 };

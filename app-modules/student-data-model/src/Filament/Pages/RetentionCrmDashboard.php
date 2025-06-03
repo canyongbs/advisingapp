@@ -78,6 +78,10 @@ class RetentionCrmDashboard extends BaseDashboard
         $user = auth()->user();
 
         abort_unless($user->hasLicense(Student::getLicenseType()), Response::HTTP_FORBIDDEN);
+
+        if (! ActionCenterTab::tryFrom($this->activeTab)) {
+            $this->redirect(static::getUrl(['activeTab' => ActionCenterTab::Subscribed->value]), navigate: true);
+        }
     }
 
     public function getWidgets(): array
