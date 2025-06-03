@@ -22,7 +22,7 @@ it('can bulk assign tags to prospects without remove the prior tags', function (
 
     $tag = Tag::factory()->state(['type' => TagType::Prospect])->create();
 
-    $prospects = Prospect::factory()->hasAttached($tag)->count(1)->create();
+    $prospects = Prospect::factory()->hasAttached($tag)->count(5)->create();
 
     $prospects->each(function (Prospect $prospect) use($tag) {
         expect($prospect->tags()->where('tag_id', $tag->getKey())->exists())->toBeTrue();
@@ -54,7 +54,7 @@ it('can bulk assign tags to prospects and remove the prior tags', function () {
 
     $tag = Tag::factory()->state(['type' => TagType::Prospect])->create();
 
-    $prospects = Prospect::factory()->hasAttached($tag)->count(1)->create();
+    $prospects = Prospect::factory()->hasAttached($tag)->count(5)->create();
 
     $prospects->each(function (Prospect $prospect) use($tag) {
         expect($prospect->tags()->where('tag_id', $tag->getKey())->exists())->toBeTrue();
