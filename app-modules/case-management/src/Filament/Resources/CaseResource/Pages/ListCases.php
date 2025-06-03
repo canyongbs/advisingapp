@@ -97,7 +97,7 @@ class ListCases extends ListRecords
                     ->sortable(query: fn (Builder $query, string $direction): Builder => $query->tap(new EducatableSort($direction))),
                 TextColumn::make('respondent.sisid')
                     ->label('SIS ID')
-                    ->searchable()
+                    ->searchable(query: fn (Builder $query, $search) => $query->tap(new EducatableSearch(relationship: 'respondent', search: $search)))
                     ->sortable(query: function (Builder $query, string $direction): Builder {
                         // Update this if any other relations are added to the Case model respondent relationship
                         return $query->join('students', function (JoinClause $join) {
@@ -107,7 +107,7 @@ class ListCases extends ListRecords
                     }),
                 TextColumn::make('respondent.otherid')
                     ->label('Other ID')
-                    ->searchable()
+                    ->searchable(query: fn (Builder $query, $search) => $query->tap(new EducatableSearch(relationship: 'respondent', search: $search)))
                     ->sortable(query: function (Builder $query, string $direction): Builder {
                         // Update this if any other relations are added to the Case model respondent relationship
                         return $query->join('students', function (JoinClause $join) {
