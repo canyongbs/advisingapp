@@ -49,6 +49,7 @@ use AdvisingApp\Segment\Actions\BulkSegmentAction;
 use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Models\Segment;
+use AdvisingApp\Prospect\Filament\Actions\ProspectTagsBulkAction;
 use App\Enums\CareTeamRoleType;
 use App\Enums\TagType;
 use App\Filament\Tables\Columns\IdColumn;
@@ -183,6 +184,7 @@ class ListProspects extends ListRecords
             ->bulkActions([
                 BulkActionGroup::make([
                     SubscribeBulkAction::make(),
+                    ProspectTagsBulkAction::make()->visible(fn (): bool => auth()->user()->can('prospect.*.update')),
                     BulkEngagementAction::make(context: 'prospects'),
                     DeleteBulkAction::make(),
                     AddCareTeamMemberAction::make(CareTeamRoleType::Prospect),
