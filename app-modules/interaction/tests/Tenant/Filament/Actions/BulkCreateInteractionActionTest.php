@@ -34,70 +34,75 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Interaction\Database\Factories\InteractionFactory;
+use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\Interaction\Tests\Tenant\Filament\Actions\RequestFactories\BulkCreateInteractionActionRequestFactory;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ListProspects;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ListStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 
+use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Laravel\assertDatabaseMissing;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
-it('shows the form and validation', function () {
+it('shows the form and validation', function (BulkCreateInteractionActionRequestFactory $data, array $errors) {
     asSuperAdmin();
 
     $student = Student::factory()->create();
 
-    $request = collect(InteractionFactory::new()->create());
+    $request = collect(BulkCreateInteractionActionRequestFactory::new($data)->create());
 
     livewire(ListStudents::class)
         ->mountTableBulkAction('createInteraction', [$student->getKey()])
-        ->setTableBulkActionData([
-            ...$request,
-        ])
-        ->callMountedTableBulkAction();
+        ->setTableBulkActionData($request->toArray())
+        ->callMountedTableBulkAction()
+        ->assertHasTableBulkActionErrors($errors);
+
+        assertDatabaseMissing(Interaction::class, $request->toArray());
 })->with([
-    'initiative required' => [
-        InteractionFactory::new()->state(['interaction_initiative_id' => null]),
+    'interaction_initiative_id required' => [
+        BulkCreateInteractionActionRequestFactory::new()->without('interaction_initiative_id'),
         ['interaction_initiative_id' => 'required'],
     ],
-    'driver required' => [
-        InteractionFactory::new()->state(['interaction_driver_id' => null]),
+    'interaction_driver_id required' => [
+        BulkCreateInteractionActionRequestFactory::new()->without('interaction_driver_id'),
         ['interaction_driver_id' => 'required'],
     ],
-    'division required' => [
-        InteractionFactory::new()->state(['division_id' => null]),
-        ['interaction_initiative_id' => 'required'],
+    'division_id required' => [
+        BulkCreateInteractionActionRequestFactory::new()->without('division_id'),
+        ['division_id' => 'required'],
     ],
-    'outcome required' => [
-        InteractionFactory::new()->state(['interaction_outcome_id' => null]),
+    'interaction_outcome_id required' => [
+        BulkCreateInteractionActionRequestFactory::new()->without('interaction_outcome_id'),
         ['interaction_outcome_id' => 'required'],
     ],
-    'relation required' => [
-        InteractionFactory::new()->state(['interaction_relation_id' => null]),
+    'interaction_relation_id required' => [
+        BulkCreateInteractionActionRequestFactory::new()->without('interaction_relation_id'),
         ['interaction_relation_id' => 'required'],
     ],
-    'status required' => [
-        InteractionFactory::new()->state(['interaction_status_id' => null]),
+    'interaction_status_id required' => [
+        BulkCreateInteractionActionRequestFactory::new()->without('interaction_status_id'),
         ['interaction_status_id' => 'required'],
     ],
-    'type required' => [
-        InteractionFactory::new()->state(['interaction_type_id' => null]),
+    'interaction_type_id required' => [
+        BulkCreateInteractionActionRequestFactory::new()->without('interaction_type_id'),
         ['interaction_type_id' => 'required'],
     ],
-    'start date required' => [
-        InteractionFactory::new()->state(['start_datetime' => null]),
+    'start_datetime required' => [
+        BulkCreateInteractionActionRequestFactory::new()->without('start_datetime'),
         ['start_datetime' => 'required'],
     ],
-    'end time required' => [
-        InteractionFactory::new()->state(['end_datetime' => null]),
+    'end_datetime required' => [
+        BulkCreateInteractionActionRequestFactory::new()->without('end_datetime'),
         ['end_datetime' => 'required'],
     ],
     'subject required' => [
-        InteractionFactory::new()->state(['subject' => null]),
+        BulkCreateInteractionActionRequestFactory::new()->without('subject'),
         ['subject' => 'required'],
     ],
     'description required' => [
-        InteractionFactory::new()->state(['description' => null]),
+        BulkCreateInteractionActionRequestFactory::new()->without('description'),
         ['description' => 'required'],
     ],
 ]);
@@ -107,9 +112,12 @@ it('can successfully create bulk interaction with student', function () {
 
     $student = Student::factory()->create();
 
-    $request = collect(InteractionFactory::new()->create([
+    $request = collect(BulkCreateInteractionActionRequestFactory::new()->create([
         'interactable_id' => $student->getKey(),
         'interactable_type' => $student->getMorphClass(),
+        'user_id' => auth()->user()->getKey(),
+        'start_datetime' => now()->seconds(0)->format('Y-m-d H:i:s'),
+        'end_datetime' => now()->addMinutes(5)->seconds(0)->format('Y-m-d H:i:s'),
     ]));
 
     livewire(ListStudents::class)
@@ -121,25 +129,30 @@ it('can successfully create bulk interaction with student', function () {
         ->assertHasNoTableBulkActionErrors()
         ->assertSuccessful()
         ->assertNotified();
+
+        assertDatabaseHas(Interaction::class, $request->toArray());
 });
 
-it('can successfully create bulk interaction with porspect', function () {
+it('can successfully create bulk interaction with prospect', function () {
     asSuperAdmin();
 
     $prospect = Prospect::factory()->create();
 
-    $request = collect(InteractionFactory::new()->create([
+    $request = collect(BulkCreateInteractionActionRequestFactory::new()->create([
         'interactable_id' => $prospect->getKey(),
         'interactable_type' => $prospect->getMorphClass(),
+        'user_id' => auth()->user()->getKey(),
+        'start_datetime' => now()->seconds(0)->format('Y-m-d H:i:s'),
+        'end_datetime' => now()->addMinutes(5)->seconds(0)->format('Y-m-d H:i:s'),
     ]));
 
-    livewire(ListStudents::class)
+    livewire(ListProspects::class)
         ->mountTableBulkAction('createInteraction', [$prospect->getKey()])
-        ->setTableBulkActionData([
-            ...$request,
-        ])
+        ->setTableBulkActionData($request->toArray())
         ->callMountedTableBulkAction()
         ->assertHasNoTableBulkActionErrors()
         ->assertSuccessful()
         ->assertNotified();
+
+        assertDatabaseHas(Interaction::class, $request->toArray());
 });

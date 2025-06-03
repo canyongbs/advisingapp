@@ -90,17 +90,15 @@ class InteractionBlock extends CampaignActionBlock
                         ->model(Interaction::class)
                         ->preload()
                         ->default(
-                            fn () => Division::query()
-                                ->where('is_default', true)
-                                ->first()
-                                ?->getKey()
+                            fn () => auth()->user()->team?->division?->getKey()
+                                ?? Division::query()
+                                    ->where('is_default', true)
+                                    ->first()
+                                    ?->getKey()
                         )
                         ->label('Division')
                         ->visible(function () {
-                            $defaultDivision = Division::query()->where('is_default', true)->count();
-                            $totalDivision = Division::query()->count();
-
-                            return $defaultDivision !== $totalDivision;
+                            return Division::query()->where('is_default', false)->exists();
                         })
                         ->dehydratedWhenHidden()
                         ->required()
