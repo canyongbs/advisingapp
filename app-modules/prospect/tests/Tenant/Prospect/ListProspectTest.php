@@ -219,3 +219,22 @@ it('can filter prospect by alerts', function () {
         ->removeTableFilter('alerts')
         ->assertCanSeeTableRecords($prospectsWithoutAlerts->merge([$prospectWithStatusActive, $prospectWithStatusInprogress]));
 });
+
+it('renders the bulk create alert action based on proper access', function () {
+    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
+
+    $user->givePermissionTo('prospect.view-any');
+    $user->givePermissionTo('prospect.*.view');
+
+    actingAs($user);
+
+    livewire(ListProspects::class)
+        ->assertOk()
+        ->assertTableBulkActionHidden('createAlert');
+
+    $user->givePermissionTo('alert.create');
+
+    livewire(ListProspects::class)
+        ->assertOk()
+        ->assertTableBulkActionVisible('createAlert');
+});

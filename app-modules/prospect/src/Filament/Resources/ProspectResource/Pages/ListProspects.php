@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
+use AdvisingApp\Alert\Filament\Actions\BulkCreateAlertAction;
+use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\CareTeam\Filament\Actions\AddCareTeamMemberAction;
 use AdvisingApp\Engagement\Filament\Actions\BulkEngagementAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeBulkAction;
@@ -72,6 +74,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Gate;
 
 class ListProspects extends ListRecords
 {
@@ -251,6 +254,8 @@ class ListProspects extends ListRecords
                                 ->send();
                         }),
                     BulkSegmentAction::make(segmentModel: SegmentModel::Prospect),
+                    BulkCreateAlertAction::make()
+                        ->authorize(fn () => Gate::allows('create', Alert::class)),
                 ]),
             ]);
     }

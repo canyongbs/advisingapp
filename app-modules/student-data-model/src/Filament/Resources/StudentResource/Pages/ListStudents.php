@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
+use AdvisingApp\Alert\Filament\Actions\BulkCreateAlertAction;
+use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\CareTeam\Filament\Actions\AddCareTeamMemberAction;
 use AdvisingApp\Engagement\Filament\Actions\BulkEngagementAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeBulkAction;
@@ -231,6 +233,8 @@ class ListStudents extends ListRecords
                     BulkEngagementAction::make(context: 'students'),
                     AddCareTeamMemberAction::make(CareTeamRoleType::Student),
                     BulkSegmentAction::make(segmentModel: SegmentModel::Student),
+                    BulkCreateAlertAction::make()
+                        ->authorize(fn () => Gate::allows('create', Alert::class)),
                 ]),
             ]);
     }
