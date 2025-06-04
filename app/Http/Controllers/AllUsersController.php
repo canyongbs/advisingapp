@@ -34,31 +34,47 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Theme\Http\Controllers\BrandedWebsiteLinksController;
-use AdvisingApp\Theme\Http\Controllers\UpdateThemeController;
-use App\Http\Controllers\AllUsersController;
-use App\Http\Controllers\Tenants\CreateTenantController;
-use App\Http\Controllers\Tenants\DeleteTenantController;
-use App\Http\Controllers\Tenants\SyncTenantController;
-use Illuminate\Support\Facades\Route;
+namespace App\Http\Controllers;
 
-Route::post('tenants', CreateTenantController::class)
-    ->name('tenants.create');
+use App\Models\Tenant;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
-Route::delete('tenants/{tenant}', DeleteTenantController::class)
-    ->name('tenants.delete');
+class AllUsersController extends Controller
+{
+    public function __invoke(Request $request): JsonResponse
+    {
+        $users = [];
 
-Route::post('tenants/{tenant}/sync', SyncTenantController::class)
-    ->name('tenants.sync');
+        Tenant::query()
+            ->where('setup_complete', true)
+            ->get()
+            ->eachCurrent(function (Tenant $tenant) use (&$users) {
+                User::query()
+                    ->cursor()
+                    ->each(function (User $user) use (&$users, $tenant) {
+                        $users[] = [
+                            'id' => $user->id,
+                            'tenant_id' => $tenant->getKey(),
+                            'name' => $user->name,
+                            'job_title' => $user->job_title,
+                            'team' => $user->team->name ?? null,
+                            'email' => $user->email,
+                            'timezone' => $user->timezone,
+                            'first_login_at' => $user->first_login_at,
+                            'last_logged_in_at' => $user->last_logged_in_at,
+                            'updated_at' => $user->updated_at,
+                            'created_at' => $user->created_at,
+                        ];
+                    });
+            });
 
-Route::post('theme', UpdateThemeController::class)
-    ->name('theme.update');
-
-Route::post('branded-website-links', BrandedWebsiteLinksController::class)
-    ->name('brandedWebsiteLinks.update');
-
-Route::post('all-users', AllUsersController::class)
-    ->name('all-users');
-
-Route::post('test', fn () => true)
-    ->name('test');
+        return response()->json([
+            'data' => $users,
+            'meta' => [
+                'total_users' => count($users),
+            ],
+        ]);
+    }
+}
