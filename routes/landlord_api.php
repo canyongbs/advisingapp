@@ -36,6 +36,7 @@
 
 use AdvisingApp\Theme\Http\Controllers\BrandedWebsiteLinksController;
 use AdvisingApp\Theme\Http\Controllers\UpdateThemeController;
+use App\Http\Controllers\AllUsersController;
 use App\Http\Controllers\Tenants\CreateTenantController;
 use App\Http\Controllers\Tenants\DeleteTenantController;
 use App\Http\Controllers\Tenants\SyncTenantController;
@@ -55,6 +56,9 @@ Route::post('theme', UpdateThemeController::class)
 
 Route::post('branded-website-links', BrandedWebsiteLinksController::class)
     ->name('brandedWebsiteLinks.update');
+
+Route::post('all-users', AllUsersController::class)
+    ->name('all-users');
 
 Route::post('test', fn () => true)
     ->name('test');

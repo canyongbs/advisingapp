@@ -34,24 +34,8 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Settings;
+describe('AllUsersControllerTest', function () {
+    it('is protected by the landlord-api middleware', function () {})->todo('To be implemented at a later date');
 
-use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Enums\AiResearchReasoningEffort;
-use Spatie\LaravelSettings\Settings;
-
-class AiResearchAssistantSettings extends Settings
-{
-    public ?AiModel $discovery_model = null;
-
-    public ?AiModel $research_model = null;
-
-    public ?string $context = null;
-
-    public AiResearchReasoningEffort $reasoning_effort = AiResearchReasoningEffort::High;
-
-    public static function group(): string
-    {
-        return 'ai_research_assistant';
-    }
-}
+    it('returns a list of all users across all tenants', function () {})->todo('To be implemented at a later date');
+});

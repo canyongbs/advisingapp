@@ -37,17 +37,71 @@
 namespace App\Filament\Widgets;
 
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Enums\ActionCenterTab;
+use App\Models\User;
 use Filament\Widgets\ChartWidget;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Cache;
+use Livewire\Attributes\Reactive;
 
 class ProspectGrowthChart extends ChartWidget
 {
+    #[Reactive]
+    public string $activeTab;
+
     protected static ?string $heading = 'Prospects (Cumulative)';
 
     protected static ?string $maxHeight = '200px';
 
     protected int | string | array $columnSpan = 'full';
+
+    public function getData(): array
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        $tab = ActionCenterTab::tryFrom($this->activeTab) ?? ActionCenterTab::All;
+
+        $baseQuery = Prospect::query();
+
+        $baseQuery = match ($tab) {
+            ActionCenterTab::Subscribed => $baseQuery->whereHas('subscriptions', fn (Builder $query) => $query->where('user_id', $user->getKey())),
+            ActionCenterTab::CareTeam => $baseQuery->whereHas('careTeam', fn (Builder $query) => $query->where('user_id', $user->getKey())),
+            default => $baseQuery,
+        };
+
+        $totalCreatedPerMonth = (clone $baseQuery)
+            ->toBase()
+            ->selectRaw('date_trunc(\'month\', created_at) as month')
+            ->selectRaw('count(*) as total')
+            ->where('created_at', '>', now()->subYear())
+            ->groupBy('month')
+            ->orderBy('month')
+            ->pluck('total', 'month');
+
+        $runningTotal = (clone $baseQuery)
+            ->where('created_at', '<', now()->subYear())
+            ->count();
+
+        $runningTotalPerMonth = [];
+
+        foreach (range(11, 0) as $month) {
+            $month = Carbon::now()->subMonths($month);
+
+            $runningTotal += $totalCreatedPerMonth[$month->startOfMonth()->toDateTimeString()] ?? 0;
+
+            $runningTotalPerMonth[$month->format('M Y')] = $runningTotal;
+        }
+
+        return [
+            'datasets' => [
+                [
+                    'data' => array_values($runningTotalPerMonth),
+                ],
+            ],
+            'labels' => array_keys($runningTotalPerMonth),
+        ];
+    }
 
     protected function getOptions(): array
     {
@@ -62,46 +116,6 @@ class ProspectGrowthChart extends ChartWidget
                     'min' => 0,
                 ],
             ],
-        ];
-    }
-
-    protected function getData(): array
-    {
-        $runningTotalPerMonth = Cache::tags(['{prospects}'])
-            ->remember('prospect-growth-chart-data', now()->addHour(), function (): array {
-                $totalCreatedPerMonth = Prospect::query()
-                    ->toBase()
-                    ->selectRaw('date_trunc(\'month\', created_at) as month')
-                    ->selectRaw('count(*) as total')
-                    ->where('created_at', '>', now()->subYear())
-                    ->groupBy('month')
-                    ->orderBy('month')
-                    ->pluck('total', 'month');
-
-                $runningTotal = Prospect::query()
-                    ->where('created_at', '<', now()->subYear())
-                    ->count();
-
-                $runningTotalPerMonth = [];
-
-                foreach (range(11, 0) as $month) {
-                    $month = Carbon::now()->subMonths($month);
-
-                    $runningTotal += $totalCreatedPerMonth[$month->startOfMonth()->toDateTimeString()] ?? 0;
-
-                    $runningTotalPerMonth[$month->format('M Y')] = $runningTotal;
-                }
-
-                return $runningTotalPerMonth;
-            });
-
-        return [
-            'datasets' => [
-                [
-                    'data' => array_values($runningTotalPerMonth),
-                ],
-            ],
-            'labels' => array_keys($runningTotalPerMonth),
         ];
     }
 
