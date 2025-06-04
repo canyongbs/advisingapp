@@ -56,7 +56,7 @@ class AddCareTeamMemberAction
     public static function make(CareTeamRoleType $context): BulkAction
     {
         return BulkAction::make('addCareTeamMember')
-            ->label('Add Care Team Member')
+            ->label('Manage Care Team')
             ->icon('heroicon-s-user-group')
             ->fillForm(fn (Collection $records): array => [
                 'records' => $records,

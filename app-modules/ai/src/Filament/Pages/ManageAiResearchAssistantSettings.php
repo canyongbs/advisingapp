@@ -38,6 +38,7 @@ namespace AdvisingApp\Ai\Filament\Pages;
 
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
+use AdvisingApp\Ai\Enums\AiResearchReasoningEffort;
 use AdvisingApp\Ai\Settings\AiResearchAssistantSettings;
 use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
@@ -80,6 +81,10 @@ class ManageAiResearchAssistantSettings extends SettingsPage
                     ->searchable()
                     ->helperText('Used for the generation of the research report.')
                     ->required(),
+                Select::make('reasoning_effort')
+                    ->options(AiResearchReasoningEffort::class)
+                    ->searchable()
+                    ->helperText('Constrains effort on reasoning for reasoning models. Currently supported values are low, medium, and high. Reducing reasoning effort can result in faster responses and fewer tokens used on reasoning in a response.'),
                 Textarea::make('context')
                     ->rows(10)
                     ->label('Institutional Context'),

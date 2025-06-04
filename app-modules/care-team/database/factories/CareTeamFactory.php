@@ -34,24 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Settings;
+namespace AdvisingApp\CareTeam\Database\Factories;
 
-use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Enums\AiResearchReasoningEffort;
-use Spatie\LaravelSettings\Settings;
+use AdvisingApp\CareTeam\Models\CareTeam;
+use AdvisingApp\CareTeam\Models\CareTeamRole;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class AiResearchAssistantSettings extends Settings
+/**
+ * @extends Factory<CareTeam>
+ */
+class CareTeamFactory extends Factory
 {
-    public ?AiModel $discovery_model = null;
-
-    public ?AiModel $research_model = null;
-
-    public ?string $context = null;
-
-    public AiResearchReasoningEffort $reasoning_effort = AiResearchReasoningEffort::High;
-
-    public static function group(): string
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
-        return 'ai_research_assistant';
+        return [
+            'user_id' => User::factory(),
+            'educatable_id' => null,
+            'educatable_type' => null,
+            'care_team_role_id' => CareTeamRole::factory(),
+        ];
     }
 }

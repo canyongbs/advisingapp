@@ -2725,7 +2725,7 @@ namespace AdvisingApp\Engagement\Models{
 /**
  * 
  *
- * @property-read Educatable $recipient
+ * @property-read ?Educatable $recipient
  * @property string $id
  * @property string|null $user_id
  * @property string|null $engagement_batch_id

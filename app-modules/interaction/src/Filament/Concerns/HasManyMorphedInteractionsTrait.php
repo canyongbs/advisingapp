@@ -101,7 +101,7 @@ trait HasManyMorphedInteractionsTrait
             ->defaultSort('end_datetime', 'desc')
             ->columns([
                 TextColumn::make('subject')
-                    ->description(fn ($record) => $record->initiative->name . ' (' . $record->driver->name . ')')
+                    ->description(fn ($record) => $record->initiative?->name . ' (' . $record->driver?->name . ')')
                     ->icon(fn ($record) => $record->is_confidential ? 'heroicon-m-lock-closed' : null)
                     ->tooltip(fn ($record) => $record->is_confidential ? 'Confidential' : null),
                 TextColumn::make('type.name')

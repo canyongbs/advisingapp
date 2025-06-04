@@ -86,7 +86,7 @@ class EngagementTimeline extends CustomTimeline
                 Fieldset::make('Content')
                     ->schema([
                         TextEntry::make('subject')
-                            ->hidden(fn ($state): bool => blank($state))
+                            ->visible(fn (Engagement $engagement): bool => $engagement->channel === NotificationChannel::Email)
                             ->getStateUsing(fn (Engagement $engagement): HtmlString => $engagement->getSubject())
                             ->columnSpanFull(),
                         EngagementBody::make('body')

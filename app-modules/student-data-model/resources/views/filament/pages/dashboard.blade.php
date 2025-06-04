@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -32,26 +30,30 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+@php
+    use AdvisingApp\StudentDataModel\Enums\ActionCenterTab;
+@endphp
 
-namespace AdvisingApp\Ai\Settings;
+<x-filament-panels::page class="fi-dashboard-page">
+    @if (method_exists($this, 'filtersForm'))
+        {{ $this->filtersForm }}
+    @endif
 
-use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Enums\AiResearchReasoningEffort;
-use Spatie\LaravelSettings\Settings;
+    <x-filament::tabs label="Content tabs">
+        @foreach (ActionCenterTab::cases() as $tab)
+            <x-filament::tabs.item
+                wire:click="$set('activeTab', '{{ $tab->value }}')"
+                :active="$activeTab === $tab->value"
+            >
+                {{ $tab->getLabel() }}
+            </x-filament::tabs.item>
+        @endforeach
+    </x-filament::tabs>
 
-class AiResearchAssistantSettings extends Settings
-{
-    public ?AiModel $discovery_model = null;
-
-    public ?AiModel $research_model = null;
-
-    public ?string $context = null;
-
-    public AiResearchReasoningEffort $reasoning_effort = AiResearchReasoningEffort::High;
-
-    public static function group(): string
-    {
-        return 'ai_research_assistant';
-    }
-}
+    <x-filament-widgets::widgets
+        :columns="$this->getColumns()"
+        :data="[...$this->filters ?? [], ...$this->getWidgetData()]"
+        :widgets="$this->getVisibleWidgets()"
+    />
+</x-filament-panels::page>
