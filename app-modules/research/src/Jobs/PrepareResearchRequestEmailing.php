@@ -41,7 +41,7 @@ use AdvisingApp\Research\Models\ResearchRequest;
 use AdvisingApp\Team\Models\Team;
 use App\Models\User;
 use Filament\Notifications\Notification;
-use Filament\Notifications\Notification as FilamentNotification;
+use Illuminate\Bus\Batch;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -51,62 +51,55 @@ use Illuminate\Support\Facades\Bus;
 
 class PrepareResearchRequestEmailing implements ShouldQueue
 {
-  use Dispatchable;
-  use InteractsWithQueue;
-  use Queueable;
-  use SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
-  /** @param array<string, mixed> $targetIds */
-  public function __construct(
-    public ResearchRequest $researchRequest,
-    public string $targetType,
-    public array $targetIds,
-    public ?string $note,
-    public User $sender,
-  ) {}
+    /** @param array<string, mixed> $targetIds */
+    public function __construct(
+        public ResearchRequest $researchRequest,
+        public string $targetType,
+        public array $targetIds,
+        public ?string $note,
+        public User $sender,
+    ) {}
 
-  public function handle(): void
-  {
-    if ($this->targetType === ResearchRequestShareTarget::User->value) {
-      User::query()
-        ->whereKey($this->targetIds)
-        ->get()
-        ->each(function (User $recipient) {
-          dispatch(new EmailResearchRequest($this->researchRequest, $this->note, $this->sender, $recipient, true));
+    public function handle(): void
+    {
+        if ($this->targetType === ResearchRequestShareTarget::User->value) {
+            User::query()
+                ->whereKey($this->targetIds)
+                ->get()
+                ->each(function (User $recipient) {
+                    dispatch(new EmailResearchRequest($this->researchRequest, $this->note, $this->sender, $recipient, true));
+                });
 
-          $recipientName = $this->sender->is($recipient) ? 'yourself' : $recipient->name;
+            return;
+        }
 
-          Notification::make()
-            ->success()
-            ->title("You emailed a research report to {$recipientName}.")
-            ->sendToDatabase($this->sender);
-        });
+        if ($this->targetType === ResearchRequestShareTarget::Team->value) {
+            $sender = $this->sender;
 
-      return;
+            Team::query()
+                ->whereKey($this->targetIds)
+                ->with('users')
+                ->get()
+                ->each(function (Team $team) use ($sender) {
+                    Bus::batch(
+                        $team->users()->whereKeyNot($this->sender)->get()
+                            ->map(fn (User $recipient) => new EmailResearchRequest($this->researchRequest, $this->note, $this->sender, $recipient, false))
+                            ->all(),
+                    )
+                        ->name("PrepareResearchReportEmailing for team {$team->getKey()}")
+                        ->finally(function (Batch $batch) use ($sender, $team) {
+                            Notification::make()
+                                ->success()
+                                ->title("You emailed a research report to {$batch->processedJobs()} users in team {$team->name}.")
+                                ->sendToDatabase($sender);
+                        })
+                        ->dispatch();
+                });
+        }
     }
-
-    if ($this->targetType === ResearchRequestShareTarget::Team->value) {
-      $sender = $this->sender;
-
-      Team::query()
-        ->whereKey($this->targetIds)
-        ->with('users')
-        ->get()
-        ->each(function (Team $team) use ($sender) {
-          Bus::batch(
-            $team->users()->whereKeyNot($this->sender)->get()
-              ->map(fn(User $recipient) => new EmailResearchRequest($this->researchRequest, $this->note, $this->sender, $recipient))
-              ->all(),
-          )
-            ->name("PrepareResearchReportEmailing for team {$team->getKey()}")
-            ->then(function () use ($sender, $team) {
-              FilamentNotification::make()
-                ->success()
-                ->title("You emailed a research report to users in team {$team->name}.")
-                ->sendToDatabase($sender);
-            })
-            ->dispatch();
-        });
-    }
-  }
 }

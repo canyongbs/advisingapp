@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Research\Filament\Pages\ManageResearchRequests\Concerns;
 
-
 use AdvisingApp\Research\Models\ResearchRequest;
 use AdvisingApp\Research\Models\ResearchRequestFolder;
 use App\Models\User;
@@ -77,7 +76,7 @@ trait CanManageFolders
             ->researchRequestFolders()
             ->with([
                 /** @phpstan-ignore argument.type */
-                'requests' => fn(HasMany $query) => $query
+                'requests' => fn (HasMany $query) => $query
                     ->latest('updated_at'),
             ])
             ->orderBy('name')
@@ -110,7 +109,7 @@ trait CanManageFolders
             })
             ->icon('heroicon-m-folder-plus')
             ->color('primary')
-            ->modalSubmitAction(fn(StaticAction $action) => $action->color('primary'));
+            ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'));
     }
 
     public function renameFolderAction(): Action
@@ -119,7 +118,7 @@ trait CanManageFolders
             ->modalSubmitActionLabel('Rename')
             ->modalWidth('md')
             ->size(ActionSize::ExtraSmall)
-            ->fillForm(fn(array $arguments) => [
+            ->fillForm(fn (array $arguments) => [
                 'name' => auth()->user()->researchRequestFolders()
                     ->find($arguments['folder'])
                     ?->name,
@@ -144,7 +143,7 @@ trait CanManageFolders
             })
             ->icon('heroicon-m-pencil')
             ->color('warning')
-            ->modalSubmitAction(fn(StaticAction $action) => $action->color('primary'))
+            ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'))
             ->iconButton()
             ->extraAttributes([
                 'class' => 'relative inline-flex w-5 h-5 hidden group-hover:inline-flex',
@@ -197,7 +196,7 @@ trait CanManageFolders
             })
             ->icon('heroicon-m-arrow-down-on-square')
             ->color('warning')
-            ->modalSubmitAction(fn(StaticAction $action) => $action->color('primary'))
+            ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'))
             ->iconButton()
             ->extraAttributes([
                 'class' => 'relative inline-flex w-5 h-5 hidden group-hover:inline-flex',
@@ -222,7 +221,7 @@ trait CanManageFolders
 
         $folder = filled($folderId) ?
             auth()->user()->researchRequestFolders()
-            ->find($folderId) :
+                ->find($folderId) :
             null;
 
         try {
@@ -245,7 +244,7 @@ trait CanManageFolders
     protected function folderSelect(): Select
     {
         return Select::make('folder')
-            ->options(fn(): array => auth()->user()
+            ->options(fn (): array => auth()->user()
                 ->researchRequestFolders()
                 ->orderBy('name')
                 ->pluck('name', 'id')
