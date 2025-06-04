@@ -40,11 +40,11 @@ use Filament\Support\Contracts\HasLabel;
 
 enum AiResearchReasoningEffort: string implements HasLabel
 {
-    case High = 'High';
+    case High = 'high';
 
-    case Medium = 'Medium';
+    case Medium = 'medium';
 
-    case Low = 'Low';
+    case Low = 'low';
 
     public function getLabel(): string
     {
