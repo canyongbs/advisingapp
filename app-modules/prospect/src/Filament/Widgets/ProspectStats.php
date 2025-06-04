@@ -43,6 +43,7 @@ use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Enums\ActionCenterTab;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Models\Task;
 use App\Models\User;
@@ -50,56 +51,70 @@ use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Number;
+use Livewire\Attributes\Reactive;
 
 class ProspectStats extends StatsOverviewWidget
 {
-    protected function getColumns(): int
-    {
-        return 4;
-    }
+    #[Reactive]
+    public string $activeTab;
 
-    protected function getStats(): array
+    public function getStats(): array
     {
         /** @var User $user */
         $user = auth()->user();
 
+        $tab = ActionCenterTab::tryFrom($this->activeTab) ?? ActionCenterTab::Subscribed;
+
+        $prospectQuery = fn (Builder $query) => match ($tab) {
+            ActionCenterTab::All => $query,
+            ActionCenterTab::Subscribed => Prospect::query()
+                ->whereHas('subscriptions', fn (Builder $query) => $query->where('user_id', $user->getKey())),
+            ActionCenterTab::CareTeam => Prospect::query()
+                ->whereHas('careTeam', fn (Builder $query) => $query->where('user_id', $user->getKey())),
+        };
+
         return [
             Stat::make('New Messages', Number::format(EngagementResponse::query()
-                ->whereHasMorph('sender', Prospect::class, fn (Builder $query) => $query->whereRelation('subscriptions', 'user_id', $user->getKey()))
+                ->whereHasMorph('sender', Prospect::class, $prospectQuery)
                 ->where('status', EngagementResponseStatus::New)
                 ->count())),
             Stat::make('Open Cases', Number::format(CaseModel::query()
-                ->whereHasMorph('respondent', Prospect::class, fn (Builder $query) => $query->whereRelation('subscriptions', 'user_id', $user->getKey()))
+                ->whereHasMorph('respondent', Prospect::class, $prospectQuery)
                 ->whereRelation('status', 'classification', '!=', SystemCaseClassification::Closed)
                 ->count())),
             Stat::make('Open Alerts', Number::format(Alert::query()
-                ->whereHasMorph('concern', Prospect::class, fn (Builder $query) => $query->whereRelation('subscriptions', 'user_id', $user->getKey()))
+                ->whereHasMorph('concern', Prospect::class, $prospectQuery)
                 ->whereHas('status', fn (Builder $query) => $query->whereNotIn('classification', [SystemAlertStatusClassification::Resolved, SystemAlertStatusClassification::Canceled]))
                 ->count())),
             Stat::make('Open Tasks', Number::format(Task::query()
-                ->whereHasMorph('concern', Prospect::class, fn (Builder $query) => $query->whereRelation('subscriptions', 'user_id', $user->getKey()))
+                ->whereHasMorph('concern', Prospect::class, $prospectQuery)
                 ->whereNotIn('status', [TaskStatus::Completed, TaskStatus::Canceled])
                 ->count())),
             Stat::make('Actioned Messages', Number::format(EngagementResponse::query()
-                ->whereHasMorph('sender', Prospect::class, fn (Builder $query) => $query->whereRelation('subscriptions', 'user_id', $user->getKey()))
+                ->whereHasMorph('sender', Prospect::class, $prospectQuery)
                 ->where('status', EngagementResponseStatus::Actioned)
                 ->count()))
                 ->extraAttributes(['class' => 'fi-wi-stats-overview-stat-primary']),
             Stat::make('Closed Cases', Number::format(CaseModel::query()
-                ->whereHasMorph('respondent', Prospect::class, fn (Builder $query) => $query->whereRelation('subscriptions', 'user_id', $user->getKey()))
+                ->whereHasMorph('respondent', Prospect::class, $prospectQuery)
                 ->whereRelation('status', 'classification', SystemCaseClassification::Closed)
                 ->count()))
                 ->extraAttributes(['class' => 'fi-wi-stats-overview-stat-primary']),
             Stat::make('Closed Alerts', Number::format(Alert::query()
-                ->whereHasMorph('concern', Prospect::class, fn (Builder $query) => $query->whereRelation('subscriptions', 'user_id', $user->getKey()))
+                ->whereHasMorph('concern', Prospect::class, $prospectQuery)
                 ->whereHas('status', fn (Builder $query) => $query->whereIn('classification', [SystemAlertStatusClassification::Resolved, SystemAlertStatusClassification::Canceled]))
                 ->count()))
                 ->extraAttributes(['class' => 'fi-wi-stats-overview-stat-primary']),
             Stat::make('Closed Tasks', Number::format(Task::query()
-                ->whereHasMorph('concern', Prospect::class, fn (Builder $query) => $query->whereRelation('subscriptions', 'user_id', $user->getKey()))
+                ->whereHasMorph('concern', Prospect::class, $prospectQuery)
                 ->whereIn('status', [TaskStatus::Completed, TaskStatus::Canceled])
                 ->count()))
                 ->extraAttributes(['class' => 'fi-wi-stats-overview-stat-primary']),
         ];
+    }
+
+    protected function getColumns(): int
+    {
+        return 4;
     }
 }
