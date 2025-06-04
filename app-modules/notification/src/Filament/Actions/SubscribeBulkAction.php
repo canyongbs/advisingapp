@@ -73,7 +73,6 @@ class SubscribeBulkAction
                       ->hintIconTooltip('If checked, all prior care subscriptions will be removed.'),
               ])
               ->action(function(array $data, Collection $records) use($context) {
-          
                     $records->each(function ($record) use ($data,$context) {
 
                       throw_unless($record instanceof Student || $record instanceof Prospect, new Exception("Record must be of type {$context}."));
@@ -94,7 +93,7 @@ class SubscribeBulkAction
                               ]);
                       }
                       
-                  });
+                    });
 
                   Notification::make()
                         ->title('Subscriptions created successfully.')
