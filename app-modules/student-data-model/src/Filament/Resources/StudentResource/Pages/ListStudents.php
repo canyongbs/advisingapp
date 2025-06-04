@@ -234,7 +234,7 @@ class ListStudents extends ListRecords
                     AddCareTeamMemberAction::make(CareTeamRoleType::Student),
                     BulkSegmentAction::make(segmentModel: SegmentModel::Student),
                     BulkCreateAlertAction::make()
-                        ->authorize(fn () => Gate::allows('create', Alert::class)),
+                        ->authorize(fn () => Gate::allows('create', Alert::class) && Gate::allows('update', [auth()->user(), Student::class])),
                 ]),
             ]);
     }

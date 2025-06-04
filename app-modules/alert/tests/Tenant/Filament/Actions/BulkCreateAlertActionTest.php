@@ -40,6 +40,7 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ListProspects
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ListStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Support\Str;
 
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
@@ -51,27 +52,43 @@ it('shows the form and validation', function (BulkCreateAlertActionRequestFactor
 
     $student = Student::factory()->create();
 
-    $request = collect(BulkCreateAlertActionRequestFactory::new($data)->create());
+    $request = BulkCreateAlertActionRequestFactory::new($data)->create();
 
     livewire(ListStudents::class)
         ->mountTableBulkAction('createAlert', [$student->getKey()])
-        ->setTableBulkActionData($request->toArray())
+        ->setTableBulkActionData($request)
         ->callMountedTableBulkAction()
         ->assertHasTableBulkActionErrors($errors);
 
-    assertDatabaseMissing(Alert::class, $request->toArray());
+    assertDatabaseMissing(Alert::class, $request);
 })->with([
     'description required' => [
         BulkCreateAlertActionRequestFactory::new()->without('description'),
         ['description' => 'required'],
     ],
+    'description max 150 characters only' => [
+        BulkCreateAlertActionRequestFactory::new([
+            'description' => str_repeat('a', 151),
+        ]),
+        ['description' => 'max:150'],
+    ],
     'status_id required' => [
         BulkCreateAlertActionRequestFactory::new()->without('status_id'),
         ['status_id' => 'required'],
     ],
+    'status_id exists' => [
+        BulkCreateAlertActionRequestFactory::new()->state(['status_id' => (string) Str::uuid()]),
+        ['status_id' => 'exists'],
+    ],
     'suggested_intervention required' => [
         BulkCreateAlertActionRequestFactory::new()->without('suggested_intervention'),
         ['suggested_intervention' => 'required'],
+    ],
+    'suggested_intervention max 150 characters only' => [
+        BulkCreateAlertActionRequestFactory::new([
+            'suggested_intervention' => str_repeat('a', 151),
+        ]),
+        ['suggested_intervention' => 'max:150'],
     ],
 ]);
 
@@ -80,10 +97,7 @@ it('can successfully create bulk alert with student', function () {
 
     $student = Student::factory()->create();
 
-    $request = collect(BulkCreateAlertActionRequestFactory::new()->create([
-        'concern_id' => $student->getKey(),
-        'concern_type' => $student->getMorphClass(),
-    ]));
+    $request = BulkCreateAlertActionRequestFactory::new()->create();
 
     livewire(ListStudents::class)
         ->mountTableBulkAction('createAlert', [$student->getKey()])
@@ -94,8 +108,11 @@ it('can successfully create bulk alert with student', function () {
         ->assertHasNoTableBulkActionErrors()
         ->assertSuccessful()
         ->assertNotified();
-
-    assertDatabaseHas(Alert::class, $request->toArray());
+    assertDatabaseHas(Alert::class, [
+        ...$request,
+        'concern_id' => $student->getKey(),
+        'concern_type' => $student->getMorphClass(),
+    ]);
 });
 
 it('can successfully create bulk alert with prospect', function () {
@@ -103,18 +120,19 @@ it('can successfully create bulk alert with prospect', function () {
 
     $prospect = Prospect::factory()->create();
 
-    $request = collect(BulkCreateAlertActionRequestFactory::new()->create([
-        'concern_id' => $prospect->getKey(),
-        'concern_type' => $prospect->getMorphClass(),
-    ]));
+    $request = BulkCreateAlertActionRequestFactory::new()->create();
 
     livewire(ListProspects::class)
         ->mountTableBulkAction('createAlert', [$prospect->getKey()])
-        ->setTableBulkActionData($request->toArray())
+        ->setTableBulkActionData($request)
         ->callMountedTableBulkAction()
         ->assertHasNoTableBulkActionErrors()
         ->assertSuccessful()
         ->assertNotified();
 
-    assertDatabaseHas(Alert::class, $request->toArray());
+    assertDatabaseHas(Alert::class, [
+        ...$request,
+        'concern_id' => $prospect->getKey(),
+        'concern_type' => $prospect->getMorphClass(),
+    ]);
 });

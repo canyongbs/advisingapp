@@ -255,7 +255,7 @@ class ListProspects extends ListRecords
                         }),
                     BulkSegmentAction::make(segmentModel: SegmentModel::Prospect),
                     BulkCreateAlertAction::make()
-                        ->authorize(fn () => Gate::allows('create', Alert::class)),
+                        ->authorize(fn () => Gate::allows('create', Alert::class) && Gate::allows('update', [auth()->user(), Prospect::class])),
                 ]),
             ]);
     }

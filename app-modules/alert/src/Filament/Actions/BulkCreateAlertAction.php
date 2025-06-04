@@ -55,11 +55,12 @@ class BulkCreateAlertAction
     {
         return BulkAction::make('createAlert')
             ->label('Create Alert')
-            ->icon('heroicon-o-chat-bubble-bottom-center-text')
+            ->icon('heroicon-o-bell-alert')
             ->modalHeading('Create Alert')
             ->form([
                 Textarea::make('description')
                     ->required()
+                    ->maxLength(150)
                     ->string()
                     ->label('Description'),
                 Select::make('severity')
@@ -70,6 +71,7 @@ class BulkCreateAlertAction
                     ->label('Severity'),
                 Textarea::make('suggested_intervention')
                     ->required()
+                    ->maxLength(150)
                     ->string()
                     ->label('Suggested Intervention'),
                 Select::make('status_id')
@@ -82,29 +84,27 @@ class BulkCreateAlertAction
                 try {
                     DB::beginTransaction();
 
-                    $records->chunk(100)->each(function ($chunk) use ($data) {
-                        $chunk->each(function ($record) use ($data) {
-                            throw_unless($record instanceof Student || $record instanceof Prospect, new Exception('Record must be of type student or prospect.'));
-                            $record->alerts()->create([
-                                ...$data,
-                            ]);
-                        });
-                    });
+                    foreach ($records as $record) {
+                        throw_unless($record instanceof Student || $record instanceof Prospect, new Exception('Record must be of type student or prospect.'));
+                        $record->alerts()->create([
+                            ...$data,
+                        ]);
+                    }
 
                     DB::commit();
                 } catch (Exception $e) {
                     DB::rollBack();
                     Notification::make()
-                        ->title('Could not save alert')
-                        ->body('We failed to create the alert. Please try again later.')
+                        ->title('Something went wrong')
+                        ->body('We failed to create the alerts. Please try again later.')
                         ->danger()
                         ->send();
 
                     return;
                 }
                 Notification::make()
-                    ->title('Alert created')
-                    ->body('The alert have been created with your selections.')
+                    ->title('Alerts created')
+                    ->body('Alerts have been created with your selections.')
                     ->success()
                     ->send();
             })
