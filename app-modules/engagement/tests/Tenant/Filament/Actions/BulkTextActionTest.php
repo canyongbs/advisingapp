@@ -37,6 +37,8 @@
 use AdvisingApp\Engagement\Jobs\CreateBatchedEngagement;
 use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ListProspects;
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ListStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Support\Facades\Queue;
@@ -46,7 +48,7 @@ use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
-it('can create an Email Engagement properly', function () {
+it('can create an SMS Engagement properly for students', function () {
     Queue::fake();
 
     asSuperAdmin();
@@ -55,14 +57,12 @@ it('can create an Email Engagement properly', function () {
 
     $faker = fake();
 
-    $subject = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $faker->sentence()]]]]];
     $body = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $faker->paragraph()]]]]];
 
     livewire(ListStudents::class)
-        ->mountTableBulkAction('engage', $students->pluck('sisid')->toArray())
+        ->mountTableBulkAction('send_text', $students->pluck('sisid')->toArray())
         ->setTableBulkActionData([
-            'channel' => NotificationChannel::Email->value,
-            'subject' => $subject,
+            'channel' => NotificationChannel::Sms->value,
             'body' => $body,
         ])
         ->callMountedTableBulkAction()
@@ -72,25 +72,24 @@ it('can create an Email Engagement properly', function () {
 
     $engagementBatch = EngagementBatch::first();
 
-    expect($engagementBatch->channel)->toEqual(NotificationChannel::Email);
-    expect($engagementBatch->subject)->toEqual($subject);
+    expect($engagementBatch->channel)->toEqual(NotificationChannel::Sms);
     expect($engagementBatch->body)->toEqual($body);
     Queue::assertPushed(CreateBatchedEngagement::class, 3);
 });
 
-it('can create an SMS Engagement properly', function () {
+it('can create an SMS Engagement properly for prospects', function () {
     Queue::fake();
 
     asSuperAdmin();
 
-    $students = Student::factory()->count(3)->create();
+    $prospects = Prospect::factory()->count(3)->create();
 
     $faker = fake();
 
     $body = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $faker->paragraph()]]]]];
 
-    livewire(ListStudents::class)
-        ->mountTableBulkAction('engage', $students->pluck('sisid')->toArray())
+    livewire(ListProspects::class)
+        ->mountTableBulkAction('send_text', $prospects->pluck('id')->toArray())
         ->setTableBulkActionData([
             'channel' => NotificationChannel::Sms->value,
             'body' => $body,

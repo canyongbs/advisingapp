@@ -61,7 +61,7 @@ class BulkTextAction
             ->label('Send Text')
             ->icon('heroicon-o-chat-bubble-bottom-center-text')
             ->modalHeading('Send Bulk Text')
-            ->modalDescription(fn (Collection $records) => "You have selected {$records->count()} {$context} to engage.")
+            ->modalDescription(fn (Collection $records) => "You have selected {$records->count()} {$context} to text.")
             ->steps([
                 Step::make('Engagement Details')
                     ->description("Add the details that will be sent to the selected {$context}")
