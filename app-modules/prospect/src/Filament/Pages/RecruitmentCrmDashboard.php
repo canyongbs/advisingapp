@@ -39,9 +39,11 @@ namespace AdvisingApp\Prospect\Filament\Pages;
 use AdvisingApp\Prospect\Filament\Widgets\ProspectsActionCenterWidget;
 use AdvisingApp\Prospect\Filament\Widgets\ProspectStats;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Enums\ActionCenterTab;
 use App\Filament\Widgets\ProspectGrowthChart;
 use App\Models\User;
 use Filament\Pages\Dashboard as BaseDashboard;
+use Livewire\Attributes\Url;
 use Symfony\Component\HttpFoundation\Response;
 
 class RecruitmentCrmDashboard extends BaseDashboard
@@ -58,6 +60,11 @@ class RecruitmentCrmDashboard extends BaseDashboard
 
     protected static ?string $navigationIcon = '';
 
+    #[Url]
+    public string $activeTab = ActionCenterTab::Subscribed->value;
+
+    protected static string $view = 'student-data-model::filament.pages.dashboard';
+
     public static function shouldRegisterNavigation(): bool
     {
         /** @var User $user */
@@ -72,6 +79,10 @@ class RecruitmentCrmDashboard extends BaseDashboard
         $user = auth()->user();
 
         abort_unless($user->hasLicense(Prospect::getLicenseType()), Response::HTTP_FORBIDDEN);
+
+        if (! ActionCenterTab::tryFrom($this->activeTab)) {
+            $this->redirect(static::getUrl(['activeTab' => ActionCenterTab::Subscribed->value]), navigate: true);
+        }
     }
 
     public function getWidgets(): array
@@ -80,6 +91,13 @@ class RecruitmentCrmDashboard extends BaseDashboard
             ProspectStats::class,
             ProspectsActionCenterWidget::class,
             ProspectGrowthChart::class,
+        ];
+    }
+
+    public function getWidgetData(): array
+    {
+        return [
+            'activeTab' => $this->activeTab,
         ];
     }
 }

@@ -34,24 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Settings;
+namespace AdvisingApp\StudentDataModel\Enums;
 
-use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Enums\AiResearchReasoningEffort;
-use Spatie\LaravelSettings\Settings;
+use Filament\Support\Contracts\HasLabel;
 
-class AiResearchAssistantSettings extends Settings
+enum ActionCenterTab: string implements HasLabel
 {
-    public ?AiModel $discovery_model = null;
+    case All = 'all';
 
-    public ?AiModel $research_model = null;
+    case Subscribed = 'subscribed';
 
-    public ?string $context = null;
+    case CareTeam = 'care_team';
 
-    public AiResearchReasoningEffort $reasoning_effort = AiResearchReasoningEffort::High;
-
-    public static function group(): string
+    public function getLabel(): string
     {
-        return 'ai_research_assistant';
+        return match ($this) {
+            self::All => 'All',
+            self::Subscribed => 'Subscribed',
+            self::CareTeam => 'Care Team',
+        };
     }
 }

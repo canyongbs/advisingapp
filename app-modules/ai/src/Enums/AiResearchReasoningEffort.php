@@ -34,24 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Settings;
+namespace AdvisingApp\Ai\Enums;
 
-use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Enums\AiResearchReasoningEffort;
-use Spatie\LaravelSettings\Settings;
+use Filament\Support\Contracts\HasLabel;
 
-class AiResearchAssistantSettings extends Settings
+enum AiResearchReasoningEffort: string implements HasLabel
 {
-    public ?AiModel $discovery_model = null;
+    case High = 'high';
 
-    public ?AiModel $research_model = null;
+    case Medium = 'medium';
 
-    public ?string $context = null;
+    case Low = 'low';
 
-    public AiResearchReasoningEffort $reasoning_effort = AiResearchReasoningEffort::High;
-
-    public static function group(): string
+    public function getLabel(): string
     {
-        return 'ai_research_assistant';
+        return $this->name;
     }
 }

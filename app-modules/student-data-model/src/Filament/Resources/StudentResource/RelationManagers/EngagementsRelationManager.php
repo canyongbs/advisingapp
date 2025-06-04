@@ -95,12 +95,13 @@ class EngagementsRelationManager extends RelationManager
                                             ->getStateUsing(function (Timeline $record): ?string {
                                                 $model = $record->timelineable;
 
-                                                if ($model instanceof Engagement) {
+                                                if ($model instanceof Engagement && $model->channel === NotificationChannel::Email) {
                                                     return (string) $model->getSubject();
                                                 }
 
                                                 return null;
                                             })
+                                            ->visible(fn (Timeline $record): bool => $record->timelineable instanceof Engagement && $record->timelineable->channel === NotificationChannel::Email)
                                             ->columnSpanFull(),
                                         EngagementBody::make('body')
                                             ->getStateUsing(fn (Timeline $record): HtmlString => $record->timelineable->getBody())

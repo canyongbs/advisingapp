@@ -34,24 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Settings;
+use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Enums\AiResearchReasoningEffort;
-use Spatie\LaravelSettings\Settings;
-
-class AiResearchAssistantSettings extends Settings
-{
-    public ?AiModel $discovery_model = null;
-
-    public ?AiModel $research_model = null;
-
-    public ?string $context = null;
-
-    public AiResearchReasoningEffort $reasoning_effort = AiResearchReasoningEffort::High;
-
-    public static function group(): string
+return new class () extends SettingsMigration {
+    public function up(): void
     {
-        return 'ai_research_assistant';
+        try {
+            $this->migrator->add('ai_research_assistant.reasoning_effort', 'high');
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
     }
-}
+
+    public function down(): void
+    {
+        $this->migrator->deleteIfExists('ai_research_assistant.reasoning_effort');
+    }
+};

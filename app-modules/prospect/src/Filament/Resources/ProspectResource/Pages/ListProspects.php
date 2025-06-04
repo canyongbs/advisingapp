@@ -38,7 +38,8 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use AdvisingApp\Alert\Filament\Actions\BulkCreateAlertAction;
 use AdvisingApp\CareTeam\Filament\Actions\AddCareTeamMemberAction;
-use AdvisingApp\Engagement\Filament\Actions\BulkEngagementAction;
+use AdvisingApp\Engagement\Filament\Actions\BulkEmailAction;
+use AdvisingApp\Engagement\Filament\Actions\BulkTextAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeBulkAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeTableAction;
 use AdvisingApp\Prospect\Filament\Actions\ProspectTagsBulkAction;
@@ -74,6 +75,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Gate;
 
 class ListProspects extends ListRecords
 {
@@ -185,8 +187,9 @@ class ListProspects extends ListRecords
             ->bulkActions([
                 BulkActionGroup::make([
                     SubscribeBulkAction::make(),
+                    BulkTextAction::make(context: 'prospects')->authorize(fn () => Gate::allows('update', [auth()->user(), Prospect::class])),
+                    BulkEmailAction::make(context: 'prospects')->authorize(fn () => Gate::allows('update', [auth()->user(), Prospect::class])),
                     ProspectTagsBulkAction::make()->visible(fn (): bool => auth()->user()->can('prospect.*.update')),
-                    BulkEngagementAction::make(context: 'prospects'),
                     DeleteBulkAction::make(),
                     AddCareTeamMemberAction::make(CareTeamRoleType::Prospect),
                     BulkAction::make('bulk_update')
