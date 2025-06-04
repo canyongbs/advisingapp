@@ -55,23 +55,7 @@ class ProspectGrowthChart extends ChartWidget
 
     protected int | string | array $columnSpan = 'full';
 
-    protected function getOptions(): array
-    {
-        return [
-            'plugins' => [
-                'legend' => [
-                    'display' => false,
-                ],
-            ],
-            'scales' => [
-                'y' => [
-                    'min' => 0,
-                ],
-            ],
-        ];
-    }
-
-    protected function getData(): array
+    public function getData(): array
     {
         /** @var User $user */
         $user = auth()->user();
@@ -116,6 +100,22 @@ class ProspectGrowthChart extends ChartWidget
                 ],
             ],
             'labels' => array_keys($runningTotalPerMonth),
+        ];
+    }
+
+    protected function getOptions(): array
+    {
+        return [
+            'plugins' => [
+                'legend' => [
+                    'display' => false,
+                ],
+            ],
+            'scales' => [
+                'y' => [
+                    'min' => 0,
+                ],
+            ],
         ];
     }
 

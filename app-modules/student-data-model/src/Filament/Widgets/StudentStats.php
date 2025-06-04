@@ -58,12 +58,7 @@ class StudentStats extends StatsOverviewWidget
     #[Reactive]
     public string $activeTab;
 
-    protected function getColumns(): int
-    {
-        return 4;
-    }
-
-    protected function getStats(): array
+    public function getStats(): array
     {
         /** @var User $user */
         $user = auth()->user();
@@ -114,5 +109,10 @@ class StudentStats extends StatsOverviewWidget
                 ->count()))
                 ->extraAttributes(['class' => 'fi-wi-stats-overview-stat-primary']),
         ];
+    }
+
+    protected function getColumns(): int
+    {
+        return 4;
     }
 }

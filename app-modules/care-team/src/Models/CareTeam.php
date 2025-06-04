@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\CareTeam\Models;
 
+use AdvisingApp\CareTeam\Database\Factories\CareTeamFactory;
 use AdvisingApp\CareTeam\Observers\CareTeamObserver;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
@@ -44,6 +45,7 @@ use App\Enums\CareTeamRoleType;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
@@ -59,6 +61,9 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class CareTeam extends MorphPivot implements CanTriggerAutoSubscription
 {
     use HasUuids;
+
+    /** @use HasFactory<CareTeamFactory> */
+    use HasFactory;
 
     public $timestamps = true;
 
