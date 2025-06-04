@@ -295,7 +295,9 @@ abstract class BaseOpenAiService implements AiService
 
         try {
             if (is_null($message->thread->name)) {
-                $message->thread->name = $this->complete($message->context, 'Generate a title for this chat, in 5 words or less. Do not respond with any greetings or salutations, and do not include any additional information or context. Just respond with the title:');
+                $prompt = $message->context . "\nThe following is the start of a chat between you and a user:\n" . $message->content;
+                
+                $message->thread->name = $this->complete($prompt, 'Generate a title for this chat, in 5 words or less. Do not respond with any greetings or salutations, and do not include any additional information or context. Just respond with the title:');
 
                 $message->thread->saved_at = now();
 
