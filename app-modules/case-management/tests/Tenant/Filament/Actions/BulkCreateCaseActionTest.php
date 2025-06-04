@@ -40,6 +40,7 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ListProspects
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ListStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Support\Str;
 
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
@@ -51,27 +52,39 @@ it('shows the form and validation', function (BulkCreateCaseActionRequestFactory
 
     $student = Student::factory()->create();
 
-    $request = collect(BulkCreateCaseActionRequestFactory::new($data)->create());
+    $request = BulkCreateCaseActionRequestFactory::new($data)->without('assigned_to_id')->create();
 
     livewire(ListStudents::class)
         ->mountTableBulkAction('createCase', [$student->getKey()])
-        ->setTableBulkActionData($request->toArray())
+        ->setTableBulkActionData($request)
         ->callMountedTableBulkAction()
         ->assertHasTableBulkActionErrors($errors);
 
-    assertDatabaseMissing(CaseModel::class, $request->toArray());
+    assertDatabaseMissing(CaseModel::class, $request);
 })->with([
     'division_id required' => [
         BulkCreateCaseActionRequestFactory::new()->without('division_id'),
         ['division_id' => 'required'],
     ],
+    'division_id exists' => [
+        BulkCreateCaseActionRequestFactory::new()->state(['division_id' => (string) Str::uuid()]),
+        ['division_id' => 'exists'],
+    ],
     'status_id required' => [
         BulkCreateCaseActionRequestFactory::new()->without('status_id'),
         ['status_id' => 'required'],
     ],
+    'status_id exists' => [
+        BulkCreateCaseActionRequestFactory::new()->state(['status_id' => (string) Str::uuid()]),
+        ['status_id' => 'exists'],
+    ],
     'priority_id required' => [
         BulkCreateCaseActionRequestFactory::new()->without('priority_id'),
         ['priority_id' => 'required'],
+    ],
+    'priority_id exists' => [
+        BulkCreateCaseActionRequestFactory::new()->state(['priority_id' => (string) Str::uuid()]),
+        ['priority_id' => 'exists'],
     ],
 ]);
 
@@ -80,22 +93,27 @@ it('can successfully create bulk case with student', function () {
 
     $student = Student::factory()->create();
 
-    $request = collect(BulkCreateCaseActionRequestFactory::new()->create([
-        'respondent_id' => $student->getKey(),
-        'respondent_type' => $student->getMorphClass(),
-    ]));
+    $request = BulkCreateCaseActionRequestFactory::new()->create();
 
     livewire(ListStudents::class)
         ->mountTableBulkAction('createCase', [$student->getKey()])
-        ->setTableBulkActionData([
-            ...$request,
-        ])
+        ->setTableBulkActionData($request)
         ->callMountedTableBulkAction()
         ->assertHasNoTableBulkActionErrors()
         ->assertSuccessful()
         ->assertNotified();
 
-    assertDatabaseHas(CaseModel::class, $request->toArray());
+    $expected = [
+        'division_id' => $request['division_id'],
+        'status_id' => $request['status_id'],
+        'respondent_type' => $student->getMorphClass(),
+        'respondent_id' => $student->getKey(),
+        'priority_id' => $request['priority_id'],
+        'close_details' => $request['close_details'],
+        'res_details' => $request['res_details'],
+    ];
+
+    assertDatabaseHas(CaseModel::class, $expected);
 });
 
 it('can successfully create bulk case with prospect', function () {
@@ -103,18 +121,25 @@ it('can successfully create bulk case with prospect', function () {
 
     $prospect = Prospect::factory()->create();
 
-    $request = collect(BulkCreateCaseActionRequestFactory::new()->create([
-        'respondent_id' => $prospect->getKey(),
-        'respondent_type' => $prospect->getMorphClass(),
-    ]));
+    $request = BulkCreateCaseActionRequestFactory::new()->create();
 
     livewire(ListProspects::class)
         ->mountTableBulkAction('createCase', [$prospect->getKey()])
-        ->setTableBulkActionData($request->toArray())
+        ->setTableBulkActionData($request)
         ->callMountedTableBulkAction()
         ->assertHasNoTableBulkActionErrors()
         ->assertSuccessful()
         ->assertNotified();
 
-    assertDatabaseHas(CaseModel::class, $request->toArray());
+    $expected = [
+        'division_id' => $request['division_id'],
+        'status_id' => $request['status_id'],
+        'respondent_type' => $prospect->getMorphClass(),
+        'respondent_id' => $prospect->getKey(),
+        'priority_id' => $request['priority_id'],
+        'close_details' => $request['close_details'],
+        'res_details' => $request['res_details'],
+    ];
+
+    assertDatabaseHas(CaseModel::class, $expected);
 });

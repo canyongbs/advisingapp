@@ -38,7 +38,6 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use AdvisingApp\CareTeam\Filament\Actions\AddCareTeamMemberAction;
 use AdvisingApp\CaseManagement\Filament\Actions\BulkCreateCaseAction;
-use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Engagement\Filament\Actions\BulkEngagementAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeBulkAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeTableAction;
@@ -74,7 +73,6 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Gate;
 
 class ListProspects extends ListRecords
 {
@@ -255,7 +253,7 @@ class ListProspects extends ListRecords
                         }),
                     BulkSegmentAction::make(segmentModel: SegmentModel::Prospect),
                     BulkCreateCaseAction::make()
-                        ->authorize(fn () => Gate::allows('create', CaseModel::class)),
+                        ->authorize(fn () => auth()->user()->can('prospect.*.update')),
                 ]),
             ]);
     }

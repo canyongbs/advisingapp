@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Actions;
 
+use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Models\CasePriority;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
@@ -96,13 +97,13 @@ class BulkCreateCaseAction
                     ->label('Priority')
                     ->required()
                     ->exists((new CasePriority())->getTable(), 'id'),
-                /*Select::make('assigned_to_id')
+                Select::make('assigned_to_id')
                     ->relationship('assignedTo.user', 'name')
                     ->model(CaseModel::class)
                     ->searchable()
                     ->label('Assign Case to')
                     ->nullable()
-                    ->exists((new User())->getTable(), 'id'),*/
+                    ->exists((new User())->getTable(), 'id'),
                 Textarea::make('close_details')
                     ->label('Close Details/Description')
                     ->nullable()
@@ -116,13 +117,25 @@ class BulkCreateCaseAction
                 try {
                     DB::beginTransaction();
 
-                    $records->chunk(100)->each(function ($chunk) use ($data) {
-                        $chunk->each(function ($record) use ($data) {
-                            throw_unless($record instanceof Student || $record instanceof Prospect, new Exception('Record must be of type student or prospect.'));
-                            $record->cases()->create([
-                                ...$data,
+                    $records->each(function ($record) use ($data) {
+                        throw_unless($record instanceof Student || $record instanceof Prospect, new Exception('Record must be of type student or prospect.'));
+                        $case = $record->cases()->create([
+                            'close_details' => $data['close_details'],
+                            'res_details' => $data['res_details'],
+                            'division_id' => $data['division_id'],
+                            'status_id' => $data['status_id'],
+                            'priority_id' => $data['priority_id'],
+                            'created_by_id' => auth()->id(),
+                        ]);
+
+                        if (isset($data['assigned_to_id'])) {
+                            $case->assignments()->create([
+                                'user_id' => $data['assigned_to_id'],
+                                'assigned_by_id' => auth()->id(),
+                                'assigned_at' => now(),
+                                'status' => CaseAssignmentStatus::Active,
                             ]);
-                        });
+                        }
                     });
 
                     DB::commit();

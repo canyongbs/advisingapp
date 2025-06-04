@@ -231,7 +231,7 @@ it('renders the bulk create case action based on proper access', function () {
         ->assertOk()
         ->assertTableBulkActionHidden('createCase');
 
-    $user->givePermissionTo('case.create');
+    $user->givePermissionTo('prospect.*.update');
 
     livewire(ListProspects::class)
         ->assertOk()
