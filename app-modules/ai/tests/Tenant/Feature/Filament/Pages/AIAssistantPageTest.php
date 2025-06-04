@@ -249,37 +249,6 @@ it('can save threads automatically', function () use ($setUp) {
     ]);
 });
 
-// it('can save threads into a folder', function () use ($setUp) {
-//     ['user' => $user, 'assistant' => $assistant] = $setUp();
-
-//     $thread = AiThread::factory()
-//         ->for($assistant, 'assistant')
-//         ->for($user)
-//         ->create([
-//             'name' => null,
-//         ]);
-
-//     $folder = AiThreadFolder::factory()
-//         ->for($user)
-//         ->create([
-//             'application' => AiAssistantApplication::PersonalAssistant,
-//         ]);
-
-//     Livewire::test(PersonalAssistant::class)
-//         ->call('selectThread', $thread->toArray())
-//         ->callAction('saveThread', [
-//             'name' => $name = Str::random(),
-//             'folder' => $folder->getKey(),
-//         ])
-//         ->assertHasNoActionErrors();
-
-//     assertDatabaseHas(AiThread::class, [
-//         'id' => $thread->getKey(),
-//         'name' => $name,
-//         'folder_id' => $folder->getKey(),
-//     ]);
-// });
-
 it('can select a thread', function () use ($setUp) {
     ['user' => $user, 'assistant' => $assistant, 'thread' => $thread] = $setUp();
 
