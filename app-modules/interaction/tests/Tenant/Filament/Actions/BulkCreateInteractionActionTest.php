@@ -169,5 +169,5 @@ it('can successfully create bulk interaction with prospect', function () {
         ->assertSuccessful()
         ->assertNotified();
 
-   assertDatabaseHas(Interaction::class, $prospect->interactions->first()->toArray());
+    assertDatabaseHas(Interaction::class, $prospect->interactions->first()->toArray());
 });

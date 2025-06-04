@@ -162,15 +162,15 @@ class BulkCreateInteractionAction
                     DB::rollBack();
                     Notification::make()
                         ->title('Something went wrong')
-                        ->body('We failed to create the ' .Str::plural('interaction', $records).'. Please try again later.')
+                        ->body('We failed to create the ' . Str::plural('interaction', $records) . '. Please try again later.')
                         ->danger()
                         ->send();
 
                     return;
                 }
                 Notification::make()
-                    ->title(Str::plural('Interaction', $records).' created')
-                    ->body('The '.Str::plural('interaction', $records).' have been created with your selections.')
+                    ->title(Str::plural('Interaction', $records) . ' created')
+                    ->body('The ' . Str::plural('interaction', $records) . ' have been created with your selections.')
                     ->success()
                     ->send();
             })

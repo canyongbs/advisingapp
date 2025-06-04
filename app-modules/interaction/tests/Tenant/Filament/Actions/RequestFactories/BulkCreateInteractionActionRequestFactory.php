@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Interaction\Tests\Tenant\Filament\Actions\RequestFactories;
 
-use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
@@ -44,18 +43,13 @@ use AdvisingApp\Interaction\Models\InteractionOutcome;
 use AdvisingApp\Interaction\Models\InteractionRelation;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Models\InteractionType;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
-use Exception;
 use Worksome\RequestFactories\RequestFactory;
 
 class BulkCreateInteractionActionRequestFactory extends RequestFactory
 {
     public function definition(): array
     {
-       
-
         return [
             'description' => $this->faker->paragraph(),
             'division_id' => Division::factory(),
