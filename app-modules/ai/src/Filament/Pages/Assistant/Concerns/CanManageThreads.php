@@ -44,8 +44,6 @@ use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Rules\RestrictSuperAdmin;
 use AdvisingApp\Ai\Services\Contracts\AiServiceLifecycleHooks;
-use AdvisingApp\Report\Enums\TrackedEventType;
-use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use AdvisingApp\Team\Models\Team;
 use App\Models\Scopes\WithoutSuperAdmin;
 use App\Models\User;
