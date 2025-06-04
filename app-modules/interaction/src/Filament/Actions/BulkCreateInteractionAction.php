@@ -56,6 +56,7 @@ use Filament\Notifications\Notification;
 use Filament\Tables\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class BulkCreateInteractionAction
 {
@@ -149,29 +150,27 @@ class BulkCreateInteractionAction
                 try {
                     DB::beginTransaction();
 
-                    $records->chunk(100)->each(function ($chunk) use ($data) {
-                        $chunk->each(function ($record) use ($data) {
-                            throw_unless($record instanceof Student || $record instanceof Prospect, new Exception('Record must be of type student or prospect.'));
-                            $record->interactions()->create([
-                                ...$data,
-                            ]);
-                        });
+                    $records->each(function ($record) use ($data) {
+                        throw_unless($record instanceof Student || $record instanceof Prospect, new Exception('Record must be of type student or prospect.'));
+                        $record->interactions()->create([
+                            ...$data,
+                        ]);
                     });
 
                     DB::commit();
                 } catch (Exception $e) {
                     DB::rollBack();
                     Notification::make()
-                        ->title('Could not save interaction')
-                        ->body('We failed to create the interaction. Please try again later.')
+                        ->title('Something went wrong')
+                        ->body('We failed to create the ' .Str::plural('interaction', $records).'. Please try again later.')
                         ->danger()
                         ->send();
 
                     return;
                 }
                 Notification::make()
-                    ->title('Interaction created')
-                    ->body('The interaction have been created with your selections.')
+                    ->title(Str::plural('Interaction', $records).' created')
+                    ->body('The '.Str::plural('interaction', $records).' have been created with your selections.')
                     ->success()
                     ->send();
             })

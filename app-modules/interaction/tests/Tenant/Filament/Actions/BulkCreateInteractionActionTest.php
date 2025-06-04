@@ -40,6 +40,7 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ListProspects
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ListStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Support\Str;
 
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
@@ -51,43 +52,71 @@ it('shows the form and validation', function (BulkCreateInteractionActionRequest
 
     $student = Student::factory()->create();
 
-    $request = collect(BulkCreateInteractionActionRequestFactory::new($data)->create());
+    $request = BulkCreateInteractionActionRequestFactory::new($data)->create();
 
     livewire(ListStudents::class)
         ->mountTableBulkAction('createInteraction', [$student->getKey()])
-        ->setTableBulkActionData($request->toArray())
+        ->setTableBulkActionData($request)
         ->callMountedTableBulkAction()
         ->assertHasTableBulkActionErrors($errors);
 
-    assertDatabaseMissing(Interaction::class, $request->toArray());
+    assertDatabaseMissing(Interaction::class, $request);
 })->with([
     'interaction_initiative_id required' => [
         BulkCreateInteractionActionRequestFactory::new()->without('interaction_initiative_id'),
         ['interaction_initiative_id' => 'required'],
     ],
+    'interaction_initiative_id exists' => [
+        BulkCreateInteractionActionRequestFactory::new()->state(['interaction_initiative_id' => (string) Str::uuid()]),
+        ['interaction_initiative_id' => 'exists'],
+    ],
     'interaction_driver_id required' => [
         BulkCreateInteractionActionRequestFactory::new()->without('interaction_driver_id'),
         ['interaction_driver_id' => 'required'],
+    ],
+    'interaction_driver_id exists' => [
+        BulkCreateInteractionActionRequestFactory::new()->state(['interaction_driver_id' => (string) Str::uuid()]),
+        ['interaction_driver_id' => 'exists'],
     ],
     'division_id required' => [
         BulkCreateInteractionActionRequestFactory::new()->without('division_id'),
         ['division_id' => 'required'],
     ],
+    'division_id exists' => [
+        BulkCreateInteractionActionRequestFactory::new()->state(['division_id' => (string) Str::uuid()]),
+        ['division_id' => 'exists'],
+    ],
     'interaction_outcome_id required' => [
         BulkCreateInteractionActionRequestFactory::new()->without('interaction_outcome_id'),
         ['interaction_outcome_id' => 'required'],
+    ],
+    'interaction_outcome_id exists' => [
+        BulkCreateInteractionActionRequestFactory::new()->state(['interaction_outcome_id' => (string) Str::uuid()]),
+        ['interaction_outcome_id' => 'exists'],
     ],
     'interaction_relation_id required' => [
         BulkCreateInteractionActionRequestFactory::new()->without('interaction_relation_id'),
         ['interaction_relation_id' => 'required'],
     ],
+    'interaction_relation_id exists' => [
+        BulkCreateInteractionActionRequestFactory::new()->state(['interaction_relation_id' => (string) Str::uuid()]),
+        ['interaction_relation_id' => 'exists'],
+    ],
     'interaction_status_id required' => [
         BulkCreateInteractionActionRequestFactory::new()->without('interaction_status_id'),
         ['interaction_status_id' => 'required'],
     ],
+    'interaction_status_id exists' => [
+        BulkCreateInteractionActionRequestFactory::new()->state(['interaction_status_id' => (string) Str::uuid()]),
+        ['interaction_status_id' => 'exists'],
+    ],
     'interaction_type_id required' => [
         BulkCreateInteractionActionRequestFactory::new()->without('interaction_type_id'),
         ['interaction_type_id' => 'required'],
+    ],
+    'interaction_type_id exists' => [
+        BulkCreateInteractionActionRequestFactory::new()->state(['interaction_type_id' => (string) Str::uuid()]),
+        ['interaction_type_id' => 'exists'],
     ],
     'start_datetime required' => [
         BulkCreateInteractionActionRequestFactory::new()->without('start_datetime'),
@@ -112,25 +141,17 @@ it('can successfully create bulk interaction with student', function () {
 
     $student = Student::factory()->create();
 
-    $request = collect(BulkCreateInteractionActionRequestFactory::new()->create([
-        'interactable_id' => $student->getKey(),
-        'interactable_type' => $student->getMorphClass(),
-        'user_id' => auth()->user()->getKey(),
-        'start_datetime' => now()->seconds(0)->format('Y-m-d H:i:s'),
-        'end_datetime' => now()->addMinutes(5)->seconds(0)->format('Y-m-d H:i:s'),
-    ]));
+    $request = BulkCreateInteractionActionRequestFactory::new()->create();
 
     livewire(ListStudents::class)
         ->mountTableBulkAction('createInteraction', [$student->getKey()])
-        ->setTableBulkActionData([
-            ...$request,
-        ])
+        ->setTableBulkActionData($request)
         ->callMountedTableBulkAction()
         ->assertHasNoTableBulkActionErrors()
         ->assertSuccessful()
         ->assertNotified();
 
-    assertDatabaseHas(Interaction::class, $request->toArray());
+    assertDatabaseHas(Interaction::class, $student->interactions->first()->toArray());
 });
 
 it('can successfully create bulk interaction with prospect', function () {
@@ -138,21 +159,15 @@ it('can successfully create bulk interaction with prospect', function () {
 
     $prospect = Prospect::factory()->create();
 
-    $request = collect(BulkCreateInteractionActionRequestFactory::new()->create([
-        'interactable_id' => $prospect->getKey(),
-        'interactable_type' => $prospect->getMorphClass(),
-        'user_id' => auth()->user()->getKey(),
-        'start_datetime' => now()->seconds(0)->format('Y-m-d H:i:s'),
-        'end_datetime' => now()->addMinutes(5)->seconds(0)->format('Y-m-d H:i:s'),
-    ]));
+    $request = BulkCreateInteractionActionRequestFactory::new()->create();
 
     livewire(ListProspects::class)
         ->mountTableBulkAction('createInteraction', [$prospect->getKey()])
-        ->setTableBulkActionData($request->toArray())
+        ->setTableBulkActionData($request)
         ->callMountedTableBulkAction()
         ->assertHasNoTableBulkActionErrors()
         ->assertSuccessful()
         ->assertNotified();
 
-    assertDatabaseHas(Interaction::class, $request->toArray());
+   assertDatabaseHas(Interaction::class, $prospect->interactions->first()->toArray());
 });
