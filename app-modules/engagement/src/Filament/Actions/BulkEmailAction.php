@@ -189,6 +189,7 @@ class BulkEmailAction
                             'extension' => $file->getClientOriginalExtension(),
                             'path' => (fn () => $this->path)->call($file),
                         ],
+                        /**@phpstan-ignore-next-line */
                         $form->getFlatFields()['body']->getTemporaryImages(),
                     ),
                     scheduledAt: ($data['send_later'] ?? false) ? Carbon::parse($data['scheduled_at'] ?? null) : null,
