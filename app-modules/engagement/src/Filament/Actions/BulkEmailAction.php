@@ -41,7 +41,6 @@ use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
-use Exception;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
@@ -173,7 +172,6 @@ class BulkEmailAction
             ])
             ->action(function (Collection $records, array $data, Form $form) {
                 /** @var Collection<int, CanBeNotified> $records */
-
                 app(CreateEngagementBatch::class)->execute(new EngagementCreationData(
                     user: Auth::user(),
                     recipient: $records->filter(fn (CanBeNotified $record) => $record->canReceiveEmail()),

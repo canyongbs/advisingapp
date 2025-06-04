@@ -41,7 +41,6 @@ use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Engagement\Filament\Forms\Components\EngagementSmsBodyInput;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
-use Exception;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Wizard\Step;
@@ -81,7 +80,6 @@ class BulkTextAction
             ])
             ->action(function (Collection $records, array $data, Form $form) {
                 /** @var Collection<int, CanBeNotified> $records */
-
                 app(CreateEngagementBatch::class)->execute(new EngagementCreationData(
                     user: Auth::user(),
                     recipient: $records->filter(fn (CanBeNotified $record) => $record->canReceiveSms()),
