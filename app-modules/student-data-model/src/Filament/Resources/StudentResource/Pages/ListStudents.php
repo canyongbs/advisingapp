@@ -235,7 +235,7 @@ class ListStudents extends ListRecords
                     AddCareTeamMemberAction::make(CareTeamRoleType::Student),
                     BulkSegmentAction::make(segmentModel: SegmentModel::Student),
                     BulkCreateAlertAction::make()
-                        ->visible(fn (): bool => auth()->user()->can('student.*.update') && auth()->user()->can('alert.*.create')),
+                        ->visible(fn (): bool => auth()->user()->can('student.*.update')),
                 ]),
             ]);
     }
