@@ -157,7 +157,6 @@ it('can filter students by alerts', function () {
         ->assertCanSeeTableRecords($studentsWithoutAlerts->merge([$studentWithStatusActive, $studentWithStatusInprogress]));
 });
 
-
 it('shows bulk assign tags action for authorized user', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 

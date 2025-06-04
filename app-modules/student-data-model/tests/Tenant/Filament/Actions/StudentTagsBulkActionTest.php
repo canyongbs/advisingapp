@@ -56,7 +56,7 @@ it('can bulk assign tags to students without remove the prior tags', function ()
 
     $students = Student::factory()->hasAttached($tag)->count(5)->create();
 
-    $students->each(function (Student $student) use($tag) {
+    $students->each(function (Student $student) use ($tag) {
         expect($student->tags()->where('tag_id', $tag->getKey())->exists())->toBeTrue();
     });
 
@@ -76,7 +76,7 @@ it('can bulk assign tags to students without remove the prior tags', function ()
 });
 
 it('can bulk assign tags to students and remove the prior tags', function () {
-   $user = User::factory()->licensed(Student::getLicenseType())->create();
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $user->givePermissionTo('student.view-any');
     $user->givePermissionTo('student.create');
@@ -88,7 +88,7 @@ it('can bulk assign tags to students and remove the prior tags', function () {
 
     $students = Student::factory()->hasAttached($tag)->count(5)->create();
 
-    $students->each(function (Student $student) use($tag) {
+    $students->each(function (Student $student) use ($tag) {
         expect($student->tags()->where('tag_id', $tag->getKey())->exists())->toBeTrue();
     });
 

@@ -84,7 +84,7 @@ class StudentTagsBulkAction
                             );
                     }
                 });
-                
+
                 Notification::make()
                     ->title('Tags assigned successfully.')
                     ->success()
