@@ -108,8 +108,11 @@ it('can successfully create bulk alert with student', function () {
         ->assertHasNoTableBulkActionErrors()
         ->assertSuccessful()
         ->assertNotified();
+
     assertDatabaseHas(Alert::class, [
-        ...$request,
+        'description' => $request['description'],
+        'status_id' => $request['status_id'],
+        'suggested_intervention' => $request['suggested_intervention'],
         'concern_id' => $student->getKey(),
         'concern_type' => $student->getMorphClass(),
     ]);
@@ -131,7 +134,9 @@ it('can successfully create bulk alert with prospect', function () {
         ->assertNotified();
 
     assertDatabaseHas(Alert::class, [
-        ...$request,
+        'description' => $request['description'],
+        'status_id' => $request['status_id'],
+        'suggested_intervention' => $request['suggested_intervention'],
         'concern_id' => $prospect->getKey(),
         'concern_type' => $prospect->getMorphClass(),
     ]);

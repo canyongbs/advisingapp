@@ -233,6 +233,9 @@ it('renders the bulk create alert action based on proper access', function () {
         ->assertTableBulkActionHidden('createAlert');
 
     $user->givePermissionTo('alert.create');
+    $user->givePermissionTo('prospect.*.update');
+
+    $user->refresh();
 
     livewire(ListProspects::class)
         ->assertOk()
