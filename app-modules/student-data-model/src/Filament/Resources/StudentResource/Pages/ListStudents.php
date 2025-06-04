@@ -45,6 +45,7 @@ use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Actions\DeleteStudent;
+use AdvisingApp\StudentDataModel\Filament\Actions\StudentTagsBulkAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\CareTeamRoleType;
@@ -229,6 +230,7 @@ class ListStudents extends ListRecords
                         }),
                     SubscribeBulkAction::make(),
                     BulkEngagementAction::make(context: 'students'),
+                    StudentTagsBulkAction::make()->visible(fn (): bool => auth()->user()->can('student.*.update')),
                     AddCareTeamMemberAction::make(CareTeamRoleType::Student),
                     BulkSegmentAction::make(segmentModel: SegmentModel::Student),
                 ]),
