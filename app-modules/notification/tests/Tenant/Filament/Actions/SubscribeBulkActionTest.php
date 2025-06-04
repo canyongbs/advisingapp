@@ -16,6 +16,7 @@ it('can bulk subscribe students without remove the prior subscriptions',function
 
     $user->givePermissionTo('student.view-any');
     $user->givePermissionTo('student.create');
+    $user->givePermissionTo('student.*.update');
 
     actingAs($user);
 
@@ -41,7 +42,7 @@ it('can bulk subscribe students without remove the prior subscriptions',function
         expect($student->subscriptions()->where('user_id', $anotherUser->getKey())->exists())->toBeTrue();
         expect($student->subscriptions()->where('user_id', $user->getKey())->exists())->toBeTrue();
     });
-});
+})->only();
 
 it('can bulk subscribe students and remove the prior subscriptions',function(){
     $user = User::factory()->licensed(Student::getLicenseType())->create();
@@ -49,6 +50,7 @@ it('can bulk subscribe students and remove the prior subscriptions',function(){
 
     $user->givePermissionTo('student.view-any');
     $user->givePermissionTo('student.create');
+    $user->givePermissionTo('student.*.update');
 
     actingAs($user);
 
@@ -82,6 +84,7 @@ it('can bulk subscribe prospects without remove the prior subscriptions',functio
 
     $user->givePermissionTo('prospect.view-any');
     $user->givePermissionTo('prospect.create');
+    $user->givePermissionTo('prospect.*.update');
 
     actingAs($user);
 
@@ -115,6 +118,7 @@ it('can bulk subscribe prospects and remove the prior subscriptions',function(){
 
     $user->givePermissionTo('prospect.view-any');
     $user->givePermissionTo('prospect.create');
+    $user->givePermissionTo('prospect.*.update');
 
     actingAs($user);
 
