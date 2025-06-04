@@ -173,15 +173,11 @@ class BulkEmailAction
             ])
             ->action(function (Collection $records, array $data, Form $form) {
                 /** @var Collection<int, CanBeNotified> $records */
-                $channel = NotificationChannel::parse(NotificationChannel::Email->value);
 
                 app(CreateEngagementBatch::class)->execute(new EngagementCreationData(
                     user: Auth::user(),
-                    recipient: match ($channel) {
-                        NotificationChannel::Email => $records->filter(fn (CanBeNotified $record) => $record->canReceiveEmail()),
-                        default => throw new Exception('Invalid engagement channel'),
-                    },
-                    channel: $channel,
+                    recipient: $records->filter(fn (CanBeNotified $record) => $record->canReceiveEmail()),
+                    channel: NotificationChannel::Email,
                     subject: $data['subject'] ?? null,
                     body: $data['body'] ?? null,
                     temporaryBodyImages: array_map(

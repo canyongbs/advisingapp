@@ -81,15 +81,11 @@ class BulkTextAction
             ])
             ->action(function (Collection $records, array $data, Form $form) {
                 /** @var Collection<int, CanBeNotified> $records */
-                $channel = NotificationChannel::parse(NotificationChannel::Sms->value);
 
                 app(CreateEngagementBatch::class)->execute(new EngagementCreationData(
                     user: Auth::user(),
-                    recipient: match ($channel) {
-                        NotificationChannel::Sms => $records->filter(fn (CanBeNotified $record) => $record->canReceiveSms()),
-                        default => throw new Exception('Invalid engagement channel'),
-                    },
-                    channel: $channel,
+                    recipient: $records->filter(fn (CanBeNotified $record) => $record->canReceiveSms()),
+                    channel: NotificationChannel::Sms,
                     subject: $data['subject'] ?? null,
                     body: $data['body'] ?? null,
                     temporaryBodyImages: array_map(

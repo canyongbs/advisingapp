@@ -48,7 +48,7 @@ use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
-it('can create an Email Engagement properly students', function () {
+it('can create a bulk Email Engagement properly for students', function () {
     Queue::fake();
 
     asSuperAdmin();
@@ -63,7 +63,6 @@ it('can create an Email Engagement properly students', function () {
     livewire(ListStudents::class)
         ->mountTableBulkAction('send_email', $students->pluck('sisid')->toArray())
         ->setTableBulkActionData([
-            'channel' => NotificationChannel::Email->value,
             'subject' => $subject,
             'body' => $body,
         ])
@@ -80,7 +79,7 @@ it('can create an Email Engagement properly students', function () {
     Queue::assertPushed(CreateBatchedEngagement::class, 3);
 });
 
-it('can create an Email Engagement properly prospects', function () {
+it('can create a bulk Email Engagement properly for prospects', function () {
     Queue::fake();
 
     asSuperAdmin();
@@ -95,7 +94,6 @@ it('can create an Email Engagement properly prospects', function () {
     livewire(ListProspects::class)
         ->mountTableBulkAction('send_email', $prospects->pluck('id')->toArray())
         ->setTableBulkActionData([
-            'channel' => NotificationChannel::Email->value,
             'subject' => $subject,
             'body' => $body,
         ])

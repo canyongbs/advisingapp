@@ -229,8 +229,8 @@ class ListStudents extends ListRecords
                                 ->send();
                         }),
                     SubscribeBulkAction::make(),
-                    BulkTextAction::make(context: 'students'),
-                    BulkEmailAction::make(context: 'students'),
+                    BulkTextAction::make(context: 'students')->authorize(fn () => Gate::allows('update', [auth()->user(), Student::class])),
+                    BulkEmailAction::make(context: 'students')->authorize(fn () => Gate::allows('update', [auth()->user(), Student::class])),
                     AddCareTeamMemberAction::make(CareTeamRoleType::Student),
                     BulkSegmentAction::make(segmentModel: SegmentModel::Student),
                 ]),

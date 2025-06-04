@@ -73,6 +73,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Gate;
 
 class ListProspects extends ListRecords
 {
@@ -184,8 +185,8 @@ class ListProspects extends ListRecords
             ->bulkActions([
                 BulkActionGroup::make([
                     SubscribeBulkAction::make(),
-                    BulkTextAction::make(context: 'prospects'),
-                    BulkEmailAction::make(context: 'prospects'),
+                    BulkTextAction::make(context: 'prospects')->authorize(fn () => Gate::allows('update', [auth()->user(), Prospect::class])),
+                    BulkEmailAction::make(context: 'prospects')->authorize(fn () => Gate::allows('update', [auth()->user(), Prospect::class])),
                     DeleteBulkAction::make(),
                     AddCareTeamMemberAction::make(CareTeamRoleType::Prospect),
                     BulkAction::make('bulk_update')
