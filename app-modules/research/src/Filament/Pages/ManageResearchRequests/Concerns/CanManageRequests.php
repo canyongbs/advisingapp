@@ -36,26 +36,26 @@
 
 namespace AdvisingApp\Research\Filament\Pages\ManageResearchRequests\Concerns;
 
-use AdvisingApp\Research\Models\ResearchRequest;
-use App\Models\User;
-use Filament\Actions\Action;
-use Filament\Actions\StaticAction;
-use Filament\Forms\Components\TextInput;
-use Filament\Support\Enums\ActionSize;
-use Illuminate\Support\Str;
-use Livewire\Attributes\Locked;
 use AdvisingApp\Ai\Rules\RestrictSuperAdmin;
 use AdvisingApp\Research\Enums\ResearchRequestShareTarget;
 use AdvisingApp\Research\Jobs\PrepareResearchRequestEmailing;
+use AdvisingApp\Research\Models\ResearchRequest;
 use AdvisingApp\Team\Models\Team;
 use App\Models\Scopes\WithoutSuperAdmin;
+use App\Models\User;
+use Filament\Actions\Action;
+use Filament\Actions\StaticAction;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
-use Filament\Support\Enums\Alignment;
 use Filament\Forms\Set;
+use Filament\Support\Enums\ActionSize;
+use Filament\Support\Enums\Alignment;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
+use Livewire\Attributes\Locked;
 
 trait CanManageRequests
 {
@@ -176,7 +176,7 @@ trait CanManageRequests
             ->modalSubmitActionLabel('Save')
             ->modalWidth('md')
             ->size(ActionSize::ExtraSmall)
-            ->fillForm(fn(array $arguments) => [
+            ->fillForm(fn (array $arguments) => [
                 'title' => auth()->user()->researchRequests()
                     ->find($arguments['request'])
                     ?->title,
@@ -204,7 +204,7 @@ trait CanManageRequests
             })
             ->icon('heroicon-m-pencil')
             ->color('warning')
-            ->modalSubmitAction(fn(StaticAction $action) => $action->color('primary'))
+            ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'))
             ->iconButton()
             ->extraAttributes([
                 'class' => 'relative inline-flex w-5 h-5 hidden group-hover:inline-flex',
@@ -227,14 +227,14 @@ trait CanManageRequests
                     ->default(ResearchRequestShareTarget::default()->value)
                     ->required()
                     ->live()
-                    ->afterStateUpdated(fn(Set $set) => $set('targetIds', [])),
+                    ->afterStateUpdated(fn (Set $set) => $set('targetIds', [])),
                 Select::make('targetIds')
-                    ->label(fn(Get $get): string => match ($get('targetType')) {
+                    ->label(fn (Get $get): string => match ($get('targetType')) {
                         ResearchRequestShareTarget::Team->value => 'Select Teams',
                         ResearchRequestShareTarget::User->value => 'Select Users',
                         default => '',
                     })
-                    ->visible(fn(Get $get): bool => filled($get('targetType')))
+                    ->visible(fn (Get $get): bool => filled($get('targetType')))
                     ->options(function (Get $get): Collection {
                         return match ($get('targetType')) {
                             ResearchRequestShareTarget::Team->value => Team::orderBy('name')->pluck('name', 'id'),
@@ -246,7 +246,7 @@ trait CanManageRequests
                     ->multiple()
                     ->required()
                     ->rules([
-                        fn(Get $get) => match ($get('targetType')) {
+                        fn (Get $get) => match ($get('targetType')) {
                             ResearchRequestShareTarget::User->value => new RestrictSuperAdmin('email'),
                             ResearchRequestShareTarget::Team->value => null,
                             default => '',
@@ -270,6 +270,6 @@ trait CanManageRequests
             ->link()
             ->icon('heroicon-m-envelope')
             ->color('warning')
-            ->modalSubmitAction(fn(StaticAction $action) => $action->color('primary'));
+            ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'));
     }
 }

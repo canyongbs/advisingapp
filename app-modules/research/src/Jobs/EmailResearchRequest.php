@@ -39,6 +39,7 @@ namespace AdvisingApp\Research\Jobs;
 use AdvisingApp\Research\Models\ResearchRequest;
 use AdvisingApp\Research\Notifications\ResearchTranscriptNotification;
 use App\Models\User;
+use Filament\Notifications\Notification;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -49,32 +50,38 @@ use Illuminate\Queue\SerializesModels;
 
 class EmailResearchRequest implements ShouldQueue
 {
-  use Batchable;
-  use Dispatchable;
-  use InteractsWithQueue;
-  use Queueable;
-  use SerializesModels;
+    use Batchable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
-  public function __construct(
-    protected ResearchRequest $researchRequest,
-    protected ?string $note,
-    protected User $sender,
-    protected User $recipient,
-    protected bool $shouldNotify = true,
-  ) {}
+    public function __construct(
+        protected ResearchRequest $researchRequest,
+        protected ?string $note,
+        protected User $sender,
+        protected User $recipient,
+        protected bool $shouldNotify = true,
+    ) {}
 
-  /**
-   * @return array<int, SkipIfBatchCancelled>
-   */
-  public function middleware(): array
-  {
-    return [new SkipIfBatchCancelled()];
-  }
-
-  public function handle(): void
-  {
-    if ($this->shouldNotify) {
-      $this->recipient->notifyNow(new ResearchTranscriptNotification($this->researchRequest, $this->note, $this->sender));
+    /**
+     * @return array<int, SkipIfBatchCancelled>
+     */
+    public function middleware(): array
+    {
+        return [new SkipIfBatchCancelled()];
     }
-  }
+
+    public function handle(): void
+    {
+        $this->recipient->notifyNow(new ResearchTranscriptNotification($this->researchRequest, $this->note, $this->sender));
+
+        if ($this->shouldNotify) {
+            $recipientName = $this->sender->is($this->recipient) ? 'yourself' : $this->recipient->name;
+            Notification::make()
+                ->success()
+                ->title("You emailed a research report to {$recipientName}.")
+                ->sendToDatabase($this->sender);
+        }
+    }
 }
