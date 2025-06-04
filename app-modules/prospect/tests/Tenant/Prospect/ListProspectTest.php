@@ -241,3 +241,24 @@ it('renders the bulk create alert action based on proper access', function () {
         ->assertOk()
         ->assertTableBulkActionVisible('createAlert');
 });
+
+it('shows bulk assign tags action for authorized user', function () {
+    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
+
+    $user->givePermissionTo('prospect.view-any');
+    $user->givePermissionTo('prospect.create');
+
+    actingAs($user);
+
+    $prospects = Prospect::factory()->count(5)->create();
+
+    livewire(ListProspects::class)
+        ->assertCanSeeTableRecords($prospects)
+        ->assertTableBulkActionHidden('bulkProspectTags');
+
+    $user->givePermissionTo('prospect.*.update');
+
+    livewire(ListProspects::class)
+        ->assertCanSeeTableRecords($prospects)
+        ->assertTableBulkActionVisible('bulkProspectTags');
+});
