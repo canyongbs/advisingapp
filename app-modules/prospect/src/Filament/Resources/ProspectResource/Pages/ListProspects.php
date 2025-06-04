@@ -41,6 +41,7 @@ use AdvisingApp\Engagement\Filament\Actions\BulkEmailAction;
 use AdvisingApp\Engagement\Filament\Actions\BulkTextAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeBulkAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeTableAction;
+use AdvisingApp\Prospect\Filament\Actions\ProspectTagsBulkAction;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Imports\ProspectImporter;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -187,6 +188,7 @@ class ListProspects extends ListRecords
                     SubscribeBulkAction::make(),
                     BulkTextAction::make(context: 'prospects')->authorize(fn () => Gate::allows('update', [auth()->user(), Prospect::class])),
                     BulkEmailAction::make(context: 'prospects')->authorize(fn () => Gate::allows('update', [auth()->user(), Prospect::class])),
+                    ProspectTagsBulkAction::make()->visible(fn (): bool => auth()->user()->can('prospect.*.update')),
                     DeleteBulkAction::make(),
                     AddCareTeamMemberAction::make(CareTeamRoleType::Prospect),
                     BulkAction::make('bulk_update')
