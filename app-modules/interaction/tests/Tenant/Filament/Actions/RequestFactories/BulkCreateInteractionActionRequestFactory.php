@@ -43,7 +43,6 @@ use AdvisingApp\Interaction\Models\InteractionOutcome;
 use AdvisingApp\Interaction\Models\InteractionRelation;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Models\InteractionType;
-use App\Models\User;
 use Worksome\RequestFactories\RequestFactory;
 
 class BulkCreateInteractionActionRequestFactory extends RequestFactory
@@ -53,16 +52,15 @@ class BulkCreateInteractionActionRequestFactory extends RequestFactory
         return [
             'description' => $this->faker->paragraph(),
             'division_id' => Division::factory(),
-            'end_datetime' => now()->addMinutes(5),
+            'end_datetime' => now()->addMinutes(5)->seconds(0)->format('Y-m-d H:i:s'),
             'interaction_driver_id' => InteractionDriver::factory(),
             'interaction_initiative_id' => InteractionInitiative::factory(),
             'interaction_outcome_id' => InteractionOutcome::factory(),
             'interaction_relation_id' => InteractionRelation::factory(),
             'interaction_status_id' => InteractionStatus::factory(),
             'interaction_type_id' => InteractionType::factory(),
-            'start_datetime' => now(),
+            'start_datetime' => now()->seconds(0)->format('Y-m-d H:i:s'),
             'subject' => $this->faker->sentence(),
-            'user_id' => User::factory(),
         ];
     }
 }

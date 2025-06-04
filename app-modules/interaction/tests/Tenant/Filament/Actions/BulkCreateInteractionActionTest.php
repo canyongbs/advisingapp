@@ -151,7 +151,23 @@ it('can successfully create bulk interaction with student', function () {
         ->assertSuccessful()
         ->assertNotified();
 
-    assertDatabaseHas(Interaction::class, $student->interactions->first()->toArray());
+    $expected = [
+        'interaction_initiative_id' => $request['interaction_initiative_id'],
+        'interaction_driver_id' => $request['interaction_driver_id'],
+        'division_id' => $request['division_id'],
+        'interaction_outcome_id' => $request['interaction_outcome_id'],
+        'interaction_relation_id' => $request['interaction_relation_id'],
+        'interaction_status_id' => $request['interaction_status_id'],
+        'interaction_type_id' => $request['interaction_type_id'],
+        'start_datetime' => $request['start_datetime'],
+        'end_datetime' => $request['end_datetime'],
+        'subject' => $request['subject'],
+        'description' => $request['description'],
+        'interactable_id' => $student->getKey(),
+        'interactable_type' => $student->getMorphClass(),
+    ];
+
+    assertDatabaseHas(Interaction::class, $expected);
 });
 
 it('can successfully create bulk interaction with prospect', function () {
@@ -169,5 +185,21 @@ it('can successfully create bulk interaction with prospect', function () {
         ->assertSuccessful()
         ->assertNotified();
 
-    assertDatabaseHas(Interaction::class, $prospect->interactions->first()->toArray());
+    $expected = [
+        'interaction_initiative_id' => $request['interaction_initiative_id'],
+        'interaction_driver_id' => $request['interaction_driver_id'],
+        'division_id' => $request['division_id'],
+        'interaction_outcome_id' => $request['interaction_outcome_id'],
+        'interaction_relation_id' => $request['interaction_relation_id'],
+        'interaction_status_id' => $request['interaction_status_id'],
+        'interaction_type_id' => $request['interaction_type_id'],
+        'start_datetime' => $request['start_datetime'],
+        'end_datetime' => $request['end_datetime'],
+        'subject' => $request['subject'],
+        'description' => $request['description'],
+        'interactable_id' => $prospect->getKey(),
+        'interactable_type' => $prospect->getMorphClass(),
+    ];
+
+    assertDatabaseHas(Interaction::class, $expected);
 });

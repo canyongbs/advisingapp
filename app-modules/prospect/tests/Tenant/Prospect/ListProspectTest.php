@@ -232,7 +232,7 @@ it('renders the bulk create interaction action based on proper access', function
         ->assertOk()
         ->assertTableBulkActionHidden('createInteraction');
 
-    $user->givePermissionTo('interaction.create');
+    $user->givePermissionTo('prospect.*.update');
 
     livewire(ListProspects::class)
         ->assertOk()
