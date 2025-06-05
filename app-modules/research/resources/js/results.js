@@ -48,13 +48,8 @@ document.addEventListener('alpine:init', () => {
         init: async function () {
             this.resultsHtml = this.render(this.$refs.markdownInput.value);
 
-            let newHtml = null;
-            // let typingDelay = null;
-
             while (this.$refs.isStreamingInput.value) {
                 if (this.$refs.markdownInput.value.length > this.resultsMarkdownLength) {
-                    // newHtml = this.render(this.$refs.markdownInput.value);
-
                     const binary = atob(this.$refs.markdownInput.value);
                     const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
                     const markdown = new TextDecoder().decode(bytes);
@@ -69,31 +64,6 @@ document.addEventListener('alpine:init', () => {
                         '<h2 class="sr-only" id="footnote-label">Footnotes</h2>',
                         '<h2 id="footnote-label">References</h2>',
                     );
-
-                    // this.resultsMarkdownLength = this.$refs.markdownInput.value.length;
-
-                    // if (this.resultsHtml.length > newHtml.length) {
-                    //     this.resultsHtml = newHtml;
-                    // }
-
-                    // this.resultsHtml = newHtml;
-
-                    // Not sure if we need to do this or not?
-                    // this.resultsHtml = newHtml.slice(0, this.resultsHtml.length);
-
-                    // let newContent = this.resultsHtml + newHtml.slice(this.resultsHtml.length);
-
-                    // this.resultsHtml += newHtml.slice(this.resultsHtml.length);
-
-                    // typingDelay = Math.ceil(Math.min(10000 / (newHtml.length - this.resultsHtml.length), 40));
-
-                    // this.resultsHtml = newHtml.slice(0, this.resultsHtml.length);
-
-                    // for (let i = this.resultsHtml.length; i < newHtml.length; i++) {
-                    //     this.resultsHtml += newHtml[i];
-
-                    //     await new Promise((resolve) => setTimeout(resolve, typingDelay));
-                    // }
                 }
 
                 await new Promise((resolve) => setTimeout(resolve, 500));
