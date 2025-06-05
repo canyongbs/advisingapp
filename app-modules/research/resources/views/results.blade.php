@@ -53,10 +53,6 @@
             x-ref="markdownInput"
         />
 
-        @if (filled($researchRequest?->title))
-            <h1>{{ $researchRequest->title }}</h1>
-        @endif
-
         <details
             class="research-request-reasoning"
             x-show="reasoningHtml"
@@ -66,7 +62,13 @@
             <div x-html="reasoningHtml"></div>
         </details>
 
-        <div x-html="resultsHtml"></div>
+        <div class="mx-1 mb-12 p-6 rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
+            @if (filled($researchRequest?->title))
+                <h1>{{ $researchRequest->title }}</h1>
+            @endif
+
+            <div x-html="resultsHtml"></div>
+        </div>
     </section>
 
     <script src="{{ url('js/canyon-gbs/research/results.js') . '?v=' . app('current-commit') }}"></script>
