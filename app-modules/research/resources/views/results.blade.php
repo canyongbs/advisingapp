@@ -60,10 +60,13 @@
                 open 
             @endif
         >
-            <summary>Reasoning</summary>
+            <summary class="cursor-pointer">Reasoning</summary>
 
             <div
-                class="h-20 overflow-y-auto text-xs tracking-tight"
+                @class([
+                    'flex h-20 overflow-y-auto text-xs tracking-tight',
+                    'flex-col-reverse' => $researchRequest?->hasStarted() && !$researchRequest?->finished_at ? 1 : 0
+                ])
                 x-html="reasoningHtml"
             >
             </div>
