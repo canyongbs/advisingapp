@@ -452,4 +452,10 @@ trait CanManageThreads
 
         return $this->thread->locked_at !== null;
     }
+
+    public function refreshThreads(): void
+    {
+        $this->threadsWithoutAFolder = $this->getThreadsWithoutAFolder();
+        $this->folders = $this->getFolders();
+    }
 }
