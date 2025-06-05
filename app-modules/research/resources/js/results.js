@@ -53,14 +53,30 @@ document.addEventListener('alpine:init', () => {
 
             while (this.$refs.isStreamingInput.value) {
                 if (this.$refs.markdownInput.value.length > this.resultsMarkdownLength) {
-                    newHtml = this.render(this.$refs.markdownInput.value);
-                    this.resultsMarkdownLength = this.$refs.markdownInput.value.length;
+                    // newHtml = this.render(this.$refs.markdownInput.value);
 
-                    if (this.resultsHtml.length > newHtml.length) {
-                        this.resultsHtml = newHtml;
-                    }
+                    const binary = atob(this.$refs.markdownInput.value);
+                    const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
+                    const markdown = new TextDecoder().decode(bytes);
 
-                    this.resultsHtml = newHtml;
+                    let unsafeHtml = marked.use(markedFootnote()).parse(markdown);
+
+                    let newContent = unsafeHtml.split('</think>')
+
+                    this.reasoningHtml = DOMPurify.sanitize(newContent[0].replace('<think>', ''));
+
+                    this.resultsHtml = DOMPurify.sanitize(newContent[1] ?? '').replace(
+                        '<h2 class="sr-only" id="footnote-label">Footnotes</h2>',
+                        '<h2 id="footnote-label">References</h2>',
+                    );
+
+                    // this.resultsMarkdownLength = this.$refs.markdownInput.value.length;
+
+                    // if (this.resultsHtml.length > newHtml.length) {
+                    //     this.resultsHtml = newHtml;
+                    // }
+
+                    // this.resultsHtml = newHtml;
 
                     // Not sure if we need to do this or not?
                     // this.resultsHtml = newHtml.slice(0, this.resultsHtml.length);
