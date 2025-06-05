@@ -125,13 +125,13 @@ class BulkCreateCaseAction
                             'division_id' => $data['division_id'],
                             'status_id' => $data['status_id'],
                             'priority_id' => $data['priority_id'],
-                            'created_by_id' => auth()->id(),
+                            'created_by_id' => auth()->user()->getKey(),
                         ]);
 
                         if (isset($data['assigned_to_id'])) {
                             $case->assignments()->create([
                                 'user_id' => $data['assigned_to_id'],
-                                'assigned_by_id' => auth()->id(),
+                                'assigned_by_id' => auth()->user()->getKey(),
                                 'assigned_at' => now(),
                                 'status' => CaseAssignmentStatus::Active,
                             ]);

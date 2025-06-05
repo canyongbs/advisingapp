@@ -69,6 +69,13 @@ class CaseBlock extends CampaignActionBlock
             Select::make($fieldPrefix . 'division_id')
                 ->relationship('division', 'name')
                 ->model(CaseModel::class)
+                ->default(
+                    fn () => auth()->user()->team?->division?->getKey()
+                              ?? Division::query()
+                                  ->where('is_default', true)
+                                  ->first()
+                                  ?->getKey()
+                )
                 ->label('Division')
                 ->required()
                 ->exists((new Division())->getTable(), 'id'),

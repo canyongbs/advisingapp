@@ -34,6 +34,8 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
+use AdvisingApp\CaseManagement\Models\CaseAssignment;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Tests\Tenant\Filament\Actions\RequestFactories\BulkCreateCaseActionRequestFactory;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ListProspects;
@@ -114,6 +116,46 @@ it('can successfully create bulk case with student', function () {
     ];
 
     assertDatabaseHas(CaseModel::class, $expected);
+
+    $expectedassignments = [
+        'case_model_id' => CaseModel::query()->where($expected)->first()->getKey(),
+        'user_id' => $request['assigned_to_id'],
+        'assigned_by_id' => auth()->user()->getKey(),
+        'status' => CaseAssignmentStatus::Active,
+    ];
+
+    assertDatabaseHas(CaseAssignment::class, $expectedassignments);
+
+    $request = BulkCreateCaseActionRequestFactory::new()->without('assigned_to_id')->create();
+
+    livewire(ListStudents::class)
+        ->mountTableBulkAction('createCase', [$student->getKey()])
+        ->setTableBulkActionData($request)
+        ->callMountedTableBulkAction()
+        ->assertHasNoTableBulkActionErrors()
+        ->assertSuccessful()
+        ->assertNotified();
+
+    $expected = [
+        'division_id' => $request['division_id'],
+        'status_id' => $request['status_id'],
+        'respondent_type' => $student->getMorphClass(),
+        'respondent_id' => $student->getKey(),
+        'priority_id' => $request['priority_id'],
+        'close_details' => $request['close_details'],
+        'res_details' => $request['res_details'],
+    ];
+
+    assertDatabaseHas(CaseModel::class, $expected);
+
+    $unexpectedassignments = [
+        'case_model_id' => CaseModel::query()->where($expected)->first()->getKey(),
+        'user_id' => null,
+        'assigned_by_id' => auth()->user()->getKey(),
+        'status' => CaseAssignmentStatus::Active,
+    ];
+
+    assertDatabaseMissing(CaseAssignment::class, $unexpectedassignments);
 });
 
 it('can successfully create bulk case with prospect', function () {
@@ -142,4 +184,44 @@ it('can successfully create bulk case with prospect', function () {
     ];
 
     assertDatabaseHas(CaseModel::class, $expected);
+
+    $expectedassignments = [
+        'case_model_id' => CaseModel::query()->where($expected)->first()->getKey(),
+        'user_id' => $request['assigned_to_id'],
+        'assigned_by_id' => auth()->user()->getKey(),
+        'status' => CaseAssignmentStatus::Active,
+    ];
+
+    assertDatabaseHas(CaseAssignment::class, $expectedassignments);
+
+    $request = BulkCreateCaseActionRequestFactory::new()->without('assigned_to_id')->create();
+
+    livewire(ListProspects::class)
+        ->mountTableBulkAction('createCase', [$prospect->getKey()])
+        ->setTableBulkActionData($request)
+        ->callMountedTableBulkAction()
+        ->assertHasNoTableBulkActionErrors()
+        ->assertSuccessful()
+        ->assertNotified();
+
+    $expected = [
+        'division_id' => $request['division_id'],
+        'status_id' => $request['status_id'],
+        'respondent_type' => $prospect->getMorphClass(),
+        'respondent_id' => $prospect->getKey(),
+        'priority_id' => $request['priority_id'],
+        'close_details' => $request['close_details'],
+        'res_details' => $request['res_details'],
+    ];
+
+    assertDatabaseHas(CaseModel::class, $expected);
+
+    $unexpectedassignments = [
+        'case_model_id' => CaseModel::query()->where($expected)->first()->getKey(),
+        'user_id' => null,
+        'assigned_by_id' => auth()->user()->getKey(),
+        'status' => CaseAssignmentStatus::Active,
+    ];
+
+    assertDatabaseMissing(CaseAssignment::class, $unexpectedassignments);
 });
