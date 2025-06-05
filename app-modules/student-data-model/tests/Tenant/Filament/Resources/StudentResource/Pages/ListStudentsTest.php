@@ -177,3 +177,22 @@ it('shows bulk assign tags action for authorized user', function () {
         ->assertCanSeeTableRecords($students)
         ->assertTableBulkActionVisible('bulkStudentTags');
 });
+
+it('renders the bulk create interaction action based on proper access', function () {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+
+    $user->givePermissionTo('student.view-any');
+    $user->givePermissionTo('student.*.view');
+
+    actingAs($user);
+
+    livewire(ListStudents::class)
+        ->assertOk()
+        ->assertTableBulkActionHidden('createInteraction');
+
+    $user->givePermissionTo('student.*.update');
+
+    livewire(ListStudents::class)
+        ->assertOk()
+        ->assertTableBulkActionVisible('createInteraction');
+});

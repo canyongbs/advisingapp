@@ -89,7 +89,18 @@ class InteractionBlock extends CampaignActionBlock
                         ->relationship('division', 'name')
                         ->model(Interaction::class)
                         ->preload()
+                        ->default(
+                            fn () => auth()->user()->team?->division?->getKey()
+                                ?? Division::query()
+                                    ->where('is_default', true)
+                                    ->first()
+                                    ?->getKey()
+                        )
                         ->label('Division')
+                        ->visible(function () {
+                            return Division::query()->where('is_default', false)->exists();
+                        })
+                        ->dehydratedWhenHidden()
                         ->required()
                         ->exists((new Division())->getTable(), 'id'),
                     Select::make($fieldPrefix . 'interaction_outcome_id')

@@ -39,6 +39,7 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 use AdvisingApp\CareTeam\Filament\Actions\AddCareTeamMemberAction;
 use AdvisingApp\Engagement\Filament\Actions\BulkEmailAction;
 use AdvisingApp\Engagement\Filament\Actions\BulkTextAction;
+use AdvisingApp\Interaction\Filament\Actions\BulkCreateInteractionAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeBulkAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeTableAction;
 use AdvisingApp\Prospect\Filament\Actions\ProspectTagsBulkAction;
@@ -256,6 +257,8 @@ class ListProspects extends ListRecords
                                 ->send();
                         }),
                     BulkSegmentAction::make(segmentModel: SegmentModel::Prospect),
+                    BulkCreateInteractionAction::make()
+                        ->authorize(fn () => auth()->user()->can('prospect.*.update')),
                 ]),
             ]);
     }
