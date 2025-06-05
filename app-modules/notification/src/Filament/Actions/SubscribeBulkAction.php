@@ -36,19 +36,20 @@
 
 namespace AdvisingApp\Notification\Filament\Actions;
 
-use AdvisingApp\Notification\Actions\SubscriptionToggle;
-use AdvisingApp\Notification\Models\Contracts\Subscribable;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use App\Models\User;
 use Exception;
+use App\Models\User;
+use Illuminate\Support\Str;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Notifications\Notification;
 use Filament\Tables\Actions\BulkAction;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
+use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Tables\Columns\TextInputColumn;
 use Illuminate\Database\Eloquent\Collection;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Notification\Actions\SubscriptionToggle;
+use AdvisingApp\Notification\Models\Contracts\Subscribable;
 
 class SubscribeBulkAction
 {
@@ -57,7 +58,9 @@ class SubscribeBulkAction
         return BulkAction::make('bulkSubscription')
               ->icon('heroicon-s-bell')
               ->modalHeading('Create Bulk Subscription')
-              ->modalDescription(fn (Collection $records) => "You have selected {$records->count()} {$context} to subscribe.")
+              ->modalDescription(
+                fn (Collection $records) => "You have selected {$records->count()} " . Str::plural($context, $records->count()) . ' to subscribe.'
+              )
               ->form([
                   Select::make('user_ids')
                         ->label('Who should be subscribed?')
@@ -70,7 +73,7 @@ class SubscribeBulkAction
                   Toggle::make('remove_prior')
                       ->label('Remove all prior subscriptions?')
                       ->default(false)
-                      ->hintIconTooltip('If checked, all prior care subscriptions will be removed.'),
+                      ->hintIconTooltip('If checked, all prior subscriptions will be removed.'),
               ])
               ->action(function(array $data, Collection $records) use($context) {
                     $records->each(function ($record) use ($data,$context) {
