@@ -59,7 +59,11 @@
         >
             <summary>Reasoning</summary>
 
-            <div x-html="reasoningHtml"></div>
+            <div
+                class="h-20 overflow-y-auto text-xs tracking-tight"
+                x-html="reasoningHtml"
+            >
+            </div>
         </details>
 
         <div class="mx-1 mb-12 p-6 rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
