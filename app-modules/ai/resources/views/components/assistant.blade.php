@@ -36,10 +36,13 @@
     use App\Features\SubmitAiChatOnEnterFlag;
 @endphp
 
-<div class="h-[calc(100dvh-4rem)]">  
+<div class="h-[calc(100dvh-4rem)]">
     @if ($this->isConsented && $this->thread)
         @capture($sidebarContent, $assistantSwitcherForm)
-            <div class="flex select-none flex-col gap-y-2" x-on:refresh-threads.window="$wire.$refresh()">
+            <div
+                class="flex select-none flex-col gap-y-2"
+                x-on:refresh-threads.window="$wire.$refresh()"
+            >
                 <div
                     class="relative"
                     x-data="{ isSearchingAssistants: false }"
