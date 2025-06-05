@@ -37,6 +37,7 @@
 namespace AdvisingApp\Campaign\Policies;
 
 use AdvisingApp\Campaign\Models\CampaignAction;
+use App\Features\JourneyStepPermissionRename;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
@@ -44,6 +45,13 @@ class CampaignActionPolicy
 {
     public function viewAny(Authenticatable $authenticatable): Response
     {
+        if (JourneyStepPermissionRename::active()) {
+            return $authenticatable->canOrElse(
+                abilities: 'journey_step.view-any',
+                denyResponse: 'You do not have permission to view journey steps.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: 'campaign_action.view-any',
             denyResponse: 'You do not have permission to view journey steps.'
@@ -52,6 +60,13 @@ class CampaignActionPolicy
 
     public function view(Authenticatable $authenticatable, CampaignAction $campaignAction): Response
     {
+        if (JourneyStepPermissionRename::active()) {
+            return $authenticatable->canOrElse(
+                abilities: ["journey_step.{$campaignAction->getKey()}.view"],
+                denyResponse: 'You do not have permission to view this journey step.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["campaign_action.{$campaignAction->getKey()}.view"],
             denyResponse: 'You do not have permission to view this journey step.'
@@ -60,6 +75,13 @@ class CampaignActionPolicy
 
     public function create(Authenticatable $authenticatable): Response
     {
+        if (JourneyStepPermissionRename::active()) {
+            return $authenticatable->canOrElse(
+                abilities: 'journey_step.create',
+                denyResponse: 'You do not have permission to create journey steps.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: 'campaign_action.create',
             denyResponse: 'You do not have permission to create journey steps.'
@@ -68,6 +90,13 @@ class CampaignActionPolicy
 
     public function update(Authenticatable $authenticatable, CampaignAction $campaignAction): Response
     {
+        if (JourneyStepPermissionRename::active()) {
+            return $authenticatable->canOrElse(
+                abilities: ["journey_step.{$campaignAction->getKey()}.update"],
+                denyResponse: 'You do not have permission to update this journey step.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["campaign_action.{$campaignAction->getKey()}.update"],
             denyResponse: 'You do not have permission to update this journey step.'
@@ -76,6 +105,13 @@ class CampaignActionPolicy
 
     public function delete(Authenticatable $authenticatable, CampaignAction $campaignAction): Response
     {
+        if (JourneyStepPermissionRename::active()) {
+            return $authenticatable->canOrElse(
+                abilities: ["journey_step.{$campaignAction->getKey()}.delete"],
+                denyResponse: 'You do not have permission to delete this journey step.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["campaign_action.{$campaignAction->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this journey step.'
@@ -84,6 +120,13 @@ class CampaignActionPolicy
 
     public function restore(Authenticatable $authenticatable, CampaignAction $campaignAction): Response
     {
+        if (JourneyStepPermissionRename::active()) {
+            return $authenticatable->canOrElse(
+                abilities: ["journey_step.{$campaignAction->getKey()}.restore"],
+                denyResponse: 'You do not have permission to restore this journey step.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["campaign_action.{$campaignAction->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore this journey step.'
@@ -92,6 +135,13 @@ class CampaignActionPolicy
 
     public function forceDelete(Authenticatable $authenticatable, CampaignAction $campaignAction): Response
     {
+        if (JourneyStepPermissionRename::active()) {
+            return $authenticatable->canOrElse(
+                abilities: ["journey_step.{$campaignAction->getKey()}.force-delete"],
+                denyResponse: 'You do not have permission to permanently delete this journey step.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["campaign_action.{$campaignAction->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this journey step.'
