@@ -7,7 +7,6 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ListSt
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 
-use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
@@ -41,7 +40,7 @@ it('can bulk subscribe students without removing the prior subscriptions', funct
     });
 });
 
-it('can bulk subscribe students and removing the prior subscriptions', function () {
+it('can bulk subscribe students and remove the prior subscriptions', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     $anotherUser = User::factory()->licensed(Student::getLicenseType())->create();
 
@@ -71,7 +70,7 @@ it('can bulk subscribe students and removing the prior subscriptions', function 
     });
 });
 
-it('can bulk subscribe prospects without remove the prior subscriptions', function () {
+it('can bulk subscribe prospects without removing the prior subscriptions', function () {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
     $anotherUser = User::factory()->licensed(Prospect::getLicenseType())->create();
 
@@ -104,7 +103,7 @@ it('can bulk subscribe prospects without remove the prior subscriptions', functi
 it('can bulk subscribe prospects and remove the prior subscriptions', function () {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
     $anotherUser = User::factory()->licensed(Prospect::getLicenseType())->create();
-    
+
     asSuperAdmin($user);
 
     $prospects = Prospect::factory()->has(
