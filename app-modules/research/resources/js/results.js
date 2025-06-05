@@ -56,7 +56,7 @@ document.addEventListener('alpine:init', () => {
 
                     let unsafeHtml = marked.use(markedFootnote()).parse(markdown);
 
-                    let newContent = unsafeHtml.split('</think>')
+                    let newContent = unsafeHtml.split('</think>');
 
                     this.reasoningHtml = DOMPurify.sanitize(newContent[0].replace('<think>', ''));
 

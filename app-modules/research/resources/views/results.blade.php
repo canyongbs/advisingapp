@@ -33,7 +33,7 @@
 --}}
 <div @if ($researchRequest?->hasStarted() && !$researchRequest?->finished_at) wire:poll.3s @endif>
     @if (!$researchRequest?->finished_at)
-        <div class="flex items-center gap-2 mb-4">
+        <div class="mb-4 flex items-center gap-2">
             <x-filament::loading-indicator class="h-5 w-5" /> Researching...
         </div>
     @endif
@@ -56,16 +56,17 @@
         <details
             class="research-request-reasoning"
             x-show="reasoningHtml"
-            @if ($researchRequest?->hasStarted() && !$researchRequest?->finished_at ? 1 : 0)
-                open 
-            @endif
+            @if ($researchRequest?->hasStarted() && !$researchRequest?->finished_at ? 1 : 0) open @endif
         >
             <summary class="cursor-pointer">Reasoning</summary>
 
             <div
                 @class([
                     'flex h-20 overflow-y-auto text-xs tracking-tight shadow-sm ring-1 ring-gray-950/5 dark:ring-white/10 px-4 items-start',
-                    'flex-col-reverse' => $researchRequest?->hasStarted() && !$researchRequest?->finished_at ? 1 : 0
+                    'flex-col-reverse' =>
+                        $researchRequest?->hasStarted() && !$researchRequest?->finished_at
+                            ? 1
+                            : 0,
                 ])
                 x-html="reasoningHtml"
             >
@@ -73,8 +74,8 @@
         </details>
 
         <div
+            class="mx-1 mb-12 rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10"
             x-show="resultsHtml.length > 0"
-            class="mx-1 mb-12 p-6 rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10"
         >
             @if (filled($researchRequest?->title))
                 <h1>{{ $researchRequest->title }}</h1>
