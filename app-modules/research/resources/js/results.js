@@ -49,7 +49,7 @@ document.addEventListener('alpine:init', () => {
             this.resultsHtml = this.render(this.$refs.markdownInput.value);
 
             let newHtml = null;
-            let typingDelay = null;
+            // let typingDelay = null;
 
             while (this.$refs.isStreamingInput.value) {
                 if (this.$refs.markdownInput.value.length > this.resultsMarkdownLength) {
@@ -60,9 +60,14 @@ document.addEventListener('alpine:init', () => {
                         this.resultsHtml = newHtml;
                     }
 
-                    this.resultsHtml = newHtml.slice(0, this.resultsHtml.length);
+                    this.resultsHtml = newHtml;
 
-                    this.resultsHtml += newHtml.slice(this.resultsHtml.length);
+                    // Not sure if we need to do this or not?
+                    // this.resultsHtml = newHtml.slice(0, this.resultsHtml.length);
+
+                    // let newContent = this.resultsHtml + newHtml.slice(this.resultsHtml.length);
+
+                    // this.resultsHtml += newHtml.slice(this.resultsHtml.length);
 
                     // typingDelay = Math.ceil(Math.min(10000 / (newHtml.length - this.resultsHtml.length), 40));
 
