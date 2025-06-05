@@ -60,15 +60,19 @@ document.addEventListener('alpine:init', () => {
                         this.resultsHtml = newHtml;
                     }
 
-                    typingDelay = Math.ceil(Math.min(10000 / (newHtml.length - this.resultsHtml.length), 40));
-
                     this.resultsHtml = newHtml.slice(0, this.resultsHtml.length);
 
-                    for (let i = this.resultsHtml.length; i < newHtml.length; i++) {
-                        this.resultsHtml += newHtml[i];
+                    this.resultsHtml += newHtml.slice(this.resultsHtml.length);
 
-                        await new Promise((resolve) => setTimeout(resolve, typingDelay));
-                    }
+                    // typingDelay = Math.ceil(Math.min(10000 / (newHtml.length - this.resultsHtml.length), 40));
+
+                    // this.resultsHtml = newHtml.slice(0, this.resultsHtml.length);
+
+                    // for (let i = this.resultsHtml.length; i < newHtml.length; i++) {
+                    //     this.resultsHtml += newHtml[i];
+
+                    //     await new Promise((resolve) => setTimeout(resolve, typingDelay));
+                    // }
                 }
 
                 await new Promise((resolve) => setTimeout(resolve, 500));
