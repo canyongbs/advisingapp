@@ -196,3 +196,22 @@ it('renders the bulk create interaction action based on proper access', function
         ->assertOk()
         ->assertTableBulkActionVisible('createInteraction');
 });
+
+it('renders the bulk create case action based on proper access', function () {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+
+    $user->givePermissionTo('student.view-any');
+    $user->givePermissionTo('student.*.view');
+
+    actingAs($user);
+
+    livewire(ListStudents::class)
+        ->assertOk()
+        ->assertTableBulkActionHidden('createCase');
+
+    $user->givePermissionTo('student.*.update');
+
+    livewire(ListStudents::class)
+        ->assertOk()
+        ->assertTableBulkActionVisible('createCase');
+});
