@@ -40,6 +40,7 @@ use AdvisingApp\Alert\Filament\Actions\BulkCreateAlertAction;
 use AdvisingApp\CareTeam\Filament\Actions\AddCareTeamMemberAction;
 use AdvisingApp\Engagement\Filament\Actions\BulkEmailAction;
 use AdvisingApp\Engagement\Filament\Actions\BulkTextAction;
+use AdvisingApp\Interaction\Filament\Actions\BulkCreateInteractionAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeBulkAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeTableAction;
 use AdvisingApp\Segment\Actions\BulkSegmentAction;
@@ -238,6 +239,8 @@ class ListStudents extends ListRecords
                     BulkSegmentAction::make(segmentModel: SegmentModel::Student),
                     BulkCreateAlertAction::make()
                         ->visible(fn (): bool => auth()->user()->can('student.*.update')),
+                    BulkCreateInteractionAction::make()
+                        ->authorize(fn () => auth()->user()->can('student.*.update')),
                 ]),
             ]);
     }
