@@ -31,34 +31,59 @@
 
 </COPYRIGHT>
 --}}
-@php
-    use League\CommonMark\Extension\Footnote\FootnoteExtension;
-@endphp
-
 <div @if ($researchRequest?->hasStarted() && !$researchRequest?->finished_at) wire:poll.3s @endif>
     @if (!$researchRequest?->finished_at)
-        <div class="flex items-center gap-2">
+        <div class="mb-4 flex items-center gap-2">
             <x-filament::loading-indicator class="h-5 w-5" /> Researching...
         </div>
     @endif
 
-    @if (filled($researchRequest?->results))
-        <section class="prose max-w-none dark:prose-invert">
-            @if (filled($researchRequest->title))
+    <section
+        class="prose max-w-none dark:prose-invert"
+        x-data="results"
+    >
+        <input
+            type="hidden"
+            value="{{ $researchRequest?->hasStarted() && !$researchRequest?->finished_at ? 1 : 0 }}"
+            x-ref="isStreamingInput"
+        />
+        <input
+            type="hidden"
+            value="{{ base64_encode($researchRequest?->results) }}"
+            x-ref="markdownInput"
+        />
+
+        <details
+            class="research-request-reasoning"
+            x-show="reasoningHtml"
+            @if ($researchRequest?->hasStarted() && !$researchRequest?->finished_at ? 1 : 0) open @endif
+        >
+            <summary class="cursor-pointer">Reasoning</summary>
+
+            <div
+                @class([
+                    'flex h-20 overflow-y-auto text-xs tracking-tight shadow-sm ring-1 ring-gray-950/5 dark:ring-white/10 px-4 items-start',
+                    'flex-col-reverse' =>
+                        $researchRequest?->hasStarted() && !$researchRequest?->finished_at
+                            ? 1
+                            : 0,
+                ])
+                x-html="reasoningHtml"
+            >
+            </div>
+        </details>
+
+        <div
+            class="mx-1 mb-12 rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10"
+            x-show="resultsHtml.length > 0"
+        >
+            @if (filled($researchRequest?->title))
                 <h1>{{ $researchRequest->title }}</h1>
             @endif
 
-            {!! str($researchRequest->results)->replace('<think>', '<details wire:ignore.self><summary>Reasoning</summary>')->replace('</think>', '</details>')->markdown(
-                    options: [
-                        'footnote' => [
-                            'container_add_hr' => false,
-                        ],
-                    ],
-                    extensions: [app(FootnoteExtension::class)],
-                )->replace(
-                    '<div class="footnotes" role="doc-endnotes">',
-                    '<div class="footnotes" role="doc-endnotes"><h2>References</h2>',
-                )->sanitizeHtml() !!}
-        </section>
-    @endif
+            <div x-html="resultsHtml"></div>
+        </div>
+    </section>
+
+    <script src="{{ url('js/canyon-gbs/research/results.js') . '?v=' . app('current-commit') }}"></script>
 </div>

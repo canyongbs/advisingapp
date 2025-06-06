@@ -53,6 +53,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class BulkCreateCaseAction
 {
@@ -143,16 +144,16 @@ class BulkCreateCaseAction
                     DB::rollBack();
                     Log::info($e->getMessage());
                     Notification::make()
-                        ->title('Could not save case')
-                        ->body('We failed to create the case. Please try again later.')
+                        ->title('Something went wrong')
+                        ->body('We failed to create the ' . Str::plural('case', $records) . '. Please try again later.')
                         ->danger()
                         ->send();
 
                     return;
                 }
                 Notification::make()
-                    ->title('Case created')
-                    ->body('The cases have been created with your selections.')
+                    ->title(Str::plural('Case', $records) . ' created')
+                    ->body('The ' . Str::plural('case', $records) . ' have been created with your selections.')
                     ->success()
                     ->send();
             })
