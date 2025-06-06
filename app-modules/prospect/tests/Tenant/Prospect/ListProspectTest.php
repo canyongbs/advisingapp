@@ -281,3 +281,25 @@ it('renders the bulk create interaction action based on proper access', function
         ->assertOk()
         ->assertTableBulkActionVisible('createInteraction');
 });
+
+it('shows bulk subscription action for authorized user', function () {
+    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
+
+    $user->givePermissionTo('prospect.view-any');
+    $user->givePermissionTo('prospect.create');
+
+    actingAs($user);
+
+    livewire(ListProspects::class)
+        ->assertOk()
+        ->assertTableBulkActionHidden('bulkSubscription');
+
+    $user->givePermissionTo('prospect.*.update');
+
+    $prospects = Prospect::factory()->count(5)->create();
+
+    livewire(ListProspects::class)
+        ->assertCanSeeTableRecords($prospects)
+        ->assertTableBulkActionVisible('bulkSubscription')
+        ->assertSuccessful();
+});

@@ -187,7 +187,7 @@ class ListProspects extends ListRecords
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    SubscribeBulkAction::make(),
+                    SubscribeBulkAction::make(context: 'prospect')->authorize(fn (): bool => auth()->user()->can('prospect.*.update')),
                     BulkTextAction::make(context: 'prospects')->authorize(fn () => Gate::allows('update', [auth()->user(), Prospect::class])),
                     BulkEmailAction::make(context: 'prospects')->authorize(fn () => Gate::allows('update', [auth()->user(), Prospect::class])),
                     ProspectTagsBulkAction::make()->visible(fn (): bool => auth()->user()->can('prospect.*.update')),

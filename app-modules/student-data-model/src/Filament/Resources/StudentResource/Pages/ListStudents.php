@@ -231,7 +231,7 @@ class ListStudents extends ListRecords
                                 ->body($notification['body'])
                                 ->send();
                         }),
-                    SubscribeBulkAction::make(),
+                    SubscribeBulkAction::make(context: 'student')->authorize(fn (): bool => auth()->user()->can('student.*.update')),
                     BulkTextAction::make(context: 'students')->authorize(fn () => Gate::allows('update', [auth()->user(), Student::class])),
                     BulkEmailAction::make(context: 'students')->authorize(fn () => Gate::allows('update', [auth()->user(), Student::class])),
                     StudentTagsBulkAction::make()->visible(fn (): bool => auth()->user()->can('student.*.update')),
