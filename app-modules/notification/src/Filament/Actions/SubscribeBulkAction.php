@@ -36,73 +36,67 @@
 
 namespace AdvisingApp\Notification\Filament\Actions;
 
-use Exception;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
-use Illuminate\Support\Str;
+use Exception;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
-use Filament\Tables\Actions\BulkAction;
-use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
-use AdvisingApp\Prospect\Models\Prospect;
-use Filament\Tables\Columns\TextInputColumn;
+use Filament\Tables\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Collection;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Notification\Actions\SubscriptionToggle;
-use AdvisingApp\Notification\Models\Contracts\Subscribable;
+use Illuminate\Support\Str;
 
 class SubscribeBulkAction
 {
     public static function make(string $context): BulkAction
     {
         return BulkAction::make('bulkSubscription')
-              ->icon('heroicon-s-bell')
-              ->modalHeading('Create Bulk Subscription')
-              ->modalDescription(
+            ->icon('heroicon-s-bell')
+            ->modalHeading('Create Bulk Subscription')
+            ->modalDescription(
                 fn (Collection $records) => "You have selected {$records->count()} " . Str::plural($context, $records->count()) . ' to subscribe.'
-              )
-              ->form([
-                  Select::make('user_ids')
-                        ->label('Who should be subscribed?')
-                        ->options(User::all()->pluck('name', 'id'))
-                        ->multiple()
-                        ->searchable()
-                        ->default([auth()->id()])
-                        ->required()
-                        ->exists('users', 'id'),
-                  Toggle::make('remove_prior')
-                      ->label('Remove all prior subscriptions?')
-                      ->default(false)
-                      ->hintIconTooltip('If checked, all prior subscriptions will be removed.'),
-              ])
-              ->action(function(array $data, Collection $records) use($context) {
-                    $records->each(function ($record) use ($data,$context) {
+            )
+            ->form([
+                Select::make('user_ids')
+                    ->label('Who should be subscribed?')
+                    ->options(User::all()->pluck('name', 'id'))
+                    ->multiple()
+                    ->searchable()
+                    ->default([auth()->id()])
+                    ->required()
+                    ->exists('users', 'id'),
+                Toggle::make('remove_prior')
+                    ->label('Remove all prior subscriptions?')
+                    ->default(false)
+                    ->hintIconTooltip('If checked, all prior subscriptions will be removed.'),
+            ])
+            ->action(function (array $data, Collection $records) use ($context) {
+                $records->each(function ($record) use ($data, $context) {
+                    throw_unless($record instanceof Student || $record instanceof Prospect, new Exception("Record must be of type {$context}."));
 
-                      throw_unless($record instanceof Student || $record instanceof Prospect, new Exception("Record must be of type {$context}."));
+                    $removePrior = $data['remove_prior'];
+                    $userIds = $data['user_ids'] ?? [];
 
-                      $removePrior = $data['remove_prior'];
-                      $userIds = $data['user_ids'] ?? [];
+                    if ($removePrior) {
+                        $record->subscriptions()->delete();
+                    }
 
-                      if ($removePrior) {
-                          $record->subscriptions()->delete();
-                      }
+                    foreach ($userIds as $userId) {
+                        $record->subscriptions()
+                            ->firstOrCreate([
+                                'subscribable_id' => $record->getKey(),
+                                'subscribable_type' => $record->getMorphClass(),
+                                'user_id' => $userId,
+                            ]);
+                    }
+                });
 
-                      foreach ($userIds as $userId) {
-                          $record->subscriptions()
-                              ->firstOrCreate([
-                                  'subscribable_id' => $record->getKey(),
-                                  'subscribable_type' => $record->getMorphClass(),
-                                  'user_id' => $userId,
-                              ]);
-                      }
-                      
-                    });
-
-                  Notification::make()
-                        ->title('Subscriptions created successfully.')
-                        ->success()
-                        ->send();
-                })
-                ->deselectRecordsAfterCompletion();
+                Notification::make()
+                    ->title('Subscriptions created successfully.')
+                    ->success()
+                    ->send();
+            })
+            ->deselectRecordsAfterCompletion();
     }
 }
