@@ -148,16 +148,16 @@ class AiAssistantForm
                             ->hiddenLabel()
                             ->multiple()
                             ->reactive()
-                            ->maxFiles(fn (?AiAssistant $record): int => 3 - $record?->files->count() ?? 0)
-                            ->disabled(fn (?AiAssistant $record): int => $record?->files->count() === 3)
+                            ->maxFiles(fn (?AiAssistant $record): int => 5 - $record?->files->count() ?? 0)
+                            ->disabled(fn (?AiAssistant $record): int => $record?->files->count() === 5)
                             ->acceptedFileTypes(config('ai.supported_file_types'))
                             ->storeFiles(false)
                             ->helperText(function (?AiAssistant $record): string {
-                                if ($record?->files->count() < 3) {
-                                    return 'You may upload a total of 3 files to your custom assistant. Files must be less than 20MB.';
+                                if ($record?->files->count() < 5) {
+                                    return 'You may upload a total of 5 files to your custom assistant. Files must be less than 20MB.';
                                 }
 
-                                return "You've reached the maximum file upload limit of 3 for custom assistants. Please delete a file if you wish to upload another.";
+                                return "You've reached the maximum file upload limit of 5 for custom assistants. Please delete a file if you wish to upload another.";
                             })
                             ->maxSize(20000)
                             ->columnSpan(function (Get $get) {
