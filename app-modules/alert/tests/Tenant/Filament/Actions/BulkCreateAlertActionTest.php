@@ -66,11 +66,11 @@ it('shows the form and validation', function (BulkCreateAlertActionRequestFactor
         BulkCreateAlertActionRequestFactory::new()->without('description'),
         ['description' => 'required'],
     ],
-    'description max 150 characters only' => [
+    'description max 65535 characters only' => [
         BulkCreateAlertActionRequestFactory::new([
-            'description' => str_repeat('a', 151),
+            'description' => str_repeat('a', 65536),
         ]),
-        ['description' => 'max:150'],
+        ['description' => 'max:65535'],
     ],
     'status_id required' => [
         BulkCreateAlertActionRequestFactory::new()->without('status_id'),
@@ -84,11 +84,11 @@ it('shows the form and validation', function (BulkCreateAlertActionRequestFactor
         BulkCreateAlertActionRequestFactory::new()->without('suggested_intervention'),
         ['suggested_intervention' => 'required'],
     ],
-    'suggested_intervention max 150 characters only' => [
+    'suggested_intervention max 65535 characters only' => [
         BulkCreateAlertActionRequestFactory::new([
-            'suggested_intervention' => str_repeat('a', 151),
+            'suggested_intervention' => str_repeat('a', 65536),
         ]),
-        ['suggested_intervention' => 'max:150'],
+        ['suggested_intervention' => 'max:65535'],
     ],
 ]);
 

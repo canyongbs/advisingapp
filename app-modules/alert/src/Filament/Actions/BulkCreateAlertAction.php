@@ -60,7 +60,7 @@ class BulkCreateAlertAction
             ->form([
                 Textarea::make('description')
                     ->required()
-                    ->maxLength(150)
+                    ->maxLength(65535)
                     ->string()
                     ->label('Description'),
                 Select::make('severity')
@@ -71,7 +71,7 @@ class BulkCreateAlertAction
                     ->label('Severity'),
                 Textarea::make('suggested_intervention')
                     ->required()
-                    ->maxLength(150)
+                    ->maxLength(65535)
                     ->string()
                     ->label('Suggested Intervention'),
                 Select::make('status_id')
