@@ -107,7 +107,7 @@ class AiAssistantForm
                             ->maxLength(fn (Get $get): int => (AiModel::parse($get('model')) ?? AiModel::OpenAiGpt4o)->getService()->getMaxAssistantInstructionsLength()),
                     ]),
                 Section::make('Additional Knowledge')
-                    ->description('Add additional knowledge to your custom AI Assistant to improve its responses.')
+                    ->description('Add additional knowledge to your custom advisor to improve its responses.')
                     ->reactive()
                     ->columns([
                         'sm' => 1,
@@ -142,22 +142,22 @@ class AiAssistantForm
                             ->deleteAction(
                                 fn (Action $action) => $action->requiresConfirmation()
                                     ->modalHeading('Are you sure you want to delete this file?')
-                                    ->modalDescription('This file will be permanently removed from the assistant, and cannot be restored.')
+                                    ->modalDescription('This file will be permanently removed from your custom advisor, and cannot be restored.')
                             ),
                         FileUpload::make('uploaded_files')
                             ->hiddenLabel()
                             ->multiple()
                             ->reactive()
                             ->maxFiles(fn (?AiAssistant $record): int => 5 - $record?->files->count() ?? 0)
-                            ->disabled(fn (?AiAssistant $record): int => $record?->files->count() === 5)
+                            ->disabled(fn (?AiAssistant $record): int => $record?->files->count() >= 5)
                             ->acceptedFileTypes(config('ai.supported_file_types'))
                             ->storeFiles(false)
                             ->helperText(function (?AiAssistant $record): string {
                                 if ($record?->files->count() < 5) {
-                                    return 'You may upload a total of 5 files to your custom assistant. Files must be less than 20MB.';
+                                    return 'You may upload a total of 5 files to your custom advisor. Files must be less than 20MB.';
                                 }
 
-                                return "You've reached the maximum file upload limit of 5 for custom assistants. Please delete a file if you wish to upload another.";
+                                return "You've reached the maximum file upload limit of 5 for your custom advisor. Please delete a file if you wish to upload another.";
                             })
                             ->maxSize(20000)
                             ->columnSpan(function (Get $get) {
