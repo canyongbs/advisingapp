@@ -41,6 +41,7 @@ use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
 use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Enums\ActionCenterTab;
 use AdvisingApp\Task\Enums\TaskStatus;
 use App\Models\User;
 use Filament\Tables\Actions\ViewAction;
@@ -49,7 +50,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Livewire\Attributes\Reactive;
 
 class ProspectsActionCenterWidget extends TableWidget
 {
@@ -58,6 +59,9 @@ class ProspectsActionCenterWidget extends TableWidget
      */
     protected int | string | array $columnSpan = 'full';
 
+    #[Reactive]
+    public string $activeTab;
+
     public function table(Table $table): Table
     {
         /** @var User $user */
@@ -65,7 +69,17 @@ class ProspectsActionCenterWidget extends TableWidget
 
         return $table
             ->heading('Action Center Records')
-            ->relationship(fn (): MorphToMany => $user->prospectSubscriptions())
+            ->query(function () use ($user) {
+                $tab = ActionCenterTab::tryFrom($this->activeTab) ?? ActionCenterTab::Subscribed;
+
+                return match ($tab) {
+                    ActionCenterTab::All => Prospect::query(),
+                    ActionCenterTab::Subscribed => Prospect::query()
+                        ->whereHas('subscriptions', fn (Builder $query) => $query->where('user_id', $user->getKey())),
+                    ActionCenterTab::CareTeam => Prospect::query()
+                        ->whereHas('careTeam', fn (Builder $query) => $query->where('user_id', $user->getKey())),
+                };
+            })
             ->columns([
                 TextColumn::make('full_name')
                     ->label('Prospect Name')

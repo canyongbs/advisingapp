@@ -219,3 +219,43 @@ it('can filter prospect by alerts', function () {
         ->removeTableFilter('alerts')
         ->assertCanSeeTableRecords($prospectsWithoutAlerts->merge([$prospectWithStatusActive, $prospectWithStatusInprogress]));
 });
+
+it('shows bulk assign tags action for authorized user', function () {
+    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
+
+    $user->givePermissionTo('prospect.view-any');
+    $user->givePermissionTo('prospect.create');
+
+    actingAs($user);
+
+    $prospects = Prospect::factory()->count(5)->create();
+
+    livewire(ListProspects::class)
+        ->assertCanSeeTableRecords($prospects)
+        ->assertTableBulkActionHidden('bulkProspectTags');
+
+    $user->givePermissionTo('prospect.*.update');
+
+    livewire(ListProspects::class)
+        ->assertCanSeeTableRecords($prospects)
+        ->assertTableBulkActionVisible('bulkProspectTags');
+});
+
+it('renders the bulk create interaction action based on proper access', function () {
+    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
+
+    $user->givePermissionTo('prospect.view-any');
+    $user->givePermissionTo('prospect.*.view');
+
+    actingAs($user);
+
+    livewire(ListProspects::class)
+        ->assertOk()
+        ->assertTableBulkActionHidden('createInteraction');
+
+    $user->givePermissionTo('prospect.*.update');
+
+    livewire(ListProspects::class)
+        ->assertOk()
+        ->assertTableBulkActionVisible('createInteraction');
+});

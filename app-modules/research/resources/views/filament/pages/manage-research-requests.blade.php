@@ -419,31 +419,44 @@
                 {{ $sidebarContent() }}
             </div>
 
-            <div class="col-span-1 flex flex-col gap-2 overflow-y-auto pt-3 lg:col-span-2 lg:pt-6 2xl:col-span-3">
-                <div class="lg:hidden">
-                    <x-filament::dropdown
-                        shift
-                        placement="bottom-start"
-                        width="lg"
-                        x-on:close-assistant-sidebar.window="close"
-                    >
-                        <x-slot name="trigger">
-                            <x-filament::icon-button
-                                label="Open menu"
-                                icon="heroicon-s-bars-3"
-                            />
-                        </x-slot>
-
-                        <div class="p-3">
-                            {{ $sidebarContent() }}
+            @if ($this->request)
+                <div
+                    class="col-span-1 flex flex-col gap-2 overflow-y-auto pt-3 lg:col-span-2 lg:pt-6 2xl:col-span-3"
+                    wire:key="request{{ $this->request->id }}"
+                >
+                    <div class="mb-6 flex items-center justify-between gap-3">
+                        <div>
+                            <x-filament::badge :size="ActionSize::Large">
+                                <h1 class="text-xxs uppercase leading-3">
+                                    Research Advisor
+                                </h1>
+                            </x-filament::badge>
                         </div>
-                    </x-filament::dropdown>
-                </div>
 
-                @if ($this->request)
+                        <div class="lg:hidden">
+                            <x-filament::dropdown
+                                shift
+                                placement="bottom-start"
+                                width="lg"
+                                x-on:close-assistant-sidebar.window="close"
+                            >
+                                <x-slot name="trigger">
+                                    <x-filament::icon-button
+                                        label="Open menu"
+                                        icon="heroicon-s-bars-3"
+                                    />
+                                </x-slot>
+
+                                <div class="p-3">
+                                    {{ $sidebarContent() }}
+                                </div>
+                            </x-filament::dropdown>
+                        </div>
+                    </div>
+
                     @include('research::results', ['researchRequest' => $this->request])
-                @endif
-            </div>
+                </div>
+            @endif
 
             <div class="col-span-full hidden md:block">
                 <x-footer />

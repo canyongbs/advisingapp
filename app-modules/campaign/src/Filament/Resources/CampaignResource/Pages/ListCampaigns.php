@@ -46,7 +46,6 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
@@ -63,16 +62,26 @@ class ListCampaigns extends ListRecords
                 IdColumn::make(),
                 TextColumn::make('name'),
                 TextColumn::make('segment.name')
-                    ->label('Population Segment'),
-                IconColumn::make('enabled')
+                    ->label('Segment'),
+                TextColumn::make('enabled')
                     ->label('Enabled')
-                    ->boolean()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                IconColumn::make('execution_status')
-                    ->label('Complete')
+                    ->formatStateUsing(fn (bool $state): string => $state ? 'Yes' : 'No')
+                    ->badge()
+                    ->color(fn (bool $state): string => $state ? 'blue' : 'orange'),
+                TextColumn::make('execution_status')
+                    ->label('Completed')
                     ->getStateUsing(fn (Campaign $record) => $record->hasBeenExecuted())
-                    ->boolean()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->formatStateUsing(fn (bool $state): string => $state ? 'Yes' : 'No')
+                    ->badge()
+                    ->color(fn (bool $state): string => $state ? 'blue' : 'orange'),
+                TextColumn::make('created_at')
+                    ->label('Created')
+                    ->dateTime()
+                    ->sortable(),
+                TextColumn::make('createdBy.name')
+                    ->label('Created By')
+                    ->searchable()
+                    ->sortable(),
             ])
             ->actions([
                 ViewAction::make(),
