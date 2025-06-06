@@ -157,6 +157,28 @@ it('can filter students by alerts', function () {
         ->assertCanSeeTableRecords($studentsWithoutAlerts->merge([$studentWithStatusActive, $studentWithStatusInprogress]));
 });
 
+it('renders the bulk create alert action based on proper access', function () {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+
+    $user->givePermissionTo('student.view-any');
+    $user->givePermissionTo('student.*.view');
+
+    actingAs($user);
+
+    livewire(ListStudents::class)
+        ->assertOk()
+        ->assertTableBulkActionHidden('createAlert');
+
+    $user->givePermissionTo('alert.create');
+    $user->givePermissionTo('student.*.update');
+
+    $user->refresh();
+
+    livewire(ListStudents::class)
+        ->assertOk()
+        ->assertTableBulkActionVisible('createAlert');
+});
+
 it('shows bulk assign tags action for authorized user', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
