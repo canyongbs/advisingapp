@@ -1,7 +1,9 @@
 <?php
 
+use App\Features\JourneyStepPermissionRename;
 use CanyonGBS\Common\Database\Migrations\Concerns\CanModifyPermissions;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
 return new class () extends Migration {
     use CanModifyPermissions;
@@ -29,23 +31,31 @@ return new class () extends Migration {
 
     public function up(): void
     {
-        collect($this->guards)->each(function (string $guard) {
-            $this->renamePermissions($this->campaignActionToJourneyStepPermissions, $guard);
-        });
+        DB::transaction(function () {
+            collect($this->guards)->each(function (string $guard) {
+                $this->renamePermissions($this->campaignActionToJourneyStepPermissions, $guard);
+            });
 
-        $this->renamePermissionGroups([
-            'Campaign Action' => 'Journey Step',
-        ]);
+            $this->renamePermissionGroups([
+                'Campaign Action' => 'Journey Step',
+            ]);
+
+            JourneyStepPermissionRename::activate();
+        });
     }
 
     public function down(): void
     {
-        collect($this->guards)->each(function (string $guard) {
-            $this->renamePermissions(array_flip($this->campaignActionToJourneyStepPermissions), $guard);
-        });
+        DB::transaction(function () {
+            collect($this->guards)->each(function (string $guard) {
+                $this->renamePermissions(array_flip($this->campaignActionToJourneyStepPermissions), $guard);
+            });
 
-        $this->renamePermissionGroups([
-            'Journey Step' => 'Campaign Action',
-        ]);
+            $this->renamePermissionGroups([
+                'Journey Step' => 'Campaign Action',
+            ]);
+
+            JourneyStepPermissionRename::deactivate();
+        });
     }
 };
