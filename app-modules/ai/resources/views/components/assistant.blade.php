@@ -39,7 +39,10 @@
 <div class="h-[calc(100dvh-4rem)]">
     @if ($this->isConsented && $this->thread)
         @capture($sidebarContent, $assistantSwitcherForm)
-            <div class="flex select-none flex-col gap-y-2">
+            <div
+                class="flex select-none flex-col gap-y-2"
+                x-on:refresh-threads.window="$wire.$refresh()"
+            >
                 <div
                     class="relative"
                     x-data="{ isSearchingAssistants: false }"
@@ -712,11 +715,7 @@
                                     </div>
                                 </div>
 
-                                @if (blank($this->thread->name))
-                                    <div class="flex w-full justify-center pt-3 sm:w-auto sm:pl-2 sm:pt-0">
-                                        {{ $this->saveThreadAction }}
-                                    </div>
-                                @else
+                                @if (!blank($this->thread->name))
                                     <div class="flex w-full justify-center gap-1.5 pt-3 sm:w-auto sm:pt-0">
                                         {{ ($this->cloneThreadAction)(['thread' => $this->thread->id]) }}
                                         {{ ($this->emailThreadAction)(['thread' => $this->thread->id]) }}

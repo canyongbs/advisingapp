@@ -185,6 +185,9 @@ document.addEventListener('alpine:init', () => {
                 if (!isCompletingPreviousResponse) {
                     this.$wire.clearFiles();
                 }
+
+                this.$wire.refreshThreads();
+                this.$dispatch('refresh-threads', { threadId: threadId });
             },
 
             sendMessage: async function (prompt = null) {
