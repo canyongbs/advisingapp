@@ -77,10 +77,10 @@ class ResearchTranscriptNotification extends Notification implements ShouldQueue
         $senderIsNotifiable = $this->sender->is($notifiable);
 
         if ($senderIsNotifiable) {
-            $message->subject("Research Transcript: {$this->researchRequest->topic}")
+            $message->subject('Research Transcript')
                 ->line("Here is a copy of research on: {$this->researchRequest->topic}");
         } else {
-            $message->subject("A Research Transcript has been shared with you: {$this->researchRequest->topic}")
+            $message->subject('A Research Transcript has been shared with you')
                 ->line("Here is a copy of {$this->sender->name}'s research on: {$this->researchRequest->topic}");
         }
         $link = ManageResearchRequests::getUrl(['researchRequest' => $this->researchRequest]);
