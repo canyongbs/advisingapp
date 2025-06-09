@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
+use AdvisingApp\Alert\Filament\Actions\BulkCreateAlertAction;
 use AdvisingApp\CareTeam\Filament\Actions\AddCareTeamMemberAction;
 use AdvisingApp\Engagement\Filament\Actions\BulkEmailAction;
 use AdvisingApp\Engagement\Filament\Actions\BulkTextAction;
@@ -230,12 +231,14 @@ class ListStudents extends ListRecords
                                 ->body($notification['body'])
                                 ->send();
                         }),
-                    SubscribeBulkAction::make(),
+                    SubscribeBulkAction::make(context: 'student')->authorize(fn (): bool => auth()->user()->can('student.*.update')),
                     BulkTextAction::make(context: 'students')->authorize(fn () => Gate::allows('update', [auth()->user(), Student::class])),
                     BulkEmailAction::make(context: 'students')->authorize(fn () => Gate::allows('update', [auth()->user(), Student::class])),
                     StudentTagsBulkAction::make()->visible(fn (): bool => auth()->user()->can('student.*.update')),
                     AddCareTeamMemberAction::make(CareTeamRoleType::Student),
                     BulkSegmentAction::make(segmentModel: SegmentModel::Student),
+                    BulkCreateAlertAction::make()
+                        ->visible(fn (): bool => auth()->user()->can('student.*.update')),
                     BulkCreateInteractionAction::make()
                         ->authorize(fn () => auth()->user()->can('student.*.update')),
                 ]),
