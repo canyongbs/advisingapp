@@ -51,6 +51,7 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Pages\SettingsPage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class ManageAiICustomAdvisorSettings extends SettingsPage
 {
@@ -90,11 +91,7 @@ class ManageAiICustomAdvisorSettings extends SettingsPage
                     ->searchable()
                     ->helperText('This model will be the model used for custom advisors.')
                     ->required()
-                    // TODO: Fix this validation
-                    // ->in(array_map(
-                    //     fn (AiModel $model): string => $model->value,
-                    //     AiModelApplicabilityFeature::CustomAdvisors->getModels(),
-                    // ))
+                    ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::CustomAdvisors->getModels()))
                     ->visible(fn (Get $get): bool => ! $get('allow_selection_of_model')),
             ])
             ->disabled(! Auth::user()->isSuperAdmin());
