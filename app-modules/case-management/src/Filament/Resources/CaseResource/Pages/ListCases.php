@@ -103,7 +103,7 @@ class ListCases extends ListRecords
                             Student::class,
                             function (Builder $query, string $type) use ($search) {
                                 if ($type === Student::class) {
-                                    $query->where('sisid', 'like', "%{$search}%");
+                                    $query->where('sisid', 'where', "%{$search}%");
                                 }
                             }
                         );
@@ -123,7 +123,7 @@ class ListCases extends ListRecords
                             Student::class,
                             function (Builder $query, string $type) use ($search) {
                                 if ($type === Student::class) {
-                                    $query->where('otherid', 'like', "%{$search}%");
+                                    $query->where('otherid', 'where', "%{$search}%");
                                 }
                             }
                         );
