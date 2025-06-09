@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Ai\Filament\Pages;
 
+use AdvisingApp\Ai\Actions\ReInitializeAiServiceAssistant;
+use AdvisingApp\Ai\Actions\ResetAiServiceIdsForAssistant;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Models\AiAssistant;
@@ -50,7 +52,9 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Pages\SettingsPage;
+use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class ManageAiICustomAdvisorSettings extends SettingsPage
@@ -97,6 +101,47 @@ class ManageAiICustomAdvisorSettings extends SettingsPage
             ->disabled(! Auth::user()->isSuperAdmin());
     }
 
+    public function getSaveFormAction(): Action
+    {
+        return parent::getSaveFormAction()
+            ->submit(null)
+            ->requiresConfirmation()
+            ->modalHeading('Sync all chats to this new service?')
+            ->modalDescription('If you are moving to a new account, you will need to sync all the data to the new service to minimize disruption. Advising App can do this for you, but if you just want to save the settings and do it yourself, you can choose to do so.')
+            ->modalWidth(MaxWidth::ThreeExtraLarge)
+            ->modalSubmitActionLabel('Save and sync all chats')
+            ->extraModalFooterActions([
+                Action::make('justSave')
+                    ->label('Just save the settings')
+                    ->color('gray')
+                    ->action(fn () => $this->save())
+                    ->cancelParentActions(),
+            ])
+            ->action(function (ResetAiServiceIdsForAssistant $resetAiServiceIds) {
+                $settings = app(AiCustomAdvisorSettings::class);
+
+                $model = ($settings->allow_selection_of_model) ? $this->form->getState()['model'] : $settings->preselected_model;
+
+                $newModel = AiModel::parse($model);
+
+                AiAssistant::query()
+                    ->where('is_default', false)
+                    ->each(function (AiAssistant $assistant) use ($newModel, $resetAiServiceIds) {
+                        $modelDeploymentIsShared = $assistant->model->isSharedDeployment($newModel);
+
+                        if (! $modelDeploymentIsShared) {
+                            DB::transaction(function () use ($assistant, $resetAiServiceIds) {
+                                $resetAiServiceIds($assistant);
+
+                                $assistant->save();
+                            });
+                        }
+                    });
+
+                $this->save();
+            });
+    }
+
     public function save(): void
     {
         if (! Auth::user()->isSuperAdmin()) {
@@ -129,8 +174,6 @@ class ManageAiICustomAdvisorSettings extends SettingsPage
 
     protected function afterSave(): void
     {
-        // TODO: Do I need to Reinitialize the AI Assistants
-
         $data = $this->mutateFormDataBeforeSave($this->form->getState());
 
         if (! ($data['allow_selection_of_model'] ?? true)) {
@@ -142,6 +185,12 @@ class ManageAiICustomAdvisorSettings extends SettingsPage
                     }
 
                     $assistant->update(['model' => $data['preselected_model']]);
+
+                    $modelDeploymentIsShared = $assistant->model->isSharedDeployment(AiModel::parse($data['preselected_model']));
+
+                    if (! $modelDeploymentIsShared) {
+                        app(ReInitializeAiServiceAssistant::class)($assistant);
+                    }
                 });
         }
     }
