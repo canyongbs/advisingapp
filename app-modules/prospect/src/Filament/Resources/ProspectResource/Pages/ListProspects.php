@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
+use AdvisingApp\Alert\Filament\Actions\BulkCreateAlertAction;
 use AdvisingApp\CareTeam\Filament\Actions\AddCareTeamMemberAction;
 use AdvisingApp\CaseManagement\Filament\Actions\BulkCreateCaseAction;
 use AdvisingApp\Engagement\Filament\Actions\BulkEmailAction;
@@ -187,7 +188,7 @@ class ListProspects extends ListRecords
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    SubscribeBulkAction::make(),
+                    SubscribeBulkAction::make(context: 'prospect')->authorize(fn (): bool => auth()->user()->can('prospect.*.update')),
                     BulkTextAction::make(context: 'prospects')->authorize(fn () => Gate::allows('update', [auth()->user(), Prospect::class])),
                     BulkEmailAction::make(context: 'prospects')->authorize(fn () => Gate::allows('update', [auth()->user(), Prospect::class])),
                     ProspectTagsBulkAction::make()->visible(fn (): bool => auth()->user()->can('prospect.*.update')),
@@ -260,6 +261,8 @@ class ListProspects extends ListRecords
                     BulkSegmentAction::make(segmentModel: SegmentModel::Prospect),
                     BulkCreateCaseAction::make()
                         ->authorize(fn () => auth()->user()->can('prospect.*.update')),
+                    BulkCreateAlertAction::make()
+                        ->visible(fn (): bool => auth()->user()->can('prospect.*.update')),
                     BulkCreateInteractionAction::make()
                         ->authorize(fn () => auth()->user()->can('prospect.*.update')),
                 ]),

@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
+use AdvisingApp\Alert\Filament\Actions\BulkCreateAlertAction;
 use AdvisingApp\CareTeam\Filament\Actions\AddCareTeamMemberAction;
 use AdvisingApp\CaseManagement\Filament\Actions\BulkCreateCaseAction;
 use AdvisingApp\Engagement\Filament\Actions\BulkEmailAction;
@@ -231,7 +232,7 @@ class ListStudents extends ListRecords
                                 ->body($notification['body'])
                                 ->send();
                         }),
-                    SubscribeBulkAction::make(),
+                    SubscribeBulkAction::make(context: 'student')->authorize(fn (): bool => auth()->user()->can('student.*.update')),
                     BulkTextAction::make(context: 'students')->authorize(fn () => Gate::allows('update', [auth()->user(), Student::class])),
                     BulkEmailAction::make(context: 'students')->authorize(fn () => Gate::allows('update', [auth()->user(), Student::class])),
                     StudentTagsBulkAction::make()->visible(fn (): bool => auth()->user()->can('student.*.update')),
@@ -239,6 +240,8 @@ class ListStudents extends ListRecords
                     BulkSegmentAction::make(segmentModel: SegmentModel::Student),
                     BulkCreateCaseAction::make()
                         ->authorize(fn () => auth()->user()->can('student.*.update')),
+                    BulkCreateAlertAction::make()
+                        ->visible(fn (): bool => auth()->user()->can('student.*.update')),
                     BulkCreateInteractionAction::make()
                         ->authorize(fn () => auth()->user()->can('student.*.update')),
                 ]),
