@@ -43,8 +43,10 @@ use AdvisingApp\Ai\Filament\Resources\AiAssistantResource;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Concerns\HandlesFileUploads;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Forms\AiAssistantForm;
 use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Settings\AiCustomAdvisorSettings;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Settings\LicenseSettings;
+use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
@@ -88,7 +90,11 @@ class EditAiAssistant extends EditRecord
                     ->cancelParentActions(),
             ])
             ->action(function (ResetAiServiceIdsForAssistant $resetAiServiceIds, ReInitializeAiServiceAssistant $reInitializeAiServiceAssistant) {
-                $newModel = AiModel::parse($this->form->getState()['model']);
+                $settings = app(AiCustomAdvisorSettings::class);
+
+                $model = ($settings->allow_selection_of_model) ? $this->form->getState()['model'] : $settings->preselected_model;
+
+                $newModel = AiModel::parse($model);
 
                 $modelDeploymentIsShared = $this->getRecord()->model->isSharedDeployment($newModel);
 
@@ -166,6 +172,17 @@ class EditAiAssistant extends EditRecord
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
         $record->fill($data);
+
+        throw_if(
+            ! $record instanceof AiAssistant,
+            new Exception('The model must be an instance of AiAssistant.')
+        );
+
+        $settings = app(AiCustomAdvisorSettings::class);
+
+        if (! $settings->allow_selection_of_model) {
+            $record->model = $settings->preselected_model ?? $record->model;
+        }
 
         $aiService = $record->model->getService();
 
