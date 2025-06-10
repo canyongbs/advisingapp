@@ -250,7 +250,7 @@ it('can save threads automatically', function () use ($setUp) {
 
     $message = AiMessage::factory()->create(['thread_id' => $thread->getKey(), 'user_id' => $user->getKey()]);
 
-    $assistant->model->getService()->sendMessage($message, [], function() {});
+    $assistant->model->getService()->sendMessage($message, [], function () {});
 
     assertNotEmpty(AiThread::find($thread->getKey())->name);
 });
