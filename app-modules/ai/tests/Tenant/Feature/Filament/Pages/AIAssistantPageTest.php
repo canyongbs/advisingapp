@@ -56,7 +56,6 @@ use App\Models\Authenticatable;
 use App\Models\User;
 use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Str;
 use Livewire\Livewire;
 
 use function Pest\Laravel\{actingAs,
@@ -65,6 +64,7 @@ use function Pest\Laravel\{actingAs,
     assertNotSoftDeleted,
     assertSoftDeleted
 };
+use function PHPUnit\Framework\assertNotEmpty;
 use function Tests\asSuperAdmin;
 
 $setUp = function (
@@ -233,7 +233,7 @@ it('will not automatically set the current thread to one belonging to another us
         ->assertNotSet('thread.id', $thread->id);
 });
 
-it('can save threads', function () use ($setUp) {
+it('can save threads automatically', function () use ($setUp) {
     ['user' => $user, 'assistant' => $assistant] = $setUp();
 
     $thread = AiThread::factory()
@@ -242,66 +242,17 @@ it('can save threads', function () use ($setUp) {
         ->create([
             'name' => null,
         ]);
-
-    Livewire::test(PersonalAssistant::class)
-        ->call('selectThread', $thread->toArray())
-        ->callAction('saveThread', [
-            'name' => $name = Str::random(),
-        ])
-        ->assertHasNoActionErrors();
 
     assertDatabaseHas(AiThread::class, [
         'id' => $thread->getKey(),
         'user_id' => $user->getKey(),
-        'name' => $name,
     ]);
-});
 
-it('can save threads into a folder', function () use ($setUp) {
-    ['user' => $user, 'assistant' => $assistant] = $setUp();
+    $message = AiMessage::factory()->create(['thread_id' => $thread->getKey(), 'user_id' => $user->getKey()]);
 
-    $thread = AiThread::factory()
-        ->for($assistant, 'assistant')
-        ->for($user)
-        ->create([
-            'name' => null,
-        ]);
+    $assistant->model->getService()->sendMessage($message, [], function () {});
 
-    $folder = AiThreadFolder::factory()
-        ->for($user)
-        ->create([
-            'application' => AiAssistantApplication::PersonalAssistant,
-        ]);
-
-    Livewire::test(PersonalAssistant::class)
-        ->call('selectThread', $thread->toArray())
-        ->callAction('saveThread', [
-            'name' => $name = Str::random(),
-            'folder' => $folder->getKey(),
-        ])
-        ->assertHasNoActionErrors();
-
-    assertDatabaseHas(AiThread::class, [
-        'id' => $thread->getKey(),
-        'name' => $name,
-        'folder_id' => $folder->getKey(),
-    ]);
-});
-
-it('cannot save threads without a name', function () use ($setUp) {
-    ['user' => $user, 'assistant' => $assistant] = $setUp();
-
-    AiThread::factory()
-        ->for($assistant, 'assistant')
-        ->for($user)
-        ->create([
-            'name' => null,
-        ]);
-
-    Livewire::test(PersonalAssistant::class)
-        ->call('loadFirstThread')
-        ->callAction('saveThread')
-        ->assertHasActionErrors(['name' => 'required']);
+    assertNotEmpty(AiThread::find($thread->getKey())->name);
 });
 
 it('can select a thread', function () use ($setUp) {

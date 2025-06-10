@@ -85,6 +85,9 @@ class TestAiService implements AiService
         $message->context = fake()->paragraph();
         $message->save();
 
+        $message->thread->name = fake()->words();
+        $message->thread->save();
+
         if ($message->wasRecentlyCreated || $message->wasChanged('content')) {
             dispatch(new RecordTrackedEvent(
                 type: TrackedEventType::AiExchange,

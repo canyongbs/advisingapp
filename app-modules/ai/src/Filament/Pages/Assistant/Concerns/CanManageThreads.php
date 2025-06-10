@@ -44,8 +44,6 @@ use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Rules\RestrictSuperAdmin;
 use AdvisingApp\Ai\Services\Contracts\AiServiceLifecycleHooks;
-use AdvisingApp\Report\Enums\TrackedEventType;
-use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use AdvisingApp\Team\Models\Team;
 use App\Models\Scopes\WithoutSuperAdmin;
 use App\Models\User;
@@ -262,51 +260,6 @@ trait CanManageThreads
         }
     }
 
-    public function saveThreadAction(): Action
-    {
-        return Action::make('saveThread')
-            ->label('Save')
-            ->modalHeading('Save chat')
-            ->modalSubmitActionLabel('Save')
-            ->icon('heroicon-s-bookmark')
-            ->link()
-            ->size(ActionSize::Small)
-            ->form([
-                TextInput::make('name')
-                    ->label('Name')
-                    ->autocomplete(false)
-                    ->placeholder('Name this chat')
-                    ->required(),
-                $this->folderSelect(),
-            ])
-            ->modalWidth('md')
-            ->action(function (array $data) {
-                $this->thread->name = $data['name'];
-
-                $this->thread->saved_at = now();
-
-                $this->thread->save();
-
-                dispatch(new RecordTrackedEvent(
-                    type: TrackedEventType::AiThreadSaved,
-                    occurredAt: now(),
-                ));
-
-                $folder = auth()->user()->aiThreadFolders()
-                    ->where('application', static::APPLICATION)
-                    ->find($data['folder']);
-
-                if (! $folder) {
-                    $this->threadsWithoutAFolder = $this->getThreadsWithoutAFolder();
-
-                    return;
-                }
-
-                $this->moveThread($this->thread, $folder);
-                $this->folders = $this->getFolders();
-            });
-    }
-
     public function deleteThreadAction(): Action
     {
         return Action::make('deleteThread')
@@ -500,5 +453,11 @@ trait CanManageThreads
         }
 
         return $this->thread->locked_at !== null;
+    }
+
+    public function refreshThreads(): void
+    {
+        $this->threadsWithoutAFolder = $this->getThreadsWithoutAFolder();
+        $this->folders = $this->getFolders();
     }
 }
