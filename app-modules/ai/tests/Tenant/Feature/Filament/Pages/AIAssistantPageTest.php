@@ -64,6 +64,7 @@ use function Pest\Laravel\{actingAs,
     assertNotSoftDeleted,
     assertSoftDeleted
 };
+use function PHPUnit\Framework\assertNotEmpty;
 use function Tests\asSuperAdmin;
 
 $setUp = function (
@@ -246,6 +247,12 @@ it('can save threads automatically', function () use ($setUp) {
         'id' => $thread->getKey(),
         'user_id' => $user->getKey(),
     ]);
+
+    $message = AiMessage::factory()->create(['thread_id' => $thread->getKey(), 'user_id' => $user->getKey()]);
+
+    $assistant->model->getService()->sendMessage($message, [], function() {});
+
+    assertNotEmpty(AiThread::find($thread->getKey())->name);
 });
 
 it('can select a thread', function () use ($setUp) {
