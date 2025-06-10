@@ -141,8 +141,8 @@ class BulkCreateCaseAction
 
                     DB::commit();
                 } catch (Exception $e) {
+                    report($e);
                     DB::rollBack();
-                    Log::info($e->getMessage());
                     Notification::make()
                         ->title('Something went wrong')
                         ->body('We failed to create the ' . Str::plural('case', $records) . '. Please try again later.')

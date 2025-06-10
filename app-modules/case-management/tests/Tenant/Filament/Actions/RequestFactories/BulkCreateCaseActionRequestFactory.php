@@ -46,15 +46,14 @@ class BulkCreateCaseActionRequestFactory extends RequestFactory
 {
     public function definition(): array
     {
-        $priority = CasePriority::factory()->create();
 
         return [
-            'division_id' => Division::inRandomOrder()->first()->id ?? Division::factory()->create()->id,
-            'status_id' => CaseStatus::factory()->create()->id,
-            'priority_id' => $priority->id,
+            'division_id' => Division::factory(),
+            'status_id' => CaseStatus::factory(),
+            'priority_id' => CasePriority::factory(),
             'close_details' => $this->faker->sentence,
             'res_details' => $this->faker->sentence,
-            'assigned_to_id' => User::factory()->create()->id,
+            'assigned_to_id' => User::factory(),
         ];
     }
 }

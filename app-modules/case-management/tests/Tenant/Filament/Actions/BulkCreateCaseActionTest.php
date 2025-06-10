@@ -117,14 +117,14 @@ it('can successfully create bulk case with student', function () {
 
     assertDatabaseHas(CaseModel::class, $expected);
 
-    $expectedassignments = [
+    $expectedAssignments = [
         'case_model_id' => CaseModel::query()->where($expected)->first()->getKey(),
         'user_id' => $request['assigned_to_id'],
         'assigned_by_id' => auth()->user()->getKey(),
         'status' => CaseAssignmentStatus::Active,
     ];
 
-    assertDatabaseHas(CaseAssignment::class, $expectedassignments);
+    assertDatabaseHas(CaseAssignment::class, $expectedAssignments);
 
     $request = BulkCreateCaseActionRequestFactory::new()->without('assigned_to_id')->create();
 
@@ -148,14 +148,14 @@ it('can successfully create bulk case with student', function () {
 
     assertDatabaseHas(CaseModel::class, $expected);
 
-    $unexpectedassignments = [
+    $unexpectedAssignments = [
         'case_model_id' => CaseModel::query()->where($expected)->first()->getKey(),
         'user_id' => null,
         'assigned_by_id' => auth()->user()->getKey(),
         'status' => CaseAssignmentStatus::Active,
     ];
 
-    assertDatabaseMissing(CaseAssignment::class, $unexpectedassignments);
+    assertDatabaseMissing(CaseAssignment::class, $unexpectedAssignments);
 });
 
 it('can successfully create bulk case with prospect', function () {
@@ -185,14 +185,14 @@ it('can successfully create bulk case with prospect', function () {
 
     assertDatabaseHas(CaseModel::class, $expected);
 
-    $expectedassignments = [
+    $expectedAssignments = [
         'case_model_id' => CaseModel::query()->where($expected)->first()->getKey(),
         'user_id' => $request['assigned_to_id'],
         'assigned_by_id' => auth()->user()->getKey(),
         'status' => CaseAssignmentStatus::Active,
     ];
 
-    assertDatabaseHas(CaseAssignment::class, $expectedassignments);
+    assertDatabaseHas(CaseAssignment::class, $expectedAssignments);
 
     $request = BulkCreateCaseActionRequestFactory::new()->without('assigned_to_id')->create();
 
@@ -216,12 +216,12 @@ it('can successfully create bulk case with prospect', function () {
 
     assertDatabaseHas(CaseModel::class, $expected);
 
-    $unexpectedassignments = [
+    $unexpectedAssignments = [
         'case_model_id' => CaseModel::query()->where($expected)->first()->getKey(),
         'user_id' => null,
         'assigned_by_id' => auth()->user()->getKey(),
         'status' => CaseAssignmentStatus::Active,
     ];
 
-    assertDatabaseMissing(CaseAssignment::class, $unexpectedassignments);
+    assertDatabaseMissing(CaseAssignment::class, $unexpectedAssignments);
 });
