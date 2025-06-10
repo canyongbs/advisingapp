@@ -413,10 +413,11 @@ trait CanManageThreads
                     ->searchable()
                     ->multiple()
                     ->required()
-                    ->rules([fn (Get $get) => match ($get('targetType')) {
-                        AiThreadShareTarget::User->value => new RestrictSuperAdmin('clone'),
-                        AiThreadShareTarget::Team->value => null,
-                    },
+                    ->rules([
+                        fn (Get $get) => match ($get('targetType')) {
+                            AiThreadShareTarget::User->value => new RestrictSuperAdmin('clone'),
+                            AiThreadShareTarget::Team->value => null,
+                        },
                     ]),
             ])
             ->action(function (array $arguments, array $data) {
@@ -468,10 +469,11 @@ trait CanManageThreads
                     ->searchable()
                     ->multiple()
                     ->required()
-                    ->rules([fn (Get $get) => match ($get('targetType')) {
-                        AiThreadShareTarget::User->value => new RestrictSuperAdmin('email'),
-                        AiThreadShareTarget::Team->value => null,
-                    },
+                    ->rules([
+                        fn (Get $get) => match ($get('targetType')) {
+                            AiThreadShareTarget::User->value => new RestrictSuperAdmin('email'),
+                            AiThreadShareTarget::Team->value => null,
+                        },
                     ]),
             ])
             ->action(function (array $arguments, array $data) {

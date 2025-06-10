@@ -34,31 +34,54 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Enums;
+namespace AdvisingApp\Research\Jobs;
 
-use Filament\Support\Contracts\HasLabel;
+use AdvisingApp\Research\Models\ResearchRequest;
+use AdvisingApp\Research\Notifications\ResearchTranscriptNotification;
+use App\Models\User;
+use Filament\Notifications\Notification;
+use Illuminate\Bus\Batchable;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
+use Illuminate\Queue\SerializesModels;
 
-enum AiThreadShareTarget: string implements HasLabel
+class EmailResearchRequest implements ShouldQueue
 {
-    case User = 'user';
-    case Team = 'team';
+    use Batchable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
-    public function getLabel(): string
+    public function __construct(
+        protected ResearchRequest $researchRequest,
+        protected ?string $note,
+        protected User $sender,
+        protected User $recipient,
+        protected bool $shouldNotify = true,
+    ) {}
+
+    /**
+     * @return array<int, SkipIfBatchCancelled>
+     */
+    public function middleware(): array
     {
-        return $this->name;
+        return [new SkipIfBatchCancelled()];
     }
 
-    public static function default(): AiThreadShareTarget
+    public function handle(): void
     {
-        return AiThreadShareTarget::User;
-    }
+        $this->recipient->notifyNow(new ResearchTranscriptNotification($this->researchRequest, $this->note, $this->sender));
 
-    public static function parse(string | self $value): self
-    {
-        if ($value instanceof self) {
-            return $value;
+        if ($this->shouldNotify) {
+            $recipientName = $this->sender->is($this->recipient) ? 'yourself' : $this->recipient->name;
+            Notification::make()
+                ->success()
+                ->title("You emailed a research report to {$recipientName}.")
+                ->sendToDatabase($this->sender);
         }
-
-        return self::from($value);
     }
 }
