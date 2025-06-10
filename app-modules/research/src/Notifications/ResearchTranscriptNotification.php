@@ -49,6 +49,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Str;
 
 class ResearchTranscriptNotification extends Notification implements ShouldQueue, HasAfterSendHook
 {
@@ -85,7 +86,7 @@ class ResearchTranscriptNotification extends Notification implements ShouldQueue
         }
         $link = ManageResearchRequests::getUrl(['researchRequest' => $this->researchRequest]);
 
-        $message->line(str('Reasoning: <br>' . $this->researchRequest->results)
+        $message->line(str(Str::after($this->researchRequest->results, '</think>'))
             ->toHtmlString());
 
         if ($this->note) {
