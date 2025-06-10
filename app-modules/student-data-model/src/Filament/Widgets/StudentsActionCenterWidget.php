@@ -178,10 +178,10 @@ class StudentsActionCenterWidget extends TableWidget
             ]);
     }
 
-    /** 
-     * @param Builder<Student> $query 
-     * 
-     * @return Paginator<int, Student> 
+    /**
+     * @param Builder<Student> $query
+     *
+     * @return Paginator<int, Student>
      */
     protected function paginateTableQuery(Builder $query): Paginator
     {

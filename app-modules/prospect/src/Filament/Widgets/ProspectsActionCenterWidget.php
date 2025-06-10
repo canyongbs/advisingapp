@@ -49,10 +49,9 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\Reactive;
-use Illuminate\Contracts\Pagination\Paginator;
-
 
 class ProspectsActionCenterWidget extends TableWidget
 {
@@ -179,10 +178,10 @@ class ProspectsActionCenterWidget extends TableWidget
             ]);
     }
 
-    /** 
-     * @param Builder<Prospect> $query 
-     * 
-     * @return Paginator<int, Prospect> 
+    /**
+     * @param Builder<Prospect> $query
+     *
+     * @return Paginator<int, Prospect>
      */
     protected function paginateTableQuery(Builder $query): Paginator
     {
