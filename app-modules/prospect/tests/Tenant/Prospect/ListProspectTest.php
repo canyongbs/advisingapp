@@ -303,3 +303,22 @@ it('shows bulk subscription action for authorized user', function () {
         ->assertTableBulkActionVisible('bulkSubscription')
         ->assertSuccessful();
 });
+
+it('renders the bulk create case action based on proper access', function () {
+    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
+
+    $user->givePermissionTo('prospect.view-any');
+    $user->givePermissionTo('prospect.*.view');
+
+    actingAs($user);
+
+    livewire(ListProspects::class)
+        ->assertOk()
+        ->assertTableBulkActionHidden('createCase');
+
+    $user->givePermissionTo('prospect.*.update');
+
+    livewire(ListProspects::class)
+        ->assertOk()
+        ->assertTableBulkActionVisible('createCase');
+});

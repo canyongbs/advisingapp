@@ -38,6 +38,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
 use AdvisingApp\Alert\Filament\Actions\BulkCreateAlertAction;
 use AdvisingApp\CareTeam\Filament\Actions\AddCareTeamMemberAction;
+use AdvisingApp\CaseManagement\Filament\Actions\BulkCreateCaseAction;
 use AdvisingApp\Engagement\Filament\Actions\BulkEmailAction;
 use AdvisingApp\Engagement\Filament\Actions\BulkTextAction;
 use AdvisingApp\Interaction\Filament\Actions\BulkCreateInteractionAction;
@@ -237,6 +238,8 @@ class ListStudents extends ListRecords
                     StudentTagsBulkAction::make()->visible(fn (): bool => auth()->user()->can('student.*.update')),
                     AddCareTeamMemberAction::make(CareTeamRoleType::Student),
                     BulkSegmentAction::make(segmentModel: SegmentModel::Student),
+                    BulkCreateCaseAction::make()
+                        ->authorize(fn () => auth()->user()->can('student.*.update')),
                     BulkCreateAlertAction::make()
                         ->visible(fn (): bool => auth()->user()->can('student.*.update')),
                     BulkCreateInteractionAction::make()
