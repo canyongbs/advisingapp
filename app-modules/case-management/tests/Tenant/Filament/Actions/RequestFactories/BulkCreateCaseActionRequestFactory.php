@@ -46,7 +46,6 @@ class BulkCreateCaseActionRequestFactory extends RequestFactory
 {
     public function definition(): array
     {
-
         return [
             'division_id' => Division::factory(),
             'status_id' => CaseStatus::factory(),
