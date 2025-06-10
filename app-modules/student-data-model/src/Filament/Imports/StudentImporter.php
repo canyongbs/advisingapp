@@ -107,6 +107,13 @@ class StudentImporter extends Importer
                     'nullable',
                     'integer',
                 ]),
+            ImportColumn::make('gender')
+                ->example('Male')
+                ->rules([
+                    'nullable',
+                    'string',
+                    'max:255',
+                ]),
             ImportColumn::make('sms_opt_out')
                 ->label('SMS opt out')
                 ->example('false')
