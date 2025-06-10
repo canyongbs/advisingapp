@@ -51,6 +51,8 @@ use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\Reactive;
+use Illuminate\Contracts\Pagination\Paginator;
+
 
 class ProspectsActionCenterWidget extends TableWidget
 {
@@ -175,5 +177,15 @@ class ProspectsActionCenterWidget extends TableWidget
                     ->url(fn (Prospect $record): string => ProspectResource::getUrl('view', ['record' => $record]), shouldOpenInNewTab: true)
                     ->icon('heroicon-m-arrow-top-right-on-square'),
             ]);
+    }
+
+    /** 
+     * @param Builder<Prospect> $query 
+     * 
+     * @return Paginator<int, Prospect> 
+     */
+    protected function paginateTableQuery(Builder $query): Paginator
+    {
+        return $query->paginate(($this->getTableRecordsPerPage() === 'all') ? $query->count() : $this->getTableRecordsPerPage());
     }
 }
