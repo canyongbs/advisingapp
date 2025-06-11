@@ -86,7 +86,8 @@ class ImportStudentDataAction
             ->label(__('filament-actions::import.modal.form.file.label'))
             ->placeholder('Upload a students CSV file')
             ->acceptedFileTypes(['text/csv', 'text/x-csv', 'application/csv', 'application/x-csv', 'text/comma-separated-values', 'text/x-comma-separated-values', 'text/plain', 'application/vnd.ms-excel'])
-            ->rules($action->getFileValidationRules())
+            // TODO: Fix validation to allow for Microsoft Excel CSVs
+            //->rules($action->getFileValidationRules())
             ->afterStateUpdated(function (FileUpload $component, Component $livewire, Forms\Set $set, ?TemporaryUploadedFile $state) use ($action, $columnMapStatePath, $importer) {
                 if (! $state instanceof TemporaryUploadedFile) {
                     return;
