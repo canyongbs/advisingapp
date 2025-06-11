@@ -97,7 +97,22 @@ class ListCases extends ListRecords
                     ->sortable(query: fn (Builder $query, string $direction): Builder => $query->tap(new EducatableSort($direction))),
                 TextColumn::make('respondent.sisid')
                     ->label('SIS ID')
-                    ->searchable()
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query->when(
+                            ! empty($search),
+                            function (Builder $query) use ($search) {
+                                $query->whereHasMorph(
+                                    'respondent',
+                                    Student::class,
+                                    function (Builder $query, string $type) use ($search) {
+                                        if ($type === Student::class) {
+                                            $query->where('sisid', "{$search}");
+                                        }
+                                    }
+                                );
+                            }
+                        );
+                    })
                     ->sortable(query: function (Builder $query, string $direction): Builder {
                         // Update this if any other relations are added to the Case model respondent relationship
                         return $query->join('students', function (JoinClause $join) {
@@ -107,7 +122,22 @@ class ListCases extends ListRecords
                     }),
                 TextColumn::make('respondent.otherid')
                     ->label('Other ID')
-                    ->searchable()
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query->when(
+                            ! empty($search),
+                            function (Builder $query) use ($search) {
+                                $query->whereHasMorph(
+                                    'respondent',
+                                    Student::class,
+                                    function (Builder $query, string $type) use ($search) {
+                                        if ($type === Student::class) {
+                                            $query->where('otherid', "{$search}");
+                                        }
+                                    }
+                                );
+                            }
+                        );
+                    })
                     ->sortable(query: function (Builder $query, string $direction): Builder {
                         // Update this if any other relations are added to the Case model respondent relationship
                         return $query->join('students', function (JoinClause $join) {
