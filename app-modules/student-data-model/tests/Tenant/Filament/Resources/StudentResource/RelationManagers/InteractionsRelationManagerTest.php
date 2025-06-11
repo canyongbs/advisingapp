@@ -102,11 +102,11 @@ it('renders the initiative select filter', function () {
 
     $initiatives = InteractionInitiative::factory()->count(2)->create();
     $selectableInteractions = Interaction::factory([
-        'interaction_initiative_id' => $initiatives->first()->id,
+        'interaction_initiative_id' => $initiatives->first()->getKey(),
     ])->create();
 
     $nonSelectableInteractions = Interaction::factory([
-        'interaction_initiative_id' => $initiatives->last()->id,
+        'interaction_initiative_id' => $initiatives->last()->getKey(),
     ])->create();
 
     $student = Student::factory()->create();
@@ -123,7 +123,7 @@ it('renders the initiative select filter', function () {
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
-        ->filterTable('interaction_initiative_id', $initiatives->first()->id)
+        ->filterTable('interaction_initiative_id', $initiatives->first()->getKey())
         ->assertCanSeeTableRecords([$selectableInteractions])
         ->assertCanNotSeeTableRecords([$nonSelectableInteractions])
         ->removeTableFilter('interaction_initiative_id')
@@ -135,11 +135,11 @@ it('renders the driver select filter', function () {
 
     $drivers = InteractionDriver::factory()->count(2)->create();
     $selectableInteractions = Interaction::factory([
-        'interaction_driver_id' => $drivers->first()->id,
+        'interaction_driver_id' => $drivers->first()->getKey(),
     ])->create();
 
     $nonSelectableInteractions = Interaction::factory([
-        'interaction_driver_id' => $drivers->last()->id,
+        'interaction_driver_id' => $drivers->last()->getKey(),
     ])->create();
 
     $student = Student::factory()->create();
@@ -156,7 +156,7 @@ it('renders the driver select filter', function () {
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
-        ->filterTable('interaction_driver_id', $drivers->first()->id)
+        ->filterTable('interaction_driver_id', $drivers->first()->getKey())
         ->assertCanSeeTableRecords([$selectableInteractions])
         ->assertCanNotSeeTableRecords([$nonSelectableInteractions])
         ->removeTableFilter('interaction_driver_id')
@@ -168,11 +168,11 @@ it('renders the type select filter', function () {
 
     $types = InteractionType::factory()->count(2)->create();
     $selectableInteractions = Interaction::factory([
-        'interaction_type_id' => $types->first()->id,
+        'interaction_type_id' => $types->first()->getKey(),
     ])->create();
 
     $nonSelectableInteractions = Interaction::factory([
-        'interaction_type_id' => $types->last()->id,
+        'interaction_type_id' => $types->last()->getKey(),
     ])->create();
 
     $student = Student::factory()->create();
@@ -189,7 +189,7 @@ it('renders the type select filter', function () {
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
-        ->filterTable('interaction_type_id', $types->first()->id)
+        ->filterTable('interaction_type_id', $types->first()->getKey())
         ->assertCanSeeTableRecords([$selectableInteractions])
         ->assertCanNotSeeTableRecords([$nonSelectableInteractions])
         ->removeTableFilter('interaction_type_id')
@@ -201,11 +201,11 @@ it('renders the status select filter', function () {
 
     $statuses = InteractionStatus::factory()->count(5)->create();
     $selectableInteractions = Interaction::factory([
-        'interaction_status_id' => $statuses->first()->id,
+        'interaction_status_id' => $statuses->first()->getKey(),
     ])->create();
 
     $nonSelectableInteractions = Interaction::factory([
-        'interaction_status_id' => $statuses->last()->id,
+        'interaction_status_id' => $statuses->last()->getKey(),
     ])->create();
 
     $student = Student::factory()->create();
@@ -222,7 +222,7 @@ it('renders the status select filter', function () {
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
-        ->filterTable('interaction_status_id', $statuses->first()->id)
+        ->filterTable('interaction_status_id', $statuses->first()->getKey())
         ->assertCanSeeTableRecords([$selectableInteractions])
         ->assertCanNotSeeTableRecords([$nonSelectableInteractions])
         ->removeTableFilter('interaction_status_id')
@@ -234,11 +234,11 @@ it('renders the created by select filter', function () {
 
     $users = User::factory()->count(2)->create();
     $selectableInteractions = Interaction::factory([
-        'user_id' => $users->first()->id,
+        'user_id' => $users->first()->getKey(),
     ])->create();
 
     $nonSelectableInteractions = Interaction::factory([
-        'user_id' => $users->last()->id,
+        'user_id' => $users->last()->getKey(),
     ])->create();
 
     $student = Student::factory()->create();
@@ -255,7 +255,7 @@ it('renders the created by select filter', function () {
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
-        ->filterTable('user_id', $users->first()->id)
+        ->filterTable('user_id', $users->first()->getKey())
         ->assertCanSeeTableRecords([$selectableInteractions])
         ->assertCanNotSeeTableRecords([$nonSelectableInteractions])
         ->removeTableFilter('user_id')

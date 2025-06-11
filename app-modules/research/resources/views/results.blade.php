@@ -82,6 +82,11 @@
             @endif
 
             <div x-html="resultsHtml"></div>
+            @if ($showEmailResults)
+                <section class="mt-3 px-3 text-right">
+                    {{ ($this->emailResearchRequestAction)(['researchRequest' => $researchRequest->getKey()]) }}
+                </section>
+            @endif
         </div>
     </section>
 

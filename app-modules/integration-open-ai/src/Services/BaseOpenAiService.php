@@ -56,6 +56,7 @@ use AdvisingApp\IntegrationOpenAi\Services\Concerns\UploadsFiles;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use Closure;
+use Exception;
 use Generator;
 use Illuminate\Support\Facades\Http;
 use OpenAI\Contracts\ClientContract;
@@ -290,6 +291,27 @@ abstract class BaseOpenAiService implements AiService
                 $file->message()->associate($message);
                 $file->save();
             }
+        }
+
+        try {
+            if (is_null($message->thread->name)) {
+                $prompt = $message->context . "\nThe following is the start of a chat between you and a user:\n" . $message->content;
+
+                $message->thread->name = $this->complete($prompt, 'Generate a title for this chat, in 5 words or less. Do not respond with any greetings or salutations, and do not include any additional information or context. Just respond with the title:');
+
+                $message->thread->saved_at = now();
+
+                $message->thread->save();
+
+                dispatch(new RecordTrackedEvent(
+                    type: TrackedEventType::AiThreadSaved,
+                    occurredAt: now(),
+                ));
+            }
+        } catch (Exception $e) {
+            report($e);
+
+            $message->thread->name = 'Untitled Chat';
         }
 
         return $this->streamRun($message, $instructions, $saveResponse);

@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Enums;
+namespace AdvisingApp\Research\Enums;
 
 use Filament\Support\Contracts\HasLabel;
 
-enum AiThreadShareTarget: string implements HasLabel
+enum ResearchRequestShareTarget: string implements HasLabel
 {
     case User = 'user';
     case Team = 'team';
@@ -48,9 +48,9 @@ enum AiThreadShareTarget: string implements HasLabel
         return $this->name;
     }
 
-    public static function default(): AiThreadShareTarget
+    public static function default(): ResearchRequestShareTarget
     {
-        return AiThreadShareTarget::User;
+        return ResearchRequestShareTarget::User;
     }
 
     public static function parse(string | self $value): self

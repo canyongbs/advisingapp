@@ -34,31 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Enums;
+namespace AdvisingApp\CaseManagement\Tests\Tenant\Filament\Actions\RequestFactories;
 
-use Filament\Support\Contracts\HasLabel;
+use AdvisingApp\CaseManagement\Models\CasePriority;
+use AdvisingApp\CaseManagement\Models\CaseStatus;
+use AdvisingApp\Division\Models\Division;
+use App\Models\User;
+use Worksome\RequestFactories\RequestFactory;
 
-enum AiThreadShareTarget: string implements HasLabel
+class BulkCreateCaseActionRequestFactory extends RequestFactory
 {
-    case User = 'user';
-    case Team = 'team';
-
-    public function getLabel(): string
+    public function definition(): array
     {
-        return $this->name;
-    }
-
-    public static function default(): AiThreadShareTarget
-    {
-        return AiThreadShareTarget::User;
-    }
-
-    public static function parse(string | self $value): self
-    {
-        if ($value instanceof self) {
-            return $value;
-        }
-
-        return self::from($value);
+        return [
+            'division_id' => Division::factory(),
+            'status_id' => CaseStatus::factory(),
+            'priority_id' => CasePriority::factory(),
+            'close_details' => $this->faker->sentence,
+            'res_details' => $this->faker->sentence,
+            'assigned_to_id' => User::factory(),
+        ];
     }
 }

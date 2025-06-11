@@ -59,6 +59,8 @@ class ManageResearchRequests extends Page
 
     protected static ?int $navigationSort = 20;
 
+    public bool $showEmailResults = true;
+
     /**
      * @return array<NavigationItem>
      */
