@@ -98,13 +98,18 @@ class ListCases extends ListRecords
                 TextColumn::make('respondent.sisid')
                     ->label('SIS ID')
                     ->searchable(query: function (Builder $query, string $search): Builder {
-                        return $query->whereHasMorph(
-                            'respondent',
-                            Student::class,
-                            function (Builder $query, string $type) use ($search) {
-                                if ($type === Student::class) {
-                                    $query->where('sisid', "{$search}");
-                                }
+                        return $query->when(
+                            ! empty($search),
+                            function (Builder $query) use ($search) {
+                                $query->whereHasMorph(
+                                    'respondent',
+                                    Student::class,
+                                    function (Builder $query, string $type) use ($search) {
+                                        if ($type === Student::class) {
+                                            $query->where('sisid', "{$search}");
+                                        }
+                                    }
+                                );
                             }
                         );
                     })
@@ -118,13 +123,18 @@ class ListCases extends ListRecords
                 TextColumn::make('respondent.otherid')
                     ->label('Other ID')
                     ->searchable(query: function (Builder $query, string $search): Builder {
-                        return $query->whereHasMorph(
-                            'respondent',
-                            Student::class,
-                            function (Builder $query, string $type) use ($search) {
-                                if ($type === Student::class) {
-                                    $query->where('otherid', "{$search}");
-                                }
+                        return $query->when(
+                            ! empty($search),
+                            function (Builder $query) use ($search) {
+                                $query->whereHasMorph(
+                                    'respondent',
+                                    Student::class,
+                                    function (Builder $query, string $type) use ($search) {
+                                        if ($type === Student::class) {
+                                            $query->where('otherid', "{$search}");
+                                        }
+                                    }
+                                );
                             }
                         );
                     })
