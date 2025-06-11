@@ -40,6 +40,7 @@ use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Settings\AiCustomAdvisorSettings;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\FileUpload;
@@ -94,7 +95,17 @@ class AiAssistantForm
                     ->searchable()
                     ->required()
                     ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::CustomAdvisors->getModels()))
-                    ->visible(fn (Get $get): bool => filled($get('application'))),
+                    ->visible(fn (Get $get): bool => filled($get('application')))
+                    ->disabled(fn (): bool => ! app(AiCustomAdvisorSettings::class)->allow_selection_of_model)
+                    ->default(function () {
+                        $settings = app(AiCustomAdvisorSettings::class);
+
+                        if ($settings->allow_selection_of_model) {
+                            return null;
+                        }
+
+                        return $settings->preselected_model;
+                    }),
                 Textarea::make('description')
                     ->columnSpanFull()
                     ->required(),

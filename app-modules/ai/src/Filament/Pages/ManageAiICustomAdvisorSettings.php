@@ -36,34 +36,41 @@
 
 namespace AdvisingApp\Ai\Filament\Pages;
 
+use AdvisingApp\Ai\Actions\ReInitializeAiServiceAssistant;
+use AdvisingApp\Ai\Actions\ResetAiServiceIdsForAssistant;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
+use AdvisingApp\Ai\Settings\AiCustomAdvisorSettings;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Pages\SettingsPage;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
-/**
- * @property-read ?AiAssistant $defaultAssistant
- */
-class ManageAiIntegratedAssistantSettings extends SettingsPage
+class ManageAiICustomAdvisorSettings extends SettingsPage
 {
-    protected static string $settings = AiIntegratedAssistantSettings::class;
+    protected static string $settings = AiCustomAdvisorSettings::class;
 
-    protected static ?string $title = 'Integrated Advisor';
+    protected static ?string $title = 'Custom Advisor';
 
     protected static ?string $cluster = GlobalArtificialIntelligence::class;
 
-    protected static ?int $navigationSort = 20;
+    protected static ?int $navigationSort = 15;
+
+    protected ?bool $hasDatabaseTransactions = true;
 
     public static function canAccess(): bool
     {
         /** @var User $user */
-        $user = auth()->user();
+        $user = Auth::user();
 
         if (! $user->hasLicense(LicenseType::ConversationalAi)) {
             return false;
@@ -76,18 +83,25 @@ class ManageAiIntegratedAssistantSettings extends SettingsPage
     {
         return $form
             ->schema([
-                Select::make('default_model')
-                    ->options(AiModelApplicabilityFeature::IntegratedAdvisor->getModelsAsSelectOptions())
+                Toggle::make('allow_selection_of_model')
+                    ->label('Allow selection of model?')
+                    ->helperText('If enabled, users can select a model when creating or editing custom advisors.')
+                    ->live(),
+                Select::make('preselected_model')
+                    ->label('Select Model')
+                    ->options(AiModelApplicabilityFeature::CustomAdvisors->getModelsAsSelectOptions())
                     ->searchable()
-                    ->helperText('Used for general purposes like generating content when an assistant is not being used.')
-                    ->required(),
+                    ->helperText('This model will be the model used for custom advisors.')
+                    ->required()
+                    ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::CustomAdvisors->getModels()))
+                    ->visible(fn (Get $get): bool => ! $get('allow_selection_of_model')),
             ])
-            ->disabled(! auth()->user()->isSuperAdmin());
+            ->disabled(! Auth::user()->isSuperAdmin());
     }
 
     public function save(): void
     {
-        if (! auth()->user()->isSuperAdmin()) {
+        if (! Auth::user()->isSuperAdmin()) {
             return;
         }
 
@@ -99,7 +113,7 @@ class ManageAiIntegratedAssistantSettings extends SettingsPage
      */
     public function getFormActions(): array
     {
-        if (! auth()->user()->isSuperAdmin()) {
+        if (! Auth::user()->isSuperAdmin()) {
             return [];
         }
 
@@ -108,10 +122,41 @@ class ManageAiIntegratedAssistantSettings extends SettingsPage
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        if (filled($data['default_model'] ?? null)) {
-            $data['default_model'] = AiModel::parse($data['default_model']);
+        if (filled($data['preselected_model'] ?? null)) {
+            $data['preselected_model'] = AiModel::parse($data['preselected_model']);
         }
 
         return parent::mutateFormDataBeforeSave($data);
+    }
+
+    protected function afterSave(): void
+    {
+        $data = $this->mutateFormDataBeforeSave($this->form->getState());
+
+        if (! ($data['allow_selection_of_model'] ?? true)) {
+            AiAssistant::query()
+                ->where('is_default', false)
+                ->each(function (AiAssistant $assistant) use ($data) {
+                    if ($assistant->model === $data['preselected_model']) {
+                        return;
+                    }
+
+                    $modelDeploymentIsShared = $assistant->model->isSharedDeployment(AiModel::parse($data['preselected_model']));
+
+                    $assistant->model = $data['preselected_model'];
+
+                    if (! $modelDeploymentIsShared) {
+                        app(ResetAiServiceIdsForAssistant::class)(
+                            $assistant,
+                        );
+                    }
+
+                    $assistant->save();
+
+                    if (! $modelDeploymentIsShared) {
+                        app(ReInitializeAiServiceAssistant::class)($assistant);
+                    }
+                });
+        }
     }
 }

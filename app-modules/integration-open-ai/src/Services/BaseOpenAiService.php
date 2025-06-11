@@ -60,6 +60,7 @@ use Exception;
 use Generator;
 use Illuminate\Support\Facades\Http;
 use OpenAI\Contracts\ClientContract;
+use OpenAI\Exceptions\ErrorException;
 use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
 use OpenAI\Responses\Threads\ThreadResponse;
 use OpenAI\Testing\ClientFake;
@@ -252,11 +253,19 @@ abstract class BaseOpenAiService implements AiService
 
     public function deleteThread(AiThread $thread): void
     {
-        foreach ($this->retrieveThread($thread)->vectorStoreIds as $vectorStoreId) {
-            $this->deleteVectorStore($vectorStoreId);
-        }
+        try {
+            foreach ($this->retrieveThread($thread)->vectorStoreIds as $vectorStoreId) {
+                $this->deleteVectorStore($vectorStoreId);
+            }
 
-        $this->client->threads()->delete($thread->thread_id);
+            $this->client->threads()->delete($thread->thread_id);
+        } catch (ErrorException $e) {
+            if ($e->getMessage() !== 'Resource not found') {
+                throw $e;
+            }
+
+            report($e);
+        }
 
         $thread->thread_id = null;
     }
