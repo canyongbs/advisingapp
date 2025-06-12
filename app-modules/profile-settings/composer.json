@@ -1,0 +1,26 @@
+{
+    "name": "canyon-gbs/profile-settings",
+    "description": "",
+    "type": "library",
+    "version": "1.0",
+    "license": "proprietary",
+    "require": {
+        "filament/filament": "^3.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "AdvisingApp\\ProfileSettings\\": "src/",
+            "AdvisingApp\\ProfileSettings\\Tests\\": "tests/",
+            "AdvisingApp\\ProfileSettings\\Database\\Factories\\": "database/factories/",
+            "AdvisingApp\\ProfileSettings\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AdvisingApp\\ProfileSettings\\Providers\\ProfileSettingsServiceProvider"
+            ]
+        }
+    }
+}
