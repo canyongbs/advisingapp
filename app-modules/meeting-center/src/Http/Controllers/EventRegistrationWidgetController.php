@@ -177,6 +177,7 @@ class EventRegistrationWidgetController extends Controller
                 $authentication = EventRegistrationFormAuthentication::findOrFail($authentication);
             }
 
+            /** @var ?EventRegistrationFormAuthentication $authentication */
             if (
                 ($authentication?->isExpired() ?? true)
             ) {

@@ -58,6 +58,7 @@ use Filament\Actions\Exports\Jobs\ExportCompletion;
 use Filament\Actions\Exports\Jobs\ExportCsv;
 use Filament\Actions\Exports\Jobs\PrepareCsvExport;
 use Filament\Actions\Imports\Jobs\ImportCsv;
+use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Auth\ResetPassword;
 use Filament\Tables\Table;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -189,6 +190,10 @@ class AppServiceProvider extends ServiceProvider
             $table
                 ->paginationPageOptions([5, 10, 20])
                 ->defaultPaginationPageOption(5);
+        });
+
+        Textarea::configureUsing(function (Textarea $textarea): void {
+            $textarea->disableGrammarly();
         });
 
         configureScope(function (Scope $scope): void {

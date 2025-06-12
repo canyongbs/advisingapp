@@ -172,6 +172,7 @@ class CaseFormWidgetController extends Controller
             $authentication = CaseFormAuthentication::findOrFail($authentication);
         }
 
+        /** @var ?CaseFormAuthentication $authentication */
         if (
             $caseForm->is_authenticated &&
             ($authentication?->isExpired() ?? true)
