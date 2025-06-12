@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\ProfileSettings\Providers;
 
+use AdvisingApp\ProfileSettings\ProfileSettingsPlugin;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
-use AdvisingApp\ProfileSettings\ProfileSettingsPlugin;
 
 class ProfileSettingsServiceProvider extends ServiceProvider
 {
@@ -51,7 +51,6 @@ class ProfileSettingsServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Relation::morphMap([
-          
         ]);
     }
 }
