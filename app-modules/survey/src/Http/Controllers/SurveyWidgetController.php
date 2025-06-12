@@ -172,6 +172,7 @@ class SurveyWidgetController extends Controller
             $authentication = SurveyAuthentication::findOrFail($authentication);
         }
 
+        /** @var ?SurveyAuthentication $authentication */
         if (
             $survey->is_authenticated &&
             ($authentication?->isExpired() ?? true)

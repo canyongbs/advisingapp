@@ -663,6 +663,7 @@ class UserChat extends Page implements HasForms, HasActions
 
             $settings = app(TwilioSettings::class);
 
+            // @phpstan-ignore method.notFound
             $configuration = $twilioClient->conversations->v1->configuration()->fetch();
 
             return (new AccessToken(
