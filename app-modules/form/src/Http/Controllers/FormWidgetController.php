@@ -187,6 +187,7 @@ class FormWidgetController extends Controller
             $authentication = FormAuthentication::findOrFail($authentication);
         }
 
+        /** @var ?FormAuthentication $authentication */
         if (
             $form->is_authenticated &&
             ($authentication?->isExpired() ?? true)

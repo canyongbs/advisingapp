@@ -158,6 +158,7 @@ class ApplicationWidgetController extends Controller
             $authentication = ApplicationAuthentication::findOrFail($authentication);
         }
 
+        /** @var ?ApplicationAuthentication $authentication */
         if (
             ($authentication?->isExpired() ?? true)
         ) {
