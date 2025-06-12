@@ -295,9 +295,7 @@ class EngagementsRelationManager extends RelationManager
                                 )
                             )
                     ),
-            ]);
-        // Polling disabled for now due to action modal reload issues
-        // ->poll('5s');
+            ])->poll('5s');
     }
 
     public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
