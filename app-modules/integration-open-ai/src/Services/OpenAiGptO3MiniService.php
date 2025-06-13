@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Services;
 
+use AdvisingApp\Ai\Enums\ReasoningEffort;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Services\Contracts\AiServiceLifecycleHooks;
@@ -103,5 +104,10 @@ class OpenAiGptO3MiniService extends BaseOpenAiService implements AiServiceLifec
     public function beforeMessageFileForceDeleted(AiMessageFile $file): void
     {
         $this->deleteFile($file);
+    }
+
+    public function getReasoningEffort(): ReasoningEffort
+    {
+        return $this->settings->reasoning_effort ?? ReasoningEffort::Medium;
     }
 }
