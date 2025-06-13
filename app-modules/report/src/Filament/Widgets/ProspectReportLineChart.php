@@ -45,8 +45,8 @@ class ProspectReportLineChart extends ChartReportWidget
 
     protected int | string | array $columnSpan = [
         'sm' => 1,
-        'md' => 3,
-        'lg' => 3,
+        'md' => 4,
+        'lg' => 4,
     ];
 
     protected function getOptions(): array
