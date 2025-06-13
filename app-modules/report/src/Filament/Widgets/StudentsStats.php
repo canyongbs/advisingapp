@@ -41,12 +41,16 @@ use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
+use Carbon\Carbon;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Number;
 
 class StudentsStats extends StatsOverviewReportWidget
 {
+    use InteractsWithPageFilters;
+
     protected int | string | array $columnSpan = [
         'sm' => 2,
         'md' => 4,
@@ -55,9 +59,21 @@ class StudentsStats extends StatsOverviewReportWidget
 
     protected function getStats(): array
     {
-        $studentsCount = Cache::tags(["{{$this->cacheTag}}"])->remember('total-students-count', now()->addHours(24), function (): int {
-            return Student::count();
-        });
+        $startDate = ! is_null($this->filters['startDate'] ?? null) ?
+            Carbon::parse($this->filters['startDate']) :
+            null;
+
+        $endDate = ! is_null($this->filters['endDate'] ?? null) ?
+            Carbon::parse($this->filters['endDate']) :
+            now();
+
+        $shouldBypassCache = filled($startDate) || ($this->filters['endDate'] ?? false);
+
+        $studentsCount = $shouldBypassCache
+            ? Student::whereBetween('created_at', [$startDate, $endDate])->count()
+            : Cache::tags(["{{$this->cacheTag}}"])->remember('total-students-count', now()->addHours(24), function () use ($startDate, $endDate): int {
+                return Student::whereBetween('created_at', [$startDate, $endDate])->count();
+            });
 
         return [
             Stat::make(
