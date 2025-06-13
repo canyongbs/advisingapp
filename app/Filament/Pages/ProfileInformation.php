@@ -38,10 +38,8 @@ namespace App\Filament\Pages;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\MeetingCenter\Managers\CalendarManager;
-use App\Features\SubmitAiChatOnEnterFlag;
+use App\Filament\Clusters\ProfileSettings;
 use App\Models\User;
-use App\Settings\CollegeBrandingSettings;
-use App\Settings\DisplaySettings;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -50,49 +48,45 @@ use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Component;
-use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Forms\Components\Split;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
 use Filament\Support\Enums\Alignment;
-use Filament\Support\Enums\VerticalAlignment;
 use Filament\Support\Exceptions\Halt;
-use FilamentTiptapEditor\Enums\TiptapOutput;
-use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
-use Tapp\FilamentTimezoneField\Forms\Components\TimezoneSelect;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 /**
  * @property Form $form
  */
-class EditProfile extends Page
+class ProfileInformation extends Page
 {
     use InteractsWithFormActions;
 
-    protected static string $view = 'filament.pages.edit-profile';
+    protected static string $view = 'filament.pages.profile-save';
 
-    protected static ?string $slug = 'profile';
+    protected static ?string $cluster = ProfileSettings::class;
 
-    protected static ?string $title = 'Profile Settings';
+    protected static ?string $slug = 'profile-information';
 
-    protected static bool $shouldRegisterNavigation = false;
+    protected static ?string $title = 'Profile Information';
+
+    protected static ?int $navigationSort = 10;
+
+    protected static bool $shouldRegisterNavigation = true;
 
     /** @var array<string, mixed> $data */
     public ?array $data = [];
@@ -157,7 +151,6 @@ class EditProfile extends Page
         return $form
             ->schema([
                 Section::make('Public Profile')
-                    ->aside()
                     ->visible($hasCrmLicense)
                     ->schema([
                         Toggle::make('has_enabled_public_profile')
@@ -184,7 +177,6 @@ class EditProfile extends Page
                     ]),
                 Section::make('Profile Information')
                     ->description('This information is visible to other users on your profile page, if you choose to make it visible.')
-                    ->aside()
                     ->schema([
                         SpatieMediaLibraryFileUpload::make('avatar')
                             ->label('Avatar')
@@ -199,6 +191,12 @@ class EditProfile extends Page
                             ->visible($user->is_external),
                         $this->getNameFormComponent()
                             ->disabled($user->is_external),
+                        $this->getEmailFormComponent()
+                            ->disabled($user->is_external),
+                        Checkbox::make('is_email_visible_on_profile')
+                            ->label('Show Email on profile')
+                            ->live()
+                            ->visible($hasCrmLicense),
                         RichEditor::make('bio')
                             ->label('Personal Bio')
                             ->toolbarButtons(['bold', 'italic', 'underline', 'link', 'blockquote', 'bulletList', 'orderedList'])
@@ -240,134 +238,10 @@ class EditProfile extends Page
                             ->label('Show Division on profile')
                             ->hidden(! $user->team?->division()->exists())
                             ->live(),
-                    ]),
-                Section::make('Artificial Intelligence')
-                    ->description('Select options for how you work with AI.')
-                    ->aside()
-                    ->schema([
-                        Select::make('is_submit_ai_chat_on_enter_enabled')
-                            ->label('Enter Key')
-                            ->selectablePlaceholder(false)
-                            ->hint('Decide below if you would prefer the enter key to create a new line or submit the prompt you typed in the AI chat interface.')
-                            ->options([
-                                false => 'New Line',
-                                true => 'Enter',
-                            ]),
-                    ])
-                    ->visible(SubmitAiChatOnEnterFlag::active()),
-                Section::make('Account Information')
-                    ->description("Update your account's information.")
-                    ->aside()
-                    ->schema([
-                        $this->getEmailFormComponent()
-                            ->disabled($user->is_external),
-                        Checkbox::make('is_email_visible_on_profile')
-                            ->label('Show Email on profile')
-                            ->live()
-                            ->visible($hasCrmLicense),
                         $this->getPasswordFormComponent()
                             ->hidden($user->is_external),
                         $this->getPasswordConfirmationFormComponent()
                             ->hidden($user->is_external),
-                        TimezoneSelect::make('timezone')
-                            ->required()
-                            ->selectablePlaceholder(false)
-                            ->helperText(function (): string {
-                                $timezone = config('app.timezone');
-
-                                if (
-                                    filled($displaySettingsTimezone = app(DisplaySettings::class)->timezone)
-                                ) {
-                                    $timezone = $displaySettingsTimezone;
-                                }
-
-                                return "Default: {$timezone}";
-                            }),
-                    ]),
-                Section::make('Disable Branding Bar')
-                    ->aside()
-                    ->schema([
-                        Toggle::make('is_branding_bar_dismissed')
-                            ->label(''),
-                    ])
-                    ->visible(fn (CollegeBrandingSettings $settings) => $settings->dismissible),
-                Section::make('Connected Accounts')
-                    ->description('Disconnect your external accounts.')
-                    ->aside()
-                    ->schema($connectedAccounts->toArray())
-                    ->visible(fn () => $connectedAccounts->count() > 0),
-                Section::make('Working Hours')
-                    ->aside()
-                    ->visible($hasCrmLicense)
-                    ->schema([
-                        Toggle::make('working_hours_are_enabled')
-                            ->label('Set Working Hours')
-                            ->live()
-                            ->hint(fn (Get $get): string => $get('are_working_hours_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
-                        Checkbox::make('are_working_hours_visible_on_profile')
-                            ->label('Show Working Hours on profile')
-                            ->visible(fn (Get $get) => $get('working_hours_are_enabled'))
-                            ->live(),
-                        Section::make('Days')
-                            ->schema($this->getHoursForDays('working_hours'))
-                            ->visible(fn (Get $get) => $get('working_hours_are_enabled')),
-                    ]),
-                Section::make('Office Hours')
-                    ->aside()
-                    ->visible($hasCrmLicense)
-                    ->schema([
-                        Toggle::make('office_hours_are_enabled')
-                            ->label('Enable Office Hours')
-                            ->live(),
-                        Checkbox::make('appointments_are_restricted_to_existing_students')
-                            ->label('Restrict appointments to existing students')
-                            ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
-                        Section::make('Days')
-                            ->schema($this->getHoursForDays('office_hours'))
-                            ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
-                    ]),
-                Section::make('Email Signature')
-                    ->aside()
-                    ->visible($hasCrmLicense)
-                    ->schema([
-                        Toggle::make('is_signature_enabled')
-                            ->label('Enable Email Signature')
-                            ->live(),
-                        TiptapEditor::make('signature')
-                            ->profile('signature')
-                            ->extraInputAttributes(['style' => 'min-height: 12rem;'])
-                            ->output(TiptapOutput::Json)
-                            ->required(fn (Get $get) => $get('is_signature_enabled'))
-                            ->disk('s3-public')
-                            ->visible(fn (Get $get) => $get('is_signature_enabled')),
-                    ]),
-                Section::make('Out of Office')
-                    ->aside()
-                    ->schema([
-                        Grid::make()
-                            ->columns([
-                                'sm' => 1,
-                                'md' => 1,
-                                'lg' => 1,
-                                'xl' => 2,
-                                '2xl' => 2,
-                            ])
-                            ->schema([
-                                Toggle::make('out_of_office_is_enabled')
-                                    ->columnSpanFull()
-                                    ->label('Enable Out of Office')
-                                    ->live(),
-                                DateTimePicker::make('out_of_office_starts_at')
-                                    ->columnSpan(1)
-                                    ->label('Start')
-                                    ->required()
-                                    ->visible(fn (Get $get) => $get('out_of_office_is_enabled')),
-                                DateTimePicker::make('out_of_office_ends_at')
-                                    ->columnSpan(1)
-                                    ->label('End')
-                                    ->required()
-                                    ->visible(fn (Get $get) => $get('out_of_office_is_enabled')),
-                            ]),
                     ]),
             ]);
     }
@@ -591,66 +465,5 @@ class EditProfile extends Page
     protected function hasFullWidthFormActions(): bool
     {
         return false;
-    }
-
-    /**
-     * @return array<string, Grid>
-     */
-    private function getHoursForDays(string $key): array
-    {
-        return collect([
-            'sunday',
-            'monday',
-            'tuesday',
-            'wednesday',
-            'thursday',
-            'friday',
-            'saturday',
-        ])->map(
-            fn ($day) => Split::make([
-                Toggle::make("{$key}.{$day}.enabled")
-                    ->label(str($day)->ucfirst())
-                    ->inline(false)
-                    ->live(),
-                Split::make([
-                    TimePicker::make("{$key}.{$day}.starts_at")
-                        ->required()
-                        ->visible(fn (Get $get) => $get("{$key}.{$day}.enabled")),
-                    TimePicker::make("{$key}.{$day}.ends_at")
-                        ->required()
-                        ->visible(fn (Get $get) => $get("{$key}.{$day}.enabled")),
-                ]),
-
-                Actions::make([
-                    FormAction::make("copy_time_from_{$day}_{$key}")
-                        ->label('Copy to All')
-                        ->visible(fn (Get $get) => $get("{$key}.{$day}.enabled"))
-                        ->link()
-                        ->color('blue')
-                        ->extraAttributes(['class' => 'fi-action-copytime-link'])
-                        ->action(function (Get $get, Set $set) use ($day, $key) {
-                            $start = $get("{$key}.{$day}.starts_at");
-                            $end = $get("{$key}.{$day}.ends_at");
-
-                            collect(['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'])
-                                ->filter(fn ($targetDay) => $targetDay !== $day)
-                                ->each(function ($targetDay) use ($get, $set, $key, $start, $end) {
-                                    if ($get("{$key}.{$targetDay}.enabled") === false) {
-                                        return;
-                                    }
-                                    $set("{$key}.{$targetDay}.starts_at", $start);
-                                    $set("{$key}.{$targetDay}.ends_at", $end);
-                                });
-
-                            Notification::make()
-                                ->title('Copied time to all days')
-                                ->success()
-                                ->send();
-                        }),
-                ]),
-            ])
-                ->from('md')
-                ->verticalAlignment(VerticalAlignment::End)
-        )->toArray();
     }
 }
