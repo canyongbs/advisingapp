@@ -44,11 +44,6 @@ use Illuminate\Support\Number;
 
 class StudentInteractionStats extends StatsOverviewReportWidget
 {
-    protected function getColumns(): int
-    {
-        return 2;
-    }
-
     public function getStats(): array
     {
         return [
@@ -69,5 +64,10 @@ class StudentInteractionStats extends StatsOverviewReportWidget
                 maxPrecision: 2,
             )),
         ];
+    }
+
+    protected function getColumns(): int
+    {
+        return 2;
     }
 }
