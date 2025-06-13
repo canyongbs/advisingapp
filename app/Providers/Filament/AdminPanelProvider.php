@@ -39,7 +39,6 @@ namespace App\Providers\Filament;
 use AdvisingApp\Authorization\Filament\Pages\Auth\Login;
 use AdvisingApp\Theme\Settings\ThemeSettings;
 use App\Filament\Pages\Dashboard;
-use App\Filament\Pages\EditProfile;
 use App\Filament\Pages\ProductHealth;
 use App\Filament\Pages\ProfileInformation;
 use App\Models\Tenant;
