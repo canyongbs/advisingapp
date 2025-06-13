@@ -43,6 +43,7 @@ use AdvisingApp\Audit\Models\Audit;
 use AdvisingApp\Campaign\Jobs\ExecuteCampaignActions;
 use AdvisingApp\Engagement\Jobs\DeliverEngagements as DeliverEngagementsJob;
 use AdvisingApp\Engagement\Jobs\GatherAndDispatchSesS3InboundEmails;
+use AdvisingApp\Engagement\Jobs\UnmatchedInboundCommunicationsJob;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use AdvisingApp\Form\Models\FormAuthentication;
 use AdvisingApp\MeetingCenter\Console\Commands\RefreshCalendarRefreshTokens;
@@ -73,6 +74,11 @@ class Kernel extends ConsoleKernel
             ->everyMinute()
             ->name('Gather and Dispatch SES S3 Inbound Emails')
             ->monitorName('Gather and Dispatch SES S3 Inbound Emails');
+
+        $schedule->job(new UnmatchedInboundCommunicationsJob())
+            ->daily()
+            ->name('Process Unmatched Inbound Communications')
+            ->monitorName('Process Unmatched Inbound Communications');
 
         Tenant::query()
             ->tap(new SetupIsComplete())

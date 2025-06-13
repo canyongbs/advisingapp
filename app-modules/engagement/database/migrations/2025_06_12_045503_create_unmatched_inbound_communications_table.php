@@ -34,43 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Actions;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
-use AdvisingApp\Engagement\DataTransferObjects\EngagementResponseData;
-use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
-use AdvisingApp\Engagement\Enums\EngagementResponseType;
-use AdvisingApp\Engagement\Models\EngagementResponse;
-use AdvisingApp\Engagement\Models\UnmatchedInboundCommunication;
-
-class CreateEngagementResponse
-{
-    public function __construct(
-        public EngagementResponseSenderFinder $finder
-    ) {}
-
-    public function __invoke(EngagementResponseData $data): void
+return new class () extends Migration {
+    public function up(): void
     {
-        $sender = $this->finder->find($data->from);
-
-        if (! is_null($sender)) {
-            EngagementResponse::create([
-                'type' => EngagementResponseType::Sms,
-                'sender_id' => $sender->getKey(),
-                'sender_type' => $sender->getMorphClass(),
-                'content' => $data->body,
-                // TODO We might need to retroactively get this data from the Twilio API
-                // For now, we will assume that the message was sent at the time it was received
-                'sent_at' => now(),
-                'status' => EngagementResponseStatus::New,
-            ]);
-        } else {
-            UnmatchedInboundCommunication::create([
-                'type' => EngagementResponseType::Sms,
-                'sender' => $data->from,
-                'body' => $data->body,
-                'occurred_at' => now(),
-            ]);
-        }
+        Schema::create('unmatched_inbound_communications', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('type');
+            $table->string('subject')->nullable();
+            $table->longText('body');
+            $table->timestamp('occurred_at');
+            $table->string('sender')->nullable();
+            $table->timestamps();
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::dropIfExists('unmatched_inbound_communications');
+    }
+};
