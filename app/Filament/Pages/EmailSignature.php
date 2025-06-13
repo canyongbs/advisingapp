@@ -68,7 +68,7 @@ class EmailSignature extends Page
 {
     use InteractsWithFormActions;
 
-    protected static string $view = 'filament.pages.edit-profile';
+    protected static string $view = 'filament.pages.profile-save';
 
     protected static ?string $cluster = ProfileSettings::class;
 

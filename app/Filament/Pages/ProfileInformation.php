@@ -72,11 +72,11 @@ use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 /**
  * @property Form $form
  */
-class EditProfile extends Page
+class ProfileInformation extends Page
 {
     use InteractsWithFormActions;
 
-    protected static string $view = 'filament.pages.edit-profile';
+    protected static string $view = 'filament.pages.profile-save';
 
     protected static ?string $cluster = ProfileSettings::class;
 

@@ -41,6 +41,7 @@ use AdvisingApp\Theme\Settings\ThemeSettings;
 use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\EditProfile;
 use App\Filament\Pages\ProductHealth;
+use App\Filament\Pages\ProfileInformation;
 use App\Models\Tenant;
 use App\Multitenancy\Http\Middleware\NeedsTenant;
 use Filament\Actions\ExportAction;
@@ -185,7 +186,7 @@ class AdminPanelProvider extends PanelProvider
             ->userMenuItems([
                 MenuItem::make()
                     ->label('Profile Settings')
-                    ->url(fn () => EditProfile::getUrl())
+                    ->url(fn () => ProfileInformation::getUrl())
                     ->icon('heroicon-s-cog-6-tooth'),
                 MenuItem::make()
                     ->label('About')

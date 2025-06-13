@@ -62,7 +62,7 @@ class MultifactorAuthentication extends Page
 {
     use InteractsWithFormActions;
 
-    protected static string $view = 'filament.pages.edit-profile';
+    protected static string $view = 'filament.pages.multifactor-authentication';
 
     protected static ?string $cluster = ProfileSettings::class;
 
