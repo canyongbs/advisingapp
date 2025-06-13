@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -32,45 +30,30 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+@php
+    use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 
-namespace AdvisingApp\Report\Abstract;
+    $visibleWidgets = collect($this->getVisibleWidgets())
+        ->reject(fn($widget) => $widget->widget === RefreshWidget::class)
+        ->all();
+@endphp
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Pages\Dashboard;
-use Filament\Pages\Dashboard\Concerns\HasFiltersForm;
+<x-filament-panels::page class="fi-dashboard-page">
+    <div>
+        @livewire(RefreshWidget::class, ['cacheTag' => $this->cacheTag])
+    </div>
 
-abstract class StudentReport extends Dashboard
-{
-    use HasFiltersForm;
+    @if (method_exists($this, 'filtersForm'))
+        {{ $this->filtersForm }}
+    @endif
 
-    protected static string $view = 'report::filament.pages.students';
-
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->hasLicense(LicenseType::RetentionCrm) && $user->can('report-library.view-any');
-    }
-
-    public function filtersForm(Form $form): Form
-    {
-        return $form
-            ->schema([
-                Section::make()
-                    ->schema([
-                        DatePicker::make('startDate')
-                            ->maxDate(fn (Get $get) => $get('endDate') ?: now()),
-                        DatePicker::make('endDate')
-                            ->minDate(fn (Get $get) => $get('startDate') ?: now())
-                            ->maxDate(now()),
-                    ])
-                    ->columns(2),
-            ]);
-    }
-}
+    <x-filament-widgets::widgets
+        :columns="$this->getColumns()"
+        :data="[
+            ...property_exists($this, 'filters') ? ['filters' => $this->filters] : [],
+            ...$this->getWidgetData(),
+        ]"
+        :widgets="$visibleWidgets"
+    />
+</x-filament-panels::page>
