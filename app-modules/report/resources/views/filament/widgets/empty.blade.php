@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -32,30 +30,19 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+@php
+    $heading = $this->getHeading();
+    $description = $this->getDescription();
+@endphp
 
-namespace AdvisingApp\Report\Filament\Widgets;
-
-use Filament\Widgets\ChartWidget;
-use Livewire\Attributes\Locked;
-use Livewire\Attributes\On;
-
-abstract class ChartReportWidget extends ChartWidget
-{
-    #[Locked]
-    public string $cacheTag;
-
-    protected static ?string $pollingInterval = null;
-
-    protected static bool $isLazy = false;
-
-    public function mount($cacheTag = null): void
-    {
-        parent::mount();
-
-        $this->cacheTag = $cacheTag;
-    }
-
-    #[On('refresh-widgets')]
-    public function refreshWidget() {}
-}
+<x-filament-widgets::widget>
+    <x-filament::section
+        :description="$description"
+        :heading="$heading"
+    >
+        <p class="text-sm text-gray-500 dark:text-gray-400">
+            {{ $message }}
+        </p>
+    </x-filament::section>
+</x-filament-widgets::widget>

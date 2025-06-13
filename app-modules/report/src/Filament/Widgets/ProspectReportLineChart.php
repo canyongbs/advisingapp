@@ -81,6 +81,7 @@ class ProspectReportLineChart extends ChartReportWidget
                     COUNT(*) AS monthly_total
                 FROM prospects
                 WHERE created_at >= date_trunc('month', CURRENT_DATE) - INTERVAL '11 months'
+                AND deleted_at IS NULL
                 GROUP BY date_trunc('month', created_at)
             )
             SELECT

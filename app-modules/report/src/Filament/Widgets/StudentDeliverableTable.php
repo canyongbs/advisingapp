@@ -61,10 +61,7 @@ class StudentDeliverableTable extends BaseWidget
     }
 
     #[On('refresh-widgets')]
-    public function refreshWidget()
-    {
-        $this->dispatch('$refresh');
-    }
+    public function refreshWidget() {}
 
     public function table(Table $table): Table
     {

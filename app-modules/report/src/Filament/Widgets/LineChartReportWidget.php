@@ -59,10 +59,7 @@ abstract class LineChartReportWidget extends ChartWidget
     }
 
     #[On('refresh-widgets')]
-    public function refreshWidget()
-    {
-        $this->dispatch('$refresh');
-    }
+    public function refreshWidget() {}
 
     protected function getType(): string
     {

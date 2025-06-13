@@ -73,10 +73,7 @@ class StudentInteractionUsersTable extends BaseWidget
     }
 
     #[On('refresh-widgets')]
-    public function refreshWidget(): void
-    {
-        $this->dispatch('$refresh');
-    }
+    public function refreshWidget(): void {}
 
     public function table(Table $table): Table
     {

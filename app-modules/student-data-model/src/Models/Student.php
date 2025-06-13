@@ -145,10 +145,13 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         'primary_email_id',
         'primary_phone_id',
         'primary_address_id',
+        'created_at_source',
+        'updated_at_source',
     ];
 
     protected $casts = [
         'sisid' => 'string',
+        'created_at_source' => 'datetime',
         'updated_at_source' => 'datetime',
         'birthdate' => 'date',
         'dfw' => 'date',
