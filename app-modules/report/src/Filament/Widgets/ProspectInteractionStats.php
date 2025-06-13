@@ -65,4 +65,9 @@ class ProspectInteractionStats extends StatsOverviewReportWidget
             )),
         ];
     }
+
+    protected function getColumns(): int
+    {
+        return 2;
+    }
 }
