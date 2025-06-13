@@ -68,19 +68,19 @@ class StudentsStats extends StatsOverviewReportWidget
             ),
             Stat::make('Total Alerts', Number::abbreviate(
                 Cache::tags(["{{$this->cacheTag}}"])->remember('total-student-alerts-count', now()->addHours(24), function (): int {
-                    return Alert::where('concern_type', (new Student())->getMorphClass())->count();
+                    return Alert::query()->whereHasMorph('concern', Student::class)->count();
                 }),
                 maxPrecision: 2,
             )),
             Stat::make('Total Segments', Number::abbreviate(
                 Cache::tags(["{{$this->cacheTag}}"])->remember('total-student-segments-count', now()->addHours(24), function (): int {
-                    return Segment::where('model', SegmentModel::Student)->count();
+                    return Segment::query()->where('model', SegmentModel::Student)->count();
                 }),
                 maxPrecision: 2,
             )),
             Stat::make('Total Tasks', Number::abbreviate(
                 Cache::tags(["{{$this->cacheTag}}"])->remember('total-student-tasks-count', now()->addHours(24), function (): int {
-                    return Task::where('concern_type', (new Student())->getMorphClass())->count();
+                    return Task::query()->whereHasMorph('concern', Student::class)->count();
                 }),
                 maxPrecision: 2,
             )),

@@ -64,10 +64,7 @@ class MostRecentStudentsTable extends BaseWidget
     }
 
     #[On('refresh-widgets')]
-    public function refreshWidget()
-    {
-        $this->dispatch('$refresh');
-    }
+    public function refreshWidget() {}
 
     public function table(Table $table): Table
     {
@@ -79,6 +76,8 @@ class MostRecentStudentsTable extends BaseWidget
                     return Student::whereIn($key, function ($query) use ($key) {
                         $query->select($key)
                             ->from((new Student())->getTable())
+                            ->whereNotNull('created_at_source')
+                            ->whereNull('deleted_at')
                             ->orderBy('created_at_source', 'desc')
                             ->take(100);
                     })->orderBy('created_at_source', 'desc');

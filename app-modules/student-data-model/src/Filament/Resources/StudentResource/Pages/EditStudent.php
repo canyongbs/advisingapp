@@ -308,6 +308,7 @@ class EditStudent extends EditRecord
         $student->primaryEmailAddress()->associate($student->emailAddresses()->first());
         $student->primaryPhoneNumber()->associate($student->phoneNumbers()->first());
         $student->primaryAddress()->associate($student->addresses()->first());
+        $student->updated_at_source = now();
         $student->save();
     }
 }

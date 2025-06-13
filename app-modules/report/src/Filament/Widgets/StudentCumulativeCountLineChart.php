@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
+use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
@@ -48,6 +50,22 @@ class StudentCumulativeCountLineChart extends LineChartReportWidget
         'md' => 4,
         'lg' => 4,
     ];
+
+    public function render(): View
+    {
+        if (Student::query()->whereNull('created_at_source')->exists()) {
+            return view('report::filament.widgets.empty', [
+                'message' => 'We apologize, some records are missing information about when your students were created in the student information system (SIS), so we are unable to accurately present the cumulative growth of students at your institution in this chart.',
+            ]);
+        }
+
+        return parent::render();
+    }
+
+    public static function canView(): bool
+    {
+        return (! Student::query()->exists()) || Student::query()->whereNotNull('created_at_source')->exists();
+    }
 
     protected function getOptions(): array
     {
@@ -81,6 +99,7 @@ class StudentCumulativeCountLineChart extends LineChartReportWidget
                                             COUNT(*) AS monthly_total
                                         FROM students
                                         WHERE created_at_source >= date_trunc('month', CURRENT_DATE) - INTERVAL '11 months'
+                                        AND deleted_at IS NULL
                                         GROUP BY date_trunc('month', created_at_source)
                                     )
                                     SELECT

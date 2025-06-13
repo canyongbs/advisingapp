@@ -314,6 +314,7 @@ class CreateStudent extends CreateRecord
         /** Student $student */
         $student = $this->getRecord();
 
+        $student->created_at_source = now();
         $student->primaryEmailAddress()->associate($student->emailAddresses()->first());
         $student->primaryPhoneNumber()->associate($student->phoneNumbers()->first());
         $student->primaryAddress()->associate($student->addresses()->first());
