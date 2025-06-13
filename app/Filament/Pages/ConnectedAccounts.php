@@ -59,6 +59,7 @@ use Filament\Support\Enums\Alignment;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
@@ -321,6 +322,9 @@ class ConnectedAccounts extends Page
         return false;
     }
 
+    /**
+     * @return Collection<Component>
+     */
     private static function getConnectedAccounts(): Collection
     {
         $connectedAccounts = collect([

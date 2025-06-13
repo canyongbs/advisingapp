@@ -42,7 +42,5 @@ class ProfileSettings extends Cluster
 {
     protected static bool $shouldRegisterNavigation = false;
 
-    protected static ?string $navigationLabel = 'Profile Settings';
-
     protected static ?string $title = 'Profile Settings';
 }
