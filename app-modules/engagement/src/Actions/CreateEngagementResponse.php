@@ -41,6 +41,7 @@ use AdvisingApp\Engagement\DataTransferObjects\EngagementResponseData;
 use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Models\EngagementResponse;
+use AdvisingApp\Engagement\Models\UnmatchedInboundCommunication;
 
 class CreateEngagementResponse
 {
@@ -62,6 +63,13 @@ class CreateEngagementResponse
                 // For now, we will assume that the message was sent at the time it was received
                 'sent_at' => now(),
                 'status' => EngagementResponseStatus::New,
+            ]);
+        } else {
+            UnmatchedInboundCommunication::create([
+                'type' => EngagementResponseType::Sms,
+                'sender' => $data->from,
+                'body' => $data->body,
+                'occurred_at' => now(),
             ]);
         }
     }
