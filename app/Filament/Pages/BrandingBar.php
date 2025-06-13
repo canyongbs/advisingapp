@@ -83,7 +83,7 @@ use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 /**
  * @property Form $form
  */
-class EditProfile extends Page
+class BrandingBar extends Page
 {
     use InteractsWithFormActions;
 
@@ -91,169 +91,32 @@ class EditProfile extends Page
 
     protected static ?string $cluster = ProfileSettings::class;
 
-    protected static ?string $slug = 'profile-information';
+    protected static ?string $slug = 'branding-bar';
 
-    protected static ?string $title = 'Profile Information';
+    protected static ?string $title = 'Branding Bar';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 50;
 
     protected static bool $shouldRegisterNavigation = true;
 
     /** @var array<string, mixed> $data */
     public ?array $data = [];
 
+    public static function canAccess(): bool
+    {
+        return app(CollegeBrandingSettings::class)->is_enabled && app(CollegeBrandingSettings::class)->dismissible;
+    }
+
     public function form(Form $form): Form
     {
-        /** @var User $user */
-        $user = auth()->user();
-        $hasCrmLicense = $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]);
-
-        $connectedAccounts = collect([
-            Grid::make()
-                ->schema([
-                    Placeholder::make('calendar')
-                        ->label(function (): string {
-                            /** @var User $user */
-                            $user = auth()->user();
-
-                            return "{$user->calendar->provider_type->getLabel()} Calendar";
-                        })
-                        ->content(function (): ?string {
-                            /** @var User $user */
-                            $user = auth()->user();
-
-                            return $user->calendar?->name;
-                        }),
-                    Actions::make([
-                        FormAction::make('Disconnect')
-                            ->icon('heroicon-m-trash')
-                            ->color('danger')
-                            ->requiresConfirmation()
-                            ->action(function () {
-                                /** @var User $user */
-                                $user = auth()->user();
-
-                                $calendar = $user->calendar;
-
-                                $revoked = resolve(CalendarManager::class)
-                                    ->driver($calendar->provider_type->value)
-                                    ->revokeToken($calendar);
-
-                                if ($revoked) {
-                                    $calendar->delete();
-
-                                    Notification::make()
-                                        ->title("Disconnected {$calendar->provider_type->getLabel()} Calendar")
-                                        ->success()
-                                        ->send();
-                                }
-                            }),
-                    ])->alignRight()
-                        ->verticallyAlignCenter(),
-                ])
-                ->visible(function (): bool {
-                    /** @var User $user */
-                    $user = auth()->user();
-
-                    return filled($user->calendar?->oauth_token);
-                }),
-        ])->filter(fn (Component $component) => $component->isVisible());
-
         return $form
             ->schema([
-                Section::make('Public Profile')
-                    ->visible($hasCrmLicense)
+                Section::make('Branding Bar')
                     ->schema([
-                        Toggle::make('has_enabled_public_profile')
-                            ->label('Enable public profile')
-                            ->live(),
-                        TextInput::make('public_profile_slug')
-                            ->label('Url')
-                            ->visible(fn (Get $get) => $get('has_enabled_public_profile'))
-                            //TODO: default doesn't work for some reason
-                            ->afterStateHydrated(fn (TextInput $component, $state) => $component->state($state ?? str($user->name)->lower()->slug('')))
-                            ->unique(ignoreRecord: true)
-                            ->maxLength(255)
-                            ->required()
-                            //The id doesn't matter because we're just using it to generate a piece of a url
-                            ->prefix(str(route('users.profile.view.public', ['user' => -1]))->beforeLast('/')->append('/'))
-                            ->suffixAction(
-                                FormAction::make('viewPublicProfile')
-                                    ->url(fn () => route('users.profile.view.public', ['user' => $user->public_profile_slug]))
-                                    ->icon('heroicon-m-arrow-top-right-on-square')
-                                    ->openUrlInNewTab()
-                                    ->visible(fn () => $user->public_profile_slug),
-                            )
-                            ->live(),
-                    ]),
-                Section::make('Profile Information')
-                    ->description('This information is visible to other users on your profile page, if you choose to make it visible.')
-                    ->schema([
-                        SpatieMediaLibraryFileUpload::make('avatar')
-                            ->label('Avatar')
-                            ->visibility('private')
-                            ->disk('s3')
-                            ->collection('avatar')
-                            ->hidden($user->is_external)
-                            ->avatar(),
-                        Placeholder::make('external_avatar')
-                            ->label('Avatar')
-                            ->content('Your authentication into this application is managed through single sign on (SSO). Please update your profile picture in your source authentication system and then logout and login here to persist that update into this application.')
-                            ->visible($user->is_external),
-                        $this->getNameFormComponent()
-                            ->disabled($user->is_external),
-                        $this->getEmailFormComponent()
-                            ->disabled($user->is_external),
-                        Checkbox::make('is_email_visible_on_profile')
-                            ->label('Show Email on profile')
-                            ->live()
-                            ->visible($hasCrmLicense),
-                        RichEditor::make('bio')
-                            ->label('Personal Bio')
-                            ->toolbarButtons(['bold', 'italic', 'underline', 'link', 'blockquote', 'bulletList', 'orderedList'])
-                            ->hint(fn (Get $get): string => $get('is_bio_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
-                        Checkbox::make('is_bio_visible_on_profile')
-                            ->label('Show Bio on profile')
-                            ->visible($hasCrmLicense)
-                            ->live(),
-                        PhoneInput::make('phone_number')
-                            ->label('Contact phone number')
-                            ->hint(fn (Get $get): string => $get('is_phone_number_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
-                        Checkbox::make('is_phone_number_visible_on_profile')
-                            ->label('Show phone number on profile')
-                            ->live()
-                            ->visible($hasCrmLicense),
-                        Select::make('pronouns_id')
-                            ->relationship('pronouns', 'label')
-                            ->hint(fn (Get $get): string => $get('are_pronouns_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
-                        Checkbox::make('are_pronouns_visible_on_profile')
-                            ->label('Show Pronouns on profile')
-                            ->live()
-                            ->visible($hasCrmLicense),
-                        Placeholder::make('teams')
-                            ->label('Team')
-                            ->content(fn () => $user->team->name)
-                            ->hidden(! $user->team)
-                            ->hint(fn (Get $get): string => $get('are_teams_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
-                        //TODO: Right now this is not passed to the frontend
-                        Checkbox::make('are_teams_visible_on_profile')
-                            ->label('Show ' . str('team') . ' on profile')
-                            ->hidden(! $user->team)
-                            ->live(),
-                        Placeholder::make('division')
-                            ->content($user->team?->division?->name)
-                            ->hidden(! $user->team?->division()->exists())
-                            ->hint(fn (Get $get): string => $get('is_division_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
-                        //TODO: Right now this is not passed to the frontend
-                        Checkbox::make('is_division_visible_on_profile')
-                            ->label('Show Division on profile')
-                            ->hidden(! $user->team?->division()->exists())
-                            ->live(),
-                        $this->getPasswordFormComponent()
-                            ->hidden($user->is_external),
-                        $this->getPasswordConfirmationFormComponent()
-                            ->hidden($user->is_external),
-                    ]),
+                        Toggle::make('is_branding_bar_dismissed')
+                            ->label('Disable Branding Bar'),
+                    ])
+                    ->visible(fn (CollegeBrandingSettings $settings) => $settings->dismissible),
             ]);
     }
 

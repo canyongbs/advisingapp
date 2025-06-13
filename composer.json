@@ -52,7 +52,6 @@
         "canyon-gbs/basic-needs": "*",
         "canyon-gbs/integration-open-ai": "*",
         "canyon-gbs/multifactor-authentication": "*",
-        "canyon-gbs/profile-settings": "*",
         "canyon-gbs/research": "*",
         "canyon-gbs/segment": "*",
         "canyongbs/common": "^1.1.1",

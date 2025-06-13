@@ -40,11 +40,9 @@ use Filament\Clusters\Cluster;
 
 class ProfileSettings extends Cluster
 {
-    protected static bool $shouldRegisterNavigation = true; //revert back to false before submitting!!!
+    protected static bool $shouldRegisterNavigation = false;
 
-    protected static ?string $navigationLabel = 'Profile Settings (new)';
+    protected static ?string $navigationLabel = 'Profile Settings';
 
-    protected static ?string $title = 'Profile Settings (new)';
-
-    protected static ?string $navigationGroup = 'User Management';
+    protected static ?string $title = 'Profile Settings';
 }

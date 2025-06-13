@@ -2717,41 +2717,6 @@
             }
         },
         {
-            "name": "canyon-gbs/profile-settings",
-            "version": "1.0",
-            "dist": {
-                "type": "path",
-                "url": "app-modules/profile-settings",
-                "reference": "9d8370640c5479ccdb93f2226c689c942ea696c9"
-            },
-            "require": {
-                "filament/filament": "^3.0.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "AdvisingApp\\ProfileSettings\\Providers\\ProfileSettingsServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "AdvisingApp\\ProfileSettings\\": "src/",
-                    "AdvisingApp\\ProfileSettings\\Tests\\": "tests/",
-                    "AdvisingApp\\ProfileSettings\\Database\\Factories\\": "database/factories/",
-                    "AdvisingApp\\ProfileSettings\\Database\\Seeders\\": "database/seeders/"
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
             "name": "canyon-gbs/research",
             "version": "1.0",
             "dist": {

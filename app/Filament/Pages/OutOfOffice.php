@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ProfileSettings\Filament\Pages;
+namespace App\Filament\Pages;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\MeetingCenter\Managers\CalendarManager;
@@ -83,19 +83,21 @@ use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 /**
  * @property Form $form
  */
-class ProfileInformation extends Page
+class OutOfOffice extends Page
 {
     use InteractsWithFormActions;
 
     protected static string $view = 'filament.pages.edit-profile';
 
-    protected static ?string $slug = 'profile';
-
-    protected static ?string $title = 'Profile Settings (new)';
-
-    protected static bool $shouldRegisterNavigation = true; //CHANGE ME
-
     protected static ?string $cluster = ProfileSettings::class;
+
+    protected static ?string $slug = 'out-of-office';
+
+    protected static ?string $title = 'Out Of Office';
+
+    protected static ?int $navigationSort = 90;
+
+    protected static bool $shouldRegisterNavigation = true;
 
     /** @var array<string, mixed> $data */
     public ?array $data = [];
@@ -159,193 +161,7 @@ class ProfileInformation extends Page
 
         return $form
             ->schema([
-                Section::make('Public Profile')
-                    ->aside()
-                    ->visible($hasCrmLicense)
-                    ->schema([
-                        Toggle::make('has_enabled_public_profile')
-                            ->label('Enable public profile')
-                            ->live(),
-                        TextInput::make('public_profile_slug')
-                            ->label('Url')
-                            ->visible(fn (Get $get) => $get('has_enabled_public_profile'))
-                            //TODO: default doesn't work for some reason
-                            ->afterStateHydrated(fn (TextInput $component, $state) => $component->state($state ?? str($user->name)->lower()->slug('')))
-                            ->unique(ignoreRecord: true)
-                            ->maxLength(255)
-                            ->required()
-                            //The id doesn't matter because we're just using it to generate a piece of a url
-                            ->prefix(str(route('users.profile.view.public', ['user' => -1]))->beforeLast('/')->append('/'))
-                            ->suffixAction(
-                                FormAction::make('viewPublicProfile')
-                                    ->url(fn () => route('users.profile.view.public', ['user' => $user->public_profile_slug]))
-                                    ->icon('heroicon-m-arrow-top-right-on-square')
-                                    ->openUrlInNewTab()
-                                    ->visible(fn () => $user->public_profile_slug),
-                            )
-                            ->live(),
-                    ]),
-                Section::make('Profile Information')
-                    ->description('This information is visible to other users on your profile page, if you choose to make it visible.')
-                    ->aside()
-                    ->schema([
-                        SpatieMediaLibraryFileUpload::make('avatar')
-                            ->label('Avatar')
-                            ->visibility('private')
-                            ->disk('s3')
-                            ->collection('avatar')
-                            ->hidden($user->is_external)
-                            ->avatar(),
-                        Placeholder::make('external_avatar')
-                            ->label('Avatar')
-                            ->content('Your authentication into this application is managed through single sign on (SSO). Please update your profile picture in your source authentication system and then logout and login here to persist that update into this application.')
-                            ->visible($user->is_external),
-                        $this->getNameFormComponent()
-                            ->disabled($user->is_external),
-                        RichEditor::make('bio')
-                            ->label('Personal Bio')
-                            ->toolbarButtons(['bold', 'italic', 'underline', 'link', 'blockquote', 'bulletList', 'orderedList'])
-                            ->hint(fn (Get $get): string => $get('is_bio_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
-                        Checkbox::make('is_bio_visible_on_profile')
-                            ->label('Show Bio on profile')
-                            ->visible($hasCrmLicense)
-                            ->live(),
-                        PhoneInput::make('phone_number')
-                            ->label('Contact phone number')
-                            ->hint(fn (Get $get): string => $get('is_phone_number_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
-                        Checkbox::make('is_phone_number_visible_on_profile')
-                            ->label('Show phone number on profile')
-                            ->live()
-                            ->visible($hasCrmLicense),
-                        Select::make('pronouns_id')
-                            ->relationship('pronouns', 'label')
-                            ->hint(fn (Get $get): string => $get('are_pronouns_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
-                        Checkbox::make('are_pronouns_visible_on_profile')
-                            ->label('Show Pronouns on profile')
-                            ->live()
-                            ->visible($hasCrmLicense),
-                        Placeholder::make('teams')
-                            ->label('Team')
-                            ->content(fn () => $user->team->name)
-                            ->hidden(! $user->team)
-                            ->hint(fn (Get $get): string => $get('are_teams_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
-                        //TODO: Right now this is not passed to the frontend
-                        Checkbox::make('are_teams_visible_on_profile')
-                            ->label('Show ' . str('team') . ' on profile')
-                            ->hidden(! $user->team)
-                            ->live(),
-                        Placeholder::make('division')
-                            ->content($user->team?->division?->name)
-                            ->hidden(! $user->team?->division()->exists())
-                            ->hint(fn (Get $get): string => $get('is_division_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
-                        //TODO: Right now this is not passed to the frontend
-                        Checkbox::make('is_division_visible_on_profile')
-                            ->label('Show Division on profile')
-                            ->hidden(! $user->team?->division()->exists())
-                            ->live(),
-                    ]),
-                Section::make('Artificial Intelligence')
-                    ->description('Select options for how you work with AI.')
-                    ->aside()
-                    ->schema([
-                        Select::make('is_submit_ai_chat_on_enter_enabled')
-                            ->label('Enter Key')
-                            ->selectablePlaceholder(false)
-                            ->hint('Decide below if you would prefer the enter key to create a new line or submit the prompt you typed in the AI chat interface.')
-                            ->options([
-                                false => 'New Line',
-                                true => 'Enter',
-                            ]),
-                    ])
-                    ->visible(SubmitAiChatOnEnterFlag::active()),
-                Section::make('Account Information')
-                    ->description("Update your account's information.")
-                    ->aside()
-                    ->schema([
-                        $this->getEmailFormComponent()
-                            ->disabled($user->is_external),
-                        Checkbox::make('is_email_visible_on_profile')
-                            ->label('Show Email on profile')
-                            ->live()
-                            ->visible($hasCrmLicense),
-                        $this->getPasswordFormComponent()
-                            ->hidden($user->is_external),
-                        $this->getPasswordConfirmationFormComponent()
-                            ->hidden($user->is_external),
-                        TimezoneSelect::make('timezone')
-                            ->required()
-                            ->selectablePlaceholder(false)
-                            ->helperText(function (): string {
-                                $timezone = config('app.timezone');
-
-                                if (
-                                    filled($displaySettingsTimezone = app(DisplaySettings::class)->timezone)
-                                ) {
-                                    $timezone = $displaySettingsTimezone;
-                                }
-
-                                return "Default: {$timezone}";
-                            }),
-                    ]),
-                Section::make('Disable Branding Bar')
-                    ->aside()
-                    ->schema([
-                        Toggle::make('is_branding_bar_dismissed')
-                            ->label(''),
-                    ])
-                    ->visible(fn (CollegeBrandingSettings $settings) => $settings->dismissible),
-                Section::make('Connected Accounts')
-                    ->description('Disconnect your external accounts.')
-                    ->aside()
-                    ->schema($connectedAccounts->toArray())
-                    ->visible(fn () => $connectedAccounts->count() > 0),
-                Section::make('Working Hours')
-                    ->aside()
-                    ->visible($hasCrmLicense)
-                    ->schema([
-                        Toggle::make('working_hours_are_enabled')
-                            ->label('Set Working Hours')
-                            ->live()
-                            ->hint(fn (Get $get): string => $get('are_working_hours_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
-                        Checkbox::make('are_working_hours_visible_on_profile')
-                            ->label('Show Working Hours on profile')
-                            ->visible(fn (Get $get) => $get('working_hours_are_enabled'))
-                            ->live(),
-                        Section::make('Days')
-                            ->schema($this->getHoursForDays('working_hours'))
-                            ->visible(fn (Get $get) => $get('working_hours_are_enabled')),
-                    ]),
-                Section::make('Office Hours')
-                    ->aside()
-                    ->visible($hasCrmLicense)
-                    ->schema([
-                        Toggle::make('office_hours_are_enabled')
-                            ->label('Enable Office Hours')
-                            ->live(),
-                        Checkbox::make('appointments_are_restricted_to_existing_students')
-                            ->label('Restrict appointments to existing students')
-                            ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
-                        Section::make('Days')
-                            ->schema($this->getHoursForDays('office_hours'))
-                            ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
-                    ]),
-                Section::make('Email Signature')
-                    ->aside()
-                    ->visible($hasCrmLicense)
-                    ->schema([
-                        Toggle::make('is_signature_enabled')
-                            ->label('Enable Email Signature')
-                            ->live(),
-                        TiptapEditor::make('signature')
-                            ->profile('signature')
-                            ->extraInputAttributes(['style' => 'min-height: 12rem;'])
-                            ->output(TiptapOutput::Json)
-                            ->required(fn (Get $get) => $get('is_signature_enabled'))
-                            ->disk('s3-public')
-                            ->visible(fn (Get $get) => $get('is_signature_enabled')),
-                    ]),
                 Section::make('Out of Office')
-                    ->aside()
                     ->schema([
                         Grid::make()
                             ->columns([
