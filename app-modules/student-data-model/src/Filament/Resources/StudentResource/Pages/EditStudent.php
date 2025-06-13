@@ -302,7 +302,7 @@ class EditStudent extends EditRecord
 
     protected function afterSave(): void
     {
-        /** Student $student */
+        /** @var Student $student */
         $student = $this->getRecord();
 
         $student->primaryEmailAddress()->associate($student->emailAddresses()->first());
