@@ -323,7 +323,7 @@ class ConnectedAccounts extends Page
     }
 
     /**
-     * @return Collection<Component>
+     * @return Collection<int, Grid>
      */
     private static function getConnectedAccounts(): Collection
     {
