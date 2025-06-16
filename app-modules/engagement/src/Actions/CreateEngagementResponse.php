@@ -42,6 +42,7 @@ use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Engagement\Models\UnmatchedInboundCommunication;
+use App\Features\UnMatchInboundCommunicationFeature;
 
 class CreateEngagementResponse
 {
@@ -65,12 +66,15 @@ class CreateEngagementResponse
                 'status' => EngagementResponseStatus::New,
             ]);
         } else {
-            UnmatchedInboundCommunication::create([
-                'type' => EngagementResponseType::Sms,
-                'sender' => $data->from,
-                'body' => $data->body,
-                'occurred_at' => now(),
-            ]);
+            if (! UnMatchInboundCommunicationFeature::active()) {
+                return;
+            }
+                UnmatchedInboundCommunication::create([
+                    'type' => EngagementResponseType::Sms,
+                    'sender' => $data->from,
+                    'body' => $data->body,
+                    'occurred_at' => now(),
+                ]);
         }
     }
 }
