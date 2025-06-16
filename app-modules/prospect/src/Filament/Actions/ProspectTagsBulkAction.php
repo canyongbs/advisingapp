@@ -53,7 +53,7 @@ class ProspectTagsBulkAction
         return BulkAction::make('bulkProspectTags')
             ->icon('heroicon-o-tag')
             ->modalHeading('Bulk assign prospect tags')
-            ->label('Bulk Prospect Tags')
+            ->label('Manage Tags')
             ->modalDescription(
                 fn (Collection $records) => "You have selected {$records->count()} " . Str::plural('prospect', $records->count()) . ' to apply tags.'
             )
