@@ -190,28 +190,8 @@ class ListProspects extends ListRecords
             ->bulkActions([
                 BulkActionGroup::make([
                     ActionGroup::make([
-                        SubscribeBulkAction::make(context: 'prospect')->authorize(fn (): bool => auth()->user()->can('prospect.*.update')),
-                        AddCareTeamMemberAction::make(CareTeamRoleType::Prospect),
-                        ProspectTagsBulkAction::make()->visible(fn (): bool => auth()->user()->can('prospect.*.update')),
-                    ])->dropdown(false),
-                    ActionGroup::make([
-                        BulkEmailAction::make(context: 'prospects')->authorize(fn () => Gate::allows('update', [auth()->user(), Prospect::class])),
-                        BulkTextAction::make(context: 'prospects')->authorize(fn () => Gate::allows('update', [auth()->user(), Prospect::class])),
-                    ])->dropdown(false),
-                    ActionGroup::make([
-                        BulkCreateCaseAction::make()
-                            ->authorize(fn () => auth()->user()->can('prospect.*.update')),
-                        BulkCreateAlertAction::make()
-                            ->visible(fn (): bool => auth()->user()->can('prospect.*.update')),
-                        BulkCreateInteractionAction::make()
-                            ->authorize(fn () => auth()->user()->can('prospect.*.update')),
-                    ])->dropdown(false),
-                    ActionGroup::make([
-                        BulkSegmentAction::make(segmentModel: SegmentModel::Prospect),
-                    ])->dropdown(false),
-                    ActionGroup::make([
-                        DeleteBulkAction::make()->label('Delete'),
                         BulkAction::make('bulk_update')
+                            ->label('Update Records')
                             ->icon('heroicon-o-pencil-square')
                             ->form([
                                 Select::make('field')
@@ -275,6 +255,29 @@ class ListProspects extends ListRecords
                                     ->success()
                                     ->send();
                             }),
+                    ])->dropdown(false),
+                    ActionGroup::make([
+                        SubscribeBulkAction::make(context: 'prospect')->authorize(fn (): bool => auth()->user()->can('prospect.*.update')),
+                        AddCareTeamMemberAction::make(CareTeamRoleType::Prospect),
+                        ProspectTagsBulkAction::make()->visible(fn (): bool => auth()->user()->can('prospect.*.update')),
+                    ])->dropdown(false),
+                    ActionGroup::make([
+                        BulkEmailAction::make(context: 'prospects')->authorize(fn () => Gate::allows('update', [auth()->user(), Prospect::class])),
+                        BulkTextAction::make(context: 'prospects')->authorize(fn () => Gate::allows('update', [auth()->user(), Prospect::class])),
+                    ])->dropdown(false),
+                    ActionGroup::make([
+                        BulkCreateCaseAction::make()
+                            ->authorize(fn () => auth()->user()->can('prospect.*.update')),
+                        BulkCreateAlertAction::make()
+                            ->visible(fn (): bool => auth()->user()->can('prospect.*.update')),
+                        BulkCreateInteractionAction::make()
+                            ->authorize(fn () => auth()->user()->can('prospect.*.update')),
+                    ])->dropdown(false),
+                    ActionGroup::make([
+                        BulkSegmentAction::make(segmentModel: SegmentModel::Prospect),
+                    ])->dropdown(false),
+                    ActionGroup::make([
+                        DeleteBulkAction::make()->label('Delete'),
                     ])->dropdown(false),
                 ]),
             ]);

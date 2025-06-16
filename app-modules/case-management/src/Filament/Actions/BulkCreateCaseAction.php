@@ -60,7 +60,7 @@ class BulkCreateCaseAction
     {
         return BulkAction::make('createCase')
             ->label('Open Case')
-            ->icon('heroicon-o-chat-bubble-bottom-center-text')
+            ->icon('heroicon-o-folder-open')
             ->modalHeading('Create Case')
             ->form([
                 Select::make('division_id')

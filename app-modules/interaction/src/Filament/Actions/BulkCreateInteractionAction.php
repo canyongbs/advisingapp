@@ -64,7 +64,7 @@ class BulkCreateInteractionAction
     {
         return BulkAction::make('createInteraction')
             ->label('Log Interaction')
-            ->icon('heroicon-o-chat-bubble-bottom-center-text')
+            ->icon('heroicon-o-document-text')
             ->modalHeading('Create Interaction')
             ->form([
                 Fieldset::make('Details')
