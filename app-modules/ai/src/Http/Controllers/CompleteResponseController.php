@@ -51,7 +51,7 @@ class CompleteResponseController
     public function __invoke(CompleteResponseRequest $request, AiThread $thread): StreamedResponse | JsonResponse
     {
         try {
-            return response()->stream(
+            return new StreamedResponse(
                 app(CompleteResponse::class)(
                     $thread,
                 ),
