@@ -43,7 +43,7 @@ class ProfileSettings extends Cluster
     protected static ?string $title = 'Profile Settings';
 
     public static function shouldRegisterNavigation(): bool
-{
-    return false;
-}
+    {
+        return false;
+    }
 }
