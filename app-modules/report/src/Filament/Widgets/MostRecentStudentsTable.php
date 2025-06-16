@@ -76,13 +76,13 @@ class MostRecentStudentsTable extends BaseWidget
             ->query(function () {
                 $key = (new Student())->getKeyName();
 
-                $startDate = ! is_null($this->filters['startDate'] ?? null) ?
-                  Carbon::parse($this->filters['startDate']) :
-                  null;
+                $startDate = filled($this->filters['startDate'] ?? null)
+                    ? Carbon::parse($this->filters['startDate'])->startOfDay()
+                    : null;
 
-                $endDate = ! is_null($this->filters['endDate'] ?? null) ?
-                    Carbon::parse($this->filters['endDate']) :
-                    now();
+                $endDate = filled($this->filters['endDate'] ?? null)
+                    ? Carbon::parse($this->filters['endDate'])->endOfDay()
+                    : null;
 
                 return Student::whereIn($key, function ($query) use ($key, $startDate, $endDate) {
                     $query->select($key)

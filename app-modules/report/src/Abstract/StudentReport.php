@@ -65,10 +65,20 @@ abstract class StudentReport extends Dashboard
                 Section::make()
                     ->schema([
                         DatePicker::make('startDate')
-                            ->maxDate(fn (Get $get) => $get('endDate') ?: now()),
+                            ->maxDate(fn (Get $get) => $get('endDate') ?: now())
+                            ->afterStateUpdated(function ($set, $state, Get $get) {
+                                if (blank($get('endDate')) && filled($state)) {
+                                    $set('endDate', $state);
+                                }
+                            }),
                         DatePicker::make('endDate')
                             ->minDate(fn (Get $get) => $get('startDate') ?: now())
-                            ->maxDate(now()),
+                            ->maxDate(now())
+                            ->afterStateUpdated(function ($set, $state, Get $get) {
+                                if (blank($get('startDate')) && filled($state)) {
+                                    $set('startDate', $state);
+                                }
+                            }),
                     ])
                     ->columns(2),
             ]);

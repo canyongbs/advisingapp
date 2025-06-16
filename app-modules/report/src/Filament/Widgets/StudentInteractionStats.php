@@ -38,31 +38,56 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Carbon\Carbon;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Number;
 
 class StudentInteractionStats extends StatsOverviewReportWidget
 {
+    use InteractsWithPageFilters;
+
     public function getStats(): array
     {
+        $startDate = filled($this->filters['startDate'] ?? null)
+            ? Carbon::parse($this->filters['startDate'])->startOfDay()
+            : null;
+
+        $endDate = filled($this->filters['endDate'] ?? null)
+            ? Carbon::parse($this->filters['endDate'])->endOfDay()
+            : null;
+
+        $shouldBypassCache = filled($startDate) || filled($endDate);
+
+        $interactionsCount = $shouldBypassCache
+            ? Interaction::query()
+                ->whereHasMorph('interactable', Student::class)
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->count()
+            : Cache::tags(["{{$this->cacheTag}}"])->remember('total-student-interactions-count', now()->addHours(24), function (): int {
+                return Interaction::query()
+                    ->whereHasMorph('interactable', Student::class)
+                    ->count();
+            });
+
+        $studentsWithInteractionsCount = $shouldBypassCache
+            ? Student::query()
+                ->whereHas('interactions', function ($query) use ($startDate, $endDate) {
+                    if ($startDate) {
+                        $query->whereBetween('created_at', [$startDate, $endDate]);
+                    }
+                })
+                ->count()
+            : Cache::tags(["{{$this->cacheTag}}"])->remember('students-with-interactions', now()->addHours(24), function (): int {
+                return Student::query()
+                    ->whereHas('interactions')
+                    ->count();
+            });
+
         return [
-            Stat::make('Total Interactions', Number::abbreviate(
-                Cache::tags(["{{$this->cacheTag}}"])->remember('total-student-interactions-count', now()->addHours(24), function (): int {
-                    return Interaction::query()
-                        ->whereHasMorph('interactable', Student::class)
-                        ->count();
-                }),
-                maxPrecision: 2,
-            )),
-            Stat::make('Students with Interactions', Number::abbreviate(
-                Cache::tags(["{{$this->cacheTag}}"])->remember('students-with-interactions', now()->addHours(24), function (): int {
-                    return Student::query()
-                        ->whereHas('interactions')
-                        ->count();
-                }),
-                maxPrecision: 2,
-            )),
+            Stat::make('Total Interactions', Number::abbreviate($interactionsCount, maxPrecision: 2)),
+            Stat::make('Students with Interactions', Number::abbreviate($studentsWithInteractionsCount, maxPrecision: 2)),
         ];
     }
 

@@ -44,6 +44,7 @@ use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
@@ -52,6 +53,8 @@ use Livewire\Attributes\On;
 
 class StudentInteractionUsersTable extends BaseWidget
 {
+    use InteractsWithPageFilters;
+
     #[Locked]
     public string $cacheTag;
 
@@ -80,9 +83,18 @@ class StudentInteractionUsersTable extends BaseWidget
         return $table
             ->query(
                 function () {
+                    $startDate = filled($this->filters['startDate'] ?? null)
+                        ? Carbon::parse($this->filters['startDate'])->startOfDay()
+                        : null;
+
+                    $endDate = filled($this->filters['endDate'] ?? null)
+                        ? Carbon::parse($this->filters['endDate'])->endOfDay()
+                        : null;
+
                     return User::query()
-                        ->whereHas('interactions', function (Builder $query) {
-                            $query->whereHasMorph('interactable', Student::class);
+                        ->whereHas('interactions', function (Builder $query) use ($startDate, $endDate) {
+                            $query->whereHasMorph('interactable', Student::class)
+                                ->when($startDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]));
                         })
                         ->with([
                             'interactions',
