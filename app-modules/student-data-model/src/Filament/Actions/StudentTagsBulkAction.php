@@ -53,7 +53,7 @@ class StudentTagsBulkAction
         return BulkAction::make('bulkStudentTags')
             ->icon('heroicon-o-tag')
             ->modalHeading('Bulk assign student tags')
-            ->label('Bulk Student Tags')
+            ->label('Manage Tags')
             ->modalDescription(
                 fn (Collection $records) => "You have selected {$records->count()} " . Str::plural('student', $records->count()) . ' to apply tags.'
             )

@@ -53,6 +53,7 @@ class SubscribeBulkAction
     {
         return BulkAction::make('bulkSubscription')
             ->icon('heroicon-s-bell')
+            ->label('Manage Subscriptions')
             ->modalHeading('Create Bulk Subscription')
             ->modalDescription(
                 fn (Collection $records) => "You have selected {$records->count()} " . Str::plural($context, $records->count()) . ' to subscribe.'
