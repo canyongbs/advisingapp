@@ -40,7 +40,10 @@ use Filament\Clusters\Cluster;
 
 class ProfileSettings extends Cluster
 {
-    protected static bool $shouldRegisterNavigation = false;
-
     protected static ?string $title = 'Profile Settings';
+
+    public static function shouldRegisterNavigation(): bool
+{
+    return false;
+}
 }
