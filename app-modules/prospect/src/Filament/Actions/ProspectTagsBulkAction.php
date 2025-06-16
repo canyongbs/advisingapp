@@ -37,6 +37,7 @@
 namespace AdvisingApp\Prospect\Filament\Actions;
 
 use AdvisingApp\Prospect\Models\Prospect;
+use App\Enums\TagType;
 use App\Models\Tag;
 use Exception;
 use Filament\Forms\Components\Select;
@@ -61,7 +62,9 @@ class ProspectTagsBulkAction
                 Select::make('tag_ids')
                     ->label('Which tags should be applied?')
                     ->options(function () {
-                        return Tag::where('type', app(Prospect::class)->getMorphClass())->pluck('name', 'id');
+                        return Tag::where('type', TagType::Prospect)
+                            ->orderBy('name', 'ASC')
+                            ->pluck('name', 'id');
                     })
                     ->multiple()
                     ->searchable()
