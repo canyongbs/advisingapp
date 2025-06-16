@@ -63,7 +63,7 @@ class BulkCreateInteractionAction
     public static function make(): BulkAction
     {
         return BulkAction::make('createInteraction')
-            ->label('Create Interaction')
+            ->label('Log Interaction')
             ->icon('heroicon-o-chat-bubble-bottom-center-text')
             ->modalHeading('Create Interaction')
             ->form([

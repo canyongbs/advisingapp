@@ -54,7 +54,7 @@ class BulkCreateAlertAction
     public static function make(): BulkAction
     {
         return BulkAction::make('createAlert')
-            ->label('Create Alert')
+            ->label('Open Alert')
             ->icon('heroicon-o-bell-alert')
             ->modalHeading('Create Alert')
             ->form([

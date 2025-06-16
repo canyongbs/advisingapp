@@ -59,7 +59,7 @@ class BulkCreateCaseAction
     public static function make(): BulkAction
     {
         return BulkAction::make('createCase')
-            ->label('Create Case')
+            ->label('Open Case')
             ->icon('heroicon-o-chat-bubble-bottom-center-text')
             ->modalHeading('Create Case')
             ->form([
