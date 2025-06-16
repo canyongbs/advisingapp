@@ -37,6 +37,7 @@
 namespace AdvisingApp\StudentDataModel\Filament\Actions;
 
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Enums\TagType;
 use App\Models\Tag;
 use Exception;
 use Filament\Forms\Components\Select;
@@ -60,9 +61,12 @@ class StudentTagsBulkAction
             ->form([
                 Select::make('tag_ids')
                     ->label('Which tags should be applied?')
-                    ->options(function () {
-                        return Tag::where('type', app(Student::class)->getMorphClass())->pluck('name', 'id');
-                    })
+                    ->options(
+                        fn (): array => Tag::where('type', TagType::Student)
+                            ->orderBy('name', 'ASC')
+                            ->pluck('name', 'id')
+                            ->toArray()
+                    )
                     ->multiple()
                     ->searchable()
                     ->required()

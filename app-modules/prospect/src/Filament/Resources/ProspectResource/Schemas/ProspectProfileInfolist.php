@@ -62,7 +62,10 @@ class ProspectProfileInfolist
                             TextEntry::make('tags.name')
                                 ->label('Tags')
                                 ->badge()
-                                ->placeholder('-'),
+                                ->placeholder('-')
+                                ->getStateUsing(
+                                    fn ($record) => $record->tags->sortBy('name')->pluck('name')->all()
+                                ),
                             TextEntry::make('preferred')
                                 ->label('Preferred Name')
                                 ->placeholder('-'),
