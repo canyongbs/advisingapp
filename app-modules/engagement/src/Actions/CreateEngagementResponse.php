@@ -69,12 +69,12 @@ class CreateEngagementResponse
             if (! UnMatchInboundCommunicationFeature::active()) {
                 return;
             }
-                UnmatchedInboundCommunication::create([
-                    'type' => EngagementResponseType::Sms,
-                    'sender' => $data->from,
-                    'body' => $data->body,
-                    'occurred_at' => now(),
-                ]);
+            UnmatchedInboundCommunication::create([
+                'type' => EngagementResponseType::Sms,
+                'sender' => $data->from,
+                'body' => $data->body,
+                'occurred_at' => now(),
+            ]);
         }
     }
 }

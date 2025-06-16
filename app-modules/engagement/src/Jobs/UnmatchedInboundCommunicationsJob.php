@@ -56,7 +56,7 @@ class UnmatchedInboundCommunicationsJob implements ShouldQueue
      */
     public function handle(): void
     {
-        if(! UnMatchInboundCommunicationFeature::active()) {
+        if (! UnMatchInboundCommunicationFeature::active()) {
             return;
         }
         UnmatchedInboundCommunication::query()
