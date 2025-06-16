@@ -66,7 +66,7 @@ class StudentTagsAction extends Action
                     ->label('Tag')
                     ->multiple()
                     ->required()
-                    ->default(fn (?Student $record): array => $record ? $record->tags->pluck('id')->toArray() : [])
+                    ->default(fn (?Student $record): array => $record ? $record->tags->sortBy('name')->pluck('id')->toArray() : [])
                     ->searchable(),
             ])
             ->action(function (array $data, Student $record) {

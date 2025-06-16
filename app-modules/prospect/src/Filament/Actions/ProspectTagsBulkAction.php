@@ -61,11 +61,12 @@ class ProspectTagsBulkAction
             ->form([
                 Select::make('tag_ids')
                     ->label('Which tags should be applied?')
-                    ->options(function () {
-                        return Tag::where('type', TagType::Prospect)
+                    ->options(
+                        fn (): array => Tag::where('type', TagType::Prospect)
                             ->orderBy('name', 'ASC')
-                            ->pluck('name', 'id');
-                    })
+                            ->pluck('name', 'id')
+                            ->toArray()
+                    )
                     ->multiple()
                     ->searchable()
                     ->required()
