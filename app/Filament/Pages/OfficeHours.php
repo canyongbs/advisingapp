@@ -324,7 +324,7 @@ class OfficeHours extends Page
     protected function getSaveFormAction(): Action
     {
         return Action::make('save')
-            ->label(__('filament-panels::pages/auth/edit-profile.form.actions.save.label'))
+            ->label('Save')
             ->submit('save')
             ->keyBindings(['mod+s']);
     }

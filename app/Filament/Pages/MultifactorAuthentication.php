@@ -266,33 +266,6 @@ class MultifactorAuthentication extends Page
         ];
     }
 
-    /**
-     * @return array<Action | ActionGroup>
-     */
-    protected function getFormActions(): array
-    {
-        return [
-            $this->getSaveFormAction(),
-            $this->getCancelFormAction(),
-        ];
-    }
-
-    protected function getCancelFormAction(): Action
-    {
-        return Action::make('cancel')
-            ->label(__('filament-panels::pages/auth/edit-profile.actions.cancel.label'))
-            ->url(filament()->getUrl())
-            ->color('gray');
-    }
-
-    protected function getSaveFormAction(): Action
-    {
-        return Action::make('save')
-            ->label(__('filament-panels::pages/auth/edit-profile.form.actions.save.label'))
-            ->submit('save')
-            ->keyBindings(['mod+s']);
-    }
-
     protected function hasFullWidthFormActions(): bool
     {
         return false;
