@@ -85,7 +85,7 @@ it('renders all prospects correctly in the recruitment dashboard for the All tab
 
     $stats = $statsWidget->getStats();
 
-    $openTasksStat = $stats[3];
+    $openTasksStat = $stats[2];
     expect($openTasksStat->getValue())->toEqual($allProspects->count());
 
     livewire(ProspectsActionCenterWidget::class, ['activeTab' => ActionCenterTab::All->value])
@@ -120,7 +120,7 @@ it('renders subscribed prospects correctly in the recruitment dashboard for the 
 
     $stats = $statsWidget->getStats();
 
-    $openTasksStat = $stats[3];
+    $openTasksStat = $stats[2];
     expect($openTasksStat->getValue())->toEqual($prospectsWithSubscription->count());
 
     livewire(ProspectsActionCenterWidget::class, ['activeTab' => ActionCenterTab::Subscribed->value])
@@ -158,7 +158,7 @@ it('renders care team prospects correctly in the recruitment dashboard for the C
 
     $stats = $statsWidget->getStats();
 
-    $openTasksStat = $stats[3];
+    $openTasksStat = $stats[2];
     expect($openTasksStat->getValue())->toEqual($prospectsWithCareTeam->count());
 
     livewire(ProspectsActionCenterWidget::class, ['activeTab' => ActionCenterTab::CareTeam->value])
