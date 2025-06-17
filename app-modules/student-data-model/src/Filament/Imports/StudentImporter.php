@@ -202,6 +202,20 @@ class StudentImporter extends Importer
                     'string',
                     'max:255',
                 ]),
+            ImportColumn::make('created_at_source')
+                ->label('Create date/time')
+                ->example('2024-10-21 12:00:00')
+                ->rules([
+                    'nullable',
+                    'date',
+                ]),
+            ImportColumn::make('updated_at_source')
+                ->label('Update date/time')
+                ->example('2024-10-21 12:00:00')
+                ->rules([
+                    'nullable',
+                    'date',
+                ]),
         ];
     }
 

@@ -37,6 +37,7 @@
 namespace AdvisingApp\StudentDataModel\Filament\Actions;
 
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Enums\TagType;
 use App\Models\Tag;
 use Exception;
 use Filament\Forms\Components\Select;
@@ -53,16 +54,19 @@ class StudentTagsBulkAction
         return BulkAction::make('bulkStudentTags')
             ->icon('heroicon-o-tag')
             ->modalHeading('Bulk assign student tags')
-            ->label('Bulk Student Tags')
+            ->label('Manage Tags')
             ->modalDescription(
                 fn (Collection $records) => "You have selected {$records->count()} " . Str::plural('student', $records->count()) . ' to apply tags.'
             )
             ->form([
                 Select::make('tag_ids')
                     ->label('Which tags should be applied?')
-                    ->options(function () {
-                        return Tag::where('type', app(Student::class)->getMorphClass())->pluck('name', 'id');
-                    })
+                    ->options(
+                        fn (): array => Tag::where('type', TagType::Student)
+                            ->orderBy('name', 'ASC')
+                            ->pluck('name', 'id')
+                            ->toArray()
+                    )
                     ->multiple()
                     ->searchable()
                     ->required()

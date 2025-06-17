@@ -302,12 +302,13 @@ class EditStudent extends EditRecord
 
     protected function afterSave(): void
     {
-        /** Student $student */
+        /** @var Student $student */
         $student = $this->getRecord();
 
         $student->primaryEmailAddress()->associate($student->emailAddresses()->first());
         $student->primaryPhoneNumber()->associate($student->phoneNumbers()->first());
         $student->primaryAddress()->associate($student->addresses()->first());
+        $student->updated_at_source = now();
         $student->save();
     }
 }

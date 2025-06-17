@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -32,42 +30,19 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+@php
+    $heading = $this->getHeading();
+    $description = $this->getDescription();
+@endphp
 
-namespace AdvisingApp\Report\Filament\Widgets;
-
-use AdvisingApp\Interaction\Models\Interaction;
-use AdvisingApp\Prospect\Models\Prospect;
-use Filament\Widgets\StatsOverviewWidget\Stat;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Number;
-
-class ProspectInteractionStats extends StatsOverviewReportWidget
-{
-    public function getStats(): array
-    {
-        return [
-            Stat::make('Total Interactions', Number::abbreviate(
-                Cache::tags(["{{$this->cacheTag}}"])->remember('total-prospect-interactions-count', now()->addHours(24), function (): int {
-                    return Interaction::query()
-                        ->whereHasMorph('interactable', Prospect::class)
-                        ->count();
-                }),
-                maxPrecision: 2,
-            )),
-            Stat::make('Prospects with Interactions', Number::abbreviate(
-                Cache::tags(["{{$this->cacheTag}}"])->remember('prospects-with-interactions', now()->addHours(24), function (): int {
-                    return Prospect::query()
-                        ->whereHas('interactions')
-                        ->count();
-                }),
-                maxPrecision: 2,
-            )),
-        ];
-    }
-
-    protected function getColumns(): int
-    {
-        return 2;
-    }
-}
+<x-filament-widgets::widget>
+    <x-filament::section
+        :description="$description"
+        :heading="$heading"
+    >
+        <p class="text-sm text-gray-500 dark:text-gray-400">
+            {{ $message }}
+        </p>
+    </x-filament::section>
+</x-filament-widgets::widget>

@@ -45,8 +45,8 @@ class ProspectReportLineChart extends ChartReportWidget
 
     protected int | string | array $columnSpan = [
         'sm' => 1,
-        'md' => 3,
-        'lg' => 3,
+        'md' => 4,
+        'lg' => 4,
     ];
 
     protected function getOptions(): array
@@ -81,6 +81,7 @@ class ProspectReportLineChart extends ChartReportWidget
                     COUNT(*) AS monthly_total
                 FROM prospects
                 WHERE created_at >= date_trunc('month', CURRENT_DATE) - INTERVAL '11 months'
+                AND deleted_at IS NULL
                 GROUP BY date_trunc('month', created_at)
             )
             SELECT

@@ -55,8 +55,5 @@ abstract class StatsOverviewReportWidget extends StatsOverviewWidget
     }
 
     #[On('refresh-widgets')]
-    public function refreshWidget()
-    {
-        $this->dispatch('$refresh');
-    }
+    public function refreshWidget() {}
 }
