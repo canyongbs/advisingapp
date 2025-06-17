@@ -47,6 +47,7 @@ use Filament\Tables\Table;
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
@@ -216,7 +217,10 @@ class StudentInteractionUsersTable extends BaseWidget
                     ->searchable()
                     ->query(function (Builder $query, array $data) {
                         if (! empty($data['values'])) {
-                            $query->whereRaw('LOWER(name) IN (?)', array_map(fn ($value) => Str::lower($value), $data['values']));
+                            $query->whereIn(
+                                DB::raw('LOWER(name)'),
+                                array_map(fn ($value) => Str::lower($value), $data['values'])
+                            );
                         }
                     }),
                 SelectFilter::make('job_title')
@@ -235,7 +239,10 @@ class StudentInteractionUsersTable extends BaseWidget
                     ->searchable()
                     ->query(function (Builder $query, array $data) {
                         if (! empty($data['values'])) {
-                            $query->whereRaw('LOWER(job_title) IN (?)', array_map(fn ($value) => Str::lower($value), $data['values']));
+                            $query->whereIn(
+                                DB::raw('LOWER(job_title)'),
+                                array_map(fn ($value) => Str::lower($value), $data['values'])
+                            );
                         }
                     }),
                 SelectFilter::make('team')

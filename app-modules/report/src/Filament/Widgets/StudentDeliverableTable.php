@@ -43,6 +43,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\TableWidget as BaseWidget;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\On;
 
 class StudentDeliverableTable extends BaseWidget
@@ -80,11 +81,10 @@ class StudentDeliverableTable extends BaseWidget
         return $table
             ->query(
                 Student::select('sisid', 'full_name', 'email_bounce', 'sms_opt_out')
-                    ->where('sms_opt_out', true)
-                    ->orWhere('email_bounce', true)
                     ->when($startDate, function ($query) use ($startDate, $endDate) {
-                        $query->whereBetween('created_at_source', [$startDate, $endDate]);
-                    })
+                        $query->whereBetween('created_at_source', [$startDate, $endDate])
+                            ->where(fn (Builder $query) => $query->where('sms_opt_out', true)->orWhere('email_bounce', true));
+                    }, fn (Builder $query) => $query->where(fn (Builder $query) => $query->where('sms_opt_out', true)->orWhere('email_bounce', true)))
             )
             ->columns([
                 TextColumn::make('full_name')
