@@ -47,17 +47,15 @@ use function Tests\asSuperAdmin;
 
 it('can view the campaigns list page', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
-
     asSuperAdmin($user);
 
-    $enabledCampaigns = Campaign::factory(3)->enabled()->create();
-    $disabledCampaigns = Campaign::factory(2)->disabled()->create();
+    Campaign::factory(3)->enabled()->create();
+    Campaign::factory(2)->disabled()->create();
+
+    $allRecords = Campaign::all();
 
     livewire(ListCampaigns::class)
-        ->assertCanSeeTableRecords([
-            $enabledCampaigns,
-            $disabledCampaigns,
-        ])
+        ->assertCanSeeTableRecords($allRecords)
         ->assertCountTableRecords(5);
 });
 
