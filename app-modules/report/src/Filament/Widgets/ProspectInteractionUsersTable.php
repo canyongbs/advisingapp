@@ -44,14 +44,18 @@ use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 
 class ProspectInteractionUsersTable extends BaseWidget
 {
+    use InteractsWithPageFilters;
+
     #[Locked]
     public string $cacheTag;
 
@@ -80,12 +84,18 @@ class ProspectInteractionUsersTable extends BaseWidget
         return $table
             ->query(
                 function () {
+                    $startDate = filled($this->filters['startDate'] ?? null)
+                        ? Carbon::parse($this->filters['startDate'])->startOfDay()
+                        : null;
+
+                    $endDate = filled($this->filters['endDate'] ?? null)
+                        ? Carbon::parse($this->filters['endDate'])->endOfDay()
+                        : null;
+
                     return User::query()
-                        ->whereHas('interactions', function ($query) {
-                            $query->whereHasMorph(
-                                'interactable',
-                                Prospect::class,
-                            );
+                        ->whereHas('interactions', function (Builder $query) use ($startDate, $endDate) {
+                            $query->whereHasMorph('interactable', Prospect::class)
+                                ->when($startDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]));
                         })
                         ->with([
                             'interactions',
@@ -222,7 +232,10 @@ class ProspectInteractionUsersTable extends BaseWidget
                     ->searchable()
                     ->query(function (Builder $query, array $data) {
                         if (! empty($data['values'])) {
-                            $query->whereRaw('LOWER(name) IN (?)', array_map(fn ($value) => Str::lower($value), $data['values']));
+                            $query->whereIn(
+                                DB::raw('LOWER(name)'),
+                                array_map(fn ($value) => Str::lower($value), $data['values'])
+                            );
                         }
                     }),
                 SelectFilter::make('job_title')
@@ -241,7 +254,10 @@ class ProspectInteractionUsersTable extends BaseWidget
                     ->searchable()
                     ->query(function (Builder $query, array $data) {
                         if (! empty($data['values'])) {
-                            $query->whereRaw('LOWER(job_title) IN (?)', array_map(fn ($value) => Str::lower($value), $data['values']));
+                            $query->whereIn(
+                                DB::raw('LOWER(job_title)'),
+                                array_map(fn ($value) => Str::lower($value), $data['values'])
+                            );
                         }
                     }),
                 SelectFilter::make('team')

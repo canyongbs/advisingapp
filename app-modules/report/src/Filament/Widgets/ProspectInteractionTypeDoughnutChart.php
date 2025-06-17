@@ -38,12 +38,16 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Prospect\Models\Prospect;
+use Carbon\Carbon;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
 
 class ProspectInteractionTypeDoughnutChart extends ChartReportWidget
 {
+    use InteractsWithPageFilters;
+
     protected static ?string $heading = 'Type';
 
     protected int | string | array $columnSpan = [
@@ -69,24 +73,40 @@ class ProspectInteractionTypeDoughnutChart extends ChartReportWidget
 
     public function getData(): array
     {
-        $interactionsByType = Cache::tags(["{{$this->cacheTag}}"])->remember('prospect_interactions_by_type', now()->addHours(24), function (): Collection {
-            $interactionsByTypeData = InteractionType::withCount([
-                'interactions' => function ($query) {
-                    $query->whereHasMorph(
-                        'interactable',
-                        Prospect::class,
-                    );
-                },
-            ])->get(['id', 'name']);
+        $startDate = filled($this->filters['startDate'] ?? null)
+            ? Carbon::parse($this->filters['startDate'])->startOfDay()
+            : null;
 
-            $interactionsByTypeData = $interactionsByTypeData->map(function (InteractionType $interactionType) {
-                $interactionType['bg_color'] = $this->getRgbString();
+        $endDate = filled($this->filters['endDate'] ?? null)
+            ? Carbon::parse($this->filters['endDate'])->endOfDay()
+            : null;
 
-                return $interactionType;
+        $shouldBypassCache = filled($startDate) || filled($endDate);
+
+        $interactionsByType = $shouldBypassCache
+            ? $this->getInteractionTypeData($startDate, $endDate)
+            : Cache::tags(["{{$this->cacheTag}}"])->remember('prospect_interactions_by_type', now()->addHours(24), function () {
+                return $this->getInteractionTypeData();
             });
 
-            return $interactionsByTypeData;
-        });
+        // $interactionsByType = Cache::tags(["{{$this->cacheTag}}"])->remember('prospect_interactions_by_type', now()->addHours(24), function (): Collection {
+        //     $interactionsByTypeData = InteractionType::withCount([
+        //         'interactions' => function ($query) {
+        //             $query->whereHasMorph(
+        //                 'interactable',
+        //                 Prospect::class,
+        //             );
+        //         },
+        //     ])->get(['id', 'name']);
+
+        //     $interactionsByTypeData = $interactionsByTypeData->map(function (InteractionType $interactionType) {
+        //         $interactionType['bg_color'] = $this->getRgbString();
+
+        //         return $interactionType;
+        //     });
+
+        //     return $interactionsByTypeData;
+        // });
 
         return [
             'labels' => $interactionsByType->pluck('name'),
@@ -131,5 +151,27 @@ class ProspectInteractionTypeDoughnutChart extends ChartReportWidget
     protected function getType(): string
     {
         return 'doughnut';
+    }
+
+    /**
+     * @return Collection<int, InteractionType>
+     */
+    protected function getInteractionTypeData(?Carbon $startDate = null, ?Carbon $endDate = null): Collection
+    {
+        $query = InteractionType::withCount([
+            'interactions' => function ($query) use ($startDate, $endDate) {
+                $query->whereHasMorph('interactable', Prospect::class);
+
+                if ($startDate && $endDate) {
+                    $query->whereBetween('created_at', [$startDate, $endDate]);
+                }
+            },
+        ])->get(['id', 'name']);
+
+        return $query->map(function (InteractionType $interactionType) {
+            $interactionType['bg_color'] = $this->getRgbString();
+
+            return $interactionType;
+        });
     }
 }

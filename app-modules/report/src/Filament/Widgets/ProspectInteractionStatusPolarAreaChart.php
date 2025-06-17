@@ -38,12 +38,16 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Prospect\Models\Prospect;
+use Carbon\Carbon;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
 
 class ProspectInteractionStatusPolarAreaChart extends ChartReportWidget
 {
+    use InteractsWithPageFilters;
+
     protected static ?string $heading = 'Status';
 
     protected int | string | array $columnSpan = [
@@ -69,24 +73,21 @@ class ProspectInteractionStatusPolarAreaChart extends ChartReportWidget
 
     public function getData(): array
     {
-        $interactionsByStatus = Cache::tags(["{{$this->cacheTag}}"])->remember('prospect_interactions_by_status', now()->addHours(24), function (): Collection {
-            $interactionsByStatusData = InteractionStatus::withCount([
-                'interactions' => function ($query) {
-                    $query->whereHasMorph(
-                        'interactable',
-                        Prospect::class,
-                    );
-                },
-            ])->get(['id', 'name']);
+        $startDate = filled($this->filters['startDate'] ?? null)
+           ? Carbon::parse($this->filters['startDate'])->startOfDay()
+           : null;
 
-            $interactionsByTypeData = $interactionsByStatusData->map(function (InteractionStatus $interactionStatus) {
-                $interactionStatus['bg_color'] = $interactionStatus->color->getRgbString();
+        $endDate = filled($this->filters['endDate'] ?? null)
+            ? Carbon::parse($this->filters['endDate'])->endOfDay()
+            : null;
 
-                return $interactionStatus;
-            });
+        $shouldBypassCache = filled($startDate) || filled($endDate);
 
-            return $interactionsByTypeData;
-        });
+        $interactionsByStatus = $shouldBypassCache
+           ? $this->getInteractionStatusData($startDate, $endDate)
+           : Cache::tags(["{{$this->cacheTag}}"])->remember('prospect_interactions_by_status', now()->addHours(24), function () {
+               return $this->getInteractionStatusData();
+           });
 
         return [
             'labels' => $interactionsByStatus->pluck('name'),
@@ -126,5 +127,25 @@ class ProspectInteractionStatusPolarAreaChart extends ChartReportWidget
     protected function getType(): string
     {
         return 'polarArea';
+    }
+
+    /**
+     * @return Collection<int, InteractionStatus>
+     */
+    protected function getInteractionStatusData(?Carbon $startDate = null, ?Carbon $endDate = null): Collection
+    {
+        return InteractionStatus::withCount([
+            'interactions' => function ($query) use ($startDate, $endDate) {
+                $query->whereHasMorph('interactable', Prospect::class);
+
+                if ($startDate && $endDate) {
+                    $query->whereBetween('created_at', [$startDate, $endDate]);
+                }
+            },
+        ])->get(['id', 'name'])->map(function (InteractionStatus $interactionStatus) {
+            $interactionStatus['bg_color'] = $interactionStatus->color->getRgbString();
+
+            return $interactionStatus;
+        });
     }
 }

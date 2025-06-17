@@ -37,13 +37,17 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Prospect\Models\Prospect;
+use Carbon\Carbon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\TableWidget;
 use Livewire\Attributes\On;
 
 class ProspectReportTableChart extends TableWidget
 {
+    use InteractsWithPageFilters;
+
     public string $cacheTag;
 
     protected int | string | array $columnSpan = 'full';
@@ -69,9 +73,20 @@ class ProspectReportTableChart extends TableWidget
                 function () {
                     $key = (new Prospect())->getKeyName();
 
-                    return Prospect::whereIn($key, function ($query) use ($key) {
+                    $startDate = filled($this->filters['startDate'] ?? null)
+                        ? Carbon::parse($this->filters['startDate'])->startOfDay()
+                        : null;
+
+                    $endDate = filled($this->filters['endDate'] ?? null)
+                        ? Carbon::parse($this->filters['endDate'])->endOfDay()
+                        : null;
+
+                    return Prospect::whereIn($key, function ($query) use ($key, $startDate, $endDate) {
                         $query->select($key)
                             ->from((new Prospect())->getTable())
+                            ->when($startDate, function ($query) use ($startDate, $endDate) {
+                                $query->whereBetween('created_at', [$startDate, $endDate]);
+                            })
                             ->orderBy('created_at', 'desc')
                             ->take(100);
                     })->orderBy('created_at', 'desc');

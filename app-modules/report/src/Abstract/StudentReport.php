@@ -48,7 +48,7 @@ abstract class StudentReport extends Dashboard
 {
     use HasFiltersForm;
 
-    protected static string $view = 'report::filament.pages.students';
+    protected static string $view = 'report::filament.pages.reports';
 
     public static function canAccess(): bool
     {

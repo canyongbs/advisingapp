@@ -39,36 +39,35 @@ namespace AdvisingApp\Report\Filament\Widgets;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Prospect\Models\Prospect;
 use Carbon\Carbon;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class ProspectInteractionLineChart extends LineChartReportWidget
 {
+    use InteractsWithPageFilters;
+
     protected static ?string $heading = 'Prospects (Interaction)';
 
     protected int | string | array $columnSpan = 'full';
 
     public function getData(): array
     {
-        $runningTotalPerMonth = Cache::tags(["{{$this->cacheTag}}"])->remember('prospect_interactions_line_chart', now()->addHours(24), function (): array {
-            $totalInteractionPerMonth = Interaction::query()
-                ->whereHasMorph('interactable', Prospect::class)
-                ->toBase()
-                ->selectRaw('date_trunc(\'month\', created_at) as month')
-                ->selectRaw('count(*) as total')
-                ->where('created_at', '>', now()->subYear())
-                ->groupBy('month')
-                ->orderBy('month')
-                ->pluck('total', 'month');
+        $startDate = filled($this->filters['startDate'] ?? null)
+            ? Carbon::parse($this->filters['startDate'])->startOfDay()
+            : null;
 
-            $runningTotalPerMonth = [];
+        $endDate = filled($this->filters['endDate'] ?? null)
+            ? Carbon::parse($this->filters['endDate'])->endOfDay()
+            : null;
 
-            foreach (range(11, 0) as $month) {
-                $month = Carbon::now()->subMonths($month);
-                $runningTotalPerMonth[$month->format('M Y')] = $totalInteractionPerMonth[$month->startOfMonth()->toDateTimeString()] ?? 0;
-            }
+        $shouldBypassCache = filled($startDate) || filled($endDate);
 
-            return $runningTotalPerMonth;
-        });
+        $runningTotalPerMonth = $shouldBypassCache
+           ? $this->getProspectInteractionData($startDate, $endDate)
+           : Cache::tags(["{{$this->cacheTag}}"])->remember('prospect_interactions_line_chart', now()->addHours(24), function () {
+               return $this->getProspectInteractionData();
+           });
 
         return [
             'datasets' => [
@@ -97,5 +96,75 @@ class ProspectInteractionLineChart extends LineChartReportWidget
                 ],
             ],
         ];
+    }
+
+    /**
+     * @return array<string, int>
+     */
+    protected function getProspectInteractionData(?Carbon $startDate = null, ?Carbon $endDate = null): array
+    {
+        if ($startDate && $endDate) {
+            $data = DB::select("
+            WITH months AS (
+                SELECT generate_series(
+                    date_trunc('month', ?::date),
+                    date_trunc('month', ?::date),
+                    interval '1 month'
+                ) AS month
+            ),
+            monthly_data AS (
+                SELECT
+                    date_trunc('month', created_at) AS month,
+                    COUNT(*) AS monthly_total
+                FROM interactions
+                WHERE created_at BETWEEN ? AND ?
+                AND deleted_at IS NULL
+                AND interactable_type = ?
+                GROUP BY date_trunc('month', created_at)
+            )
+            SELECT
+                to_char(m.month, 'Mon YYYY') AS label,
+                COALESCE(d.monthly_total, 0) AS total
+            FROM months m
+            LEFT JOIN monthly_data d ON m.month = d.month
+            ORDER BY m.month
+        ", [
+                $startDate,
+                $endDate,
+                $startDate,
+                $endDate,
+                app(Prospect::class)->getMorphClass(),
+            ]);
+        } else {
+            $data = DB::select("
+            WITH months AS (
+                SELECT generate_series(
+                    date_trunc('month', CURRENT_DATE) - INTERVAL '11 months',
+                    date_trunc('month', CURRENT_DATE),
+                    interval '1 month'
+                ) AS month
+            ),
+            monthly_data AS (
+                SELECT
+                    date_trunc('month', created_at) AS month,
+                    COUNT(*) AS monthly_total
+                FROM interactions
+                WHERE created_at >= date_trunc('month', CURRENT_DATE) - INTERVAL '11 months'
+                AND deleted_at IS NULL
+                AND interactable_type = ?
+                GROUP BY date_trunc('month', created_at)
+            )
+            SELECT
+                to_char(m.month, 'Mon YYYY') AS label,
+                COALESCE(d.monthly_total, 0) AS total
+            FROM months m
+            LEFT JOIN monthly_data d ON m.month = d.month
+            ORDER BY m.month
+        ", [
+                app(Prospect::class)->getMorphClass(),
+            ]);
+        }
+
+        return collect($data)->pluck('total', 'label')->toArray();
     }
 }
