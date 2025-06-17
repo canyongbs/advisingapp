@@ -47,7 +47,7 @@
                     <h1 class="ml-2 flex">
                         <a class="hover:underline"
                             href="{{ $educatable->filamentResource()::getUrl('view', ['record' => $educatable->identifier()]) }}">
-                            {{ $educatable->display_name }} -
+                            {{ $educatable->display_name }}
                         </a>
                     </h1>
                     <x-filament::button wire:click="engage('{{ $educatable->identifier() }}')">
