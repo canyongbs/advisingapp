@@ -37,35 +37,12 @@
 namespace App\Filament\Pages;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use App\Filament\Clusters\ProfileSettings;
 use App\Models\User;
-use Exception;
-use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
-use Filament\Facades\Filament;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Split;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
-use Filament\Forms\Set;
-use Filament\Notifications\Notification;
-use Filament\Pages\Concerns\InteractsWithFormActions;
-use Filament\Pages\Page;
-use Filament\Support\Enums\Alignment;
-use Filament\Support\Enums\VerticalAlignment;
-use Filament\Support\Exceptions\Halt;
-use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules\Password;
 
 /**
  * @property Form $form
@@ -106,5 +83,4 @@ class WorkingHours extends ProfilePage
                     ]),
             ]);
     }
-    
 }

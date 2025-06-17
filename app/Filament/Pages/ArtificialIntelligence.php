@@ -37,26 +37,9 @@
 namespace App\Filament\Pages;
 
 use App\Features\SubmitAiChatOnEnterFlag;
-use App\Filament\Clusters\ProfileSettings;
-use Exception;
-use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
-use Filament\Facades\Filament;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Notifications\Notification;
-use Filament\Pages\Concerns\InteractsWithFormActions;
-use Filament\Pages\Page;
-use Filament\Support\Enums\Alignment;
-use Filament\Support\Exceptions\Halt;
-use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules\Password;
 
 /**
  * @property Form $form
@@ -91,5 +74,4 @@ class ArtificialIntelligence extends ProfilePage
                     ->visible(SubmitAiChatOnEnterFlag::active()),
             ]);
     }
-
 }

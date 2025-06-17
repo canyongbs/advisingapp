@@ -41,7 +41,6 @@ use AdvisingApp\Theme\Settings\ThemeSettings;
 use App\Filament\Clusters\ProfileSettings;
 use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\ProductHealth;
-use App\Filament\Pages\ProfileInformation;
 use App\Models\Tenant;
 use App\Multitenancy\Http\Middleware\NeedsTenant;
 use Filament\Actions\ExportAction;

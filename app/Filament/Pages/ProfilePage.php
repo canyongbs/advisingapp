@@ -43,10 +43,8 @@ use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action as FormAction;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Split;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
@@ -60,8 +58,6 @@ use Filament\Support\Enums\VerticalAlignment;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules\Password;
 
 /**
  * @property Form $form
@@ -213,21 +209,6 @@ abstract class ProfilePage extends Page
         ];
     }
 
-    /**
-     * @return array<int | string, string | Form>
-     */
-    protected function getForms(): array
-    {
-        return [
-            'form' => $this->form(
-                $this->makeForm()
-                    ->operation('edit')
-                    ->model($this->getUser())
-                    ->statePath('data'),
-            ),
-        ];
-    }
-
     public function getCancelFormAction(): Action
     {
         return Action::make('cancel')
@@ -244,12 +225,27 @@ abstract class ProfilePage extends Page
             ->keyBindings(['mod+s']);
     }
 
+    /**
+     * @return array<int | string, string | Form>
+     */
+    protected function getForms(): array
+    {
+        return [
+            'form' => $this->form(
+                $this->makeForm()
+                    ->operation('edit')
+                    ->model($this->getUser())
+                    ->statePath('data'),
+            ),
+        ];
+    }
+
     protected function hasFullWidthFormActions(): bool
     {
         return false;
     }
 
-        /**
+    /**
      * @return array<string, Grid>
      */
     protected function getHoursForDays(string $key): array

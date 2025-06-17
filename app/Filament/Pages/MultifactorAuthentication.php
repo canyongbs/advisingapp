@@ -37,21 +37,9 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Clusters\ProfileSettings;
-use Exception;
-use Filament\Facades\Filament;
-use Filament\Forms\Components\Component;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
-use Filament\Support\Enums\Alignment;
-use Filament\Support\Exceptions\Halt;
-use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules\Password;
 
 /**
  * @property Form $form
@@ -69,5 +57,4 @@ class MultifactorAuthentication extends Page
     protected static ?string $title = 'Multifactor Authentication';
 
     protected static ?int $navigationSort = 100;
-
 }
