@@ -41,12 +41,17 @@
                 <x-engagement::empty-state />
             </div>
         @else
-            <div class="max-h-full overflow-y-auto" id="message-center-content">
+            <div
+                class="max-h-full overflow-y-auto"
+                id="message-center-content"
+            >
                 <div
                     class="sticky top-0 z-[5] flex h-12 w-full items-center justify-between bg-gray-100 px-4 underline dark:bg-gray-700">
                     <h1 class="ml-2 flex">
-                        <a class="hover:underline"
-                            href="{{ $educatable->filamentResource()::getUrl('view', ['record' => $educatable->identifier()]) }}">
+                        <a
+                            class="hover:underline"
+                            href="{{ $educatable->filamentResource()::getUrl('view', ['record' => $educatable->identifier()]) }}"
+                        >
                             {{ $educatable->display_name }}
                         </a>
                     </h1>
@@ -55,8 +60,12 @@
                     </x-filament::button>
                 </div>
                 <div class="p-6">
-                    <x-timeline::timeline :timelineRecords="$timelineRecords" :hasMorePages="$hasMorePages"
-                        :emptyStateMessage="$emptyStateMessage" :noMoreRecordsMessage="$noMoreRecordsMessage" />
+                    <x-timeline::timeline
+                        :timelineRecords="$timelineRecords"
+                        :hasMorePages="$hasMorePages"
+                        :emptyStateMessage="$emptyStateMessage"
+                        :noMoreRecordsMessage="$noMoreRecordsMessage"
+                    />
                 </div>
             </div>
         @endif
