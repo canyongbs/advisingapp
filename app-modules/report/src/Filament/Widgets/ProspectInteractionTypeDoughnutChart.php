@@ -89,25 +89,6 @@ class ProspectInteractionTypeDoughnutChart extends ChartReportWidget
                 return $this->getInteractionTypeData();
             });
 
-        // $interactionsByType = Cache::tags(["{{$this->cacheTag}}"])->remember('prospect_interactions_by_type', now()->addHours(24), function (): Collection {
-        //     $interactionsByTypeData = InteractionType::withCount([
-        //         'interactions' => function ($query) {
-        //             $query->whereHasMorph(
-        //                 'interactable',
-        //                 Prospect::class,
-        //             );
-        //         },
-        //     ])->get(['id', 'name']);
-
-        //     $interactionsByTypeData = $interactionsByTypeData->map(function (InteractionType $interactionType) {
-        //         $interactionType['bg_color'] = $this->getRgbString();
-
-        //         return $interactionType;
-        //     });
-
-        //     return $interactionsByTypeData;
-        // });
-
         return [
             'labels' => $interactionsByType->pluck('name'),
             'datasets' => [
