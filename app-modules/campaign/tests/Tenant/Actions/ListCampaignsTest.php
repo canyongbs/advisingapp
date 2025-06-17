@@ -42,6 +42,7 @@ use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use App\Models\User;
 
+use ReflectionClass;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
@@ -49,17 +50,53 @@ it('can view the all campaigns in the list page', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     asSuperAdmin();
 
-    Campaign::factory(3)->enabled()->create();
-    Campaign::factory(2)->disabled()->create();
+    Campaign::factory(2)->enabled()->create();
+    Campaign::factory()->disabled()->create();
     Campaign::factory()->for($user, 'createdBy')
         ->create();
-
-    $allCompaigns = Campaign::all();
+    Campaign::factory()
+        ->has(CampaignAction::factory()->finishedAt(), 'actions')
+        ->create();
+     Campaign::factory()
+        ->has(CampaignAction::factory(), 'actions')
+        ->create();
 
     livewire(ListCampaigns::class)
-        ->assertCanSeeTableRecords($allCompaigns)
+        ->set('tableRecordsPerPage', 20)
+        ->assertCanSeeTableRecords(Campaign::all())
         ->assertCountTableRecords(6);
 });
+
+it('can filter by', function (string $filter, bool $isTrue, int $expectedCount) {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    asSuperAdmin($user);
+    $differentUser = User::factory()->create();
+
+    Campaign::factory(2)->enabled()->create();
+    Campaign::factory()->disabled()->create();
+    Campaign::factory()->for($user, 'createdBy')
+        ->create();
+    Campaign::factory()->for($differentUser, 'createdBy')
+        ->create();
+    Campaign::factory()
+        ->has(CampaignAction::factory()->finishedAt(), 'actions')
+        ->create();
+     Campaign::factory()
+        ->has(CampaignAction::factory(), 'actions')
+        ->create();
+
+    livewire(ListCampaigns::class)
+        ->set('tableRecordsPerPage', 20)
+        ->filterTable($filter, $isTrue)
+        // ->assertCanSeeTableRecords(Campaign::all())
+        ->assertCountTableRecords($expectedCount);
+})->with([
+    ['My Campaigns', true, 1],
+    ['Enabled', true, 6],
+    ['Enabled', false, 1],
+    ['Completed', true, 6],
+    ['Completed', false, 1]
+]);
 
 it('can filter campaigns by `My Campaigns`', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
