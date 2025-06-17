@@ -49,6 +49,7 @@ use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptO1MiniService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptO3MiniService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptO4MiniService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptTestService;
+use AdvisingApp\IntegrationOpenAi\Services\OpenAiResponsesGpt4oMiniService;
 use Exception;
 use Filament\Support\Contracts\HasLabel;
 
@@ -132,7 +133,8 @@ enum AiModel: string implements HasLabel
             self::OpenAiGpt35 => OpenAiGpt35Service::class,
             self::OpenAiGpt4 => OpenAiGpt4Service::class,
             self::OpenAiGpt4o => OpenAiGpt4oService::class,
-            self::OpenAiGpt4oMini => OpenAiGpt4oMiniService::class,
+            // self::OpenAiGpt4oMini => OpenAiGpt4oMiniService::class,
+            self::OpenAiGpt4oMini => OpenAiResponsesGpt4oMiniService::class,
             self::OpenAiGptO1Mini => OpenAiGptO1MiniService::class,
             self::OpenAiGptO3Mini => OpenAiGptO3MiniService::class,
             self::OpenAiGpt41Mini => OpenAiGpt41MiniService::class,

@@ -34,28 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Providers;
+namespace AdvisingApp\IntegrationOpenAi\Prism;
 
-use AdvisingApp\IntegrationOpenAi\IntegrationOpenAiPlugin;
-use AdvisingApp\IntegrationOpenAi\Prism\AzureOpenAi;
-use Filament\Panel;
-use Illuminate\Support\ServiceProvider;
-use Prism\Prism\Contracts\Provider;
+use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Http;
+use Prism\Prism\Providers\OpenAI\OpenAI;
 
-class IntegrationOpenAiServiceProvider extends ServiceProvider
+readonly class AzureOpenAi extends OpenAI
 {
-    public function register()
-    {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new IntegrationOpenAiPlugin()));
-    }
+    public function __construct() {}
 
-    public function boot()
+    /**
+     * @param  array<string, mixed>  $options
+     * @param  array{0: array<int, int>|int, 1?: Closure|int, 2?: ?callable, 3?: bool}  $retry
+     */
+    protected function client(array $options, array $retry): PendingRequest
     {
-        $this->mergeConfigFrom(__DIR__ . '/../../config/integration-open-ai.php', 'integration-open-ai');
-
-        $this->app['prism-manager']->extend(
-            'azure_open_ai',
-            fn (): Provider => app(AzureOpenAi::class),
-        );
+        return Http::withHeaders([
+            'api-key' => $options['apiKey'],
+            'api-version' => $options['apiVersion'],
+        ])
+            ->withQueryParameters(['api-version' => 'preview'])
+            ->withOptions(Arr::except($options, ['apiKey', 'apiVersion', 'deployment']))
+            ->retry(...$retry)
+            ->baseUrl($options['deployment']);
     }
 }

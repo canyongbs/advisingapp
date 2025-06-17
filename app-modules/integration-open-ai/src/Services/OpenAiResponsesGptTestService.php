@@ -34,28 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Providers;
+namespace AdvisingApp\IntegrationOpenAi\Services;
 
-use AdvisingApp\IntegrationOpenAi\IntegrationOpenAiPlugin;
-use AdvisingApp\IntegrationOpenAi\Prism\AzureOpenAi;
-use Filament\Panel;
-use Illuminate\Support\ServiceProvider;
-use Prism\Prism\Contracts\Provider;
-
-class IntegrationOpenAiServiceProvider extends ServiceProvider
+class OpenAiResponsesGptTestService extends BaseOpenAiService
 {
-    public function register()
+    public function getApiKey(): string
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new IntegrationOpenAiPlugin()));
+        return 'test';
     }
 
-    public function boot()
+    public function getApiVersion(): string
     {
-        $this->mergeConfigFrom(__DIR__ . '/../../config/integration-open-ai.php', 'integration-open-ai');
+        return '1.0.0';
+    }
 
-        $this->app['prism-manager']->extend(
-            'azure_open_ai',
-            fn (): Provider => app(AzureOpenAi::class),
-        );
+    public function getModel(): string
+    {
+        return 'test';
+    }
+
+    public function getDeployment(): ?string
+    {
+        return null;
     }
 }
