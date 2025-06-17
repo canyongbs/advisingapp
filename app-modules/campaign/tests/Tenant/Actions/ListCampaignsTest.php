@@ -42,7 +42,6 @@ use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use App\Models\User;
 
-use ReflectionClass;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
@@ -57,7 +56,7 @@ it('can view the all campaigns in the list page', function () {
     Campaign::factory()
         ->has(CampaignAction::factory()->finishedAt(), 'actions')
         ->create();
-     Campaign::factory()
+    Campaign::factory()
         ->has(CampaignAction::factory(), 'actions')
         ->create();
 
@@ -81,7 +80,7 @@ it('can filter by', function (string $filter, bool $isTrue, int $expectedCount) 
     Campaign::factory()
         ->has(CampaignAction::factory()->finishedAt(), 'actions')
         ->create();
-     Campaign::factory()
+    Campaign::factory()
         ->has(CampaignAction::factory(), 'actions')
         ->create();
 
@@ -95,7 +94,7 @@ it('can filter by', function (string $filter, bool $isTrue, int $expectedCount) 
     ['Enabled', true, 6],
     ['Enabled', false, 1],
     ['Completed', true, 6],
-    ['Completed', false, 1]
+    ['Completed', false, 1],
 ]);
 
 it('can filter campaigns by `My Campaigns`', function () {
