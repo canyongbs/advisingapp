@@ -40,6 +40,7 @@ use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectEmailAddress;
@@ -53,6 +54,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
@@ -81,7 +83,10 @@ interface Educatable extends Identifiable, CanBeNotified
 
     public static function getLicenseType(): LicenseType;
 
-    public function eventAttendeeRecords(): HasMany;
+    /**
+     * @return HasManyThrough<EventAttendee, covariant Model, covariant Model>
+     */
+    public function eventAttendeeRecords(): HasManyThrough;
 
     public function canReceiveSms(): bool;
 
