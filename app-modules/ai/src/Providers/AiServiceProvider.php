@@ -52,6 +52,7 @@ use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiThreadFolder;
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Models\PromptType;
+use AdvisingApp\Ai\Models\QnAAdvisor;
 use App\Concerns\ImplementsGraphQL;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -97,6 +98,7 @@ class AiServiceProvider extends ServiceProvider
             'ai_thread' => AiThread::class,
             'prompt_type' => PromptType::class,
             'prompt' => Prompt::class,
+            'qna_advisor' => QnAAdvisor::class,
         ]);
 
         $this->discoverSchema(__DIR__ . '/../../graphql/*');
