@@ -77,6 +77,7 @@ use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -314,14 +315,17 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
     }
 
     /**
-     * @return HasMany<EventAttendee, $this>
+     * @return HasManyThrough<EventAttendee, ProspectEmailAddress, $this>
      */
-    public function eventAttendeeRecords(): HasMany
+    public function eventAttendeeRecords(): HasManyThrough
     {
-        return $this->hasMany(
+        return $this->hasManyThrough(
             related: EventAttendee::class,
-            foreignKey: 'email',
-            localKey: 'email',
+            through: ProspectEmailAddress::class,
+            firstKey: 'prospect_id',
+            secondKey: 'email',
+            localKey: 'id',
+            secondLocalKey: 'address',
         );
     }
 

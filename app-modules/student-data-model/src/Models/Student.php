@@ -74,6 +74,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -305,14 +306,17 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     }
 
     /**
-     * @return HasMany<EventAttendee, $this>
+     * @return HasManyThrough<EventAttendee, StudentEmailAddress, $this>
      */
-    public function eventAttendeeRecords(): HasMany
+    public function eventAttendeeRecords(): HasManyThrough
     {
-        return $this->hasMany(
+        return $this->hasManyThrough(
             related: EventAttendee::class,
-            foreignKey: 'email',
-            localKey: 'email',
+            through: StudentEmailAddress::class,
+            firstKey: 'sisid',
+            secondKey: 'email',
+            localKey: 'sisid',
+            secondLocalKey: 'address',
         );
     }
 
