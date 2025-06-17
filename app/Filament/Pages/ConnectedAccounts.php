@@ -61,7 +61,7 @@ class ConnectedAccounts extends ProfilePage
 
     public static function canAccess(): bool
     {
-        return self::getConnectedAccounts()->count() > 0;
+        return self::getConnectedAccounts()->count() > 0 && parent::canAccess();
     }
 
     public function form(Form $form): Form

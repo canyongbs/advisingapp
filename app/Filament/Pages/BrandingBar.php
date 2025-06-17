@@ -54,7 +54,7 @@ class BrandingBar extends ProfilePage
 
     public static function canAccess(): bool
     {
-        return app(CollegeBrandingSettings::class)->is_enabled && app(CollegeBrandingSettings::class)->dismissible;
+        return app(CollegeBrandingSettings::class)->is_enabled && app(CollegeBrandingSettings::class)->dismissible && parent::canAccess();
     }
 
     public function form(Form $form): Form
