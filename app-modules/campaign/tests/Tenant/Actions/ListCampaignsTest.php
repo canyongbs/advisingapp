@@ -45,7 +45,7 @@ use App\Models\User;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
-it('can view the campaigns list page', function () {
+it('can view the all campaigns in the list page', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     asSuperAdmin($user);
 
