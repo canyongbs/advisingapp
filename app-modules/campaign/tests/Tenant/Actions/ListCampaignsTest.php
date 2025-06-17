@@ -45,6 +45,22 @@ use App\Models\User;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
+it('can view the campaigns list page', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+
+    asSuperAdmin($user);
+
+    $enabledCampaigns = Campaign::factory(3)->enabled()->create();
+    $disabledCampaigns = Campaign::factory(2)->disabled()->create();
+
+    livewire(ListCampaigns::class)
+        ->assertCanSeeTableRecords([
+            $enabledCampaigns,
+            $disabledCampaigns,
+        ])
+        ->assertCountTableRecords(5);
+});
+
 it('can filter campaigns by `My Campaigns`', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
