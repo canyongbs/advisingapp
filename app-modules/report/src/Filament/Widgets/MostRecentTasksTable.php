@@ -41,13 +41,17 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
+use Carbon\Carbon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Livewire\Attributes\On;
 
 class MostRecentTasksTable extends BaseWidget
 {
+    use InteractsWithPageFilters;
+
     public string $cacheTag;
 
     protected static ?string $heading = 'Most Recent Tasks Added';
@@ -72,10 +76,19 @@ class MostRecentTasksTable extends BaseWidget
 
     public function table(Table $table): Table
     {
+        $startDate = filled($this->filters['startDate'] ?? null)
+            ? Carbon::parse($this->filters['startDate'])->startOfDay()
+            : null;
+
+        $endDate = filled($this->filters['endDate'] ?? null)
+            ? Carbon::parse($this->filters['endDate'])->endOfDay()
+            : null;
+
         return $table
             ->query(
                 Task::query()
                     ->with(['concern'])
+                    ->when($startDate, fn ($query) => $query->whereBetween('created_at', [$startDate, $endDate]))
                     ->orderBy('created_at', 'desc')
                     ->limit(10)
             )

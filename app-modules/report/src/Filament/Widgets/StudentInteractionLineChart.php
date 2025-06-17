@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Carbon\Carbon;
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class StudentInteractionLineChart extends LineChartReportWidget
 {
@@ -102,30 +102,70 @@ class StudentInteractionLineChart extends LineChartReportWidget
      */
     protected function getStudentInteractionData(?Carbon $startDate = null, ?Carbon $endDate = null): array
     {
-        $query = Interaction::query()
-            ->whereHasMorph('interactable', Student::class)
-            ->toBase()
-            ->selectRaw("date_trunc('month', created_at) as month")
-            ->selectRaw('count(*) as total');
-
         if ($startDate && $endDate) {
-            $query->whereBetween('created_at', [$startDate, $endDate]);
+            $data = DB::select("
+            WITH months AS (
+                SELECT generate_series(
+                    date_trunc('month', ?::date),
+                    date_trunc('month', ?::date),
+                    interval '1 month'
+                ) AS month
+            ),
+            monthly_data AS (
+                SELECT
+                    date_trunc('month', created_at) AS month,
+                    COUNT(*) AS monthly_total
+                FROM interactions
+                WHERE created_at BETWEEN ? AND ?
+                AND deleted_at IS NULL
+                AND interactable_type = ?
+                GROUP BY date_trunc('month', created_at)
+            )
+            SELECT
+                to_char(m.month, 'Mon YYYY') AS label,
+                COALESCE(d.monthly_total, 0) AS monthly_total,
+                SUM(COALESCE(d.monthly_total, 0)) OVER (ORDER BY m.month) AS running_total
+            FROM months m
+            LEFT JOIN monthly_data d ON m.month = d.month
+            ORDER BY m.month
+        ", [
+                $startDate,
+                $endDate,
+                $startDate,
+                $endDate,
+                app(Student::class)->getMorphClass(),
+            ]);
         } else {
-            $query->where('created_at', '>', now()->subYear());
+            $data = DB::select("
+            WITH months AS (
+                SELECT generate_series(
+                    date_trunc('month', CURRENT_DATE) - INTERVAL '11 months',
+                    date_trunc('month', CURRENT_DATE),
+                    interval '1 month'
+                ) AS month
+            ),
+            monthly_data AS (
+                SELECT
+                    date_trunc('month', created_at) AS month,
+                    COUNT(*) AS monthly_total
+                FROM interactions
+                WHERE created_at >= date_trunc('month', CURRENT_DATE) - INTERVAL '11 months'
+                AND deleted_at IS NULL
+                AND interactable_type = ?
+                GROUP BY date_trunc('month', created_at)
+            )
+            SELECT
+                to_char(m.month, 'Mon YYYY') AS label,
+                COALESCE(d.monthly_total, 0) AS monthly_total,
+                SUM(COALESCE(d.monthly_total, 0)) OVER (ORDER BY m.month) AS running_total
+            FROM months m
+            LEFT JOIN monthly_data d ON m.month = d.month
+            ORDER BY m.month
+        ", [
+                app(Student::class)->getMorphClass(),
+            ]);
         }
 
-        $totalInteractionPerMonth = $query
-            ->groupBy('month')
-            ->orderBy('month')
-            ->pluck('total', 'month');
-
-        $runningTotalPerMonth = [];
-
-        foreach (range(11, 0) as $monthOffset) {
-            $month = Carbon::now()->subMonths($monthOffset);
-            $runningTotalPerMonth[$month->format('M Y')] = $totalInteractionPerMonth[$month->startOfMonth()->toDateTimeString()] ?? 0;
-        }
-
-        return $runningTotalPerMonth;
+        return collect($data)->pluck('running_total', 'label')->toArray();
     }
 }

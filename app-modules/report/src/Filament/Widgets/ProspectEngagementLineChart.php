@@ -36,14 +36,17 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
 use Carbon\Carbon;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class ProspectEngagementLineChart extends LineChartReportWidget
 {
+    use InteractsWithPageFilters;
+
     protected static ?string $heading = 'Prospects (Engagement)';
 
     protected int | string | array $columnSpan = 'full';
@@ -66,40 +69,21 @@ class ProspectEngagementLineChart extends LineChartReportWidget
 
     protected function getData(): array
     {
-        $runningTotalPerMonth = Cache::tags(["{{$this->cacheTag}}"])->remember('prospect_engagements_line_chart', now()->addHours(24), function (): array {
-            $totalEmailEnagagementsPerMonth = Engagement::query()
-                ->whereHasMorph('recipient', Prospect::class)
-                ->toBase()
-                ->where('channel', NotificationChannel::Email)
-                ->selectRaw('date_trunc(\'month\', created_at) as month')
-                ->selectRaw('count(*) as total')
-                ->where('created_at', '>', now()->subYear())
-                ->groupBy('month')
-                ->orderBy('month')
-                ->pluck('total', 'month');
+        $startDate = filled($this->filters['startDate'] ?? null)
+            ? Carbon::parse($this->filters['startDate'])->startOfDay()
+            : null;
 
-            $totalTextEnagagementsPerMonth = Engagement::query()
-                ->whereHasMorph('recipient', Prospect::class)
-                ->toBase()
-                ->where('channel', NotificationChannel::Sms)
-                ->selectRaw('date_trunc(\'month\', created_at) as month')
-                ->selectRaw('count(*) as total')
-                ->where('created_at', '>', now()->subYear())
-                ->groupBy('month')
-                ->orderBy('month')
-                ->pluck('total', 'month');
+        $endDate = filled($this->filters['endDate'] ?? null)
+            ? Carbon::parse($this->filters['endDate'])->endOfDay()
+            : null;
 
-            $data = [];
+        $shouldBypassCache = filled($startDate) || filled($endDate);
 
-            foreach (range(11, 0) as $month) {
-                $month = Carbon::now()->subMonths($month);
-                $data['emailEngagement'][$month->format('M Y')] = $totalEmailEnagagementsPerMonth[$month->startOfMonth()->toDateTimeString()] ?? 0;
-
-                $data['textEnagagment'][$month->format('M Y')] = $totalTextEnagagementsPerMonth[$month->startOfMonth()->toDateTimeString()] ?? 0;
-            }
-
-            return $data;
-        });
+        $runningTotalPerMonth = $shouldBypassCache
+           ? $this->getProspectEngagementData($startDate, $endDate)
+           : Cache::tags(["{{$this->cacheTag}}"])->remember('prospect_engagements_line_chart', now()->addHours(24), function () {
+               return $this->getProspectEngagementData();
+           });
 
         return [
             'datasets' => [
@@ -118,5 +102,156 @@ class ProspectEngagementLineChart extends LineChartReportWidget
             ],
             'labels' => array_keys($runningTotalPerMonth['emailEngagement']),
         ];
+    }
+
+    /**
+     * @return array<string, array<mixed>>
+     */
+    protected function getProspectEngagementData(?Carbon $startDate = null, ?Carbon $endDate = null): array
+    {
+        if ($startDate && $endDate) {
+            $totalEmailEnagagementsPerMonth = DB::select("
+                WITH months AS (
+                    SELECT generate_series(
+                        date_trunc('month', ?::date),
+                        date_trunc('month', ?::date),
+                        interval '1 month'
+                    ) AS month
+                ),
+                monthly_data AS (
+                    SELECT
+                        date_trunc('month', created_at) AS month,
+                        COUNT(*) AS monthly_total
+                    FROM engagements
+                    WHERE created_at BETWEEN ? AND ?
+                    AND deleted_at IS NULL
+                    AND recipient_type = ?
+                    AND channel = ?
+                    GROUP BY date_trunc('month', created_at)
+                )
+                SELECT
+                    to_char(m.month, 'Mon YYYY') AS label,
+                    COALESCE(d.monthly_total, 0) AS total
+                FROM months m
+                LEFT JOIN monthly_data d ON m.month = d.month
+                ORDER BY m.month
+            ", [
+                $startDate,
+                $endDate,
+                $startDate,
+                $endDate,
+                app(Prospect::class)->getMorphClass(),
+                NotificationChannel::Email->value,
+            ]);
+
+            $totalEmailEnagagementsPerMonth = collect($totalEmailEnagagementsPerMonth)->pluck('total', 'label')->toArray();
+
+            $totalTextEnagagementsPerMonth = DB::select("
+                WITH months AS (
+                    SELECT generate_series(
+                        date_trunc('month', ?::date),
+                        date_trunc('month', ?::date),
+                        interval '1 month'
+                    ) AS month
+                ),
+                monthly_data AS (
+                    SELECT
+                        date_trunc('month', created_at) AS month,
+                        COUNT(*) AS monthly_total
+                    FROM engagements
+                    WHERE created_at BETWEEN ? AND ?
+                    AND deleted_at IS NULL
+                    AND recipient_type = ?
+                    AND channel = ?
+                    GROUP BY date_trunc('month', created_at)
+                )
+                SELECT
+                    to_char(m.month, 'Mon YYYY') AS label,
+                    COALESCE(d.monthly_total, 0) AS total
+                FROM months m
+                LEFT JOIN monthly_data d ON m.month = d.month
+                ORDER BY m.month
+            ", [
+                $startDate,
+                $endDate,
+                $startDate,
+                $endDate,
+                app(Prospect::class)->getMorphClass(),
+                NotificationChannel::Sms->value,
+            ]);
+
+            $totalTextEnagagementsPerMonth = collect($totalTextEnagagementsPerMonth)->pluck('total', 'label')->toArray();
+        } else {
+            $totalEmailEnagagementsPerMonth = DB::select("
+                WITH months AS (
+                    SELECT generate_series(
+                        date_trunc('month', CURRENT_DATE) - INTERVAL '11 months',
+                        date_trunc('month', CURRENT_DATE),
+                        interval '1 month'
+                    ) AS month
+                ),
+                monthly_data AS (
+                    SELECT
+                        date_trunc('month', created_at) AS month,
+                        COUNT(*) AS monthly_total
+                    FROM engagements
+                    WHERE created_at >= date_trunc('month', CURRENT_DATE) - INTERVAL '11 months'
+                    AND deleted_at IS NULL
+                    AND recipient_type = ?
+                    AND channel = ?
+                    GROUP BY date_trunc('month', created_at)
+                )
+                SELECT
+                    to_char(m.month, 'Mon YYYY') AS label,
+                    COALESCE(d.monthly_total, 0) AS total
+                FROM months m
+                LEFT JOIN monthly_data d ON m.month = d.month
+                ORDER BY m.month
+            ", [
+                app(Prospect::class)->getMorphClass(),
+                NotificationChannel::Email->value,
+            ]);
+
+            $totalEmailEnagagementsPerMonth = collect($totalEmailEnagagementsPerMonth)->pluck('total', 'label')->toArray();
+
+            $totalTextEnagagementsPerMonth = DB::select("
+                WITH months AS (
+                    SELECT generate_series(
+                        date_trunc('month', CURRENT_DATE) - INTERVAL '11 months',
+                        date_trunc('month', CURRENT_DATE),
+                        interval '1 month'
+                    ) AS month
+                ),
+                monthly_data AS (
+                    SELECT
+                        date_trunc('month', created_at) AS month,
+                        COUNT(*) AS monthly_total
+                    FROM engagements
+                    WHERE created_at >= date_trunc('month', CURRENT_DATE) - INTERVAL '11 months'
+                    AND deleted_at IS NULL
+                    AND recipient_type = ?
+                    AND channel = ?
+                    GROUP BY date_trunc('month', created_at)
+                )
+                SELECT
+                    to_char(m.month, 'Mon YYYY') AS label,
+                    COALESCE(d.monthly_total, 0) AS total
+                FROM months m
+                LEFT JOIN monthly_data d ON m.month = d.month
+                ORDER BY m.month
+            ", [
+                app(Prospect::class)->getMorphClass(),
+                NotificationChannel::Sms->value,
+            ]);
+
+            $totalTextEnagagementsPerMonth = collect($totalTextEnagagementsPerMonth)->pluck('total', 'label')->toArray();
+        }
+
+        $data = [];
+
+        $data['emailEngagement'] = $totalEmailEnagagementsPerMonth;
+        $data['textEnagagment'] = $totalTextEnagagementsPerMonth;
+
+        return $data;
     }
 }

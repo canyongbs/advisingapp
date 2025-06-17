@@ -41,12 +41,16 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\Task\Models\Task;
+use Carbon\Carbon;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Number;
 
 class ProspectReportStats extends StatsOverviewReportWidget
 {
+    use InteractsWithPageFilters;
+
     protected int | string | array $columnSpan = [
         'sm' => 2,
         'md' => 4,
@@ -55,32 +59,54 @@ class ProspectReportStats extends StatsOverviewReportWidget
 
     protected function getStats(): array
     {
-        $prospectsCount = Cache::tags(["{{$this->cacheTag}}"])->remember('prospects-count', now()->addHours(24), function (): int {
-            return Prospect::count();
-        });
+        $startDate = filled($this->filters['startDate'] ?? null)
+            ? Carbon::parse($this->filters['startDate'])->startOfDay()
+            : null;
+
+        $endDate = filled($this->filters['endDate'] ?? null)
+            ? Carbon::parse($this->filters['endDate'])->endOfDay()
+            : null;
+
+        $shouldBypassCache = filled($startDate) || filled($endDate);
+
+        $prospectsCount = $shouldBypassCache
+            ? Prospect::whereBetween('created_at', [$startDate, $endDate])->count()
+            : Cache::tags(["{{$this->cacheTag}}"])->remember('prospects-count', now()->addHours(24), function (): int {
+                return Prospect::count();
+            });
+
+        $alertsCount = $shouldBypassCache
+            ? Alert::whereHasMorph('concern', Prospect::class)
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->count()
+            : Cache::tags(["{{$this->cacheTag}}"])->remember('prospect-alerts-count', now()->addHours(24), function (): int {
+                return Alert::whereHasMorph('concern', Prospect::class)->count();
+            });
+
+        $segmentsCount = $shouldBypassCache
+            ? Segment::where('model', SegmentModel::Prospect)
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->count()
+            : Cache::tags(["{{$this->cacheTag}}"])->remember('prospect-segments-count', now()->addHours(24), function (): int {
+                return Segment::query()->where('model', SegmentModel::Prospect)->count();
+            });
+
+        $tasksCount = $shouldBypassCache
+            ? Task::whereHasMorph('concern', Prospect::class)
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->count()
+            : Cache::tags(["{{$this->cacheTag}}"])->remember('prospect-tasks-count', now()->addHours(24), function (): int {
+                return Task::whereHasMorph('concern', Prospect::class)->count();
+            });
 
         return [
             Stat::make('Total Prospects', ($prospectsCount > 9999999)
                 ? Number::abbreviate($prospectsCount, maxPrecision: 2)
                 : Number::format($prospectsCount, maxPrecision: 2)),
-            Stat::make('Total Alerts', Number::abbreviate(
-                Cache::tags(["{{$this->cacheTag}}"])->remember('prospect-alerts-count', now()->addHours(24), function (): int {
-                    return Alert::whereHasMorph('concern', Prospect::class)->count();
-                }),
-                maxPrecision: 2,
-            )),
-            Stat::make('Total Segments', Number::abbreviate(
-                Cache::tags(["{{$this->cacheTag}}"])->remember('prospect-segments-count', now()->addHours(24), function (): int {
-                    return Segment::query()->where('model', SegmentModel::Prospect)->count();
-                }),
-                maxPrecision: 2,
-            )),
-            Stat::make('Total Tasks', Number::abbreviate(
-                Cache::tags(["{{$this->cacheTag}}"])->remember('prospect-tasks-count', now()->addHours(24), function (): int {
-                    return Task::whereHasMorph('concern', Prospect::class)->count();
-                }),
-                maxPrecision: 2,
-            )),
+
+            Stat::make('Total Alerts', Number::abbreviate($alertsCount, maxPrecision: 2)),
+            Stat::make('Total Segments', Number::abbreviate($segmentsCount, maxPrecision: 2)),
+            Stat::make('Total Tasks', Number::abbreviate($tasksCount, maxPrecision: 2)),
         ];
     }
 }
