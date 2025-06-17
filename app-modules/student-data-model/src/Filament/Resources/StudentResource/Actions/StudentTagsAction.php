@@ -56,12 +56,17 @@ class StudentTagsAction extends Action
             ->modalSubmitActionLabel('Save')
             ->form([
                 Select::make('tag_ids')
-                    ->options(fn (): array => Tag::where('type', TagType::Student)->pluck('name', 'id')->toArray())
+                    ->options(
+                        fn (): array => Tag::where('type', TagType::Student)
+                            ->orderBy('name', 'ASC')
+                            ->pluck('name', 'id')
+                            ->toArray()
+                    )
                     ->required()
                     ->label('Tag')
                     ->multiple()
                     ->required()
-                    ->default(fn (?Student $record): array => $record ? $record->tags->pluck('id')->toArray() : [])
+                    ->default(fn (?Student $record): array => $record ? $record->tags->sortBy('name')->pluck('id')->toArray() : [])
                     ->searchable(),
             ])
             ->action(function (array $data, Student $record) {

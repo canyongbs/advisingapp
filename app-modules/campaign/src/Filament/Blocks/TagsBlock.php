@@ -77,7 +77,7 @@ class TagsBlock extends CampaignActionBlock
                     }
                     $segment = Segment::find($segment_id);
 
-                    return Tag::where('type', $segment->model)->pluck('name', 'id');
+                    return Tag::where('type', $segment->model)->orderBy('name', 'ASC')->pluck('name', 'id');
                 })
                 ->multiple()
                 ->searchable()

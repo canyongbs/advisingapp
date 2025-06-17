@@ -66,6 +66,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -188,83 +189,96 @@ class ListProspects extends ListRecords
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    SubscribeBulkAction::make(context: 'prospect')->authorize(fn (): bool => auth()->user()->can('prospect.*.update')),
-                    BulkTextAction::make(context: 'prospects')->authorize(fn () => Gate::allows('update', [auth()->user(), Prospect::class])),
-                    BulkEmailAction::make(context: 'prospects')->authorize(fn () => Gate::allows('update', [auth()->user(), Prospect::class])),
-                    ProspectTagsBulkAction::make()->visible(fn (): bool => auth()->user()->can('prospect.*.update')),
-                    DeleteBulkAction::make(),
-                    AddCareTeamMemberAction::make(CareTeamRoleType::Prospect),
-                    BulkAction::make('bulk_update')
-                        ->icon('heroicon-o-pencil-square')
-                        ->form([
-                            Select::make('field')
-                                ->options([
-                                    'description' => 'Description',
-                                    'email_bounce' => 'Email Bounce',
-                                    'hsgrad' => 'High School Graduation Year',
-                                    'sms_opt_out' => 'SMS Opt Out',
-                                    'source_id' => 'Source',
-                                    'status_id' => 'Status',
-                                ])
-                                ->required()
-                                ->live(),
-                            Textarea::make('description')
-                                ->string()
-                                ->required()
-                                ->visible(fn (Get $get) => $get('field') === 'description'),
-                            Select::make('email_bounce')
-                                ->label('Email Bounce')
-                                ->boolean()
-                                ->visible(fn (Get $get) => $get('field') === 'email_bounce'),
-                            TextInput::make('hsgrad')
-                                ->label('High School Graduation Year')
-                                ->numeric()
-                                ->minValue(1920)
-                                ->maxValue(now()->addYears(25)->year)
-                                ->required()
-                                ->visible(fn (Get $get) => $get('field') === 'hsgrad'),
-                            Select::make('sms_opt_out')
-                                ->label('SMS Opt Out')
-                                ->boolean()
-                                ->visible(fn (Get $get) => $get('field') === 'sms_opt_out'),
-                            Select::make('source_id')
-                                ->label('Source')
-                                ->relationship('source', 'name')
-                                ->exists(
-                                    table: (new ProspectSource())->getTable(),
-                                    column: (new ProspectSource())->getKeyName()
-                                )
-                                ->required()
-                                ->visible(fn (Get $get) => $get('field') === 'source_id'),
-                            Select::make('status_id')
-                                ->label('Status')
-                                ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('sort'))
-                                ->exists(
-                                    table: (new ProspectStatus())->getTable(),
-                                    column: (new ProspectStatus())->getKeyName()
-                                )
-                                ->required()
-                                ->visible(fn (Get $get) => $get('field') === 'status_id'),
-                        ])
-                        ->action(function (Collection $records, array $data) {
-                            $records->each(
-                                fn (Prospect $prospect) => $prospect
-                                    ->forceFill([$data['field'] => $data[$data['field']]])
-                                    ->save()
-                            );
+                    ActionGroup::make([
+                        BulkAction::make('bulk_update')
+                            ->label('Update Records')
+                            ->icon('heroicon-o-pencil-square')
+                            ->form([
+                                Select::make('field')
+                                    ->options([
+                                        'description' => 'Description',
+                                        'email_bounce' => 'Email Bounce',
+                                        'hsgrad' => 'High School Graduation Year',
+                                        'sms_opt_out' => 'SMS Opt Out',
+                                        'source_id' => 'Source',
+                                        'status_id' => 'Status',
+                                    ])
+                                    ->required()
+                                    ->live(),
+                                Textarea::make('description')
+                                    ->string()
+                                    ->required()
+                                    ->visible(fn (Get $get) => $get('field') === 'description'),
+                                Select::make('email_bounce')
+                                    ->label('Email Bounce')
+                                    ->boolean()
+                                    ->visible(fn (Get $get) => $get('field') === 'email_bounce'),
+                                TextInput::make('hsgrad')
+                                    ->label('High School Graduation Year')
+                                    ->numeric()
+                                    ->minValue(1920)
+                                    ->maxValue(now()->addYears(25)->year)
+                                    ->required()
+                                    ->visible(fn (Get $get) => $get('field') === 'hsgrad'),
+                                Select::make('sms_opt_out')
+                                    ->label('SMS Opt Out')
+                                    ->boolean()
+                                    ->visible(fn (Get $get) => $get('field') === 'sms_opt_out'),
+                                Select::make('source_id')
+                                    ->label('Source')
+                                    ->relationship('source', 'name')
+                                    ->exists(
+                                        table: (new ProspectSource())->getTable(),
+                                        column: (new ProspectSource())->getKeyName()
+                                    )
+                                    ->required()
+                                    ->visible(fn (Get $get) => $get('field') === 'source_id'),
+                                Select::make('status_id')
+                                    ->label('Status')
+                                    ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('sort'))
+                                    ->exists(
+                                        table: (new ProspectStatus())->getTable(),
+                                        column: (new ProspectStatus())->getKeyName()
+                                    )
+                                    ->required()
+                                    ->visible(fn (Get $get) => $get('field') === 'status_id'),
+                            ])
+                            ->action(function (Collection $records, array $data) {
+                                $records->each(
+                                    fn (Prospect $prospect) => $prospect
+                                        ->forceFill([$data['field'] => $data[$data['field']]])
+                                        ->save()
+                                );
 
-                            Notification::make()
-                                ->title($records->count() . ' ' . str('Prospect')->plural($records->count()) . ' Updated')
-                                ->success()
-                                ->send();
-                        }),
-                    BulkSegmentAction::make(segmentModel: SegmentModel::Prospect),
-                    BulkCreateCaseAction::make()
-                        ->authorize(fn () => auth()->user()->can('prospect.*.update')),
-                    BulkCreateAlertAction::make()
-                        ->visible(fn (): bool => auth()->user()->can('prospect.*.update')),
-                    BulkCreateInteractionAction::make()
-                        ->authorize(fn () => auth()->user()->can('prospect.*.update')),
+                                Notification::make()
+                                    ->title($records->count() . ' ' . str('Prospect')->plural($records->count()) . ' Updated')
+                                    ->success()
+                                    ->send();
+                            }),
+                    ])->dropdown(false),
+                    ActionGroup::make([
+                        SubscribeBulkAction::make(context: 'prospect')->authorize(fn (): bool => auth()->user()->can('prospect.*.update')),
+                        AddCareTeamMemberAction::make(CareTeamRoleType::Prospect),
+                        ProspectTagsBulkAction::make()->visible(fn (): bool => auth()->user()->can('prospect.*.update')),
+                    ])->dropdown(false),
+                    ActionGroup::make([
+                        BulkEmailAction::make(context: 'prospects')->authorize(fn () => Gate::allows('update', [auth()->user(), Prospect::class])),
+                        BulkTextAction::make(context: 'prospects')->authorize(fn () => Gate::allows('update', [auth()->user(), Prospect::class])),
+                    ])->dropdown(false),
+                    ActionGroup::make([
+                        BulkCreateCaseAction::make()
+                            ->authorize(fn () => auth()->user()->can('prospect.*.update')),
+                        BulkCreateAlertAction::make()
+                            ->visible(fn (): bool => auth()->user()->can('prospect.*.update')),
+                        BulkCreateInteractionAction::make()
+                            ->authorize(fn () => auth()->user()->can('prospect.*.update')),
+                    ])->dropdown(false),
+                    ActionGroup::make([
+                        BulkSegmentAction::make(segmentModel: SegmentModel::Prospect),
+                    ])->dropdown(false),
+                    ActionGroup::make([
+                        DeleteBulkAction::make()->label('Delete'),
+                    ])->dropdown(false),
                 ]),
             ]);
     }

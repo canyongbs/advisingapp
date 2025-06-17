@@ -59,8 +59,8 @@ class BulkCreateCaseAction
     public static function make(): BulkAction
     {
         return BulkAction::make('createCase')
-            ->label('Create Case')
-            ->icon('heroicon-o-chat-bubble-bottom-center-text')
+            ->label('Open Case')
+            ->icon('heroicon-o-folder-open')
             ->modalHeading('Create Case')
             ->form([
                 Select::make('division_id')

@@ -60,6 +60,7 @@ use Filament\Actions\CreateAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\ViewAction;
@@ -187,63 +188,74 @@ class ListStudents extends ListRecords
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make()
-                        ->modalDescription('Are you sure you wish to delete the selected record(s)? This action cannot be reversed')
-                        ->action(function (Collection $records) {
-                            $deletedCount = 0;
-                            $notDeleteCount = 0;
+                    ActionGroup::make([
+                        SubscribeBulkAction::make(context: 'student')->authorize(fn (): bool => auth()->user()->can('student.*.update')),
+                        AddCareTeamMemberAction::make(CareTeamRoleType::Student),
+                        StudentTagsBulkAction::make()->visible(fn (): bool => auth()->user()->can('student.*.update')),
+                    ])->dropdown(false),
+                    ActionGroup::make([
+                        BulkEmailAction::make(context: 'students')->authorize(fn () => Gate::allows('update', [auth()->user(), Student::class])),
+                        BulkTextAction::make(context: 'students')->authorize(fn () => Gate::allows('update', [auth()->user(), Student::class])),
+                    ])->dropdown(false),
+                    ActionGroup::make([
+                        BulkCreateCaseAction::make()
+                            ->authorize(fn () => auth()->user()->can('student.*.update')),
+                        BulkCreateAlertAction::make()
+                            ->visible(fn (): bool => auth()->user()->can('student.*.update')),
+                        BulkCreateInteractionAction::make()
+                            ->authorize(fn () => auth()->user()->can('student.*.update')),
+                    ])->dropdown(false),
+                    ActionGroup::make([
+                        BulkSegmentAction::make(segmentModel: SegmentModel::Student),
+                    ])->dropdown(false),
+                    ActionGroup::make([
+                        DeleteBulkAction::make()
+                            ->label('Delete')
+                            ->modalDescription('Are you sure you wish to delete the selected record(s)? This action cannot be reversed')
+                            ->action(function (Collection $records) {
+                                $deletedCount = 0;
+                                $notDeleteCount = 0;
 
-                            /** @var Collection|Student[] $records */
-                            foreach ($records as $record) {
-                                /** @var Student $record */
-                                $response = Gate::inspect('delete', $record);
+                                /** @var Collection|Student[] $records */
+                                foreach ($records as $record) {
+                                    /** @var Student $record */
+                                    $response = Gate::inspect('delete', $record);
 
-                                if ($response->allowed()) {
-                                    app(DeleteStudent::class)->execute($record);
-                                    $deletedCount++;
-                                } else {
-                                    $notDeleteCount++;
+                                    if ($response->allowed()) {
+                                        app(DeleteStudent::class)->execute($record);
+                                        $deletedCount++;
+                                    } else {
+                                        $notDeleteCount++;
+                                    }
                                 }
-                            }
 
-                            $wasWere = fn ($count) => $count === 1 ? 'was' : 'were';
+                                $wasWere = fn ($count) => $count === 1 ? 'was' : 'were';
 
-                            $notification = match (true) {
-                                $deletedCount === 0 => [
-                                    'title' => 'None deleted',
-                                    'status' => 'danger',
-                                    'body' => "{$notDeleteCount} {$wasWere($notDeleteCount)} skipped because you do not have permission to delete.",
-                                ],
-                                $deletedCount > 0 && $notDeleteCount > 0 => [
-                                    'title' => 'Some deleted',
-                                    'status' => 'warning',
-                                    'body' => "{$deletedCount} {$wasWere($deletedCount)} deleted, but {$notDeleteCount} {$wasWere($notDeleteCount)} skipped because you do not have permission to delete.",
-                                ],
-                                default => [
-                                    'title' => 'Deleted',
-                                    'status' => 'success',
-                                    'body' => null,
-                                ],
-                            };
+                                $notification = match (true) {
+                                    $deletedCount === 0 => [
+                                        'title' => 'None deleted',
+                                        'status' => 'danger',
+                                        'body' => "{$notDeleteCount} {$wasWere($notDeleteCount)} skipped because you do not have permission to delete.",
+                                    ],
+                                    $deletedCount > 0 && $notDeleteCount > 0 => [
+                                        'title' => 'Some deleted',
+                                        'status' => 'warning',
+                                        'body' => "{$deletedCount} {$wasWere($deletedCount)} deleted, but {$notDeleteCount} {$wasWere($notDeleteCount)} skipped because you do not have permission to delete.",
+                                    ],
+                                    default => [
+                                        'title' => 'Deleted',
+                                        'status' => 'success',
+                                        'body' => null,
+                                    ],
+                                };
 
-                            Notification::make()
-                                ->title($notification['title'])
-                                ->{$notification['status']}()
-                                ->body($notification['body'])
-                                ->send();
-                        }),
-                    SubscribeBulkAction::make(context: 'student')->authorize(fn (): bool => auth()->user()->can('student.*.update')),
-                    BulkTextAction::make(context: 'students')->authorize(fn () => Gate::allows('update', [auth()->user(), Student::class])),
-                    BulkEmailAction::make(context: 'students')->authorize(fn () => Gate::allows('update', [auth()->user(), Student::class])),
-                    StudentTagsBulkAction::make()->visible(fn (): bool => auth()->user()->can('student.*.update')),
-                    AddCareTeamMemberAction::make(CareTeamRoleType::Student),
-                    BulkSegmentAction::make(segmentModel: SegmentModel::Student),
-                    BulkCreateCaseAction::make()
-                        ->authorize(fn () => auth()->user()->can('student.*.update')),
-                    BulkCreateAlertAction::make()
-                        ->visible(fn (): bool => auth()->user()->can('student.*.update')),
-                    BulkCreateInteractionAction::make()
-                        ->authorize(fn () => auth()->user()->can('student.*.update')),
+                                Notification::make()
+                                    ->title($notification['title'])
+                                    ->{$notification['status']}()
+                                    ->body($notification['body'])
+                                    ->send();
+                            }),
+                    ])->dropdown(false),
                 ]),
             ]);
     }
