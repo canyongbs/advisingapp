@@ -37,12 +37,16 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\StudentDataModel\Models\Student;
+use Carbon\Carbon;
 use Filament\Support\Colors\Color;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Cache;
 
 class StudentSmsOptInOptOutPieChart extends PieChartReportWidget
 {
+    use InteractsWithPageFilters;
+
     protected static ?string $heading = 'Student SMS';
 
     protected int | string | array $columnSpan = [
@@ -66,17 +70,45 @@ class StudentSmsOptInOptOutPieChart extends PieChartReportWidget
 
     public function getData(): array
     {
-        $smsOptInCount = Cache::tags(["{{$this->cacheTag}}"])->remember('sms_opt_in_count', now()->addHours(24), function (): int {
-            return Student::where('sms_opt_out', false)->count();
-        });
+        $startDate = filled($this->filters['startDate'] ?? null)
+              ? Carbon::parse($this->filters['startDate'])->startOfDay()
+              : null;
 
-        $smsOptOutCount = Cache::tags(["{{$this->cacheTag}}"])->remember('sms_opt_out_count', now()->addHours(24), function (): int {
-            return Student::where('sms_opt_out', true)->count();
-        });
+        $endDate = filled($this->filters['endDate'] ?? null)
+            ? Carbon::parse($this->filters['endDate'])->endOfDay()
+            : null;
 
-        $smsNullCount = Cache::tags(["{{$this->cacheTag}}"])->remember('sms_null_count', now()->addHours(24), function (): int {
-            return Student::whereNull('sms_opt_out')->count();
-        });
+        $shouldBypassCache = filled($startDate) || filled($endDate);
+
+        // $smsOptInCount = Cache::tags(["{{$this->cacheTag}}"])->remember('sms_opt_in_count', now()->addHours(24), function (): int {
+        //     return Student::where('sms_opt_out', false)->count();
+        // });
+
+        $smsOptInCount = $shouldBypassCache
+            ? Student::where('sms_opt_out', false)->whereBetween('created_at_source', [$startDate, $endDate])->count()
+            : Cache::tags(["{{$this->cacheTag}}"])->remember('sms_opt_in_count', now()->addHours(24), function (): int {
+                return Student::where('sms_opt_out', false)->count();
+            });
+
+        // $smsOptOutCount = Cache::tags(["{{$this->cacheTag}}"])->remember('sms_opt_out_count', now()->addHours(24), function (): int {
+        //     return Student::where('sms_opt_out', true)->count();
+        // });
+
+        $smsOptOutCount = $shouldBypassCache
+            ? Student::where('sms_opt_out', true)->whereBetween('created_at_source', [$startDate, $endDate])->count()
+            : Cache::tags(["{{$this->cacheTag}}"])->remember('sms_opt_out_count', now()->addHours(24), function (): int {
+                return Student::where('sms_opt_out', true)->count();
+            });
+
+        // $smsNullCount = Cache::tags(["{{$this->cacheTag}}"])->remember('sms_null_count', now()->addHours(24), function (): int {
+        //     return Student::whereNull('sms_opt_out')->count();
+        // });
+
+        $smsNullCount = $shouldBypassCache
+            ? Student::whereNull('sms_opt_out')->whereBetween('created_at_source', [$startDate, $endDate])->count()
+            : Cache::tags(["{{$this->cacheTag}}"])->remember('sms_null_count', now()->addHours(24), function (): int {
+                return Student::whereNull('sms_opt_out')->count();
+            });
 
         return [
             'labels' => ['Can receive texts', 'Cannot receive texts', 'Data unavailable'],

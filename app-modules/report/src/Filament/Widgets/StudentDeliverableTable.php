@@ -37,14 +37,18 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\StudentDataModel\Models\Student;
+use Carbon\Carbon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Livewire\Attributes\On;
 
 class StudentDeliverableTable extends BaseWidget
 {
+    use InteractsWithPageFilters;
+
     public string $cacheTag;
 
     protected static ?string $pollingInterval = null;
@@ -65,11 +69,22 @@ class StudentDeliverableTable extends BaseWidget
 
     public function table(Table $table): Table
     {
+        $startDate = filled($this->filters['startDate'] ?? null)
+                ? Carbon::parse($this->filters['startDate'])->startOfDay()
+                : null;
+
+        $endDate = filled($this->filters['endDate'] ?? null)
+            ? Carbon::parse($this->filters['endDate'])->endOfDay()
+            : null;
+
         return $table
             ->query(
                 Student::select('sisid', 'full_name', 'email_bounce', 'sms_opt_out')
                     ->where('sms_opt_out', true)
                     ->orWhere('email_bounce', true)
+                    ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
+                        $query->whereBetween('created_at_source', [$startDate, $endDate]);
+                    })
             )
             ->columns([
                 TextColumn::make('full_name')
