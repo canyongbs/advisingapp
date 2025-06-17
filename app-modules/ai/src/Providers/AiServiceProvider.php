@@ -52,6 +52,7 @@ use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiThreadFolder;
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Models\PromptType;
+use AdvisingApp\Ai\Models\QnaAdvisor;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Event;
@@ -94,6 +95,7 @@ class AiServiceProvider extends ServiceProvider
             'ai_thread' => AiThread::class,
             'prompt_type' => PromptType::class,
             'prompt' => Prompt::class,
+            'qna_advisor' => QnaAdvisor::class,
         ]);
 
         $this->mergeConfigFrom(__DIR__ . '/../../config/ai.php', 'ai');
