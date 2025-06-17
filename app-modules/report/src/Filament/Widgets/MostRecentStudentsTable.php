@@ -100,7 +100,8 @@ class MostRecentStudentsTable extends BaseWidget
             ->columns([
                 TextColumn::make(Student::displayNameKey())
                     ->label('Name'),
-                TextColumn::make('email'),
+                TextColumn::make('primaryEmailAddress.address')
+                    ->label('Email'),
                 TextColumn::make('sisid')
                     ->label('SIS ID'),
                 TextColumn::make('otherid')
