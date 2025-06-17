@@ -37,12 +37,16 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\StudentDataModel\Models\Student;
+use Carbon\Carbon;
 use Filament\Support\Colors\Color;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Cache;
 
 class StudentEmailOptInOptOutPieChart extends PieChartReportWidget
 {
+    use InteractsWithPageFilters;
+
     protected static ?string $heading = 'Student Email Addresses';
 
     protected int | string | array $columnSpan = [
@@ -66,17 +70,45 @@ class StudentEmailOptInOptOutPieChart extends PieChartReportWidget
 
     public function getData(): array
     {
-        $emailOptInPercentage = Cache::tags(["{{$this->cacheTag}}"])->remember('email_opt_in_count', now()->addHours(24), function (): int {
-            return Student::where('email_bounce', false)->count();
-        });
+        $startDate = filled($this->filters['startDate'] ?? null)
+              ? Carbon::parse($this->filters['startDate'])->startOfDay()
+              : null;
 
-        $emailOptOutPercentage = Cache::tags(["{{$this->cacheTag}}"])->remember('email_opt_out_count', now()->addHours(24), function (): int {
-            return Student::where('email_bounce', true)->count();
-        });
+        $endDate = filled($this->filters['endDate'] ?? null)
+            ? Carbon::parse($this->filters['endDate'])->endOfDay()
+            : null;
 
-        $emailNullPercentage = Cache::tags(["{{$this->cacheTag}}"])->remember('email_null_count', now()->addHours(24), function (): int {
-            return Student::whereNull('email_bounce')->count();
-        });
+        $shouldBypassCache = filled($startDate) || filled($endDate);
+
+        // $emailOptInPercentage = Cache::tags(["{{$this->cacheTag}}"])->remember('email_opt_in_count', now()->addHours(24), function (): int {
+        //     return Student::where('email_bounce', false)->count();
+        // });
+
+        $emailOptInPercentage = $shouldBypassCache
+            ? Student::where('email_bounce', false)->whereBetween('created_at_source', [$startDate, $endDate])->count()
+            : Cache::tags(["{{$this->cacheTag}}"])->remember('email_opt_in_count', now()->addHours(24), function (): int {
+                return Student::where('email_bounce', false)->count();
+            });
+
+        // $emailOptOutPercentage = Cache::tags(["{{$this->cacheTag}}"])->remember('email_opt_out_count', now()->addHours(24), function (): int {
+        //     return Student::where('email_bounce', true)->count();
+        // });
+
+        $emailOptOutPercentage = $shouldBypassCache
+            ? Student::where('email_bounce', true)->whereBetween('created_at_source', [$startDate, $endDate])->count()
+            : Cache::tags(["{{$this->cacheTag}}"])->remember('email_opt_out_count', now()->addHours(24), function (): int {
+                return Student::where('email_bounce', true)->count();
+            });
+
+        // $emailNullPercentage = Cache::tags(["{{$this->cacheTag}}"])->remember('email_null_count', now()->addHours(24), function (): int {
+        //     return Student::whereNull('email_bounce')->count();
+        // });
+
+        $emailNullPercentage = $shouldBypassCache
+            ? Student::whereNull('email_bounce')->whereBetween('created_at_source', [$startDate, $endDate])->count()
+            : Cache::tags(["{{$this->cacheTag}}"])->remember('email_null_count', now()->addHours(24), function (): int {
+                return Student::whereNull('email_bounce')->count();
+            });
 
         return [
             'labels' => ['Can receive emails', 'Cannot receive emails', 'Data unavailable'],

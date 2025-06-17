@@ -37,13 +37,17 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\StudentDataModel\Models\Student;
+use Carbon\Carbon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Livewire\Attributes\On;
 
 class MostEngagedStudentsTable extends BaseWidget
 {
+    use InteractsWithPageFilters;
+
     public string $cacheTag;
 
     protected static ?string $pollingInterval = null;
@@ -64,11 +68,22 @@ class MostEngagedStudentsTable extends BaseWidget
 
     public function table(Table $table): Table
     {
+        $startDate = filled($this->filters['startDate'] ?? null)
+              ? Carbon::parse($this->filters['startDate'])->startOfDay()
+              : null;
+
+        $endDate = filled($this->filters['endDate'] ?? null)
+            ? Carbon::parse($this->filters['endDate'])->endOfDay()
+            : null;
+
         return $table
             ->query(
                 Student::with('primaryEmailAddress:id,address')
                     ->select('sisid', 'full_name', 'primary_email_id')
                     ->withCount('engagements')
+                    ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
+                        $query->whereBetween('created_at_source', [$startDate, $endDate]);
+                    })
                     ->orderBy('engagements_count', 'desc')
                     ->limit(10)
             )
