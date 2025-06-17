@@ -36,20 +36,21 @@
 
 namespace AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages;
 
-use AdvisingApp\Campaign\Filament\Resources\CampaignResource;
-use AdvisingApp\Campaign\Models\Campaign;
-use App\Features\CampaignActionTimestampColumnChanges;
-use App\Filament\Tables\Columns\IdColumn;
 use App\Models\User;
+use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\Filter;
-use Filament\Tables\Table;
+use AdvisingApp\Campaign\Models\Campaign;
+use App\Filament\Tables\Columns\IdColumn;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\DeleteAction;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Filters\TernaryFilter;
+use App\Features\CampaignActionTimestampColumnChanges;
+use AdvisingApp\Campaign\Filament\Resources\CampaignResource;
 
 class ListCampaigns extends ListRecords
 {
@@ -96,18 +97,43 @@ class ListCampaigns extends ListRecords
                             ->where('created_by_id', auth()->id())
                             ->where('created_by_type', (new User())->getMorphClass()),
                     ),
-                Filter::make('Enabled')
-                    ->query(fn (Builder $query) => $query->where('enabled', true)),
-                Filter::make('Completed')
-                    ->query(function (Builder $query) {
-                        $query->whereDoesntHave('actions', function (Builder $query) {
-                            $query->whereNull(
-                                CampaignActionTimestampColumnChanges::active()
+
+                TernaryFilter::make('Enabled')
+                    ->placeholder('-')
+                    ->trueLabel('Enabled')
+                    ->falseLabel('Disabled')
+                    ->queries(
+                        true: fn (Builder $query) => $query->where('enabled', true),
+                        false: fn (Builder $query) => $query->where('enabled', false),
+                        blank: fn (Builder $query) => $query
+                    ),
+
+                TernaryFilter::make('Completed')
+                    ->placeholder('-')
+                    ->trueLabel('Completed')
+                    ->falseLabel('In Progress')
+                    ->queries(
+                        true: function(Builder $query): Builder
+                        {
+                            return $query->whereDoesntHave('actions', function (Builder $query) {
+                                $query->whereNull(
+                                    CampaignActionTimestampColumnChanges::active()
+                                        ? 'execution_finished_at'
+                                        : 'successfully_executed_at'
+                                );
+                            });
+                        },
+                        false: function(Builder $query): Builder
+                        {
+                            return $query->whereHas('actions', function (Builder $query) {
+                                $query->whereNull(CampaignActionTimestampColumnChanges::active()
                                     ? 'execution_finished_at'
                                     : 'successfully_executed_at'
-                            );
-                        });
-                    }),
+                                );
+                            });
+                        },
+                        blank: fn (Builder $query) => $query
+                    ),
             ]);
     }
 
