@@ -52,9 +52,6 @@ class ArtificialIntelligence extends ProfilePage
 
     protected static ?int $navigationSort = 40;
 
-    /** @var array<string, mixed> $data */
-    public ?array $data = [];
-
     public function form(Form $form): Form
     {
         return $form

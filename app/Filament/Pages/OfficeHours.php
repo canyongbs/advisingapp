@@ -55,9 +55,6 @@ class OfficeHours extends ProfilePage
 
     protected static ?int $navigationSort = 80;
 
-    /** @var array<string, mixed> $data */
-    public ?array $data = [];
-
     public function form(Form $form): Form
     {
         /** @var User $user */

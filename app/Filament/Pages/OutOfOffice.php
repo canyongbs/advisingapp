@@ -54,9 +54,6 @@ class OutOfOffice extends ProfilePage
 
     protected static ?int $navigationSort = 90;
 
-    /** @var array<string, mixed> $data */
-    public ?array $data = [];
-
     public function form(Form $form): Form
     {
         return $form

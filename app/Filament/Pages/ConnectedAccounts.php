@@ -59,9 +59,6 @@ class ConnectedAccounts extends ProfilePage
 
     protected static ?int $navigationSort = 60;
 
-    /** @var array<string, mixed> $data */
-    public ?array $data = [];
-
     public static function canAccess(): bool
     {
         return self::getConnectedAccounts()->count() > 0;
