@@ -46,16 +46,13 @@ use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('can view the all campaigns in the list page', function () {
-    $user = User::factory()->licensed(LicenseType::cases())->create();
-    asSuperAdmin($user);
+    asSuperAdmin();
 
     Campaign::factory(3)->enabled()->create();
     Campaign::factory(2)->disabled()->create();
 
-    $allRecords = Campaign::all();
-
     livewire(ListCampaigns::class)
-        ->assertCanSeeTableRecords($allRecords)
+        ->assertCanSeeTableRecords(Campaign::all())
         ->assertCountTableRecords(5);
 });
 
