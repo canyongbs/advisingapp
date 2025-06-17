@@ -76,6 +76,10 @@ class ProspectProfileInfolist
                                     ->all())
                                 ->listWithLineBreaks()
                                 ->visible(fn (?array $state): bool => filled($state)),
+                            TextEntry::make('primaryEmailAddress')
+                                ->label('Primary Email Address')
+                                ->state(fn (Prospect $record): View => view('student-data-model::components.filament.resources.educatable-resource.view-educatable.email-address-detail', ['emailAddress' => $record->primaryEmailAddress]))
+                                ->visible(fn (?View $state): bool => filled($state)),
                             TextEntry::make('additionalEmailAddresses')
                                 ->label(fn (?array $state): string => Str::plural('Other email address', count($state ?? [])))
                                 ->state(fn (Prospect $record): array => array_map(
@@ -84,6 +88,10 @@ class ProspectProfileInfolist
                                 ))
                                 ->listWithLineBreaks()
                                 ->visible(fn (?array $state): bool => filled($state)),
+                            TextEntry::make('primaryPhoneNumber')
+                                ->label('Primary Phone Number')
+                                ->state(fn (Prospect $record): View => view('student-data-model::components.filament.resources.educatable-resource.view-educatable.phone-number-detail', ['phoneNumber' => $record->primaryPhoneNumber]))
+                                ->visible(fn (?View $state): bool => filled($state)),
                             TextEntry::make('additionalPhoneNumbers')
                                 ->label(fn (?array $state): string => Str::plural('Other phone number', count($state ?? [])))
                                 ->state(fn (Prospect $record): array => array_map(
