@@ -81,7 +81,7 @@ class MostEngagedStudentsTable extends BaseWidget
                 Student::with('primaryEmailAddress:id,address')
                     ->select('sisid', 'full_name', 'primary_email_id')
                     ->withCount('engagements')
-                    ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
+                    ->when($startDate, function ($query) use ($startDate, $endDate) {
                         $query->whereBetween('created_at_source', [$startDate, $endDate]);
                     })
                     ->orderBy('engagements_count', 'desc')

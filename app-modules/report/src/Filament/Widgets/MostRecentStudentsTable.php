@@ -89,7 +89,7 @@ class MostRecentStudentsTable extends BaseWidget
                         ->from((new Student())->getTable())
                         ->whereNotNull('created_at_source')
                         ->whereNull('deleted_at')
-                        ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
+                        ->when($startDate, function ($query) use ($startDate, $endDate) {
                             $query->whereBetween('created_at_source', [$startDate, $endDate]);
                         })
                         ->orderBy('created_at_source', 'desc')

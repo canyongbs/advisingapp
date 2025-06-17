@@ -82,7 +82,7 @@ class StudentDeliverableTable extends BaseWidget
                 Student::select('sisid', 'full_name', 'email_bounce', 'sms_opt_out')
                     ->where('sms_opt_out', true)
                     ->orWhere('email_bounce', true)
-                    ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
+                    ->when($startDate, function ($query) use ($startDate, $endDate) {
                         $query->whereBetween('created_at_source', [$startDate, $endDate]);
                     })
             )
