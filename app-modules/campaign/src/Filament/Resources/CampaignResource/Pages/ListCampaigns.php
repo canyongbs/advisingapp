@@ -36,21 +36,21 @@
 
 namespace AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages;
 
+use AdvisingApp\Campaign\Filament\Resources\CampaignResource;
+use AdvisingApp\Campaign\Models\Campaign;
+use App\Features\CampaignActionTimestampColumnChanges;
+use App\Filament\Tables\Columns\IdColumn;
 use App\Models\User;
-use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
-use Filament\Tables\Filters\Filter;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use AdvisingApp\Campaign\Models\Campaign;
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\DeleteAction;
-use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\TernaryFilter;
-use App\Features\CampaignActionTimestampColumnChanges;
-use AdvisingApp\Campaign\Filament\Resources\CampaignResource;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class ListCampaigns extends ListRecords
 {
@@ -113,8 +113,7 @@ class ListCampaigns extends ListRecords
                     ->trueLabel('Completed')
                     ->falseLabel('In Progress')
                     ->queries(
-                        true: function(Builder $query): Builder
-                        {
+                        true: function (Builder $query): Builder {
                             return $query->whereDoesntHave('actions', function (Builder $query) {
                                 $query->whereNull(
                                     CampaignActionTimestampColumnChanges::active()
@@ -123,10 +122,10 @@ class ListCampaigns extends ListRecords
                                 );
                             });
                         },
-                        false: function(Builder $query): Builder
-                        {
+                        false: function (Builder $query): Builder {
                             return $query->whereHas('actions', function (Builder $query) {
-                                $query->whereNull(CampaignActionTimestampColumnChanges::active()
+                                $query->whereNull(
+                                    CampaignActionTimestampColumnChanges::active()
                                     ? 'execution_finished_at'
                                     : 'successfully_executed_at'
                                 );
