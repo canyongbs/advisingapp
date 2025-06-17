@@ -72,21 +72,13 @@ use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 /**
  * @property Form $form
  */
-class ProfileInformation extends Page
+class ProfileInformation extends ProfilePage
 {
-    use InteractsWithFormActions;
-
-    protected static string $view = 'filament.pages.profile-save';
-
-    protected static ?string $cluster = ProfileSettings::class;
-
     protected static ?string $slug = 'profile-information';
 
     protected static ?string $title = 'Profile Information';
 
     protected static ?int $navigationSort = 10;
-
-    protected static bool $shouldRegisterNavigation = true;
 
     /** @var array<string, mixed> $data */
     public ?array $data = [];
@@ -96,57 +88,6 @@ class ProfileInformation extends Page
         /** @var User $user */
         $user = auth()->user();
         $hasCrmLicense = $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]);
-
-        $connectedAccounts = collect([
-            Grid::make()
-                ->schema([
-                    Placeholder::make('calendar')
-                        ->label(function (): string {
-                            /** @var User $user */
-                            $user = auth()->user();
-
-                            return "{$user->calendar->provider_type->getLabel()} Calendar";
-                        })
-                        ->content(function (): ?string {
-                            /** @var User $user */
-                            $user = auth()->user();
-
-                            return $user->calendar?->name;
-                        }),
-                    Actions::make([
-                        FormAction::make('Disconnect')
-                            ->icon('heroicon-m-trash')
-                            ->color('danger')
-                            ->requiresConfirmation()
-                            ->action(function () {
-                                /** @var User $user */
-                                $user = auth()->user();
-
-                                $calendar = $user->calendar;
-
-                                $revoked = resolve(CalendarManager::class)
-                                    ->driver($calendar->provider_type->value)
-                                    ->revokeToken($calendar);
-
-                                if ($revoked) {
-                                    $calendar->delete();
-
-                                    Notification::make()
-                                        ->title("Disconnected {$calendar->provider_type->getLabel()} Calendar")
-                                        ->success()
-                                        ->send();
-                                }
-                            }),
-                    ])->alignRight()
-                        ->verticallyAlignCenter(),
-                ])
-                ->visible(function (): bool {
-                    /** @var User $user */
-                    $user = auth()->user();
-
-                    return filled($user->calendar?->oauth_token);
-                }),
-        ])->filter(fn (Component $component) => $component->isVisible());
 
         return $form
             ->schema([
@@ -176,7 +117,6 @@ class ProfileInformation extends Page
                             ->live(),
                     ]),
                 Section::make('Profile Information')
-                    ->description('This information is visible to other users on your profile page, if you choose to make it visible.')
                     ->schema([
                         SpatieMediaLibraryFileUpload::make('avatar')
                             ->label('Avatar')
@@ -246,131 +186,6 @@ class ProfileInformation extends Page
             ]);
     }
 
-    public function mount(): void
-    {
-        $this->fillForm();
-    }
-
-    public function getUser(): Authenticatable|Model
-    {
-        $user = Filament::auth()->user();
-
-        if (! $user instanceof Model) {
-            throw new Exception('The authenticated user object must be an Eloquent model to allow the profile page to update it.');
-        }
-
-        return $user;
-    }
-
-    public function save(): void
-    {
-        try {
-            $this->callHook('beforeValidate');
-
-            $data = $this->form->getState();
-
-            $this->callHook('afterValidate');
-
-            $data = $this->mutateFormDataBeforeSave($data);
-
-            $this->callHook('beforeSave');
-
-            $this->handleRecordUpdate($this->getUser(), $data);
-
-            $this->callHook('afterSave');
-        } catch (Halt $exception) {
-            return;
-        }
-
-        if (request()->hasSession() && array_key_exists('password', $data)) {
-            request()->session()->put([
-                'password_hash_' . Filament::getAuthGuard() => $data['password'],
-            ]);
-        }
-
-        $this->data['password'] = null;
-        $this->data['passwordConfirmation'] = null;
-
-        $this->getSavedNotification()?->send();
-
-        $this->dispatch('refresh-branding-bar');
-
-        if ($redirectUrl = $this->getRedirectUrl()) {
-            $this->redirect($redirectUrl);
-        }
-    }
-
-    public function getFormActionsAlignment(): string
-    {
-        return Alignment::Start->value;
-    }
-
-    protected function fillForm(): void
-    {
-        $data = $this->getUser()->attributesToArray();
-
-        $this->callHook('beforeFill');
-
-        $data = $this->mutateFormDataBeforeFill($data);
-
-        $this->form->fill($data);
-
-        $this->callHook('afterFill');
-    }
-
-    /**
-     * @param  array<string, mixed>  $data
-     *
-     * @return array<string, mixed>
-     */
-    protected function mutateFormDataBeforeFill(array $data): array
-    {
-        return $data;
-    }
-
-    /**
-     * @param  array<string, mixed>  $data
-     *
-     * @return array<string, mixed>
-     */
-    protected function mutateFormDataBeforeSave(array $data): array
-    {
-        return $data;
-    }
-
-    /**
-     * @param  array<string, mixed>  $data
-     */
-    protected function handleRecordUpdate(Model $record, array $data): Model
-    {
-        $record->update($data);
-
-        return $record;
-    }
-
-    protected function getSavedNotification(): ?Notification
-    {
-        $title = $this->getSavedNotificationTitle();
-
-        if (blank($title)) {
-            return null;
-        }
-
-        return Notification::make()
-            ->success()
-            ->title($this->getSavedNotificationTitle());
-    }
-
-    protected function getSavedNotificationTitle(): ?string
-    {
-        return __('filament-panels::pages/auth/edit-profile.notifications.saved.title');
-    }
-
-    protected function getRedirectUrl(): ?string
-    {
-        return null;
-    }
-
     protected function getNameFormComponent(): Component
     {
         return TextInput::make('name')
@@ -434,36 +249,5 @@ class ProfileInformation extends Page
             ),
         ];
     }
-
-    /**
-     * @return array<Action | ActionGroup>
-     */
-    protected function getFormActions(): array
-    {
-        return [
-            $this->getSaveFormAction(),
-            $this->getCancelFormAction(),
-        ];
-    }
-
-    protected function getCancelFormAction(): Action
-    {
-        return Action::make('cancel')
-            ->label(__('filament-panels::pages/auth/edit-profile.actions.cancel.label'))
-            ->url(filament()->getUrl())
-            ->color('gray');
-    }
-
-    protected function getSaveFormAction(): Action
-    {
-        return Action::make('save')
-            ->label('Save')
-            ->submit('save')
-            ->keyBindings(['mod+s']);
-    }
-
-    protected function hasFullWidthFormActions(): bool
-    {
-        return false;
-    }
+    
 }

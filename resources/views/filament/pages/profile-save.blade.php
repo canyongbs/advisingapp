@@ -31,9 +31,6 @@
 
 </COPYRIGHT>
 --}}
-@php
-    use AdvisingApp\MultifactorAuthentication\Livewire\MultifactorAuthenticationManagement;
-@endphp
 
 <x-filament-panels::page>
     <x-filament-panels::form wire:submit="save">

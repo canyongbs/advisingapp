@@ -38,6 +38,7 @@ namespace App\Providers\Filament;
 
 use AdvisingApp\Authorization\Filament\Pages\Auth\Login;
 use AdvisingApp\Theme\Settings\ThemeSettings;
+use App\Filament\Clusters\ProfileSettings;
 use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\ProductHealth;
 use App\Filament\Pages\ProfileInformation;
@@ -185,7 +186,7 @@ class AdminPanelProvider extends PanelProvider
             ->userMenuItems([
                 MenuItem::make()
                     ->label('Profile Settings')
-                    ->url(fn () => ProfileInformation::getUrl())
+                    ->url(fn () => ProfileSettings::getUrl())
                     ->icon('heroicon-s-cog-6-tooth'),
                 MenuItem::make()
                     ->label('About')
