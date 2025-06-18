@@ -81,6 +81,8 @@ abstract class BaseOpenAiResponsesService implements AiService
 
     public function complete(string $prompt, string $content): string
     {
+        $aiSettings = app(AiSettings::class);
+
         try {
             $response = Prism::text()
                 ->using('azure_open_ai', $this->getModel())
@@ -91,7 +93,8 @@ abstract class BaseOpenAiResponsesService implements AiService
                 ])
                 ->withSystemPrompt($prompt)
                 ->withPrompt($content)
-                ->usingTemperature(app(AiSettings::class)->temperature)
+                ->withMaxTokens($aiSettings->max_tokens->getTokens())
+                ->usingTemperature($aiSettings->temperature)
                 ->asText();
         } catch (PrismRateLimitedException $exception) {
             foreach ($exception->rateLimits as $rateLimit) {
@@ -141,6 +144,7 @@ abstract class BaseOpenAiResponsesService implements AiService
                 ->all();
         }
 
+        $aiSettings = app(AiSettings::class);
         $instructions = $this->generateAssistantInstructions($message->thread->assistant, withDynamicContext: true);
 
         try {
@@ -156,7 +160,8 @@ abstract class BaseOpenAiResponsesService implements AiService
                     ...$previousMessages,
                     $userMessage ?? new UserMessage($message->content),
                 ])
-                ->usingTemperature(app(AiSettings::class)->temperature)
+                ->withMaxTokens($aiSettings->max_tokens->getTokens())
+                ->usingTemperature($aiSettings->temperature)
                 ->withProviderOptions(([
                     'previous_response_id' => $previousResponseId,
                 ]))
