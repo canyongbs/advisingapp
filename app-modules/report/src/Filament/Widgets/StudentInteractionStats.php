@@ -63,27 +63,34 @@ class StudentInteractionStats extends StatsOverviewReportWidget
         $interactionsCount = $shouldBypassCache
             ? Interaction::query()
                 ->whereHasMorph('interactable', Student::class)
-                ->whereBetween('created_at', [$startDate, $endDate])
+                ->when(
+                    $startDate && $endDate,
+                    fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate])
+                )
                 ->count()
-            : Cache::tags(["{{$this->cacheTag}}"])->remember('total-student-interactions-count', now()->addHours(24), function (): int {
-                return Interaction::query()
+            : Cache::tags(["{{$this->cacheTag}}"])->remember(
+                'total-student-interactions-count',
+                now()->addHours(24),
+                fn (): int => Interaction::query()
                     ->whereHasMorph('interactable', Student::class)
-                    ->count();
-            });
+                    ->count()
+            );
 
         $studentsWithInteractionsCount = $shouldBypassCache
             ? Student::query()
-                ->whereHas('interactions', function ($query) use ($startDate, $endDate) {
-                    if ($startDate) {
-                        $query->whereBetween('created_at', [$startDate, $endDate]);
-                    }
-                })
+                ->whereHas('interactions')
+                ->when(
+                    $startDate && $endDate,
+                    fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate])
+                )
                 ->count()
-            : Cache::tags(["{{$this->cacheTag}}"])->remember('students-with-interactions', now()->addHours(24), function (): int {
-                return Student::query()
+            : Cache::tags(["{{$this->cacheTag}}"])->remember(
+                'students-with-interactions',
+                now()->addHours(24),
+                fn (): int => Student::query()
                     ->whereHas('interactions')
-                    ->count();
-            });
+                    ->count()
+            );
 
         return [
             Stat::make('Total Interactions', Number::abbreviate($interactionsCount, maxPrecision: 2)),

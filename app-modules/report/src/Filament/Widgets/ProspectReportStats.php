@@ -70,34 +70,49 @@ class ProspectReportStats extends StatsOverviewReportWidget
         $shouldBypassCache = filled($startDate) || filled($endDate);
 
         $prospectsCount = $shouldBypassCache
-            ? Prospect::whereBetween('created_at', [$startDate, $endDate])->count()
-            : Cache::tags(["{{$this->cacheTag}}"])->remember('prospects-count', now()->addHours(24), function (): int {
-                return Prospect::count();
-            });
+            ? Prospect::query()
+                ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]))
+                ->count()
+            : Cache::tags(["{{$this->cacheTag}}"])->remember(
+                'prospects-count',
+                now()->addHours(24),
+                fn (): int => Prospect::query()->count()
+            );
 
         $alertsCount = $shouldBypassCache
-            ? Alert::whereHasMorph('concern', Prospect::class)
-                ->whereBetween('created_at', [$startDate, $endDate])
+            ? Alert::query()
+                ->whereHasMorph('concern', Prospect::class, function ($q) use ($startDate, $endDate) {
+                    $q->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]));
+                })
                 ->count()
-            : Cache::tags(["{{$this->cacheTag}}"])->remember('prospect-alerts-count', now()->addHours(24), function (): int {
-                return Alert::whereHasMorph('concern', Prospect::class)->count();
-            });
+            : Cache::tags(["{{$this->cacheTag}}"])->remember(
+                'prospect-alerts-count',
+                now()->addHours(24),
+                fn (): int => Alert::query()->whereHasMorph('concern', Prospect::class)->count()
+            );
 
         $segmentsCount = $shouldBypassCache
-            ? Segment::where('model', SegmentModel::Prospect)
-                ->whereBetween('created_at', [$startDate, $endDate])
+            ? Segment::query()
+                ->where('model', SegmentModel::Prospect)
+                ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]))
                 ->count()
-            : Cache::tags(["{{$this->cacheTag}}"])->remember('prospect-segments-count', now()->addHours(24), function (): int {
-                return Segment::query()->where('model', SegmentModel::Prospect)->count();
-            });
+            : Cache::tags(["{{$this->cacheTag}}"])->remember(
+                'prospect-segments-count',
+                now()->addHours(24),
+                fn (): int => Segment::query()->where('model', SegmentModel::Prospect)->count()
+            );
 
         $tasksCount = $shouldBypassCache
-            ? Task::whereHasMorph('concern', Prospect::class)
-                ->whereBetween('created_at', [$startDate, $endDate])
+            ? Task::query()
+                ->whereHasMorph('concern', Prospect::class, function ($q) use ($startDate, $endDate) {
+                    $q->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]));
+                })
                 ->count()
-            : Cache::tags(["{{$this->cacheTag}}"])->remember('prospect-tasks-count', now()->addHours(24), function (): int {
-                return Task::whereHasMorph('concern', Prospect::class)->count();
-            });
+            : Cache::tags(["{{$this->cacheTag}}"])->remember(
+                'prospect-tasks-count',
+                now()->addHours(24),
+                fn (): int => Task::query()->whereHasMorph('concern', Prospect::class)->count()
+            );
 
         return [
             Stat::make('Total Prospects', ($prospectsCount > 9999999)

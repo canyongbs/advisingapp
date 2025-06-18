@@ -141,11 +141,11 @@ class StudentInteractionTypeDoughnutChart extends ChartReportWidget
     {
         $query = InteractionType::withCount([
             'interactions' => function ($query) use ($startDate, $endDate) {
-                $query->whereHasMorph('interactable', Student::class);
-
-                if ($startDate && $endDate) {
-                    $query->whereBetween('created_at', [$startDate, $endDate]);
-                }
+                $query->whereHasMorph('interactable', Student::class)
+                    ->when(
+                        $startDate && $endDate,
+                        fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate])
+                    );
             },
         ])->get(['id', 'name']);
 
