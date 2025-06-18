@@ -72,6 +72,10 @@ class UploadFilesToAssistant
 
         $response = $service->retrieveAssistant($this->assistant);
 
+        if (! $response) {
+            return;
+        }
+
         $vectorStoreId = $response->toolResources->fileSearch->vectorStoreIds[0] ?? null;
 
         $vectorStore = null;

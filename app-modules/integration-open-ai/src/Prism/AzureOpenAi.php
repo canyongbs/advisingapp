@@ -34,49 +34,46 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Http\Controllers;
+namespace AdvisingApp\IntegrationOpenAi\Prism;
 
-use AdvisingApp\Ai\Actions\RetryMessage;
-use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
-use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
-use AdvisingApp\Ai\Http\Requests\RetryMessageRequest;
-use AdvisingApp\Ai\Models\AiThread;
-use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\StreamedResponse;
-use Throwable;
+use AdvisingApp\IntegrationOpenAi\Prism\Handlers\Stream;
+use Closure;
+use Generator;
+use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Http;
+use Override;
+use Prism\Prism\Providers\OpenAI\OpenAI;
+use Prism\Prism\Text\Request as TextRequest;
 
-class RetryMessageController
+readonly class AzureOpenAi extends OpenAI
 {
-    public function __invoke(RetryMessageRequest $request, AiThread $thread): StreamedResponse | JsonResponse
-    {
-        try {
-            return new StreamedResponse(
-                app(RetryMessage::class)(
-                    $thread,
-                    $request->validated('content'),
-                    $request->validated('files'),
-                ),
-                headers: [
-                    'Content-Type' => 'text/html; charset=utf-8;',
-                    'Cache-Control' => 'no-cache',
-                    'X-Accel-Buffering' => 'no',
-                ],
-            );
-        } catch (AiAssistantArchivedException $exception) {
-            return response()->json([
-                'message' => $exception->getMessage(),
-            ], 404);
-        } catch (AiThreadLockedException $exception) {
-            return response()->json([
-                'isThreadLocked' => true,
-                'message' => $exception->getMessage(),
-            ], 503);
-        } catch (Throwable $exception) {
-            report($exception);
+    public function __construct() {}
 
-            return response()->json([
-                'message' => 'An error happened when sending your message.',
-            ], 503);
-        }
+    #[Override]
+    public function stream(TextRequest $request): Generator
+    {
+        $handler = new Stream($this->client(
+            $request->clientOptions(),
+            $request->clientRetry()
+        ));
+
+        return $handler->handle($request);
+    }
+
+    /**
+     * @param  array<string, mixed>  $options
+     * @param  array{0: array<int, int>|int, 1?: Closure|int, 2?: ?callable, 3?: bool}  $retry
+     */
+    protected function client(array $options, array $retry): PendingRequest
+    {
+        return Http::withHeaders([
+            'api-key' => $options['apiKey'],
+            'api-version' => $options['apiVersion'],
+        ])
+            ->withQueryParameters(['api-version' => 'preview'])
+            ->withOptions(Arr::except($options, ['apiKey', 'apiVersion', 'deployment']))
+            ->retry(...$retry)
+            ->baseUrl($options['deployment']);
     }
 }

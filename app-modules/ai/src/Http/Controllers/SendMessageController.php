@@ -51,7 +51,7 @@ class SendMessageController
     public function __invoke(SendMessageRequest $request, AiThread $thread): StreamedResponse | JsonResponse
     {
         try {
-            return response()->stream(
+            return new StreamedResponse(
                 app(SendMessage::class)(
                     $thread,
                     $request->validated('prompt_id') ? Prompt::find($request->validated('prompt_id')) : $request->validated('content'),

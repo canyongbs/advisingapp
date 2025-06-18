@@ -37,8 +37,10 @@
 namespace AdvisingApp\IntegrationOpenAi\Providers;
 
 use AdvisingApp\IntegrationOpenAi\IntegrationOpenAiPlugin;
+use AdvisingApp\IntegrationOpenAi\Prism\AzureOpenAi;
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
+use Prism\Prism\Contracts\Provider;
 
 class IntegrationOpenAiServiceProvider extends ServiceProvider
 {
@@ -50,5 +52,10 @@ class IntegrationOpenAiServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->mergeConfigFrom(__DIR__ . '/../../config/integration-open-ai.php', 'integration-open-ai');
+
+        $this->app['prism-manager']->extend(
+            'azure_open_ai',
+            fn (): Provider => app(AzureOpenAi::class),
+        );
     }
 }

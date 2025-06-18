@@ -34,49 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Http\Controllers;
+namespace AdvisingApp\IntegrationOpenAi\Services;
 
-use AdvisingApp\Ai\Actions\RetryMessage;
-use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
-use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
-use AdvisingApp\Ai\Http\Requests\RetryMessageRequest;
-use AdvisingApp\Ai\Models\AiThread;
-use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\StreamedResponse;
-use Throwable;
-
-class RetryMessageController
+class OpenAiResponsesGptTestService extends BaseOpenAiResponsesService
 {
-    public function __invoke(RetryMessageRequest $request, AiThread $thread): StreamedResponse | JsonResponse
+    public function getApiKey(): string
     {
-        try {
-            return new StreamedResponse(
-                app(RetryMessage::class)(
-                    $thread,
-                    $request->validated('content'),
-                    $request->validated('files'),
-                ),
-                headers: [
-                    'Content-Type' => 'text/html; charset=utf-8;',
-                    'Cache-Control' => 'no-cache',
-                    'X-Accel-Buffering' => 'no',
-                ],
-            );
-        } catch (AiAssistantArchivedException $exception) {
-            return response()->json([
-                'message' => $exception->getMessage(),
-            ], 404);
-        } catch (AiThreadLockedException $exception) {
-            return response()->json([
-                'isThreadLocked' => true,
-                'message' => $exception->getMessage(),
-            ], 503);
-        } catch (Throwable $exception) {
-            report($exception);
+        return 'test';
+    }
 
-            return response()->json([
-                'message' => 'An error happened when sending your message.',
-            ], 503);
-        }
+    public function getApiVersion(): string
+    {
+        return '1.0.0';
+    }
+
+    public function getModel(): string
+    {
+        return 'test';
+    }
+
+    public function getDeployment(): ?string
+    {
+        return null;
     }
 }

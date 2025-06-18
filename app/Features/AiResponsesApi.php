@@ -34,33 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace App\Multitenancy\Tasks;
+namespace App\Features;
 
-use AdvisingApp\Ai\Enums\AiModel;
-use Spatie\Multitenancy\Contracts\IsTenant;
-use Spatie\Multitenancy\Tasks\SwitchTenantTask;
+use App\Support\AbstractFeatureFlag;
 
-class ClearBindingsTask implements SwitchTenantTask
+class AiResponsesApi extends AbstractFeatureFlag
 {
-    public function makeCurrent(IsTenant $tenant): void
+    public function resolve(mixed $scope): mixed
     {
-        $this->clearBindings();
-    }
-
-    public function forgetCurrent(): void
-    {
-        $this->clearBindings();
-    }
-
-    public function clearBindings(): void
-    {
-        // Clear AI Service class bindings
-        foreach (AiModel::cases() as $aiModel) {
-            if ($aiModel === AiModel::JinaDeepSearchV1) {
-                continue;
-            }
-
-            app()->forgetInstance($aiModel->getServiceClass());
-        }
+        return false;
     }
 }

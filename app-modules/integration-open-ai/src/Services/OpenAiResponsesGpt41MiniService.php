@@ -34,49 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Http\Controllers;
+namespace AdvisingApp\IntegrationOpenAi\Services;
 
-use AdvisingApp\Ai\Actions\RetryMessage;
-use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
-use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
-use AdvisingApp\Ai\Http\Requests\RetryMessageRequest;
-use AdvisingApp\Ai\Models\AiThread;
-use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\StreamedResponse;
-use Throwable;
-
-class RetryMessageController
+class OpenAiResponsesGpt41MiniService extends BaseOpenAiResponsesService
 {
-    public function __invoke(RetryMessageRequest $request, AiThread $thread): StreamedResponse | JsonResponse
+    public function getApiKey(): string
     {
-        try {
-            return new StreamedResponse(
-                app(RetryMessage::class)(
-                    $thread,
-                    $request->validated('content'),
-                    $request->validated('files'),
-                ),
-                headers: [
-                    'Content-Type' => 'text/html; charset=utf-8;',
-                    'Cache-Control' => 'no-cache',
-                    'X-Accel-Buffering' => 'no',
-                ],
-            );
-        } catch (AiAssistantArchivedException $exception) {
-            return response()->json([
-                'message' => $exception->getMessage(),
-            ], 404);
-        } catch (AiThreadLockedException $exception) {
-            return response()->json([
-                'isThreadLocked' => true,
-                'message' => $exception->getMessage(),
-            ], 503);
-        } catch (Throwable $exception) {
-            report($exception);
+        return $this->settings->open_ai_gpt_41_mini_api_key ?? config('integration-open-ai.gpt_41_mini_api_key');
+    }
 
-            return response()->json([
-                'message' => 'An error happened when sending your message.',
-            ], 503);
-        }
+    public function getApiVersion(): string
+    {
+        return config('integration-open-ai.gpt_41_mini_api_version');
+    }
+
+    public function getModel(): string
+    {
+        return $this->settings->open_ai_gpt_41_mini_model ?? config('integration-open-ai.gpt_41_mini_model');
+    }
+
+    public function getDeployment(): ?string
+    {
+        return $this->settings->open_ai_gpt_41_mini_base_uri ?? config('integration-open-ai.gpt_41_mini_base_uri');
     }
 }
