@@ -90,5 +90,5 @@
         </div>
     </section>
 
-    @vite('app-modules/research/resources/js/results.js',)
+    @vite('app-modules/research/resources/js/results.js')
 </div>
