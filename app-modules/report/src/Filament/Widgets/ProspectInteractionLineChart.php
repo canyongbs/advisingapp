@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Prospect\Models\Prospect;
 use Carbon\Carbon;
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
@@ -105,30 +104,30 @@ class ProspectInteractionLineChart extends LineChartReportWidget
     {
         if ($startDate && $endDate) {
             $data = DB::select("
-            WITH months AS (
-                SELECT generate_series(
-                    date_trunc('month', ?::date),
-                    date_trunc('month', ?::date),
-                    interval '1 month'
-                ) AS month
-            ),
-            monthly_data AS (
+                WITH months AS (
+                    SELECT generate_series(
+                        date_trunc('month', ?::date),
+                        date_trunc('month', ?::date),
+                        interval '1 month'
+                    ) AS month
+                ),
+                monthly_data AS (
+                    SELECT
+                        date_trunc('month', created_at) AS month,
+                        COUNT(*) AS monthly_total
+                    FROM interactions
+                    WHERE created_at BETWEEN ? AND ?
+                    AND deleted_at IS NULL
+                    AND interactable_type = ?
+                    GROUP BY date_trunc('month', created_at)
+                )
                 SELECT
-                    date_trunc('month', created_at) AS month,
-                    COUNT(*) AS monthly_total
-                FROM interactions
-                WHERE created_at BETWEEN ? AND ?
-                AND deleted_at IS NULL
-                AND interactable_type = ?
-                GROUP BY date_trunc('month', created_at)
-            )
-            SELECT
-                to_char(m.month, 'Mon YYYY') AS label,
-                COALESCE(d.monthly_total, 0) AS total
-            FROM months m
-            LEFT JOIN monthly_data d ON m.month = d.month
-            ORDER BY m.month
-        ", [
+                    to_char(m.month, 'Mon YYYY') AS label,
+                    COALESCE(d.monthly_total, 0) AS total
+                FROM months m
+                LEFT JOIN monthly_data d ON m.month = d.month
+                ORDER BY m.month
+            ", [
                 $startDate,
                 $endDate,
                 $startDate,
@@ -137,30 +136,30 @@ class ProspectInteractionLineChart extends LineChartReportWidget
             ]);
         } else {
             $data = DB::select("
-            WITH months AS (
-                SELECT generate_series(
-                    date_trunc('month', CURRENT_DATE) - INTERVAL '11 months',
-                    date_trunc('month', CURRENT_DATE),
-                    interval '1 month'
-                ) AS month
-            ),
-            monthly_data AS (
+                WITH months AS (
+                    SELECT generate_series(
+                        date_trunc('month', CURRENT_DATE) - INTERVAL '11 months',
+                        date_trunc('month', CURRENT_DATE),
+                        interval '1 month'
+                    ) AS month
+                ),
+                monthly_data AS (
+                    SELECT
+                        date_trunc('month', created_at) AS month,
+                        COUNT(*) AS monthly_total
+                    FROM interactions
+                    WHERE created_at >= date_trunc('month', CURRENT_DATE) - INTERVAL '11 months'
+                    AND deleted_at IS NULL
+                    AND interactable_type = ?
+                    GROUP BY date_trunc('month', created_at)
+                )
                 SELECT
-                    date_trunc('month', created_at) AS month,
-                    COUNT(*) AS monthly_total
-                FROM interactions
-                WHERE created_at >= date_trunc('month', CURRENT_DATE) - INTERVAL '11 months'
-                AND deleted_at IS NULL
-                AND interactable_type = ?
-                GROUP BY date_trunc('month', created_at)
-            )
-            SELECT
-                to_char(m.month, 'Mon YYYY') AS label,
-                COALESCE(d.monthly_total, 0) AS total
-            FROM months m
-            LEFT JOIN monthly_data d ON m.month = d.month
-            ORDER BY m.month
-        ", [
+                    to_char(m.month, 'Mon YYYY') AS label,
+                    COALESCE(d.monthly_total, 0) AS total
+                FROM months m
+                LEFT JOIN monthly_data d ON m.month = d.month
+                ORDER BY m.month
+            ", [
                 app(Prospect::class)->getMorphClass(),
             ]);
         }
