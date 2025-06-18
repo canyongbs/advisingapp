@@ -78,10 +78,6 @@ class ProspectStats extends StatsOverviewWidget
                 ->whereHasMorph('sender', Prospect::class, $prospectQuery)
                 ->where('status', EngagementResponseStatus::New)
                 ->count())),
-            Stat::make('Open Cases', Number::format(CaseModel::query()
-                ->whereHasMorph('respondent', Prospect::class, $prospectQuery)
-                ->whereRelation('status', 'classification', '!=', SystemCaseClassification::Closed)
-                ->count())),
             Stat::make('Open Alerts', Number::format(Alert::query()
                 ->whereHasMorph('concern', Prospect::class, $prospectQuery)
                 ->whereHas('status', fn (Builder $query) => $query->whereNotIn('classification', [SystemAlertStatusClassification::Resolved, SystemAlertStatusClassification::Canceled]))
@@ -90,14 +86,13 @@ class ProspectStats extends StatsOverviewWidget
                 ->whereHasMorph('concern', Prospect::class, $prospectQuery)
                 ->whereNotIn('status', [TaskStatus::Completed, TaskStatus::Canceled])
                 ->count())),
+            Stat::make('Open Cases', Number::format(CaseModel::query()
+                ->whereHasMorph('respondent', Prospect::class, $prospectQuery)
+                ->whereRelation('status', 'classification', '!=', SystemCaseClassification::Closed)
+                ->count())),
             Stat::make('Actioned Messages', Number::format(EngagementResponse::query()
                 ->whereHasMorph('sender', Prospect::class, $prospectQuery)
                 ->where('status', EngagementResponseStatus::Actioned)
-                ->count()))
-                ->extraAttributes(['class' => 'fi-wi-stats-overview-stat-primary']),
-            Stat::make('Closed Cases', Number::format(CaseModel::query()
-                ->whereHasMorph('respondent', Prospect::class, $prospectQuery)
-                ->whereRelation('status', 'classification', SystemCaseClassification::Closed)
                 ->count()))
                 ->extraAttributes(['class' => 'fi-wi-stats-overview-stat-primary']),
             Stat::make('Closed Alerts', Number::format(Alert::query()
@@ -108,6 +103,11 @@ class ProspectStats extends StatsOverviewWidget
             Stat::make('Closed Tasks', Number::format(Task::query()
                 ->whereHasMorph('concern', Prospect::class, $prospectQuery)
                 ->whereIn('status', [TaskStatus::Completed, TaskStatus::Canceled])
+                ->count()))
+                ->extraAttributes(['class' => 'fi-wi-stats-overview-stat-primary']),
+            Stat::make('Closed Cases', Number::format(CaseModel::query()
+                ->whereHasMorph('respondent', Prospect::class, $prospectQuery)
+                ->whereRelation('status', 'classification', SystemCaseClassification::Closed)
                 ->count()))
                 ->extraAttributes(['class' => 'fi-wi-stats-overview-stat-primary']),
         ];
