@@ -77,8 +77,6 @@ class ManageAiIntegrationsSettings extends SettingsPage
 
     public function form(Form $form): Form
     {
-        info(config('database'));
-
         return $form
             ->columns(1)
             ->schema([
