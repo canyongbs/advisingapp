@@ -806,7 +806,7 @@
     @endif
 
     @vite(['app-modules/ai/resources/js/chat.js', 'app-modules/ai/resources/js/chats.js'])
-    
+
     <style>
         .choices__inner .prompt-upvotes-count {
             display: none;

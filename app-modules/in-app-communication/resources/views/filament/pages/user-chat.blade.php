@@ -610,7 +610,7 @@
         </div>
 
         @vite('app-modules/in-app-communication/resources/js/userToUserChat.js')
-        
+
         <style>
             .tiptap .is-editor-empty:first-child::before {
                 color: #adb5bd;

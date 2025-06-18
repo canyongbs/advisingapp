@@ -109,5 +109,5 @@
     @endif
 
     @vite('app-modules/prospect/resources/js/kanban.js')
-    
+
 </x-filament-panels::page>
