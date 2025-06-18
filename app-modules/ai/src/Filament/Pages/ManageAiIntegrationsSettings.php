@@ -107,10 +107,6 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->options(AiModelApplicabilityFeature::class)
                                     ->multiple()
                                     ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
-                                Checkbox::make('is_open_ai_gpt_35_responses_api_enabled')
-                                    ->label('Enable Responses API')
-                                    ->helperText('Use the OpenAI Responses API for generating text. The Base URI must use /openai/v1 instead of /openai.')
-                                    ->visible(AiResponsesApi::active()),
                             ]),
                         Section::make('GPT 4')
                             ->collapsible()
@@ -136,10 +132,6 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->options(AiModelApplicabilityFeature::class)
                                     ->multiple()
                                     ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
-                                Checkbox::make('is_open_ai_gpt_4_responses_api_enabled')
-                                    ->label('Enable Responses API')
-                                    ->helperText('Use the OpenAI Responses API for generating text. The Base URI must use /openai/v1 instead of /openai.')
-                                    ->visible(AiResponsesApi::active()),
                             ]),
                         Section::make('GPT 4o')
                             ->collapsible()
@@ -223,10 +215,6 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->options(AiModelApplicabilityFeature::class)
                                     ->multiple()
                                     ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
-                                Checkbox::make('is_open_ai_gpt_o1_mini_responses_api_enabled')
-                                    ->label('Enable Responses API')
-                                    ->helperText('Use the OpenAI Responses API for generating text. The Base URI must use /openai/v1 instead of /openai.')
-                                    ->visible(AiResponsesApi::active()),
                             ]),
                         Section::make('GPT o3 mini')
                             ->collapsible()
@@ -252,10 +240,6 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->options(AiModelApplicabilityFeature::class)
                                     ->multiple()
                                     ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
-                                Checkbox::make('is_open_ai_gpt_o3_mini_responses_api_enabled')
-                                    ->label('Enable Responses API')
-                                    ->helperText('Use the OpenAI Responses API for generating text. The Base URI must use /openai/v1 instead of /openai.')
-                                    ->visible(AiResponsesApi::active()),
                             ]),
                         Section::make('GPT 4.1 mini')
                             ->collapsible()

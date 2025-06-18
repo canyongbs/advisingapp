@@ -44,18 +44,6 @@ return new class () extends SettingsMigration {
     {
         DB::transaction(function () {
             try {
-                $this->migrator->add('ai.is_open_ai_gpt_35_responses_api_enabled', false);
-            } catch (SettingAlreadyExists $exception) {
-                // do nothing
-            }
-
-            try {
-                $this->migrator->add('ai.is_open_ai_gpt_4_responses_api_enabled', false);
-            } catch (SettingAlreadyExists $exception) {
-                // do nothing
-            }
-
-            try {
                 $this->migrator->add('ai.is_open_ai_gpt_4o_responses_api_enabled', false);
             } catch (SettingAlreadyExists $exception) {
                 // do nothing
@@ -63,18 +51,6 @@ return new class () extends SettingsMigration {
 
             try {
                 $this->migrator->add('ai.is_open_ai_gpt_4o_mini_responses_api_enabled', false);
-            } catch (SettingAlreadyExists $exception) {
-                // do nothing
-            }
-
-            try {
-                $this->migrator->add('ai.is_open_ai_gpt_o1_mini_responses_api_enabled', false);
-            } catch (SettingAlreadyExists $exception) {
-                // do nothing
-            }
-
-            try {
-                $this->migrator->add('ai.is_open_ai_gpt_o3_mini_responses_api_enabled', false);
             } catch (SettingAlreadyExists $exception) {
                 // do nothing
             }
@@ -105,12 +81,8 @@ return new class () extends SettingsMigration {
     {
         AiResponsesApi::purge();
 
-        $this->migrator->deleteIfExists('ai.is_open_ai_gpt_35_responses_api_enabled');
-        $this->migrator->deleteIfExists('ai.is_open_ai_gpt_4_responses_api_enabled');
         $this->migrator->deleteIfExists('ai.is_open_ai_gpt_4o_responses_api_enabled');
         $this->migrator->deleteIfExists('ai.is_open_ai_gpt_4o_mini_responses_api_enabled');
-        $this->migrator->deleteIfExists('ai.is_open_ai_gpt_o1_mini_responses_api_enabled');
-        $this->migrator->deleteIfExists('ai.is_open_ai_gpt_o3_mini_responses_api_enabled');
         $this->migrator->deleteIfExists('ai.is_open_ai_gpt_41_mini_responses_api_enabled');
         $this->migrator->deleteIfExists('ai.is_open_ai_gpt_41_nano_responses_api_enabled');
         $this->migrator->deleteIfExists('ai.is_open_ai_gpt_o4_mini_responses_api_enabled');
