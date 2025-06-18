@@ -66,37 +66,6 @@ it('can view the all campaigns in the list page', function () {
         ->assertCountTableRecords(6);
 });
 
-it('can filter by', function (string $filter, bool $isTrue, int $expectedCount) {
-    $user = User::factory()->licensed(LicenseType::cases())->create();
-    asSuperAdmin($user);
-    $differentUser = User::factory()->create();
-
-    Campaign::factory(2)->enabled()->create();
-    Campaign::factory()->disabled()->create();
-    Campaign::factory()->for($user, 'createdBy')
-        ->create();
-    Campaign::factory()->for($differentUser, 'createdBy')
-        ->create();
-    Campaign::factory()
-        ->has(CampaignAction::factory()->finishedAt(), 'actions')
-        ->create();
-    Campaign::factory()
-        ->has(CampaignAction::factory(), 'actions')
-        ->create();
-
-    livewire(ListCampaigns::class)
-        ->set('tableRecordsPerPage', 20)
-        ->filterTable($filter, $isTrue)
-        // ->assertCanSeeTableRecords(Campaign::all())
-        ->assertCountTableRecords($expectedCount);
-})->with([
-    ['My Campaigns', true, 1],
-    ['Enabled', true, 6],
-    ['Enabled', false, 1],
-    ['Completed', true, 6],
-    ['Completed', false, 1],
-]);
-
 it('can filter campaigns by `My Campaigns`', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
@@ -134,6 +103,22 @@ it('can filter campaigns by `Enabled`', function () {
         ->assertCanNotSeeTableRecords($disabledCampaigns);
 });
 
+it('can filter campaigns by `Disabled`', function () {
+    asSuperAdmin();
+
+    $enabledCampaigns = Campaign::factory()->count(2)->enabled()->create();
+    $disabledCampaigns = Campaign::factory()->count(2)->disabled()->create();
+
+    livewire(ListCampaigns::class)
+        ->assertCanSeeTableRecords([
+            ...$enabledCampaigns,
+            ...$disabledCampaigns,
+        ])
+        ->filterTable('Enabled', false)
+        ->assertCanSeeTableRecords($disabledCampaigns)
+        ->assertCanNotSeeTableRecords($enabledCampaigns);
+});
+
 it('can filter campaigns by `Completed`', function () {
     asSuperAdmin();
 
@@ -161,5 +146,37 @@ it('can filter campaigns by `Completed`', function () {
         ->assertCanNotSeeTableRecords([
             $partiallyCompleteCampaign,
             $incompleteCampaign,
+        ]);
+});
+
+it('can filter campaigns by `In Progress`', function () {
+    asSuperAdmin();
+
+    $completeCampaign = Campaign::factory()
+        ->has(CampaignAction::factory()->finishedAt(), 'actions')
+        ->create();
+
+    $partiallyCompleteCampaign = Campaign::factory()
+        ->has(CampaignAction::factory()->finishedAt(), 'actions')
+        ->has(CampaignAction::factory(), 'actions')
+        ->create();
+
+    $incompleteCampaign = Campaign::factory()
+        ->has(CampaignAction::factory(), 'actions')
+        ->create();
+
+    livewire(ListCampaigns::class)
+        ->assertCanSeeTableRecords([
+            $completeCampaign,
+            $partiallyCompleteCampaign,
+            $incompleteCampaign,
+        ])
+        ->filterTable('Completed', false)
+        ->assertCanSeeTableRecords([
+            $partiallyCompleteCampaign,
+            $incompleteCampaign,
+        ])
+        ->assertCanNotSeeTableRecords([
+            $completeCampaign,
         ]);
 });
