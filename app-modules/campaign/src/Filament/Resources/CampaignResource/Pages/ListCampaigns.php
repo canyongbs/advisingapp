@@ -48,6 +48,7 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -96,18 +97,42 @@ class ListCampaigns extends ListRecords
                             ->where('created_by_id', auth()->id())
                             ->where('created_by_type', (new User())->getMorphClass()),
                     ),
-                Filter::make('Enabled')
-                    ->query(fn (Builder $query) => $query->where('enabled', true)),
-                Filter::make('Completed')
-                    ->query(function (Builder $query) {
-                        $query->whereDoesntHave('actions', function (Builder $query) {
-                            $query->whereNull(
-                                CampaignActionTimestampColumnChanges::active()
+
+                TernaryFilter::make('Enabled')
+                    ->placeholder('-')
+                    ->trueLabel('Enabled')
+                    ->falseLabel('Disabled')
+                    ->queries(
+                        true: fn (Builder $query) => $query->where('enabled', true),
+                        false: fn (Builder $query) => $query->where('enabled', false),
+                        blank: fn (Builder $query) => $query
+                    ),
+
+                TernaryFilter::make('Completed')
+                    ->placeholder('-')
+                    ->trueLabel('Completed')
+                    ->falseLabel('In Progress')
+                    ->queries(
+                        true: function (Builder $query): Builder {
+                            return $query->whereDoesntHave('actions', function (Builder $query) {
+                                $query->whereNull(
+                                    CampaignActionTimestampColumnChanges::active()
+                                        ? 'execution_finished_at'
+                                        : 'successfully_executed_at'
+                                );
+                            });
+                        },
+                        false: function (Builder $query): Builder {
+                            return $query->whereHas('actions', function (Builder $query) {
+                                $query->whereNull(
+                                    CampaignActionTimestampColumnChanges::active()
                                     ? 'execution_finished_at'
                                     : 'successfully_executed_at'
-                            );
-                        });
-                    }),
+                                );
+                            });
+                        },
+                        blank: fn (Builder $query) => $query
+                    ),
             ]);
     }
 
