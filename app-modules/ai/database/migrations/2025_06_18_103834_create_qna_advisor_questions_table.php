@@ -8,13 +8,11 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('qn_a_advisors', function (Blueprint $table) {
+        Schema::create('qna_advisor_questions', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('name');
-            $table->text('description')->nullable();
-            $table->string('model')->nullable();
-            $table->longText('knowledge')->nullable();
-            $table->timestamp('archived_at')->nullable();
+            $table->string('question');
+            $table->text('answer');
+            $table->foreignUuid('category_id')->constrained('qn_a_advisor_categories')->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -22,6 +20,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('qn_a_advisors');
+        Schema::dropIfExists('qna_advisor_questions');
     }
 };

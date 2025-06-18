@@ -23,7 +23,9 @@ class EditQnAAdvisor extends EditRecord
 {
     protected static string $resource = QnAAdvisorResource::class;
 
-     protected static ?string $navigationLabel = 'Edit';
+    protected static ?string $navigationLabel = 'Edit';
+
+    protected static ?string $navigationGroup = 'QnA Advisor';
 
     public function form(Form $form): Form
     {

@@ -20,11 +20,16 @@ class ViewQnAAdvisor extends ViewRecord
 
     protected static ?string $navigationLabel = 'View';
 
+    protected static ?string $navigationGroup = 'QnA Advisor';
+
     public function infolist(Infolist $infolist):Infolist
     {
         return $infolist->schema([
            Section::make()->schema([
-                SpatieMediaLibraryImageEntry::make('avatar')->visibility('private')->collection('avatar')->circular(),
+                SpatieMediaLibraryImageEntry::make('avatar')
+                    ->visibility('private')
+                    ->collection('avatar')
+                    ->circular(),
                 TextEntry::make('name'),
                 TextEntry::make('description'),
                 TextEntry::make('model'),
