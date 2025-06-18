@@ -81,17 +81,17 @@ class StudentInteractionUsersTable extends BaseWidget
 
     public function table(Table $table): Table
     {
+        $startDate = filled($this->filters['startDate'] ?? null)
+            ? Carbon::parse($this->filters['startDate'])->startOfDay()
+            : null;
+
+        $endDate = filled($this->filters['endDate'] ?? null)
+            ? Carbon::parse($this->filters['endDate'])->endOfDay()
+            : null;
+
         return $table
             ->query(
-                function () {
-                    $startDate = filled($this->filters['startDate'] ?? null)
-                        ? Carbon::parse($this->filters['startDate'])->startOfDay()
-                        : null;
-
-                    $endDate = filled($this->filters['endDate'] ?? null)
-                        ? Carbon::parse($this->filters['endDate'])->endOfDay()
-                        : null;
-
+                function () use ($startDate, $endDate) {
                     return User::query()
                         ->whereHas('interactions', function (Builder $query) use ($startDate, $endDate) {
                             $query->whereHasMorph('interactable', Student::class)
@@ -134,10 +134,14 @@ class StudentInteractionUsersTable extends BaseWidget
                     ),
                 TextColumn::make('first_interaction_at')
                     ->label('First')
-                    ->getStateUsing(function ($record) {
+                    ->getStateUsing(function ($record) use ($startDate, $endDate) {
                         $first = $record
                             ->interactions()
                             ->whereHasMorph('interactable', Student::class)
+                            ->when(
+                                $startDate,
+                                fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate])
+                            )
                             ->orderBy('created_at')
                             ->first();
 
@@ -145,10 +149,14 @@ class StudentInteractionUsersTable extends BaseWidget
                     }),
                 TextColumn::make('most_recent_interaction_at')
                     ->label('Most Recent')
-                    ->getStateUsing(function ($record) {
+                    ->getStateUsing(function ($record) use ($startDate, $endDate) {
                         $last = $record
                             ->interactions()
                             ->whereHasMorph('interactable', Student::class)
+                            ->when(
+                                $startDate,
+                                fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate])
+                            )
                             ->orderByDesc('created_at')
                             ->first();
 
@@ -156,19 +164,27 @@ class StudentInteractionUsersTable extends BaseWidget
                     }),
                 TextColumn::make('total_interactions')
                     ->label('Total')
-                    ->getStateUsing(function ($record) {
+                    ->getStateUsing(function ($record) use ($startDate, $endDate) {
                         return $record
                             ->interactions()
                             ->whereHasMorph('interactable', Student::class)
+                            ->when(
+                                $startDate,
+                                fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate])
+                            )
                             ->count();
                     }),
                 TextColumn::make('total_interactions_percent')
                     ->label('Total %')
-                    ->getStateUsing(function ($record) {
+                    ->getStateUsing(function ($record) use ($startDate, $endDate) {
                         $allInteractions = Interaction::whereHasMorph('interactable', Student::class)->count();
                         $userInteractionsCount = $record
                             ->interactions()
                             ->whereHasMorph('interactable', Student::class)
+                            ->when(
+                                $startDate,
+                                fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate])
+                            )
                             ->count();
 
                         if ($allInteractions > 0) {
@@ -181,10 +197,14 @@ class StudentInteractionUsersTable extends BaseWidget
                     }),
                 TextColumn::make('avg_interaction_duration')
                     ->label('Avg. Duration')
-                    ->getStateUsing(function ($record) {
+                    ->getStateUsing(function ($record) use ($startDate, $endDate) {
                         $durations = $record
                             ->interactions()
                             ->whereHasMorph('interactable', Student::class)
+                            ->when(
+                                $startDate,
+                                fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate])
+                            )
                             ->get()
                             ->map(function ($interaction) {
                                 return Carbon::parse($interaction->end_datetime)

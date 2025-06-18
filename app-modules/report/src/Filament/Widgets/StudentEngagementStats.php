@@ -70,14 +70,16 @@ class StudentEngagementStats extends StatsOverviewReportWidget
         $shouldBypassCache = filled($startDate) || filled($endDate);
 
         $studentsCount = $shouldBypassCache
-            ? Student::whereBetween('created_at_source', [$startDate, $endDate])->count()
-            : Cache::tags(["{{$this->cacheTag}}"])->remember('total-students-count', now()->addHours(24), fn () => Student::count());
+            ? Student::query()
+                ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at_source', [$startDate, $endDate]))
+                ->count()
+            : Cache::tags(["{{$this->cacheTag}}"])->remember('total-students-count', now()->addHours(24), fn () => Student::query()->count());
 
         $emailsCount = $shouldBypassCache
             ? Engagement::query()
                 ->whereHasMorph('recipient', Student::class)
                 ->where('channel', NotificationChannel::Email)
-                ->when($startDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]))
+                ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]))
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'total-emails-count',
@@ -92,7 +94,7 @@ class StudentEngagementStats extends StatsOverviewReportWidget
             ? Engagement::query()
                 ->whereHasMorph('recipient', Student::class)
                 ->where('channel', NotificationChannel::Sms)
-                ->when($startDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]))
+                ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]))
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'total-texts-count',
@@ -105,18 +107,15 @@ class StudentEngagementStats extends StatsOverviewReportWidget
 
         $engagementFilter = function (Builder $query) use ($startDate, $endDate): void {
             $query->whereHasMorph('recipient', Student::class)
-                ->when(
-                    $startDate,
-                    fn (Builder $q) => $q->whereBetween('created_at', [$startDate, $endDate])
-                );
+                ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]));
         };
 
         $staffCount = $shouldBypassCache
-            ? User::whereHas('engagements', $engagementFilter)->count()
+            ? User::query()->whereHas('engagements', $engagementFilter)->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'total-staff-sending-count',
                 now()->addHours(24),
-                fn () => User::whereHas('engagements', $engagementFilter)->count()
+                fn () => User::query()->whereHas('engagements', $engagementFilter)->count()
             );
 
         return [

@@ -63,27 +63,36 @@ class ProspectInteractionStats extends StatsOverviewReportWidget
         $interactionsCount = $shouldBypassCache
             ? Interaction::query()
                 ->whereHasMorph('interactable', Prospect::class)
-                ->whereBetween('created_at', [$startDate, $endDate])
+                ->when(
+                    $startDate && $endDate,
+                    fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate])
+                )
                 ->count()
-            : Cache::tags(["{{$this->cacheTag}}"])->remember('total-prospect-interactions-count', now()->addHours(24), function (): int {
-                return Interaction::query()
+            : Cache::tags(["{{$this->cacheTag}}"])->remember(
+                'total-prospect-interactions-count',
+                now()->addHours(24),
+                fn (): int => Interaction::query()
                     ->whereHasMorph('interactable', Prospect::class)
-                    ->count();
-            });
+                    ->count()
+            );
 
         $prospectsWithInteractionsCount = $shouldBypassCache
             ? Prospect::query()
-                ->whereHas('interactions', function ($query) use ($startDate, $endDate) {
-                    if ($startDate) {
-                        $query->whereBetween('created_at', [$startDate, $endDate]);
-                    }
-                })
+                ->whereHas(
+                    'interactions',
+                    fn ($q) => $q->when(
+                        $startDate && $endDate,
+                        fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate])
+                    )
+                )
                 ->count()
-            : Cache::tags(["{{$this->cacheTag}}"])->remember('prospects-with-interactions', now()->addHours(24), function (): int {
-                return Prospect::query()
+            : Cache::tags(["{{$this->cacheTag}}"])->remember(
+                'prospects-with-interactions',
+                now()->addHours(24),
+                fn (): int => Prospect::query()
                     ->whereHas('interactions')
-                    ->count();
-            });
+                    ->count()
+            );
 
         return [
             Stat::make('Total Interactions', Number::abbreviate($interactionsCount, maxPrecision: 2)),

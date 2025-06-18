@@ -136,11 +136,10 @@ class ProspectInteractionStatusPolarAreaChart extends ChartReportWidget
     {
         return InteractionStatus::withCount([
             'interactions' => function ($query) use ($startDate, $endDate) {
-                $query->whereHasMorph('interactable', Prospect::class);
-
-                if ($startDate && $endDate) {
-                    $query->whereBetween('created_at', [$startDate, $endDate]);
-                }
+                $query->whereHasMorph('interactable', Prospect::class)
+                    ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
+                        $query->whereBetween('created_at', [$startDate, $endDate]);
+                    });
             },
         ])->get(['id', 'name'])->map(function (InteractionStatus $interactionStatus) {
             $interactionStatus['bg_color'] = $interactionStatus->color->getRgbString();

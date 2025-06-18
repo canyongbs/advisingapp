@@ -42,7 +42,6 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\TableWidget as BaseWidget;
-use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\On;
 
 class MostEngagedProspectsTable extends BaseWidget
@@ -82,11 +81,15 @@ class MostEngagedProspectsTable extends BaseWidget
                 Prospect::select('id', 'full_name', 'primary_email_id', 'status_id', 'created_by_id', 'created_at')
                     ->with('primaryEmailAddress:id,address')
                     ->with(['status', 'createdBy:id,name'])
-                    ->withCount('engagements')
-                    ->whereHas('engagements', function (Builder $query) use ($startDate, $endDate) {
-                        $query->when($startDate, function ($query) use ($startDate, $endDate) {
-                            $query->whereBetween('created_at', [$startDate, $endDate]);
-                        });
+                    ->withCount([
+                        'engagements as engagements_count' => fn ($query) => $query
+                            ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate])),
+                    ])
+                    ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
+                        return $query->whereHas(
+                            'engagements',
+                            fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate])
+                        );
                     })
                     ->orderBy('engagements_count', 'desc')
                     ->limit(10)

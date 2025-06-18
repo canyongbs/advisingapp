@@ -70,31 +70,47 @@ class StudentsStats extends StatsOverviewReportWidget
         $shouldBypassCache = filled($startDate) || filled($endDate);
 
         $studentsCount = $shouldBypassCache
-            ? Student::whereBetween('created_at_source', [$startDate, $endDate])->count()
-            : Cache::tags(["{{$this->cacheTag}}"])->remember('total-students-count', now()->addHours(24), function (): int {
-                return Student::count();
-            });
+            ? Student::query()
+                ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at_source', [$startDate, $endDate]))
+                ->count()
+            : Cache::tags(["{{$this->cacheTag}}"])->remember(
+                'total-students-count',
+                now()->addHours(24),
+                fn () => Student::query()->count()
+            );
 
         $alertsCount = $shouldBypassCache
-            ? Alert::where('concern_type', (new Student())->getMorphClass())
-                ->whereBetween('created_at', [$startDate, $endDate])->count()
-            : Cache::tags(["{{$this->cacheTag}}"])->remember('total-student-alerts-count', now()->addHours(24), function (): int {
-                return Alert::where('concern_type', (new Student())->getMorphClass())->count();
-            });
+            ? Alert::query()
+                ->where('concern_type', (new Student())->getMorphClass())
+                ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]))
+                ->count()
+            : Cache::tags(["{{$this->cacheTag}}"])->remember(
+                'total-student-alerts-count',
+                now()->addHours(24),
+                fn () => Alert::query()->where('concern_type', (new Student())->getMorphClass())->count()
+            );
 
         $segmentsCount = $shouldBypassCache
-            ? Segment::where('model', SegmentModel::Student)
-                ->whereBetween('created_at', [$startDate, $endDate])->count()
-            : Cache::tags(["{{$this->cacheTag}}"])->remember('total-student-segments-count', now()->addHours(24), function (): int {
-                return Segment::where('model', SegmentModel::Student)->count();
-            });
+            ? Segment::query()
+                ->where('model', SegmentModel::Student)
+                ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]))
+                ->count()
+            : Cache::tags(["{{$this->cacheTag}}"])->remember(
+                'total-student-segments-count',
+                now()->addHours(24),
+                fn () => Segment::query()->where('model', SegmentModel::Student)->count()
+            );
 
         $tasksCount = $shouldBypassCache
-            ? Task::where('concern_type', (new Student())->getMorphClass())
-                ->whereBetween('created_at', [$startDate, $endDate])->count()
-            : Cache::tags(["{{$this->cacheTag}}"])->remember('total-student-tasks-count', now()->addHours(24), function (): int {
-                return Task::where('concern_type', (new Student())->getMorphClass())->count();
-            });
+            ? Task::query()
+                ->where('concern_type', (new Student())->getMorphClass())
+                ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]))
+                ->count()
+            : Cache::tags(["{{$this->cacheTag}}"])->remember(
+                'total-student-tasks-count',
+                now()->addHours(24),
+                fn () => Task::query()->where('concern_type', (new Student())->getMorphClass())->count()
+            );
 
         return [
             Stat::make(

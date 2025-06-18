@@ -72,54 +72,73 @@ class TaskStats extends StatsOverviewReportWidget
         return [
             Stat::make('Total Tasks', Number::abbreviate(
                 $shouldBypassCache
-                    ? Task::whereBetween('created_at', [$startDate, $endDate])
+                    ? Task::query()
+                        ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]))
                         ->count()
-                    : Cache::tags(["{{$this->cacheTag}}"])->remember('tasks-count', now()->addHours(24), fn () => Task::count()),
+                    : Cache::tags(["{{$this->cacheTag}}"])->remember('tasks-count', now()->addHours(24), fn () => Task::query()->count()),
                 maxPrecision: 2,
             )),
 
             Stat::make('Staff with Open Tasks', Number::abbreviate(
                 $shouldBypassCache
-                    ? User::whereHas('assignedTasks', function ($query) use ($startDate, $endDate) {
-                        $query->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress])
-                            ->when($startDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]));
-                    })->count()
-                    : Cache::tags(["{{$this->cacheTag}}"])->remember('users-with-open-tasks-count', now()->addHours(24), function () {
-                        return User::whereHas(
+                    ? User::query()
+                        ->whereHas(
                             'assignedTasks',
-                            fn ($q) => $q->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress])
-                        )->count();
-                    }),
+                            fn ($query) => $query
+                                ->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress])
+                                ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]))
+                        )->count()
+                    : Cache::tags(["{{$this->cacheTag}}"])->remember(
+                        'users-with-open-tasks-count',
+                        now()->addHours(24),
+                        fn () => User::query()
+                            ->whereHas(
+                                'assignedTasks',
+                                fn ($q) => $q->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress])
+                            )->count()
+                    ),
                 maxPrecision: 2,
             )),
 
             Stat::make('Students with Open Tasks', Number::abbreviate(
                 $shouldBypassCache
-                    ? Student::whereHas('tasks', function ($query) use ($startDate, $endDate) {
-                        $query->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress])
-                            ->when($startDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]));
-                    })->count()
-                    : Cache::tags(["{{$this->cacheTag}}"])->remember('students-with-open-tasks-count', now()->addHours(24), function () {
-                        return Student::whereHas(
+                    ? Student::query()
+                        ->whereHas(
                             'tasks',
-                            fn ($q) => $q->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress])
-                        )->count();
-                    }),
+                            fn ($query) => $query
+                                ->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress])
+                                ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]))
+                        )->count()
+                    : Cache::tags(["{{$this->cacheTag}}"])->remember(
+                        'students-with-open-tasks-count',
+                        now()->addHours(24),
+                        fn () => Student::query()
+                            ->whereHas(
+                                'tasks',
+                                fn ($q) => $q->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress])
+                            )->count()
+                    ),
                 maxPrecision: 2,
             )),
 
             Stat::make('Prospects with Open Tasks', Number::abbreviate(
                 $shouldBypassCache
-                    ? Prospect::whereHas('tasks', function ($query) use ($startDate, $endDate) {
-                        $query->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress])
-                            ->when($startDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]));
-                    })->count()
-                    : Cache::tags(["{{$this->cacheTag}}"])->remember('prospects-with-open-tasks-count', now()->addHours(24), function () {
-                        return Prospect::whereHas(
+                    ? Prospect::query()
+                        ->whereHas(
                             'tasks',
-                            fn ($q) => $q->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress])
-                        )->count();
-                    }),
+                            fn ($query) => $query
+                                ->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress])
+                                ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]))
+                        )->count()
+                    : Cache::tags(["{{$this->cacheTag}}"])->remember(
+                        'prospects-with-open-tasks-count',
+                        now()->addHours(24),
+                        fn () => Prospect::query()
+                            ->whereHas(
+                                'tasks',
+                                fn ($q) => $q->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress])
+                            )->count()
+                    ),
                 maxPrecision: 2,
             )),
         ];
