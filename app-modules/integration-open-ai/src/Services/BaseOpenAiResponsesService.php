@@ -304,26 +304,22 @@ abstract class BaseOpenAiResponsesService implements AiService
                         continue;
                     }
 
-                    if ($chunk->finishReason === FinishReason::Error) {
-                        yield json_encode(['type' => 'failed', 'message' => 'An error happened when sending your message.']);
-
-                        report(new MessageResponseException('Stream not successful.'));
-
+                    if ($chunk->chunkType !== ChunkType::Text) {
                         continue;
                     }
+
+                    yield json_encode(['type' => 'content', 'content' => base64_encode($chunk->text)]);
+                    $response->content .= $chunk->text;
 
                     if ($chunk->finishReason === FinishReason::Length) {
                         yield json_encode(['type' => 'content', 'content' => base64_encode('...'), 'incomplete' => true]);
                         $response->content .= '...';
-
-                        continue;
                     }
 
-                    if ($chunk->chunkType === ChunkType::Text) {
-                        yield json_encode(['type' => 'content', 'content' => base64_encode($chunk->text)]);
-                        $response->content .= $chunk->text;
+                    if ($chunk->finishReason === FinishReason::Error) {
+                        yield json_encode(['type' => 'failed', 'message' => 'An error happened when sending your message.']);
 
-                        continue;
+                        report(new MessageResponseException('Stream not successful.'));
                     }
                 }
 
