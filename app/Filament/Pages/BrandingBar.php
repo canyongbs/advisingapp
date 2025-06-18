@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -30,32 +32,41 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
-@php
-    use AdvisingApp\MultifactorAuthentication\Livewire\MultifactorAuthenticationManagement;
-@endphp
+*/
 
-<x-filament-panels::page>
-    <x-filament-panels::form wire:submit="save">
-        {{ $this->form }}
+namespace App\Filament\Pages;
 
-        <x-filament-panels::form.actions
-            :actions="$this->getCachedFormActions()"
-            :full-width="$this->hasFullWidthFormActions()"
-        />
-    </x-filament-panels::form>
+use App\Settings\CollegeBrandingSettings;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Form;
 
-    <x-filament::section aside>
-        <x-slot name="heading">
-            Multifactor Authentication
-        </x-slot>
+/**
+ * @property Form $form
+ */
+class BrandingBar extends ProfilePage
+{
+    protected static ?string $slug = 'branding-bar';
 
-        <x-slot name="description">
-            Manage multifactor authentication for your account.
-        </x-slot>
+    protected static ?string $title = 'Branding Bar';
 
-        @if (!auth()->user()->is_external)
-            @livewire(MultifactorAuthenticationManagement::class)
-        @endif
-    </x-filament::section>
-</x-filament-panels::page>
+    protected static ?int $navigationSort = 50;
+
+    public static function canAccess(): bool
+    {
+        return app(CollegeBrandingSettings::class)->is_enabled && app(CollegeBrandingSettings::class)->dismissible && parent::canAccess();
+    }
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Section::make('Branding Bar')
+                    ->schema([
+                        Toggle::make('is_branding_bar_dismissed')
+                            ->label('Disable Branding Bar'),
+                    ])
+                    ->visible(fn (CollegeBrandingSettings $settings) => $settings->dismissible),
+            ]);
+    }
+}
