@@ -71,8 +71,8 @@ class StudentDeliverableTable extends BaseWidget
     public function table(Table $table): Table
     {
         $startDate = filled($this->filters['startDate'] ?? null)
-                ? Carbon::parse($this->filters['startDate'])->startOfDay()
-                : null;
+            ? Carbon::parse($this->filters['startDate'])->startOfDay()
+            : null;
 
         $endDate = filled($this->filters['endDate'] ?? null)
             ? Carbon::parse($this->filters['endDate'])->endOfDay()

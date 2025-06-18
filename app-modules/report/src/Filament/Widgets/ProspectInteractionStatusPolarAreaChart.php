@@ -74,8 +74,8 @@ class ProspectInteractionStatusPolarAreaChart extends ChartReportWidget
     public function getData(): array
     {
         $startDate = filled($this->filters['startDate'] ?? null)
-           ? Carbon::parse($this->filters['startDate'])->startOfDay()
-           : null;
+            ? Carbon::parse($this->filters['startDate'])->startOfDay()
+            : null;
 
         $endDate = filled($this->filters['endDate'] ?? null)
             ? Carbon::parse($this->filters['endDate'])->endOfDay()
@@ -84,10 +84,10 @@ class ProspectInteractionStatusPolarAreaChart extends ChartReportWidget
         $shouldBypassCache = filled($startDate) || filled($endDate);
 
         $interactionsByStatus = $shouldBypassCache
-           ? $this->getInteractionStatusData($startDate, $endDate)
-           : Cache::tags(["{{$this->cacheTag}}"])->remember('prospect_interactions_by_status', now()->addHours(24), function () {
-               return $this->getInteractionStatusData();
-           });
+            ? $this->getInteractionStatusData($startDate, $endDate)
+            : Cache::tags(["{{$this->cacheTag}}"])->remember('prospect_interactions_by_status', now()->addHours(24), function () {
+                return $this->getInteractionStatusData();
+            });
 
         return [
             'labels' => $interactionsByStatus->pluck('name'),
