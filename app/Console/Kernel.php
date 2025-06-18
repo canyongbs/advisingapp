@@ -75,11 +75,6 @@ class Kernel extends ConsoleKernel
             ->name('Gather and Dispatch SES S3 Inbound Emails')
             ->monitorName('Gather and Dispatch SES S3 Inbound Emails');
 
-        $schedule->job(new UnmatchedInboundCommunicationsJob())
-            ->daily()
-            ->name('Process Unmatched Inbound Communications')
-            ->monitorName('Process Unmatched Inbound Communications');
-
         Tenant::query()
             ->tap(new SetupIsComplete())
             ->cursor()
@@ -179,6 +174,11 @@ class Kernel extends ConsoleKernel
                         ->name("Schedule Check Heartbeat | Tenant {$tenant->domain}")
                         ->monitorName("Schedule Check Heartbeat | Tenant {$tenant->domain}")
                         ->withoutOverlapping(15);
+
+                    $schedule->job(new UnmatchedInboundCommunicationsJob())
+                        ->daily()
+                        ->name('Process Unmatched Inbound Communications')
+                        ->monitorName('Process Unmatched Inbound Communications');
                 } catch (Throwable $th) {
                     Log::error('Error scheduling tenant commands.', [
                         'tenant' => $tenant->id,

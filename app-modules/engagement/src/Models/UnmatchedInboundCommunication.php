@@ -36,14 +36,19 @@
 
 namespace AdvisingApp\Engagement\Models;
 
+use AdvisingApp\Engagement\Database\Factories\UnmatchedInboundCommunicationFactory;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * @mixin IdeHelperUnmatchedInboundCommunication
  */
 class UnmatchedInboundCommunication extends BaseModel
 {
+    /** @use HasFactory<UnmatchedInboundCommunicationFactory> */
+    use HasFactory;
+
     protected $fillable = [
         'sender',
         'occurred_at',

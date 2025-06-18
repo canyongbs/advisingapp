@@ -204,7 +204,7 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
                         ->whereRelation('emailAddresses', 'address', $sender)
                         ->get();
 
-                    if(! UnMatchInboundCommunicationFeature::active()) {
+                    if (! UnMatchInboundCommunicationFeature::active()) {
                         throw_if(
                             $prospects->isEmpty(),
                             new UnableToDetectAnyMatchingEducatablesFromSesS3EmailPayload($this->emailFilePath),

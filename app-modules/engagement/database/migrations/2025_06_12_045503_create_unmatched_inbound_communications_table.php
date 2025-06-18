@@ -47,7 +47,7 @@ return new class () extends Migration {
             $table->string('subject')->nullable();
             $table->longText('body');
             $table->timestamp('occurred_at');
-            $table->string('sender')->nullable();
+            $table->string('sender');
             $table->timestamps();
         });
     }

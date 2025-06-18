@@ -56,70 +56,81 @@ class UnmatchedInboundCommunicationsJob implements ShouldQueue
      */
     public function handle(): void
     {
-        if(! UnMatchInboundCommunicationFeature::active()) {
+        if (! UnMatchInboundCommunicationFeature::active()) {
             return;
         }
         UnmatchedInboundCommunication::query()
-            ->whereNotNull('sender')
-            ->get()
-            ->each(function (UnmatchedInboundCommunication $communication) {
-                if ($communication->type === EngagementResponseType::Email) {
-                    $students = Student::query()
-                        ->whereRelation('emailAddresses', 'address', $communication->sender)
-                        ->get();
-
-                    if ($students->isNotEmpty()) {
-                        $students->each(function (Student $student) use ($communication) {
-                            $student->engagementResponses()
-                                ->create([
-                                    'subject' => $communication->subject,
-                                    'content' => $communication->body,
-                                    'sent_at' => $communication->occurred_at,
-                                    'type' => EngagementResponseType::Email,
-                                    'status' => EngagementResponseStatus::New,
-                                ]);
-                        });
-                        $communication->delete();
-
-                        return;
-                    }
-
-                    $prospects = Prospect::query()
-                        ->whereRelation('emailAddresses', 'address', $communication->sender)
-                        ->get();
-
-                    $prospects->each(function (Prospect $prospect) use ($communication) {
-                        $prospect->engagementResponses()
-                            ->create([
-                                'subject' => $communication->subject,
-                                'content' => $communication->body,
-                                'sent_at' => $communication->occurred_at,
-                                'type' => EngagementResponseType::Email,
-                                'status' => EngagementResponseStatus::New,
-                            ]);
-                    });
-
-                    $communication->delete();
-
-                    return;
-                } elseif ($communication->type === EngagementResponseType::Sms) {
-                    $finder = app(EngagementResponseSenderFinder::class);
-
-                    $sender = $finder->find($communication->sender);
-
-                    if (! is_null($sender)) {
-                        EngagementResponse::create([
-                            'type' => EngagementResponseType::Sms,
-                            'sender_id' => $sender->getKey(),
-                            'sender_type' => $sender->getMorphClass(),
-                            'content' => $communication->body,
-                            'sent_at' => $communication->occurred_at,
-                            'status' => EngagementResponseStatus::New,
-                        ]);
-                    }
-
-                    $communication->delete();
+            ->chunkById(100, function ($communications) {
+                foreach ($communications as $communication) {
+                    match ($communication->type) {
+                        EngagementResponseType::Email => $this->processEmail($communication),
+                        EngagementResponseType::Sms => $this->processSms($communication),
+                    };
                 }
             });
+    }
+
+    protected function processEmail(UnmatchedInboundCommunication $communication): void
+    {
+        $students = Student::query()
+            ->whereRelation('emailAddresses', 'address', $communication->sender)
+            ->get();
+
+        if ($students->isNotEmpty()) {
+            $students->each(function (Student $student) use ($communication) {
+                $student->engagementResponses()
+                    ->create([
+                        'subject' => $communication->subject,
+                        'content' => $communication->body,
+                        'sent_at' => $communication->occurred_at,
+                        'type' => EngagementResponseType::Email,
+                        'status' => EngagementResponseStatus::New,
+                    ]);
+            });
+            $communication->delete();
+
+            return;
+        }
+
+        $prospects = Prospect::query()
+            ->whereRelation('emailAddresses', 'address', $communication->sender)
+            ->get();
+
+        if ($prospects->isEmpty()) {
+            return;
+        }
+
+        $prospects->each(function (Prospect $prospect) use ($communication) {
+            $prospect->engagementResponses()
+                ->create([
+                    'subject' => $communication->subject,
+                    'content' => $communication->body,
+                    'sent_at' => $communication->occurred_at,
+                    'type' => EngagementResponseType::Email,
+                    'status' => EngagementResponseStatus::New,
+                ]);
+        });
+
+        $communication->delete();
+    }
+
+    protected function processSms(UnmatchedInboundCommunication $communication): void
+    {
+        $finder = app(EngagementResponseSenderFinder::class);
+
+        $sender = $finder->find($communication->sender);
+
+        if (! is_null($sender)) {
+            EngagementResponse::create([
+                'type' => EngagementResponseType::Sms,
+                'sender_id' => $sender->getKey(),
+                'sender_type' => $sender->getMorphClass(),
+                'content' => $communication->body,
+                'sent_at' => $communication->occurred_at,
+                'status' => EngagementResponseStatus::New,
+            ]);
+
+            $communication->delete();
+        }
     }
 }
