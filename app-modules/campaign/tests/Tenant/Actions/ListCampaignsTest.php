@@ -114,7 +114,7 @@ it('can filter campaigns by `Disabled`', function () {
             ...$enabledCampaigns,
             ...$disabledCampaigns,
         ])
-        ->filterTable('Enabled', false)
+        ->filterTable('Enabled', false) // Filter by Disabled
         ->assertCanSeeTableRecords($disabledCampaigns)
         ->assertCanNotSeeTableRecords($enabledCampaigns);
 });
@@ -171,7 +171,7 @@ it('can filter campaigns by `In Progress`', function () {
             $partiallyCompleteCampaign,
             $incompleteCampaign,
         ])
-        ->filterTable('Completed', false)
+        ->filterTable('Completed', false) // Filter by In Progress
         ->assertCanSeeTableRecords([
             $partiallyCompleteCampaign,
             $incompleteCampaign,
