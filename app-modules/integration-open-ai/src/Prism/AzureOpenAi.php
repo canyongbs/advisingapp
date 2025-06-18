@@ -36,14 +36,30 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Prism;
 
+use AdvisingApp\IntegrationOpenAi\Prism\Handlers\Stream;
+use Closure;
+use Generator;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
+use Override;
 use Prism\Prism\Providers\OpenAI\OpenAI;
+use Prism\Prism\Text\Request as TextRequest;
 
 readonly class AzureOpenAi extends OpenAI
 {
     public function __construct() {}
+
+    #[Override]
+    public function stream(TextRequest $request): Generator
+    {
+        $handler = new Stream($this->client(
+            $request->clientOptions(),
+            $request->clientRetry()
+        ));
+
+        return $handler->handle($request);
+    }
 
     /**
      * @param  array<string, mixed>  $options

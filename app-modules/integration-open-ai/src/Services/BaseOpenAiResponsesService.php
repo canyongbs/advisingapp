@@ -39,14 +39,13 @@ namespace AdvisingApp\IntegrationOpenAi\Services;
 use AdvisingApp\Ai\Exceptions\MessageResponseException;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
 use AdvisingApp\Ai\Services\Contracts\AiService;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use AdvisingApp\Ai\Settings\AiSettings;
 use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Assistants\AssistantsDataTransferObject;
-use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Assistants\FileSearchDataTransferObject;
-use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Assistants\ToolResourcesDataTransferObject;
 use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Threads\ThreadsDataTransferObject;
 use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeDisabled;
 use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeEnabled;
@@ -55,7 +54,6 @@ use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use Closure;
 use Exception;
 use Generator;
-use OpenAI\Contracts\ClientContract;
 use Prism\Prism\Contracts\Message;
 use Prism\Prism\Enums\ChunkType;
 use Prism\Prism\Enums\FinishReason;
@@ -71,8 +69,6 @@ abstract class BaseOpenAiResponsesService implements AiService
 
     public const FORMATTING_INSTRUCTIONS = 'When you answer, it is crucial that you format your response using rich text in markdown format. Do not ever mention in your response that the answer is being formatted/rendered in markdown.';
 
-    protected ClientContract $client;
-
     public function __construct(
         protected AiIntegrationsSettings $settings,
     ) {}
@@ -82,11 +78,6 @@ abstract class BaseOpenAiResponsesService implements AiService
     abstract public function getApiVersion(): string;
 
     abstract public function getModel(): string;
-
-    public function getClient(): ClientContract
-    {
-        return $this->client;
-    }
 
     public function complete(string $prompt, string $content): string
     {
@@ -124,26 +115,9 @@ abstract class BaseOpenAiResponsesService implements AiService
         return $response->text;
     }
 
-    public function retrieveAssistant(AiAssistant $assistant): ?AssistantsDataTransferObject
-    {
-        $assistantResponse = $this->client->assistants()->retrieve($assistant->assistant_id);
-
-        return AssistantsDataTransferObject::from([
-            'id' => $assistantResponse->id,
-            'name' => $assistantResponse->name,
-            'description' => $assistantResponse->description,
-            'model' => $assistantResponse->model,
-            'instructions' => $assistantResponse->instructions,
-            'tools' => $assistantResponse->tools,
-            'toolResources' => ToolResourcesDataTransferObject::from([
-                'codeInterpreter' => $assistantResponse->toolResources->codeInterpreter ?? null,
-                'fileSearch' => FileSearchDataTransferObject::from([
-                    'vectorStoreIds' => $assistantResponse->toolResources->fileSearch->vectorStoreIds ?? [],
-                ]),
-            ]),
-        ]);
-    }
-
+    /**
+     * @param array<AiMessageFile> $files
+     */
     public function sendMessage(AiMessage $message, array $files, Closure $saveResponse, ?UserMessage $userMessage = null): Closure
     {
         $previousMessages = [];
@@ -222,11 +196,17 @@ abstract class BaseOpenAiResponsesService implements AiService
         }
     }
 
+    /**
+     * @param array<AiMessageFile> $files
+     */
     public function completeResponse(AiMessage $response, array $files, Closure $saveResponse): Closure
     {
         return $this->sendMessage($response, $files, $saveResponse, new UserMessage('Continue generating the response, do not mention that I told you as I will paste it directly after the last message.'));
     }
 
+    /**
+     * @param array<AiMessageFile> $files
+     */
     public function retryMessage(AiMessage $message, array $files, Closure $saveResponse): Closure
     {
         return $this->sendMessage($message, $files, $saveResponse);
@@ -249,6 +229,14 @@ abstract class BaseOpenAiResponsesService implements AiService
 
     public function updateAssistant(AiAssistant $assistant): void {}
 
+    public function retrieveAssistant(AiAssistant $assistant): ?AssistantsDataTransferObject
+    {
+        return null;
+    }
+
+    /**
+     * @param array<string> $tools
+     */
     public function updateAssistantTools(AiAssistant $assistant, array $tools): void {}
 
     public function enableAssistantFileUploads(AiAssistant $assistant): void
@@ -268,6 +256,9 @@ abstract class BaseOpenAiResponsesService implements AiService
         return null;
     }
 
+    /**
+     * @param array<string, mixed> $parameters
+     */
     public function modifyThread(AiThread $thread, array $parameters): ?ThreadsDataTransferObject
     {
         return null;
@@ -306,7 +297,7 @@ abstract class BaseOpenAiResponsesService implements AiService
                 foreach ($stream as $chunk) {
                     if (
                         ($chunk->chunkType === ChunkType::Meta) &&
-                        filled($chunk->meta->id)
+                        filled($chunk->meta?->id)
                     ) {
                         $response->message_id = $chunk->meta->id;
 

@@ -53,6 +53,8 @@ class AiIntegrationsSettings extends Settings
      */
     public array $open_ai_gpt_35_applicable_features = [];
 
+    public bool $is_open_ai_gpt_35_responses_api_enabled = false;
+
     public ?string $open_ai_gpt_4_model_name = null;
 
     public ?string $open_ai_gpt_4_base_uri = null;
@@ -65,6 +67,8 @@ class AiIntegrationsSettings extends Settings
      * @var array<string>
      */
     public array $open_ai_gpt_4_applicable_features = [];
+
+    public bool $is_open_ai_gpt_4_responses_api_enabled = false;
 
     public ?string $open_ai_gpt_4o_model_name = null;
 
@@ -79,6 +83,8 @@ class AiIntegrationsSettings extends Settings
      */
     public array $open_ai_gpt_4o_applicable_features = [];
 
+    public bool $is_open_ai_gpt_4o_responses_api_enabled = false;
+
     public ?string $open_ai_gpt_4o_mini_model_name = null;
 
     public ?string $open_ai_gpt_4o_mini_base_uri = null;
@@ -91,6 +97,8 @@ class AiIntegrationsSettings extends Settings
      * @var array<string>
      */
     public array $open_ai_gpt_4o_mini_applicable_features = [];
+
+    public bool $is_open_ai_gpt_4o_mini_responses_api_enabled = false;
 
     public ?string $open_ai_gpt_o1_mini_model_name = null;
 
@@ -105,6 +113,8 @@ class AiIntegrationsSettings extends Settings
      */
     public array $open_ai_gpt_o1_mini_applicable_features = [];
 
+    public bool $is_open_ai_gpt_o1_mini_responses_api_enabled = false;
+
     public ?string $open_ai_gpt_o3_mini_model_name = null;
 
     public ?string $open_ai_gpt_o3_mini_base_uri = null;
@@ -117,6 +127,8 @@ class AiIntegrationsSettings extends Settings
      * @var array<string>
      */
     public array $open_ai_gpt_o3_mini_applicable_features = [];
+
+    public bool $is_open_ai_gpt_o3_mini_responses_api_enabled = false;
 
     public ?string $open_ai_gpt_41_mini_model_name = null;
 
@@ -131,6 +143,8 @@ class AiIntegrationsSettings extends Settings
      */
     public array $open_ai_gpt_41_mini_applicable_features = [];
 
+    public bool $is_open_ai_gpt_41_mini_responses_api_enabled = false;
+
     public ?string $open_ai_gpt_41_nano_model_name = null;
 
     public ?string $open_ai_gpt_41_nano_base_uri = null;
@@ -144,6 +158,8 @@ class AiIntegrationsSettings extends Settings
      */
     public array $open_ai_gpt_41_nano_applicable_features = [];
 
+    public bool $is_open_ai_gpt_41_nano_responses_api_enabled = false;
+
     public ?string $open_ai_gpt_o4_mini_model_name = null;
 
     public ?string $open_ai_gpt_o4_mini_base_uri = null;
@@ -156,6 +172,8 @@ class AiIntegrationsSettings extends Settings
      * @var array<string>
      */
     public array $open_ai_gpt_o4_mini_applicable_features = [];
+
+    public bool $is_open_ai_gpt_o4_mini_responses_api_enabled = false;
 
     public ?string $jina_deepsearch_v1_model_name = null;
 

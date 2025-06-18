@@ -35,7 +35,6 @@
 */
 
 use App\Models\Tenant;
-use App\Multitenancy\Tasks\ClearBindingsTask;
 use App\Multitenancy\Tasks\ConfigurePasswordValidation;
 use App\Multitenancy\Tasks\PrefixCacheTask;
 use App\Multitenancy\Tasks\SwitchAppName;
@@ -80,7 +79,6 @@ return [
      */
     'switch_tenant_tasks' => [
         // SwitchAppKey::class,
-        ClearBindingsTask::class,
         PrefixCacheTask::class,
         SwitchTenantDatabasesTask::class,
         SwitchSessionDriver::class,
