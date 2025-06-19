@@ -57,7 +57,7 @@ class ProspectReportStats extends StatsOverviewReportWidget
         'lg' => 4,
     ];
 
-    protected function getStats(): array
+    public function getStats(): array
     {
         $startDate = filled($this->filters['startDate'] ?? null)
             ? Carbon::parse($this->filters['startDate'])->startOfDay()
@@ -81,9 +81,8 @@ class ProspectReportStats extends StatsOverviewReportWidget
 
         $alertsCount = $shouldBypassCache
             ? Alert::query()
-                ->whereHasMorph('concern', Prospect::class, function ($q) use ($startDate, $endDate) {
-                    $q->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]));
-                })
+                ->whereHasMorph('concern', Prospect::class)
+                ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]))
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'prospect-alerts-count',
@@ -104,9 +103,8 @@ class ProspectReportStats extends StatsOverviewReportWidget
 
         $tasksCount = $shouldBypassCache
             ? Task::query()
-                ->whereHasMorph('concern', Prospect::class, function ($q) use ($startDate, $endDate) {
-                    $q->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]));
-                })
+                ->whereHasMorph('concern', Prospect::class)
+                ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]))
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'prospect-tasks-count',

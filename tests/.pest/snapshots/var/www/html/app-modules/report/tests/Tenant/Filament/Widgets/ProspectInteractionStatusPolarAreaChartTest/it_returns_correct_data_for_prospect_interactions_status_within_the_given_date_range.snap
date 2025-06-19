@@ -1,0 +1,19 @@
+{
+    "labels": [
+        "velit",
+        "quasi"
+    ],
+    "datasets": [
+        {
+            "data": [
+                5,
+                5
+            ],
+            "backgroundColor": [
+                "rgb(22, 163, 74)",
+                "rgb(220, 38, 38)"
+            ],
+            "hoverOffset": 4
+        }
+    ]
+}

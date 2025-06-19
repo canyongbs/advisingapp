@@ -123,8 +123,7 @@ class StudentInteractionLineChart extends LineChartReportWidget
                 )
                 SELECT
                     to_char(m.month, 'Mon YYYY') AS label,
-                    COALESCE(d.monthly_total, 0) AS monthly_total,
-                    SUM(COALESCE(d.monthly_total, 0)) OVER (ORDER BY m.month) AS running_total
+                    COALESCE(d.monthly_total, 0) AS monthly_total
                 FROM months m
                 LEFT JOIN monthly_data d ON m.month = d.month
                 ORDER BY m.month
@@ -156,8 +155,7 @@ class StudentInteractionLineChart extends LineChartReportWidget
                 )
                 SELECT
                     to_char(m.month, 'Mon YYYY') AS label,
-                    COALESCE(d.monthly_total, 0) AS monthly_total,
-                    SUM(COALESCE(d.monthly_total, 0)) OVER (ORDER BY m.month) AS running_total
+                    COALESCE(d.monthly_total, 0) AS monthly_total
                 FROM months m
                 LEFT JOIN monthly_data d ON m.month = d.month
                 ORDER BY m.month
@@ -166,6 +164,6 @@ class StudentInteractionLineChart extends LineChartReportWidget
             ]);
         }
 
-        return collect($data)->pluck('running_total', 'label')->toArray();
+        return collect($data)->pluck('monthly_total', 'label')->toArray();
     }
 }

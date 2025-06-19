@@ -107,3 +107,53 @@ it('Check unique prospects with interactions', function () {
     $totaluniqueProspectInteractionsStat = $stats[1];
     expect($totaluniqueProspectInteractionsStat->getValue())->toEqual($interactionCount);
 });
+
+it('returns correct total and unique prospect interaction counts within the given date range', function () {
+    $prospectsWithStartDateInteractions = rand(1, 10);
+    $prospectsWithEndDateInteractions = rand(1, 10);
+    $interactionStartDate = now()->subDays(10);
+    $interactionEndDate = now()->subDays(5);
+
+    Prospect::factory()->count($prospectsWithStartDateInteractions)
+        ->has(
+            Interaction::factory()->state([
+                'created_at' => $interactionStartDate,
+            ]),
+            'interactions'
+        )->create();
+
+    Prospect::factory()->count($prospectsWithEndDateInteractions)
+        ->has(
+            Interaction::factory()->state([
+                'created_at' => $interactionEndDate,
+            ]),
+            'interactions'
+        )->create();
+
+    Prospect::factory()->count($prospectsWithEndDateInteractions)
+        ->has(
+            Interaction::factory()->count(2)->state([
+                'created_at' => $interactionStartDate,
+            ]),
+            'interactions'
+        )->create();
+
+    $widget = new ProspectInteractionStats();
+    $widget->cacheTag = 'report-prospect-interaction';
+    $widget->filters = [
+        'startDate' => $interactionStartDate->toDateString(),
+        'endDate' => $interactionEndDate->toDateString(),
+    ];
+
+    $stats = $widget->getStats();
+
+    $prospectsTotalInteractionsStat = $stats[0];
+
+    expect($prospectsTotalInteractionsStat->getValue())
+        ->toEqual($prospectsWithStartDateInteractions + $prospectsWithEndDateInteractions + ($prospectsWithEndDateInteractions * 2));
+
+    $prospectsWithInteractionsStat = $stats[1];
+
+    expect($prospectsWithInteractionsStat->getValue())
+        ->toEqual($prospectsWithStartDateInteractions + $prospectsWithEndDateInteractions + $prospectsWithEndDateInteractions);
+});

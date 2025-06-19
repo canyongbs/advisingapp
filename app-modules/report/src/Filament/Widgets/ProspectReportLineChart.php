@@ -69,7 +69,7 @@ class ProspectReportLineChart extends ChartReportWidget
         ];
     }
 
-    protected function getData(): array
+    public function getData(): array
     {
         $startDate = filled($this->filters['startDate'] ?? null)
             ? Carbon::parse($this->filters['startDate'])->startOfDay()

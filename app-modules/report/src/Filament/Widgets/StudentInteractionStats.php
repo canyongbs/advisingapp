@@ -78,11 +78,11 @@ class StudentInteractionStats extends StatsOverviewReportWidget
 
         $studentsWithInteractionsCount = $shouldBypassCache
             ? Student::query()
-                ->whereHas('interactions')
-                ->when(
-                    $startDate && $endDate,
-                    fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate])
-                )
+                ->whereHas('interactions', function ($query) use ($startDate, $endDate) {
+                    $query->when($startDate && $endDate, function ($q) use ($startDate, $endDate) {
+                        $q->whereBetween('created_at', [$startDate, $endDate]);
+                    });
+                })
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'students-with-interactions',

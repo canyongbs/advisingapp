@@ -59,3 +59,69 @@ it('checks student interaction types doughnut chart', function () {
         ->and($interactionsCount)->toEqual($stats[1])
         ->and($interactionsCount)->toEqual($stats[2]);
 });
+
+it('returns correct interaction counts by type for students within the selected date range', function () {
+    $interactionsCount = rand(1, 10);
+
+    $interactionStartDate = now()->subDays(90);
+    $interactionEndDate = now()->subDays(5);
+
+    $interactionTypeFirst = InteractionType::factory()->create();
+    $interactionTypeSecond = InteractionType::factory()->create();
+    $interactionTypeThird = InteractionType::factory()->create();
+
+    Student::factory()
+        ->has(
+            Interaction::factory()
+                ->count($interactionsCount)
+                ->state([
+                    'created_at' => $interactionStartDate,
+                ])
+                ->for(
+                    $interactionTypeFirst,
+                    'type'
+                ),
+            'interactions'
+        )->create();
+
+    Student::factory()
+        ->has(
+            Interaction::factory()
+                ->count($interactionsCount)
+                ->state([
+                    'created_at' => $interactionEndDate,
+                ])
+                ->for(
+                    $interactionTypeSecond,
+                    'type'
+                ),
+            'interactions'
+        )->create();
+
+    Student::factory()
+        ->has(
+            Interaction::factory()
+                ->count($interactionsCount)
+                ->state([
+                    'created_at' => now()->subDays(180),
+                ])
+                ->for(
+                    $interactionTypeThird,
+                    'type'
+                ),
+            'interactions'
+        )->create();
+
+    $widgetInstance = new StudentInteractionTypeDoughnutChart();
+    $widgetInstance->cacheTag = 'report-student-interaction';
+    $widgetInstance->filters = [
+        'startDate' => $interactionStartDate->toDateString(),
+        'endDate' => $interactionEndDate->toDateString(),
+    ];
+
+    $stats = $widgetInstance->getData()['datasets'][0]['data'];
+
+    expect($interactionsCount)->toEqual($stats[0])
+        ->and($interactionsCount)->toEqual($stats[1])
+        ->and($interactionsCount)->not->toEqual($stats[2]);
+});
