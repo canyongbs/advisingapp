@@ -223,7 +223,7 @@ it('can complete a prompt', function () {
 
 it('can fetch a valid previous response ID for a message', function () {
     Http::fake([
-        '*/responses/resp_12345' => Http::response(['id' => 'resp_12345'], 200),
+        '*/responses/*' => Http::response(['id' => 'resp_12345'], 200),
     ]);
 
     asSuperAdmin();
@@ -256,7 +256,7 @@ it('can fetch a valid previous response ID for a message', function () {
 
 it('can discard an invalid previous response ID for a message', function () {
     Http::fake([
-        '*/responses/resp_12345' => Http::response(null, 404),
+        '*/responses/*' => Http::response(null, 404),
     ]);
 
     asSuperAdmin();
