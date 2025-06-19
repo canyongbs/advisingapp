@@ -71,23 +71,7 @@ class StudentCumulativeCountLineChart extends LineChartReportWidget
         return (! Student::query()->exists()) || Student::query()->whereNotNull('created_at_source')->exists();
     }
 
-    protected function getOptions(): array
-    {
-        return [
-            'plugins' => [
-                'legend' => [
-                    'display' => false,
-                ],
-            ],
-            'scales' => [
-                'y' => [
-                    'min' => 0,
-                ],
-            ],
-        ];
-    }
-
-    protected function getData(): array
+    public function getData(): array
     {
         $startDate = filled($this->filters['startDate'] ?? null)
             ? Carbon::parse($this->filters['startDate'])->startOfDay()
@@ -171,6 +155,22 @@ class StudentCumulativeCountLineChart extends LineChartReportWidget
                 ],
             ],
             'labels' => array_keys($runningTotalPerMonth),
+        ];
+    }
+
+    protected function getOptions(): array
+    {
+        return [
+            'plugins' => [
+                'legend' => [
+                    'display' => false,
+                ],
+            ],
+            'scales' => [
+                'y' => [
+                    'min' => 0,
+                ],
+            ],
         ];
     }
 }

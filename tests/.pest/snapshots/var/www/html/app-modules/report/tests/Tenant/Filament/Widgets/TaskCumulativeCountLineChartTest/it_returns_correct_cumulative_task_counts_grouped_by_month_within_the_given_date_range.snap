@@ -1,0 +1,43 @@
+{
+    "datasets": [
+        {
+            "label": "Student Tasks",
+            "data": [
+                0,
+                0,
+                0,
+                2
+            ],
+            "borderColor": "#2C8BCA",
+            "pointBackgroundColor": "#2C8BCA"
+        },
+        {
+            "label": "Prospect Tasks",
+            "data": [
+                0,
+                0,
+                0,
+                2
+            ],
+            "borderColor": "#FDCC46",
+            "pointBackgroundColor": "#FDCC46"
+        },
+        {
+            "label": "Unrelated Tasks",
+            "data": [
+                0,
+                0,
+                0,
+                2
+            ],
+            "borderColor": "#FFA500",
+            "pointBackgroundColor": "#FFA500"
+        }
+    ],
+    "labels": [
+        "Mar 2025",
+        "Apr 2025",
+        "May 2025",
+        "Jun 2025"
+    ]
+}

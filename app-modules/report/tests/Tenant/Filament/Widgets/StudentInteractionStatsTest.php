@@ -107,3 +107,53 @@ it('Check unique students with interactions', function () {
     $totaluniqueStudentInteractionsStat = $stats[1];
     expect($totaluniqueStudentInteractionsStat->getValue())->toEqual($interactionCount);
 });
+
+it('returns correct total and unique student interaction counts within the given date range', function () {
+    $studentsWithStartDateInteractions = rand(1, 10);
+    $studentsWithEndDateInteractions = rand(1, 10);
+    $interactionStartDate = now()->subDays(10);
+    $interactionEndDate = now()->subDays(5);
+
+    Student::factory()->count($studentsWithStartDateInteractions)
+        ->has(
+            Interaction::factory()->state([
+                'created_at' => $interactionStartDate,
+            ]),
+            'interactions'
+        )->create();
+
+    Student::factory()->count($studentsWithEndDateInteractions)
+        ->has(
+            Interaction::factory()->state([
+                'created_at' => $interactionEndDate,
+            ]),
+            'interactions'
+        )->create();
+
+    Student::factory()->count($studentsWithEndDateInteractions)
+        ->has(
+            Interaction::factory()->count(2)->state([
+                'created_at' => $interactionStartDate,
+            ]),
+            'interactions'
+        )->create();
+
+    $widget = new StudentInteractionStats();
+    $widget->cacheTag = 'report-student';
+    $widget->filters = [
+        'startDate' => $interactionStartDate->toDateString(),
+        'endDate' => $interactionEndDate->toDateString(),
+    ];
+
+    $stats = $widget->getStats();
+
+    $studentsTotalInteractionsStat = $stats[0];
+
+    expect($studentsTotalInteractionsStat->getValue())
+        ->toEqual($studentsWithStartDateInteractions + $studentsWithEndDateInteractions + ($studentsWithEndDateInteractions * 2));
+
+    $studentsWithInteractionsStat = $stats[1];
+
+    expect($studentsWithInteractionsStat->getValue())
+        ->toEqual($studentsWithStartDateInteractions + $studentsWithEndDateInteractions + $studentsWithEndDateInteractions);
+});

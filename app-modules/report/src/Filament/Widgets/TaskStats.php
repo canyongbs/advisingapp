@@ -57,7 +57,7 @@ class TaskStats extends StatsOverviewReportWidget
         'lg' => 4,
     ];
 
-    protected function getStats(): array
+    public function getStats(): array
     {
         $startDate = filled($this->filters['startDate'] ?? null)
             ? Carbon::parse($this->filters['startDate'])->startOfDay()

@@ -57,7 +57,7 @@ class StudentsStats extends StatsOverviewReportWidget
         'lg' => 4,
     ];
 
-    protected function getStats(): array
+    public function getStats(): array
     {
         $startDate = filled($this->filters['startDate'] ?? null)
             ? Carbon::parse($this->filters['startDate'])->startOfDay()
@@ -81,13 +81,13 @@ class StudentsStats extends StatsOverviewReportWidget
 
         $alertsCount = $shouldBypassCache
             ? Alert::query()
-                ->where('concern_type', (new Student())->getMorphClass())
+                ->whereHasMorph('concern', Student::class)
                 ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]))
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'total-student-alerts-count',
                 now()->addHours(24),
-                fn () => Alert::query()->where('concern_type', (new Student())->getMorphClass())->count()
+                fn () => Alert::query()->whereHasMorph('concern', Student::class)->count()
             );
 
         $segmentsCount = $shouldBypassCache
@@ -103,13 +103,13 @@ class StudentsStats extends StatsOverviewReportWidget
 
         $tasksCount = $shouldBypassCache
             ? Task::query()
-                ->where('concern_type', (new Student())->getMorphClass())
+                ->whereHasMorph('concern', Student::class)
                 ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]))
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'total-student-tasks-count',
                 now()->addHours(24),
-                fn () => Task::query()->where('concern_type', (new Student())->getMorphClass())->count()
+                fn () => Task::query()->whereHasMorph('concern', Student::class)->count()
             );
 
         return [
