@@ -55,6 +55,6 @@ class OpenAiResponsesGptTestService extends BaseOpenAiResponsesService
 
     public function getDeployment(): ?string
     {
-        return null;
+        return 'https://api.openai.com/v1';
     }
 }
