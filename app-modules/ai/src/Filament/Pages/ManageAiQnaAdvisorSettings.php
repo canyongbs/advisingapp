@@ -3,6 +3,7 @@
 namespace AdvisingApp\Ai\Filament\Pages;
 
 use AdvisingApp\Ai\Settings\AiQnAAdvisorSettings;
+use App\Features\QnAAdvisorFeature;
 use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
 use Filament\Forms\Components\Textarea;
@@ -23,7 +24,7 @@ class ManageAiQnaAdvisorSettings extends ManageAiICustomAdvisorSettings
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->isSuperAdmin();
+        return QnAAdvisorFeature::active() && $user->isSuperAdmin();
     }
 
     public function form(Form $form): Form

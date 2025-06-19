@@ -11,15 +11,15 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\MediaLibrary\MediaCollections\File;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class QnAAdvisor extends BaseModel implements HasMedia
 {
     use CanAddAssistantLicenseGlobalScope;
     use InteractsWithMedia;
     use SoftDeletes;
-    
+
     protected $fillable = [
         'archived_at',
         'name',
@@ -47,12 +47,12 @@ class QnAAdvisor extends BaseModel implements HasMedia
     public function questions(): HasManyThrough
     {
         return $this->hasManyThrough(
-            QnaAdvisorQuestion::class,      
-            QnAAdvisorCategory::class,      
-            'qn_a_advisor_id',              
-            'category_id',                  
-            'id',                           
-            'id'                         
+            QnaAdvisorQuestion::class,
+            QnAAdvisorCategory::class,
+            'qn_a_advisor_id',
+            'category_id',
+            'id',
+            'id'
         );
     }
 

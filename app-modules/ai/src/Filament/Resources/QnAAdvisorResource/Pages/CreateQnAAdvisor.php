@@ -5,8 +5,6 @@ namespace AdvisingApp\Ai\Filament\Resources\QnAAdvisorResource\Pages;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Filament\Resources\QnAAdvisorResource;
-use AdvisingApp\Ai\Settings\AiCustomAdvisorSettings;
-use Filament\Actions;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
@@ -23,7 +21,7 @@ class CreateQnAAdvisor extends CreateRecord
     {
         return $form
             ->schema([
-                 SpatieMediaLibraryFileUpload::make('avatar')
+                SpatieMediaLibraryFileUpload::make('avatar')
                     ->label('Avatar')
                     ->disk('s3')
                     ->collection('avatar')
@@ -44,6 +42,7 @@ class CreateQnAAdvisor extends CreateRecord
                     ->options(AiModelApplicabilityFeature::CustomAdvisors->getModelsAsSelectOptions())
                     ->searchable()
                     ->required()
+                    ->visible(auth()->user()->isSuperAdmin())
                     ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::CustomAdvisors->getModels())),
                 Textarea::make('description')
                     ->required(),

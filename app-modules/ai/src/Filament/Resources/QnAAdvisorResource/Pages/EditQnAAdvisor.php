@@ -5,9 +5,8 @@ namespace AdvisingApp\Ai\Filament\Resources\QnAAdvisorResource\Pages;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Filament\Resources\QnAAdvisorResource;
-use Filament\Actions;
+use AdvisingApp\Ai\Models\QnAAdvisor;
 use Filament\Actions\Action;
-use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -17,6 +16,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class EditQnAAdvisor extends EditRecord
@@ -27,11 +27,34 @@ class EditQnAAdvisor extends EditRecord
 
     protected static ?string $navigationGroup = 'QnA Advisor';
 
+    /**
+     * @return array<int|string, string|null>
+     */
+    public function getBreadcrumbs(): array
+    {
+        $resource = static::getResource();
+        /** @var QnAAdvisor $record */
+        $record = $this->getRecord();
+
+        /** @var array<string, string> $breadcrumbs */
+        $breadcrumbs = [
+            $resource::getUrl() => $resource::getBreadcrumb(),
+            $resource::getUrl('view', ['record' => $record]) => Str::limit($record->name, 16),
+            ...(filled($breadcrumb = $this->getBreadcrumb()) ? [$breadcrumb] : []),
+        ];
+
+        if (filled($cluster = static::getCluster())) {
+            return $cluster::unshiftClusterBreadcrumbs($breadcrumbs);
+        }
+
+        return $breadcrumbs;
+    }
+
     public function form(Form $form): Form
     {
         return $form
             ->schema([
-                 Section::make()->schema([
+                Section::make()->schema([
                     SpatieMediaLibraryFileUpload::make('avatar')
                         ->label('Avatar')
                         ->disk('s3')
@@ -46,20 +69,21 @@ class EditQnAAdvisor extends EditRecord
                         ]),
                     Grid::make()->schema([
                         TextInput::make('name')
-                        ->required()
-                        ->string()
-                        ->maxLength(255),
+                            ->required()
+                            ->string()
+                            ->maxLength(255),
                         Select::make('model')
                             ->reactive()
                             ->options(AiModelApplicabilityFeature::CustomAdvisors->getModelsAsSelectOptions())
                             ->searchable()
                             ->required()
+                            ->visible(auth()->user()->isSuperAdmin())
                             ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::CustomAdvisors->getModels())),
                     ])
-                    ->columns(2),
+                        ->columns(2),
                     Textarea::make('description')
                         ->required(),
-                    ]),
+                ]),
             ]);
     }
 
@@ -97,7 +121,6 @@ class EditQnAAdvisor extends EditRecord
 
                     return false;
                 }),
-            DeleteAction::make(),
         ];
     }
 }
