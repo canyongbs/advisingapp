@@ -2,17 +2,16 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\QnAAdvisorResource\Pages;
 
-use AdvisingApp\Ai\Filament\Resources\AiAssistantResource;
 use AdvisingApp\Ai\Filament\Resources\QnAAdvisorResource;
-use Filament\Actions;
+use AdvisingApp\Ai\Models\QnAAdvisor;
 use Filament\Actions\Action;
-use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
+use Illuminate\Support\Str;
 
 class ViewQnAAdvisor extends ViewRecord
 {
@@ -22,10 +21,10 @@ class ViewQnAAdvisor extends ViewRecord
 
     protected static ?string $navigationGroup = 'QnA Advisor';
 
-    public function infolist(Infolist $infolist):Infolist
+    public function infolist(Infolist $infolist): Infolist
     {
         return $infolist->schema([
-           Section::make()->schema([
+            Section::make()->schema([
                 SpatieMediaLibraryImageEntry::make('avatar')
                     ->visibility('private')
                     ->collection('avatar')
@@ -35,6 +34,29 @@ class ViewQnAAdvisor extends ViewRecord
                 TextEntry::make('model'),
             ]),
         ]);
+    }
+
+    /**
+     * @return array<int|string, string|null>
+     */
+    public function getBreadcrumbs(): array
+    {
+        $resource = static::getResource();
+        /** @var QnAAdvisor $record */
+        $record = $this->getRecord();
+
+        /** @var array<string, string> $breadcrumbs */
+        $breadcrumbs = [
+            $resource::getUrl() => $resource::getBreadcrumb(),
+            $resource::getUrl('view', ['record' => $record]) => Str::limit($record->name, 16),
+            ...(filled($breadcrumb = $this->getBreadcrumb()) ? [$breadcrumb] : []),
+        ];
+
+        if (filled($cluster = static::getCluster())) {
+            return $cluster::unshiftClusterBreadcrumbs($breadcrumbs);
+        }
+
+        return $breadcrumbs;
     }
 
     protected function getHeaderActions(): array

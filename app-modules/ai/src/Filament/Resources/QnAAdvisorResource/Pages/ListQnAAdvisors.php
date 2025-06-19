@@ -3,11 +3,8 @@
 namespace AdvisingApp\Ai\Filament\Resources\QnAAdvisorResource\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\QnAAdvisorResource;
-use Filament\Actions;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
@@ -21,7 +18,7 @@ class ListQnAAdvisors extends ListRecords
 {
     protected static string $resource = QnAAdvisorResource::class;
 
-     public function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table
             ->columns([
@@ -35,23 +32,19 @@ class ListQnAAdvisors extends ListRecords
                 IconColumn::make('archived_at')
                     ->label('Archived')
                     ->boolean()
+                    ->getStateUsing(fn ($record) => $record->archived_at !== null ? true : false)
                     ->hidden(function (Table $table) {
                         return $table->getFilter('withoutArchived')->getState()['isActive'] ?? false;
                     }),
             ])
             ->filters([
-                 Filter::make('withoutArchived')
+                Filter::make('withoutArchived')
                     ->query(fn (Builder $query) => $query->whereNull('archived_at'))
                     ->default(),
             ])
             ->actions([
                 ViewAction::make(),
                 EditAction::make(),
-            ])
-            ->bulkActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
             ]);
     }
 

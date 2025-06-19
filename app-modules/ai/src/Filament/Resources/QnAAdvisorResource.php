@@ -2,23 +2,17 @@
 
 namespace AdvisingApp\Ai\Filament\Resources;
 
-use AdvisingApp\Ai\Filament\Resources\QnAAdvisorResource\Pages;
 use AdvisingApp\Ai\Filament\Resources\QnAAdvisorResource\Pages\CreateQnAAdvisor;
 use AdvisingApp\Ai\Filament\Resources\QnAAdvisorResource\Pages\EditQnAAdvisor;
 use AdvisingApp\Ai\Filament\Resources\QnAAdvisorResource\Pages\ListQnAAdvisors;
 use AdvisingApp\Ai\Filament\Resources\QnAAdvisorResource\Pages\ManageCategories;
 use AdvisingApp\Ai\Filament\Resources\QnAAdvisorResource\Pages\ManageQnAQuestions;
+use AdvisingApp\Ai\Filament\Resources\QnAAdvisorResource\Pages\QnAAdvisorEmbed;
 use AdvisingApp\Ai\Filament\Resources\QnAAdvisorResource\Pages\ViewQnAAdvisor;
-use AdvisingApp\Ai\Filament\Resources\QnAAdvisorResource\RelationManagers;
 use AdvisingApp\Ai\Models\QnAAdvisor;
-use Filament\Forms;
-use Filament\Forms\Form;
+use App\Features\QnAAdvisorFeature;
 use Filament\Pages\Page;
 use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class QnAAdvisorResource extends Resource
 {
@@ -30,6 +24,11 @@ class QnAAdvisorResource extends Resource
 
     protected static ?int $navigationSort = 50;
 
+    public static function canAccess(): bool
+    {
+        return QnAAdvisorFeature::active() && parent::canAccess();
+    }
+
     public static function getPages(): array
     {
         return [
@@ -39,6 +38,7 @@ class QnAAdvisorResource extends Resource
             'edit' => EditQnAAdvisor::route('/{record}/edit'),
             'manage-categories' => ManageCategories::route('/{record}/categories'),
             'manage-questions' => ManageQnAQuestions::route('/{record}/questions'),
+            'embed' => QnAAdvisorEmbed::route('/{record}/embed'),
         ];
     }
 
@@ -48,7 +48,8 @@ class QnAAdvisorResource extends Resource
             ViewQnAAdvisor::class,
             EditQnAAdvisor::class,
             ManageCategories::class,
-            ManageQnAQuestions::class
+            ManageQnAQuestions::class,
+            QnAAdvisorEmbed::class,
         ]);
     }
 }

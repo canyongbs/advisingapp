@@ -4,34 +4,55 @@ namespace AdvisingApp\Ai\Filament\Resources\QnAAdvisorResource\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\QnAAdvisorResource;
 use AdvisingApp\Ai\Models\QnAAdvisor;
+use App\Features\QnAAdvisorFeature;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\ManageRelatedRecords;
-use Filament\Tables\Actions\AssociateAction;
-use Filament\Tables\Actions\AttachAction;
-use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\DetachAction;
-use Filament\Tables\Actions\DetachBulkAction;
-use Filament\Tables\Actions\DissociateAction;
-use Filament\Tables\Actions\DissociateBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Unique;
 
 class ManageCategories extends ManageRelatedRecords
 {
     protected static string $resource = QnAAdvisorResource::class;
 
-    protected static ?string $title = 'Manage Categories';
+    protected static ?string $title = 'Categories';
 
     protected static string $relationship = 'categories';
 
     protected static ?string $navigationGroup = 'Configuration';
+
+    public static function canAccess(array $parameters = []): bool
+    {
+        return QnAAdvisorFeature::active() && parent::canAccess($parameters);
+    }
+
+    /**
+     * @return array<int|string, string|null>
+     */
+    public function getBreadcrumbs(): array
+    {
+        $resource = static::getResource();
+        /** @var QnAAdvisor $record */
+        $record = $this->getRecord();
+
+        /** @var array<string, string> $breadcrumbs */
+        $breadcrumbs = [
+            $resource::getUrl() => $resource::getBreadcrumb(),
+            $resource::getUrl('view', ['record' => $record]) => Str::limit($record->name, 16),
+            ...(filled($breadcrumb = $this->getBreadcrumb()) ? [$breadcrumb] : []),
+        ];
+
+        if (filled($cluster = static::getCluster())) {
+            return $cluster::unshiftClusterBreadcrumbs($breadcrumbs);
+        }
+
+        return $breadcrumbs;
+    }
 
     public function form(Form $form): Form
     {
@@ -68,8 +89,8 @@ class ManageCategories extends ManageRelatedRecords
             ->columns([
                 TextColumn::make('name'),
                 TextColumn::make('description')
-                ->limit(50)
-                ->wrap(),
+                    ->limit(50)
+                    ->wrap(),
             ])
             ->headerActions([
                 CreateAction::make()
