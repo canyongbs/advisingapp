@@ -34,4 +34,4 @@ it('returns correct monthly email and sms engagement data for prospects within t
     ];
 
     expect($widgetInstance->getData())->toMatchSnapshot();
-})->only();
+});

@@ -40,4 +40,4 @@ it('displays only prospects added within the selected date range', function () {
             $prospectWithinRange2,
         ]))
         ->assertCanNotSeeTableRecords(collect([$prospectOutsideRange]));
-})->only();
+});
