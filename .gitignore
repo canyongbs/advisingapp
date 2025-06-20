@@ -30,7 +30,6 @@ app-modules/**/vendor
 app-modules/**/resources/js/dist/*
 /.phpactor.json
 **/.DS_Store
-public/api-docs/*
 /_lighthouse_ide_helper.php
 /*tinkerwell.php
 .vault-password
