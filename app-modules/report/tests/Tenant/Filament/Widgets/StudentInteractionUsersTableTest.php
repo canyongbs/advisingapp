@@ -242,3 +242,57 @@ it('can filter users by team', function () {
         ->assertCanSeeTableRecords(collect([$user2]))
         ->assertCanNotSeeTableRecords(collect([$user1]));
 });
+
+it('displays only users with student interactions within the selected date range', function () {
+    $interactionStartDate = now()->subDays(10);
+    $interactionEndDate = now()->subDays(5);
+
+    $team = Team::factory()->create();
+
+    $userWithOldInteractions = User::factory()->create();
+
+    $userWithRecentAndOtherInteractions = User::factory()->for($team, 'team')->create();
+
+    $userWithoutInteractions = User::factory()->create();
+
+    $student = Student::factory()->create();
+
+    Interaction::factory()
+        ->count(5)
+        ->for($student, 'interactable')
+        ->for($userWithOldInteractions, 'user')
+        ->state([
+            'created_at' => $interactionStartDate,
+        ])
+        ->create();
+
+    Interaction::factory()
+        ->count(10)
+        ->for($student, 'interactable')
+        ->for($userWithRecentAndOtherInteractions, 'user')
+        ->state([
+            'created_at' => $interactionEndDate,
+        ])
+        ->create();
+
+    Interaction::factory()
+        ->count(10)
+        ->for($student, 'interactable')
+        ->for($userWithRecentAndOtherInteractions, 'user')
+        ->create();
+
+    $filters = [
+        'startDate' => $interactionStartDate->toDateString(),
+        'endDate' => $interactionEndDate->toDateString(),
+    ];
+
+    livewire(StudentInteractionUsersTable::class, [
+        'cacheTag' => 'report-student-interaction',
+        'filters' => $filters,
+    ])
+        ->assertCanSeeTableRecords(collect([
+            $userWithOldInteractions,
+            $userWithRecentAndOtherInteractions,
+        ]))
+        ->assertCanNotSeeTableRecords(collect([$userWithoutInteractions]));
+});

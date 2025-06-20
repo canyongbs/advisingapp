@@ -44,14 +44,18 @@ use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 
 class ProspectInteractionUsersTable extends BaseWidget
 {
+    use InteractsWithPageFilters;
+
     #[Locked]
     public string $cacheTag;
 
@@ -77,15 +81,21 @@ class ProspectInteractionUsersTable extends BaseWidget
 
     public function table(Table $table): Table
     {
+        $startDate = filled($this->filters['startDate'] ?? null)
+            ? Carbon::parse($this->filters['startDate'])->startOfDay()
+            : null;
+
+        $endDate = filled($this->filters['endDate'] ?? null)
+            ? Carbon::parse($this->filters['endDate'])->endOfDay()
+            : null;
+
         return $table
             ->query(
-                function () {
+                function () use ($startDate, $endDate) {
                     return User::query()
-                        ->whereHas('interactions', function ($query) {
-                            $query->whereHasMorph(
-                                'interactable',
-                                Prospect::class,
-                            );
+                        ->whereHas('interactions', function (Builder $query) use ($startDate, $endDate) {
+                            $query->whereHasMorph('interactable', Prospect::class)
+                                ->when($startDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]));
                         })
                         ->with([
                             'interactions',
@@ -124,12 +134,16 @@ class ProspectInteractionUsersTable extends BaseWidget
                     ),
                 TextColumn::make('first_interaction_at')
                     ->label('First')
-                    ->getStateUsing(function ($record) {
+                    ->getStateUsing(function ($record) use ($startDate, $endDate) {
                         $first = $record
                             ->interactions()
                             ->whereHasMorph(
                                 'interactable',
                                 Prospect::class,
+                            )
+                            ->when(
+                                $startDate,
+                                fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate])
                             )
                             ->orderBy('created_at')
                             ->first();
@@ -138,12 +152,16 @@ class ProspectInteractionUsersTable extends BaseWidget
                     }),
                 TextColumn::make('most_recent_interaction_at')
                     ->label('Most Recent')
-                    ->getStateUsing(function ($record) {
+                    ->getStateUsing(function ($record) use ($startDate, $endDate) {
                         $last = $record
                             ->interactions()
                             ->whereHasMorph(
                                 'interactable',
                                 Prospect::class,
+                            )
+                            ->when(
+                                $startDate,
+                                fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate])
                             )
                             ->orderByDesc('created_at')
                             ->first();
@@ -152,24 +170,32 @@ class ProspectInteractionUsersTable extends BaseWidget
                     }),
                 TextColumn::make('total_interactions')
                     ->label('Total')
-                    ->getStateUsing(function ($record) {
+                    ->getStateUsing(function ($record) use ($startDate, $endDate) {
                         return $record
                             ->interactions()
                             ->whereHasMorph(
                                 'interactable',
                                 Prospect::class,
                             )
+                            ->when(
+                                $startDate,
+                                fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate])
+                            )
                             ->count();
                     }),
                 TextColumn::make('total_interactions_percent')
                     ->label('Total %')
-                    ->getStateUsing(function ($record) {
+                    ->getStateUsing(function ($record) use ($startDate, $endDate) {
                         $allInteractions = Interaction::whereHasMorph('interactable', Prospect::class)->count();
                         $userInteractionsCount = $record
                             ->interactions()
                             ->whereHasMorph(
                                 'interactable',
                                 Prospect::class,
+                            )
+                            ->when(
+                                $startDate,
+                                fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate])
                             )
                             ->count();
 
@@ -183,12 +209,16 @@ class ProspectInteractionUsersTable extends BaseWidget
                     }),
                 TextColumn::make('avg_interaction_duration')
                     ->label('Avg. Duration')
-                    ->getStateUsing(function ($record) {
+                    ->getStateUsing(function ($record) use ($startDate, $endDate) {
                         $durations = $record
                             ->interactions()
                             ->whereHasMorph(
                                 'interactable',
                                 Prospect::class,
+                            )
+                            ->when(
+                                $startDate,
+                                fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate])
                             )
                             ->get()
                             ->map(function ($interaction) {
@@ -222,7 +252,10 @@ class ProspectInteractionUsersTable extends BaseWidget
                     ->searchable()
                     ->query(function (Builder $query, array $data) {
                         if (! empty($data['values'])) {
-                            $query->whereRaw('LOWER(name) IN (?)', array_map(fn ($value) => Str::lower($value), $data['values']));
+                            $query->whereIn(
+                                DB::raw('LOWER(name)'),
+                                array_map(fn ($value) => Str::lower($value), $data['values'])
+                            );
                         }
                     }),
                 SelectFilter::make('job_title')
@@ -241,7 +274,10 @@ class ProspectInteractionUsersTable extends BaseWidget
                     ->searchable()
                     ->query(function (Builder $query, array $data) {
                         if (! empty($data['values'])) {
-                            $query->whereRaw('LOWER(job_title) IN (?)', array_map(fn ($value) => Str::lower($value), $data['values']));
+                            $query->whereIn(
+                                DB::raw('LOWER(job_title)'),
+                                array_map(fn ($value) => Str::lower($value), $data['values'])
+                            );
                         }
                     }),
                 SelectFilter::make('team')

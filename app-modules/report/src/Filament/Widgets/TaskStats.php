@@ -41,50 +41,104 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Models\Task;
 use App\Models\User;
+use Carbon\Carbon;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Number;
 
 class TaskStats extends StatsOverviewReportWidget
 {
+    use InteractsWithPageFilters;
+
     protected int | string | array $columnSpan = [
         'sm' => 2,
         'md' => 4,
         'lg' => 4,
     ];
 
-    protected function getStats(): array
+    public function getStats(): array
     {
+        $startDate = filled($this->filters['startDate'] ?? null)
+            ? Carbon::parse($this->filters['startDate'])->startOfDay()
+            : null;
+
+        $endDate = filled($this->filters['endDate'] ?? null)
+            ? Carbon::parse($this->filters['endDate'])->endOfDay()
+            : null;
+
+        $shouldBypassCache = filled($startDate) || filled($endDate);
+
         return [
             Stat::make('Total Tasks', Number::abbreviate(
-                Cache::tags(["{{$this->cacheTag}}"])->remember('tasks-count', now()->addHours(24), function (): int {
-                    return Task::count();
-                }),
+                $shouldBypassCache
+                    ? Task::query()
+                        ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]))
+                        ->count()
+                    : Cache::tags(["{{$this->cacheTag}}"])->remember('tasks-count', now()->addHours(24), fn () => Task::query()->count()),
                 maxPrecision: 2,
             )),
+
             Stat::make('Staff with Open Tasks', Number::abbreviate(
-                Cache::tags(["{{$this->cacheTag}}"])->remember('users-with-open-tasks-count', now()->addHours(24), function (): int {
-                    return User::query()->whereHas('assignedTasks', function (Builder $query) {
-                        $query->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress]);
-                    })->count();
-                }),
+                $shouldBypassCache
+                    ? User::query()
+                        ->whereHas(
+                            'assignedTasks',
+                            fn ($query) => $query
+                                ->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress])
+                                ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]))
+                        )->count()
+                    : Cache::tags(["{{$this->cacheTag}}"])->remember(
+                        'users-with-open-tasks-count',
+                        now()->addHours(24),
+                        fn () => User::query()
+                            ->whereHas(
+                                'assignedTasks',
+                                fn ($q) => $q->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress])
+                            )->count()
+                    ),
                 maxPrecision: 2,
             )),
+
             Stat::make('Students with Open Tasks', Number::abbreviate(
-                Cache::tags(["{{$this->cacheTag}}"])->remember('students-with-open-tasks-count', now()->addHours(24), function (): int {
-                    return Student::query()->whereHas('tasks', function (Builder $query) {
-                        $query->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress]);
-                    })->count();
-                }),
+                $shouldBypassCache
+                    ? Student::query()
+                        ->whereHas(
+                            'tasks',
+                            fn ($query) => $query
+                                ->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress])
+                                ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]))
+                        )->count()
+                    : Cache::tags(["{{$this->cacheTag}}"])->remember(
+                        'students-with-open-tasks-count',
+                        now()->addHours(24),
+                        fn () => Student::query()
+                            ->whereHas(
+                                'tasks',
+                                fn ($q) => $q->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress])
+                            )->count()
+                    ),
                 maxPrecision: 2,
             )),
+
             Stat::make('Prospects with Open Tasks', Number::abbreviate(
-                Cache::tags(["{{$this->cacheTag}}"])->remember('prospects-with-open-tasks-count', now()->addHours(24), function (): int {
-                    return Prospect::query()->whereHas('tasks', function (Builder $query) {
-                        $query->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress]);
-                    })->count();
-                }),
+                $shouldBypassCache
+                    ? Prospect::query()
+                        ->whereHas(
+                            'tasks',
+                            fn ($query) => $query
+                                ->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress])
+                                ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]))
+                        )->count()
+                    : Cache::tags(["{{$this->cacheTag}}"])->remember(
+                        'prospects-with-open-tasks-count',
+                        now()->addHours(24),
+                        fn () => Prospect::query()
+                            ->whereHas(
+                                'tasks',
+                                fn ($q) => $q->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress])
+                            )->count()
+                    ),
                 maxPrecision: 2,
             )),
         ];
