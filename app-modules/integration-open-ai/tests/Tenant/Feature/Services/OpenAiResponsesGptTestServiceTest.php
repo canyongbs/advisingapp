@@ -42,6 +42,7 @@ use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiResponsesGptTestService;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
 use Prism\Prism\Enums\FinishReason;
@@ -218,4 +219,70 @@ it('can complete a prompt', function () {
         ->toHaveCount(1)
         ->each
         ->toHaveProperties(['type' => TrackedEventType::AiExchange]);
+});
+
+it('can fetch a valid previous response ID for a message', function () {
+    Http::fake([
+        '*/responses/*' => Http::response(['id' => 'resp_12345'], 200),
+    ]);
+
+    asSuperAdmin();
+
+    $service = app(OpenAiResponsesGptTestService::class);
+
+    $previousAssistantResponse = AiMessage::factory()
+        ->for(AiThread::factory()
+            ->for(AiAssistant::factory()->state([
+                'application' => AiAssistantApplication::PersonalAssistant,
+                'is_default' => true,
+                'model' => AiModel::OpenAiGptTest,
+            ]), 'assistant'), 'thread')
+        ->create([
+            'message_id' => 'resp_12345',
+            'user_id' => null,
+        ]);
+
+    $message = AiMessage::factory()
+        ->for($previousAssistantResponse->thread, 'thread')
+        ->make();
+
+    $previousResponseId = $service->getMessagePreviousResponseId($message);
+
+    Http::assertSentCount(1);
+
+    expect($previousResponseId)
+        ->toBe('resp_12345');
+});
+
+it('can discard an invalid previous response ID for a message', function () {
+    Http::fake([
+        '*/responses/*' => Http::response(null, 404),
+    ]);
+
+    asSuperAdmin();
+
+    $service = app(OpenAiResponsesGptTestService::class);
+
+    $previousAssistantResponse = AiMessage::factory()
+        ->for(AiThread::factory()
+            ->for(AiAssistant::factory()->state([
+                'application' => AiAssistantApplication::PersonalAssistant,
+                'is_default' => true,
+                'model' => AiModel::OpenAiGptTest,
+            ]), 'assistant'), 'thread')
+        ->create([
+            'message_id' => 'resp_12345',
+            'user_id' => null,
+        ]);
+
+    $message = AiMessage::factory()
+        ->for($previousAssistantResponse->thread, 'thread')
+        ->make();
+
+    $previousResponseId = $service->getMessagePreviousResponseId($message);
+
+    Http::assertSentCount(1);
+
+    expect($previousResponseId)
+        ->toBeNull();
 });

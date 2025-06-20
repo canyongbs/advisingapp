@@ -54,6 +54,7 @@ use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use Closure;
 use Exception;
 use Generator;
+use Illuminate\Support\Facades\Http;
 use Prism\Prism\Contracts\Message;
 use Prism\Prism\Enums\ChunkType;
 use Prism\Prism\Enums\FinishReason;
@@ -125,14 +126,7 @@ abstract class BaseOpenAiResponsesService implements AiService
     {
         $previousMessages = [];
 
-        $previousResponseId = $message->thread->messages()->latest()->first()?->message_id;
-
-        if (
-            blank($previousResponseId) ||
-            (! str_starts_with($previousResponseId, 'resp_'))
-        ) {
-            $previousResponseId = null;
-        }
+        $previousResponseId = $this->getMessagePreviousResponseId($message);
 
         if (blank($previousResponseId)) {
             $previousMessages = $message->thread->messages()
@@ -194,10 +188,47 @@ abstract class BaseOpenAiResponsesService implements AiService
                 $message->thread->name = 'Untitled Chat';
             }
 
+            $message->context = $instructions;
+            $message->save();
+
             dispatch(new RecordTrackedEvent(
                 type: TrackedEventType::AiExchange,
                 occurredAt: now(),
             ));
+        }
+    }
+
+    public function getMessagePreviousResponseId(AiMessage $message): ?string
+    {
+        $previousResponseId = $message->thread->messages()
+            ->whereDoesntHave('user')
+            ->whereKeyNot($message)
+            ->latest()
+            ->first()
+            ?->message_id;
+
+        if (blank($previousResponseId)) {
+            return null;
+        }
+
+        if (! str_starts_with($previousResponseId, 'resp_')) {
+            return null;
+        }
+
+        try {
+            $response = Http::withHeaders([
+                'api-key' => $this->getApiKey(),
+                'api-version' => $this->getApiVersion(),
+            ])
+                ->withQueryParameters(['api-version' => 'preview'])
+                ->baseUrl($this->getDeployment())
+                ->get("responses/{$previousResponseId}");
+
+            return $response->ok() ? $previousResponseId : null;
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return null;
         }
     }
 
