@@ -4,7 +4,7 @@ use AdvisingApp\Report\Filament\Widgets\StudentSmsOptInOptOutPieChart;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 it('it filters student SMS opt-in/out/null data accurately using start and end dates', function () {
-    $count = rand(1, 10);
+    $count = random_int(1, 10);
 
     $startDate = now()->subDays(90);
     $endDate = now()->subDays(5);

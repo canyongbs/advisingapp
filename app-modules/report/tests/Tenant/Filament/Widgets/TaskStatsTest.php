@@ -10,7 +10,7 @@ it('returns correct task statistics for total tasks, staff, students, and prospe
     $startDate = now()->subDays(10)->startOfDay();
     $endDate = now()->subDays(5)->endOfDay();
 
-    $taskCount = rand(1, 5);
+    $taskCount = random_int(1, 5);
     $student = Student::factory()->create();
     $prospect = Prospect::factory()->create();
 
