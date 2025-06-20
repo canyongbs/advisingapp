@@ -84,7 +84,6 @@
         "livewire/livewire": "^3.6.1",
         "maatwebsite/excel": "^3.1",
         "microsoft/microsoft-graph": "^1.109",
-        "nuwave/lighthouse": "^6.42",
         "owen-it/laravel-auditing": "^14.0",
         "php-mime-mail-parser/php-mime-mail-parser": "^9.0",
         "saade/filament-fullcalendar": "^3.2",
