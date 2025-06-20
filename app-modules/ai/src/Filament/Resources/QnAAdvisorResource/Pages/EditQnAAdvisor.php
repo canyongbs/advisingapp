@@ -95,6 +95,7 @@ class EditQnAAdvisor extends EditRecord
                     ])
                         ->columns(2),
                     Textarea::make('description')
+                        ->maxLength(65535)
                         ->required(),
                 ]),
             ]);

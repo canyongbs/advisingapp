@@ -55,6 +55,7 @@ class CreateQnAAdvisor extends CreateRecord
                         return $settings->preselected_model;
                     }),
                 Textarea::make('description')
+                    ->maxLength(65535)
                     ->required(),
             ]);
     }
