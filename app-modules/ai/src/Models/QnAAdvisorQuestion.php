@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * @mixin IdeHelperQnaAdvisorQuestion
  */
-class QnaAdvisorQuestion extends BaseModel
+class QnAAdvisorQuestion extends BaseModel
 {
     use SoftDeletes;
 

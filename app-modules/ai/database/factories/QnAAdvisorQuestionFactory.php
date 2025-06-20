@@ -3,13 +3,13 @@
 namespace AdvisingApp\Ai\Database\Factories;
 
 use AdvisingApp\Ai\Models\QnAAdvisorCategory;
-use AdvisingApp\Ai\Models\QnaAdvisorQuestion;
+use AdvisingApp\Ai\Models\QnAAdvisorQuestion;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<QnaAdvisorQuestion>
+ * @extends Factory<QnAAdvisorQuestion>
  */
-class QnaAdvisorQuestionFactory extends Factory
+class QnAAdvisorQuestionFactory extends Factory
 {
     /**
      * Define the model's default state.

@@ -13,7 +13,7 @@ test('ViewQnAAdvisor is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $qnaAdvisors = QnAAdvisor::factory()->create();
-    
+
     actingAs($user)
         ->get(
             QnAAdvisorResource::getUrl('view', [
@@ -45,9 +45,9 @@ test('archive action visible when QnA Advisor is not archived', function () {
     livewire(ViewQnAAdvisor::class, [
         'record' => $qnaAdvisors->getRouteKey(),
     ])
-    ->assertSuccessful()
-    ->assertActionVisible('archive')
-    ->assertActionHidden('restore');
+        ->assertSuccessful()
+        ->assertActionVisible('archive')
+        ->assertActionHidden('restore');
 });
 
 test('restore action visible when QnA Advisor is archived', function () {
@@ -65,7 +65,7 @@ test('restore action visible when QnA Advisor is archived', function () {
     livewire(ViewQnAAdvisor::class, [
         'record' => $qnaAdvisors->getRouteKey(),
     ])
-    ->assertSuccessful()
-    ->assertActionVisible('restore')
-    ->assertActionHidden('archive');
+        ->assertSuccessful()
+        ->assertActionVisible('restore')
+        ->assertActionHidden('archive');
 });

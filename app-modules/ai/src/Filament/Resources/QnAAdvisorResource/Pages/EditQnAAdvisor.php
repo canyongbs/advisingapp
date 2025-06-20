@@ -107,7 +107,6 @@ class EditQnAAdvisor extends EditRecord
             Action::make('archive')
                 ->color('danger')
                 ->action(function () {
-
                     /** @var QnAAdvisor $qnqAdvisor */
                     $qnqAdvisor = $this->getRecord();
                     $qnqAdvisor->archived_at = now();

@@ -7,7 +7,7 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('qna_advisor_questions', function (Blueprint $table) {
+        Schema::create('qn_a_advisor_questions', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('question');
             $table->text('answer');
@@ -19,6 +19,6 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        Schema::dropIfExists('qna_advisor_questions');
+        Schema::dropIfExists('qn_a_advisor_questions');
     }
 };
