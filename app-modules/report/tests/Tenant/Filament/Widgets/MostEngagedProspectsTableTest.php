@@ -41,11 +41,6 @@ it('returns top engaged prospects based on engagements within the given date ran
         'endDate' => $endDate->toDateString(),
     ];
 
-    $filters = [
-        'startDate' => $startDate->toDateString(),
-        'endDate' => $endDate->toDateString(),
-    ];
-
     livewire(MostEngagedProspectsTable::class, [
         'cacheTag' => 'report-prospect-engagement',
         'filters' => $filters,

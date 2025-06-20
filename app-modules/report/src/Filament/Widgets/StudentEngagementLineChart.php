@@ -51,23 +51,7 @@ class StudentEngagementLineChart extends LineChartReportWidget
 
     protected int | string | array $columnSpan = 'full';
 
-    protected function getOptions(): array
-    {
-        return [
-            'plugins' => [
-                'legend' => [
-                    'display' => false,
-                ],
-            ],
-            'scales' => [
-                'y' => [
-                    'min' => 0,
-                ],
-            ],
-        ];
-    }
-
-    protected function getData(): array
+    public function getData(): array
     {
         $startDate = filled($this->filters['startDate'] ?? null)
             ? Carbon::parse($this->filters['startDate'])->startOfDay()
@@ -101,6 +85,22 @@ class StudentEngagementLineChart extends LineChartReportWidget
                 ],
             ],
             'labels' => array_keys($runningTotalPerMonth['emailEngagement']),
+        ];
+    }
+
+    protected function getOptions(): array
+    {
+        return [
+            'plugins' => [
+                'legend' => [
+                    'display' => false,
+                ],
+            ],
+            'scales' => [
+                'y' => [
+                    'min' => 0,
+                ],
+            ],
         ];
     }
 
