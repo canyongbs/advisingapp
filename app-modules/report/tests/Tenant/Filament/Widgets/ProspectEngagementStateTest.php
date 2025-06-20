@@ -18,8 +18,8 @@ it('returns correct counts of prospects, emails, texts, and staff based on the g
 
     $user1 = User::factory()->create();
     Engagement::factory()->count($emailCount)->state([
-        'user_id' => $user1->id,
-        'recipient_id' => $prospect1->id,
+        'user_id' => $user1->getKey(),
+        'recipient_id' => $prospect1->getKey(),
         'recipient_type' => (new Prospect())->getMorphClass(),
         'channel' => NotificationChannel::Email,
         'created_at' => $startDate,
@@ -27,8 +27,8 @@ it('returns correct counts of prospects, emails, texts, and staff based on the g
 
     $user2 = User::factory()->create();
     Engagement::factory()->count($textCount)->state([
-        'user_id' => $user2->id,
-        'recipient_id' => $prospect2->id,
+        'user_id' => $user2->getKey(),
+        'recipient_id' => $prospect2->getKey(),
         'recipient_type' => (new Prospect())->getMorphClass(),
         'channel' => NotificationChannel::Sms,
         'created_at' => $endDate,

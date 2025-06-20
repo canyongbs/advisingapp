@@ -18,7 +18,7 @@ it('returns correct counts of students, emails, texts, and staff engagements wit
 
     $user1 = User::factory()->create();
     Engagement::factory()->count($emailCount)->state([
-        'user_id' => $user1->id,
+        'user_id' => $user1->getKey(),
         'recipient_id' => $student1->sisid,
         'recipient_type' => (new Student())->getMorphClass(),
         'channel' => NotificationChannel::Email,
@@ -27,7 +27,7 @@ it('returns correct counts of students, emails, texts, and staff engagements wit
 
     $user2 = User::factory()->create();
     Engagement::factory()->count($textCount)->state([
-        'user_id' => $user2->id,
+        'user_id' => $user2->getKey(),
         'recipient_id' => $student2->sisid,
         'recipient_type' => (new Student())->getMorphClass(),
         'channel' => NotificationChannel::Sms,
