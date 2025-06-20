@@ -805,8 +805,8 @@
         </div>
     @endif
 
-    <script src="{{ url('js/canyon-gbs/ai/chat.js') . '?v=' . app('current-commit') }}"></script>
-    <script src="{{ url('js/canyon-gbs/ai/chats.js') . '?v=' . app('current-commit') }}"></script>
+    @vite(['app-modules/ai/resources/js/chat.js', 'app-modules/ai/resources/js/chats.js'])
+
     <style>
         .choices__inner .prompt-upvotes-count {
             display: none;

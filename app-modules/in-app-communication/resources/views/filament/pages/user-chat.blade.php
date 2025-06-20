@@ -608,7 +608,9 @@
                 </div>
             @endif
         </div>
-        <script src="{{ url('js/canyon-gbs/in-app-communication/userToUserChat.js') }}"></script>
+
+        @vite('app-modules/in-app-communication/resources/js/userToUserChat.js')
+
         <style>
             .tiptap .is-editor-empty:first-child::before {
                 color: #adb5bd;
