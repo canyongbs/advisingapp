@@ -38,15 +38,12 @@ namespace AdvisingApp\Audit\Providers;
 
 use AdvisingApp\Audit\AuditPlugin;
 use AdvisingApp\Audit\Models\Audit;
-use App\Concerns\ImplementsGraphQL;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 
 class AuditServiceProvider extends ServiceProvider
 {
-    use ImplementsGraphQL;
-
     public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new AuditPlugin()));
@@ -59,7 +56,5 @@ class AuditServiceProvider extends ServiceProvider
         Relation::morphMap([
             'audit' => Audit::class,
         ]);
-
-        $this->discoverSchema(__DIR__ . '/../../graphql/audit.graphql');
     }
 }
