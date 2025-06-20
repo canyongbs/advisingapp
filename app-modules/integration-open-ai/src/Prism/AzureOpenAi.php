@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,35 +33,32 @@
 
 </COPYRIGHT>
 */
-import { defineConfig } from 'vite';
-import laravel, { refreshPaths } from 'laravel-vite-plugin';
 
-export default defineConfig({
-    plugins: [
-        laravel({
-            input: [
-                'resources/css/app.css',
-                'resources/js/app.js',
-                'resources/js/admin.js',
-                'resources/css/filament/admin/theme.css',
-                'app-modules/ai/resources/js/chat.js',
-                'app-modules/ai/resources/js/chats.js',
-                'app-modules/research/resources/js/results.js',
-                'app-modules/research/resources/js/requests.js',
-                'app-modules/in-app-communication/resources/js/userToUserChat.js',
-                'app-modules/task/resources/js/kanban.js',
-                'app-modules/prospect/resources/js/kanban.js'
-            ],
-            refresh: [
-                ...refreshPaths,
-                'app/Filament/**',
-                'app/Forms/Components/**',
-                'app/Livewire/**',
-                'app/Infolists/Components/**',
-                'app/Providers/Filament/**',
-                'app/Tables/Columns/**',
-                'portals/**',
-            ],
-        }),
-    ],
-});
+namespace AdvisingApp\IntegrationOpenAi\Prism;
+
+use Closure;
+use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Http;
+use Prism\Prism\Providers\OpenAI\OpenAI;
+
+readonly class AzureOpenAi extends OpenAI
+{
+    public function __construct() {}
+
+    /**
+     * @param  array<string, mixed>  $options
+     * @param  array{0: array<int, int>|int, 1?: Closure|int, 2?: ?callable, 3?: bool}  $retry
+     */
+    protected function client(array $options, array $retry): PendingRequest
+    {
+        return Http::withHeaders([
+            'api-key' => $options['apiKey'],
+            'api-version' => $options['apiVersion'],
+        ])
+            ->withQueryParameters(['api-version' => 'preview'])
+            ->withOptions(Arr::except($options, ['apiKey', 'apiVersion', 'deployment']))
+            ->retry(...$retry)
+            ->baseUrl($options['deployment']);
+    }
+}

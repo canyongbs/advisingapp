@@ -107,5 +107,7 @@
         ])
         <x-filament-actions::modals />
     @endif
-    <script src="{{ url('js/canyon-gbs/prospect-pipeline/kanban.js') }}"></script>
+
+    @vite('app-modules/prospect/resources/js/kanban.js')
+
 </x-filament-panels::page>

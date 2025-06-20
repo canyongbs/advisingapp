@@ -50,7 +50,7 @@ class RetryMessageController
     public function __invoke(RetryMessageRequest $request, AiThread $thread): StreamedResponse | JsonResponse
     {
         try {
-            return response()->stream(
+            return new StreamedResponse(
                 app(RetryMessage::class)(
                     $thread,
                     $request->validated('content'),

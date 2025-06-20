@@ -237,7 +237,8 @@
                                                     'text-primary-600 dark:text-primary-400': expanded(folder.id)
                                                 }"
                                                 x-text="`${folder.name} ${folder.requests.length ? '(' + folder.requests.length + ')' : ''}`"
-                                            ></div>
+                                            >
+                                            </div>
                                         </div>
 
                                         <div class="flex flex-shrink-0 items-center gap-1">
@@ -524,7 +525,8 @@
         </div>
     @endif
 
-    <script src="{{ url('js/canyon-gbs/research/requests.js') . '?v=' . app('current-commit') }}"></script>
+    @vite('app-modules/research/resources/js/requests.js')
+
     <style>
         .footer {
             display: none

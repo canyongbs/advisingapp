@@ -388,6 +388,10 @@ trait UploadsFiles
 
         $thread = $this->retrieveThread($thread);
 
+        if (! $thread) {
+            return null;
+        }
+
         // Currently threads only support a single vector store
         $expiredVectorStores = collect($thread->vectorStoreIds)
             ->map(function ($vectorStoreId) {

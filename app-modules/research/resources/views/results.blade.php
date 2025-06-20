@@ -90,5 +90,5 @@
         </div>
     </section>
 
-    <script src="{{ url('js/canyon-gbs/research/results.js') . '?v=' . app('current-commit') }}"></script>
+    @vite('app-modules/research/resources/js/results.js')
 </div>

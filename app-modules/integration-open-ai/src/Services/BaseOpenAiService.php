@@ -147,7 +147,7 @@ abstract class BaseOpenAiService implements AiService
         ]);
     }
 
-    public function retrieveAssistant(AiAssistant $assistant): AssistantsDataTransferObject
+    public function retrieveAssistant(AiAssistant $assistant): ?AssistantsDataTransferObject
     {
         $assistantResponse = $this->client->assistants()->retrieve($assistant->assistant_id);
 
@@ -230,7 +230,7 @@ abstract class BaseOpenAiService implements AiService
         }
     }
 
-    public function retrieveThread(AiThread $thread): ThreadsDataTransferObject
+    public function retrieveThread(AiThread $thread): ?ThreadsDataTransferObject
     {
         $threadResponse = $this->client->threads()->retrieve($thread->thread_id);
 
@@ -240,7 +240,7 @@ abstract class BaseOpenAiService implements AiService
         ]);
     }
 
-    public function modifyThread(AiThread $thread, array $parameters): ThreadsDataTransferObject
+    public function modifyThread(AiThread $thread, array $parameters): ?ThreadsDataTransferObject
     {
         /** @var ThreadResponse $updatedThreadResponse */
         $updatedThreadResponse = $this->client->threads()->modify($thread->thread_id, $parameters);
@@ -254,7 +254,7 @@ abstract class BaseOpenAiService implements AiService
     public function deleteThread(AiThread $thread): void
     {
         try {
-            foreach ($this->retrieveThread($thread)->vectorStoreIds as $vectorStoreId) {
+            foreach ($this->retrieveThread($thread)?->vectorStoreIds as $vectorStoreId) {
                 $this->deleteVectorStore($vectorStoreId);
             }
 

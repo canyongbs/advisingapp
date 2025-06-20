@@ -80,7 +80,7 @@ it('renders all students correctly in the retention dashboard for the All tab', 
 
     $stats = $statsWidget->getStats();
 
-    $openTasksStat = $stats[3];
+    $openTasksStat = $stats[2];
     expect($openTasksStat->getValue())->toEqual($allStudents->count());
 
     livewire(StudentsActionCenterWidget::class, ['activeTab' => ActionCenterTab::All->value])
@@ -114,7 +114,7 @@ it('renders subscribed students correctly in the retention dashboard for the Sub
 
     $stats = $statsWidget->getStats();
 
-    $openTasksStat = $stats[3];
+    $openTasksStat = $stats[2];
     expect($openTasksStat->getValue())->toEqual($studentsWithSubscription->count());
 
     livewire(StudentsActionCenterWidget::class, ['activeTab' => ActionCenterTab::Subscribed->value])
@@ -147,7 +147,7 @@ it('renders care team students correctly in the retention dashboard for the Care
 
     $stats = $statsWidget->getStats();
 
-    $openTasksStat = $stats[3];
+    $openTasksStat = $stats[2];
     expect($openTasksStat->getValue())->toEqual($studentsWithCareTeam->count());
 
     livewire(StudentsActionCenterWidget::class, ['activeTab' => ActionCenterTab::CareTeam->value])

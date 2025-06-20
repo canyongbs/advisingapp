@@ -89,10 +89,6 @@ class ProspectsActionCenterWidget extends TableWidget
                     ->label('New Messages')
                     ->counts(['engagementResponses' => fn (Builder $query) => $query->where('status', EngagementResponseStatus::New)])
                     ->sortable(),
-                TextColumn::make('cases_count')
-                    ->label('Open Cases')
-                    ->counts(['cases' => fn (Builder $query) => $query->whereRelation('status', 'classification', '!=', SystemCaseClassification::Closed)])
-                    ->sortable(),
                 TextColumn::make('alerts_count')
                     ->label('Open Alerts')
                     ->counts(['alerts' => fn (Builder $query) => $query->whereHas('status', fn (Builder $query) => $query->whereNotIn('classification', [SystemAlertStatusClassification::Resolved, SystemAlertStatusClassification::Canceled]))])
@@ -100,6 +96,10 @@ class ProspectsActionCenterWidget extends TableWidget
                 TextColumn::make('tasks_count')
                     ->label('Open Tasks')
                     ->counts(['tasks' => fn (Builder $query) => $query->whereNotIn('status', [TaskStatus::Completed, TaskStatus::Canceled])])
+                    ->sortable(),
+                TextColumn::make('cases_count')
+                    ->label('Open Cases')
+                    ->counts(['cases' => fn (Builder $query) => $query->whereRelation('status', 'classification', '!=', SystemCaseClassification::Closed)])
                     ->sortable(),
             ])
             ->filters([
