@@ -99,7 +99,6 @@ class ManageQnAQuestions extends ManageRelatedRecords
                     ->searchable(),
                 TextColumn::make('category.name')
                     ->searchable(),
-
             ])
             ->filters([
                 SelectFilter::make('category_id')

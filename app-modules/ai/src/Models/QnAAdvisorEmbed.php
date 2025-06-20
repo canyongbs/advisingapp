@@ -5,6 +5,9 @@ namespace AdvisingApp\Ai\Models;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @mixin IdeHelperQnAAdvisorEmbed
+ */
 class QnAAdvisorEmbed extends BaseModel
 {
     protected $fillable = [

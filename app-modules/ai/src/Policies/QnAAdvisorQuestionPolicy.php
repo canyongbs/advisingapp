@@ -2,7 +2,6 @@
 
 namespace AdvisingApp\Ai\Policies;
 
-use AdvisingApp\Ai\Models\QnaAdvisorQuestion;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Concerns\PerformsLicenseChecks;
 use App\Models\Authenticatable;
@@ -32,7 +31,7 @@ class QnAAdvisorQuestionPolicy
     public function view(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["qna_advisor_question.*.view"],
+            abilities: ['qna_advisor_question.*.view'],
             denyResponse: 'You do not have permission to view this QnA Advisor Question.'
         );
     }
@@ -48,7 +47,7 @@ class QnAAdvisorQuestionPolicy
     public function update(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["qna_advisor_question.*.update"],
+            abilities: ['qna_advisor_question.*.update'],
             denyResponse: 'You do not have permission to update this QnA Advisor Question.'
         );
     }
@@ -56,7 +55,7 @@ class QnAAdvisorQuestionPolicy
     public function delete(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["qna_advisor_question.*.delete"],
+            abilities: ['qna_advisor_question.*.delete'],
             denyResponse: 'You do not have permission to delete this QnA Advisor Questions.'
         );
     }
@@ -64,7 +63,7 @@ class QnAAdvisorQuestionPolicy
     public function restore(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["qna_advisor_question.*.restore"],
+            abilities: ['qna_advisor_question.*.restore'],
             denyResponse: 'You do not have permission to restore this QnA Advisor Questions.'
         );
     }
@@ -72,7 +71,7 @@ class QnAAdvisorQuestionPolicy
     public function forceDelete(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["qna_advisor_question.*.force-delete"],
+            abilities: ['qna_advisor_question.*.force-delete'],
             denyResponse: 'You do not have permission to force-delete this QnA Advisor Questions.'
         );
     }

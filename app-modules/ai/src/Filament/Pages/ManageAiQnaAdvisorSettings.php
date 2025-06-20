@@ -2,12 +2,18 @@
 
 namespace AdvisingApp\Ai\Filament\Pages;
 
+use AdvisingApp\Ai\Enums\AiModel;
+use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Settings\AiQnAAdvisorSettings;
 use App\Features\QnAAdvisorFeature;
 use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Illuminate\Validation\Rule;
 
 class ManageAiQnaAdvisorSettings extends ManageAiICustomAdvisorSettings
 {
@@ -31,6 +37,20 @@ class ManageAiQnaAdvisorSettings extends ManageAiICustomAdvisorSettings
     {
         return $form
             ->schema([
+                Toggle::make('allow_selection_of_model')
+                    ->label('Allow selection of model?')
+                    ->helperText('If enabled, users can select a model when creating or editing custom advisors.')
+                    ->columnSpanFull()
+                    ->live(),
+                Select::make('preselected_model')
+                    ->label('Select Model')
+                    ->options(AiModelApplicabilityFeature::CustomAdvisors->getModelsAsSelectOptions())
+                    ->searchable()
+                    ->helperText('This model will be the model used for custom advisors.')
+                    ->columnSpanFull()
+                    ->required()
+                    ->visible(fn (Get $get): bool => ! $get('allow_selection_of_model'))
+                    ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::QuestionAndAnswerAdvisor->getModels())),
                 Textarea::make('instructions')
                     ->label('Instructions')
                     ->columnSpanFull()

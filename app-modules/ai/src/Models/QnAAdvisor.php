@@ -14,6 +14,9 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\File;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
+/**
+ * @mixin IdeHelperQnAAdvisor
+ */
 class QnAAdvisor extends BaseModel implements HasMedia
 {
     use CanAddAssistantLicenseGlobalScope;

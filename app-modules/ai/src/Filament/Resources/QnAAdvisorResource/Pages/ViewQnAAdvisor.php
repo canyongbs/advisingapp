@@ -65,29 +65,31 @@ class ViewQnAAdvisor extends ViewRecord
             Action::make('archive')
                 ->color('danger')
                 ->action(function () {
-                    $assistant = $this->getRecord();
-                    $assistant->archived_at = now();
-                    $assistant->save();
+                    /** @var QnAAdvisor $record */
+                    $record = $this->getRecord();
+                    $record->archived_at = now();
+                    $record->save();
 
                     Notification::make()
                         ->title('QnA Advisor archived')
                         ->success()
                         ->send();
                 })
-                ->hidden(fn (): bool => (bool) $this->getRecord()->archived_at),
+                ->hidden(fn (QnAAdvisor $record): bool => (bool) $record->archived_at),
             Action::make('restore')
                 ->action(function () {
-                    $assistant = $this->getRecord();
-                    $assistant->archived_at = null;
-                    $assistant->save();
+                    /** @var QnAAdvisor $record */
+                    $record = $this->getRecord();
+                    $record->archived_at = null;
+                    $record->save();
 
                     Notification::make()
                         ->title('QnA Advisor restored')
                         ->success()
                         ->send();
                 })
-                ->hidden(function (): bool {
-                    if (! $this->getRecord()->archived_at) {
+                ->hidden(function (QnAAdvisor $record): bool {
+                    if (! $record->archived_at) {
                         return true;
                     }
 

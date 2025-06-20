@@ -2,9 +2,9 @@
 
 namespace AdvisingApp\Ai\Policies;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Concerns\PerformsLicenseChecks;
 use App\Models\Authenticatable;
-use AdvisingApp\Authorization\Enums\LicenseType;
 use Illuminate\Auth\Access\Response;
 
 class QnaAdvisorPolicy
@@ -31,7 +31,7 @@ class QnaAdvisorPolicy
     public function view(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["qna_advisor.*.view"],
+            abilities: ['qna_advisor.*.view'],
             denyResponse: 'You do not have permission to view this QnA Advisor.'
         );
     }
@@ -47,7 +47,7 @@ class QnaAdvisorPolicy
     public function update(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["qna_advisor.*.update"],
+            abilities: ['qna_advisor.*.update'],
             denyResponse: 'You do not have permission to update this QnA Advisor.'
         );
     }
@@ -67,4 +67,3 @@ class QnaAdvisorPolicy
         return Response::deny('QnA Advisors cannot be permanently deleted.');
     }
 }
-
