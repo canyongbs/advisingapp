@@ -7,7 +7,7 @@ use App\Concerns\PerformsLicenseChecks;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
-class QnaAdvisorPolicy
+class QnAAdvisorPolicy
 {
     use PerformsLicenseChecks;
 
