@@ -15,7 +15,7 @@ return new class () extends Migration {
             $table->timestamps();
             $table->softDeletes();
 
-            $table->unique(['qn_a_advisor_id', 'name'], 'uq_qn_a_advisor_categories_name');
+            $table->unique(['qn_a_advisor_id', 'name'], 'qn_a_advisor_categories_name');
         });
     }
 
