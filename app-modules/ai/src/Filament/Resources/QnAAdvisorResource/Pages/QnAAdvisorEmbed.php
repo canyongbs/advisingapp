@@ -147,8 +147,6 @@ class QnAAdvisorEmbed extends EditRecord
         /** @var QnAAdvisor $record */
         $record = $this->getRecord();
 
-        $data = [];
-
         if ($record->qnAAdvisorEmbed) {
             $data = $record->qnAAdvisorEmbed->toArray();
         }

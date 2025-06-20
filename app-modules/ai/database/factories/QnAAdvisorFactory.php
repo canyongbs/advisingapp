@@ -21,7 +21,12 @@ class QnAAdvisorFactory extends Factory
         return [
             'name' => $this->faker->name(),
             'description' => $this->faker->paragraph(),
-            'model' => $this->faker->randomElement(AiModel::cases()),
+            'model' => $this->faker->randomElement(
+                array_filter(
+                    AiModel::cases(),
+                    fn (AiModel $case) => $case !== AiModel::JinaDeepSearchV1
+                )
+            ),
         ];
     }
 }
