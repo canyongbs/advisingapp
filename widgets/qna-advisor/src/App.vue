@@ -68,7 +68,7 @@ async function getData() {
                     <h1 v-if="errorMessage" class="text-2xl font-bold text-red-500 mx-auto">
                         {{ errorMessage }}
                     </h1>
-                    <div v-else>Passed</div>
+                    <div v-else></div>
                 </div>
             </div>
         </div>

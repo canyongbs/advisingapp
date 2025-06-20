@@ -7,6 +7,7 @@ use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Filament\Resources\QnAAdvisorResource;
 use AdvisingApp\Ai\Models\QnAAdvisor;
 use AdvisingApp\Ai\Settings\AiQnAAdvisorSettings;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
@@ -22,6 +23,8 @@ use Illuminate\Validation\Rule;
 
 class EditQnAAdvisor extends EditRecord
 {
+    use EditPageRedirection;
+
     protected static string $resource = QnAAdvisorResource::class;
 
     protected static ?string $navigationLabel = 'Edit';
