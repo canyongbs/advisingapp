@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Prism;
 
+use Closure;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
