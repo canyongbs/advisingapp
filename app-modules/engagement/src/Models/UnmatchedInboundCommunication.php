@@ -58,7 +58,7 @@ class UnmatchedInboundCommunication extends BaseModel
     ];
 
     protected $casts = [
-        'occurred_at' => 'timestamp',
+        'occurred_at' => 'datetime',
         'type' => EngagementResponseType::class,
     ];
 }

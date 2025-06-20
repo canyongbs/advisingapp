@@ -205,3 +205,57 @@ it('can check prospect phone in unmatched inbound communications if exist add en
         'status' => EngagementResponseStatus::New,
     ]);
 });
+
+it('can check unmatched inbound communications with no match', function () {
+    UnmatchedInboundCommunication::factory()->create(
+        [
+            'sender' => 'nomatch@example.com',
+            'type' => EngagementResponseType::Email,
+        ]
+    );
+    UnmatchedInboundCommunication::factory()->create(
+        [
+            'sender' => '9876543210',
+            'type' => EngagementResponseType::Sms,
+        ]
+    );
+    expect(UnmatchedInboundCommunication::count())->toBe(2);
+
+    $student = Student::factory()->create();
+
+    StudentPhoneNumber::factory()->for($student, 'student')->create([
+        'number' => '1234567890',
+    ]);
+
+    StudentEmailAddress::factory()->for($student, 'student')->create([
+        'address' => 'student@example.com',
+    ]);
+
+    $prospect = Prospect::factory()->create();
+
+    ProspectEmailAddress::factory()->for($prospect, 'prospect')->create([
+        'address' => 'prospect@example.com',
+    ]);
+
+    ProspectPhoneNumber::factory()->for($prospect, 'prospect')->create([
+        'number' => '147852369',
+    ]);
+
+    expect(Student::query()->whereHas('engagementResponses')->exists())->toBeFalse();
+    expect(Prospect::query()->whereHas('engagementResponses')->exists())->toBeFalse();
+    assertDatabaseHas('unmatched_inbound_communications', [
+        'sender' => 'nomatch@example.com',
+        'type' => EngagementResponseType::Email,
+    ]);
+    assertDatabaseHas('unmatched_inbound_communications', [
+        'sender' => '9876543210',
+        'type' => EngagementResponseType::Sms,
+    ]);
+
+    $job = new UnmatchedInboundCommunicationsJob();
+    $job->handle();
+
+    expect(UnmatchedInboundCommunication::count())->toBe(2);
+    expect(Student::query()->whereHas('engagementResponses')->count())->toBe(0);
+    expect(Prospect::query()->whereHas('engagementResponses')->count())->toBe(0);
+});
