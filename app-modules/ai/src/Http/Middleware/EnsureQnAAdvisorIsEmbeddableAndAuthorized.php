@@ -35,7 +35,7 @@ class EnsureQnAAdvisorIsEmbeddableAndAuthorized
         $configuration = $advisor->qnAAdvisorEmbed;
 
         if (is_null($configuration) || ! $configuration->is_enabled) {
-            return response()->json(['Embedding is not enabled for this QNA Advisor.'], 403);
+            return response()->json(['Embedding is not enabled for this QnA Advisor.'], 403);
         }
 
         $allowedDomains = collect($configuration->allowed_domains ?? []);

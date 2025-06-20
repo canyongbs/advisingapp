@@ -24,7 +24,7 @@ class QnAAdvisorPolicy
     {
         return $authenticatable->canOrElse(
             abilities: 'qna_advisor.view-any',
-            denyResponse: 'You do not have permission to view QnA Advisor.'
+            denyResponse: 'You do not have permission to view QnA Advisors.'
         );
     }
 
@@ -54,16 +54,16 @@ class QnAAdvisorPolicy
 
     public function delete(Authenticatable $authenticatable): Response
     {
-        return Response::deny('QnA Advisors cannot be deleted.');
+        return Response::deny('QnA Advisor cannot be deleted.');
     }
 
     public function restore(Authenticatable $authenticatable): Response
     {
-        return Response::deny('QnA Advisors cannot be restored.');
+        return Response::deny('QnA Advisor cannot be restored.');
     }
 
     public function forceDelete(Authenticatable $authenticatable): Response
     {
-        return Response::deny('QnA Advisors cannot be permanently deleted.');
+        return Response::deny('QnA Advisor cannot be permanently deleted.');
     }
 }

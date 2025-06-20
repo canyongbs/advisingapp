@@ -92,6 +92,7 @@ class ManageQnAQuestions extends ManageRelatedRecords
             ->recordTitleAttribute('question')
             ->columns([
                 TextColumn::make('question')
+                    ->wrap()
                     ->searchable(),
                 TextColumn::make('answer')
                     ->limit(50)
