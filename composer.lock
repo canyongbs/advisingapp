@@ -2649,12 +2649,12 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/integration-open-ai",
-                "reference": "3be05ac0f38b8be590eec520993e9cb62ac0837c"
+                "reference": "f7e3d038e9a6c09160454634d34ed97e5029762b"
             },
             "require": {
                 "filament/filament": "^3.0.0",
                 "openai-php/client": "^v0.10",
-                "prism-php/prism": "^0.72"
+                "prism-php/prism": "^0.74"
             },
             "type": "library",
             "extra": {
@@ -11705,16 +11705,16 @@
         },
         {
             "name": "prism-php/prism",
-            "version": "v0.72.0",
+            "version": "v0.74.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/prism-php/prism.git",
-                "reference": "c2bde5907513887caa198716aa038eab72106fe0"
+                "reference": "1450e24962241f7739ab31678b258402917f678a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/prism-php/prism/zipball/c2bde5907513887caa198716aa038eab72106fe0",
-                "reference": "c2bde5907513887caa198716aa038eab72106fe0",
+                "url": "https://api.github.com/repos/prism-php/prism/zipball/1450e24962241f7739ab31678b258402917f678a",
+                "reference": "1450e24962241f7739ab31678b258402917f678a",
                 "shasum": ""
             },
             "require": {
@@ -11770,7 +11770,7 @@
             "description": "A powerful Laravel package for integrating Large Language Models (LLMs) into your applications.",
             "support": {
                 "issues": "https://github.com/prism-php/prism/issues",
-                "source": "https://github.com/prism-php/prism/tree/v0.72.0"
+                "source": "https://github.com/prism-php/prism/tree/v0.74.0"
             },
             "funding": [
                 {
@@ -11778,7 +11778,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-06-17T11:47:10+00:00"
+            "time": "2025-06-19T20:43:03+00:00"
         },
         {
             "name": "propaganistas/laravel-phone",
