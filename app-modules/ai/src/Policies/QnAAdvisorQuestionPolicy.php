@@ -56,7 +56,7 @@ class QnAAdvisorQuestionPolicy
     {
         return $authenticatable->canOrElse(
             abilities: ['qna_advisor_question.*.delete'],
-            denyResponse: 'You do not have permission to delete this QnA Advisor Questions.'
+            denyResponse: 'You do not have permission to delete this QnA Advisor Question.'
         );
     }
 
@@ -64,7 +64,7 @@ class QnAAdvisorQuestionPolicy
     {
         return $authenticatable->canOrElse(
             abilities: ['qna_advisor_question.*.restore'],
-            denyResponse: 'You do not have permission to restore this QnA Advisor Questions.'
+            denyResponse: 'You do not have permission to restore this QnA Advisor Question.'
         );
     }
 
@@ -72,7 +72,7 @@ class QnAAdvisorQuestionPolicy
     {
         return $authenticatable->canOrElse(
             abilities: ['qna_advisor_question.*.force-delete'],
-            denyResponse: 'You do not have permission to force-delete this QnA Advisor Questions.'
+            denyResponse: 'You do not have permission to force-delete this QnA Advisor Question.'
         );
     }
 }

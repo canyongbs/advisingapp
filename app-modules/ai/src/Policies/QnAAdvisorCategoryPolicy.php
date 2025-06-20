@@ -56,7 +56,7 @@ class QnAAdvisorCategoryPolicy
     {
         return $authenticatable->canOrElse(
             abilities: ['qna_advisor_category.*.delete'],
-            denyResponse: 'You do not have permission to delete this QnA Advisor Categories.'
+            denyResponse: 'You do not have permission to delete this QnA Advisor Category.'
         );
     }
 
@@ -64,7 +64,7 @@ class QnAAdvisorCategoryPolicy
     {
         return $authenticatable->canOrElse(
             abilities: ['qna_advisor_category.*.restore'],
-            denyResponse: 'You do not have permission to restore this QnA Advisor Categories.'
+            denyResponse: 'You do not have permission to restore this QnA Advisor Category.'
         );
     }
 
@@ -72,7 +72,7 @@ class QnAAdvisorCategoryPolicy
     {
         return $authenticatable->canOrElse(
             abilities: ['qna_advisor_category.*.force-delete'],
-            denyResponse: 'You do not have permission to force-delete this QnA Advisor Categories.'
+            denyResponse: 'You do not have permission to force-delete this QnA Advisor Category.'
         );
     }
 }
