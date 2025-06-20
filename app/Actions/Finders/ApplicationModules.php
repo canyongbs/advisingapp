@@ -38,6 +38,9 @@ namespace App\Actions\Finders;
 
 class ApplicationModules
 {
+    /**
+     * @return array<string, mixed>
+     */
     public function moduleConfig(string $module, string $path): array
     {
         $path = base_path("app-modules/{$module}/config/{$path}.php");

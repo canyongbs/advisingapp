@@ -59,6 +59,7 @@ use Filament\Widgets\Concerns\InteractsWithPageTable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\View\View;
 use Livewire\Component;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
@@ -69,11 +70,12 @@ class TaskKanban extends Component implements HasForms, HasActions
     use TaskEditForm;
     use InteractsWithPageTable;
 
+    /** @var TaskStatus[] */
     public array $statuses = [];
 
     public ?Task $currentTask = null;
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.task-kanban', [
             'tasks' => $this->getTasks(),
@@ -122,7 +124,7 @@ class TaskKanban extends Component implements HasForms, HasActions
         ], ResponseAlias::HTTP_OK);
     }
 
-    public function viewTask(Task $task)
+    public function viewTask(Task $task): void
     {
         $this->currentTask = $task;
 
@@ -166,7 +168,7 @@ class TaskKanban extends Component implements HasForms, HasActions
             });
     }
 
-    public function viewAction()
+    public function viewAction(): Action
     {
         return TaskKanbanViewAction::make()->record($this->currentTask)
             ->extraModalFooterActions(

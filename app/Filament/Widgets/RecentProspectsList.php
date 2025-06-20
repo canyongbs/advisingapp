@@ -52,7 +52,10 @@ class RecentProspectsList extends BaseWidget
         'lg' => 2,
     ];
 
-    public function getColumns(): int | string | array
+    /**
+     * @return int|string|array<string, int>
+     */
+    public function getColumns(): int|string|array
     {
         return [
             'sm' => 1,

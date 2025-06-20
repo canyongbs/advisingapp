@@ -88,6 +88,11 @@ return new class () extends Migration {
             });
     }
 
+    /**
+     * @param array<string, mixed> $block
+     *
+     * @return array<string, mixed>
+     */
     protected function fixTipTapBlock(array $block, string $from, string $to): array
     {
         foreach (($block['content'] ?? []) as $childBlockIndex => $childBlock) {

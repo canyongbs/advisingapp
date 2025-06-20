@@ -42,6 +42,9 @@ use Illuminate\Validation\Rule;
 
 class CreateTenantRequest extends FormRequest
 {
+    /**
+      * @return array<string, array<int, string|Rule>>
+      */
     public function rules(): array
     {
         return [
