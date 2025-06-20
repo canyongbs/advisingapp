@@ -26,11 +26,6 @@ it('displays only prospects added within the selected date range', function () {
         'endDate' => $endDate->toDateString(),
     ];
 
-    $filters = [
-        'startDate' => $startDate->toDateString(),
-        'endDate' => $endDate->toDateString(),
-    ];
-
     livewire(ProspectReportTableChart::class, [
         'cacheTag' => 'prospect-report-cache',
         'filters' => $filters,

@@ -120,184 +120,13 @@ class TaskCumulativeCountLineChart extends LineChartReportWidget
     protected function getTaskCumulativeData(?Carbon $startDate = null, ?Carbon $endDate = null): array
     {
         if ($startDate && $endDate) {
-            $studentData = DB::select("
-                WITH months AS (
-                    SELECT generate_series(
-                        date_trunc('month', ?::date),
-                        date_trunc('month', ?::date),
-                        interval '1 month'
-                    ) AS month
-                ),
-                monthly_data AS (
-                    SELECT
-                        date_trunc('month', created_at) AS month,
-                        COUNT(*) AS total
-                    FROM tasks
-                    WHERE created_at BETWEEN ? AND ?
-                    AND concern_type = ?
-                    AND deleted_at IS NULL
-                    GROUP BY date_trunc('month', created_at)
-                )
-                SELECT
-                    to_char(m.month, 'Mon YYYY') AS label,
-                    COALESCE(md.total, 0) AS total
-                FROM months m
-                LEFT JOIN monthly_data md ON m.month = md.month
-                ORDER BY m.month
-            ", [
-                $startDate,
-                $endDate,
-                $startDate,
-                $endDate,
-                app(Student::class)->getMorphClass(),
-            ]);
-
-            $prospectData = DB::select("
-                WITH months AS (
-                    SELECT generate_series(
-                        date_trunc('month', ?::date),
-                        date_trunc('month', ?::date),
-                        interval '1 month'
-                    ) AS month
-                ),
-                monthly_data AS (
-                    SELECT
-                        date_trunc('month', created_at) AS month,
-                        COUNT(*) AS total
-                    FROM tasks
-                    WHERE created_at BETWEEN ? AND ?
-                    AND concern_type = ?
-                    AND deleted_at IS NULL
-                    GROUP BY date_trunc('month', created_at)
-                )
-                SELECT
-                    to_char(m.month, 'Mon YYYY') AS label,
-                    COALESCE(md.total, 0) AS total
-                FROM months m
-                LEFT JOIN monthly_data md ON m.month = md.month
-                ORDER BY m.month
-            ", [
-                $startDate,
-                $endDate,
-                $startDate,
-                $endDate,
-                app(Prospect::class)->getMorphClass(),
-            ]);
-
-            $unrelatedData = DB::select("
-                WITH months AS (
-                    SELECT generate_series(
-                        date_trunc('month', ?::date),
-                        date_trunc('month', ?::date),
-                        interval '1 month'
-                    ) AS month
-                ),
-                monthly_data AS (
-                    SELECT
-                        date_trunc('month', created_at) AS month,
-                        COUNT(*) AS total
-                    FROM tasks
-                    WHERE created_at BETWEEN ? AND ?
-                    AND concern_id IS NULL
-                    AND concern_type IS NULL
-                    AND deleted_at IS NULL
-                    GROUP BY date_trunc('month', created_at)
-                )
-                SELECT
-                    to_char(m.month, 'Mon YYYY') AS label,
-                    COALESCE(md.total, 0) AS total
-                FROM months m
-                LEFT JOIN monthly_data md ON m.month = md.month
-                ORDER BY m.month
-            ", [
-                $startDate,
-                $endDate,
-                $startDate,
-                $endDate,
-            ]);
+            $studentData = $this->getStudentTasksByDateRange($startDate, $endDate);
+            $prospectData = $this->getProspectTasksByDateRange($startDate, $endDate);
+            $unrelatedData = $this->getUnrelatedTasksByDateRange($startDate, $endDate);
         } else {
-            $studentData = DB::select("
-                WITH months AS (
-                    SELECT generate_series(
-                        date_trunc('month', CURRENT_DATE) - INTERVAL '11 months',
-                        date_trunc('month', CURRENT_DATE),
-                        interval '1 month'
-                    ) AS month
-                ),
-                monthly_data AS (
-                    SELECT
-                        date_trunc('month', created_at) AS month,
-                        COUNT(*) AS total
-                    FROM tasks
-                    WHERE created_at >= date_trunc('month', CURRENT_DATE) - INTERVAL '11 months'
-                    AND concern_type = ?
-                    AND deleted_at IS NULL
-                    GROUP BY date_trunc('month', created_at)
-                )
-                SELECT
-                    to_char(m.month, 'Mon YYYY') AS label,
-                    COALESCE(md.total, 0) AS total
-                FROM months m
-                LEFT JOIN monthly_data md ON m.month = md.month
-                ORDER BY m.month
-            ", [
-                app(Student::class)->getMorphClass(),
-            ]);
-
-            $prospectData = DB::select("
-                WITH months AS (
-                    SELECT generate_series(
-                        date_trunc('month', CURRENT_DATE) - INTERVAL '11 months',
-                        date_trunc('month', CURRENT_DATE),
-                        interval '1 month'
-                    ) AS month
-                ),
-                monthly_data AS (
-                    SELECT
-                        date_trunc('month', created_at) AS month,
-                        COUNT(*) AS total
-                    FROM tasks
-                    WHERE created_at >= date_trunc('month', CURRENT_DATE) - INTERVAL '11 months'
-                    AND concern_type = ?
-                    AND deleted_at IS NULL
-                    GROUP BY date_trunc('month', created_at)
-                )
-                SELECT
-                    to_char(m.month, 'Mon YYYY') AS label,
-                    COALESCE(md.total, 0) AS total
-                FROM months m
-                LEFT JOIN monthly_data md ON m.month = md.month
-                ORDER BY m.month
-            ", [
-                app(Prospect::class)->getMorphClass(),
-            ]);
-
-            $unrelatedData = DB::select("
-                WITH months AS (
-                    SELECT generate_series(
-                        date_trunc('month', CURRENT_DATE) - INTERVAL '11 months',
-                        date_trunc('month', CURRENT_DATE),
-                        interval '1 month'
-                    ) AS month
-                ),
-                monthly_data AS (
-                    SELECT
-                        date_trunc('month', created_at) AS month,
-                        COUNT(*) AS total
-                    FROM tasks
-                    WHERE created_at >= date_trunc('month', CURRENT_DATE) - INTERVAL '11 months'
-                    AND concern_id IS NULL
-                    AND concern_type IS NULL
-                    AND deleted_at IS NULL
-                    GROUP BY date_trunc('month', created_at)
-                )
-                SELECT
-                    to_char(m.month, 'Mon YYYY') AS label,
-                    COALESCE(md.total, 0) AS total
-                FROM months m
-                LEFT JOIN monthly_data md ON m.month = md.month
-                ORDER BY m.month
-            ");
+            $studentData = $this->getStudentTasksDefaultRange();
+            $prospectData = $this->getProspectTasksDefaultRange();
+            $unrelatedData = $this->getUnrelatedTasksDefaultRange();
         }
 
         return [
@@ -305,5 +134,220 @@ class TaskCumulativeCountLineChart extends LineChartReportWidget
             'prospectTasks' => collect($prospectData)->pluck('total', 'label')->toArray(),
             'unrelatedTasks' => collect($unrelatedData)->pluck('total', 'label')->toArray(),
         ];
+    }
+
+    /**
+     * @return array<array{label: string, total: int}>
+     */
+    private function getStudentTasksByDateRange(Carbon $startDate, Carbon $endDate): array
+    {
+        return DB::select("
+            WITH months AS (
+                SELECT generate_series(
+                    date_trunc('month', ?::date),
+                    date_trunc('month', ?::date),
+                    interval '1 month'
+                ) AS month
+            ),
+            monthly_data AS (
+                SELECT
+                    date_trunc('month', created_at) AS month,
+                    COUNT(*) AS total
+                FROM tasks
+                WHERE created_at BETWEEN ? AND ?
+                AND concern_type = ?
+                AND deleted_at IS NULL
+                GROUP BY date_trunc('month', created_at)
+            )
+            SELECT
+                to_char(m.month, 'Mon YYYY') AS label,
+                COALESCE(md.total, 0) AS total
+            FROM months m
+            LEFT JOIN monthly_data md ON m.month = md.month
+            ORDER BY m.month
+        ", [
+            $startDate,
+            $endDate,
+            $startDate,
+            $endDate,
+            app(Student::class)->getMorphClass(),
+        ]);
+    }
+
+    /**
+     * @return array<array{label: string, total: int}>
+     */
+    private function getProspectTasksByDateRange(Carbon $startDate, Carbon $endDate): array
+    {
+        return DB::select("
+            WITH months AS (
+                SELECT generate_series(
+                    date_trunc('month', ?::date),
+                    date_trunc('month', ?::date),
+                    interval '1 month'
+                ) AS month
+            ),
+            monthly_data AS (
+                SELECT
+                    date_trunc('month', created_at) AS month,
+                    COUNT(*) AS total
+                FROM tasks
+                WHERE created_at BETWEEN ? AND ?
+                AND concern_type = ?
+                AND deleted_at IS NULL
+                GROUP BY date_trunc('month', created_at)
+            )
+            SELECT
+                to_char(m.month, 'Mon YYYY') AS label,
+                COALESCE(md.total, 0) AS total
+            FROM months m
+            LEFT JOIN monthly_data md ON m.month = md.month
+            ORDER BY m.month
+        ", [
+            $startDate,
+            $endDate,
+            $startDate,
+            $endDate,
+            app(Prospect::class)->getMorphClass(),
+        ]);
+    }
+
+    /**
+     * @return array<array{label: string, total: int}>
+     */
+    private function getUnrelatedTasksByDateRange(Carbon $startDate, Carbon $endDate): array
+    {
+        return DB::select("
+            WITH months AS (
+                SELECT generate_series(
+                    date_trunc('month', ?::date),
+                    date_trunc('month', ?::date),
+                    interval '1 month'
+                ) AS month
+            ),
+            monthly_data AS (
+                SELECT
+                    date_trunc('month', created_at) AS month,
+                    COUNT(*) AS total
+                FROM tasks
+                WHERE created_at BETWEEN ? AND ?
+                AND concern_id IS NULL
+                AND concern_type IS NULL
+                AND deleted_at IS NULL
+                GROUP BY date_trunc('month', created_at)
+            )
+            SELECT
+                to_char(m.month, 'Mon YYYY') AS label,
+                COALESCE(md.total, 0) AS total
+            FROM months m
+            LEFT JOIN monthly_data md ON m.month = md.month
+            ORDER BY m.month
+        ", [
+            $startDate,
+            $endDate,
+            $startDate,
+            $endDate,
+        ]);
+    }
+
+    /**
+     * @return array<array{label: string, total: int}>
+     */
+    private function getStudentTasksDefaultRange(): array
+    {
+        return DB::select("
+            WITH months AS (
+                SELECT generate_series(
+                    date_trunc('month', CURRENT_DATE) - INTERVAL '11 months',
+                    date_trunc('month', CURRENT_DATE),
+                    interval '1 month'
+                ) AS month
+            ),
+            monthly_data AS (
+                SELECT
+                    date_trunc('month', created_at) AS month,
+                    COUNT(*) AS total
+                FROM tasks
+                WHERE created_at >= date_trunc('month', CURRENT_DATE) - INTERVAL '11 months'
+                AND concern_type = ?
+                AND deleted_at IS NULL
+                GROUP BY date_trunc('month', created_at)
+            )
+            SELECT
+                to_char(m.month, 'Mon YYYY') AS label,
+                COALESCE(md.total, 0) AS total
+            FROM months m
+            LEFT JOIN monthly_data md ON m.month = md.month
+            ORDER BY m.month
+        ", [
+            app(Student::class)->getMorphClass(),
+        ]);
+    }
+
+    /**
+     * @return array<array{label: string, total: int}>
+     */
+    private function getProspectTasksDefaultRange(): array
+    {
+        return DB::select("
+            WITH months AS (
+                SELECT generate_series(
+                    date_trunc('month', CURRENT_DATE) - INTERVAL '11 months',
+                    date_trunc('month', CURRENT_DATE),
+                    interval '1 month'
+                ) AS month
+            ),
+            monthly_data AS (
+                SELECT
+                    date_trunc('month', created_at) AS month,
+                    COUNT(*) AS total
+                FROM tasks
+                WHERE created_at >= date_trunc('month', CURRENT_DATE) - INTERVAL '11 months'
+                AND concern_type = ?
+                AND deleted_at IS NULL
+                GROUP BY date_trunc('month', created_at)
+            )
+            SELECT
+                to_char(m.month, 'Mon YYYY') AS label,
+                COALESCE(md.total, 0) AS total
+            FROM months m
+            LEFT JOIN monthly_data md ON m.month = md.month
+            ORDER BY m.month
+        ", [
+            app(Prospect::class)->getMorphClass(),
+        ]);
+    }
+
+    /**
+     * @return array<array{label: string, total: int}>
+     */
+    private function getUnrelatedTasksDefaultRange(): array
+    {
+        return DB::select("
+            WITH months AS (
+                SELECT generate_series(
+                    date_trunc('month', CURRENT_DATE) - INTERVAL '11 months',
+                    date_trunc('month', CURRENT_DATE),
+                    interval '1 month'
+                ) AS month
+            ),
+            monthly_data AS (
+                SELECT
+                    date_trunc('month', created_at) AS month,
+                    COUNT(*) AS total
+                FROM tasks
+                WHERE created_at >= date_trunc('month', CURRENT_DATE) - INTERVAL '11 months'
+                AND concern_id IS NULL
+                AND concern_type IS NULL
+                AND deleted_at IS NULL
+                GROUP BY date_trunc('month', created_at)
+            )
+            SELECT
+                to_char(m.month, 'Mon YYYY') AS label,
+                COALESCE(md.total, 0) AS total
+            FROM months m
+            LEFT JOIN monthly_data md ON m.month = md.month
+            ORDER BY m.month
+        ");
     }
 }

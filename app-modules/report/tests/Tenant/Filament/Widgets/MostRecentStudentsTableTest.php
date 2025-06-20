@@ -26,11 +26,6 @@ it('displays only students added within the selected date range', function () {
         'endDate' => $endDate->toDateString(),
     ];
 
-    $filters = [
-        'startDate' => $startDate->toDateString(),
-        'endDate' => $endDate->toDateString(),
-    ];
-
     livewire(MostRecentStudentsTable::class, [
         'cacheTag' => 'report-students',
         'filters' => $filters,
