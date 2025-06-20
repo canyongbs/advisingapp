@@ -131,6 +131,14 @@ class QnAAdvisorEmbed extends EditRecord
         return $record;
     }
 
+    public static function canAccess(array $parameters = []): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return QnAAdvisorFeature::active() && $user->can('qna_advisor_embed.view-any') && $user->can('qna_advisor_embed.*.view') && parent::canAccess($parameters);
+    }
+
     protected function mutateFormDataBeforeFill(array $data): array
     {
         /** @var QnAAdvisor $record */
@@ -154,13 +162,5 @@ class QnAAdvisorEmbed extends EditRecord
         );
 
         return $record;
-    }
-
-    public static function canAccess(array $parameters = []): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return QnAAdvisorFeature::active() && $user->can('qna_advisor_embed.view-any') && $user->can('qna_advisor_embed.*.view') && parent::canAccess($parameters);
     }
 }

@@ -2,7 +2,6 @@
 
 namespace AdvisingApp\Ai\Policies;
 
-use AdvisingApp\Ai\Models\QnAAdvisorCategory;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Concerns\PerformsLicenseChecks;
 use App\Models\Authenticatable;
@@ -32,7 +31,7 @@ class QnAAdvisorCategoryPolicy
     public function view(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["qna_advisor_category.*.view"],
+            abilities: ['qna_advisor_category.*.view'],
             denyResponse: 'You do not have permission to view this QnA Advisor Category.'
         );
     }
@@ -48,7 +47,7 @@ class QnAAdvisorCategoryPolicy
     public function update(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["qna_advisor_category.*.update"],
+            abilities: ['qna_advisor_category.*.update'],
             denyResponse: 'You do not have permission to update this QnA Advisor Category.'
         );
     }
@@ -56,7 +55,7 @@ class QnAAdvisorCategoryPolicy
     public function delete(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["qna_advisor_category.*.delete"],
+            abilities: ['qna_advisor_category.*.delete'],
             denyResponse: 'You do not have permission to delete this QnA Advisor Categories.'
         );
     }
@@ -64,7 +63,7 @@ class QnAAdvisorCategoryPolicy
     public function restore(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["qna_advisor_category.*.restore"],
+            abilities: ['qna_advisor_category.*.restore'],
             denyResponse: 'You do not have permission to restore this QnA Advisor Categories.'
         );
     }
@@ -72,7 +71,7 @@ class QnAAdvisorCategoryPolicy
     public function forceDelete(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["qna_advisor_category.*.force-delete"],
+            abilities: ['qna_advisor_category.*.force-delete'],
             denyResponse: 'You do not have permission to force-delete this QnA Advisor Categories.'
         );
     }

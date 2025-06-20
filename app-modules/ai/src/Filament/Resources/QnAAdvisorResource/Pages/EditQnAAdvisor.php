@@ -6,6 +6,7 @@ use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Filament\Resources\QnAAdvisorResource;
 use AdvisingApp\Ai\Models\QnAAdvisor;
+use AdvisingApp\Ai\Settings\AiQnAAdvisorSettings;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
@@ -74,11 +75,20 @@ class EditQnAAdvisor extends EditRecord
                             ->maxLength(255),
                         Select::make('model')
                             ->reactive()
-                            ->options(AiModelApplicabilityFeature::CustomAdvisors->getModelsAsSelectOptions())
+                            ->options(AiModelApplicabilityFeature::QuestionAndAnswerAdvisor->getModelsAsSelectOptions())
                             ->searchable()
                             ->required()
-                            ->visible(auth()->user()->isSuperAdmin())
-                            ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::CustomAdvisors->getModels())),
+                            ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::QuestionAndAnswerAdvisor->getModels()))
+                            ->disabled(fn (): bool => ! app(AiQnAAdvisorSettings::class)->allow_selection_of_model)
+                            ->default(function () {
+                                $settings = app(AiQnAAdvisorSettings::class);
+
+                                if ($settings->allow_selection_of_model) {
+                                    return null;
+                                }
+
+                                return $settings->preselected_model;
+                            }),
                     ])
                         ->columns(2),
                     Textarea::make('description')
@@ -93,29 +103,32 @@ class EditQnAAdvisor extends EditRecord
             Action::make('archive')
                 ->color('danger')
                 ->action(function () {
-                    $assistant = $this->getRecord();
-                    $assistant->archived_at = now();
-                    $assistant->save();
+
+                    /** @var QnAAdvisor $qnqAdvisor */
+                    $qnqAdvisor = $this->getRecord();
+                    $qnqAdvisor->archived_at = now();
+                    $qnqAdvisor->save();
 
                     Notification::make()
                         ->title('QnA Advisor archived')
                         ->success()
                         ->send();
                 })
-                ->hidden(fn (): bool => (bool) $this->getRecord()->archived_at),
+                ->hidden(fn (QnAAdvisor $record): bool => (bool) $record->archived_at),
             Action::make('restore')
                 ->action(function () {
-                    $assistant = $this->getRecord();
-                    $assistant->archived_at = null;
-                    $assistant->save();
+                    /** @var QnAAdvisor $qnqAdvisor */
+                    $qnqAdvisor = $this->getRecord();
+                    $qnqAdvisor->archived_at = null;
+                    $qnqAdvisor->save();
 
                     Notification::make()
                         ->title('QnA Advisor restored')
                         ->success()
                         ->send();
                 })
-                ->hidden(function (): bool {
-                    if (! $this->getRecord()->archived_at) {
+                ->hidden(function (QnAAdvisor $record): bool {
+                    if (! $record->archived_at) {
                         return true;
                     }
 

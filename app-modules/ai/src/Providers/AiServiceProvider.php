@@ -43,7 +43,6 @@ use AdvisingApp\Ai\Events\AiMessageTrashed;
 use AdvisingApp\Ai\Events\AiThreadForceDeleting;
 use AdvisingApp\Ai\Events\AiThreadTrashed;
 use AdvisingApp\Ai\Events\AssistantFilesFinishedUploading;
-use AdvisingApp\Ai\Filament\Resources\QnAAdvisorResource\Pages\QnAAdvisorEmbed;
 use AdvisingApp\Ai\Listeners\HandleAssistantFilesFinishedUploading;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiAssistantFile;
