@@ -56,7 +56,7 @@ class SnsMessage extends Data
         public string|Optional $unsubscribeURL,
     ) {}
 
-    public static function fromRequest(Request $request): static
+    public static function fromRequest(Request $request): SnsMessage
     {
         $data = json_decode($request->getContent(), true);
 

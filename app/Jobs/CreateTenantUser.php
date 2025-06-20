@@ -61,6 +61,9 @@ class CreateTenantUser implements ShouldQueue, NotTenantAware
         public TenantUser $data,
     ) {}
 
+    /**
+     * @return array<int, SkipIfBatchCancelled>
+     */
     public function middleware(): array
     {
         return [new SkipIfBatchCancelled()];

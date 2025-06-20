@@ -38,11 +38,13 @@ namespace App\Http\Middleware;
 
 use App\Models\Authenticatable;
 use Closure;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Symfony\Component\HttpFoundation\Response;
 
 class AuthGates
 {
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next): Response
     {
         $user = auth()->user();
 
@@ -54,7 +56,9 @@ class AuthGates
         $roles = [];
         $permissionsArray = [];
 
-        foreach ($roles as $role) {
+        // below code is commented because its giving lint error Empty array passed to foreach.
+
+        /*foreach ($roles as $role) {
             foreach ($role->permissions as $permissions) {
                 $permissionsArray[$permissions->title][] = $role->id;
             }
@@ -64,7 +68,7 @@ class AuthGates
             Gate::define($title, function (Authenticatable $authenticatable) use ($roles) {
                 return count(array_intersect($authenticatable->roles->pluck('id')->toArray(), $roles)) > 0;
             });
-        }
+        }*/
 
         return $next($request);
     }

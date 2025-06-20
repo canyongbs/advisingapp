@@ -49,6 +49,9 @@ class SqsDiskConnector extends BaseSqsDiskConnector
      * Establish a queue connection.
      *
      *
+     *
+     * @param array<string, mixed> $config
+     *
      * @return Queue
      */
     public function connect(array $config)

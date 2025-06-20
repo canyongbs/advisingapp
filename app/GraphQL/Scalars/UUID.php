@@ -118,7 +118,7 @@ class UUID extends ScalarType implements TypeDefinition
         return $this;
     }
 
-    private function validateUUID($value): false|int
+    private function validateUUID(string $value): false|int
     {
         $pattern = '/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i';
 

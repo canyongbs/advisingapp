@@ -37,10 +37,12 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class SetPreferredLocale
 {
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next): Response
     {
         // If user has locale then set it
         if ($userLocale = optional(auth()->user())->locale) {
