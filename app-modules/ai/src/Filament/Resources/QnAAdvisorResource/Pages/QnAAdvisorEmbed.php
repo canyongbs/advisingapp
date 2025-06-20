@@ -7,6 +7,7 @@ use AdvisingApp\Ai\Filament\Resources\QnAAdvisorResource;
 use AdvisingApp\Ai\Models\QnAAdvisor;
 use AdvisingApp\Form\Rules\IsDomain;
 use App\Features\QnAAdvisorFeature;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
@@ -22,6 +23,8 @@ use Illuminate\Support\Str;
 
 class QnAAdvisorEmbed extends EditRecord
 {
+    use EditPageRedirection;
+
     protected static string $resource = QnAAdvisorResource::class;
 
     protected static ?string $title = 'Embed';
