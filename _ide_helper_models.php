@@ -1288,7 +1288,7 @@ namespace AdvisingApp\Ai\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \AdvisingApp\Ai\Models\QnAAdvisorCategory $category
- * @method static \AdvisingApp\Ai\Database\Factories\QnaAdvisorQuestionFactory factory($count = null, $state = [])
+ * @method static \AdvisingApp\Ai\Database\Factories\QnAAdvisorQuestionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|QnAAdvisorQuestion newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|QnAAdvisorQuestion newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|QnAAdvisorQuestion onlyTrashed()
@@ -1305,7 +1305,7 @@ namespace AdvisingApp\Ai\Models{
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
-	class IdeHelperQnaAdvisorQuestion {}
+	class IdeHelperQnAAdvisorQuestion {}
 }
 
 namespace AdvisingApp\Alert\Models{

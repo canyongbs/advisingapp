@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @mixin IdeHelperQnaAdvisorQuestion
+ * @mixin IdeHelperQnAAdvisorQuestion
  */
 class QnAAdvisorQuestion extends BaseModel
 {
