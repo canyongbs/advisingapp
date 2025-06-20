@@ -37,18 +37,14 @@
 namespace AdvisingApp\Consent\Providers;
 
 use AdvisingApp\Consent\ConsentPlugin;
-use AdvisingApp\Consent\Enums\ConsentAgreementType;
 use AdvisingApp\Consent\Models\ConsentAgreement;
 use AdvisingApp\Consent\Models\UserConsentAgreement;
-use App\Concerns\ImplementsGraphQL;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 
 class ConsentServiceProvider extends ServiceProvider
 {
-    use ImplementsGraphQL;
-
     public function register()
     {
         Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new ConsentPlugin()));
@@ -60,8 +56,5 @@ class ConsentServiceProvider extends ServiceProvider
             'consent_agreement' => ConsentAgreement::class,
             'user_consent_agreement' => UserConsentAgreement::class,
         ]);
-
-        $this->discoverSchema(__DIR__ . '/../../graphql/*');
-        $this->registerEnum(ConsentAgreementType::class);
     }
 }
