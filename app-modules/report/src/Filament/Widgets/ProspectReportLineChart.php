@@ -53,22 +53,6 @@ class ProspectReportLineChart extends ChartReportWidget
         'lg' => 4,
     ];
 
-    protected function getOptions(): array
-    {
-        return [
-            'plugins' => [
-                'legend' => [
-                    'display' => false,
-                ],
-            ],
-            'scales' => [
-                'y' => [
-                    'min' => 0,
-                ],
-            ],
-        ];
-    }
-
     public function getData(): array
     {
         $startDate = filled($this->filters['startDate'] ?? null)
@@ -153,6 +137,22 @@ class ProspectReportLineChart extends ChartReportWidget
                 ],
             ],
             'labels' => array_keys($runningTotalPerMonth),
+        ];
+    }
+
+    protected function getOptions(): array
+    {
+        return [
+            'plugins' => [
+                'legend' => [
+                    'display' => false,
+                ],
+            ],
+            'scales' => [
+                'y' => [
+                    'min' => 0,
+                ],
+            ],
         ];
     }
 
