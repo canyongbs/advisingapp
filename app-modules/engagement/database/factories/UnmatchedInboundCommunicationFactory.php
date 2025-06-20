@@ -34,49 +34,42 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Actions;
+namespace AdvisingApp\Engagement\Database\Factories;
 
-use AdvisingApp\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
-use AdvisingApp\Engagement\DataTransferObjects\EngagementResponseData;
-use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
-use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Engagement\Models\UnmatchedInboundCommunication;
-use App\Features\UnMatchInboundCommunicationFeature;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class CreateEngagementResponse
+/**
+ * @extends Factory<UnmatchedInboundCommunication>
+ */
+class UnmatchedInboundCommunicationFactory extends Factory
 {
-    public function __construct(
-        public EngagementResponseSenderFinder $finder
-    ) {}
-
-    public function __invoke(EngagementResponseData $data): void
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
-        $sender = $this->finder->find($data->from);
-
-        if (is_null($sender)) {
-            if (! UnMatchInboundCommunicationFeature::active()) {
-                return;
-            }
-            UnmatchedInboundCommunication::create([
-                'type' => EngagementResponseType::Sms,
-                'sender' => $data->from,
-                'body' => $data->body,
-                'occurred_at' => now(),
-            ]);
-
-            return;
-        }
-
-        EngagementResponse::create([
-            'type' => EngagementResponseType::Sms,
-            'sender_id' => $sender->getKey(),
-            'sender_type' => $sender->getMorphClass(),
-            'content' => $data->body,
-            // TODO We might need to retroactively get this data from the Twilio API
-            // For now, we will assume that the message was sent at the time it was received
-            'sent_at' => now(),
-            'status' => EngagementResponseStatus::New,
-        ]);
+        return [
+            'type' => $this->faker->randomElement(EngagementResponseType::cases()),
+            'sender' => function ($attributes) {
+                return match ($attributes['type']) {
+                    EngagementResponseType::Email => $this->faker->email(),
+                    EngagementResponseType::Sms => $this->faker->phoneNumber(),
+                    default => $this->faker->phoneNumber(),
+                };
+            },
+            'occurred_at' => now(),
+            'subject' => function ($attributes) {
+                return match ($attributes['type']) {
+                    EngagementResponseType::Email => $this->faker->sentence(),
+                    EngagementResponseType::Sms => null,
+                    default => null,
+                };
+            },
+            'body' => $this->faker->sentence(),
+        ];
     }
 }

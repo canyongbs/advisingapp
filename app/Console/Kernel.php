@@ -43,6 +43,7 @@ use AdvisingApp\Audit\Models\Audit;
 use AdvisingApp\Campaign\Jobs\ExecuteCampaignActions;
 use AdvisingApp\Engagement\Jobs\DeliverEngagements as DeliverEngagementsJob;
 use AdvisingApp\Engagement\Jobs\GatherAndDispatchSesS3InboundEmails;
+use AdvisingApp\Engagement\Jobs\UnmatchedInboundCommunicationsJob;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use AdvisingApp\Form\Models\FormAuthentication;
 use AdvisingApp\MeetingCenter\Console\Commands\RefreshCalendarRefreshTokens;
@@ -173,6 +174,11 @@ class Kernel extends ConsoleKernel
                         ->name("Schedule Check Heartbeat | Tenant {$tenant->domain}")
                         ->monitorName("Schedule Check Heartbeat | Tenant {$tenant->domain}")
                         ->withoutOverlapping(15);
+
+                    $schedule->job(new UnmatchedInboundCommunicationsJob())
+                        ->daily()
+                        ->name('Process Unmatched Inbound Communications')
+                        ->monitorName('Process Unmatched Inbound Communications');
                 } catch (Throwable $th) {
                     Log::error('Error scheduling tenant commands.', [
                         'tenant' => $tenant->id,

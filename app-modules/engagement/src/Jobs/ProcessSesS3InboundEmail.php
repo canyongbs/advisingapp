@@ -43,8 +43,10 @@ use AdvisingApp\Engagement\Exceptions\UnableToDetectAnyMatchingEducatablesFromSe
 use AdvisingApp\Engagement\Exceptions\UnableToDetectTenantFromSesS3EmailPayload;
 use AdvisingApp\Engagement\Exceptions\UnableToRetrieveContentFromSesS3EmailPayload;
 use AdvisingApp\Engagement\Models\EngagementResponse;
+use AdvisingApp\Engagement\Models\UnmatchedInboundCommunication;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\UnMatchInboundCommunicationFeature;
 use App\Models\Tenant;
 use Aws\Crypto\KmsMaterialsProviderV2;
 use Aws\Kms\KmsClient;
@@ -202,10 +204,28 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
                         ->whereRelation('emailAddresses', 'address', $sender)
                         ->get();
 
-                    throw_if(
-                        $prospects->isEmpty(),
-                        new UnableToDetectAnyMatchingEducatablesFromSesS3EmailPayload($this->emailFilePath),
-                    );
+                    if (! UnMatchInboundCommunicationFeature::active()) {
+                        throw_if(
+                            $prospects->isEmpty(),
+                            new UnableToDetectAnyMatchingEducatablesFromSesS3EmailPayload($this->emailFilePath),
+                        );
+                    }
+
+                    if (UnMatchInboundCommunicationFeature::active() && $prospects->isEmpty()) {
+                        UnmatchedInboundCommunication::create([
+                            'type' => EngagementResponseType::Email,
+                            'subject' => $parser->getHeader('subject'),
+                            'body' => $parser->getMessageBody('htmlEmbedded'),
+                            'occurred_at' => $parser->getHeader('date'),
+                            'sender' => $sender,
+                        ]);
+
+                        Storage::disk('s3-inbound-email')->delete($this->emailFilePath);
+
+                        DB::commit();
+
+                        return;
+                    }
 
                     $prospects->each(function (Prospect $prospect) use ($parser, $content) {
                         /** @var EngagementResponse $engagementResponse */
