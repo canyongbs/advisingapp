@@ -9,11 +9,12 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Enum;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Livewire\livewire;
+
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 test('EditQnAAdvisor is gated with proper access control', function () {
     Storage::fake('s3');
@@ -34,8 +35,7 @@ test('EditQnAAdvisor is gated with proper access control', function () {
     ])
         ->assertForbidden();
 
-    $user->givePermissionTo('qna_advisor.view-any');
-    $user->givePermissionTo('qna_advisor.*.update');
+    $user->givePermissionTo(['qna_advisor.view-any', 'qna_advisor.*.update']);
 
     actingAs($user)
         ->get(
@@ -70,15 +70,14 @@ test('EditQnAAdvisor is gated with proper access control', function () {
     );
 });
 
-test('EditIncident validates the inputs', function ($data, $errors) {
+test('EditQnAAdvisor validates the inputs', function ($data, $errors) {
     Storage::fake('s3');
 
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     actingAs($user);
 
-    $user->givePermissionTo('qna_advisor.view-any');
-    $user->givePermissionTo('qna_advisor.*.update');
+    $user->givePermissionTo(['qna_advisor.view-any', 'qna_advisor.*.update']);
 
     $qnaAdvisor = QnAAdvisor::factory()->create();
 
@@ -137,9 +136,9 @@ test('archive action visible when QnA Advisor is not archived', function () {
     livewire(EditQnAAdvisor::class, [
         'record' => $qnaAdvisors->getRouteKey(),
     ])
-    ->assertSuccessful()
-    ->assertActionVisible('archive')
-    ->assertActionHidden('restore');
+        ->assertSuccessful()
+        ->assertActionVisible('archive')
+        ->assertActionHidden('restore');
 });
 
 test('restore action visible when QnA Advisor is archived', function () {
@@ -158,8 +157,7 @@ test('restore action visible when QnA Advisor is archived', function () {
     livewire(EditQnAAdvisor::class, [
         'record' => $qnaAdvisors->getRouteKey(),
     ])
-    ->assertSuccessful()
-    ->assertActionVisible('restore')
-    ->assertActionHidden('archive');
+        ->assertSuccessful()
+        ->assertActionVisible('restore')
+        ->assertActionHidden('archive');
 });
-

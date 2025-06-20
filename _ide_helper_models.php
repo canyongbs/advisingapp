@@ -1192,7 +1192,7 @@ namespace AdvisingApp\Ai\Models{
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
  * @property-read \AdvisingApp\Ai\Models\QnAAdvisorEmbed|null $qnAAdvisorEmbed
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\QnaAdvisorQuestion> $questions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\QnAAdvisorQuestion> $questions
  * @property-read int|null $questions_count
  * @method static \AdvisingApp\Ai\Database\Factories\QnAAdvisorFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|QnAAdvisor newModelQuery()
@@ -1228,7 +1228,7 @@ namespace AdvisingApp\Ai\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \AdvisingApp\Ai\Models\QnAAdvisor $qnAAdvisor
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\QnaAdvisorQuestion> $questions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\QnAAdvisorQuestion> $questions
  * @property-read int|null $questions_count
  * @method static \AdvisingApp\Ai\Database\Factories\QnAAdvisorCategoryFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|QnAAdvisorCategory newModelQuery()
@@ -1289,19 +1289,19 @@ namespace AdvisingApp\Ai\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \AdvisingApp\Ai\Models\QnAAdvisorCategory $category
  * @method static \AdvisingApp\Ai\Database\Factories\QnaAdvisorQuestionFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorQuestion newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorQuestion newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorQuestion onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorQuestion query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorQuestion whereAnswer($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorQuestion whereCategoryId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorQuestion whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorQuestion whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorQuestion whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorQuestion whereQuestion($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorQuestion whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorQuestion withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorQuestion withoutTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnAAdvisorQuestion newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnAAdvisorQuestion newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnAAdvisorQuestion onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnAAdvisorQuestion query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnAAdvisorQuestion whereAnswer($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnAAdvisorQuestion whereCategoryId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnAAdvisorQuestion whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnAAdvisorQuestion whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnAAdvisorQuestion whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnAAdvisorQuestion whereQuestion($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnAAdvisorQuestion whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnAAdvisorQuestion withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnAAdvisorQuestion withoutTrashed()
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]

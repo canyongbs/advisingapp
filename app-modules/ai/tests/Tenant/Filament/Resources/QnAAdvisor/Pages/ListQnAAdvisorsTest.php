@@ -28,7 +28,7 @@ test('ListQnAAdvisors is gated with proper access control', function () {
 it('render QnA Advisors default to without archived', function () {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
-    $user->givePermissionTo(['qna_advisor.view-any','qna_advisor.*.view']);
+    $user->givePermissionTo(['qna_advisor.view-any', 'qna_advisor.*.view']);
 
     actingAs($user);
 
@@ -43,13 +43,12 @@ it('render QnA Advisors default to without archived', function () {
     livewire(ListQnAAdvisors::class)
         ->assertCanSeeTableRecords($qnaAdvisors)
         ->assertCanNotSeeTableRecords($archivedQnaAdvisors);
-
 });
 
 it('filter QnA Advisors with archived', function () {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
-    $user->givePermissionTo(['qna_advisor.view-any','qna_advisor.*.view']);
+    $user->givePermissionTo(['qna_advisor.view-any', 'qna_advisor.*.view']);
 
     actingAs($user);
 
@@ -66,5 +65,4 @@ it('filter QnA Advisors with archived', function () {
         ->assertCanNotSeeTableRecords($archivedQnaAdvisors)
         ->removeTableFilter('withoutArchived')
         ->assertCanSeeTableRecords($qnaAdvisors->merge($archivedQnaAdvisors));
-
 });

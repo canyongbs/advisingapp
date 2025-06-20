@@ -10,7 +10,6 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Enum;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
@@ -18,6 +17,9 @@ use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
 use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
+
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+
 use function Tests\asSuperAdmin;
 
 test('CreateQnAAdvisor is gated with proper access control', function () {
@@ -39,8 +41,7 @@ test('CreateQnAAdvisor is gated with proper access control', function () {
     livewire(CreateQnAAdvisor::class)
         ->assertForbidden();
 
-    $user->givePermissionTo('qna_advisor.view-any');
-    $user->givePermissionTo('qna_advisor.create');
+    $user->givePermissionTo(['qna_advisor.view-any', 'qna_advisor.create']);
 
     actingAs($user)
         ->get(
@@ -71,11 +72,9 @@ test('CreateQnAAdvisor is gated with proper access control', function () {
             'collection_name' => 'avatar',
         ]
     );
-
 });
 
 test('CreateQnAAdvisor validates the inputs', function ($data, $errors) {
-    
     Storage::fake('s3');
 
     asSuperAdmin();

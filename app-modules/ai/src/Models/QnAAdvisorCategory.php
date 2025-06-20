@@ -29,10 +29,10 @@ class QnAAdvisorCategory extends BaseModel
     }
 
     /**
-     * @return HasMany<QnaAdvisorQuestion, $this>
+     * @return HasMany<QnAAdvisorQuestion, $this>
      */
     public function questions(): HasMany
     {
-        return $this->hasMany(QnaAdvisorQuestion::class, 'category_id');
+        return $this->hasMany(QnAAdvisorQuestion::class, 'category_id');
     }
 }

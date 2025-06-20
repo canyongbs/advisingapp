@@ -45,12 +45,12 @@ class QnAAdvisor extends BaseModel implements HasMedia
     }
 
     /**
-     * @return HasManyThrough<QnaAdvisorQuestion, QnAAdvisorCategory, $this>
+     * @return HasManyThrough<QnAAdvisorQuestion, QnAAdvisorCategory, $this>
      */
     public function questions(): HasManyThrough
     {
         return $this->hasManyThrough(
-            QnaAdvisorQuestion::class,
+            QnAAdvisorQuestion::class,
             QnAAdvisorCategory::class,
             'qn_a_advisor_id',
             'category_id',
