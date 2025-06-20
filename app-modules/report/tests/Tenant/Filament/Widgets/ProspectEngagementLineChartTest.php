@@ -13,14 +13,14 @@ it('returns correct monthly email and sms engagement data for prospects within t
     $prospect2 = Prospect::factory()->state(['created_at' => $endDate])->create();
 
     Engagement::factory()->count(5)->state([
-        'recipient_id' => $prospect1->id,
+        'recipient_id' => $prospect1->getKey(),
         'recipient_type' => (new Prospect())->getMorphClass(),
         'channel' => NotificationChannel::Email,
         'created_at' => $startDate,
     ])->create();
 
     Engagement::factory()->count(5)->state([
-        'recipient_id' => $prospect2->id,
+        'recipient_id' => $prospect2->getKey(),
         'recipient_type' => (new Prospect())->getMorphClass(),
         'channel' => NotificationChannel::Sms,
         'created_at' => $endDate,
