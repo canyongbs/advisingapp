@@ -77,7 +77,7 @@ class EditQnAAdvisor extends EditRecord
                             ->string()
                             ->maxLength(255),
                         Select::make('model')
-                            ->reactive()
+                            ->live()
                             ->options(AiModelApplicabilityFeature::QuestionAndAnswerAdvisor->getModelsAsSelectOptions())
                             ->searchable()
                             ->required()

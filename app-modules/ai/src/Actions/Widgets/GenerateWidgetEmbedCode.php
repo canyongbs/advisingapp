@@ -11,7 +11,7 @@ class GenerateWidgetEmbedCode
     {
         $scriptUrl = url('js/widgets/qna-advisor/qna-advisor-widget.js?');
 
-        $formDefinitionUrl = URL::to(
+        $url = URL::to(
             URL::signedRoute(
                 name: 'qna-advisor.widget',
                 parameters: ['qnAAdvisor' => $qnAAdvisor],
@@ -20,7 +20,7 @@ class GenerateWidgetEmbedCode
         );
 
         return <<<EOD
-        <qna-advisor-embed url="{$formDefinitionUrl}"></qna-advisor-embed>
+        <qna-advisor-embed url="{$url}"></qna-advisor-embed>
         <script src="{$scriptUrl}"></script>
         EOD;
     }

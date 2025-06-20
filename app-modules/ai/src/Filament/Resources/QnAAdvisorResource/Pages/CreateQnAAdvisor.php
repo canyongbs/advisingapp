@@ -39,7 +39,7 @@ class CreateQnAAdvisor extends CreateRecord
                     ->string()
                     ->maxLength(255),
                 Select::make('model')
-                    ->reactive()
+                    ->live()
                     ->options(AiModelApplicabilityFeature::QuestionAndAnswerAdvisor->getModelsAsSelectOptions())
                     ->searchable()
                     ->required()
