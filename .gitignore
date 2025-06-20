@@ -32,8 +32,6 @@ app-modules/**/resources/js/dist/*
 **/.DS_Store
 public/api-docs/*
 /_lighthouse_ide_helper.php
-/programmatic-types.graphql
-/schema-directives.graphql
 /*tinkerwell.php
 .vault-password
 /rr
