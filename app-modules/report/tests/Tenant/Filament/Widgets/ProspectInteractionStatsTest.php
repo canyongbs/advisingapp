@@ -109,8 +109,8 @@ it('Check unique prospects with interactions', function () {
 });
 
 it('returns correct total and unique prospect interaction counts within the given date range', function () {
-    $prospectsWithStartDateInteractions = rand(1, 10);
-    $prospectsWithEndDateInteractions = rand(1, 10);
+    $prospectsWithStartDateInteractions = random_int(1, 10);
+    $prospectsWithEndDateInteractions = random_int(1, 10);
     $interactionStartDate = now()->subDays(10);
     $interactionEndDate = now()->subDays(5);
 

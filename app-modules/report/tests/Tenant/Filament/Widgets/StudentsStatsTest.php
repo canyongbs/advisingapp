@@ -11,7 +11,7 @@ it('returns correct total student stats of students, alerts, segments and tasks 
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
-    $count = rand(1, 5);
+    $count = random_int(1, 5);
 
     Student::factory()->count($count)->state([
         'created_at_source' => $startDate,

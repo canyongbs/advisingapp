@@ -11,11 +11,11 @@ it('returns correct total prospect stats of prospects, alerts, segments and task
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
-    $prospectCountStart = rand(1, 5);
-    $prospectCountEnd = rand(1, 5);
-    $alertCount = rand(1, 5);
-    $segmentCount = rand(1, 5);
-    $taskCount = rand(1, 5);
+    $prospectCountStart = random_int(1, 5);
+    $prospectCountEnd = random_int(1, 5);
+    $alertCount = random_int(1, 5);
+    $segmentCount = random_int(1, 5);
+    $taskCount = random_int(1, 5);
 
     Prospect::factory()->count($prospectCountStart)->state([
         'created_at' => $startDate,
