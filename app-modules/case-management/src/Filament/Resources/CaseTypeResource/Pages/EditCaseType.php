@@ -57,6 +57,8 @@ class EditCaseType extends EditRecord
 
     protected static string $resource = CaseTypeResource::class;
 
+    protected static ?string $navigationLabel = 'Edit';
+
     public function form(Form $form): Form
     {
         return $form
