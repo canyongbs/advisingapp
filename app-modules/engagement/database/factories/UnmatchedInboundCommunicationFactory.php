@@ -39,6 +39,7 @@ namespace AdvisingApp\Engagement\Database\Factories;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Models\UnmatchedInboundCommunication;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use UnhandledMatchError;
 
 /**
  * @extends Factory<UnmatchedInboundCommunication>
@@ -58,7 +59,7 @@ class UnmatchedInboundCommunicationFactory extends Factory
                 return match ($attributes['type']) {
                     EngagementResponseType::Email => $this->faker->unique()->email(),
                     EngagementResponseType::Sms => $this->faker->unique()->e164PhoneNumber(),
-                    default => throw new \UnhandledMatchError('The provided type is not handled.'),
+                    default => throw new UnhandledMatchError('The provided type is not handled.'),
                 };
             },
             'occurred_at' => now(),
