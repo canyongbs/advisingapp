@@ -342,7 +342,9 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->maxLength(255)
                                     ->nullable(),
                                 TextInput::make('jina_deepsearch_v1_api_key')
-                                    ->label('API Key'),
+                                    ->label('API Key')
+                                    ->password()
+                                    ->autocomplete(false),
                                 Select::make('jina_deepsearch_v1_applicable_features')
                                     ->label('Applicability')
                                     ->options(AiModelApplicabilityFeature::class)
