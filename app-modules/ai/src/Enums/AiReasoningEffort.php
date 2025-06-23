@@ -34,37 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services;
+namespace AdvisingApp\Ai\Enums;
 
-class OpenAiResponsesGptO4MiniService extends BaseOpenAiResponsesService
+use Filament\Support\Contracts\HasLabel;
+
+enum AiReasoningEffort: string implements HasLabel
 {
-    public function getApiKey(): string
+    case Low = 'low';
+
+    case Medium = 'medium';
+
+    case High = 'high';
+
+    public function getLabel(): string
     {
-        return $this->settings->open_ai_gpt_o4_mini_api_key ?? config('integration-open-ai.gpt_o4_mini_api_key');
+        return $this->name;
     }
 
-    public function getApiVersion(): string
+    public static function parse(string | self | null $value): ?self
     {
-        return config('integration-open-ai.gpt_o4_mini_api_version');
-    }
+        if ($value instanceof self) {
+            return $value;
+        }
 
-    public function getModel(): string
-    {
-        return $this->settings->open_ai_gpt_o4_mini_model ?? config('integration-open-ai.gpt_o4_mini_model');
-    }
-
-    public function getDeployment(): ?string
-    {
-        return $this->settings->open_ai_gpt_o4_mini_base_uri ?? config('integration-open-ai.gpt_o4_mini_base_uri');
-    }
-
-    public function hasReasoning(): bool
-    {
-        return true;
-    }
-
-    public function hasTemperature(): bool
-    {
-        return false;
+        return self::tryFrom($value);
     }
 }
