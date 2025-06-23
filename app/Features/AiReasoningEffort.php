@@ -34,36 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services;
+namespace App\Features;
 
-class OpenAiResponsesGptO4MiniService extends BaseOpenAiResponsesService
+use App\Support\AbstractFeatureFlag;
+
+class AiReasoningEffort extends AbstractFeatureFlag
 {
-    public function getApiKey(): string
-    {
-        return $this->settings->open_ai_gpt_o4_mini_api_key ?? config('integration-open-ai.gpt_o4_mini_api_key');
-    }
-
-    public function getApiVersion(): string
-    {
-        return config('integration-open-ai.gpt_o4_mini_api_version');
-    }
-
-    public function getModel(): string
-    {
-        return $this->settings->open_ai_gpt_o4_mini_model ?? config('integration-open-ai.gpt_o4_mini_model');
-    }
-
-    public function getDeployment(): ?string
-    {
-        return $this->settings->open_ai_gpt_o4_mini_base_uri ?? config('integration-open-ai.gpt_o4_mini_base_uri');
-    }
-
-    public function hasReasoning(): bool
-    {
-        return true;
-    }
-
-    public function hasTemperature(): bool
+    public function resolve(mixed $scope): mixed
     {
         return false;
     }

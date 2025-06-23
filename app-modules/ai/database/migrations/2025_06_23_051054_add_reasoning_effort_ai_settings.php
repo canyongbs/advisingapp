@@ -34,37 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services;
+use App\Features\AiReasoningEffort;
+use Illuminate\Support\Facades\DB;
+use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-class OpenAiResponsesGptO4MiniService extends BaseOpenAiResponsesService
-{
-    public function getApiKey(): string
+return new class () extends SettingsMigration {
+    public function up(): void
     {
-        return $this->settings->open_ai_gpt_o4_mini_api_key ?? config('integration-open-ai.gpt_o4_mini_api_key');
+        DB::transaction(function () {
+            try {
+                $this->migrator->add('ai.reasoning_effort', 'medium');
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
+
+            AiReasoningEffort::activate();
+        });
     }
 
-    public function getApiVersion(): string
+    public function down(): void
     {
-        return config('integration-open-ai.gpt_o4_mini_api_version');
-    }
+        DB::transaction(function () {
+            AiReasoningEffort::purge();
 
-    public function getModel(): string
-    {
-        return $this->settings->open_ai_gpt_o4_mini_model ?? config('integration-open-ai.gpt_o4_mini_model');
+            $this->migrator->deleteIfExists('ai.reasoning_effort');
+        });
     }
-
-    public function getDeployment(): ?string
-    {
-        return $this->settings->open_ai_gpt_o4_mini_base_uri ?? config('integration-open-ai.gpt_o4_mini_base_uri');
-    }
-
-    public function hasReasoning(): bool
-    {
-        return true;
-    }
-
-    public function hasTemperature(): bool
-    {
-        return false;
-    }
-}
+};
