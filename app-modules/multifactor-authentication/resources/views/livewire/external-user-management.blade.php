@@ -31,25 +31,10 @@
 
 </COPYRIGHT>
 --}}
-@php
-    use AdvisingApp\MultifactorAuthentication\Livewire\MultifactorAuthenticationManagement;
-    use AdvisingApp\MultifactorAuthentication\Livewire\ExternalUserManagement;
-@endphp
-
-<x-filament-panels::page>
-    <x-filament::section>
-        <x-slot name="heading">
-            Multifactor Authentication
-        </x-slot>
-
-        <x-slot name="description">
-            Manage multifactor authentication for your account.
-        </x-slot>
-
-        @if (!auth()->user()->is_external)
-            @livewire(MultifactorAuthenticationManagement::class)
-        @else
-            @livewire(ExternalUserManagement::class)
-        @endif
-    </x-filament::section>
-</x-filament-panels::page>
+<div>
+    <p class="text-sm">{{ $this->form }}</p>
+    <span class="text-sm text-gray-400">
+        Your account is configured using enterprise single sign-on (SSO) so multifactor authentication is handled by
+        your institution, rather than by this product.
+    </span>
+</div>

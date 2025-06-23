@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -30,26 +32,42 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
-@php
-    use AdvisingApp\MultifactorAuthentication\Livewire\MultifactorAuthenticationManagement;
-    use AdvisingApp\MultifactorAuthentication\Livewire\ExternalUserManagement;
-@endphp
+*/
 
-<x-filament-panels::page>
-    <x-filament::section>
-        <x-slot name="heading">
-            Multifactor Authentication
-        </x-slot>
+namespace AdvisingApp\MultifactorAuthentication\Livewire;
 
-        <x-slot name="description">
-            Manage multifactor authentication for your account.
-        </x-slot>
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Form;
+use Illuminate\View\View;
+use Livewire\Component;
 
-        @if (!auth()->user()->is_external)
-            @livewire(MultifactorAuthenticationManagement::class)
-        @else
-            @livewire(ExternalUserManagement::class)
-        @endif
-    </x-filament::section>
-</x-filament-panels::page>
+/**
+ * @property Form $form
+ */
+class ExternalUserManagement extends Component implements HasForms
+{
+    use InteractsWithForms;
+
+    /** @var array<string, mixed>|null */
+    public ?array $data = [];
+
+    public function render(): View
+    {
+        return view('multifactor-authentication::livewire.external-user-management');
+    }
+
+    /**
+     * @return array<Toggle>
+     */
+    protected function getFormSchema(): array
+    {
+        return [
+            Toggle::make('sso')
+                ->label('SSO Enabled')
+                ->default(false)
+                ->disabled(),
+        ];
+    }
+}
