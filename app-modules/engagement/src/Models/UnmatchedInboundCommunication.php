@@ -34,49 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Actions;
+namespace AdvisingApp\Engagement\Models;
 
-use AdvisingApp\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
-use AdvisingApp\Engagement\DataTransferObjects\EngagementResponseData;
-use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
+use AdvisingApp\Engagement\Database\Factories\UnmatchedInboundCommunicationFactory;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
-use AdvisingApp\Engagement\Models\EngagementResponse;
-use AdvisingApp\Engagement\Models\UnmatchedInboundCommunication;
-use App\Features\UnMatchInboundCommunicationFeature;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class CreateEngagementResponse
+/**
+ * @mixin IdeHelperUnmatchedInboundCommunication
+ */
+class UnmatchedInboundCommunication extends BaseModel
 {
-    public function __construct(
-        public EngagementResponseSenderFinder $finder
-    ) {}
+    /** @use HasFactory<UnmatchedInboundCommunicationFactory> */
+    use HasFactory;
 
-    public function __invoke(EngagementResponseData $data): void
-    {
-        $sender = $this->finder->find($data->from);
+    protected $fillable = [
+        'sender',
+        'occurred_at',
+        'subject',
+        'type',
+        'body',
+    ];
 
-        if (is_null($sender)) {
-            if (! UnMatchInboundCommunicationFeature::active()) {
-                return;
-            }
-            UnmatchedInboundCommunication::create([
-                'type' => EngagementResponseType::Sms,
-                'sender' => $data->from,
-                'body' => $data->body,
-                'occurred_at' => now(),
-            ]);
-
-            return;
-        }
-
-        EngagementResponse::create([
-            'type' => EngagementResponseType::Sms,
-            'sender_id' => $sender->getKey(),
-            'sender_type' => $sender->getMorphClass(),
-            'content' => $data->body,
-            // TODO We might need to retroactively get this data from the Twilio API
-            // For now, we will assume that the message was sent at the time it was received
-            'sent_at' => now(),
-            'status' => EngagementResponseStatus::New,
-        ]);
-    }
+    protected $casts = [
+        'occurred_at' => 'datetime',
+        'type' => EngagementResponseType::class,
+    ];
 }
