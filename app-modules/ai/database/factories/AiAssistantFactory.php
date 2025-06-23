@@ -58,7 +58,7 @@ class AiAssistantFactory extends Factory
             'model' => $this->faker->randomElement(
                 array_filter(
                     AiModel::cases(),
-                    fn (AiModel $case) => $case !== AiModel::JinaDeepSearchV1
+                    fn (AiModel $case) => ! in_array($case, [AiModel::JinaDeepSearchV1, AiModel::LlamaParse]),
                 )
             ),
         ];
