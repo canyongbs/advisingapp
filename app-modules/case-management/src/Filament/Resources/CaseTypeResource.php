@@ -43,6 +43,7 @@ use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\ViewCas
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\RelationManagers\CasePrioritiesRelationManager;
 use AdvisingApp\CaseManagement\Models\CaseType;
 use App\Filament\Clusters\CaseManagementAdministration;
+use Filament\Pages\Page;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -77,6 +78,16 @@ class CaseTypeResource extends Resource
             'create' => CreateCaseType::route('/create'),
             'view' => ViewCaseType::route('/{record}'),
             'edit' => EditCaseType::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getRecordSubNavigation(Page $page): array
+    {
+        return [
+            ...$page->generateNavigationItems([
+                ViewCaseType::class,
+                EditCaseType::class,
+            ]),
         ];
     }
 }

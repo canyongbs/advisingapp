@@ -50,6 +50,8 @@ class ViewCaseType extends ViewRecord
 {
     protected static string $resource = CaseTypeResource::class;
 
+    protected static ?string $navigationLabel = 'View';
+
     public function infolist(Infolist $infolist): Infolist
     {
         return $infolist
