@@ -47,27 +47,21 @@ use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 
 use function Pest\Laravel\assertDatabaseHas;
 
-it('can check student email in unmatched inbound communications if exist add engagement to the student', function () {
-    $unmatchRecordOne = UnmatchedInboundCommunication::factory()->create([
-        'sender' => 'example@example.com',
-        'type' => EngagementResponseType::Email,
-    ]);
-    UnmatchedInboundCommunication::factory()->create([
-        'sender' => 'notmatch@example.com',
-        'type' => EngagementResponseType::Email,
-    ]);
+it('will properly match to and create an engagement response for a student email', function () {
+    $unmatchedInboundRecordOne = UnmatchedInboundCommunication::factory()->email()->create();
+    $unmatchedInboundRecordTwo = UnmatchedInboundCommunication::factory()->email()->create();
 
     $student = Student::factory()->create();
 
     StudentEmailAddress::factory()->for($student, 'student')->create([
-        'address' => 'example@example.com',
+        'address' => $unmatchedInboundRecordOne->sender,
     ]);
 
     expect(UnmatchedInboundCommunication::count())->toBe(2);
     expect(Student::query()->whereHas('engagementResponses')->count())->toBe(0);
 
     assertDatabaseHas('unmatched_inbound_communications', [
-        'sender' => 'example@example.com',
+        'sender' => $unmatchedInboundRecordOne->sender,
     ]);
 
     $job = new UnmatchedInboundCommunicationsJob();
@@ -77,38 +71,32 @@ it('can check student email in unmatched inbound communications if exist add eng
     expect(Student::query()->whereHas('engagementResponses')->count())->toBe(1);
 
     assertDatabaseHas('unmatched_inbound_communications', [
-        'sender' => 'notmatch@example.com',
+        'sender' => $unmatchedInboundRecordTwo->sender,
     ]);
     assertDatabaseHas('engagement_responses', [
         'type' => EngagementResponseType::Email,
-        'content' => $unmatchRecordOne->body,
-        'subject' => $unmatchRecordOne->subject,
+        'content' => $unmatchedInboundRecordOne->body,
+        'subject' => $unmatchedInboundRecordOne->subject,
         'sender_id' => $student->sisid,
         'status' => EngagementResponseStatus::New,
     ]);
 });
 
-it('can check prospect email in unmatched inbound communications if exist add engagement to the prospect', function () {
-    $unmatchRecordOne = UnmatchedInboundCommunication::factory()->create([
-        'sender' => 'prospect@example.com',
-        'type' => EngagementResponseType::Email,
-    ]);
-    UnmatchedInboundCommunication::factory()->create([
-        'sender' => 'notmatch@example.com',
-        'type' => EngagementResponseType::Email,
-    ]);
+it('will properly match to and create an engagement response for a prospect email', function () {
+    $unmatchedInboundRecordOne = UnmatchedInboundCommunication::factory()->email()->create();
+    $unmatchedInboundRecordTwo = UnmatchedInboundCommunication::factory()->email()->create();
 
     $prospect = Prospect::factory()->create();
 
     ProspectEmailAddress::factory()->for($prospect, 'prospect')->create([
-        'address' => 'prospect@example.com',
+        'address' => $unmatchedInboundRecordOne->sender,
     ]);
 
     expect(UnmatchedInboundCommunication::count())->toBe(2);
     expect(Prospect::query()->whereHas('engagementResponses')->count())->toBe(0);
 
     assertDatabaseHas('unmatched_inbound_communications', [
-        'sender' => 'prospect@example.com',
+        'sender' => $unmatchedInboundRecordOne->sender,
     ]);
 
     $job = new UnmatchedInboundCommunicationsJob();
@@ -118,36 +106,31 @@ it('can check prospect email in unmatched inbound communications if exist add en
     expect(Prospect::query()->whereHas('engagementResponses')->count())->toBe(1);
 
     assertDatabaseHas('unmatched_inbound_communications', [
-        'sender' => 'notmatch@example.com',
+        'sender' => $unmatchedInboundRecordTwo->sender,
     ]);
     assertDatabaseHas('engagement_responses', [
         'type' => EngagementResponseType::Email,
-        'content' => $unmatchRecordOne->body,
-        'subject' => $unmatchRecordOne->subject,
+        'content' => $unmatchedInboundRecordOne->body,
+        'subject' => $unmatchedInboundRecordOne->subject,
         'sender_id' => $prospect->getKey(),
         'status' => EngagementResponseStatus::New,
     ]);
 });
-it('can check student phone in unmatched inbound communications if exist add engagement to the student', function () {
-    $unmatchRecordOne = UnmatchedInboundCommunication::factory()->create([
-        'sender' => '1234567890',
-        'type' => EngagementResponseType::Sms,
-    ]);
-    UnmatchedInboundCommunication::factory()->create([
-        'sender' => '0987654321',
-        'type' => EngagementResponseType::Sms,
-    ]);
+
+it('will properly match to and create an engagement response for a student phone number', function () {
+    $unmatchedInboundRecordOne = UnmatchedInboundCommunication::factory()->sms()->create();
+    $unmatchedInboundRecordTwo = UnmatchedInboundCommunication::factory()->sms()->create();
 
     $student = Student::factory()->create();
 
     StudentPhoneNumber::factory()->for($student, 'student')->create([
-        'number' => '1234567890',
+        'number' => $unmatchedInboundRecordOne->sender,
     ]);
 
     expect(UnmatchedInboundCommunication::count())->toBe(2);
     expect(Student::query()->whereHas('engagementResponses')->count())->toBe(0);
     assertDatabaseHas('unmatched_inbound_communications', [
-        'sender' => '1234567890',
+        'sender' => $unmatchedInboundRecordOne->sender,
     ]);
 
     $job = new UnmatchedInboundCommunicationsJob();
@@ -157,36 +140,30 @@ it('can check student phone in unmatched inbound communications if exist add eng
     expect(Student::query()->whereHas('engagementResponses')->count())->toBe(1);
 
     assertDatabaseHas('unmatched_inbound_communications', [
-        'sender' => '0987654321',
+        'sender' => $unmatchedInboundRecordTwo->sender,
     ]);
     assertDatabaseHas('engagement_responses', [
         'type' => EngagementResponseType::Sms,
-        'content' => $unmatchRecordOne->body,
+        'content' => $unmatchedInboundRecordOne->body,
         'sender_id' => $student->sisid,
         'status' => EngagementResponseStatus::New,
     ]);
 });
 
-it('can check prospect phone in unmatched inbound communications if exist add engagement to the prospect', function () {
-    $unmatchRecordOne = UnmatchedInboundCommunication::factory()->create([
-        'sender' => '1234567890',
-        'type' => EngagementResponseType::Sms,
-    ]);
-    UnmatchedInboundCommunication::factory()->create([
-        'sender' => '0987654321',
-        'type' => EngagementResponseType::Sms,
-    ]);
+it('will properly match to and create an engagement response for a prospect phone number', function () {
+    $unmatchedInboundRecordOne = UnmatchedInboundCommunication::factory()->sms()->create();
+    $unmatchedInboundRecordTwo = UnmatchedInboundCommunication::factory()->sms()->create();
 
     $prospect = Prospect::factory()->create();
 
     ProspectPhoneNumber::factory()->for($prospect, 'prospect')->create([
-        'number' => '1234567890',
+        'number' => $unmatchedInboundRecordOne->sender,
     ]);
 
     expect(UnmatchedInboundCommunication::count())->toBe(2);
     expect(Prospect::query()->whereHas('engagementResponses')->count())->toBe(0);
     assertDatabaseHas('unmatched_inbound_communications', [
-        'sender' => '1234567890',
+        'sender' => $unmatchedInboundRecordOne->sender,
     ]);
 
     $job = new UnmatchedInboundCommunicationsJob();
@@ -196,29 +173,20 @@ it('can check prospect phone in unmatched inbound communications if exist add en
     expect(Prospect::query()->whereHas('engagementResponses')->count())->toBe(1);
 
     assertDatabaseHas('unmatched_inbound_communications', [
-        'sender' => '0987654321',
+        'sender' => $unmatchedInboundRecordTwo->sender,
     ]);
     assertDatabaseHas('engagement_responses', [
         'type' => EngagementResponseType::Sms,
-        'content' => $unmatchRecordOne->body,
+        'content' => $unmatchedInboundRecordOne->body,
         'sender_id' => $prospect->getKey(),
         'status' => EngagementResponseStatus::New,
     ]);
 });
 
 it('can check unmatched inbound communications with no match', function () {
-    UnmatchedInboundCommunication::factory()->create(
-        [
-            'sender' => 'nomatch@example.com',
-            'type' => EngagementResponseType::Email,
-        ]
-    );
-    UnmatchedInboundCommunication::factory()->create(
-        [
-            'sender' => '9876543210',
-            'type' => EngagementResponseType::Sms,
-        ]
-    );
+    $unmatchedInboundEmailRecord = UnmatchedInboundCommunication::factory()->email()->create();
+    $unmatchedInboundSmsRecord = UnmatchedInboundCommunication::factory()->sms()->create();
+
     expect(UnmatchedInboundCommunication::count())->toBe(2);
 
     $student = Student::factory()->create();
@@ -244,11 +212,11 @@ it('can check unmatched inbound communications with no match', function () {
     expect(Student::query()->whereHas('engagementResponses')->exists())->toBeFalse();
     expect(Prospect::query()->whereHas('engagementResponses')->exists())->toBeFalse();
     assertDatabaseHas('unmatched_inbound_communications', [
-        'sender' => 'nomatch@example.com',
+        'sender' => $unmatchedInboundEmailRecord->sender,
         'type' => EngagementResponseType::Email,
     ]);
     assertDatabaseHas('unmatched_inbound_communications', [
-        'sender' => '9876543210',
+        'sender' => $unmatchedInboundSmsRecord->sender,
         'type' => EngagementResponseType::Sms,
     ]);
 

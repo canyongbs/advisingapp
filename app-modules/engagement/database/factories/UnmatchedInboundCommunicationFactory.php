@@ -56,9 +56,9 @@ class UnmatchedInboundCommunicationFactory extends Factory
             'type' => $this->faker->randomElement(EngagementResponseType::cases()),
             'sender' => function ($attributes) {
                 return match ($attributes['type']) {
-                    EngagementResponseType::Email => $this->faker->email(),
-                    EngagementResponseType::Sms => $this->faker->phoneNumber(),
-                    default => $this->faker->phoneNumber(),
+                    EngagementResponseType::Email => $this->faker->unique()->email(),
+                    EngagementResponseType::Sms => $this->faker->unique()->e164PhoneNumber(),
+                    default => throw new \UnhandledMatchError('The provided type is not handled.'),
                 };
             },
             'occurred_at' => now(),
@@ -71,5 +71,23 @@ class UnmatchedInboundCommunicationFactory extends Factory
             },
             'body' => $this->faker->sentence(),
         ];
+    }
+
+    public function email(): self
+    {
+        return $this->state(fn () => [
+            'type' => EngagementResponseType::Email,
+            'sender' => $this->faker->unique()->email(),
+            'subject' => $this->faker->sentence(),
+        ]);
+    }
+
+    public function sms(): self
+    {
+        return $this->state(fn () => [
+            'type' => EngagementResponseType::Sms,
+            'sender' => $this->faker->unique()->e164PhoneNumber(),
+            'subject' => null,
+        ]);
     }
 }

@@ -163,6 +163,11 @@ class Kernel extends ConsoleKernel
                         ->monitorName("Prune Educatable Pipeline Stages | Tenant {$tenant->domain}")
                         ->withoutOverlapping(720);
 
+                    $schedule->job(new UnmatchedInboundCommunicationsJob())
+                        ->daily()
+                        ->name('Process Unmatched Inbound Communications')
+                        ->monitorName('Process Unmatched Inbound Communications');
+
                     $schedule->command("tenants:artisan \"health:check\" --tenant={$tenant->id}")
                         ->everyMinute()
                         ->name("Health Check | Tenant {$tenant->domain}")
@@ -174,11 +179,6 @@ class Kernel extends ConsoleKernel
                         ->name("Schedule Check Heartbeat | Tenant {$tenant->domain}")
                         ->monitorName("Schedule Check Heartbeat | Tenant {$tenant->domain}")
                         ->withoutOverlapping(15);
-
-                    $schedule->job(new UnmatchedInboundCommunicationsJob())
-                        ->daily()
-                        ->name('Process Unmatched Inbound Communications')
-                        ->monitorName('Process Unmatched Inbound Communications');
                 } catch (Throwable $th) {
                     Log::error('Error scheduling tenant commands.', [
                         'tenant' => $tenant->id,
