@@ -37,6 +37,8 @@
 namespace AdvisingApp\CaseManagement\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Audit\Overrides\BelongsToMany;
+use AdvisingApp\Team\Models\Team;
 use App\Models\BaseModel;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
@@ -92,6 +94,26 @@ class CaseType extends BaseModel implements Auditable
     public function form(): HasOne
     {
         return $this->hasOne(CaseForm::class, 'case_type_id');
+    }
+
+    /**
+     * @return BelongsToMany
+     */
+    public function managers(): BelongsToMany
+    {
+        return $this->belongsToMany(Team::class, 'case_type_managers')
+            ->using(CaseTypeManager::class)
+            ->withTimestamps();
+    }
+
+    /**
+     * @return BelongsToMany<Team, $this, covariant CaseTypeAuditor>
+     */
+    public function auditors(): BelongsToMany
+    {
+        return $this->belongsToMany(Team::class, 'case_type_auditors')
+            ->using(CaseTypeAuditor::class)
+            ->withTimestamps();
     }
 
     protected function serializeDate(DateTimeInterface $date): string
