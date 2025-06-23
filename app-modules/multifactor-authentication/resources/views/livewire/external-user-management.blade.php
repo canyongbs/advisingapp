@@ -32,9 +32,5 @@
 </COPYRIGHT>
 --}}
 <div>
-    <p class="text-sm">{{ $this->form }}</p>
-    <span class="text-sm text-gray-400">
-        Your account is configured using enterprise single sign-on (SSO) so multifactor authentication is handled by
-        your institution, rather than by this product.
-    </span>
+    {{ $this->form }}
 </div>

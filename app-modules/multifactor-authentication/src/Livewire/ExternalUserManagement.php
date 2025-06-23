@@ -65,6 +65,8 @@ class ExternalUserManagement extends Component implements HasForms
     {
         return [
             Toggle::make('sso')
+                ->helperText('Your account is configured using enterprise single sign-on (SSO) so multifactor authentication is handled by
+        your institution, rather than by this product.')
                 ->label('SSO Enabled')
                 ->default(false)
                 ->disabled(),
