@@ -43,6 +43,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Actions\StudentTagsAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Actions\SyncStudentSisAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
 use App\Settings\DisplaySettings;
 use Filament\Actions\DeleteAction;
@@ -98,7 +99,8 @@ trait HasStudentHeader
         return [
             StudentTagsAction::make()->visible(fn (): bool => auth()->user()->can('student.*.update')),
             SyncStudentSisAction::make(),
-            SubscribeHeaderAction::make(),
+            SubscribeHeaderAction::make()
+                ->view('student-data-model::filament.resources.educatable-resource.subscribe-header-action', ['record' => $this->getRecord(), 'type' => (new Student())->getMorphClass()]),
             DeleteAction::make()
                 ->modalDescription('Are you sure you wish to delete the student? By deleting a student record, you will remove any related enrollment and program data, along with any related interactions, notes, etc. This action cannot be reversed.')
                 ->using(function ($record) {
