@@ -128,8 +128,8 @@ class EditQnaAdvisor extends EditRecord
             Action::make('archive')
                 ->color('danger')
                 ->action(function () {
-                    /** @var QnaAdvisor $qnaAdvisor*/
-                    $qnaAdvisor= $this->getRecord();
+                    /** @var QnaAdvisor $qnaAdvisor */
+                    $qnaAdvisor = $this->getRecord();
                     $qnaAdvisor->archived_at = now();
                     $qnaAdvisor->save();
 
@@ -141,8 +141,8 @@ class EditQnaAdvisor extends EditRecord
                 ->hidden(fn (QnaAdvisor $record): bool => (bool) $record->archived_at),
             Action::make('restore')
                 ->action(function () {
-                    /** @var QnaAdvisor $qnaAdvisor*/
-                    $qnaAdvisor= $this->getRecord();
+                    /** @var QnaAdvisor $qnaAdvisor */
+                    $qnaAdvisor = $this->getRecord();
                     $qnaAdvisor->archived_at = null;
                     $qnaAdvisor->save();
 

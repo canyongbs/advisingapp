@@ -17,7 +17,7 @@ test('ViewQnaAdvisor is gated with proper access control', function () {
     actingAs($user)
         ->get(
             QnaAdvisorResource::getUrl('view', [
-                'record' => $qnaAdvisors,
+                'record' => $qnaAdvisor,
             ])
         )->assertForbidden();
 
