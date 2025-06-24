@@ -102,7 +102,7 @@ trait HasProspectHeader
             ConvertToStudent::make()->visible(fn (Prospect $record) => ! $record->student()->exists()),
             DisassociateStudent::make()->visible(fn (Prospect $record) => $record->student()->exists()),
             SubscribeHeaderAction::make()
-                ->view('student-data-model::filament.resources.educatable-resource.subscribe-header-action', ['record' => $this->getRecord(), 'type' => (new Prospect())->getMorphClass()]),
+                ->view('student-data-model::filament.resources.educatable-resource.subscribe-header-action', ['record' => $this->getRecord()]),
         ];
     }
 }
