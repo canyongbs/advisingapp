@@ -4,8 +4,10 @@ namespace AdvisingApp\Ai\Policies;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Concerns\PerformsLicenseChecks;
+use App\Enums\Feature;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Facades\Gate;
 
 class QnaAdvisorPolicy
 {
@@ -22,6 +24,10 @@ class QnaAdvisorPolicy
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
+        if (! Gate::check(Feature::QnAAdvisor->getGateName())) {
+            return Response::deny('QnA Advisors are not enabled.');
+        }
+        
         return $authenticatable->canOrElse(
             abilities: 'qna_advisor.view-any',
             denyResponse: 'You do not have permission to view QnA Advisors.'

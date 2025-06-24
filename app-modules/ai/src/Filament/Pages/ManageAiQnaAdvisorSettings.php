@@ -39,7 +39,7 @@ class ManageAiQnaAdvisorSettings extends ManageAiICustomAdvisorSettings
             ->schema([
                 Toggle::make('allow_selection_of_model')
                     ->label('Allow selection of model?')
-                    ->helperText('If enabled, users can select a model when creating or editing QnA advisors.')
+                    ->helperText('If enabled, admin can select a model when creating or editing QnA advisors.')
                     ->columnSpanFull()
                     ->live(),
                 Select::make('preselected_model')
