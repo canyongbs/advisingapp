@@ -37,10 +37,9 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Prospect\Models\Prospect;
-use Carbon\Carbon;
+use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\TableWidget;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\On;
@@ -74,13 +73,8 @@ class ProspectReportTableChart extends TableWidget
                 function () {
                     $key = (new Prospect())->getKeyName();
 
-                    $startDate = filled($this->filters['startDate'] ?? null)
-                        ? Carbon::parse($this->filters['startDate'])->startOfDay()
-                        : null;
-
-                    $endDate = filled($this->filters['endDate'] ?? null)
-                        ? Carbon::parse($this->filters['endDate'])->endOfDay()
-                        : null;
+                    $startDate = $this->getStartDate();
+                    $endDate = $this->getEndDate();
 
                     return Prospect::whereIn($key, function ($query) use ($key, $startDate, $endDate) {
                         $query->select($key)

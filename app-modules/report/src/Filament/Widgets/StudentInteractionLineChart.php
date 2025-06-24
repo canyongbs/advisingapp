@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
+use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Carbon\Carbon;
-use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
@@ -52,13 +52,8 @@ class StudentInteractionLineChart extends LineChartReportWidget
 
     public function getData(): array
     {
-        $startDate = filled($this->filters['startDate'] ?? null)
-            ? Carbon::parse($this->filters['startDate'])->startOfDay()
-            : null;
-
-        $endDate = filled($this->filters['endDate'] ?? null)
-            ? Carbon::parse($this->filters['endDate'])->endOfDay()
-            : null;
+        $startDate = $this->getStartDate();
+        $endDate = $this->getEndDate();
 
         $shouldBypassCache = filled($startDate) || filled($endDate);
 

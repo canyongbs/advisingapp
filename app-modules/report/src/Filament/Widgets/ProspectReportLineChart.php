@@ -36,8 +36,7 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use Carbon\Carbon;
-use Filament\Widgets\Concerns\InteractsWithPageFilters;
+use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
@@ -53,31 +52,10 @@ class ProspectReportLineChart extends ChartReportWidget
         'lg' => 4,
     ];
 
-    protected function getOptions(): array
-    {
-        return [
-            'plugins' => [
-                'legend' => [
-                    'display' => false,
-                ],
-            ],
-            'scales' => [
-                'y' => [
-                    'min' => 0,
-                ],
-            ],
-        ];
-    }
-
     public function getData(): array
     {
-        $startDate = filled($this->filters['startDate'] ?? null)
-            ? Carbon::parse($this->filters['startDate'])->startOfDay()
-            : null;
-
-        $endDate = filled($this->filters['endDate'] ?? null)
-            ? Carbon::parse($this->filters['endDate'])->endOfDay()
-            : null;
+        $startDate = $this->getStartDate();
+        $endDate = $this->getEndDate();
 
         $shouldBypassCache = filled($startDate) || filled($endDate);
 
@@ -153,6 +131,22 @@ class ProspectReportLineChart extends ChartReportWidget
                 ],
             ],
             'labels' => array_keys($runningTotalPerMonth),
+        ];
+    }
+
+    protected function getOptions(): array
+    {
+        return [
+            'plugins' => [
+                'legend' => [
+                    'display' => false,
+                ],
+            ],
+            'scales' => [
+                'y' => [
+                    'min' => 0,
+                ],
+            ],
         ];
     }
 

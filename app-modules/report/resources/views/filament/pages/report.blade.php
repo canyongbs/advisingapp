@@ -21,6 +21,7 @@
             ...property_exists($this, 'filters') ? ['filters' => $this->filters] : [],
             ...$this->getWidgetData(),
         ]"
+        {{-- :data="$this->getWidgetData()" --}}
         :widgets="$visibleWidgets"
     />
 </x-filament-panels::page>

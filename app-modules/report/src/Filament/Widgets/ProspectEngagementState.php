@@ -39,9 +39,8 @@ namespace AdvisingApp\Report\Filament\Widgets;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use App\Models\User;
-use Carbon\Carbon;
-use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
@@ -59,13 +58,8 @@ class ProspectEngagementState extends StatsOverviewReportWidget
 
     public function getStats(): array
     {
-        $startDate = filled($this->filters['startDate'] ?? null)
-            ? Carbon::parse($this->filters['startDate'])->startOfDay()
-            : null;
-
-        $endDate = filled($this->filters['endDate'] ?? null)
-            ? Carbon::parse($this->filters['endDate'])->endOfDay()
-            : null;
+        $startDate = $this->getStartDate();
+        $endDate = $this->getEndDate();
 
         $shouldBypassCache = filled($startDate) || filled($endDate);
 

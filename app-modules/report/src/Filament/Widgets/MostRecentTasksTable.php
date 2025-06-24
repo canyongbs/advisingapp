@@ -38,13 +38,12 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
-use Carbon\Carbon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\On;
@@ -77,13 +76,8 @@ class MostRecentTasksTable extends BaseWidget
 
     public function table(Table $table): Table
     {
-        $startDate = filled($this->filters['startDate'] ?? null)
-            ? Carbon::parse($this->filters['startDate'])->startOfDay()
-            : null;
-
-        $endDate = filled($this->filters['endDate'] ?? null)
-            ? Carbon::parse($this->filters['endDate'])->endOfDay()
-            : null;
+        $startDate = $this->getStartDate();
+        $endDate = $this->getEndDate();
 
         return $table
             ->query(

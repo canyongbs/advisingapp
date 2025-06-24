@@ -36,11 +36,10 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
+use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Carbon\Carbon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Query\Builder;
 use Livewire\Attributes\On;
@@ -77,13 +76,8 @@ class MostRecentStudentsTable extends BaseWidget
             ->query(function () {
                 $key = (new Student())->getKeyName();
 
-                $startDate = filled($this->filters['startDate'] ?? null)
-                    ? Carbon::parse($this->filters['startDate'])->startOfDay()
-                    : null;
-
-                $endDate = filled($this->filters['endDate'] ?? null)
-                    ? Carbon::parse($this->filters['endDate'])->endOfDay()
-                    : null;
+                $startDate = $this->getStartDate();
+                $endDate = $this->getEndDate();
 
                 return Student::whereIn($key, function ($query) use ($key, $startDate, $endDate) {
                     $query->select($key)
