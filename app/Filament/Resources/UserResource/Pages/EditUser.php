@@ -121,7 +121,7 @@ class EditUser extends EditRecord
                             ->options(Team::all()->pluck('name', 'id'))
                             ->relationship('team', 'name'),
                     ])
-                    ->hidden(fn (?User $record) => $record?->IsAdmin),
+                    ->hidden(fn (?User $record) => $record->IsAdmin ?? false),
                 Licenses::make()
                     ->disabled(function () {
                         /** @var User $user */
