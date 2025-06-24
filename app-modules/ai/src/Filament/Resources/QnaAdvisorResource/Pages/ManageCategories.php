@@ -66,10 +66,10 @@ class ManageCategories extends ManageRelatedRecords
                         column: 'name',
                         ignoreRecord: true,
                         modifyRuleUsing: function (Unique $rule) {
-                            /** @var QnaAdvisor $advisor */
-                            $advisor = $this->getOwnerRecord();
+                            /** @var QnaAdvisor $qnaAdvisor */
+                            $qnaAdvisor = $this->getOwnerRecord();
 
-                            $rule->where('qna_advisor_id', $advisor->getKey());
+                            $rule->where('qna_advisor_id', $qnaAdvisor->getKey());
                         }
                     )
                     ->maxLength(255)

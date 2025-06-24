@@ -105,9 +105,9 @@ class ManageQnaQuestions extends ManageRelatedRecords
                 SelectFilter::make('category_id')
                     ->label('Category')
                     ->relationship('category', 'name', modifyQueryUsing: function ($query) {
-                        /** @var QnaAdvisor $advisor */
-                        $advisor = $this->getOwnerRecord();
-                        $query->where('qna_advisor_id', $advisor->getKey());
+                        /** @var QnaAdvisor $qnaAdvisor */
+                        $qnaAdvisor = $this->getOwnerRecord();
+                        $query->where('qna_advisor_id', $qnaAdvisor->getKey());
                     })
                     ->multiple()
                     ->preload()

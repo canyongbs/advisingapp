@@ -12,7 +12,7 @@ use function Pest\Livewire\livewire;
 test('ViewQnaAdvisor is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
-    $qnaAdvisors = QnaAdvisor::factory()->create();
+    $qnaAdvisor = QnaAdvisor::factory()->create();
 
     actingAs($user)
         ->get(
@@ -27,7 +27,7 @@ test('ViewQnaAdvisor is gated with proper access control', function () {
     actingAs($user)
         ->get(
             QnaAdvisorResource::getUrl('view', [
-                'record' => $qnaAdvisors,
+                'record' => $qnaAdvisor,
             ])
         )->assertSuccessful();
 });
@@ -35,7 +35,7 @@ test('ViewQnaAdvisor is gated with proper access control', function () {
 test('archive action visible when QnA Advisor is not archived', function () {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
-    $qnaAdvisors = QnaAdvisor::factory()->create();
+    $qnaAdvisor = QnaAdvisor::factory()->create();
 
     $user->givePermissionTo('qna_advisor.view-any');
     $user->givePermissionTo('qna_advisor.*.view');
@@ -43,7 +43,7 @@ test('archive action visible when QnA Advisor is not archived', function () {
     actingAs($user);
 
     livewire(ViewQnaAdvisor::class, [
-        'record' => $qnaAdvisors->getRouteKey(),
+        'record' => $qnaAdvisor->getRouteKey(),
     ])
         ->assertSuccessful()
         ->assertActionVisible('archive')
@@ -53,7 +53,7 @@ test('archive action visible when QnA Advisor is not archived', function () {
 test('restore action visible when QnA Advisor is archived', function () {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
-    $qnaAdvisors = QnaAdvisor::factory()->state([
+    $qnaAdvisor = QnaAdvisor::factory()->state([
         'archived_at' => now(),
     ])->create();
 
@@ -63,7 +63,7 @@ test('restore action visible when QnA Advisor is archived', function () {
     actingAs($user);
 
     livewire(ViewQnaAdvisor::class, [
-        'record' => $qnaAdvisors->getRouteKey(),
+        'record' => $qnaAdvisor->getRouteKey(),
     ])
         ->assertSuccessful()
         ->assertActionVisible('restore')

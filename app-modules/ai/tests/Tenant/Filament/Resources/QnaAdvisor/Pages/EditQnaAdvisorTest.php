@@ -116,7 +116,7 @@ test('EditQnaAdvisor validates the inputs', function ($data, $errors) {
 test('archive action visible when QnA Advisor is not archived', function () {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
-    $qnaAdvisors = QnaAdvisor::factory()->create();
+    $qnaAdvisor = QnaAdvisor::factory()->create();
 
     $user->givePermissionTo('qna_advisor.view-any');
     $user->givePermissionTo('qna_advisor.*.view');
@@ -125,7 +125,7 @@ test('archive action visible when QnA Advisor is not archived', function () {
     actingAs($user);
 
     livewire(EditQnaAdvisor::class, [
-        'record' => $qnaAdvisors->getRouteKey(),
+        'record' => $qnaAdvisor->getRouteKey(),
     ])
         ->assertSuccessful()
         ->assertActionVisible('archive')
@@ -135,7 +135,7 @@ test('archive action visible when QnA Advisor is not archived', function () {
 test('restore action visible when QnA Advisor is archived', function () {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
-    $qnaAdvisors = QnaAdvisor::factory()->state([
+    $qnaAdvisor = QnaAdvisor::factory()->state([
         'archived_at' => now(),
     ])->create();
 
@@ -146,7 +146,7 @@ test('restore action visible when QnA Advisor is archived', function () {
     actingAs($user);
 
     livewire(EditQnaAdvisor::class, [
-        'record' => $qnaAdvisors->getRouteKey(),
+        'record' => $qnaAdvisor->getRouteKey(),
     ])
         ->assertSuccessful()
         ->assertActionVisible('restore')
