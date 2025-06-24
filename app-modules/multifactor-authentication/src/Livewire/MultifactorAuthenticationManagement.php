@@ -44,6 +44,7 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
@@ -175,5 +176,20 @@ class MultifactorAuthenticationManagement extends Component implements HasAction
     public function getMultifactorQrCode()
     {
         return app(MultifactorService::class)->getMultifactorQrCodeSvg($this->user->getMultifactorQrCodeUrl());
+    }
+
+    /**
+     * @return array<Toggle>
+     */
+    public function getFormSchema(): array
+    {
+        return [
+            Toggle::make('is_sso_enabled')
+                ->helperText('Your account is configured using enterprise single sign-on (SSO) so multifactor authentication is handled by
+        your institution, rather than by this product.')
+                ->label('SSO Enabled')
+                ->default(false)
+                ->disabled(),
+        ];
     }
 }
