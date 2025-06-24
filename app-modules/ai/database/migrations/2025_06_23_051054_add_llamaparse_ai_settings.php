@@ -50,7 +50,7 @@ return new class () extends SettingsMigration {
             }
 
             try {
-                $this->migrator->add('ai.llamaparse_api_key');
+                $this->migrator->add('ai.llamaparse_api_key', encrypted: true);
             } catch (SettingAlreadyExists $exception) {
                 // do nothing
             }
