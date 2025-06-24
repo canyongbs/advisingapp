@@ -42,7 +42,7 @@ class ManageQnaQuestions extends ManageRelatedRecords
                 Select::make('category_id')
                     ->label('Category')
                     ->relationship('category', 'name', modifyQueryUsing: function ($query) {
-                        /** @var QnAAdvisor $advisor */
+                        /** @var QnaAdvisor $advisor */
                         $advisor = $this->getOwnerRecord();
                         $query->where('qna_advisor_id', $advisor->getKey());
                     })

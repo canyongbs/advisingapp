@@ -16,6 +16,7 @@ use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Str;
@@ -81,6 +82,7 @@ class EditQnaAdvisor extends EditRecord
                             ->options(AiModelApplicabilityFeature::QuestionAndAnswerAdvisor->getModelsAsSelectOptions())
                             ->searchable()
                             ->required()
+                            ->visible(auth()->user()->isSuperAdmin())
                             ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::QuestionAndAnswerAdvisor->getModels()))
                             ->disabled(fn (): bool => ! app(AiQnaAdvisorSettings::class)->allow_selection_of_model)
                             ->default(function () {
@@ -97,6 +99,25 @@ class EditQnaAdvisor extends EditRecord
                     Textarea::make('description')
                         ->maxLength(65535)
                         ->required(),
+                    Section::make('Configure AI Advisor')
+                        ->description('Design the capability of your advisor by including detailed instructions below.')
+                        ->visible(auth()->user()->isSuperAdmin())
+                        ->schema([
+                            Textarea::make('instructions')
+                                ->required()
+                                ->visible(auth()->user()->isSuperAdmin())
+                                ->disabled(fn (): bool => ! app(AiQnaAdvisorSettings::class)->allow_selection_of_model)
+                                ->maxLength(fn (Get $get): int => (AiModel::parse($get('model')) ?? AiModel::OpenAiGpt4o)->getService()->getMaxAssistantInstructionsLength())
+                                ->default(function () {
+                                    $settings = app(AiQnaAdvisorSettings::class);
+
+                                    if ($settings->allow_selection_of_model) {
+                                        return null;
+                                    }
+
+                                    return $settings->instructions;
+                                }),
+                        ]),
                 ]),
             ]);
     }

@@ -27,7 +27,6 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Export newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Export newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Export onlyTrashed()
@@ -136,7 +135,6 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\FailedImportRow> $failedRows
  * @property-read int|null $failed_rows_count
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Import newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Import newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Import onlyTrashed()
@@ -1182,6 +1180,7 @@ namespace AdvisingApp\Ai\Models{
  * @property string $name
  * @property string|null $description
  * @property \AdvisingApp\Ai\Enums\AiModel|null $model
+ * @property string|null $instructions
  * @property string|null $knowledge
  * @property \Illuminate\Support\Carbon|null $archived_at
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -1203,6 +1202,7 @@ namespace AdvisingApp\Ai\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisor whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisor whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisor whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisor whereInstructions($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisor whereKnowledge($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisor whereModel($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisor whereName($value)

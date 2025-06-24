@@ -12,6 +12,7 @@ return new class () extends Migration {
             $table->string('name');
             $table->text('description')->nullable();
             $table->string('model')->nullable();
+            $table->longText('instructions')->nullable();
             $table->longText('knowledge')->nullable();
             $table->timestamp('archived_at')->nullable();
             $table->timestamps();

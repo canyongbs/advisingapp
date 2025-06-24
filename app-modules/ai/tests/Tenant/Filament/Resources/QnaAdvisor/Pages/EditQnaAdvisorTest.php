@@ -1,6 +1,5 @@
 <?php
 
-use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource\Pages\EditQnaAdvisor;
 use AdvisingApp\Ai\Models\QnaAdvisor;
@@ -8,7 +7,6 @@ use AdvisingApp\Ai\Tests\RequestFactories\QnaAdvisorRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\Rules\Enum;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
@@ -35,7 +33,7 @@ test('EditQnaAdvisor is gated with proper access control', function () {
     ])
         ->assertForbidden();
 
-    $user->givePermissionTo(['qna_advisor.view-any', 'qna_advisor.*.update']);
+    $user->givePermissionTo(['qna_advisor.view-any', 'qna_advisor.*.view', 'qna_advisor.*.update']);
 
     actingAs($user)
         ->get(
@@ -57,6 +55,7 @@ test('EditQnaAdvisor is gated with proper access control', function () {
         QnaAdvisor::class,
         $request->except([
             'avatar',
+            'instructions',
         ])->toArray()
     );
 
@@ -77,7 +76,7 @@ test('EditQnaAdvisor validates the inputs', function ($data, $errors) {
 
     actingAs($user);
 
-    $user->givePermissionTo(['qna_advisor.view-any', 'qna_advisor.*.update']);
+    $user->givePermissionTo(['qna_advisor.view-any', 'qna_advisor.*.view', 'qna_advisor.*.update']);
 
     $qnaAdvisor = QnaAdvisor::factory()->create();
 
@@ -110,14 +109,6 @@ test('EditQnaAdvisor validates the inputs', function ($data, $errors) {
         'description max' => [
             QnaAdvisorRequestFactory::new()->state(['description' => str()->random(65537)]),
             ['description' => 'max'],
-        ],
-        'model required' => [
-            QnaAdvisorRequestFactory::new()->state(['model' => null]),
-            ['model' => 'required'],
-        ],
-        'model must be correct enum' => [
-            QnaAdvisorRequestFactory::new()->state(['model' => AiModel::OpenAiGpt4]),
-            ['model' => Enum::class],
         ],
     ]
 );

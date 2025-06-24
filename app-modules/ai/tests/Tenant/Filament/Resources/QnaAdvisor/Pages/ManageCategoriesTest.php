@@ -30,7 +30,7 @@ test('CreateQnaAdvisor Category is gated with proper access control', function (
     livewire(ManageCategories::class, ['record' => $qnaAdvisor->getKey()])
         ->assertForbidden();
 
-    $user->givePermissionTo(['qna_advisor.view-any', 'qna_advisor.*.view','qna_advisor.create']);
+    $user->givePermissionTo(['qna_advisor.view-any', 'qna_advisor.*.view', 'qna_advisor.create']);
 
     actingAs($user)
         ->get(
@@ -69,7 +69,7 @@ test('CreateQnaAdvisor Category validates the inputs', function ($data, $errors)
     livewire(ManageCategories::class, ['record' => $qnaAdvisor->getKey()])
         ->assertForbidden();
 
-   $user->givePermissionTo(['qna_advisor.view-any', 'qna_advisor.*.view','qna_advisor.create']);
+    $user->givePermissionTo(['qna_advisor.view-any', 'qna_advisor.*.view', 'qna_advisor.create']);
 
     actingAs($user)
         ->get(

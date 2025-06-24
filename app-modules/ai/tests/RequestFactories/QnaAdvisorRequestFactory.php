@@ -14,6 +14,7 @@ class QnaAdvisorRequestFactory extends RequestFactory
             'avatar' => UploadedFile::fake()->image(fake()->word . '.png'),
             'name' => $this->faker->word(),
             'description' => $this->faker->paragraph(),
+            'instructions' => $this->faker->paragraph(),
             'model' => AiModel::Test,
         ];
     }

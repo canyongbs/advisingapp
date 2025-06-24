@@ -27,6 +27,7 @@ class QnaAdvisor extends BaseModel implements HasMedia
         'name',
         'model',
         'description',
+        'instructions',
         'knowledge',
     ];
 

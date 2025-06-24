@@ -31,7 +31,6 @@ class ViewQnaAdvisor extends ViewRecord
                     ->circular(),
                 TextEntry::make('name'),
                 TextEntry::make('description'),
-                TextEntry::make('model'),
             ]),
         ]);
     }

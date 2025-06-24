@@ -4,7 +4,6 @@ use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource\Pages\CreateQnaAdvisor;
 use AdvisingApp\Ai\Models\QnaAdvisor;
-use AdvisingApp\Ai\Settings\AiQnaAdvisorSettings;
 use AdvisingApp\Ai\Tests\RequestFactories\QnaAdvisorRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
@@ -27,10 +26,6 @@ test('CreateQnaAdvisor is gated with proper access control', function () {
 
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
-    $qnaAdvisorSetting = app(AiQnaAdvisorSettings::class);
-    $qnaAdvisorSetting->allow_selection_of_model = true;
-    $qnaAdvisorSetting->save();
-
     assertDatabaseCount(QnaAdvisor::class, 0);
 
     actingAs($user)
@@ -51,7 +46,7 @@ test('CreateQnaAdvisor is gated with proper access control', function () {
     $qnaAdvisor = collect(QnaAdvisorRequestFactory::new()->create());
 
     livewire(CreateQnaAdvisor::class)
-        ->fillForm($qnaAdvisor->toArray())
+        ->fillForm($qnaAdvisor->except(['model'])->toArray())
         ->call('create')
         ->assertHasNoFormErrors();
 
@@ -61,6 +56,8 @@ test('CreateQnaAdvisor is gated with proper access control', function () {
         QnaAdvisor::class,
         $qnaAdvisor->except([
             'avatar',
+            'model',
+            'instructions',
         ])->toArray()
     );
 
@@ -113,6 +110,10 @@ test('CreateQnAAdvisor validates the inputs', function ($data, $errors) {
         'description max' => [
             QnaAdvisorRequestFactory::new()->state(['description' => str()->random(65537)]),
             ['description' => 'max'],
+        ],
+        'instructions required' => [
+            QnaAdvisorRequestFactory::new()->state(['instructions' => null]),
+            ['instructions' => 'required'],
         ],
         'model required' => [
             QnaAdvisorRequestFactory::new()->state(['model' => null]),

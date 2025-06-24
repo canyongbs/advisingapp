@@ -31,7 +31,7 @@ class QnaAdvisorQuestionPolicy
     public function view(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-             abilities: ['qna_advisor.*.view'],
+            abilities: ['qna_advisor.*.view'],
             denyResponse: 'You do not have permission to view this QnA Advisor Question.'
         );
     }
