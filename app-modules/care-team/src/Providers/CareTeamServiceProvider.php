@@ -39,15 +39,12 @@ namespace AdvisingApp\CareTeam\Providers;
 use AdvisingApp\CareTeam\CareTeamPlugin;
 use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
-use App\Concerns\ImplementsGraphQL;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 
 class CareTeamServiceProvider extends ServiceProvider
 {
-    use ImplementsGraphQL;
-
     public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new CareTeamPlugin()));
@@ -59,7 +56,5 @@ class CareTeamServiceProvider extends ServiceProvider
             'care_team' => CareTeam::class,
             'care_team_role' => CareTeamRole::class,
         ]);
-
-        $this->discoverSchema(__DIR__ . '/../../graphql/care-team.graphql');
     }
 }

@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Interaction\Providers;
 
-use AdvisingApp\Interaction\Enums\InteractionStatusColorOptions;
 use AdvisingApp\Interaction\InteractionPlugin;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\InteractionDriver;
@@ -45,15 +44,12 @@ use AdvisingApp\Interaction\Models\InteractionOutcome;
 use AdvisingApp\Interaction\Models\InteractionRelation;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Models\InteractionType;
-use App\Concerns\ImplementsGraphQL;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 
 class InteractionServiceProvider extends ServiceProvider
 {
-    use ImplementsGraphQL;
-
     public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new InteractionPlugin()));
@@ -70,9 +66,5 @@ class InteractionServiceProvider extends ServiceProvider
             'interaction_type' => InteractionType::class,
             'interaction' => Interaction::class,
         ]);
-
-        $this->discoverSchema(__DIR__ . '/../../graphql/interaction.graphql');
-
-        $this->registerEnum(InteractionStatusColorOptions::class);
     }
 }
