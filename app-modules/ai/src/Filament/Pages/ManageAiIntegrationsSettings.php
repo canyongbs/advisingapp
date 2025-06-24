@@ -43,6 +43,7 @@ use AdvisingApp\Ai\Jobs\ReInitializeAiModel;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use App\Features\AiReasoningEffort;
 use App\Features\AiResponsesApi;
+use App\Features\LlamaParse;
 use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -379,6 +380,25 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
                             ]),
                     ]),
+                Section::make('LlamaCloud')
+                    ->collapsible()
+                    ->schema([
+                        Section::make('LlamaCloud Parsing Service')
+                            ->collapsible()
+                            ->schema([
+                                TextInput::make('llamaparse_model_name')
+                                    ->label('Model Name')
+                                    ->placeholder('Canyon Parsing Service')
+                                    ->string()
+                                    ->maxLength(255)
+                                    ->nullable(),
+                                TextInput::make('llamaparse_api_key')
+                                    ->label('API Key')
+                                    ->password()
+                                    ->autocomplete(false),
+                            ]),
+                    ])
+                    ->visible(LlamaParse::active()),
             ]);
     }
 

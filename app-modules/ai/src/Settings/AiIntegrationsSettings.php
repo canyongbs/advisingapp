@@ -189,6 +189,10 @@ class AiIntegrationsSettings extends Settings
      */
     public array $jina_deepsearch_v1_applicable_features = [];
 
+    public ?string $llamaparse_model_name = null;
+
+    public ?string $llamaparse_api_key = null;
+
     public static function group(): string
     {
         return 'ai';
@@ -228,6 +232,7 @@ class AiIntegrationsSettings extends Settings
             'open_ai_gpt_o4_mini_api_key',
             'open_ai_gpt_o4_mini_model',
             'jina_deepsearch_v1_api_key',
+            'llamaparse_api_key',
         ];
     }
 }
