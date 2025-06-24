@@ -42,14 +42,14 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->boolean('is_action_center_updated')->default(false);
+            $table->boolean('is_action_center_update_enabled')->default(false);
         });
     }
 
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('is_action_center_updated');
+            $table->dropColumn('is_action_center_update_enabled');
         });
     }
 };
