@@ -366,7 +366,9 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->maxLength(255)
                                     ->nullable(),
                                 TextInput::make('llamaparse_api_key')
-                                    ->label('API Key'),
+                                    ->label('API Key')
+                                    ->password()
+                                    ->autocomplete(false),
                             ]),
                     ])
                     ->visible(LlamaParse::active()),
