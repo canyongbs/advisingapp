@@ -5,11 +5,19 @@ use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource\Pages\ViewQnaAdvisor;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
+use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 test('ViewQnaAdvisor is gated with proper access control', function () {
+    
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->qnaAdvisor = true;
+
+    $settings->save();
+
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $qnaAdvisor = QnaAdvisor::factory()->create();
@@ -33,6 +41,13 @@ test('ViewQnaAdvisor is gated with proper access control', function () {
 });
 
 test('archive action visible when QnA Advisor is not archived', function () {
+
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->qnaAdvisor = true;
+
+    $settings->save();
+
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $qnaAdvisor = QnaAdvisor::factory()->create();
@@ -51,6 +66,13 @@ test('archive action visible when QnA Advisor is not archived', function () {
 });
 
 test('restore action visible when QnA Advisor is archived', function () {
+    
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->qnaAdvisor = true;
+
+    $settings->save();
+
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $qnaAdvisor = QnaAdvisor::factory()->state([

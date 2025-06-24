@@ -27,7 +27,7 @@ class QnaAdvisorPolicy
         if (! Gate::check(Feature::QnAAdvisor->getGateName())) {
             return Response::deny('QnA Advisors are not enabled.');
         }
-        
+
         return $authenticatable->canOrElse(
             abilities: 'qna_advisor.view-any',
             denyResponse: 'You do not have permission to view QnA Advisors.'

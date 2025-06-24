@@ -8,6 +8,7 @@ use AdvisingApp\Ai\Models\QnaAdvisorQuestion;
 use AdvisingApp\Ai\Tests\RequestFactories\QnaAdvisorQuestionRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
+use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
@@ -16,6 +17,13 @@ use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
 
 test('CreateQnAAdvisor Question is gated with proper access control', function () {
+
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->qnaAdvisor = true;
+
+    $settings->save();
+
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $qnaAdvisor = QnaAdvisor::factory()->create();
@@ -59,6 +67,13 @@ test('CreateQnAAdvisor Question is gated with proper access control', function (
 });
 
 test('CreateQnAAdvisor Question validates the inputs', function ($data, $errors) {
+
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->qnaAdvisor = true;
+
+    $settings->save();
+
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $user->givePermissionTo([
@@ -107,6 +122,13 @@ test('CreateQnAAdvisor Question validates the inputs', function ($data, $errors)
 );
 
 test('EditQnAAdvisor Category is gated with proper access control', function () {
+
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->qnaAdvisor = true;
+
+    $settings->save();
+
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $user->givePermissionTo([
@@ -138,6 +160,13 @@ test('EditQnAAdvisor Category is gated with proper access control', function () 
 });
 
 test('EditQnAAdvisor Category validates the inputs', function ($data, $errors) {
+
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->qnaAdvisor = true;
+
+    $settings->save();
+
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $user->givePermissionTo([
@@ -162,27 +191,27 @@ test('EditQnAAdvisor Category validates the inputs', function ($data, $errors) {
         ->callTableAction('edit', record: $qnaAdvisorQuestion->getKey(), data: $request)
         ->assertHasTableActionErrors($errors);
 })
-    ->with(
-        [
-            'question required' => [
-                QnaAdvisorQuestionRequestFactory::new()->state(['question' => null]),
-                ['question' => 'required'],
-            ],
-            'question string' => [
-                QnaAdvisorQuestionRequestFactory::new()->state(['question' => 1]),
-                ['question' => 'string'],
-            ],
-            'question max' => [
-                QnaAdvisorQuestionRequestFactory::new()->state(['question' => str()->random(257)]),
-                ['question' => 'max'],
-            ],
-            'answer required' => [
-                QnaAdvisorQuestionRequestFactory::new()->state(['answer' => null]),
-                ['answer' => 'required'],
-            ],
-            'answer max' => [
-                QnaAdvisorQuestionRequestFactory::new()->state(['answer' => str()->random(65537)]),
-                ['answer' => 'max'],
-            ],
-        ]
-    );
+->with(
+    [
+        'question required' => [
+            QnaAdvisorQuestionRequestFactory::new()->state(['question' => null]),
+            ['question' => 'required'],
+        ],
+        'question string' => [
+            QnaAdvisorQuestionRequestFactory::new()->state(['question' => 1]),
+            ['question' => 'string'],
+        ],
+        'question max' => [
+            QnaAdvisorQuestionRequestFactory::new()->state(['question' => str()->random(257)]),
+            ['question' => 'max'],
+        ],
+        'answer required' => [
+            QnaAdvisorQuestionRequestFactory::new()->state(['answer' => null]),
+            ['answer' => 'required'],
+        ],
+        'answer max' => [
+            QnaAdvisorQuestionRequestFactory::new()->state(['answer' => str()->random(65537)]),
+            ['answer' => 'max'],
+        ],
+    ]
+);

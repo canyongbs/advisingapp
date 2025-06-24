@@ -7,6 +7,7 @@ use AdvisingApp\Ai\Models\QnaAdvisorCategory;
 use AdvisingApp\Ai\Tests\RequestFactories\QnaAdvisorCategoryRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
+use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
@@ -15,6 +16,13 @@ use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
 
 test('CreateQnaAdvisor Category is gated with proper access control', function () {
+    
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->qnaAdvisor = true;
+
+    $settings->save();
+
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $qnaAdvisor = QnaAdvisor::factory()->create();
@@ -54,6 +62,13 @@ test('CreateQnaAdvisor Category is gated with proper access control', function (
 });
 
 test('CreateQnaAdvisor Category validates the inputs', function ($data, $errors) {
+
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->qnaAdvisor = true;
+
+    $settings->save();
+
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $qnaAdvisor = QnaAdvisor::factory()->create();
@@ -114,6 +129,13 @@ test('CreateQnaAdvisor Category validates the inputs', function ($data, $errors)
 );
 
 test('EditQnaAdvisor Category is gated with proper access control', function () {
+
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->qnaAdvisor = true;
+
+    $settings->save();
+
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $user->givePermissionTo([
@@ -142,6 +164,13 @@ test('EditQnaAdvisor Category is gated with proper access control', function () 
 });
 
 test('EditQnaAdvisor Category validates the inputs', function ($data, $errors) {
+
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->qnaAdvisor = true;
+
+    $settings->save();
+
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $user->givePermissionTo([

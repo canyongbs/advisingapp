@@ -6,6 +6,7 @@ use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Ai\Tests\RequestFactories\QnaAdvisorRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
+use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\Storage;
 
 use function Pest\Laravel\actingAs;
@@ -16,6 +17,12 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 test('EditQnaAdvisor is gated with proper access control', function () {
     Storage::fake('s3');
+
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->qnaAdvisor = true;
+
+    $settings->save();
 
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
@@ -56,6 +63,7 @@ test('EditQnaAdvisor is gated with proper access control', function () {
         $request->except([
             'avatar',
             'instructions',
+            'model',
         ])->toArray()
     );
 
@@ -71,6 +79,12 @@ test('EditQnaAdvisor is gated with proper access control', function () {
 
 test('EditQnaAdvisor validates the inputs', function ($data, $errors) {
     Storage::fake('s3');
+
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->qnaAdvisor = true;
+
+    $settings->save();
 
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
@@ -114,6 +128,12 @@ test('EditQnaAdvisor validates the inputs', function ($data, $errors) {
 );
 
 test('archive action visible when QnA Advisor is not archived', function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->qnaAdvisor = true;
+
+    $settings->save();
+
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $qnaAdvisor = QnaAdvisor::factory()->create();
@@ -133,6 +153,12 @@ test('archive action visible when QnA Advisor is not archived', function () {
 });
 
 test('restore action visible when QnA Advisor is archived', function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->qnaAdvisor = true;
+
+    $settings->save();
+
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $qnaAdvisor = QnaAdvisor::factory()->state([

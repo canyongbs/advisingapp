@@ -7,6 +7,7 @@ use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Ai\Tests\RequestFactories\QnaAdvisorRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
+use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Enum;
 
@@ -23,6 +24,12 @@ use function Tests\asSuperAdmin;
 
 test('CreateQnaAdvisor is gated with proper access control', function () {
     Storage::fake('s3');
+
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->qnaAdvisor = true;
+
+    $settings->save();
 
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
@@ -73,6 +80,12 @@ test('CreateQnaAdvisor is gated with proper access control', function () {
 
 test('CreateQnAAdvisor validates the inputs', function ($data, $errors) {
     Storage::fake('s3');
+
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->qnaAdvisor = true;
+
+    $settings->save();
 
     asSuperAdmin();
 
