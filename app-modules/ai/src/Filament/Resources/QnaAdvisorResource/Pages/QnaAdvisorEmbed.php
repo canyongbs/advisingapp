@@ -11,7 +11,7 @@ class QnaAdvisorEmbed extends Page
 {
     protected static string $resource = QnaAdvisorResource::class;
 
-    protected static string $view = 'advising-ai.filament.resources.qna-advisor-resource.pages.qna-advisor-embed';
+    protected static string $view = 'filament.pages.coming-soon';
 
     protected static ?string $navigationGroup = 'Configuration';
 
