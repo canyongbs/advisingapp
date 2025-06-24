@@ -41,6 +41,7 @@ use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Jobs\ReInitializeAiModel;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use App\Features\AiReasoningEffort;
 use App\Features\AiResponsesApi;
 use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
@@ -216,6 +217,32 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->multiple()
                                     ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
                             ]),
+                        Section::make('GPT o3')
+                            ->collapsible()
+                            ->schema([
+                                TextInput::make('open_ai_gpt_o3_model_name')
+                                    ->label('Model Name')
+                                    ->placeholder('Canyon o3')
+                                    ->string()
+                                    ->maxLength(255)
+                                    ->nullable(),
+                                TextInput::make('open_ai_gpt_o3_base_uri')
+                                    ->label('Base URI')
+                                    ->placeholder('https://example.openai.azure.com/openai/v1')
+                                    ->url(),
+                                TextInput::make('open_ai_gpt_o3_api_key')
+                                    ->label('API Key')
+                                    ->password()
+                                    ->autocomplete(false),
+                                TextInput::make('open_ai_gpt_o3_model')
+                                    ->label('Model'),
+                                Select::make('open_ai_gpt_o3_applicable_features')
+                                    ->label('Applicability')
+                                    ->options(AiModelApplicabilityFeature::class)
+                                    ->multiple()
+                                    ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
+                            ])
+                            ->visible(AiReasoningEffort::active()),
                         Section::make('GPT o3 mini')
                             ->collapsible()
                             ->schema([
@@ -387,6 +414,10 @@ class ManageAiIntegrationsSettings extends SettingsPage
                     return false;
                 }
 
+                if ($originalSettings->open_ai_gpt_o3_base_uri !== ($newSettings['open_ai_gpt_o3_base_uri'] ?? null)) {
+                    return false;
+                }
+
                 if ($originalSettings->open_ai_gpt_o3_mini_base_uri !== $newSettings['open_ai_gpt_o3_mini_base_uri']) {
                     return false;
                 }
@@ -421,6 +452,7 @@ class ManageAiIntegrationsSettings extends SettingsPage
                     ...(($originalSettings->open_ai_gpt_4o_base_uri !== $newSettings['open_ai_gpt_4o_base_uri']) ? [AiModel::OpenAiGpt4o] : []),
                     ...(($originalSettings->open_ai_gpt_4o_mini_base_uri !== $newSettings['open_ai_gpt_4o_mini_base_uri']) ? [AiModel::OpenAiGpt4o] : []),
                     ...(($originalSettings->open_ai_gpt_o1_mini_base_uri !== $newSettings['open_ai_gpt_o1_mini_base_uri']) ? [AiModel::OpenAiGptO1Mini] : []),
+                    ...(($originalSettings->open_ai_gpt_o3_base_uri !== ($newSettings['open_ai_gpt_o3_base_uri'] ?? null)) ? [AiModel::OpenAiGptO3] : []),
                     ...(($originalSettings->open_ai_gpt_o3_mini_base_uri !== $newSettings['open_ai_gpt_o3_mini_base_uri']) ? [AiModel::OpenAiGptO3Mini] : []),
                     ...(($originalSettings->open_ai_gpt_41_mini_base_uri !== $newSettings['open_ai_gpt_41_mini_base_uri']) ? [AiModel::OpenAiGpt41Mini] : []),
                     ...(($originalSettings->open_ai_gpt_41_nano_base_uri !== $newSettings['open_ai_gpt_41_nano_base_uri']) ? [AiModel::OpenAiGpt41Nano] : []),
