@@ -34,27 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Audit\Providers;
+namespace App\Features;
 
-use AdvisingApp\Audit\AuditPlugin;
-use AdvisingApp\Audit\Models\Audit;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use App\Support\AbstractFeatureFlag;
 
-class AuditServiceProvider extends ServiceProvider
+class UnMatchInboundCommunicationFeature extends AbstractFeatureFlag
 {
-    public function register(): void
+    public function resolve(mixed $scope): mixed
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new AuditPlugin()));
-
-        $this->mergeConfigFrom(__DIR__ . '/../../config/audit.php', 'audit');
-    }
-
-    public function boot(): void
-    {
-        Relation::morphMap([
-            'audit' => Audit::class,
-        ]);
+        return false;
     }
 }

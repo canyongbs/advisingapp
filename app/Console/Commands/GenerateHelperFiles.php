@@ -73,13 +73,6 @@ class GenerateHelperFiles extends Command
             outputBuffer: $this->output,
         );
 
-        $this->info('Generating GraphQL helper files...');
-
-        Artisan::call(
-            command: 'lighthouse:ide-helper',
-            outputBuffer: $this->output,
-        );
-
         $this->info('Helper files generated!');
 
         return static::SUCCESS;

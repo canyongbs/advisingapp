@@ -78,15 +78,12 @@
         "laravel/socialite": "^5.15",
         "laravel/tinker": "^2.8",
         "laravel/ui": "^4.5",
-        "lastdragon-ru/lara-asp-graphql": "^9.0",
         "league/flysystem-aws-s3-v3": "^3.28",
         "league/html-to-markdown": "^5.1",
         "league/oauth2-client": "^2.7",
         "livewire/livewire": "^3.6.1",
         "maatwebsite/excel": "^3.1",
         "microsoft/microsoft-graph": "^1.109",
-        "mll-lab/graphql-php-scalars": "^6.2",
-        "nuwave/lighthouse": "^6.42",
         "owen-it/laravel-auditing": "^14.0",
         "php-mime-mail-parser/php-mime-mail-parser": "^9.0",
         "saade/filament-fullcalendar": "^3.2",
@@ -182,7 +179,7 @@
             "rm -f ./.php-cs-fixer.cache"
         ],
         "prettier": [
-            "./node_modules/.bin/prettier \"resources/**/*{.css,.blade.php,.js}\" \"app-modules/**/resources/**/*{.css,.blade.php,.js}\" \"graphql/*.graphql\" \"app-modules/**/graphql/*.graphql\" \"portals/**/*{.vue,.js}\" \"widgets/**/*{.vue,.js}\" \"resources/views/vendor/**/*{.css,.blade.php,.js}\" --config ./.prettierrc.json --ignore-path ./.prettierignore --cache"
+            "./node_modules/.bin/prettier \"resources/**/*{.css,.blade.php,.js}\" \"app-modules/**/resources/**/*{.css,.blade.php,.js}\" \"portals/**/*{.vue,.js}\" \"widgets/**/*{.vue,.js}\" \"resources/views/vendor/**/*{.css,.blade.php,.js}\" --config ./.prettierrc.json --ignore-path ./.prettierignore --cache"
         ],
         "prettier-format": [
             "@prettier --write"
@@ -216,11 +213,6 @@
         "ci": [
             "rm -rf ./vendor",
             "composer install"
-        ],
-        "generate-api-docs": [
-            "./node_modules/.bin/prettier \"graphql/*.graphql\" \"app-modules/**/graphql/*.graphql\" --config ./.prettierrc.json --ignore-path ./.prettierignore --cache --write",
-            "@php artisan api:print-schema",
-            "npm run api-docs:generate"
         ]
     },
     "extra": {

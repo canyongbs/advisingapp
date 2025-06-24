@@ -37,13 +37,10 @@
 namespace AdvisingApp\Alert\Providers;
 
 use AdvisingApp\Alert\AlertPlugin;
-use AdvisingApp\Alert\Enums\AlertSeverity;
-use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Alert\Events\AlertCreated;
 use AdvisingApp\Alert\Histories\AlertHistory;
 use AdvisingApp\Alert\Listeners\NotifySubscribersOfAlertCreated;
 use AdvisingApp\Alert\Models\Alert;
-use App\Concerns\ImplementsGraphQL;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Event;
@@ -51,8 +48,6 @@ use Illuminate\Support\ServiceProvider;
 
 class AlertServiceProvider extends ServiceProvider
 {
-    use ImplementsGraphQL;
-
     public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new AlertPlugin()));
@@ -66,8 +61,6 @@ class AlertServiceProvider extends ServiceProvider
         ]);
 
         $this->registerEvents();
-
-        $this->registerGraphQL();
     }
 
     protected function registerEvents(): void
@@ -76,13 +69,5 @@ class AlertServiceProvider extends ServiceProvider
             AlertCreated::class,
             NotifySubscribersOfAlertCreated::class
         );
-    }
-
-    protected function registerGraphQL(): void
-    {
-        $this->discoverSchema(__DIR__ . '/../../graphql/*');
-
-        $this->registerEnum(AlertSeverity::class);
-        $this->registerEnum(SystemAlertStatusClassification::class);
     }
 }

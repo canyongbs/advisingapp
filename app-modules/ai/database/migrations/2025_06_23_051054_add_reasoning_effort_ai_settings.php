@@ -34,49 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Actions;
+use App\Features\AiReasoningEffort;
+use Illuminate\Support\Facades\DB;
+use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use AdvisingApp\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
-use AdvisingApp\Engagement\DataTransferObjects\EngagementResponseData;
-use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
-use AdvisingApp\Engagement\Enums\EngagementResponseType;
-use AdvisingApp\Engagement\Models\EngagementResponse;
-use AdvisingApp\Engagement\Models\UnmatchedInboundCommunication;
-use App\Features\UnMatchInboundCommunicationFeature;
-
-class CreateEngagementResponse
-{
-    public function __construct(
-        public EngagementResponseSenderFinder $finder
-    ) {}
-
-    public function __invoke(EngagementResponseData $data): void
+return new class () extends SettingsMigration {
+    public function up(): void
     {
-        $sender = $this->finder->find($data->from);
-
-        if (is_null($sender)) {
-            if (! UnMatchInboundCommunicationFeature::active()) {
-                return;
+        DB::transaction(function () {
+            try {
+                $this->migrator->add('ai.reasoning_effort', 'medium');
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
             }
-            UnmatchedInboundCommunication::create([
-                'type' => EngagementResponseType::Sms,
-                'sender' => $data->from,
-                'body' => $data->body,
-                'occurred_at' => now(),
-            ]);
 
-            return;
-        }
-
-        EngagementResponse::create([
-            'type' => EngagementResponseType::Sms,
-            'sender_id' => $sender->getKey(),
-            'sender_type' => $sender->getMorphClass(),
-            'content' => $data->body,
-            // TODO We might need to retroactively get this data from the Twilio API
-            // For now, we will assume that the message was sent at the time it was received
-            'sent_at' => now(),
-            'status' => EngagementResponseStatus::New,
-        ]);
+            AiReasoningEffort::activate();
+        });
     }
-}
+
+    public function down(): void
+    {
+        DB::transaction(function () {
+            AiReasoningEffort::purge();
+
+            $this->migrator->deleteIfExists('ai.reasoning_effort');
+        });
+    }
+};

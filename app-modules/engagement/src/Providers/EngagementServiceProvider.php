@@ -43,17 +43,12 @@ use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Engagement\Models\SmsTemplate;
-use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
-use App\Concerns\ImplementsGraphQL;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 
 class EngagementServiceProvider extends ServiceProvider
 {
-    use ImplementsGraphQL;
-
     public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new EngagementPlugin()));
@@ -69,15 +64,5 @@ class EngagementServiceProvider extends ServiceProvider
             'engagement' => Engagement::class,
             'sms_template' => SmsTemplate::class,
         ]);
-
-        $this->registerGraphQL();
-    }
-
-    protected function registerGraphQL(): void
-    {
-        $this->discoverSchema(__DIR__ . '/../../graphql/*');
-
-        $this->registerEnum(NotificationChannel::class);
-        $this->registerEnum(NotificationDeliveryStatus::class);
     }
 }

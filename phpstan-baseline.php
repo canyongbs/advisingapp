@@ -2780,18 +2780,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/consent/src/Filament/Resources/ConsentAgreementResource/Pages/EditConsentAgreement.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Consent\\\\GraphQL\\\\Mutations\\\\ConsentUserToConsentAgreement\\:\\:__invoke\\(\\) has parameter \\$args with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/consent/src/GraphQL/Mutations/ConsentUserToConsentAgreement.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Consent\\\\GraphQL\\\\Mutations\\\\UpdateConsentAgreement\\:\\:__invoke\\(\\) has parameter \\$args with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/consent/src/GraphQL/Mutations/UpdateConsentAgreement.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Consent\\\\Models\\\\ConsentAgreement\\:\\:newMorphToMany\\(\\) return type with generic class AdvisingApp\\\\Audit\\\\Overrides\\\\MorphToMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
@@ -3198,78 +3186,6 @@ $ignoreErrors[] = [
     'identifier' => 'match.unhandled',
     'count' => 2,
     'path' => __DIR__ . '/app-modules/engagement/src/Filament/Resources/EngagementResponseResource/Pages/ViewEngagementResponse.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Engagement\\\\GraphQL\\\\Mutations\\\\DeleteEngagement\\:\\:__invoke\\(\\) has parameter \\$args with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/GraphQL/Mutations/DeleteEngagement.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Match arm comparison between AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\|AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student and \'AdvisingApp\\\\\\\\Prospect\\\\\\\\Models\\\\\\\\Prospect\' is always false\\.$#',
-    'identifier' => 'match.alwaysFalse',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/GraphQL/Mutations/SendEmail.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Match arm comparison between AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\|AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student and \'AdvisingApp\\\\\\\\StudentDataModel\\\\\\\\Models\\\\\\\\Student\' is always false\\.$#',
-    'identifier' => 'match.alwaysFalse',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/GraphQL/Mutations/SendEmail.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Match expression does not handle remaining values\\: AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\|AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student$#',
-    'identifier' => 'match.unhandled',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/GraphQL/Mutations/SendEmail.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Engagement\\\\GraphQL\\\\Mutations\\\\SendEmail\\:\\:__invoke\\(\\) has parameter \\$args with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/GraphQL/Mutations/SendEmail.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$type of static method AdvisingApp\\\\Engagement\\\\Models\\\\Engagement\\:\\:getMergeTags\\(\\) expects class\\-string, AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\|AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/GraphQL/Mutations/SendEmail.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Match expression does not handle remaining values\\: class\\-string\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\|null$#',
-    'identifier' => 'match.unhandled',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/GraphQL/Mutations/SendSMS.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Engagement\\\\GraphQL\\\\Mutations\\\\SendSMS\\:\\:__invoke\\(\\) has parameter \\$args with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/GraphQL/Mutations/SendSMS.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Engagement\\\\GraphQL\\\\Mutations\\\\UpdateEmail\\:\\:__invoke\\(\\) has parameter \\$args with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/GraphQL/Mutations/UpdateEmail.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Engagement\\\\GraphQL\\\\Mutations\\\\UpdateSMS\\:\\:__invoke\\(\\) has parameter \\$args with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/GraphQL/Mutations/UpdateSMS.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Engagement\\\\GraphQL\\\\Rules\\\\RecipientIdExists\\:\\:setData\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/GraphQL/Rules/RecipientIdExists.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\Engagement\\\\GraphQL\\\\Rules\\\\RecipientIdExists\\:\\:\\$data type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/GraphQL/Rules/RecipientIdExists.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Engagement\\\\Http\\\\Controllers\\\\EngagementFileDownloadController\\:\\:__invoke\\(\\) has no return type specified\\.$#',
@@ -9852,6 +9768,10 @@ $ignoreErrors[] = [
     'identifier' => 'argument.templateType',
     'count' => 2,
     'path' => __DIR__ . '/app/Console/Commands/ValidateGraphQL.php',
+    'message' => '#^Method App\\\\Console\\\\Commands\\\\DispatchMigrations\\:\\:getVersionTag\\(\\) should return string but returns int\\.$#',
+    'identifier' => 'return.type',
+    'count' => 2,
+    'path' => __DIR__ . '/app/Console/Commands/DispatchMigrations.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method App\\\\DataTransferObjects\\\\Casts\\\\DataCast\\:\\:get\\(\\) has parameter \\$payload with no type specified\\.$#',
@@ -9888,12 +9808,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app/DataTransferObjects/Casts/MoneySettingCast.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Exceptions\\\\IntegrationException\\:\\:context\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Exceptions/IntegrationException.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method App\\\\Exceptions\\\\IntegrationException\\:\\:make\\(\\) should return static\\(App\\\\Exceptions\\\\IntegrationException\\) but returns App\\\\Exceptions\\\\IntegrationNotConfigured\\.$#',
@@ -10080,6 +9994,16 @@ $ignoreErrors[] = [
     'identifier' => 'property.notFound',
     'count' => 1,
     'path' => __DIR__ . '/app/GraphQL/Scalars/Year.php',
+    'message' => '#^Method App\\\\Filament\\\\Widgets\\\\ProspectGrowthChart\\:\\:getOptions\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Filament/Widgets/ProspectGrowthChart.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Filament\\\\Widgets\\\\RecentProspectsList\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Filament/Widgets/RecentProspectsList.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method App\\\\Http\\\\Controllers\\\\ViewPublicUserProfileController\\:\\:formatHours\\(\\) has parameter \\$hours with no value type specified in iterable type array\\.$#',
@@ -10092,6 +10016,66 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app/Http/Controllers/ViewPublicUserProfileController.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Empty array passed to foreach\\.$#',
+    'identifier' => 'foreach.emptyArray',
+    'count' => 2,
+    'path' => __DIR__ . '/app/Http/Middleware/AuthGates.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Http\\\\Middleware\\\\AuthGates\\:\\:handle\\(\\) has no return type specified\\.$#',
+    'identifier' => 'missingType.return',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Http/Middleware/AuthGates.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Http\\\\Middleware\\\\AuthGates\\:\\:handle\\(\\) has parameter \\$request with no type specified\\.$#',
+    'identifier' => 'missingType.parameter',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Http/Middleware/AuthGates.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Http\\\\Middleware\\\\SetPreferredLocale\\:\\:handle\\(\\) has no return type specified\\.$#',
+    'identifier' => 'missingType.return',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Http/Middleware/SetPreferredLocale.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Http\\\\Middleware\\\\SetPreferredLocale\\:\\:handle\\(\\) has parameter \\$request with no type specified\\.$#',
+    'identifier' => 'missingType.parameter',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Http/Middleware/SetPreferredLocale.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Http\\\\Requests\\\\SetAzureSsoSettingRequest\\:\\:rules\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Http/Requests/SetAzureSsoSettingRequest.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Http\\\\Requests\\\\Tenants\\\\CreateTenantRequest\\:\\:rules\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Http/Requests/Tenants/CreateTenantRequest.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Http\\\\Requests\\\\Tenants\\\\SyncTenantRequest\\:\\:rules\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Http/Requests/Tenants/SyncTenantRequest.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Jobs\\\\CreateTenantUser\\:\\:middleware\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Jobs/CreateTenantUser.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Livewire\\\\BrandingBar\\:\\:refreshBrandingBar\\(\\) has no return type specified\\.$#',
+    'identifier' => 'missingType.return',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Livewire/BrandingBar.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method App\\\\Livewire\\\\ProspectPipelineKanban\\:\\:getPipelineSubjects\\(\\) return type with generic class Illuminate\\\\Support\\\\Collection does not specify its types\\: TKey, TValue$#',

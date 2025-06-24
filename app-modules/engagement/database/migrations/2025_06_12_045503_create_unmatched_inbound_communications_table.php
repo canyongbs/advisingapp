@@ -34,27 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Audit\Providers;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Audit\AuditPlugin;
-use AdvisingApp\Audit\Models\Audit;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
-
-class AuditServiceProvider extends ServiceProvider
-{
-    public function register(): void
+return new class () extends Migration {
+    public function up(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new AuditPlugin()));
-
-        $this->mergeConfigFrom(__DIR__ . '/../../config/audit.php', 'audit');
+        Schema::create('unmatched_inbound_communications', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('type');
+            $table->string('subject')->nullable();
+            $table->longText('body');
+            $table->timestamp('occurred_at');
+            $table->string('sender');
+            $table->timestamps();
+        });
     }
 
-    public function boot(): void
+    public function down(): void
     {
-        Relation::morphMap([
-            'audit' => Audit::class,
-        ]);
+        Schema::dropIfExists('unmatched_inbound_communications');
     }
-}
+};

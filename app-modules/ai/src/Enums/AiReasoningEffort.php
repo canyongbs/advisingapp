@@ -34,27 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Audit\Providers;
+namespace AdvisingApp\Ai\Enums;
 
-use AdvisingApp\Audit\AuditPlugin;
-use AdvisingApp\Audit\Models\Audit;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use Filament\Support\Contracts\HasLabel;
 
-class AuditServiceProvider extends ServiceProvider
+enum AiReasoningEffort: string implements HasLabel
 {
-    public function register(): void
-    {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new AuditPlugin()));
+    case Low = 'low';
 
-        $this->mergeConfigFrom(__DIR__ . '/../../config/audit.php', 'audit');
+    case Medium = 'medium';
+
+    case High = 'high';
+
+    public function getLabel(): string
+    {
+        return $this->name;
     }
 
-    public function boot(): void
+    public static function parse(string | self | null $value): ?self
     {
-        Relation::morphMap([
-            'audit' => Audit::class,
-        ]);
+        if ($value instanceof self) {
+            return $value;
+        }
+
+        return self::tryFrom($value);
     }
 }

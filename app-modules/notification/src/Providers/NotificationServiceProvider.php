@@ -53,7 +53,6 @@ use AdvisingApp\Notification\Notifications\ChannelManager;
 use AdvisingApp\Notification\Notifications\Channels\DatabaseChannel;
 use AdvisingApp\Notification\Notifications\Channels\MailChannel;
 use AdvisingApp\Notification\Notifications\Channels\SmsChannel;
-use App\Concerns\ImplementsGraphQL;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Notifications\ChannelManager as BaseChannelManager;
@@ -64,8 +63,6 @@ use Illuminate\Support\ServiceProvider;
 
 class NotificationServiceProvider extends ServiceProvider
 {
-    use ImplementsGraphQL;
-
     public function register(): void
     {
         $this->app->bind(BaseMailChannel::class, MailChannel::class);
@@ -87,8 +84,6 @@ class NotificationServiceProvider extends ServiceProvider
         ]);
 
         $this->registerEvents();
-
-        $this->discoverSchema(__DIR__ . '/../../graphql/subscription.graphql');
     }
 
     protected function registerEvents(): void
