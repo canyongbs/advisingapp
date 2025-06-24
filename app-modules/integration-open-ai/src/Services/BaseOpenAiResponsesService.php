@@ -95,7 +95,7 @@ abstract class BaseOpenAiResponsesService implements AiService
                 ->withSystemPrompt($prompt)
                 ->withPrompt($content)
                 ->withMaxTokens($aiSettings->max_tokens->getTokens())
-                ->usingTemperature($aiSettings->temperature)
+                ->usingTemperature($this->hasTemperature() ? $aiSettings->temperature : null)
                 ->asText();
         } catch (PrismRateLimitedException $exception) {
             foreach ($exception->rateLimits as $rateLimit) {
@@ -155,9 +155,14 @@ abstract class BaseOpenAiResponsesService implements AiService
                     $userMessage ?? new UserMessage($message->content),
                 ])
                 ->withMaxTokens($aiSettings->max_tokens->getTokens())
-                ->usingTemperature($aiSettings->temperature)
+                ->usingTemperature($this->hasTemperature() ? $aiSettings->temperature : null)
                 ->withProviderOptions(([
                     'previous_response_id' => $previousResponseId,
+                    ...($this->hasReasoning() ? [
+                        'reasoning' => [
+                            'effort' => $aiSettings->reasoning_effort->value,
+                        ],
+                    ] : []),
                 ]))
                 ->asStream();
 
@@ -320,6 +325,16 @@ abstract class BaseOpenAiResponsesService implements AiService
     public function supportsAssistantFileUploads(): bool
     {
         return false;
+    }
+
+    public function hasReasoning(): bool
+    {
+        return false;
+    }
+
+    public function hasTemperature(): bool
+    {
+        return true;
     }
 
     protected function streamResponse(Generator $stream, AiMessage $message, Closure $saveResponse): Closure

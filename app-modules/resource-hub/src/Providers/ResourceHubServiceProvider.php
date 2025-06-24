@@ -41,15 +41,12 @@ use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
 use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
 use AdvisingApp\ResourceHub\ResourceHubPlugin;
-use App\Concerns\ImplementsGraphQL;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 
 class ResourceHubServiceProvider extends ServiceProvider
 {
-    use ImplementsGraphQL;
-
     public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new ResourceHubPlugin()));
@@ -63,7 +60,5 @@ class ResourceHubServiceProvider extends ServiceProvider
             'resource_hub_quality' => ResourceHubQuality::class,
             'resource_hub_status' => ResourceHubStatus::class,
         ]);
-
-        $this->discoverSchema(__DIR__ . '/../../graphql/resource-hub-article.graphql');
     }
 }

@@ -34,20 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\GraphQL\Mutations;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Engagement\Models\Engagement;
-use Nuwave\Lighthouse\Execution\ResolveInfo;
-use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
-
-class DeleteEngagement
-{
-    public function __invoke(mixed $root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): Engagement
+return new class () extends Migration {
+    public function up(): void
     {
-        $engagement = Engagement::findOrFail($args['id']);
-
-        $engagement->delete();
-
-        return $engagement->refresh();
+        Schema::create('unmatched_inbound_communications', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('type');
+            $table->string('subject')->nullable();
+            $table->longText('body');
+            $table->timestamp('occurred_at');
+            $table->string('sender');
+            $table->timestamps();
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::dropIfExists('unmatched_inbound_communications');
+    }
+};

@@ -57,4 +57,14 @@ class OpenAiResponsesGptO4MiniService extends BaseOpenAiResponsesService
     {
         return $this->settings->open_ai_gpt_o4_mini_base_uri ?? config('integration-open-ai.gpt_o4_mini_base_uri');
     }
+
+    public function hasReasoning(): bool
+    {
+        return true;
+    }
+
+    public function hasTemperature(): bool
+    {
+        return false;
+    }
 }

@@ -62,7 +62,7 @@ class ArtificialIntelligence extends ProfilePage
                         Select::make('is_submit_ai_chat_on_enter_enabled')
                             ->label('Enter Key')
                             ->selectablePlaceholder(false)
-                            ->hint('Decide below if you would prefer the enter key to create a new line or submit the prompt you typed in the AI chat interface.')
+                            ->helperText('Decide below if you would prefer the enter key to create a new line or submit the prompt you typed in the AI chat interface.')
                             ->options([
                                 false => 'New Line',
                                 true => 'Enter',

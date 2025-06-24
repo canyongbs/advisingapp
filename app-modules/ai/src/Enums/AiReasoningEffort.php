@@ -34,33 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace App\Concerns;
+namespace AdvisingApp\Ai\Enums;
 
-use GraphQL\Type\Definition\PhpEnumType;
-use Illuminate\Support\Facades\Event;
-use Nuwave\Lighthouse\Events\BuildSchemaString;
-use Nuwave\Lighthouse\Exceptions\DefinitionException;
-use Nuwave\Lighthouse\Schema\Source\SchemaStitcher;
-use Nuwave\Lighthouse\Schema\TypeRegistry;
+use Filament\Support\Contracts\HasLabel;
 
-trait ImplementsGraphQL
+enum AiReasoningEffort: string implements HasLabel
 {
-    public function discoverSchema(string $path): void
+    case Low = 'low';
+
+    case Medium = 'medium';
+
+    case High = 'high';
+
+    public function getLabel(): string
     {
-        foreach (glob($path) as $schema) {
-            Event::listen(function (BuildSchemaString $event) use ($schema) {
-                return (new SchemaStitcher($schema))->getSchemaString();
-            });
-        }
+        return $this->name;
     }
 
-    /**
-     * @param class-string $enumClass
-     *
-     * @throws DefinitionException
-     */
-    public function registerEnum(string $enumClass): void
+    public static function parse(string | self | null $value): ?self
     {
-        app(TypeRegistry::class)->register(new PhpEnumType($enumClass));
+        if ($value instanceof self) {
+            return $value;
+        }
+
+        return self::tryFrom($value);
     }
 }

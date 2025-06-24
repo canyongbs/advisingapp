@@ -52,15 +52,12 @@ use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\CaseManagement\Models\CaseUpdate;
 use AdvisingApp\CaseManagement\Models\Sla;
-use App\Concerns\ImplementsGraphQL;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 
 class CaseManagementServiceProvider extends ServiceProvider
 {
-    use ImplementsGraphQL;
-
     public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new CaseManagementPlugin()));
@@ -85,7 +82,5 @@ class CaseManagementServiceProvider extends ServiceProvider
             'case_model' => CaseModel::class,
             'sla' => Sla::class,
         ]);
-
-        $this->discoverSchema(__DIR__ . '/../../graphql/case-management.graphql');
     }
 }

@@ -42,9 +42,11 @@ use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiMaxTokens;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
+use AdvisingApp\Ai\Enums\AiReasoningEffort;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiSettings;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Features\AiReasoningEffort as AiReasoningEffortFeature;
 use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
 use CanyonGBS\Common\Filament\Forms\Components\Slider;
@@ -129,6 +131,12 @@ class ManageAiSettings extends SettingsPage
                     ->options(AiMaxTokens::class)
                     ->enum(AiMaxTokens::class)
                     ->required(),
+                Select::make('reasoning_effort')
+                    ->label('Reasoning Effort')
+                    ->options(AiReasoningEffort::class)
+                    ->enum(AiReasoningEffort::class)
+                    ->required()
+                    ->visible(AiReasoningEffortFeature::active()),
                 Slider::make('temperature')
                     ->label('Creativity')
                     ->required()

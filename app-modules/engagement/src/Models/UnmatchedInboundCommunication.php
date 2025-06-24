@@ -34,12 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace App\GraphQL\Scalars;
+namespace AdvisingApp\Engagement\Models;
 
-use GraphQL\Type\Definition\StringType;
+use AdvisingApp\Engagement\Database\Factories\UnmatchedInboundCommunicationFactory;
+use AdvisingApp\Engagement\Enums\EngagementResponseType;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-/** Read more about scalars here: https://webonyx.github.io/graphql-php/type-definitions/scalars. */
-class InteractableId extends StringType
+/**
+ * @mixin IdeHelperUnmatchedInboundCommunication
+ */
+class UnmatchedInboundCommunication extends BaseModel
 {
-    public ?string $description = 'The `InteractableId` scalar type represents a unique identifier of an interactable entity. Due to the differences between some of the educatable entities, the type of the identifier may vary. A Prospect has a UUID, a Student has a sisid, which can be an integer, string, or UUID, and a Service Request has a UUID.';
+    /** @use HasFactory<UnmatchedInboundCommunicationFactory> */
+    use HasFactory;
+
+    protected $fillable = [
+        'sender',
+        'occurred_at',
+        'subject',
+        'type',
+        'body',
+    ];
+
+    protected $casts = [
+        'occurred_at' => 'datetime',
+        'type' => EngagementResponseType::class,
+    ];
 }

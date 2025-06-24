@@ -47,7 +47,7 @@
 
 namespace App\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property int|null $completed_at
@@ -61,6 +61,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Export newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Export newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Export onlyTrashed()
@@ -87,7 +88,7 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property array<array-key, mixed> $data
@@ -118,7 +119,7 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * 
+ *
  *
  * @property int $id
  * @property string $check_name
@@ -153,7 +154,7 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property int|null $completed_at
@@ -169,6 +170,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\FailedImportRow> $failedRows
  * @property-read int|null $failed_rows_count
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Import newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Import newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Import onlyTrashed()
@@ -195,7 +197,7 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $group
@@ -222,7 +224,7 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -267,7 +269,7 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $monitored_scheduled_task_id
@@ -293,7 +295,7 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -332,7 +334,7 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $notification_setting_id
@@ -359,7 +361,7 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $label
@@ -388,7 +390,7 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $group
@@ -415,7 +417,7 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -453,7 +455,7 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -489,7 +491,7 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $tag_id
@@ -517,7 +519,7 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -554,7 +556,7 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * 
+ *
  *
  * @property CareTeamRole $careTeamRole
  * @property string $id
@@ -748,7 +750,7 @@ namespace App\Models{
 
 namespace AdvisingApp\Ai\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string|null $assistant_id
@@ -801,7 +803,7 @@ namespace AdvisingApp\Ai\Models{
 
 namespace AdvisingApp\Ai\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $assistant_id
@@ -839,7 +841,7 @@ namespace AdvisingApp\Ai\Models{
 
 namespace AdvisingApp\Ai\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $assistant_id
@@ -869,7 +871,7 @@ namespace AdvisingApp\Ai\Models{
 
 namespace AdvisingApp\Ai\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string|null $message_id
@@ -913,7 +915,7 @@ namespace AdvisingApp\Ai\Models{
 
 namespace AdvisingApp\Ai\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $message_id
@@ -951,7 +953,7 @@ namespace AdvisingApp\Ai\Models{
 
 namespace AdvisingApp\Ai\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string|null $thread_id
@@ -1003,7 +1005,7 @@ namespace AdvisingApp\Ai\Models{
 
 namespace AdvisingApp\Ai\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -1037,7 +1039,7 @@ namespace AdvisingApp\Ai\Models{
 
 namespace AdvisingApp\Ai\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $message
@@ -1071,7 +1073,7 @@ namespace AdvisingApp\Ai\Models{
 
 namespace AdvisingApp\Ai\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $title
@@ -1114,7 +1116,7 @@ namespace AdvisingApp\Ai\Models{
 
 namespace AdvisingApp\Ai\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $title
@@ -1145,7 +1147,7 @@ namespace AdvisingApp\Ai\Models{
 
 namespace AdvisingApp\Ai\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $prompt_id
@@ -1175,7 +1177,7 @@ namespace AdvisingApp\Ai\Models{
 
 namespace AdvisingApp\Ai\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $prompt_id
@@ -1206,7 +1208,7 @@ namespace AdvisingApp\Ai\Models{
 
 namespace AdvisingApp\Alert\Models{
 /**
- * 
+ *
  *
  * @property-read (Subscribable&(Student|Prospect))|null $concern
  * @property string $id
@@ -1253,7 +1255,7 @@ namespace AdvisingApp\Alert\Models{
 
 namespace AdvisingApp\Alert\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property \AdvisingApp\Alert\Enums\SystemAlertStatusClassification $classification
@@ -1288,7 +1290,7 @@ namespace AdvisingApp\Alert\Models{
 
 namespace AdvisingApp\Application\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -1332,7 +1334,7 @@ namespace AdvisingApp\Application\Models{
 
 namespace AdvisingApp\Application\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string|null $author_id
@@ -1362,7 +1364,7 @@ namespace AdvisingApp\Application\Models{
 
 namespace AdvisingApp\Application\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $label
@@ -1401,7 +1403,7 @@ namespace AdvisingApp\Application\Models{
 
 namespace AdvisingApp\Application\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $label
@@ -1436,7 +1438,7 @@ namespace AdvisingApp\Application\Models{
 
 namespace AdvisingApp\Application\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $application_id
@@ -1472,7 +1474,7 @@ namespace AdvisingApp\Application\Models{
 
 namespace AdvisingApp\Application\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property \AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification $classification
@@ -1509,7 +1511,7 @@ namespace AdvisingApp\Application\Models{
 
 namespace AdvisingApp\Audit\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string|null $change_agent_type
@@ -1555,7 +1557,7 @@ namespace AdvisingApp\Audit\Models{
 
 namespace AdvisingApp\Authorization\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $user_id
@@ -1586,7 +1588,7 @@ namespace AdvisingApp\Authorization\Models{
 
 namespace AdvisingApp\Authorization\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -1629,7 +1631,7 @@ namespace AdvisingApp\Authorization\Models{
 
 namespace AdvisingApp\Authorization\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -1657,7 +1659,7 @@ namespace AdvisingApp\Authorization\Models{
 
 namespace AdvisingApp\Authorization\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -1694,7 +1696,7 @@ namespace AdvisingApp\Authorization\Models{
 
 namespace AdvisingApp\BasicNeeds\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -1727,7 +1729,7 @@ namespace AdvisingApp\BasicNeeds\Models{
 
 namespace AdvisingApp\BasicNeeds\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -1775,7 +1777,7 @@ namespace AdvisingApp\BasicNeeds\Models{
 
 namespace AdvisingApp\Campaign\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -1817,7 +1819,7 @@ namespace AdvisingApp\Campaign\Models{
 
 namespace AdvisingApp\Campaign\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $campaign_id
@@ -1864,7 +1866,7 @@ namespace AdvisingApp\Campaign\Models{
 
 namespace AdvisingApp\Campaign\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $campaign_action_id
@@ -1898,7 +1900,7 @@ namespace AdvisingApp\Campaign\Models{
 
 namespace AdvisingApp\Campaign\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $campaign_action_educatable_id
@@ -1925,7 +1927,7 @@ namespace AdvisingApp\Campaign\Models{
 
 namespace AdvisingApp\CareTeam\Models{
 /**
- * 
+ *
  *
  * @property string $care_team_role_id
  * @property Educatable $educatable
@@ -1958,7 +1960,7 @@ namespace AdvisingApp\CareTeam\Models{
 
 namespace AdvisingApp\CareTeam\Models{
 /**
- * 
+ *
  *
  * @property bool $is_default
  * @property string $id
@@ -1993,7 +1995,7 @@ namespace AdvisingApp\CareTeam\Models{
 
 namespace AdvisingApp\CaseManagement\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $case_model_id
@@ -2033,7 +2035,7 @@ namespace AdvisingApp\CaseManagement\Models{
 
 namespace AdvisingApp\CaseManagement\Models{
 /**
- * 
+ *
  *
  * @property-read Educatable $assignee
  * @property string $id
@@ -2069,7 +2071,7 @@ namespace AdvisingApp\CaseManagement\Models{
 
 namespace AdvisingApp\CaseManagement\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string|null $case_type_id
@@ -2119,7 +2121,7 @@ namespace AdvisingApp\CaseManagement\Models{
 
 namespace AdvisingApp\CaseManagement\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string|null $author_id
@@ -2148,7 +2150,7 @@ namespace AdvisingApp\CaseManagement\Models{
 
 namespace AdvisingApp\CaseManagement\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $label
@@ -2186,7 +2188,7 @@ namespace AdvisingApp\CaseManagement\Models{
 
 namespace AdvisingApp\CaseManagement\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $label
@@ -2221,7 +2223,7 @@ namespace AdvisingApp\CaseManagement\Models{
 
 namespace AdvisingApp\CaseManagement\Models{
 /**
- * 
+ *
  *
  * @property Student|Prospect|null $author
  * @property string $id
@@ -2273,7 +2275,7 @@ namespace AdvisingApp\CaseManagement\Models{
 
 namespace AdvisingApp\CaseManagement\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $case_model_id
@@ -2307,7 +2309,7 @@ namespace AdvisingApp\CaseManagement\Models{
 
 namespace AdvisingApp\CaseManagement\Models{
 /**
- * 
+ *
  *
  * @property-read Student|Prospect $respondent
  * @property string $id
@@ -2381,7 +2383,7 @@ namespace AdvisingApp\CaseManagement\Models{
 
 namespace AdvisingApp\CaseManagement\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -2420,7 +2422,7 @@ namespace AdvisingApp\CaseManagement\Models{
 
 namespace AdvisingApp\CaseManagement\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property \AdvisingApp\CaseManagement\Enums\SystemCaseClassification $classification
@@ -2455,7 +2457,7 @@ namespace AdvisingApp\CaseManagement\Models{
 
 namespace AdvisingApp\CaseManagement\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -2495,7 +2497,7 @@ namespace AdvisingApp\CaseManagement\Models{
 
 namespace AdvisingApp\CaseManagement\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string|null $case_model_id
@@ -2531,7 +2533,7 @@ namespace AdvisingApp\CaseManagement\Models{
 
 namespace AdvisingApp\CaseManagement\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -2569,7 +2571,7 @@ namespace AdvisingApp\CaseManagement\Models{
 
 namespace AdvisingApp\Consent\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property \AdvisingApp\Consent\Enums\ConsentAgreementType $type
@@ -2606,7 +2608,7 @@ namespace AdvisingApp\Consent\Models{
 
 namespace AdvisingApp\Consent\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $user_id
@@ -2640,7 +2642,7 @@ namespace AdvisingApp\Consent\Models{
 
 namespace AdvisingApp\Division\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -2686,7 +2688,7 @@ namespace AdvisingApp\Division\Models{
 
 namespace AdvisingApp\Engagement\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -2722,7 +2724,7 @@ namespace AdvisingApp\Engagement\Models{
 
 namespace AdvisingApp\Engagement\Models{
 /**
- * 
+ *
  *
  * @property-read ?Educatable $recipient
  * @property string $id
@@ -2790,7 +2792,7 @@ namespace AdvisingApp\Engagement\Models{
 
 namespace AdvisingApp\Engagement\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string|null $identifier
@@ -2833,7 +2835,7 @@ namespace AdvisingApp\Engagement\Models{
 
 namespace AdvisingApp\Engagement\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $description
@@ -2873,7 +2875,7 @@ namespace AdvisingApp\Engagement\Models{
 
 namespace AdvisingApp\Engagement\Models{
 /**
- * 
+ *
  *
  * @property string $engagement_file_id
  * @property string $entity_id
@@ -2898,7 +2900,7 @@ namespace AdvisingApp\Engagement\Models{
 
 namespace AdvisingApp\Engagement\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string|null $sender_id
@@ -2947,7 +2949,7 @@ namespace AdvisingApp\Engagement\Models{
 
 namespace AdvisingApp\Engagement\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -2979,9 +2981,27 @@ namespace AdvisingApp\Engagement\Models{
 	class IdeHelperSmsTemplate {}
 }
 
+namespace AdvisingApp\Engagement\Models{
+/**
+ *
+ *
+ * @property \AdvisingApp\Engagement\Enums\EngagementResponseType $type
+ * @property string $sender
+ * @property string $body
+ * @property string|null $subject
+ * @property Illuminate\Support\Carbon $occurred_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UnmatchedInboundCommunication newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UnmatchedInboundCommunication newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UnmatchedInboundCommunication query()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperUnmatchedInboundCommunication {}
+}
+
 namespace AdvisingApp\Form\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -3034,7 +3054,7 @@ namespace AdvisingApp\Form\Models{
 
 namespace AdvisingApp\Form\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string|null $author_id
@@ -3063,7 +3083,7 @@ namespace AdvisingApp\Form\Models{
 
 namespace AdvisingApp\Form\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property array<array-key, mixed>|null $subject
@@ -3098,7 +3118,7 @@ namespace AdvisingApp\Form\Models{
 
 namespace AdvisingApp\Form\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $label
@@ -3140,7 +3160,7 @@ namespace AdvisingApp\Form\Models{
 
 namespace AdvisingApp\Form\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property array<array-key, mixed> $response
@@ -3167,7 +3187,7 @@ namespace AdvisingApp\Form\Models{
 
 namespace AdvisingApp\Form\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $label
@@ -3202,7 +3222,7 @@ namespace AdvisingApp\Form\Models{
 
 namespace AdvisingApp\Form\Models{
 /**
- * 
+ *
  *
  * @property Student|Prospect|null $author
  * @property string $id
@@ -3252,7 +3272,7 @@ namespace AdvisingApp\Form\Models{
 
 namespace AdvisingApp\InAppCommunication\Models{
 /**
- * 
+ *
  *
  * @property string $sid
  * @property string|null $friendly_name
@@ -3289,7 +3309,7 @@ namespace AdvisingApp\InAppCommunication\Models{
 
 namespace AdvisingApp\InAppCommunication\Models{
 /**
- * 
+ *
  *
  * @property string $conversation_sid
  * @property string $user_id
@@ -3330,7 +3350,7 @@ namespace AdvisingApp\InAppCommunication\Models{
 
 namespace AdvisingApp\Interaction\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string|null $subject
@@ -3403,7 +3423,7 @@ namespace AdvisingApp\Interaction\Models{
 
 namespace AdvisingApp\Interaction\Models{
 /**
- * 
+ *
  *
  * @property-read \AdvisingApp\Interaction\Models\Interaction|null $interaction
  * @property-read \AdvisingApp\Team\Models\Team|null $team
@@ -3419,7 +3439,7 @@ namespace AdvisingApp\Interaction\Models{
 
 namespace AdvisingApp\Interaction\Models{
 /**
- * 
+ *
  *
  * @property-read \AdvisingApp\Interaction\Models\Interaction|null $interaction
  * @property-read \App\Models\User|null $user
@@ -3435,7 +3455,7 @@ namespace AdvisingApp\Interaction\Models{
 
 namespace AdvisingApp\Interaction\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -3468,7 +3488,7 @@ namespace AdvisingApp\Interaction\Models{
 
 namespace AdvisingApp\Interaction\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -3498,7 +3518,7 @@ namespace AdvisingApp\Interaction\Models{
 
 namespace AdvisingApp\Interaction\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -3531,7 +3551,7 @@ namespace AdvisingApp\Interaction\Models{
 
 namespace AdvisingApp\Interaction\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -3564,7 +3584,7 @@ namespace AdvisingApp\Interaction\Models{
 
 namespace AdvisingApp\Interaction\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -3599,7 +3619,7 @@ namespace AdvisingApp\Interaction\Models{
 
 namespace AdvisingApp\Interaction\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -3632,7 +3652,7 @@ namespace AdvisingApp\Interaction\Models{
 
 namespace AdvisingApp\MeetingCenter\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string|null $name
@@ -3671,7 +3691,7 @@ namespace AdvisingApp\MeetingCenter\Models{
 
 namespace AdvisingApp\MeetingCenter\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $title
@@ -3706,7 +3726,7 @@ namespace AdvisingApp\MeetingCenter\Models{
 
 namespace AdvisingApp\MeetingCenter\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $title
@@ -3746,7 +3766,7 @@ namespace AdvisingApp\MeetingCenter\Models{
 
 namespace AdvisingApp\MeetingCenter\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property \AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus $status
@@ -3781,7 +3801,7 @@ namespace AdvisingApp\MeetingCenter\Models{
 
 namespace AdvisingApp\MeetingCenter\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $event_id
@@ -3830,7 +3850,7 @@ namespace AdvisingApp\MeetingCenter\Models{
 
 namespace AdvisingApp\MeetingCenter\Models{
 /**
- * 
+ *
  *
  * @property-read EventRegistrationForm $submissible
  * @property string $id
@@ -3857,7 +3877,7 @@ namespace AdvisingApp\MeetingCenter\Models{
 
 namespace AdvisingApp\MeetingCenter\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $label
@@ -3896,7 +3916,7 @@ namespace AdvisingApp\MeetingCenter\Models{
 
 namespace AdvisingApp\MeetingCenter\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $label
@@ -3932,7 +3952,7 @@ namespace AdvisingApp\MeetingCenter\Models{
 
 namespace AdvisingApp\MeetingCenter\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $form_id
@@ -3969,7 +3989,7 @@ namespace AdvisingApp\MeetingCenter\Models{
 
 namespace AdvisingApp\Notification\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $notification_class
@@ -4005,7 +4025,7 @@ namespace AdvisingApp\Notification\Models{
 
 namespace AdvisingApp\Notification\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $notification_class
@@ -4047,7 +4067,7 @@ namespace AdvisingApp\Notification\Models{
 
 namespace AdvisingApp\Notification\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $email_message_id
@@ -4076,7 +4096,7 @@ namespace AdvisingApp\Notification\Models{
 
 namespace AdvisingApp\Notification\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $notification_class
@@ -4118,7 +4138,7 @@ namespace AdvisingApp\Notification\Models{
 
 namespace AdvisingApp\Notification\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $sms_message_id
@@ -4147,7 +4167,7 @@ namespace AdvisingApp\Notification\Models{
 
 namespace AdvisingApp\Notification\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property \AdvisingApp\Notification\Enums\NotificationChannel $type
@@ -4170,7 +4190,7 @@ namespace AdvisingApp\Notification\Models{
 
 namespace AdvisingApp\Notification\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $user_id
@@ -4199,7 +4219,7 @@ namespace AdvisingApp\Notification\Models{
 
 namespace AdvisingApp\Portal\Models{
 /**
- * 
+ *
  *
  * @property Carbon|null $created_at
  * @property string $id
@@ -4228,7 +4248,7 @@ namespace AdvisingApp\Portal\Models{
 
 namespace AdvisingApp\Prospect\Models{
 /**
- * 
+ *
  *
  * @property string $pipeline_id
  * @property string $pipeline_stage_id
@@ -4256,7 +4276,7 @@ namespace AdvisingApp\Prospect\Models{
 
 namespace AdvisingApp\Prospect\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -4295,7 +4315,7 @@ namespace AdvisingApp\Prospect\Models{
 
 namespace AdvisingApp\Prospect\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -4324,7 +4344,7 @@ namespace AdvisingApp\Prospect\Models{
 
 namespace AdvisingApp\Prospect\Models{
 /**
- * 
+ *
  *
  * @property string $display_name
  * @property string $id
@@ -4452,7 +4472,7 @@ namespace AdvisingApp\Prospect\Models{
 
 namespace AdvisingApp\Prospect\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $prospect_id
@@ -4496,7 +4516,7 @@ namespace AdvisingApp\Prospect\Models{
 
 namespace AdvisingApp\Prospect\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $prospect_id
@@ -4527,7 +4547,7 @@ namespace AdvisingApp\Prospect\Models{
 
 namespace AdvisingApp\Prospect\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $prospect_id
@@ -4562,7 +4582,7 @@ namespace AdvisingApp\Prospect\Models{
 
 namespace AdvisingApp\Prospect\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -4593,7 +4613,7 @@ namespace AdvisingApp\Prospect\Models{
 
 namespace AdvisingApp\Prospect\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property \AdvisingApp\Prospect\Enums\SystemProspectClassification $classification
@@ -4632,7 +4652,7 @@ namespace AdvisingApp\Prospect\Models{
 
 namespace AdvisingApp\Report\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -4667,7 +4687,7 @@ namespace AdvisingApp\Report\Models{
 
 namespace AdvisingApp\Report\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property \AdvisingApp\Report\Enums\TrackedEventType $type
@@ -4694,7 +4714,7 @@ namespace AdvisingApp\Report\Models{
 
 namespace AdvisingApp\Report\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property \AdvisingApp\Report\Enums\TrackedEventType $type
@@ -4727,7 +4747,7 @@ namespace AdvisingApp\Report\Models{
 
 namespace AdvisingApp\Research\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string|null $title
@@ -4765,7 +4785,7 @@ namespace AdvisingApp\Research\Models{
 
 namespace AdvisingApp\Research\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -4796,7 +4816,7 @@ namespace AdvisingApp\Research\Models{
 
 namespace AdvisingApp\Research\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $content
@@ -4825,7 +4845,7 @@ namespace AdvisingApp\Research\Models{
 
 namespace AdvisingApp\ResourceHub\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property bool $public
@@ -4880,7 +4900,7 @@ namespace AdvisingApp\ResourceHub\Models{
 
 namespace AdvisingApp\ResourceHub\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $resource_hub_item_id
@@ -4907,7 +4927,7 @@ namespace AdvisingApp\ResourceHub\Models{
 
 namespace AdvisingApp\ResourceHub\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $resource_hub_item_id
@@ -4934,7 +4954,7 @@ namespace AdvisingApp\ResourceHub\Models{
 
 namespace AdvisingApp\ResourceHub\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -4969,7 +4989,7 @@ namespace AdvisingApp\ResourceHub\Models{
 
 namespace AdvisingApp\ResourceHub\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -5000,7 +5020,7 @@ namespace AdvisingApp\ResourceHub\Models{
 
 namespace AdvisingApp\ResourceHub\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -5031,7 +5051,7 @@ namespace AdvisingApp\ResourceHub\Models{
 
 namespace AdvisingApp\Segment\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -5074,7 +5094,7 @@ namespace AdvisingApp\Segment\Models{
 
 namespace AdvisingApp\Segment\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $subject_id
@@ -5106,7 +5126,7 @@ namespace AdvisingApp\Segment\Models{
 
 namespace AdvisingApp\StudentDataModel\Models{
 /**
- * 
+ *
  *
  * @property string $sisid
  * @property string|null $division
@@ -5160,7 +5180,7 @@ namespace AdvisingApp\StudentDataModel\Models{
 
 namespace AdvisingApp\StudentDataModel\Models{
 /**
- * 
+ *
  *
  * @property string $sisid
  * @property string|null $acad_career
@@ -5208,7 +5228,7 @@ namespace AdvisingApp\StudentDataModel\Models{
 
 namespace AdvisingApp\StudentDataModel\Models{
 /**
- * 
+ *
  *
  * @property string $display_name
  * @property string $mobile
@@ -5357,7 +5377,7 @@ namespace AdvisingApp\StudentDataModel\Models{
 
 namespace AdvisingApp\StudentDataModel\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $sisid
@@ -5401,7 +5421,7 @@ namespace AdvisingApp\StudentDataModel\Models{
 
 namespace AdvisingApp\StudentDataModel\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $user_id
@@ -5451,7 +5471,7 @@ namespace AdvisingApp\StudentDataModel\Models{
 
 namespace AdvisingApp\StudentDataModel\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $sisid
@@ -5482,7 +5502,7 @@ namespace AdvisingApp\StudentDataModel\Models{
 
 namespace AdvisingApp\StudentDataModel\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $sisid
@@ -5517,7 +5537,7 @@ namespace AdvisingApp\StudentDataModel\Models{
 
 namespace AdvisingApp\Survey\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -5565,7 +5585,7 @@ namespace AdvisingApp\Survey\Models{
 
 namespace AdvisingApp\Survey\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string|null $author_id
@@ -5594,7 +5614,7 @@ namespace AdvisingApp\Survey\Models{
 
 namespace AdvisingApp\Survey\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $label
@@ -5636,7 +5656,7 @@ namespace AdvisingApp\Survey\Models{
 
 namespace AdvisingApp\Survey\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property array<array-key, mixed> $response
@@ -5663,7 +5683,7 @@ namespace AdvisingApp\Survey\Models{
 
 namespace AdvisingApp\Survey\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $label
@@ -5698,7 +5718,7 @@ namespace AdvisingApp\Survey\Models{
 
 namespace AdvisingApp\Survey\Models{
 /**
- * 
+ *
  *
  * @property Student|Prospect|null $author
  * @property string $id
@@ -5748,7 +5768,7 @@ namespace AdvisingApp\Survey\Models{
 
 namespace AdvisingApp\Task\Models{
 /**
- * 
+ *
  *
  * @property-read Student|Prospect $concern
  * @property string $id
@@ -5799,7 +5819,7 @@ namespace AdvisingApp\Task\Models{
 
 namespace AdvisingApp\Team\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $name
@@ -5830,7 +5850,7 @@ namespace AdvisingApp\Team\Models{
 
 namespace AdvisingApp\Timeline\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $entity_type
@@ -5866,7 +5886,7 @@ namespace AdvisingApp\Timeline\Models{
 
 namespace AdvisingApp\Webhook\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property \AdvisingApp\Webhook\Enums\InboundWebhookSource $source
@@ -5895,7 +5915,7 @@ namespace AdvisingApp\Webhook\Models{
 
 namespace AdvisingApp\Webhook\Models{
 /**
- * 
+ *
  *
  * @property string $id
  * @property \AdvisingApp\Webhook\Enums\InboundWebhookSource $source

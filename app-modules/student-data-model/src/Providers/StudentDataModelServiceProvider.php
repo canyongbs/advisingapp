@@ -43,15 +43,12 @@ use AdvisingApp\StudentDataModel\Models\StudentAddress;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use AdvisingApp\StudentDataModel\StudentDataModelPlugin;
-use App\Concerns\ImplementsGraphQL;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 
 class StudentDataModelServiceProvider extends ServiceProvider
 {
-    use ImplementsGraphQL;
-
     public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new StudentDataModelPlugin()));
@@ -67,7 +64,5 @@ class StudentDataModelServiceProvider extends ServiceProvider
             'student_address' => StudentAddress::class,
             'student_email_address' => StudentEmailAddress::class,
         ]);
-
-        $this->discoverSchema(__DIR__ . '/../../graphql/*');
     }
 }

@@ -43,6 +43,7 @@ use AdvisingApp\Audit\Models\Audit;
 use AdvisingApp\Campaign\Jobs\ExecuteCampaignActions;
 use AdvisingApp\Engagement\Jobs\DeliverEngagements as DeliverEngagementsJob;
 use AdvisingApp\Engagement\Jobs\GatherAndDispatchSesS3InboundEmails;
+use AdvisingApp\Engagement\Jobs\UnmatchedInboundCommunicationsJob;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use AdvisingApp\Form\Models\FormAuthentication;
 use AdvisingApp\MeetingCenter\Console\Commands\RefreshCalendarRefreshTokens;
@@ -161,6 +162,11 @@ class Kernel extends ConsoleKernel
                         ->name("Prune Educatable Pipeline Stages | Tenant {$tenant->domain}")
                         ->monitorName("Prune Educatable Pipeline Stages | Tenant {$tenant->domain}")
                         ->withoutOverlapping(720);
+
+                    $schedule->job(new UnmatchedInboundCommunicationsJob())
+                        ->daily()
+                        ->name('Process Unmatched Inbound Communications')
+                        ->monitorName('Process Unmatched Inbound Communications');
 
                     $schedule->command("tenants:artisan \"health:check\" --tenant={$tenant->id}")
                         ->everyMinute()

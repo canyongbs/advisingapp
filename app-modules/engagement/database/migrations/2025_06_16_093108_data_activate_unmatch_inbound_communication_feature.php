@@ -34,25 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Consent\GraphQL\Mutations;
+use App\Features\UnMatchInboundCommunicationFeature;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\Consent\Models\ConsentAgreement;
-use App\Models\User;
-use Nuwave\Lighthouse\Execution\ResolveInfo;
-use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
-
-class UpdateConsentAgreement
-{
-    public function __invoke(mixed $root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): ConsentAgreement
+return new class () extends Migration {
+    public function up(): void
     {
-        $consentAgreement = ConsentAgreement::find($args['id']);
-        $consentAgreement->update($args);
-
-        foreach (data_get($args, 'users.consent', []) as $userId) {
-            $user = User::find($userId);
-            $user->consentTo($consentAgreement);
-        }
-
-        return $consentAgreement;
+        UnMatchInboundCommunicationFeature::activate();
     }
-}
+
+    public function down(): void
+    {
+        UnMatchInboundCommunicationFeature::deactivate();
+    }
+};

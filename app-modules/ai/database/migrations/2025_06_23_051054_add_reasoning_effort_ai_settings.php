@@ -34,29 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace App\Overrides\LastDragon_ru\LaraASP\GraphQL\SearchBy\Types;
+use App\Features\AiReasoningEffort;
+use Illuminate\Support\Facades\DB;
+use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use App\GraphQL\Directives\CanUseInQueryDirective;
-use LastDragon_ru\LaraASP\GraphQL\Builder\Contracts\Context;
-use LastDragon_ru\LaraASP\GraphQL\Builder\Manipulator;
-use LastDragon_ru\LaraASP\GraphQL\Builder\Sources\InputFieldSource;
-use LastDragon_ru\LaraASP\GraphQL\Builder\Sources\InterfaceFieldSource;
-use LastDragon_ru\LaraASP\GraphQL\Builder\Sources\ObjectFieldSource;
-use LastDragon_ru\LaraASP\GraphQL\SearchBy\Types\Condition\Condition as BaseCondition;
-use Nuwave\Lighthouse\Support\Contracts\Directive;
+return new class () extends SettingsMigration {
+    public function up(): void
+    {
+        DB::transaction(function () {
+            try {
+                $this->migrator->add('ai.reasoning_effort', 'medium');
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
 
-class Condition extends BaseCondition
-{
-    protected function isFieldDirectiveAllowed(
-        Manipulator $manipulator,
-        InputFieldSource|ObjectFieldSource|InterfaceFieldSource $field,
-        Context $context,
-        Directive $directive,
-    ): bool {
-        if ($directive instanceof CanUseInQueryDirective) {
-            return true;
-        }
-
-        return parent::isFieldDirectiveAllowed($manipulator, $field, $context, $directive);
+            AiReasoningEffort::activate();
+        });
     }
-}
+
+    public function down(): void
+    {
+        DB::transaction(function () {
+            AiReasoningEffort::purge();
+
+            $this->migrator->deleteIfExists('ai.reasoning_effort');
+        });
+    }
+};
