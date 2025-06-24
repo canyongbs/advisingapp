@@ -81,10 +81,24 @@ class StudentDeliverableTable extends BaseWidget
         return $table
             ->query(
                 Student::select('sisid', 'full_name', 'email_bounce', 'sms_opt_out')
-                    ->when($startDate, function ($query) use ($startDate, $endDate) {
-                        $query->whereBetween('created_at_source', [$startDate, $endDate])
-                            ->where(fn (Builder $query) => $query->where('sms_opt_out', true)->orWhere('email_bounce', true));
-                    }, fn (Builder $query) => $query->where(fn (Builder $query) => $query->where('sms_opt_out', true)->orWhere('email_bounce', true)))
+                    ->when(
+                        $startDate && $endDate,
+                        function (Builder $query) use ($startDate, $endDate): Builder {
+                            return $query->whereBetween('created_at_source', [$startDate, $endDate])
+                                ->where(function (Builder $communicationFilter): Builder {
+                                    return $communicationFilter
+                                        ->where('sms_opt_out', true)
+                                        ->orWhere('email_bounce', true);
+                                });
+                        },
+                        function (Builder $query): Builder {
+                            return $query->where(function (Builder $communicationFilter): Builder {
+                                return $communicationFilter
+                                    ->where('sms_opt_out', true)
+                                    ->orWhere('email_bounce', true);
+                            });
+                        }
+                    )
             )
             ->columns([
                 TextColumn::make('full_name')

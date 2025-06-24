@@ -41,6 +41,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use Carbon\Carbon;
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Number;
 
@@ -65,7 +66,7 @@ class ProspectInteractionStats extends StatsOverviewReportWidget
                 ->whereHasMorph('interactable', Prospect::class)
                 ->when(
                     $startDate && $endDate,
-                    fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate])
+                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
@@ -80,10 +81,12 @@ class ProspectInteractionStats extends StatsOverviewReportWidget
             ? Prospect::query()
                 ->whereHas(
                     'interactions',
-                    fn ($q) => $q->when(
-                        $startDate && $endDate,
-                        fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate])
-                    )
+                    function (Builder $query) use ($startDate, $endDate): Builder {
+                        return $query->when(
+                            $startDate && $endDate,
+                            fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                        );
+                    }
                 )
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(

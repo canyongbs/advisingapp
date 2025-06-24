@@ -71,7 +71,10 @@ class ProspectEngagementState extends StatsOverviewReportWidget
 
         $prospectsCount = $shouldBypassCache
             ? Prospect::query()
-                ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]))
+                ->when(
+                    $startDate && $endDate,
+                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                )
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'total-prospects-count',
@@ -83,7 +86,10 @@ class ProspectEngagementState extends StatsOverviewReportWidget
             ? Engagement::query()
                 ->whereHasMorph('recipient', Prospect::class)
                 ->where('channel', NotificationChannel::Email)
-                ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]))
+                ->when(
+                    $startDate && $endDate,
+                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                )
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'total-emails-sent',
@@ -98,7 +104,10 @@ class ProspectEngagementState extends StatsOverviewReportWidget
             ? Engagement::query()
                 ->whereHasMorph('recipient', Prospect::class)
                 ->where('channel', NotificationChannel::Sms)
-                ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]))
+                ->when(
+                    $startDate && $endDate,
+                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                )
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'total-texts-sent',
@@ -111,7 +120,10 @@ class ProspectEngagementState extends StatsOverviewReportWidget
 
         $engagementFilter = function (Builder $query) use ($startDate, $endDate): void {
             $query->whereHasMorph('recipient', Prospect::class)
-                ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]));
+                ->when(
+                    $startDate && $endDate,
+                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                );
         };
 
         $staffCount = $shouldBypassCache
@@ -124,7 +136,7 @@ class ProspectEngagementState extends StatsOverviewReportWidget
                 fn (): int => User::query()
                     ->whereHas(
                         'engagements',
-                        fn ($q) => $q->whereHasMorph('recipient', Prospect::class)
+                        fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                     )->count()
             );
 

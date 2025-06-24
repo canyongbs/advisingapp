@@ -44,6 +44,7 @@ use AdvisingApp\Task\Models\Task;
 use Carbon\Carbon;
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Number;
 
@@ -71,7 +72,10 @@ class StudentsStats extends StatsOverviewReportWidget
 
         $studentsCount = $shouldBypassCache
             ? Student::query()
-                ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at_source', [$startDate, $endDate]))
+                ->when(
+                    $startDate && $endDate,
+                    fn (Builder $query): Builder => $query->whereBetween('created_at_source', [$startDate, $endDate])
+                )
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'total-students-count',
@@ -82,7 +86,10 @@ class StudentsStats extends StatsOverviewReportWidget
         $alertsCount = $shouldBypassCache
             ? Alert::query()
                 ->whereHasMorph('concern', Student::class)
-                ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]))
+                ->when(
+                    $startDate && $endDate,
+                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                )
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'total-student-alerts-count',
@@ -93,7 +100,10 @@ class StudentsStats extends StatsOverviewReportWidget
         $segmentsCount = $shouldBypassCache
             ? Segment::query()
                 ->where('model', SegmentModel::Student)
-                ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]))
+                ->when(
+                    $startDate && $endDate,
+                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                )
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'total-student-segments-count',
@@ -104,7 +114,10 @@ class StudentsStats extends StatsOverviewReportWidget
         $tasksCount = $shouldBypassCache
             ? Task::query()
                 ->whereHasMorph('concern', Student::class)
-                ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]))
+                ->when(
+                    $startDate && $endDate,
+                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                )
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'total-student-tasks-count',

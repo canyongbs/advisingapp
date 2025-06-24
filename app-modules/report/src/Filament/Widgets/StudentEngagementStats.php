@@ -79,7 +79,10 @@ class StudentEngagementStats extends StatsOverviewReportWidget
             ? Engagement::query()
                 ->whereHasMorph('recipient', Student::class)
                 ->where('channel', NotificationChannel::Email)
-                ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]))
+                ->when(
+                    $startDate && $endDate,
+                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                )
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'total-emails-count',
@@ -94,7 +97,10 @@ class StudentEngagementStats extends StatsOverviewReportWidget
             ? Engagement::query()
                 ->whereHasMorph('recipient', Student::class)
                 ->where('channel', NotificationChannel::Sms)
-                ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]))
+                ->when(
+                    $startDate && $endDate,
+                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                )
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'total-texts-count',
@@ -107,7 +113,10 @@ class StudentEngagementStats extends StatsOverviewReportWidget
 
         $engagementFilter = function (Builder $query) use ($startDate, $endDate): void {
             $query->whereHasMorph('recipient', Student::class)
-                ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]));
+                ->when(
+                    $startDate && $endDate,
+                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                );
         };
 
         $staffCount = $shouldBypassCache

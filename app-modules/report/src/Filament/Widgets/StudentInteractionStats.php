@@ -41,6 +41,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use Carbon\Carbon;
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Number;
 
@@ -65,7 +66,7 @@ class StudentInteractionStats extends StatsOverviewReportWidget
                 ->whereHasMorph('interactable', Student::class)
                 ->when(
                     $startDate && $endDate,
-                    fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate])
+                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
@@ -79,9 +80,12 @@ class StudentInteractionStats extends StatsOverviewReportWidget
         $studentsWithInteractionsCount = $shouldBypassCache
             ? Student::query()
                 ->whereHas('interactions', function ($query) use ($startDate, $endDate) {
-                    $query->when($startDate && $endDate, function ($q) use ($startDate, $endDate) {
-                        $q->whereBetween('created_at', [$startDate, $endDate]);
-                    });
+                    $query->when(
+                        $startDate && $endDate,
+                        function (Builder $query) use ($startDate, $endDate): Builder {
+                            return $query->whereBetween('created_at', [$startDate, $endDate]);
+                        }
+                    );
                 })
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(

@@ -46,6 +46,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\TableWidget as BaseWidget;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\On;
 
 class MostRecentTasksTable extends BaseWidget
@@ -88,7 +89,12 @@ class MostRecentTasksTable extends BaseWidget
             ->query(
                 Task::query()
                     ->with(['concern'])
-                    ->when($startDate, fn ($query) => $query->whereBetween('created_at', [$startDate, $endDate]))
+                    ->when(
+                        $startDate && $endDate,
+                        function (Builder $dateFilteredQuery) use ($startDate, $endDate): Builder {
+                            return $dateFilteredQuery->whereBetween('created_at', [$startDate, $endDate]);
+                        }
+                    )
                     ->orderBy('created_at', 'desc')
                     ->limit(10)
             )

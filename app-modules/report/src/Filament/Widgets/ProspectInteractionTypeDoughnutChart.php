@@ -41,6 +41,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use Carbon\Carbon;
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
 
@@ -144,7 +145,7 @@ class ProspectInteractionTypeDoughnutChart extends ChartReportWidget
                 $query->whereHasMorph('interactable', Prospect::class)
                     ->when(
                         $startDate && $endDate,
-                        fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate])
+                        fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                     );
             },
         ])->get(['id', 'name']);

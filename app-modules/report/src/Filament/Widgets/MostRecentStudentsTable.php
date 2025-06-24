@@ -42,6 +42,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\TableWidget as BaseWidget;
+use Illuminate\Database\Query\Builder;
 use Livewire\Attributes\On;
 
 class MostRecentStudentsTable extends BaseWidget
@@ -89,9 +90,12 @@ class MostRecentStudentsTable extends BaseWidget
                         ->from((new Student())->getTable())
                         ->whereNotNull('created_at_source')
                         ->whereNull('deleted_at')
-                        ->when($startDate, function ($query) use ($startDate, $endDate) {
-                            $query->whereBetween('created_at_source', [$startDate, $endDate]);
-                        })
+                        ->when(
+                            $startDate && $endDate,
+                            function (Builder $query) use ($startDate, $endDate): Builder {
+                                return $query->whereBetween('created_at_source', [$startDate, $endDate]);
+                            }
+                        )
                         ->orderBy('created_at_source', 'desc')
                         ->take(100);
                 })

@@ -44,6 +44,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Number;
 
@@ -73,7 +74,10 @@ class TaskStats extends StatsOverviewReportWidget
             Stat::make('Total Tasks', Number::abbreviate(
                 $shouldBypassCache
                     ? Task::query()
-                        ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]))
+                        ->when(
+                            $startDate && $endDate,
+                            fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                        )
                         ->count()
                     : Cache::tags(["{{$this->cacheTag}}"])->remember('tasks-count', now()->addHours(24), fn () => Task::query()->count()),
                 maxPrecision: 2,
@@ -86,7 +90,10 @@ class TaskStats extends StatsOverviewReportWidget
                             'assignedTasks',
                             fn ($query) => $query
                                 ->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress])
-                                ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]))
+                                ->when(
+                                    $startDate && $endDate,
+                                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                                )
                         )->count()
                     : Cache::tags(["{{$this->cacheTag}}"])->remember(
                         'users-with-open-tasks-count',
@@ -107,7 +114,10 @@ class TaskStats extends StatsOverviewReportWidget
                             'tasks',
                             fn ($query) => $query
                                 ->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress])
-                                ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]))
+                                ->when(
+                                    $startDate && $endDate,
+                                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                                )
                         )->count()
                     : Cache::tags(["{{$this->cacheTag}}"])->remember(
                         'students-with-open-tasks-count',
@@ -128,7 +138,10 @@ class TaskStats extends StatsOverviewReportWidget
                             'tasks',
                             fn ($query) => $query
                                 ->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress])
-                                ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at', [$startDate, $endDate]))
+                                ->when(
+                                    $startDate && $endDate,
+                                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                                )
                         )->count()
                     : Cache::tags(["{{$this->cacheTag}}"])->remember(
                         'prospects-with-open-tasks-count',

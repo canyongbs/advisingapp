@@ -42,6 +42,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\TableWidget;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\On;
 
 class ProspectReportTableChart extends TableWidget
@@ -84,8 +85,8 @@ class ProspectReportTableChart extends TableWidget
                     return Prospect::whereIn($key, function ($query) use ($key, $startDate, $endDate) {
                         $query->select($key)
                             ->from((new Prospect())->getTable())
-                            ->when($startDate, function ($query) use ($startDate, $endDate) {
-                                $query->whereBetween('created_at', [$startDate, $endDate]);
+                            ->when($startDate && $endDate, function (Builder $query) use ($startDate, $endDate): Builder {
+                                return $query->whereBetween('created_at', [$startDate, $endDate]);
                             })
                             ->orderBy('created_at', 'desc')
                             ->take(100);
