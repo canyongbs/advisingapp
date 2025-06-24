@@ -54,10 +54,12 @@ class ManageAiQnaAdvisorSettings extends ManageAiICustomAdvisorSettings
                 Textarea::make('instructions')
                     ->label('Instructions')
                     ->columnSpanFull()
+                    ->visible(fn (Get $get): bool => ! $get('allow_selection_of_model'))
                     ->required(),
                 Textarea::make('background_information')
                     ->label('Background Information')
                     ->columnSpanFull()
+                    ->visible(fn (Get $get): bool => ! $get('allow_selection_of_model'))
                     ->required(),
             ]);
     }
