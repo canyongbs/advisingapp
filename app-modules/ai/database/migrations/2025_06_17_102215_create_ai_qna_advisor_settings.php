@@ -1,21 +1,46 @@
 <?php
 
+use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
+use Spatie\LaravelSettings\Migrations\SettingsBlueprint;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 return new class () extends SettingsMigration {
     public function up(): void
     {
-        $this->migrator->add('ai-qna-advisor.allow_selection_of_model', true);
-        $this->migrator->add('ai-qna-advisor.preselected_model', null);
-        $this->migrator->add('ai-qna-advisor.instructions', null);
-        $this->migrator->add('ai-qna-advisor.background_information', null);
+        $this->migrator->inGroup('ai-qna-advisor', function (SettingsBlueprint $blueprint) {
+            try {
+                $blueprint->add('allow_selection_of_model', true);
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
+
+            try {
+                $blueprint->add('preselected_model', null);
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
+
+            try {
+                $blueprint->add('instructions', null);
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
+
+            try {
+                $blueprint->add('background_information', null);
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
+        });
     }
 
     public function down(): void
     {
-        $this->migrator->deleteIfExists('ai-qna-advisor.allow_selection_of_model');
-        $this->migrator->deleteIfExists('ai-qna-advisor.preselected_model');
-        $this->migrator->deleteIfExists('ai-qna-advisor.instructions');
-        $this->migrator->deleteIfExists('ai-qna-advisor.background_information');
+        $this->migrator->inGroup('ai-qna-advisor', function (SettingsBlueprint $blueprint) {
+            $blueprint->delete('allow_selection_of_model');
+            $blueprint->delete('preselected_model');
+            $blueprint->delete('instructions');
+            $blueprint->delete('background_information');
+        });
     }
 };

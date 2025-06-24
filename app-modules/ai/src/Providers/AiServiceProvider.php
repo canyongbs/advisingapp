@@ -52,9 +52,9 @@ use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiThreadFolder;
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Models\PromptType;
-use AdvisingApp\Ai\Models\QnAAdvisor;
-use AdvisingApp\Ai\Models\QnAAdvisorCategory;
-use AdvisingApp\Ai\Models\QnAAdvisorQuestion;
+use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\QnaAdvisorCategory;
+use AdvisingApp\Ai\Models\QnaAdvisorQuestion;
 use App\Concerns\ImplementsGraphQL;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -98,9 +98,9 @@ class AiServiceProvider extends ServiceProvider
             'ai_thread' => AiThread::class,
             'prompt_type' => PromptType::class,
             'prompt' => Prompt::class,
-            'qna_advisor' => QnAAdvisor::class,
-            'qna_advisor_category' => QnAAdvisorCategory::class,
-            'qna_advisor_question' => QnAAdvisorQuestion::class,
+            'qna_advisor' => QnaAdvisor::class,
+            'qna_advisor_category' => QnaAdvisorCategory::class,
+            'qna_advisor_question' => QnaAdvisorQuestion::class,
         ]);
 
         $this->mergeConfigFrom(__DIR__ . '/../../config/ai.php', 'ai');

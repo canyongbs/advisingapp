@@ -4,8 +4,8 @@ namespace AdvisingApp\Ai\Filament\Pages;
 
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
-use AdvisingApp\Ai\Settings\AiQnAAdvisorSettings;
-use App\Features\QnAAdvisorFeature;
+use AdvisingApp\Ai\Settings\AiQnaAdvisorSettings;
+use App\Features\QnaAdvisorFeature;
 use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
 use Filament\Forms\Components\Select;
@@ -17,7 +17,7 @@ use Illuminate\Validation\Rule;
 
 class ManageAiQnaAdvisorSettings extends ManageAiICustomAdvisorSettings
 {
-    protected static string $settings = AiQnAAdvisorSettings::class;
+    protected static string $settings = AiQnaAdvisorSettings::class;
 
     protected static ?string $title = 'QnA Advisor';
 
@@ -30,7 +30,7 @@ class ManageAiQnaAdvisorSettings extends ManageAiICustomAdvisorSettings
         /** @var User $user */
         $user = auth()->user();
 
-        return QnAAdvisorFeature::active() && $user->isSuperAdmin();
+        return QnaAdvisorFeature::active() && $user->isSuperAdmin();
     }
 
     public function form(Form $form): Form
@@ -39,14 +39,14 @@ class ManageAiQnaAdvisorSettings extends ManageAiICustomAdvisorSettings
             ->schema([
                 Toggle::make('allow_selection_of_model')
                     ->label('Allow selection of model?')
-                    ->helperText('If enabled, users can select a model when creating or editing custom advisors.')
+                    ->helperText('If enabled, users can select a model when creating or editing QnA advisors.')
                     ->columnSpanFull()
                     ->live(),
                 Select::make('preselected_model')
                     ->label('Select Model')
-                    ->options(AiModelApplicabilityFeature::CustomAdvisors->getModelsAsSelectOptions())
+                    ->options(AiModelApplicabilityFeature::QuestionAndAnswerAdvisor->getModelsAsSelectOptions())
                     ->searchable()
-                    ->helperText('This model will be the model used for custom advisors.')
+                    ->helperText('This model will be the model used for QnA advisors.')
                     ->columnSpanFull()
                     ->required()
                     ->visible(fn (Get $get): bool => ! $get('allow_selection_of_model'))

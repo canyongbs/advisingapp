@@ -1,16 +1,16 @@
 <?php
 
-use App\Features\QnAAdvisorFeature;
+use App\Features\QnaAdvisorFeature;
 use Illuminate\Database\Migrations\Migration;
 
 return new class () extends Migration {
     public function up(): void
     {
-        QnAAdvisorFeature::activate();
+        QnaAdvisorFeature::activate();
     }
 
     public function down(): void
     {
-        QnAAdvisorFeature::deactivate();
+        QnaAdvisorFeature::deactivate();
     }
 };
