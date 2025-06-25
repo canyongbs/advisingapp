@@ -36,35 +36,34 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Services;
 
+use AdvisingApp\Ai\Exceptions\MessageResponseException;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Models\AiMessageFile;
+use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
+use AdvisingApp\Ai\Services\Contracts\AiService;
+use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use AdvisingApp\Ai\Settings\AiSettings;
+use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Assistants\AssistantsDataTransferObject;
+use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Threads\ThreadsDataTransferObject;
+use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeDisabled;
+use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeEnabled;
+use AdvisingApp\Report\Enums\TrackedEventType;
+use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use Closure;
 use Exception;
 use Generator;
-use Throwable;
-use Prism\Prism\Prism;
-use Prism\Prism\Enums\ChunkType;
-use Prism\Prism\Contracts\Message;
-use AdvisingApp\Ai\Models\AiThread;
-use Prism\Prism\Enums\FinishReason;
-use AdvisingApp\Ai\Models\AiMessage;
-use Illuminate\Support\Facades\Http;
-use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Settings\AiSettings;
-use AdvisingApp\Ai\Models\AiMessageFile;
-use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\Report\Enums\TrackedEventType;
-use AdvisingApp\Report\Jobs\RecordTrackedEvent;
-use AdvisingApp\Ai\Services\Contracts\AiService;
-use Prism\Prism\ValueObjects\Messages\UserMessage;
-use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Http;
+use Prism\Prism\Contracts\Message;
+use Prism\Prism\Enums\ChunkType;
+use Prism\Prism\Enums\FinishReason;
 use Prism\Prism\Exceptions\PrismRateLimitedException;
-use AdvisingApp\Ai\Exceptions\MessageResponseException;
+use Prism\Prism\Prism;
 use Prism\Prism\ValueObjects\Messages\AssistantMessage;
-use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
-use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeEnabled;
-use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeDisabled;
-use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Threads\ThreadsDataTransferObject;
-use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Assistants\AssistantsDataTransferObject;
+use Prism\Prism\ValueObjects\Messages\UserMessage;
+use Throwable;
 
 abstract class BaseOpenAiResponsesService implements AiService
 {
