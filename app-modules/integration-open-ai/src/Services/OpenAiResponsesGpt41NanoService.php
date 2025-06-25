@@ -43,11 +43,6 @@ class OpenAiResponsesGpt41NanoService extends BaseOpenAiResponsesService
         return $this->settings->open_ai_gpt_41_nano_api_key ?? config('integration-open-ai.gpt_41_nano_api_key');
     }
 
-    public function getApiVersion(): string
-    {
-        return config('integration-open-ai.gpt_41_nano_api_version');
-    }
-
     public function getModel(): string
     {
         return $this->settings->open_ai_gpt_41_nano_model ?? config('integration-open-ai.gpt_41_nano_model');

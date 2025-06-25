@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\Ai\Actions;
 
-use Closure;
-use Illuminate\Support\Arr;
-use AdvisingApp\Ai\Models\Prompt;
-use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
+use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiMessageFile;
+use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
-use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
-use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
+use Closure;
+use Illuminate\Support\Arr;
 
 class SendMessage
 {

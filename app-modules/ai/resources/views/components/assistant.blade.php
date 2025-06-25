@@ -662,16 +662,18 @@
 
                                 @foreach ($this->getFiles() as $file)
                                     <x-filament::badge
-                                        :tooltip="blank($file->parsing_results) ? 'This file is currently being parsed' : null"
+                                        :tooltip="blank($file->parsing_results)
+                                            ? 'This file is currently being parsed'
+                                            : null"
                                         wire:target="removeUploadedFile('{{ $file->getKey() }}')"
                                     >
                                         <span class="flex items-center gap-1">
                                             @if (blank($file->parsing_results))
                                                 <x-filament::loading-indicator
+                                                    class="h-4 w-4 shrink-0"
                                                     wire:poll.5s="checkForParsingResults('{{ $file->getKey() }}')"
                                                     wire:loading.remove
                                                     wire:target="removeUploadedFile('{{ $file->getKey() }}')"
-                                                    class="h-4 w-4 shrink-0"
                                                 />
                                             @endif
                                             {{ $file->name }}

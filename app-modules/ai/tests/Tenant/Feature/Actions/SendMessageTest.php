@@ -41,7 +41,6 @@ use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
 use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
-use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
@@ -87,58 +86,6 @@ it('sends a message', function () {
         ->user->getKey()->toBe(auth()->user()->getKey());
 
     $response = $messages->last();
-
-    expect($response)
-        ->thread->getKey()->toBe($thread->getKey())
-        ->user->toBeNull();
-
-    expect($streamedContent)->toBe($response->content);
-});
-
-it('sends a message with a file', function () {
-    asSuperAdmin();
-
-    $assistant = AiAssistant::factory()->create([
-        'application' => AiAssistantApplication::Test,
-        'is_default' => true,
-        'model' => AiModel::Test,
-    ]);
-
-    $thread = AiThread::factory()
-        ->for($assistant, 'assistant')
-        ->for(auth()->user())
-        ->create();
-
-    $content = AiMessage::factory()->make()->content;
-    $files = ['some-file'];
-
-    expect(AiMessage::count())
-        ->toBe(0);
-
-    expect(AiMessageFile::count())
-        ->toBe(0);
-
-    $responseStream = app(SendMessage::class)($thread, $content, $files);
-
-    $streamedContent = '';
-
-    foreach ($responseStream() as $responseContent) {
-        $streamedContent .= $responseContent;
-    }
-
-    expect(AiMessage::count())
-        ->toBe(2);
-
-    expect(AiMessageFile::count())
-        ->toBe(1);
-
-    expect(AiMessage::query()->orderBy('id')->first())
-        ->content->toBe($content)
-        ->thread->getKey()->toBe($thread->getKey())
-        ->user->getKey()->toBe(auth()->user()->getKey())
-        ->files->first()->getKey()->toBe(AiMessageFile::query()->first()->getKey());
-
-    $response = AiMessage::query()->latest('id')->first();
 
     expect($response)
         ->thread->getKey()->toBe($thread->getKey())

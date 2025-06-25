@@ -34,27 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Observers;
+namespace AdvisingApp\Ai\Console\Commands;
 
+use AdvisingApp\Ai\Jobs\FetchAiAssistantFileParsingResults;
 use AdvisingApp\Ai\Models\AiAssistantFile;
+use Illuminate\Console\Command;
+use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 
-class AiAssistantFileObserver
+class FetchAiAssistantFilesParsingResults extends Command
 {
-    public function created(AiAssistantFile $file): void
-    {
-        /**
-         * For some reason an extra file is being created on the creation of an assistant
-         * So this is in place just to ensure that the file is deleted if it wasn't uploaded by the user
-         */
-        if (blank($file->temporary_url)) {
-            $file->forceDelete();
-        }
-    }
+    use TenantAware;
 
-    public function deleted(AiAssistantFile $file): void
-    {
-        $service = $file->assistant->model->getService();
+    protected $signature = 'ai:fetch-assistant-files-parsing-results {--tenant=*}';
 
-        $service->deleteFile($file);
+    protected $description = 'Finds AI assistant files that were uploaded in the past hour and do not yet have parsed results.';
+
+    public function handle(): void
+    {
+        AiAssistantFile::query()
+            ->whereNull('parsing_results')
+            ->where('created_at', '>=', now()->subHour())
+            ->each(fn (AiAssistantFile $file) => dispatch(new FetchAiAssistantFileParsingResults($file)));
     }
 }

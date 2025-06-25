@@ -76,8 +76,6 @@ abstract class BaseOpenAiResponsesService implements AiService
 
     abstract public function getApiKey(): string;
 
-    abstract public function getApiVersion(): string;
-
     abstract public function getModel(): string;
 
     public function complete(string $prompt, string $content): string
@@ -89,8 +87,10 @@ abstract class BaseOpenAiResponsesService implements AiService
                 ->using('azure_open_ai', $this->getModel())
                 ->withClientOptions([
                     'apiKey' => $this->getApiKey(),
-                    'apiVersion' => $this->getApiVersion(),
                     'deployment' => $this->getDeployment(),
+                ])
+                ->withProviderOptions([
+                    'truncation' => 'auto',
                 ])
                 ->withSystemPrompt($prompt)
                 ->withPrompt($content)
@@ -134,7 +134,7 @@ abstract class BaseOpenAiResponsesService implements AiService
                 ->oldest()
                 ->get()
                 ->map(fn (AiMessage $message): Message => filled($message->user_id)
-                    ? new UserMessage($this->attachFilesToMessageContent($message->content, $message->files))
+                    ? new UserMessage($this->attachFilesToMessageContent($message->content, $message->files->all()))
                     : new AssistantMessage($message->content))
                 ->all();
         }
@@ -147,8 +147,10 @@ abstract class BaseOpenAiResponsesService implements AiService
                 ->using('azure_open_ai', $this->getModel())
                 ->withClientOptions([
                     'apiKey' => $this->getApiKey(),
-                    'apiVersion' => $this->getApiVersion(),
                     'deployment' => $this->getDeployment(),
+                ])
+                ->withProviderOptions([
+                    'truncation' => 'auto',
                 ])
                 ->withSystemPrompt($instructions)
                 ->withMessages([
@@ -204,37 +206,6 @@ abstract class BaseOpenAiResponsesService implements AiService
         }
     }
 
-    protected function attachFilesToMessageContent(string $content, array $files): string
-    {
-        if (blank($files)) {
-            return $content;
-        }
-
-        if (filled($files)) {
-            $content .= <<<'EOT'
-                                
-                ---
-
-                Consider the content from the following files. These have already been converted by Canyon GBS' technology to Markdown for improved processing. When you reference these files, reference the file names as user uploaded files as noted below:
-
-                EOT;
-
-            foreach ($files as $file) {
-                $content .= <<<EOT
-                    ---
-
-                    File Name: {$file->name}
-                    Type: {$file->mime_type}
-                    Source: User Uploaded
-                    Contents: {$file->parsing_results}
-
-                    EOT;
-            }
-        }
-
-        return $content;
-    }
-
     public function getMessagePreviousResponseId(AiMessage $message): ?string
     {
         $previousResponseId = $message->thread->messages()
@@ -255,7 +226,6 @@ abstract class BaseOpenAiResponsesService implements AiService
         try {
             $response = Http::withHeaders([
                 'api-key' => $this->getApiKey(),
-                'api-version' => $this->getApiVersion(),
             ])
                 ->withQueryParameters(['api-version' => 'preview'])
                 ->baseUrl($this->getDeployment())
@@ -366,6 +336,40 @@ abstract class BaseOpenAiResponsesService implements AiService
         return true;
     }
 
+    /**
+     * @param array<AiMessageFile> $files
+     */
+    protected function attachFilesToMessageContent(string $content, array $files): string
+    {
+        if (blank($files)) {
+            return $content;
+        }
+
+        if (filled($files)) {
+            $content .= <<<'EOT'
+                                
+                ---
+
+                Consider the content from the following files. These have already been converted by Canyon GBS' technology to Markdown for improved processing. When you reference these files, reference the file names as user uploaded files as noted below:
+
+                EOT;
+
+            foreach ($files as $file) {
+                $content .= <<<EOT
+                    ---
+
+                    File Name: {$file->name}
+                    Type: {$file->mime_type}
+                    Source: User Uploaded
+                    Contents: {$file->parsing_results}
+
+                    EOT;
+            }
+        }
+
+        return $content;
+    }
+
     protected function streamResponse(Generator $stream, AiMessage $message, Closure $saveResponse): Closure
     {
         return function () use ($message, $saveResponse, $stream): Generator {
@@ -439,12 +443,35 @@ abstract class BaseOpenAiResponsesService implements AiService
 
         $formattingInstructions = static::FORMATTING_INSTRUCTIONS;
 
-        if (! $withDynamicContext) {
-            return "{$assistantInstructions}.\n\n{$formattingInstructions}";
+        if ($withDynamicContext) {
+            $dynamicContext = rtrim(auth()->user()->getDynamicContext(), '. ');
+
+            $instructions = "{$dynamicContext}.\n\n{$assistantInstructions}.\n\n{$formattingInstructions}";
+        } else {
+            $instructions = "{$assistantInstructions}.\n\n{$formattingInstructions}";
         }
 
-        $dynamicContext = rtrim(auth()->user()->getDynamicContext(), '. ');
+        if (filled($files = $assistant->files->all())) {
+            $instructions .= <<<'EOT'
+                                
+                ---
 
-        return "{$dynamicContext}.\n\n{$assistantInstructions}.\n\n{$formattingInstructions}";
+                Consider the following additional knowledge, which has already been handled by Canyon GBS' technology to Markdown for improved processing. When you reference the information, describe that it is part of the assistant's knowledge:
+
+                EOT;
+
+            foreach ($files as $file) {
+                $instructions .= <<<EOT
+                    ---
+
+                    Type: {$file->mime_type}
+                    Source: Assistant Knowledge
+                    Contents: {$file->parsing_results}
+
+                    EOT;
+            }
+        }
+
+        return $instructions;
     }
 }

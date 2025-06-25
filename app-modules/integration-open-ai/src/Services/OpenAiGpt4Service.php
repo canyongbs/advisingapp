@@ -47,7 +47,7 @@ class OpenAiGpt4Service extends BaseOpenAiService
         $this->client = OpenAI::factory()
             ->withBaseUri($this->getDeployment())
             ->withHttpHeader('api-key', $this->settings->open_ai_gpt_4_api_key ?? config('integration-open-ai.gpt_4_api_key'))
-            ->withQueryParam('api-version', config('integration-open-ai.gpt_4_api_version'))
+            ->withQueryParam('api-version', $this->getApiVersion())
             ->withHttpHeader('OpenAI-Beta', 'assistants=v2')
             ->withHttpHeader('Accept', '*/*')
             ->make();
@@ -60,7 +60,7 @@ class OpenAiGpt4Service extends BaseOpenAiService
 
     public function getApiVersion(): string
     {
-        return config('integration-open-ai.gpt_4_api_version');
+        return '2024-05-01-preview';
     }
 
     public function getModel(): string

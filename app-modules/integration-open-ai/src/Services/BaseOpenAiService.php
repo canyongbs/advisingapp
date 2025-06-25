@@ -36,36 +36,36 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Services;
 
-use Closure;
-use Exception;
-use Generator;
-use Throwable;
-use OpenAI\Testing\ClientFake;
-use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\AiMessage;
-use Illuminate\Support\Facades\Http;
-use OpenAI\Contracts\ClientContract;
-use OpenAI\Exceptions\ErrorException;
-use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Settings\AiSettings;
-use AdvisingApp\Ai\Models\AiMessageFile;
-use OpenAI\Responses\Threads\ThreadResponse;
-use AdvisingApp\Report\Enums\TrackedEventType;
-use AdvisingApp\Report\Jobs\RecordTrackedEvent;
-use AdvisingApp\Ai\Services\Contracts\AiService;
-use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
-use AdvisingApp\Ai\Exceptions\MessageResponseException;
-use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
-use OpenAI\Responses\Threads\Messages\ThreadMessageResponse;
-use AdvisingApp\Ai\Exceptions\MessageResponseTimeoutException;
 use AdvisingApp\Ai\Exceptions\AiStreamEndedUnexpectedlyException;
-use AdvisingApp\IntegrationOpenAi\Services\Concerns\UploadsFiles;
-use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeEnabled;
-use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeDisabled;
-use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Threads\ThreadsDataTransferObject;
+use AdvisingApp\Ai\Exceptions\MessageResponseException;
+use AdvisingApp\Ai\Exceptions\MessageResponseTimeoutException;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Models\AiMessageFile;
+use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
+use AdvisingApp\Ai\Services\Contracts\AiService;
+use AdvisingApp\Ai\Settings\AiSettings;
 use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Assistants\AssistantsDataTransferObject;
 use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Assistants\FileSearchDataTransferObject;
 use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Assistants\ToolResourcesDataTransferObject;
+use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Threads\ThreadsDataTransferObject;
+use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeDisabled;
+use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeEnabled;
+use AdvisingApp\IntegrationOpenAi\Services\Concerns\UploadsFiles;
+use AdvisingApp\Report\Enums\TrackedEventType;
+use AdvisingApp\Report\Jobs\RecordTrackedEvent;
+use Closure;
+use Exception;
+use Generator;
+use Illuminate\Support\Facades\Http;
+use OpenAI\Contracts\ClientContract;
+use OpenAI\Exceptions\ErrorException;
+use OpenAI\Responses\Threads\Messages\ThreadMessageResponse;
+use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
+use OpenAI\Responses\Threads\ThreadResponse;
+use OpenAI\Testing\ClientFake;
+use Throwable;
 
 abstract class BaseOpenAiService implements AiService
 {
@@ -296,13 +296,6 @@ abstract class BaseOpenAiService implements AiService
             occurredAt: now(),
         ));
 
-        if (! empty($createdFiles)) {
-            foreach ($createdFiles as $file) {
-                $file->message()->associate($message);
-                $file->save();
-            }
-        }
-
         try {
             if (is_null($message->thread->name)) {
                 $prompt = $message->context . "\nThe following is the start of a chat between you and a user:\n" . $message->content;
@@ -443,7 +436,7 @@ abstract class BaseOpenAiService implements AiService
     /**
      * @param array<AiMessageFile> $files
      */
-    protected function createMessage(string $threadId, string $content, array $files): ThreadMessageResponse
+    protected function createMessage(string $threadId, string $content, array $files = []): ThreadMessageResponse
     {
         if (filled($files)) {
             $content .= <<<'EOT'
@@ -563,13 +556,36 @@ abstract class BaseOpenAiService implements AiService
 
         $formattingInstructions = static::FORMATTING_INSTRUCTIONS;
 
-        if (! $withDynamicContext) {
-            return "{$assistantInstructions}.\n\n{$formattingInstructions}";
+        if ($withDynamicContext) {
+            $dynamicContext = rtrim(auth()->user()->getDynamicContext(), '. ');
+
+            $instructions = "{$dynamicContext}.\n\n{$assistantInstructions}.\n\n{$formattingInstructions}";
+        } else {
+            $instructions = "{$assistantInstructions}.\n\n{$formattingInstructions}";
         }
 
-        $dynamicContext = rtrim(auth()->user()->getDynamicContext(), '. ');
+        if (filled($files = $assistant->files->all())) {
+            $instructions .= <<<'EOT'
+                                
+                ---
 
-        return "{$dynamicContext}.\n\n{$assistantInstructions}.\n\n{$formattingInstructions}";
+                Consider the following additional knowledge, which has already been handled by Canyon GBS' technology to Markdown for improved processing. When you reference the information, describe that it is part of the assistant's knowledge:
+
+                EOT;
+
+            foreach ($files as $file) {
+                $instructions .= <<<EOT
+                    ---
+
+                    Type: {$file->mime_type}
+                    Source: Assistant Knowledge
+                    Contents: {$file->parsing_results}
+
+                    EOT;
+            }
+        }
+
+        return $instructions;
     }
 
     protected function streamRun(AiMessage $message, string $instructions, Closure $saveResponse): Closure

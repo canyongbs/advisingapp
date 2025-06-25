@@ -38,85 +38,65 @@ namespace AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Concerns;
 
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiAssistantFile;
-use AdvisingApp\Ai\Services\Contracts\AiService;
-use AdvisingApp\IntegrationOpenAi\Jobs\UploadFilesToAssistant;
-use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService;
+use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use Filament\Notifications\Notification;
-use Illuminate\Support\Collection;
-use Throwable;
+use Illuminate\Filesystem\AwsS3V3Adapter;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 trait HandlesFileUploads
 {
-    protected function attemptingToUploadAssistantFilesWhenItsNotSupported(AiService $service, array $data): bool
+    /**
+     * @param array<?TemporaryUploadedFile> $files
+     */
+    protected function uploadFilesToAssistant(AiAssistant $assistant, array $files): void
     {
-        if (isset($data['uploaded_files']) && $service->supportsAssistantFileUploads() === false) {
-            Notification::make()
-                ->title('Files could not be uploaded to your custom assistant.')
-                ->body('It looks like you attempted to upload files to your custom assistant, but it is not currently supported on the selected model.')
-                ->danger()
-                ->send();
-
-            return true;
-        }
-
-        return false;
-    }
-
-    protected function uploadFilesToAssistant(AiService $aiService, AiAssistant $assistant, array $uploadedFiles): void
-    {
-        $aiAssistantFiles = $this->createAiAssistantFiles($assistant, $uploadedFiles);
-
-        try {
-            match (true) {
-                $aiService instanceof BaseOpenAiService => UploadFilesToAssistant::dispatchSync($aiService, $assistant, $aiAssistantFiles),
-                default => $this->couldNotUploadFilesToAssistant($aiAssistantFiles),
-            };
-        } catch (Throwable $e) {
-            $this->failedToUploadFilesToAssistant($aiAssistantFiles);
-
-            report($e);
-        }
-    }
-
-    protected function createAiAssistantFiles(AiAssistant $record, array $uploadedFiles): Collection
-    {
-        return collect($uploadedFiles)
-            ->map(function ($file) use ($record): AiAssistantFile {
-                $fileRecord = new AiAssistantFile();
-                $fileRecord->temporary_url = $file->temporaryUrl();
-                $fileRecord->name = $file->getClientOriginalName();
-                $fileRecord->mime_type = $file->getMimeType();
-                $fileRecord->assistant()->associate($record);
-                $fileRecord->save();
-
-                return $fileRecord;
-            });
-    }
-
-    protected function couldNotUploadFilesToAssistant(Collection $aiAssistantFiles): void
-    {
-        Notification::make()
-            ->title('Files could not be uploaded to your custom assistant.')
-            ->body('It looks like you attempted to upload files to your custom assistant, but it is not currently supported on the selected model.')
-            ->danger()
-            ->send();
-
-        $aiAssistantFiles->each->forceDelete();
-    }
-
-    // TODO Perhaps implement some sort of background retry mechanism
-    protected function failedToUploadFilesToAssistant(Collection $files): void
-    {
-        Notification::make()
-            ->title('Files failed to upload to custom assistant')
-            ->body('The files you tried to attach failed to upload to the custom assistant. Support has been notified about this problem. Please try again later.')
-            ->danger()
-            ->send();
-
-        $files->each(function (AiAssistantFile $file) {
-            if (blank($file->file_id)) {
-                $file->delete();
+        foreach ($files as $attachment) {
+            if (! ($attachment instanceof TemporaryUploadedFile)) {
+                continue;
             }
-        });
+
+            $file = new AiAssistantFile();
+            $file->assistant()->associate($assistant);
+            $file->name = $attachment->getClientOriginalName();
+            $file->mime_type = $attachment->getMimeType();
+            $file->temporary_url = $attachment->temporaryUrl();
+
+            /** @var AwsS3V3Adapter $s3Adapter */
+            $s3Adapter = Storage::disk('s3')->getAdapter();
+
+            invade($s3Adapter)->client->registerStreamWrapper(); /** @phpstan-ignore-line */
+            $fileS3Path = (string) str('s3://' . config('filesystems.disks.s3.bucket') . '/' . $attachment->getRealPath())->replace('\\', '/');
+
+            $resource = fopen($fileS3Path, mode: 'r', context: stream_context_create([
+                's3' => [
+                    'seekable' => true,
+                ],
+            ]));
+
+            $response = Http::attach(
+                'file',
+                $resource,
+                $file->name,
+                ['Content-Type' => $file->mime_type]
+            )
+                ->withToken(app(AiIntegrationsSettings::class)->llamaparse_api_key)
+                ->acceptJson()
+                ->post('https://api.cloud.llamaindex.ai/api/v1/parsing/upload');
+
+            if ((! $response->successful()) || blank($response->json('id'))) {
+                Notification::make()
+                    ->title('File Upload Failed')
+                    ->body('There was an error uploading the file. Please try again later.')
+                    ->danger()
+                    ->send();
+
+                continue;
+            }
+
+            $file->file_id = $response->json('id');
+            $file->save();
+        }
     }
 }

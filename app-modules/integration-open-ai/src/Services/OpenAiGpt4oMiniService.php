@@ -53,7 +53,7 @@ class OpenAiGpt4oMiniService extends BaseOpenAiService implements AiServiceLifec
         $this->client = OpenAI::factory()
             ->withBaseUri($this->getDeployment())
             ->withHttpHeader('api-key', $this->settings->open_ai_gpt_4o_mini_api_key ?? config('integration-open-ai.gpt_4o_mini_api_key'))
-            ->withQueryParam('api-version', config('integration-open-ai.gpt_4o_mini_api_version'))
+            ->withQueryParam('api-version', $this->getApiVersion())
             ->withHttpHeader('OpenAI-Beta', 'assistants=v2')
             ->withHttpHeader('Accept', '*/*')
             ->make();
@@ -82,7 +82,7 @@ class OpenAiGpt4oMiniService extends BaseOpenAiService implements AiServiceLifec
 
     public function getApiVersion(): string
     {
-        return config('integration-open-ai.gpt_4o_mini_api_version');
+        return '2024-05-01-preview';
     }
 
     public function getModel(): string

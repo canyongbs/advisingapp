@@ -36,16 +36,17 @@
 
 namespace AdvisingApp\Ai\Filament\Pages\Assistant\Concerns;
 
+use AdvisingApp\Ai\Models\AiMessageFile;
+use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use Filament\Actions\Action;
-use Livewire\Attributes\Computed;
-use Livewire\Attributes\Locked;
+use Filament\Forms\Components\FileUpload;
+use Filament\Notifications\Notification;
+use Illuminate\Filesystem\AwsS3V3Adapter;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
-use AdvisingApp\Ai\Models\AiMessageFile;
-use Filament\Notifications\Notification;
-use Filament\Forms\Components\FileUpload;
-use Illuminate\Filesystem\AwsS3V3Adapter;
-use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use Livewire\Attributes\Computed;
+use Livewire\Attributes\Locked;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 /**
  * @property-read bool $isParsingFiles
@@ -146,7 +147,7 @@ trait CanUploadFiles
                 $s3Adapter = Storage::disk('s3')->getAdapter();
 
                 invade($s3Adapter)->client->registerStreamWrapper(); /** @phpstan-ignore-line */
-                $fileS3Path = (string) str('s3://' . config("filesystems.disks.s3.bucket") . '/' . $attachment->getRealPath())->replace('\\', '/');
+                $fileS3Path = (string) str('s3://' . config('filesystems.disks.s3.bucket') . '/' . $attachment->getRealPath())->replace('\\', '/');
 
                 $resource = fopen($fileS3Path, mode: 'r', context: stream_context_create([
                     's3' => [
@@ -155,7 +156,10 @@ trait CanUploadFiles
                 ]));
 
                 $response = Http::attach(
-                    'file', $resource, $file->name, ['Content-Type' => $file->mime_type]
+                    'file',
+                    $resource,
+                    $file->name,
+                    ['Content-Type' => $file->mime_type]
                 )
                     ->withToken(app(AiIntegrationsSettings::class)->llamaparse_api_key)
                     ->acceptJson()

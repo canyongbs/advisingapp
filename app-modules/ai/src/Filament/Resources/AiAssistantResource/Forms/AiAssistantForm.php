@@ -41,6 +41,7 @@ use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiCustomAdvisorSettings;
+use App\Models\User;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\FileUpload;
@@ -59,6 +60,9 @@ class AiAssistantForm
 {
     public function form(Form | Component $form): Form | Component
     {
+        /** @var User $user */
+        $user = auth()->user();
+
         return $form
             ->schema([
                 SpatieMediaLibraryFileUpload::make('avatar')
@@ -144,9 +148,20 @@ class AiAssistantForm
                         Repeater::make('files')
                             ->relationship()
                             ->hiddenLabel()
-                            ->simple(
-                                TextInput::make('name')
-                                    ->disabled(),
+                            ->when(
+                                $user->isSuperAdmin(),
+                                fn (Repeater $repeater) => $repeater->schema([
+                                    TextInput::make('name')
+                                        ->disabled(),
+                                    Textarea::make('parsing_results')
+                                        ->placeholder('Not parsed yet')
+                                        ->disabled()
+                                        ->visible($user->isSuperAdmin()),
+                                ]),
+                                fn (Repeater $repeater) => $repeater->simple(
+                                    TextInput::make('name')
+                                        ->disabled(),
+                                ),
                             )
                             ->addable(false)
                             ->visible(fn (?AiAssistant $record): bool => $record?->files->isNotEmpty() ?? false)

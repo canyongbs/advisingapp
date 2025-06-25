@@ -43,11 +43,6 @@ class OpenAiResponsesGpt4oMiniService extends BaseOpenAiResponsesService
         return $this->settings->open_ai_gpt_4o_mini_api_key ?? config('integration-open-ai.gpt_4o_mini_api_key');
     }
 
-    public function getApiVersion(): string
-    {
-        return config('integration-open-ai.gpt_4o_mini_api_version');
-    }
-
     public function getModel(): string
     {
         return $this->settings->open_ai_gpt_4o_mini_model ?? config('integration-open-ai.gpt_4o_mini_model');

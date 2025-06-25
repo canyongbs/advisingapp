@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Ai\Http\Requests;
 
-use Illuminate\Validation\Rule;
-use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Models\AiMessageFile;
-use Illuminate\Foundation\Http\FormRequest;
+use AdvisingApp\Ai\Models\Prompt;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class SendMessageRequest extends FormRequest
 {
