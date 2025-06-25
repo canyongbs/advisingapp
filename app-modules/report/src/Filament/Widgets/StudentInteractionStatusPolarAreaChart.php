@@ -37,7 +37,6 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Interaction\Models\InteractionStatus;
-use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
@@ -46,8 +45,6 @@ use Illuminate\Support\Facades\Cache;
 
 class StudentInteractionStatusPolarAreaChart extends ChartReportWidget
 {
-    use InteractsWithPageFilters;
-
     protected static ?string $heading = 'Status';
 
     protected int | string | array $columnSpan = [

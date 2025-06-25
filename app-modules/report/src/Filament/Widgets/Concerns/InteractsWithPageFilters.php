@@ -4,6 +4,7 @@ namespace AdvisingApp\Report\Filament\Widgets\Concerns;
 
 use Carbon\Carbon;
 use Filament\Widgets\Concerns\InteractsWithPageFilters as InteractsWithPageFiltersBase;
+use Illuminate\Support\Collection;
 
 trait InteractsWithPageFilters
 {
@@ -23,11 +24,22 @@ trait InteractsWithPageFilters
         return filled($endDate) ? Carbon::parse($endDate)->endOfDay() : null;
     }
 
-    // $startDate = filled($this->filters['startDate'] ?? null)
-    //     ? Carbon::parse($this->filters['startDate'])->startOfDay()
-    //     : null;
+    /**
+     * @return Collection<int, Carbon>
+     */
+    public function getMonthRange(Carbon $startDate, Carbon $endDate): Collection
+    {
+        $monthStart = $startDate->copy()->startOfMonth();
+        $monthEnd = $endDate->copy()->startOfMonth();
 
-    // $endDate = filled($this->filters['endDate'] ?? null)
-    //     ? Carbon::parse($this->filters['endDate'])->endOfDay()
-    //     : null;
+        $months = collect();
+        $current = $monthStart->copy();
+
+        while ($current->lte($monthEnd)) {
+            $months->push($current->copy());
+            $current->addMonth();
+        }
+
+        return $months;
+    }
 }

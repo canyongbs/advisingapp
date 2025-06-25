@@ -88,13 +88,13 @@ class ProspectInteractionUsersTable extends BaseWidget
             ->query(
                 function () use ($startDate, $endDate) {
                     return User::query()
-                        ->whereHas('interactions', function (Builder $interactionQuery) use ($startDate, $endDate): Builder {
-                            return $interactionQuery
+                        ->whereHas('interactions', function (Builder $query) use ($startDate, $endDate): Builder {
+                            return $query
                                 ->whereHasMorph('interactable', Prospect::class)
                                 ->when(
                                     $startDate && $endDate,
-                                    function (Builder $dateFilteredQuery) use ($startDate, $endDate): Builder {
-                                        return $dateFilteredQuery->whereBetween('created_at', [$startDate, $endDate]);
+                                    function (Builder $query) use ($startDate, $endDate): Builder {
+                                        return $query->whereBetween('created_at', [$startDate, $endDate]);
                                     }
                                 );
                         })

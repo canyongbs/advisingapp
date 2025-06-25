@@ -75,4 +75,11 @@ class ProspectReport extends AbstractProspectReport
             'lg' => 4,
         ];
     }
+
+    public function getWidgetData(): array
+    {
+        return [
+            'filters' => $this->filters,
+        ];
+    }
 }

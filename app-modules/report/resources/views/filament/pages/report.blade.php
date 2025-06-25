@@ -11,17 +11,11 @@
         @livewire(RefreshWidget::class, ['cacheTag' => $this->cacheTag])
     </div>
 
-    @if (method_exists($this, 'filtersForm'))
-        {{ $this->filtersForm }}
-    @endif
+    {{ $this->filtersForm }}
 
     <x-filament-widgets::widgets
         :columns="$this->getColumns()"
-        :data="[
-            ...property_exists($this, 'filters') ? ['filters' => $this->filters] : [],
-            ...$this->getWidgetData(),
-        ]"
-        {{-- :data="$this->getWidgetData()" --}}
+        :data="$this->getWidgetData()"
         :widgets="$visibleWidgets"
     />
 </x-filament-panels::page>

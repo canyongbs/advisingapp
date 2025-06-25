@@ -12,8 +12,6 @@ trait HasFiltersForm
 {
     use ConcernsHasFiltersForm;
 
-    // protected static string $view = 'report::filament.pages.report';
-
     public function filtersForm(Form $form): Form
     {
         return $form

@@ -38,7 +38,6 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\Task\Models\Task;
@@ -49,8 +48,6 @@ use Illuminate\Support\Number;
 
 class ProspectReportStats extends StatsOverviewReportWidget
 {
-    use InteractsWithPageFilters;
-
     protected int | string | array $columnSpan = [
         'sm' => 2,
         'md' => 4,

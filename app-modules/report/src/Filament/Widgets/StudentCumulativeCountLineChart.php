@@ -36,16 +36,13 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 
 class StudentCumulativeCountLineChart extends LineChartReportWidget
 {
-    use InteractsWithPageFilters;
-
     protected static ?string $heading = 'Students (Cumulative)';
 
     protected int | string | array $columnSpan = [
@@ -78,69 +75,11 @@ class StudentCumulativeCountLineChart extends LineChartReportWidget
         $shouldBypassCache = filled($startDate) || filled($endDate);
 
         $runningTotalPerMonth = $shouldBypassCache
-        ? (function () use ($startDate, $endDate): array {
-            $totalCreatedPerMonth = DB::select("
-                WITH months AS (
-                    SELECT generate_series(
-                        date_trunc('month', ?::date),
-                        date_trunc('month', ?::date),
-                        interval '1 month'
-                    ) AS month
-                ),
-                monthly_data AS (
-                    SELECT
-                        date_trunc('month', created_at_source) AS month,
-                        COUNT(*) AS monthly_total
-                    FROM students
-                    WHERE created_at_source BETWEEN ? AND ?
-                    AND deleted_at IS NULL
-                    GROUP BY date_trunc('month', created_at_source)
-                )
-                SELECT
-                    to_char(m.month, 'Mon YYYY') as label,
-                    COALESCE(d.monthly_total, 0) AS monthly_total,
-                    SUM(COALESCE(d.monthly_total, 0)) OVER (ORDER BY m.month) AS running_total
-                FROM months m
-                LEFT JOIN monthly_data d ON m.month = d.month
-                ORDER BY m.month
-            ", [
-                $startDate,
-                $endDate,
-                $startDate,
-                $endDate,
-            ]);
-
-            return collect($totalCreatedPerMonth)->pluck('running_total', 'label')->toArray();
-        })()
-        : Cache::tags(["{{$this->cacheTag}}"])->remember('student-cumulative-count-line-chart', now()->addHours(24), function (): array {
-            $totalCreatedPerMonth = DB::select("
-                WITH months AS (
-                    SELECT generate_series(
-                        date_trunc('month', CURRENT_DATE) - INTERVAL '11 months',
-                        date_trunc('month', CURRENT_DATE),
-                        interval '1 month'
-                    ) AS month
-                ),
-                monthly_data AS (
-                    SELECT
-                        date_trunc('month', created_at_source) AS month,
-                        COUNT(*) AS monthly_total
-                    FROM students
-                    WHERE created_at_source >= date_trunc('month', CURRENT_DATE) - INTERVAL '11 months'
-                    AND deleted_at IS NULL
-                    GROUP BY date_trunc('month', created_at_source)
-                )
-                SELECT
-                    to_char(m.month, 'Mon YYYY') as label,
-                    COALESCE(d.monthly_total, 0) AS monthly_total,
-                    SUM(COALESCE(d.monthly_total, 0)) OVER (ORDER BY m.month) AS running_total
-                FROM months m
-                LEFT JOIN monthly_data d ON m.month = d.month
-                ORDER BY m.month
-            ");
-
-            return collect($totalCreatedPerMonth)->pluck('running_total', 'label')->toArray();
-        });
+            ? $this->getStudentRunningTotalData($startDate, $endDate)
+            : Cache::tags(["{{$this->cacheTag}}"])
+                ->remember('student-cumulative-count-line-chart', now()->addHours(24), function (): array {
+                    return $this->getStudentRunningTotalData();
+                });
 
         return [
             'datasets' => [
@@ -166,5 +105,40 @@ class StudentCumulativeCountLineChart extends LineChartReportWidget
                 ],
             ],
         ];
+    }
+
+    /**
+     * @return array<string, int>
+     */
+    protected function getStudentRunningTotalData(?Carbon $startDate = null, ?Carbon $endDate = null): array
+    {
+        $startDate = $startDate ?? Carbon::now()->subMonths(11)->startOfMonth();
+        $endDate = $endDate ?? Carbon::now()->endOfMonth();
+
+        $months = $this->getMonthRange($startDate, $endDate);
+
+        $monthlyData = Student::query()
+            ->whereBetween('created_at_source', [$startDate, $endDate])
+            ->selectRaw("date_trunc('month', created_at_source) as month, COUNT(*) as monthly_total")
+            ->groupByRaw("date_trunc('month', created_at_source)")
+            ->get()
+            ->mapWithKeys(function (object $item): array {
+                return [
+                    Carbon::parse($item['month'])->startOfMonth()->toDateString() => (int) $item['monthly_total'],
+                ];
+            });
+
+        $runningTotal = [];
+        $total = 0;
+
+        foreach ($months as $month) {
+            $key = $month->toDateString();
+            $label = $month->format('M Y');
+            $count = $monthlyData[$key] ?? 0;
+            $total += $count;
+            $runningTotal[$label] = $total;
+        }
+
+        return $runningTotal;
     }
 }

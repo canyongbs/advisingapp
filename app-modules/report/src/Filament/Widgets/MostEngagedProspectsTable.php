@@ -77,22 +77,22 @@ class MostEngagedProspectsTable extends BaseWidget
                     ->with('primaryEmailAddress:id,address')
                     ->with(['status', 'createdBy:id,name'])
                     ->withCount([
-                        'engagements as engagements_count' => function (Builder $engagementQuery) use ($startDate, $endDate): Builder {
-                            return $engagementQuery->when(
+                        'engagements as engagements_count' => function (Builder $query) use ($startDate, $endDate): Builder {
+                            return $query->when(
                                 $startDate && $endDate,
-                                function (Builder $filteredQuery) use ($startDate, $endDate): Builder {
-                                    return $filteredQuery->whereBetween('created_at', [$startDate, $endDate]);
+                                function (Builder $query) use ($startDate, $endDate): Builder {
+                                    return $query->whereBetween('created_at', [$startDate, $endDate]);
                                 }
                             );
                         },
                     ])
                     ->when(
                         $startDate && $endDate,
-                        function (Builder $prospectQuery) use ($startDate, $endDate): Builder {
-                            return $prospectQuery->whereHas(
+                        function (Builder $query) use ($startDate, $endDate): Builder {
+                            return $query->whereHas(
                                 'engagements',
-                                function (Builder $engagementQuery) use ($startDate, $endDate): Builder {
-                                    return $engagementQuery->whereBetween('created_at', [$startDate, $endDate]);
+                                function (Builder $query) use ($startDate, $endDate): Builder {
+                                    return $query->whereBetween('created_at', [$startDate, $endDate]);
                                 }
                             );
                         }

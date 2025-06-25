@@ -39,7 +39,6 @@ namespace AdvisingApp\Report\Filament\Widgets;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use App\Models\User;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
@@ -48,8 +47,6 @@ use Illuminate\Support\Number;
 
 class ProspectEngagementState extends StatsOverviewReportWidget
 {
-    use InteractsWithPageFilters;
-
     protected int | string | array $columnSpan = [
         'sm' => 2,
         'md' => 4,

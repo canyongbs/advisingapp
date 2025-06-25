@@ -38,16 +38,11 @@ namespace AdvisingApp\Report\Abstract;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Pages\Dashboard;
 
 abstract class EngagementReport extends Dashboard
 {
     use HasFiltersForm;
-    // use HasFiltersForm;
 
     protected static string $view = 'report::filament.pages.report';
 
@@ -58,30 +53,4 @@ abstract class EngagementReport extends Dashboard
 
         return ($user->hasLicense(LicenseType::RetentionCrm) || $user->hasLicense(LicenseType::RecruitmentCrm)) && $user->can('report-library.view-any');
     }
-
-    // public function filtersForm(Form $form): Form
-    // {
-    //     return $form
-    //         ->schema([
-    //             Section::make()
-    //                 ->schema([
-    //                     DatePicker::make('startDate')
-    //                         ->maxDate(fn (Get $get) => $get('endDate') ?: now())
-    //                         ->afterStateUpdated(function ($set, $state, Get $get) {
-    //                             if (blank($get('endDate')) && filled($state)) {
-    //                                 $set('endDate', $state);
-    //                             }
-    //                         }),
-    //                     DatePicker::make('endDate')
-    //                         ->minDate(fn (Get $get) => $get('startDate') ?: now())
-    //                         ->maxDate(now())
-    //                         ->afterStateUpdated(function ($set, $state, Get $get) {
-    //                             if (blank($get('startDate')) && filled($state)) {
-    //                                 $set('startDate', $state);
-    //                             }
-    //                         }),
-    //                 ])
-    //                 ->columns(2),
-    //         ]);
-    // }
 }

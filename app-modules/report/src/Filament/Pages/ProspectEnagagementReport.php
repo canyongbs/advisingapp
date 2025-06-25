@@ -75,4 +75,11 @@ class ProspectEnagagementReport extends ProspectReport
             MostEngagedProspectsTable::make(['cacheTag' => $this->cacheTag]),
         ];
     }
+
+    public function getWidgetData(): array
+    {
+        return [
+            'filters' => $this->filters,
+        ];
+    }
 }

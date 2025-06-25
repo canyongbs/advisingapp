@@ -36,16 +36,13 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
+use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 
 class ProspectInteractionLineChart extends LineChartReportWidget
 {
-    use InteractsWithPageFilters;
-
     protected static ?string $heading = 'Prospects (Interaction)';
 
     protected int | string | array $columnSpan = 'full';
@@ -97,68 +94,32 @@ class ProspectInteractionLineChart extends LineChartReportWidget
      */
     protected function getProspectInteractionData(?Carbon $startDate = null, ?Carbon $endDate = null): array
     {
-        if ($startDate && $endDate) {
-            $data = DB::select("
-                WITH months AS (
-                    SELECT generate_series(
-                        date_trunc('month', ?::date),
-                        date_trunc('month', ?::date),
-                        interval '1 month'
-                    ) AS month
-                ),
-                monthly_data AS (
-                    SELECT
-                        date_trunc('month', created_at) AS month,
-                        COUNT(*) AS monthly_total
-                    FROM interactions
-                    WHERE created_at BETWEEN ? AND ?
-                    AND deleted_at IS NULL
-                    AND interactable_type = ?
-                    GROUP BY date_trunc('month', created_at)
-                )
-                SELECT
-                    to_char(m.month, 'Mon YYYY') AS label,
-                    COALESCE(d.monthly_total, 0) AS total
-                FROM months m
-                LEFT JOIN monthly_data d ON m.month = d.month
-                ORDER BY m.month
-            ", [
-                $startDate,
-                $endDate,
-                $startDate,
-                $endDate,
-                app(Prospect::class)->getMorphClass(),
-            ]);
-        } else {
-            $data = DB::select("
-                WITH months AS (
-                    SELECT generate_series(
-                        date_trunc('month', CURRENT_DATE) - INTERVAL '11 months',
-                        date_trunc('month', CURRENT_DATE),
-                        interval '1 month'
-                    ) AS month
-                ),
-                monthly_data AS (
-                    SELECT
-                        date_trunc('month', created_at) AS month,
-                        COUNT(*) AS monthly_total
-                    FROM interactions
-                    WHERE created_at >= date_trunc('month', CURRENT_DATE) - INTERVAL '11 months'
-                    AND deleted_at IS NULL
-                    AND interactable_type = ?
-                    GROUP BY date_trunc('month', created_at)
-                )
-                SELECT
-                    to_char(m.month, 'Mon YYYY') AS label,
-                    COALESCE(d.monthly_total, 0) AS total
-                FROM months m
-                LEFT JOIN monthly_data d ON m.month = d.month
-                ORDER BY m.month
-            ", [
-                app(Prospect::class)->getMorphClass(),
-            ]);
+        $startDate = $startDate ?? Carbon::now()->subMonths(11)->startOfMonth();
+        $endDate = $endDate ?? Carbon::now()->endOfMonth();
+
+        $months = $this->getMonthRange($startDate, $endDate);
+
+        $monthlyData = Interaction::query()
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->where('interactable_type', app(Prospect::class)->getMorphClass())
+            ->selectRaw("date_trunc('month', created_at) AS month, COUNT(*) AS monthly_total")
+            ->groupByRaw("date_trunc('month', created_at)")
+            ->get()
+            ->mapWithKeys(function (object $item): array {
+                return [
+                    Carbon::parse($item['month'])->startOfMonth()->toDateString() => (int) $item['monthly_total'],
+                ];
+            });
+
+        $result = [];
+
+        foreach ($months as $month) {
+            $key = $month->toDateString();
+            $label = $month->format('M Y');
+            $count = $monthlyData[$key] ?? 0;
+            $result[$label] = $count;
         }
 
-        return collect($data)->pluck('total', 'label')->toArray();
+        return $result;
     }
 }

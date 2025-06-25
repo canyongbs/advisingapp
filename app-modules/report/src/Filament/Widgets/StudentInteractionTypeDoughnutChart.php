@@ -37,7 +37,6 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Interaction\Models\InteractionType;
-use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
@@ -47,8 +46,6 @@ use Illuminate\Support\Facades\Cache;
 
 class StudentInteractionTypeDoughnutChart extends ChartReportWidget
 {
-    use InteractsWithPageFilters;
-
     protected static ?string $heading = 'Type';
 
     protected int | string | array $columnSpan = [

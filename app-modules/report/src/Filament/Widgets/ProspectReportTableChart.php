@@ -41,7 +41,7 @@ use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder;
 use Livewire\Attributes\On;
 
 class ProspectReportTableChart extends TableWidget

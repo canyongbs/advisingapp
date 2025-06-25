@@ -38,7 +38,6 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
@@ -46,8 +45,6 @@ use Illuminate\Support\Number;
 
 class ProspectInteractionStats extends StatsOverviewReportWidget
 {
-    use InteractsWithPageFilters;
-
     public function getStats(): array
     {
         $startDate = $this->getStartDate();

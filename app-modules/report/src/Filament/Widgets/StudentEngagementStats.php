@@ -38,7 +38,6 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -48,8 +47,6 @@ use Illuminate\Support\Number;
 
 class StudentEngagementStats extends StatsOverviewReportWidget
 {
-    use InteractsWithPageFilters;
-
     protected int | string | array $columnSpan = [
         'sm' => 2,
         'md' => 4,

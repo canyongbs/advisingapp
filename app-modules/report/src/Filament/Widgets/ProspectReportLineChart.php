@@ -36,14 +36,13 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
+use AdvisingApp\Prospect\Models\Prospect;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class ProspectReportLineChart extends ChartReportWidget
 {
-    use InteractsWithPageFilters;
-
     protected static ?string $heading = 'Prospects (Cumulative)';
 
     protected int | string | array $columnSpan = [
@@ -59,70 +58,77 @@ class ProspectReportLineChart extends ChartReportWidget
 
         $shouldBypassCache = filled($startDate) || filled($endDate);
 
+        // $runningTotalPerMonth = $shouldBypassCache
+        //     ? (function () use ($startDate, $endDate): array {
+        //         $totalCreatedPerMonth = DB::select("
+        //             WITH months AS (
+        //                 SELECT generate_series(
+        //                     date_trunc('month', ?::date),
+        //                     date_trunc('month', ?::date),
+        //                     interval '1 month'
+        //                 ) AS month
+        //             ),
+        //             monthly_data AS (
+        //                 SELECT
+        //                     date_trunc('month', created_at) AS month,
+        //                     COUNT(*) AS monthly_total
+        //                 FROM prospects
+        //                 WHERE created_at BETWEEN ? AND ?
+        //                 AND deleted_at IS NULL
+        //                 GROUP BY date_trunc('month', created_at)
+        //             )
+        //             SELECT
+        //                 to_char(m.month, 'Mon YYYY') as label,
+        //                 COALESCE(d.monthly_total, 0) AS monthly_total,
+        //                 SUM(COALESCE(d.monthly_total, 0)) OVER (ORDER BY m.month) AS running_total
+        //             FROM months m
+        //             LEFT JOIN monthly_data d ON m.month = d.month
+        //             ORDER BY m.month
+        //         ", [
+        //             $startDate,
+        //             $endDate,
+        //             $startDate,
+        //             $endDate,
+        //         ]);
+
+        //         return collect($totalCreatedPerMonth)->pluck('running_total', 'label')->toArray();
+        //     })()
+        //     : Cache::tags(["{{$this->cacheTag}}"])->remember('total-prospects_line_chart', now()->addHours(24), function (): array {
+        //         $runningTotalPerMonth = DB::select("
+        //             WITH months AS (
+        //                 SELECT generate_series(
+        //                     date_trunc('month', CURRENT_DATE) - INTERVAL '11 months',
+        //                     date_trunc('month', CURRENT_DATE),
+        //                     interval '1 month'
+        //                 ) AS month
+        //             ),
+        //             monthly_data AS (
+        //                 SELECT
+        //                     date_trunc('month', created_at) AS month,
+        //                     COUNT(*) AS monthly_total
+        //                 FROM prospects
+        //                 WHERE created_at >= date_trunc('month', CURRENT_DATE) - INTERVAL '11 months'
+        //                 AND deleted_at IS NULL
+        //                 GROUP BY date_trunc('month', created_at)
+        //             )
+        //             SELECT
+        //                 to_char(m.month, 'Mon YYYY') as label,
+        //                 COALESCE(d.monthly_total, 0) AS monthly_total,
+        //                 SUM(COALESCE(d.monthly_total, 0)) OVER (ORDER BY m.month) AS running_total
+        //             FROM months m
+        //             LEFT JOIN monthly_data d ON m.month = d.month
+        //             ORDER BY m.month
+        //         ");
+
+        //         return collect($runningTotalPerMonth)->pluck('running_total', 'label')->toArray();
+        //     });
+
         $runningTotalPerMonth = $shouldBypassCache
-            ? (function () use ($startDate, $endDate): array {
-                $totalCreatedPerMonth = DB::select("
-                    WITH months AS (
-                        SELECT generate_series(
-                            date_trunc('month', ?::date),
-                            date_trunc('month', ?::date),
-                            interval '1 month'
-                        ) AS month
-                    ),
-                    monthly_data AS (
-                        SELECT
-                            date_trunc('month', created_at) AS month,
-                            COUNT(*) AS monthly_total
-                        FROM prospects
-                        WHERE created_at BETWEEN ? AND ?
-                        AND deleted_at IS NULL
-                        GROUP BY date_trunc('month', created_at)
-                    )
-                    SELECT
-                        to_char(m.month, 'Mon YYYY') as label,
-                        COALESCE(d.monthly_total, 0) AS monthly_total,
-                        SUM(COALESCE(d.monthly_total, 0)) OVER (ORDER BY m.month) AS running_total
-                    FROM months m
-                    LEFT JOIN monthly_data d ON m.month = d.month
-                    ORDER BY m.month
-                ", [
-                    $startDate,
-                    $endDate,
-                    $startDate,
-                    $endDate,
-                ]);
-
-                return collect($totalCreatedPerMonth)->pluck('running_total', 'label')->toArray();
-            })()
-            : Cache::tags(["{{$this->cacheTag}}"])->remember('total-prospects_line_chart', now()->addHours(24), function (): array {
-                $runningTotalPerMonth = DB::select("
-                    WITH months AS (
-                        SELECT generate_series(
-                            date_trunc('month', CURRENT_DATE) - INTERVAL '11 months',
-                            date_trunc('month', CURRENT_DATE),
-                            interval '1 month'
-                        ) AS month
-                    ),
-                    monthly_data AS (
-                        SELECT
-                            date_trunc('month', created_at) AS month,
-                            COUNT(*) AS monthly_total
-                        FROM prospects
-                        WHERE created_at >= date_trunc('month', CURRENT_DATE) - INTERVAL '11 months'
-                        AND deleted_at IS NULL
-                        GROUP BY date_trunc('month', created_at)
-                    )
-                    SELECT
-                        to_char(m.month, 'Mon YYYY') as label,
-                        COALESCE(d.monthly_total, 0) AS monthly_total,
-                        SUM(COALESCE(d.monthly_total, 0)) OVER (ORDER BY m.month) AS running_total
-                    FROM months m
-                    LEFT JOIN monthly_data d ON m.month = d.month
-                    ORDER BY m.month
-                ");
-
-                return collect($runningTotalPerMonth)->pluck('running_total', 'label')->toArray();
-            });
+            ? $this->getProspectRunningTotalData($startDate, $endDate)
+            : Cache::tags(["{{$this->cacheTag}}"])
+                ->remember('total-prospects_line_chart', now()->addHours(24), function (): array {
+                    return $this->getProspectRunningTotalData();
+                });
 
         return [
             'datasets' => [
@@ -153,5 +159,40 @@ class ProspectReportLineChart extends ChartReportWidget
     protected function getType(): string
     {
         return 'line';
+    }
+
+    /**
+     * @return array<string, int>
+     */
+    protected function getProspectRunningTotalData(?Carbon $startDate = null, ?Carbon $endDate = null): array
+    {
+        $startDate = $startDate ?? Carbon::now()->subMonths(11)->startOfMonth();
+        $endDate = $endDate ?? Carbon::now()->endOfMonth();
+
+        $months = $this->getMonthRange($startDate, $endDate);
+
+        $monthlyData = Prospect::query()
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->selectRaw("date_trunc('month', created_at) as month, COUNT(*) as monthly_total")
+            ->groupByRaw("date_trunc('month', created_at)")
+            ->get()
+            ->mapWithKeys(function (object $item): array {
+                return [
+                    Carbon::parse($item['month'])->startOfMonth()->toDateString() => (int) $item['monthly_total'],
+                ];
+            });
+
+        $runningTotal = [];
+        $total = 0;
+
+        foreach ($months as $month) {
+            $key = $month->toDateString();
+            $label = $month->format('M Y');
+            $count = $monthlyData[$key] ?? 0;
+            $total += $count;
+            $runningTotal[$label] = $total;
+        }
+
+        return $runningTotal;
     }
 }

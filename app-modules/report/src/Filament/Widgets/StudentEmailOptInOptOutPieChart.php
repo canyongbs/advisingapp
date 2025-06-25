@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Support\Colors\Color;
 use Illuminate\Contracts\View\View;
@@ -44,8 +43,6 @@ use Illuminate\Support\Facades\Cache;
 
 class StudentEmailOptInOptOutPieChart extends PieChartReportWidget
 {
-    use InteractsWithPageFilters;
-
     protected static ?string $heading = 'Student Email Addresses';
 
     protected int | string | array $columnSpan = [

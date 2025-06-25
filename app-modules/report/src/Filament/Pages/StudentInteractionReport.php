@@ -79,4 +79,11 @@ class StudentInteractionReport extends StudentReport
             StudentInteractionUsersTable::make(['cacheTag' => $this->cacheTag]),
         ];
     }
+
+    public function getWidgetData(): array
+    {
+        return [
+            'filters' => $this->filters,
+        ];
+    }
 }

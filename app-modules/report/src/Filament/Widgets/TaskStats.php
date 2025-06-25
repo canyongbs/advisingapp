@@ -37,7 +37,6 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Models\Task;
@@ -49,8 +48,6 @@ use Illuminate\Support\Number;
 
 class TaskStats extends StatsOverviewReportWidget
 {
-    use InteractsWithPageFilters;
-
     protected int | string | array $columnSpan = [
         'sm' => 2,
         'md' => 4,

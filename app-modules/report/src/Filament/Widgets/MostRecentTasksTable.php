@@ -85,8 +85,8 @@ class MostRecentTasksTable extends BaseWidget
                     ->with(['concern'])
                     ->when(
                         $startDate && $endDate,
-                        function (Builder $dateFilteredQuery) use ($startDate, $endDate): Builder {
-                            return $dateFilteredQuery->whereBetween('created_at', [$startDate, $endDate]);
+                        function (Builder $query) use ($startDate, $endDate): Builder {
+                            return $query->whereBetween('created_at', [$startDate, $endDate]);
                         }
                     )
                     ->orderBy('created_at', 'desc')

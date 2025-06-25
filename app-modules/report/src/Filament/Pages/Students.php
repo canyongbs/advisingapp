@@ -77,4 +77,11 @@ class Students extends StudentReport
             'lg' => 4,
         ];
     }
+
+    public function getWidgetData(): array
+    {
+        return [
+            'filters' => $this->filters,
+        ];
+    }
 }
