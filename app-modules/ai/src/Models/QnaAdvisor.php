@@ -8,19 +8,22 @@ use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\File;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use OwenIt\Auditing\Auditable as AuditableTrait;
 
 /**
  * @mixin IdeHelperQnaAdvisor
  */
-class QnaAdvisor extends BaseModel implements HasMedia
+class QnaAdvisor extends BaseModel implements HasMedia, Auditable
 {
     use CanAddAssistantLicenseGlobalScope;
     use InteractsWithMedia;
     use SoftDeletes;
+    use AuditableTrait;
 
     protected $fillable = [
         'archived_at',

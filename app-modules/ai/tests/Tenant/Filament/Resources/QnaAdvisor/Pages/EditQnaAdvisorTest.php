@@ -15,9 +15,7 @@ use function Pest\Livewire\livewire;
 
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-test('EditQnaAdvisor is gated with proper access control', function () {
-    Storage::fake('s3');
-
+test('Edit QnA Advisor is gated with proper access control', function () {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->qnaAdvisor = true;
@@ -48,6 +46,24 @@ test('EditQnaAdvisor is gated with proper access control', function () {
                 'record' => $qnaAdvisor,
             ])
         )->assertSuccessful();
+});
+
+test('can edit QnA Advisor', function () {
+    Storage::fake('s3');
+
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->qnaAdvisor = true;
+
+    $settings->save();
+
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+
+    $qnaAdvisor = QnaAdvisor::factory()->create();
+
+    $user->givePermissionTo(['qna_advisor.view-any', 'qna_advisor.*.view', 'qna_advisor.*.update']);
+
+    actingAs($user);
 
     $request = collect(QnaAdvisorRequestFactory::new()->create());
 
@@ -77,7 +93,7 @@ test('EditQnaAdvisor is gated with proper access control', function () {
     );
 });
 
-test('EditQnaAdvisor validates the inputs', function ($data, $errors) {
+test('Edit QnA Advisor validates the inputs', function ($data, $errors) {
     Storage::fake('s3');
 
     $settings = app(LicenseSettings::class);

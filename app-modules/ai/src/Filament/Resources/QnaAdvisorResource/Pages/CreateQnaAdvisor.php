@@ -60,7 +60,7 @@ class CreateQnaAdvisor extends CreateRecord
                 Textarea::make('description')
                     ->maxLength(65535)
                     ->required(),
-                Section::make('Configure AI Advisor')
+                Section::make('Configure QnA Advisor')
                     ->description('Design the capability of your advisor by including detailed instructions below.')
                     ->visible(auth()->user()->isSuperAdmin())
                     ->schema([

@@ -10,7 +10,7 @@ use App\Settings\LicenseSettings;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
-test('ListQnaAdvisors is gated with proper access control', function () {
+test('List QnA Advisors is gated with proper access control', function () {
 
     $settings = app(LicenseSettings::class);
 

@@ -20,8 +20,7 @@ return new class () extends Migration {
      * @var array<string> $guards
      */
     private array $guards = [
-        'web',
-        'api',
+        'web'
     ];
 
     public function up(): void

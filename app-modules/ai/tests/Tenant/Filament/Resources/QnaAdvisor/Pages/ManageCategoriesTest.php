@@ -15,8 +15,7 @@ use function Pest\Laravel\assertDatabaseMissing;
 use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
 
-test('CreateQnaAdvisor Category is gated with proper access control', function () {
-    
+test('Create QnA Advisor Category is gated with proper access control', function () {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->qnaAdvisor = true;
@@ -38,6 +37,7 @@ test('CreateQnaAdvisor Category is gated with proper access control', function (
     livewire(ManageCategories::class, ['record' => $qnaAdvisor->getKey()])
         ->assertForbidden();
 
+        
     $user->givePermissionTo(['qna_advisor.view-any', 'qna_advisor.*.view', 'qna_advisor.create']);
 
     actingAs($user)
@@ -46,6 +46,23 @@ test('CreateQnaAdvisor Category is gated with proper access control', function (
                 'record' => $qnaAdvisor,
             ])
         )->assertSuccessful();
+});
+
+test('can create QnA Advisor Category', function () {
+    
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->qnaAdvisor = true;
+
+    $settings->save();
+
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+
+    $qnaAdvisor = QnaAdvisor::factory()->create();
+
+    $user->givePermissionTo(['qna_advisor.view-any', 'qna_advisor.*.view', 'qna_advisor.create']);
+
+    actingAs($user);
 
     $qnaAdvisorCategory = collect(QnaAdvisorCategoryRequestFactory::new()->create());
 
@@ -61,7 +78,7 @@ test('CreateQnaAdvisor Category is gated with proper access control', function (
     );
 });
 
-test('CreateQnaAdvisor Category validates the inputs', function ($data, $errors) {
+test('Create QnA Advisor Category validates the inputs', function ($data, $errors) {
 
     $settings = app(LicenseSettings::class);
 
@@ -128,7 +145,7 @@ test('CreateQnaAdvisor Category validates the inputs', function ($data, $errors)
     ]
 );
 
-test('EditQnaAdvisor Category is gated with proper access control', function () {
+test('can edit QnA Advisor Category', function () {
 
     $settings = app(LicenseSettings::class);
 
@@ -163,7 +180,7 @@ test('EditQnaAdvisor Category is gated with proper access control', function () 
     );
 });
 
-test('EditQnaAdvisor Category validates the inputs', function ($data, $errors) {
+test('Edit QnA Advisor Category validates the inputs', function ($data, $errors) {
 
     $settings = app(LicenseSettings::class);
 

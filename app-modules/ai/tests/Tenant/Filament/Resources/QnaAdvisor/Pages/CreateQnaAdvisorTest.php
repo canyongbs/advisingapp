@@ -22,9 +22,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 use function Tests\asSuperAdmin;
 
-test('CreateQnaAdvisor is gated with proper access control', function () {
-    Storage::fake('s3');
-
+test('Create QnA Advisor is gated with proper access control', function () {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->qnaAdvisor = true;
@@ -32,8 +30,6 @@ test('CreateQnaAdvisor is gated with proper access control', function () {
     $settings->save();
 
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
-
-    assertDatabaseCount(QnaAdvisor::class, 0);
 
     actingAs($user)
         ->get(
@@ -49,6 +45,24 @@ test('CreateQnaAdvisor is gated with proper access control', function () {
         ->get(
             QnaAdvisorResource::getUrl('create')
         )->assertSuccessful();
+});
+
+test('can create QnA Advisor', function () {
+    Storage::fake('s3');
+
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->qnaAdvisor = true;
+
+    $settings->save();
+
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+
+    assertDatabaseCount(QnaAdvisor::class, 0);
+
+    $user->givePermissionTo(['qna_advisor.view-any', 'qna_advisor.create']);
+
+    actingAs($user);
 
     $qnaAdvisor = collect(QnaAdvisorRequestFactory::new()->create());
 
@@ -78,7 +92,7 @@ test('CreateQnaAdvisor is gated with proper access control', function () {
     );
 });
 
-test('CreateQnAAdvisor validates the inputs', function ($data, $errors) {
+test('Create QnA Advisor validates the inputs', function ($data, $errors) {
     Storage::fake('s3');
 
     $settings = app(LicenseSettings::class);

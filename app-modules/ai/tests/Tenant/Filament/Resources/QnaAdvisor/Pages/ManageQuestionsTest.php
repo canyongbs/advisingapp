@@ -16,9 +16,8 @@ use function Pest\Laravel\assertDatabaseMissing;
 use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
 
-test('CreateQnAAdvisor Question is gated with proper access control', function () {
-
-    $settings = app(LicenseSettings::class);
+test('Create QnA Advisor Question is gated with proper access control', function () {
+     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->qnaAdvisor = true;
 
@@ -39,6 +38,7 @@ test('CreateQnAAdvisor Question is gated with proper access control', function (
     livewire(ManageQnaQuestions::class, ['record' => $qnaAdvisor->getKey()])
         ->assertForbidden();
 
+        
     $user->givePermissionTo([
         'qna_advisor.view-any',
         'qna_advisor.*.view',
@@ -51,8 +51,29 @@ test('CreateQnAAdvisor Question is gated with proper access control', function (
                 'record' => $qnaAdvisor,
             ])
         )->assertSuccessful();
+});
+
+test('can create QnA Advisor Question', function () {
+
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->qnaAdvisor = true;
+
+    $settings->save();
+
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+
+    $qnaAdvisor = QnaAdvisor::factory()->create();
+
+    $user->givePermissionTo([
+        'qna_advisor.view-any',
+        'qna_advisor.*.view',
+        'qna_advisor.create',
+    ]);
 
     $qnaAdvisorQuestion = collect(QnaAdvisorQuestionRequestFactory::new()->create());
+
+    actingAs($user);
 
     livewire(ManageQnaQuestions::class, ['record' => $qnaAdvisor->getKey()])
         ->callTableAction('create', data: $qnaAdvisorQuestion->toArray())
@@ -66,7 +87,7 @@ test('CreateQnAAdvisor Question is gated with proper access control', function (
     );
 });
 
-test('CreateQnAAdvisor Question validates the inputs', function ($data, $errors) {
+test('Create QnA Advisor Question validates the inputs', function ($data, $errors) {
 
     $settings = app(LicenseSettings::class);
 
@@ -98,6 +119,10 @@ test('CreateQnAAdvisor Question validates the inputs', function ($data, $errors)
     );
 })->with(
     [
+        'category_id required' => [
+            QnaAdvisorQuestionRequestFactory::new()->state(['category_id' => null]),
+            ['category_id' => 'required'],
+        ],
         'question required' => [
             QnaAdvisorQuestionRequestFactory::new()->state(['question' => null]),
             ['question' => 'required'],
@@ -121,7 +146,7 @@ test('CreateQnAAdvisor Question validates the inputs', function ($data, $errors)
     ]
 );
 
-test('EditQnAAdvisor Category is gated with proper access control', function () {
+test('can edit QnA Advisor Question', function () {
 
     $settings = app(LicenseSettings::class);
 
@@ -159,7 +184,7 @@ test('EditQnAAdvisor Category is gated with proper access control', function () 
     );
 });
 
-test('EditQnAAdvisor Category validates the inputs', function ($data, $errors) {
+test('Edit QnA Advisor Question validates the inputs', function ($data, $errors) {
 
     $settings = app(LicenseSettings::class);
 
@@ -193,6 +218,10 @@ test('EditQnAAdvisor Category validates the inputs', function ($data, $errors) {
 })
 ->with(
     [
+        'category_id required' => [
+            QnaAdvisorQuestionRequestFactory::new()->state(['category_id' => null]),
+            ['category_id' => 'required'],
+        ],
         'question required' => [
             QnaAdvisorQuestionRequestFactory::new()->state(['question' => null]),
             ['question' => 'required'],
