@@ -605,7 +605,7 @@ abstract class BaseOpenAiService implements AiService
             ];
         }
 
-         $stream = $this->client->threads()->runs()->createStreamed($message->thread->thread_id, $runData);
+        $stream = $this->client->threads()->runs()->createStreamed($message->thread->thread_id, $runData);
 
         return function () use ($message, $saveResponse, $stream): Generator {
             try {
