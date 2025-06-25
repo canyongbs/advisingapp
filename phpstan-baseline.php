@@ -9734,6 +9734,34 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Casts/TenantEncrypted.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Method App\\\\Console\\\\Commands\\\\ValidateGraphQL\\:\\:checkModel\\(\\) has parameter \\$fail with no type specified\\.$#',
+    'identifier' => 'missingType.parameter',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Console/Commands/ValidateGraphQL.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Console\\\\Commands\\\\ValidateGraphQL\\:\\:checkModel\\(\\) has parameter \\$models with generic class Illuminate\\\\Support\\\\Collection but does not specify its types\\: TKey, TValue$#',
+    'identifier' => 'missingType.generics',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Console/Commands/ValidateGraphQL.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\Console\\\\Commands\\\\ValidateGraphQL\\:\\:checkModel\\(\\) has parameter \\$types with generic class Illuminate\\\\Support\\\\Collection but does not specify its types\\: TKey, TValue$#',
+    'identifier' => 'missingType.generics',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Console/Commands/ValidateGraphQL.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Unable to resolve the template type TKey in call to function collect$#',
+    'identifier' => 'argument.templateType',
+    'count' => 2,
+    'path' => __DIR__ . '/app/Console/Commands/ValidateGraphQL.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Unable to resolve the template type TValue in call to function collect$#',
+    'identifier' => 'argument.templateType',
+    'count' => 2,
+    'path' => __DIR__ . '/app/Console/Commands/ValidateGraphQL.php',
     'message' => '#^Method App\\\\Console\\\\Commands\\\\DispatchMigrations\\:\\:getVersionTag\\(\\) should return string but returns int\\.$#',
     'identifier' => 'return.type',
     'count' => 2,
@@ -9924,6 +9952,70 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Filament/Widgets/Notifications.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Access to an undefined property GraphQL\\\\Language\\\\AST\\\\TypeExtensionNode\\:\\:\\$directives\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app/GraphQL/Directives/AddonDirective.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property GraphQL\\\\Language\\\\AST\\\\TypeExtensionNode\\:\\:\\$fields\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app/GraphQL/Directives/AddonDirective.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property GraphQL\\\\Language\\\\AST\\\\TypeExtensionNode\\:\\:\\$interfaces\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app/GraphQL/Directives/AddonDirective.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property GraphQL\\\\Language\\\\AST\\\\TypeExtensionNode\\:\\:\\$name\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 2,
+    'path' => __DIR__ . '/app/GraphQL/Directives/AddonDirective.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Parameter \\#2 \\$typeWithFields of static method Nuwave\\\\Lighthouse\\\\Schema\\\\AST\\\\ASTHelper\\:\\:addDirectiveToFields\\(\\) expects GraphQL\\\\Language\\\\AST\\\\InterfaceTypeDefinitionNode\\|GraphQL\\\\Language\\\\AST\\\\InterfaceTypeExtensionNode\\|GraphQL\\\\Language\\\\AST\\\\ObjectTypeDefinitionNode\\|GraphQL\\\\Language\\\\AST\\\\ObjectTypeExtensionNode, GraphQL\\\\Language\\\\AST\\\\Node&GraphQL\\\\Language\\\\AST\\\\TypeDefinitionNode given\\.$#',
+    'identifier' => 'argument.type',
+    'count' => 1,
+    'path' => __DIR__ . '/app/GraphQL/Directives/AddonDirective.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Property GraphQL\\\\Language\\\\AST\\\\FieldDefinitionNode\\:\\:\\$directives \\(GraphQL\\\\Language\\\\AST\\\\NodeList\\<GraphQL\\\\Language\\\\AST\\\\DirectiveNode\\>\\) does not accept GraphQL\\\\Language\\\\AST\\\\NodeList\\<GraphQL\\\\Language\\\\AST\\\\Node\\>\\.$#',
+    'identifier' => 'assign.propertyType',
+    'count' => 1,
+    'path' => __DIR__ . '/app/GraphQL/Directives/AddonDirective.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Argument of an invalid type Nuwave\\\\Lighthouse\\\\Execution\\\\Arguments\\\\Argument supplied for foreach, only iterables are supported\\.$#',
+    'identifier' => 'foreach.nonIterable',
+    'count' => 1,
+    'path' => __DIR__ . '/app/GraphQL/Directives/MorphToRelationDirective.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\GraphQL\\\\Directives\\\\MorphToRelationDirective\\:\\:build\\(\\) has parameter \\$builder with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
+    'identifier' => 'missingType.generics',
+    'count' => 1,
+    'path' => __DIR__ . '/app/GraphQL/Directives/MorphToRelationDirective.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\GraphQL\\\\Directives\\\\MorphToRelationDirective\\:\\:build\\(\\) has parameter \\$relationshipTypes with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app/GraphQL/Directives/MorphToRelationDirective.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method App\\\\GraphQL\\\\Scalars\\\\UUID\\:\\:getTypeDefinition\\(\\) should return class\\-string\\<\\(GraphQL\\\\Type\\\\Definition\\\\NamedType&GraphQL\\\\Type\\\\Definition\\\\Type\\)\\|UnitEnum\\>\\|\\(GraphQL\\\\Language\\\\AST\\\\Node&GraphQL\\\\Language\\\\AST\\\\TypeDefinitionNode\\)\\|null but returns \\$this\\(App\\\\GraphQL\\\\Scalars\\\\UUID\\)\\.$#',
+    'identifier' => 'return.type',
+    'count' => 1,
+    'path' => __DIR__ . '/app/GraphQL/Scalars/UUID.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property GraphQL\\\\Language\\\\AST\\\\Node&GraphQL\\\\Language\\\\AST\\\\ValueNode\\:\\:\\$value\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app/GraphQL/Scalars/Year.php',
     'message' => '#^Method App\\\\Filament\\\\Widgets\\\\ProspectGrowthChart\\:\\:getOptions\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
