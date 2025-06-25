@@ -140,7 +140,7 @@ class StudentInteractionUsersTable extends BaseWidget
                             ->whereHasMorph('interactable', Student::class)
                             ->when(
                                 $startDate && $endDate,
-                                fn (Builder $query) => $query->whereBetween('created_at', [$startDate, $endDate])
+                                fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                             )
                             ->orderBy('created_at')
                             ->first();
@@ -155,7 +155,7 @@ class StudentInteractionUsersTable extends BaseWidget
                             ->whereHasMorph('interactable', Student::class)
                             ->when(
                                 $startDate && $endDate,
-                                fn (Builder $query) => $query->whereBetween('created_at', [$startDate, $endDate])
+                                fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                             )
                             ->orderByDesc('created_at')
                             ->first();
@@ -170,7 +170,7 @@ class StudentInteractionUsersTable extends BaseWidget
                             ->whereHasMorph('interactable', Student::class)
                             ->when(
                                 $startDate && $endDate,
-                                fn (Builder $query) => $query->whereBetween('created_at', [$startDate, $endDate])
+                                fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                             )
                             ->count();
                     }),
@@ -183,7 +183,7 @@ class StudentInteractionUsersTable extends BaseWidget
                             ->whereHasMorph('interactable', Student::class)
                             ->when(
                                 $startDate && $endDate,
-                                fn (Builder $query) => $query->whereBetween('created_at', [$startDate, $endDate])
+                                fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                             )
                             ->count();
 
@@ -203,7 +203,7 @@ class StudentInteractionUsersTable extends BaseWidget
                             ->whereHasMorph('interactable', Student::class)
                             ->when(
                                 $startDate && $endDate,
-                                fn (Builder $query) => $query->whereBetween('created_at', [$startDate, $endDate])
+                                fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                             )
                             ->get()
                             ->map(function ($interaction) {

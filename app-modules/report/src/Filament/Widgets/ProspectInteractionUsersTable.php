@@ -144,7 +144,7 @@ class ProspectInteractionUsersTable extends BaseWidget
                             )
                             ->when(
                                 $startDate && $endDate,
-                                fn (Builder $query) => $query->whereBetween('created_at', [$startDate, $endDate])
+                                fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                             )
                             ->orderBy('created_at')
                             ->first();
@@ -162,7 +162,7 @@ class ProspectInteractionUsersTable extends BaseWidget
                             )
                             ->when(
                                 $startDate && $endDate,
-                                fn (Builder $query) => $query->whereBetween('created_at', [$startDate, $endDate])
+                                fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                             )
                             ->orderByDesc('created_at')
                             ->first();
@@ -180,7 +180,7 @@ class ProspectInteractionUsersTable extends BaseWidget
                             )
                             ->when(
                                 $startDate && $endDate,
-                                fn (Builder $query) => $query->whereBetween('created_at', [$startDate, $endDate])
+                                fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                             )
                             ->count();
                     }),
@@ -196,7 +196,7 @@ class ProspectInteractionUsersTable extends BaseWidget
                             )
                             ->when(
                                 $startDate && $endDate,
-                                fn (Builder $query) => $query->whereBetween('created_at', [$startDate, $endDate])
+                                fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                             )
                             ->count();
 
@@ -219,7 +219,7 @@ class ProspectInteractionUsersTable extends BaseWidget
                             )
                             ->when(
                                 $startDate && $endDate,
-                                fn (Builder $query) => $query->whereBetween('created_at', [$startDate, $endDate])
+                                fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                             )
                             ->get()
                             ->map(function ($interaction) {
