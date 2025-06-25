@@ -128,12 +128,13 @@ abstract class BaseOpenAiResponsesService implements AiService
 
         $previousResponseId = $this->getMessagePreviousResponseId($message);
 
-        if (blank($previousResponseId)) {
+        if (blank(value: $previousResponseId)) {
             $previousMessages = $message->thread->messages()
+                ->with(['files'])
                 ->oldest()
                 ->get()
                 ->map(fn (AiMessage $message): Message => filled($message->user_id)
-                    ? new UserMessage($message->content)
+                    ? new UserMessage($this->attachFilesToMessageContent($message->content, $message->files))
                     : new AssistantMessage($message->content))
                 ->all();
         }
@@ -152,7 +153,7 @@ abstract class BaseOpenAiResponsesService implements AiService
                 ->withSystemPrompt($instructions)
                 ->withMessages([
                     ...$previousMessages,
-                    $userMessage ?? new UserMessage($message->content),
+                    $userMessage ?? new UserMessage($this->attachFilesToMessageContent($message->content, $files)),
                 ])
                 ->withMaxTokens($aiSettings->max_tokens->getTokens())
                 ->usingTemperature($this->hasTemperature() ? $aiSettings->temperature : null)
@@ -203,6 +204,37 @@ abstract class BaseOpenAiResponsesService implements AiService
         }
     }
 
+    protected function attachFilesToMessageContent(string $content, array $files): string
+    {
+        if (blank($files)) {
+            return $content;
+        }
+
+        if (filled($files)) {
+            $content .= <<<'EOT'
+                                
+                ---
+
+                Consider the content from the following files. These have already been converted by Canyon GBS' technology to Markdown for improved processing. When you reference these files, reference the file names as user uploaded files as noted below:
+
+                EOT;
+
+            foreach ($files as $file) {
+                $content .= <<<EOT
+                    ---
+
+                    File Name: {$file->name}
+                    Type: {$file->mime_type}
+                    Source: User Uploaded
+                    Contents: {$file->parsing_results}
+
+                    EOT;
+            }
+        }
+
+        return $content;
+    }
+
     public function getMessagePreviousResponseId(AiMessage $message): ?string
     {
         $previousResponseId = $message->thread->messages()
@@ -237,12 +269,9 @@ abstract class BaseOpenAiResponsesService implements AiService
         }
     }
 
-    /**
-     * @param array<AiMessageFile> $files
-     */
-    public function completeResponse(AiMessage $response, array $files, Closure $saveResponse): Closure
+    public function completeResponse(AiMessage $response, Closure $saveResponse): Closure
     {
-        return $this->sendMessage($response, $files, $saveResponse, new UserMessage('Continue generating the response, do not mention that I told you as I will paste it directly after the last message.'));
+        return $this->sendMessage($response, [], $saveResponse, new UserMessage('Continue generating the response, do not mention that I told you as I will paste it directly after the last message.'));
     }
 
     /**

@@ -36,8 +36,10 @@
 
 namespace AdvisingApp\Ai\Http\Requests;
 
-use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Validation\Rule;
+use AdvisingApp\Ai\Models\AiMessageFile;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\ValidationRule;
 
 class RetryMessageRequest extends FormRequest
 {
@@ -59,6 +61,7 @@ class RetryMessageRequest extends FormRequest
         return [
             'content' => ['required', 'string', 'max:1000'],
             'files' => ['array', 'max:1'],
+            'files.*' => [Rule::exists(AiMessageFile::class, 'id')],
         ];
     }
 }

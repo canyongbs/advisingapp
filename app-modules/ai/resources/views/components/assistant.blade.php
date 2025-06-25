@@ -657,22 +657,34 @@
                     <form x-on:submit.prevent="sendMessage()">
                         <div
                             class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
-                            @if ($this->thread->assistant->model->getService()->supportsMessageFileUploads())
-                                <div class="flex items-center justify-start gap-x-4 gap-y-3 p-4">
-                                    {{ $this->uploadFilesAction }}
+                            <div class="flex items-center justify-start gap-x-4 gap-y-3 p-4">
+                                {{ $this->uploadFilesAction }}
 
-                                    @foreach ($this->files as $key => $file)
-                                        <x-filament::badge>
-                                            {{ $file['name'] }}
-                                            <x-slot
-                                                name="deleteButton"
-                                                label="Remove uploaded file {{ $file['name'] }}"
-                                                wire:click="removeUploadedFile({{ $key }})"
-                                            ></x-slot>
-                                        </x-filament::badge>
-                                    @endforeach
-                                </div>
-                            @endif
+                                @foreach ($this->getFiles() as $file)
+                                    <x-filament::badge
+                                        :tooltip="blank($file->parsing_results) ? 'This file is currently being parsed' : null"
+                                        wire:target="removeUploadedFile('{{ $file->getKey() }}')"
+                                    >
+                                        <span class="flex items-center gap-1">
+                                            @if (blank($file->parsing_results))
+                                                <x-filament::loading-indicator
+                                                    wire:poll.5s="checkForParsingResults('{{ $file->getKey() }}')"
+                                                    wire:loading.remove
+                                                    wire:target="removeUploadedFile('{{ $file->getKey() }}')"
+                                                    class="h-4 w-4 shrink-0"
+                                                />
+                                            @endif
+                                            {{ $file->name }}
+                                        </span>
+
+                                        <x-slot
+                                            name="deleteButton"
+                                            label="Remove uploaded file {{ $file->name }}"
+                                            wire:click="removeUploadedFile('{{ $file->getKey() }}')"
+                                        ></x-slot>
+                                    </x-filament::badge>
+                                @endforeach
+                            </div>
                             <div class="bg-white dark:bg-gray-800">
                                 <label
                                     class="sr-only"
@@ -698,12 +710,21 @@
                             <div
                                 class="flex flex-col items-center border-t px-3 py-2 dark:border-gray-600 sm:flex-row sm:justify-between">
                                 <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
-                                    <x-filament::button
-                                        class="w-full sm:w-auto"
-                                        type="submit"
-                                    >
-                                        Send
-                                    </x-filament::button>
+                                    @if ($this->isParsingFiles)
+                                        <x-filament::button
+                                            class="w-full sm:w-auto"
+                                            disabled
+                                        >
+                                            Processing files, please wait...
+                                        </x-filament::button>
+                                    @else
+                                        <x-filament::button
+                                            class="w-full sm:w-auto"
+                                            type="submit"
+                                        >
+                                            Send
+                                        </x-filament::button>
+                                    @endif
 
                                     {{ $this->insertFromPromptLibraryAction }}
 

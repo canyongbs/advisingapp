@@ -36,35 +36,36 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Services;
 
-use AdvisingApp\Ai\Exceptions\AiStreamEndedUnexpectedlyException;
-use AdvisingApp\Ai\Exceptions\MessageResponseException;
-use AdvisingApp\Ai\Exceptions\MessageResponseTimeoutException;
-use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Models\AiMessage;
-use AdvisingApp\Ai\Models\AiMessageFile;
-use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
-use AdvisingApp\Ai\Services\Contracts\AiService;
-use AdvisingApp\Ai\Settings\AiSettings;
-use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Assistants\AssistantsDataTransferObject;
-use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Assistants\FileSearchDataTransferObject;
-use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Assistants\ToolResourcesDataTransferObject;
-use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Threads\ThreadsDataTransferObject;
-use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeDisabled;
-use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeEnabled;
-use AdvisingApp\IntegrationOpenAi\Services\Concerns\UploadsFiles;
-use AdvisingApp\Report\Enums\TrackedEventType;
-use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use Closure;
 use Exception;
 use Generator;
+use Throwable;
+use OpenAI\Testing\ClientFake;
+use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Models\AiMessage;
 use Illuminate\Support\Facades\Http;
 use OpenAI\Contracts\ClientContract;
 use OpenAI\Exceptions\ErrorException;
-use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Settings\AiSettings;
+use AdvisingApp\Ai\Models\AiMessageFile;
 use OpenAI\Responses\Threads\ThreadResponse;
-use OpenAI\Testing\ClientFake;
-use Throwable;
+use AdvisingApp\Report\Enums\TrackedEventType;
+use AdvisingApp\Report\Jobs\RecordTrackedEvent;
+use AdvisingApp\Ai\Services\Contracts\AiService;
+use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
+use AdvisingApp\Ai\Exceptions\MessageResponseException;
+use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
+use OpenAI\Responses\Threads\Messages\ThreadMessageResponse;
+use AdvisingApp\Ai\Exceptions\MessageResponseTimeoutException;
+use AdvisingApp\Ai\Exceptions\AiStreamEndedUnexpectedlyException;
+use AdvisingApp\IntegrationOpenAi\Services\Concerns\UploadsFiles;
+use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeEnabled;
+use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeDisabled;
+use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Threads\ThreadsDataTransferObject;
+use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Assistants\AssistantsDataTransferObject;
+use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Assistants\FileSearchDataTransferObject;
+use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Assistants\ToolResourcesDataTransferObject;
 
 abstract class BaseOpenAiService implements AiService
 {
@@ -127,11 +128,6 @@ abstract class BaseOpenAiService implements AiService
             'model' => $this->getModel(),
             'metadata' => [
                 'last_updated_at' => now(),
-            ],
-            'tools' => [
-                [
-                    'type' => 'file_search',
-                ],
             ],
         ]);
 
@@ -282,13 +278,18 @@ abstract class BaseOpenAiService implements AiService
             $this->awaitPreviousThreadRunCompletion($latestRun);
         }
 
-        [$newMessageResponse, $createdFiles] = $this->createMessage($message->thread->thread_id, $message->content, $files);
+        $newMessageResponse = $this->createMessage($message->thread->thread_id, $message->content, $files);
 
         $instructions = $this->generateAssistantInstructions($message->thread->assistant, withDynamicContext: true);
 
         $message->context = $instructions;
         $message->message_id = $newMessageResponse->id;
         $message->save();
+
+        foreach ($files as $file) {
+            $file->message()->associate($message);
+            $file->save();
+        }
 
         dispatch(new RecordTrackedEvent(
             type: TrackedEventType::AiExchange,
@@ -326,7 +327,7 @@ abstract class BaseOpenAiService implements AiService
         return $this->streamRun($message, $instructions, $saveResponse);
     }
 
-    public function completeResponse(AiMessage $response, array $files, Closure $saveResponse): Closure
+    public function completeResponse(AiMessage $response, Closure $saveResponse): Closure
     {
         $latestRun = $this->client->threads()->runs()->list($response->thread->thread_id, [
             'order' => 'desc',
@@ -341,7 +342,6 @@ abstract class BaseOpenAiService implements AiService
         $this->createMessage(
             $response->thread->thread_id,
             'Continue generating the response, do not mention that I told you as I will paste it directly after the last message.',
-            $files,
         );
 
         return $this->streamRun($response, $this->generateAssistantInstructions($response->thread->assistant, withDynamicContext: true), $saveResponse);
@@ -387,11 +387,16 @@ abstract class BaseOpenAiService implements AiService
         $instructions = $this->generateAssistantInstructions($message->thread->assistant, withDynamicContext: true);
 
         if (blank($message->message_id)) {
-            [$newMessageResponse] = $this->createMessage($message->thread->thread_id, $message->content, $files);
+            $newMessageResponse = $this->createMessage($message->thread->thread_id, $message->content, $files);
 
             $message->context = $instructions;
             $message->message_id = $newMessageResponse->id;
             $message->save();
+        }
+
+        foreach ($files as $file) {
+            $file->message()->associate($message);
+            $file->save();
         }
 
         return $this->streamRun($message, $instructions, $saveResponse);
@@ -435,34 +440,37 @@ abstract class BaseOpenAiService implements AiService
         $this->client = new ClientFake();
     }
 
-    protected function createMessage(string $threadId, string $content, array $files): array
+    /**
+     * @param array<AiMessageFile> $files
+     */
+    protected function createMessage(string $threadId, string $content, array $files): ThreadMessageResponse
     {
-        $data = [
+        if (filled($files)) {
+            $content .= <<<'EOT'
+                                
+                ---
+
+                Consider the content from the following files. These have already been converted by Canyon GBS' technology to Markdown for improved processing. When you reference these files, reference the file names as user uploaded files as noted below:
+
+                EOT;
+
+            foreach ($files as $file) {
+                $content .= <<<EOT
+                    ---
+
+                    File Name: {$file->name}
+                    Type: {$file->mime_type}
+                    Source: User Uploaded
+                    Contents: {$file->parsing_results}
+
+                    EOT;
+            }
+        }
+
+        return $this->client->threads()->messages()->create($threadId, [
             'role' => 'user',
             'content' => $content,
-        ];
-
-        $createdFiles = [];
-
-        if (method_exists($this, 'createFiles') && ! empty($files)) {
-            $createdFiles = $this->createFiles($files);
-        }
-
-        if (! empty($createdFiles)) {
-            $data['attachments'] = array_map(
-                fn (AiMessageFile $createdFile): array => [
-                    'file_id' => $createdFile->file_id,
-                    'tools' => [
-                        [
-                            'type' => 'file_search',
-                        ],
-                    ],
-                ],
-                $createdFiles,
-            );
-        }
-
-        return [$this->client->threads()->messages()->create($threadId, $data), $createdFiles];
+        ]);
     }
 
     protected function isThreadRunCompleted(ThreadRunResponse $threadRunResponse): bool
@@ -574,12 +582,6 @@ abstract class BaseOpenAiService implements AiService
             'max_completion_tokens' => $aiSettings->max_tokens->getTokens(),
             'temperature' => $aiSettings->temperature,
         ];
-
-        if ($message->thread->messages()->whereHas('files')->exists()) {
-            $runData['tools'] = [
-                ['type' => 'file_search'],
-            ];
-        }
 
         $stream = $this->client->threads()->runs()->createStreamed($message->thread->thread_id, $runData);
 

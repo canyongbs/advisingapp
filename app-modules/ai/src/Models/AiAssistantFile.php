@@ -56,10 +56,11 @@ class AiAssistantFile extends BaseModel implements AiFile, HasMedia
 
     protected $fillable = [
         'file_id',
-        'message_id',
+        'assistant_id',
         'mime_type',
         'name',
         'temporary_url',
+        'parsing_results',
     ];
 
     /**

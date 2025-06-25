@@ -37,22 +37,82 @@
 namespace AdvisingApp\Ai\Filament\Pages\Assistant\Concerns;
 
 use Filament\Actions\Action;
-use Filament\Forms\Components\FileUpload;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
+use AdvisingApp\Ai\Models\AiMessageFile;
+use Filament\Notifications\Notification;
+use Filament\Forms\Components\FileUpload;
+use Illuminate\Filesystem\AwsS3V3Adapter;
+use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 
+/**
+ * @property-read bool $isParsingFiles
+ */
 trait CanUploadFiles
 {
+    /**
+     * @var array<string>
+     */
     #[Locked]
     public array $files = [];
 
-    public function removeUploadedFile(int $key): void
+    public function removeUploadedFile(string $key): void
     {
-        unset($this->files[$key]);
+        $this->files = array_filter($this->files, fn (string $file): bool => $file !== $key);
+    }
+
+    public function checkForParsingResults(string $key): void
+    {
+        if (! in_array($key, $this->files)) {
+            return;
+        }
+
+        $file = AiMessageFile::find($key);
+
+        if (! $file) {
+            return;
+        }
+
+        if (filled($file->parsing_results)) {
+            return;
+        }
+
+        $response = Http::withToken(app(AiIntegrationsSettings::class)->llamaparse_api_key)
+            ->get("https://api.cloud.llamaindex.ai/api/v1/parsing/job/{$file->file_id}/result/text");
+
+        if ((! $response->successful()) || blank($response->json('text'))) {
+            return;
+        }
+
+        $file->parsing_results = $response->json('text');
+        $file->save();
     }
 
     public function clearFiles(): void
     {
-        $this->reset('files');
+        $this->files = [];
+    }
+
+    /**
+     * @return array<AiMessageFile>
+     */
+    public function getFiles(): array
+    {
+        return AiMessageFile::query()
+            ->whereKey($this->files)
+            ->get()
+            ->all();
+    }
+
+    #[Computed]
+    public function isParsingFiles(): bool
+    {
+        return AiMessageFile::query()
+            ->whereKey($this->files)
+            ->whereNull('parsing_results')
+            ->exists();
     }
 
     public function uploadFilesAction(): Action
@@ -73,15 +133,50 @@ trait CanUploadFiles
                     ->maxSize(20000)
                     ->required(),
             ])
-            ->action(function (array $data) {
+            ->action(function (Action $action, array $data) {
                 /** @var TemporaryUploadedFile $attachment */
                 $attachment = $data['attachment'];
 
-                $this->files[] = [
-                    'temporaryUrl' => $attachment->temporaryUrl(),
-                    'mimeType' => $attachment->getMimeType(),
-                    'name' => $attachment->getClientOriginalName(),
-                ];
+                $file = new AiMessageFile();
+                $file->name = $attachment->getClientOriginalName();
+                $file->mime_type = $attachment->getMimeType();
+                $file->temporary_url = $attachment->temporaryUrl();
+
+                /** @var AwsS3V3Adapter $s3Adapter */
+                $s3Adapter = Storage::disk('s3')->getAdapter();
+
+                invade($s3Adapter)->client->registerStreamWrapper(); /** @phpstan-ignore-line */
+                $fileS3Path = (string) str('s3://' . config("filesystems.disks.s3.bucket") . '/' . $attachment->getRealPath())->replace('\\', '/');
+
+                $resource = fopen($fileS3Path, mode: 'r', context: stream_context_create([
+                    's3' => [
+                        'seekable' => true,
+                    ],
+                ]));
+
+                $response = Http::attach(
+                    'file', $resource, $file->name, ['Content-Type' => $file->mime_type]
+                )
+                    ->withToken(app(AiIntegrationsSettings::class)->llamaparse_api_key)
+                    ->acceptJson()
+                    ->post('https://api.cloud.llamaindex.ai/api/v1/parsing/upload');
+
+                if ((! $response->successful()) || blank($response->json('id'))) {
+                    Notification::make()
+                        ->title('File Upload Failed')
+                        ->body('There was an error uploading the file. Please try again later.')
+                        ->danger()
+                        ->send();
+
+                    $action->halt();
+
+                    return;
+                }
+
+                $file->file_id = $response->json('id');
+                $file->save();
+
+                $this->files[] = $file->getKey();
             });
     }
 }

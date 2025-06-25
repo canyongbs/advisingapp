@@ -79,11 +79,6 @@ class CompleteResponse
         return $aiService
             ->completeResponse(
                 response: $response,
-                files: $thread->messages()
-                    ->whereNotNull('user_id')
-                    ->latest()
-                    ->first()
-                    ?->files?->all() ?? [],
                 saveResponse: function (AiMessage $response) use ($thread) {
                     $response->save();
 

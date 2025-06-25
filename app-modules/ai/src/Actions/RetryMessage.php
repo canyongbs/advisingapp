@@ -47,6 +47,9 @@ use Illuminate\Support\Arr;
 
 class RetryMessage
 {
+    /**
+     * @param array<AiMessageFile> $files
+     */
     public function __invoke(AiThread $thread, string $content, array $files = []): Closure
     {
         if ($thread->locked_at) {
