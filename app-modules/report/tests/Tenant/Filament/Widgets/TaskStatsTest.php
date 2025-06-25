@@ -39,7 +39,7 @@ it('returns correct task statistics for total tasks, staff, students, and prospe
     ])->create();
 
     Task::factory()->count($taskCount)->state([
-        'concern_id' => $prospect->id,
+        'concern_id' => $prospect->getKey(),
         'concern_type' => (new Prospect())->getMorphClass(),
         'status' => TaskStatus::Pending,
         'created_at' => $endDate,

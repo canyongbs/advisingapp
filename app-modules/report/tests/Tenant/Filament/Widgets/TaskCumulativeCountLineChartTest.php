@@ -21,7 +21,7 @@ it('returns correct cumulative task counts grouped by month within the given dat
     ])->create();
 
     Task::factory()->count(2)->state([
-        'concern_id' => $prospect->id,
+        'concern_id' => $prospect->getKey(),
         'concern_type' => (new Prospect())->getMorphClass(),
         'status' => TaskStatus::Pending,
         'created_at' => $endDate,
