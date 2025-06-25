@@ -97,6 +97,8 @@ trait HandlesFileUploads
 
             $file->file_id = $response->json('id');
             $file->save();
+
+            $file->addMediaFromUrl($file->temporary_url)->toMediaCollection('files');
         }
     }
 }

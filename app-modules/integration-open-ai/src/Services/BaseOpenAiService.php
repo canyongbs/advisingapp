@@ -564,7 +564,7 @@ abstract class BaseOpenAiService implements AiService
             $instructions = "{$assistantInstructions}.\n\n{$formattingInstructions}";
         }
 
-        if (filled($files = $assistant->files->all())) {
+        if (filled($files = $assistant->files()->whereNotNull('parsing_results')->get()->all())) {
             $instructions .= <<<'EOT'
                                 
                 ---
