@@ -38,6 +38,7 @@ namespace AdvisingApp\CaseManagement\Models;
 
 use AdvisingApp\CaseManagement\Database\Factories\CaseTypeAuditorFactory;
 use AdvisingApp\Team\Models\Team;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
@@ -46,6 +47,8 @@ class CaseTypeAuditor extends Pivot
 {
     /** @use HasFactory<CaseTypeAuditorFactory> */
     use HasFactory;
+
+    use HasUuids;
 
     protected $table = 'case_type_auditors';
 

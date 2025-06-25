@@ -59,7 +59,7 @@ class ManageCaseTypeAuditors extends ManageRelatedRecords
 
     public static function canAccess(array $parameters = []): bool
     {
-        return parent::canAccess($parameters) && CaseTypeManagerAuditor::active();
+        return CaseTypeManagerAuditor::active() && parent::canAccess($parameters);
     }
 
     public function table(Table $table): Table

@@ -59,7 +59,7 @@ it('can attach team member to case type', function () {
             ])
         )->assertForbidden();
 
-    $user->givePermissionTo('case_type.view-any');
+    $user->givePermissionTo('product_admin.view-any');
     $user->givePermissionTo('team.view-any');
 
     livewire(ManageCaseTypeManagers::class, [
@@ -70,8 +70,10 @@ it('can attach team member to case type', function () {
             data: ['recordId' => $team->getKey()]
         )->assertSuccessful();
 
-    expect($caseType->refresh())
-        ->managers
-        ->pluck('id')
-        ->toContain($team->getKey());
+    expect(
+        $caseType->refresh()
+            ->managers
+            ->pluck('id')
+            ->contains($team->getKey())
+    )->toBeTrue();
 });

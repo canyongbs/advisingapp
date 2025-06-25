@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Team\Models;
 
-use AdvisingApp\Audit\Overrides\BelongsToMany;
 use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\CaseManagement\Models\CaseTypeAuditor;
 use AdvisingApp\CaseManagement\Models\CaseTypeManager;
@@ -44,6 +43,7 @@ use AdvisingApp\Division\Models\Division;
 use App\Models\BaseModel;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -81,7 +81,7 @@ class Team extends BaseModel
     }
 
     /**
-     * @return BelongsToMany<CaseType, $this, covariant CaseTypeAuditor>
+     * @return BelongsToMany<CaseType, $this, CaseTypeAuditor>
      */
     public function auditableCaseTypes(): BelongsToMany
     {

@@ -70,8 +70,10 @@ it('can attach audit member to case type', function () {
             data: ['recordId' => $team->getKey()]
         )->assertSuccessful();
 
-    expect($caseType->refresh())
-        ->auditors
-        ->pluck('id')
-        ->toContain($team->getKey());
+    expect(
+        $caseType->refresh()
+            ->auditors
+            ->pluck('id')
+            ->contains($team->getKey())
+    )->toBeTrue();
 });
