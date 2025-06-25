@@ -599,7 +599,13 @@ abstract class BaseOpenAiService implements AiService
             'temperature' => $aiSettings->temperature,
         ];
 
-        $stream = $this->client->threads()->runs()->createStreamed($message->thread->thread_id, $runData);
+        if ($message->thread->messages()->whereHas('files')->exists()) {
+            $runData['tools'] = [
+                ['type' => 'file_search'],
+            ];
+        }
+
+         $stream = $this->client->threads()->runs()->createStreamed($message->thread->thread_id, $runData);
 
         return function () use ($message, $saveResponse, $stream): Generator {
             try {

@@ -59,6 +59,6 @@ class FetchAiAssistantFilesParsingResults extends Command
         AiAssistantFile::query()
             ->whereNull('parsing_results')
             ->where('created_at', '>=', now()->subHour())
-            ->each(fn (AiAssistantFile $file) => dispatch(new FetchAiAssistantFileParsingResults($file)));
+            ->eachById(fn (AiAssistantFile $file) => dispatch(new FetchAiAssistantFileParsingResults($file)));
     }
 }

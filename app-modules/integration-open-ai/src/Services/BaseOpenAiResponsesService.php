@@ -77,6 +77,11 @@ abstract class BaseOpenAiResponsesService implements AiService
 
     abstract public function getApiKey(): string;
 
+    public function getApiVersion(): string
+    {
+        return 'preview';
+    }
+
     abstract public function getModel(): string;
 
     public function complete(string $prompt, string $content): string
@@ -88,6 +93,7 @@ abstract class BaseOpenAiResponsesService implements AiService
                 ->using('azure_open_ai', $this->getModel())
                 ->withClientOptions([
                     'apiKey' => $this->getApiKey(),
+                    'apiVersion' => $this->getApiVersion(),
                     'deployment' => $this->getDeployment(),
                 ])
                 ->withProviderOptions([
@@ -148,6 +154,7 @@ abstract class BaseOpenAiResponsesService implements AiService
                 ->using('azure_open_ai', $this->getModel())
                 ->withClientOptions([
                     'apiKey' => $this->getApiKey(),
+                    'apiVersion' => $this->getApiVersion(),
                     'deployment' => $this->getDeployment(),
                 ])
                 ->withProviderOptions([
@@ -228,7 +235,7 @@ abstract class BaseOpenAiResponsesService implements AiService
             $response = Http::withHeaders([
                 'api-key' => $this->getApiKey(),
             ])
-                ->withQueryParameters(['api-version' => 'preview'])
+                ->withQueryParameters(['api-version' => $this->getApiVersion()])
                 ->baseUrl($this->getDeployment())
                 ->get("responses/{$previousResponseId}");
 
