@@ -68,7 +68,8 @@ class ManageCaseTypeAuditors extends ManageRelatedRecords
             ->recordTitleAttribute('name')
             ->inverseRelationship('auditableCaseTypes')
             ->columns([
-                TextColumn::make('name'),
+                TextColumn::make('name')
+                    ->label('Team'),
             ])
             ->headerActions([
                 AttachAction::make(),

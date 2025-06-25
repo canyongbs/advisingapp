@@ -54,7 +54,7 @@ class CaseTypeAuditorFactory extends Factory
     public function definition(): array
     {
         return [
-            'type_type_id' => CaseType::factory(),
+            'case_type_id' => CaseType::factory(),
             'team_id' => Team::factory(),
         ];
     }
