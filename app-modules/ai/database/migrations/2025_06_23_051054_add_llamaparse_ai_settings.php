@@ -34,33 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Database\Factories;
+use App\Features\LlamaParse;
+use Illuminate\Support\Facades\DB;
+use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use AdvisingApp\Ai\Enums\AiAssistantApplication;
-use AdvisingApp\Ai\Enums\AiModel;
-use Illuminate\Database\Eloquent\Factories\Factory;
-
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Ai\Models\AiAssistant>
- */
-class AiAssistantFactory extends Factory
-{
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+return new class () extends SettingsMigration {
+    public function up(): void
     {
-        return [
-            'name' => $this->faker->word(),
-            'application' => AiAssistantApplication::PersonalAssistant,
-            'model' => $this->faker->randomElement(
-                array_filter(
-                    AiModel::cases(),
-                    fn (AiModel $case) => ! in_array($case, [AiModel::JinaDeepSearchV1, AiModel::LlamaParse]),
-                )
-            ),
-        ];
+        DB::transaction(function () {
+            try {
+                $this->migrator->add('ai.llamaparse_model_name');
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
+
+            try {
+                $this->migrator->add('ai.llamaparse_api_key', encrypted: true);
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
+
+            LlamaParse::activate();
+        });
     }
-}
+
+    public function down(): void
+    {
+        DB::transaction(function () {
+            LlamaParse::purge();
+
+            $this->migrator->deleteIfExists('ai.llamaparse_model_name');
+            $this->migrator->deleteIfExists('ai.llamaparse_api_key');
+        });
+    }
+};

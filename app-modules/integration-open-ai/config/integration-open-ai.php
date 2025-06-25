@@ -75,6 +75,14 @@ return [
 
     'gpt_o1_mini_model' => env('OPEN_AI_GPT_O1_MINI_MODEL'),
 
+    'gpt_o3_base_uri' => env('OPEN_AI_GPT_O3_BASE_URI'),
+
+    'gpt_o3_api_key' => env('OPEN_AI_GPT_O3_API_KEY'),
+
+    'gpt_o3_api_version' => env('OPEN_AI_GPT_O3_API_VERSION'),
+
+    'gpt_o3_model' => env('OPEN_AI_GPT_O3_MODEL'),
+
     'gpt_o3_mini_base_uri' => env('OPEN_AI_GPT_O3_MINI_BASE_URI'),
 
     'gpt_o3_mini_api_key' => env('OPEN_AI_GPT_O3_MINI_API_KEY'),

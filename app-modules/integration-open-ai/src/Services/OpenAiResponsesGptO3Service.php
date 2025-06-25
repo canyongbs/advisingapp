@@ -34,33 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Database\Factories;
+namespace AdvisingApp\IntegrationOpenAi\Services;
 
-use AdvisingApp\Ai\Enums\AiAssistantApplication;
-use AdvisingApp\Ai\Enums\AiModel;
-use Illuminate\Database\Eloquent\Factories\Factory;
-
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Ai\Models\AiAssistant>
- */
-class AiAssistantFactory extends Factory
+class OpenAiResponsesGptO3Service extends BaseOpenAiResponsesService
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+    public function getApiKey(): string
     {
-        return [
-            'name' => $this->faker->word(),
-            'application' => AiAssistantApplication::PersonalAssistant,
-            'model' => $this->faker->randomElement(
-                array_filter(
-                    AiModel::cases(),
-                    fn (AiModel $case) => ! in_array($case, [AiModel::JinaDeepSearchV1, AiModel::LlamaParse]),
-                )
-            ),
-        ];
+        return $this->settings->open_ai_gpt_o3_api_key ?? config('integration-open-ai.gpt_o3_api_key');
+    }
+
+    public function getApiVersion(): string
+    {
+        return config('integration-open-ai.gpt_o3_api_version');
+    }
+
+    public function getModel(): string
+    {
+        return $this->settings->open_ai_gpt_o3_model ?? config('integration-open-ai.gpt_o3_model');
+    }
+
+    public function getDeployment(): ?string
+    {
+        return $this->settings->open_ai_gpt_o3_base_uri ?? config('integration-open-ai.gpt_o3_base_uri');
+    }
+
+    public function hasReasoning(): bool
+    {
+        return true;
+    }
+
+    public function hasTemperature(): bool
+    {
+        return false;
     }
 }

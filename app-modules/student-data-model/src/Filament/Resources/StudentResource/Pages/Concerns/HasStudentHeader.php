@@ -98,7 +98,8 @@ trait HasStudentHeader
         return [
             StudentTagsAction::make()->visible(fn (): bool => auth()->user()->can('student.*.update')),
             SyncStudentSisAction::make(),
-            SubscribeHeaderAction::make(),
+            SubscribeHeaderAction::make()
+                ->view('student-data-model::filament.resources.educatable-resource.subscribe-header-action', ['record' => $this->getRecord()]),
             DeleteAction::make()
                 ->modalDescription('Are you sure you wish to delete the student? By deleting a student record, you will remove any related enrollment and program data, along with any related interactions, notes, etc. This action cannot be reversed.')
                 ->using(function ($record) {

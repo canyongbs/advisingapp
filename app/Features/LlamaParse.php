@@ -34,33 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Database\Factories;
+namespace App\Features;
 
-use AdvisingApp\Ai\Enums\AiAssistantApplication;
-use AdvisingApp\Ai\Enums\AiModel;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Support\AbstractFeatureFlag;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Ai\Models\AiAssistant>
- */
-class AiAssistantFactory extends Factory
+class LlamaParse extends AbstractFeatureFlag
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+    public function resolve(mixed $scope): mixed
     {
-        return [
-            'name' => $this->faker->word(),
-            'application' => AiAssistantApplication::PersonalAssistant,
-            'model' => $this->faker->randomElement(
-                array_filter(
-                    AiModel::cases(),
-                    fn (AiModel $case) => ! in_array($case, [AiModel::JinaDeepSearchV1, AiModel::LlamaParse]),
-                )
-            ),
-        ];
+        return false;
     }
 }

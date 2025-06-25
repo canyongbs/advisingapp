@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -32,35 +30,28 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
-
-namespace AdvisingApp\Ai\Database\Factories;
-
-use AdvisingApp\Ai\Enums\AiAssistantApplication;
-use AdvisingApp\Ai\Enums\AiModel;
-use Illuminate\Database\Eloquent\Factories\Factory;
-
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Ai\Models\AiAssistant>
- */
-class AiAssistantFactory extends Factory
-{
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
-    {
-        return [
-            'name' => $this->faker->word(),
-            'application' => AiAssistantApplication::PersonalAssistant,
-            'model' => $this->faker->randomElement(
-                array_filter(
-                    AiModel::cases(),
-                    fn (AiModel $case) => ! in_array($case, [AiModel::JinaDeepSearchV1, AiModel::LlamaParse]),
-                )
-            ),
-        ];
-    }
-}
+--}}
+@php
+    use function Filament\Support\prepare_inherited_attributes;
+@endphp
+<div class="flex items-center gap-2">
+    <x-filament::button
+        :attributes="prepare_inherited_attributes($attributes)"
+        :icon="$action->getIcon()"
+        :color="$action->getColor()"
+        :size="$action->getSize()"
+        wire:click="mountAction('{{ $action->getName() }}')"
+    >
+        {{ $action->getLabel() ?? $action->getName() }}
+    </x-filament::button>
+    @php
+        $tooltipText = "When you subscribe to a {$record->getMorphClass()}, you will receive updates via notifications on that {$record->getMorphClass()}'s activities. You may subscribe or unsubscribe at any time.";
+    @endphp
+    <div
+        class="cursor-help"
+        x-data
+        x-tooltip.raw="{{ $tooltipText }}"
+    >
+        <x-heroicon-o-question-mark-circle class="h-5 w-5" />
+    </div>
+</div>
