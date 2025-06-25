@@ -34,59 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Team\Models;
+namespace AdvisingApp\CaseManagement\Database\Factories;
 
 use AdvisingApp\CaseManagement\Models\CaseType;
-use AdvisingApp\CaseManagement\Models\CaseTypeAuditor;
 use AdvisingApp\CaseManagement\Models\CaseTypeManager;
-use AdvisingApp\Division\Models\Division;
-use App\Models\BaseModel;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use AdvisingApp\Team\Models\Team;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @mixin IdeHelperTeam
+ * @extends Factory<CaseTypeManager>
  */
-class Team extends BaseModel
+class CaseTypeManagerFactory extends Factory
 {
-    protected $fillable = [
-        'name',
-        'description',
-    ];
-
-    /** @return HasMany<User, $this> */
-    public function users(): HasMany
-    {
-        return $this->hasMany(User::class);
-    }
-
     /**
-    * @return BelongsTo<Division, $this>
-    */
-    public function division(): BelongsTo
-    {
-        return $this->belongsTo(Division::class);
-    }
-
-    /**
-     * @return BelongsToMany<CaseType, $this, covariant CaseTypeManager>
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
      */
-    public function managableCaseTypes(): BelongsToMany
+    public function definition(): array
     {
-        return $this->belongsToMany(CaseType::class, 'case_type_managers')
-            ->using(CaseTypeManager::class)
-            ->withTimestamps();
-    }
-
-    /**
-     * @return BelongsToMany<CaseType, $this, CaseTypeAuditor>
-     */
-    public function auditableCaseTypes(): BelongsToMany
-    {
-        return $this->belongsToMany(CaseType::class, 'case_type_auditors')
-            ->using(CaseTypeAuditor::class)
-            ->withTimestamps();
+        return [
+            'case_type_id' => CaseType::factory(),
+            'team_id' => Team::factory(),
+        ];
     }
 }

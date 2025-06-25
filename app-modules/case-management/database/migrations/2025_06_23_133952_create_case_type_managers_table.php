@@ -34,59 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Team\Models;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\CaseManagement\Models\CaseType;
-use AdvisingApp\CaseManagement\Models\CaseTypeAuditor;
-use AdvisingApp\CaseManagement\Models\CaseTypeManager;
-use AdvisingApp\Division\Models\Division;
-use App\Models\BaseModel;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-
-/**
- * @mixin IdeHelperTeam
- */
-class Team extends BaseModel
-{
-    protected $fillable = [
-        'name',
-        'description',
-    ];
-
-    /** @return HasMany<User, $this> */
-    public function users(): HasMany
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->hasMany(User::class);
+        Schema::create('case_type_managers', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->foreignUuid('case_type_id')->constrained('case_types')->cascadeOnDelete();
+            $table->foreignUuid('team_id')->constrained('teams')->cascadeOnDelete();
+            $table->timestamps();
+        });
     }
 
-    /**
-    * @return BelongsTo<Division, $this>
-    */
-    public function division(): BelongsTo
+    public function down(): void
     {
-        return $this->belongsTo(Division::class);
+        Schema::dropIfExists('case_type_managers');
     }
-
-    /**
-     * @return BelongsToMany<CaseType, $this, covariant CaseTypeManager>
-     */
-    public function managableCaseTypes(): BelongsToMany
-    {
-        return $this->belongsToMany(CaseType::class, 'case_type_managers')
-            ->using(CaseTypeManager::class)
-            ->withTimestamps();
-    }
-
-    /**
-     * @return BelongsToMany<CaseType, $this, CaseTypeAuditor>
-     */
-    public function auditableCaseTypes(): BelongsToMany
-    {
-        return $this->belongsToMany(CaseType::class, 'case_type_auditors')
-            ->using(CaseTypeAuditor::class)
-            ->withTimestamps();
-    }
-}
+};

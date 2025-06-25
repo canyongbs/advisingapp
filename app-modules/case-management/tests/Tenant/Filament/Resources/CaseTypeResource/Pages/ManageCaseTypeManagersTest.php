@@ -34,59 +34,46 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Team\Models;
-
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\ManageCaseTypeManagers;
 use AdvisingApp\CaseManagement\Models\CaseType;
-use AdvisingApp\CaseManagement\Models\CaseTypeAuditor;
-use AdvisingApp\CaseManagement\Models\CaseTypeManager;
-use AdvisingApp\Division\Models\Division;
-use App\Models\BaseModel;
+use AdvisingApp\Team\Models\Team;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Filament\Tables\Actions\AttachAction;
 
-/**
- * @mixin IdeHelperTeam
- */
-class Team extends BaseModel
-{
-    protected $fillable = [
-        'name',
-        'description',
-    ];
+use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
 
-    /** @return HasMany<User, $this> */
-    public function users(): HasMany
-    {
-        return $this->hasMany(User::class);
-    }
+it('can attach team member to case type', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    /**
-    * @return BelongsTo<Division, $this>
-    */
-    public function division(): BelongsTo
-    {
-        return $this->belongsTo(Division::class);
-    }
+    $caseType = CaseType::factory()->create();
 
-    /**
-     * @return BelongsToMany<CaseType, $this, covariant CaseTypeManager>
-     */
-    public function managableCaseTypes(): BelongsToMany
-    {
-        return $this->belongsToMany(CaseType::class, 'case_type_managers')
-            ->using(CaseTypeManager::class)
-            ->withTimestamps();
-    }
+    $team = Team::factory()->create();
 
-    /**
-     * @return BelongsToMany<CaseType, $this, CaseTypeAuditor>
-     */
-    public function auditableCaseTypes(): BelongsToMany
-    {
-        return $this->belongsToMany(CaseType::class, 'case_type_auditors')
-            ->using(CaseTypeAuditor::class)
-            ->withTimestamps();
-    }
-}
+    actingAs($user)
+        ->get(
+            CaseTypeResource::getUrl('case-type-managers', [
+                'record' => $caseType->getRouteKey(),
+            ])
+        )->assertForbidden();
+
+    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('team.view-any');
+
+    livewire(ManageCaseTypeManagers::class, [
+        'record' => $caseType->getRouteKey(),
+    ])
+        ->callTableAction(
+            AttachAction::class,
+            data: ['recordId' => $team->getKey()]
+        )->assertSuccessful();
+
+    expect(
+        $caseType->refresh()
+            ->managers
+            ->pluck('id')
+            ->contains($team->getKey())
+    )->toBeTrue();
+});

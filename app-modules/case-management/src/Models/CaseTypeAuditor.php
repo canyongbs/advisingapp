@@ -34,59 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Team\Models;
+namespace AdvisingApp\CaseManagement\Models;
 
-use AdvisingApp\CaseManagement\Models\CaseType;
-use AdvisingApp\CaseManagement\Models\CaseTypeAuditor;
-use AdvisingApp\CaseManagement\Models\CaseTypeManager;
-use AdvisingApp\Division\Models\Division;
-use App\Models\BaseModel;
-use App\Models\User;
+use AdvisingApp\CaseManagement\Database\Factories\CaseTypeAuditorFactory;
+use AdvisingApp\Team\Models\Team;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-/**
- * @mixin IdeHelperTeam
- */
-class Team extends BaseModel
+class CaseTypeAuditor extends Pivot
 {
-    protected $fillable = [
-        'name',
-        'description',
-    ];
+    /** @use HasFactory<CaseTypeAuditorFactory> */
+    use HasFactory;
 
-    /** @return HasMany<User, $this> */
-    public function users(): HasMany
-    {
-        return $this->hasMany(User::class);
-    }
+    use HasUuids;
+
+    protected $table = 'case_type_auditors';
 
     /**
-    * @return BelongsTo<Division, $this>
-    */
-    public function division(): BelongsTo
-    {
-        return $this->belongsTo(Division::class);
-    }
-
-    /**
-     * @return BelongsToMany<CaseType, $this, covariant CaseTypeManager>
+     * @return BelongsTo<Team, $this>
      */
-    public function managableCaseTypes(): BelongsToMany
+    public function team(): BelongsTo
     {
-        return $this->belongsToMany(CaseType::class, 'case_type_managers')
-            ->using(CaseTypeManager::class)
-            ->withTimestamps();
+        return $this->belongsTo(Team::class);
     }
 
     /**
-     * @return BelongsToMany<CaseType, $this, CaseTypeAuditor>
+     * @return BelongsTo<CaseType, $this>
      */
-    public function auditableCaseTypes(): BelongsToMany
+    public function caseType(): BelongsTo
     {
-        return $this->belongsToMany(CaseType::class, 'case_type_auditors')
-            ->using(CaseTypeAuditor::class)
-            ->withTimestamps();
+        return $this->belongsTo(CaseType::class);
     }
 }

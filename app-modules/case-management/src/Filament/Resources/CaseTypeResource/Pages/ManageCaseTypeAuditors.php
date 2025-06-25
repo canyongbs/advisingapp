@@ -34,59 +34,53 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Team\Models;
+namespace AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages;
 
-use AdvisingApp\CaseManagement\Models\CaseType;
-use AdvisingApp\CaseManagement\Models\CaseTypeAuditor;
-use AdvisingApp\CaseManagement\Models\CaseTypeManager;
-use AdvisingApp\Division\Models\Division;
-use App\Models\BaseModel;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
+use App\Features\CaseTypeManagerAuditor;
+use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Tables\Actions\AttachAction;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DetachAction;
+use Filament\Tables\Actions\DetachBulkAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
-/**
- * @mixin IdeHelperTeam
- */
-class Team extends BaseModel
+class ManageCaseTypeAuditors extends ManageRelatedRecords
 {
-    protected $fillable = [
-        'name',
-        'description',
-    ];
+    protected static string $resource = CaseTypeResource::class;
 
-    /** @return HasMany<User, $this> */
-    public function users(): HasMany
+    protected static string $relationship = 'auditors';
+
+    public static function getNavigationLabel(): string
     {
-        return $this->hasMany(User::class);
+        return 'Auditors';
     }
 
-    /**
-    * @return BelongsTo<Division, $this>
-    */
-    public function division(): BelongsTo
+    public static function canAccess(array $parameters = []): bool
     {
-        return $this->belongsTo(Division::class);
+        return CaseTypeManagerAuditor::active() && parent::canAccess($parameters);
     }
 
-    /**
-     * @return BelongsToMany<CaseType, $this, covariant CaseTypeManager>
-     */
-    public function managableCaseTypes(): BelongsToMany
+    public function table(Table $table): Table
     {
-        return $this->belongsToMany(CaseType::class, 'case_type_managers')
-            ->using(CaseTypeManager::class)
-            ->withTimestamps();
-    }
-
-    /**
-     * @return BelongsToMany<CaseType, $this, CaseTypeAuditor>
-     */
-    public function auditableCaseTypes(): BelongsToMany
-    {
-        return $this->belongsToMany(CaseType::class, 'case_type_auditors')
-            ->using(CaseTypeAuditor::class)
-            ->withTimestamps();
+        return $table
+            ->recordTitleAttribute('name')
+            ->inverseRelationship('auditableCaseTypes')
+            ->columns([
+                TextColumn::make('name')
+                    ->label('Team'),
+            ])
+            ->headerActions([
+                AttachAction::make(),
+            ])
+            ->actions([
+                DetachAction::make(),
+            ])
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DetachBulkAction::make(),
+                ]),
+            ]);
     }
 }
