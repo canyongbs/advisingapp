@@ -109,6 +109,19 @@ class AiIntegrationsSettings extends Settings
      */
     public array $open_ai_gpt_o1_mini_applicable_features = [];
 
+    public ?string $open_ai_gpt_o3_model_name = null;
+
+    public ?string $open_ai_gpt_o3_base_uri = null;
+
+    public ?string $open_ai_gpt_o3_api_key = null;
+
+    public ?string $open_ai_gpt_o3_model = null;
+
+    /**
+     * @var array<string>
+     */
+    public array $open_ai_gpt_o3_applicable_features = [];
+
     public ?string $open_ai_gpt_o3_mini_model_name = null;
 
     public ?string $open_ai_gpt_o3_mini_base_uri = null;
@@ -176,6 +189,10 @@ class AiIntegrationsSettings extends Settings
      */
     public array $jina_deepsearch_v1_applicable_features = [];
 
+    public ?string $llamaparse_model_name = null;
+
+    public ?string $llamaparse_api_key = null;
+
     public static function group(): string
     {
         return 'ai';
@@ -199,6 +216,9 @@ class AiIntegrationsSettings extends Settings
             'open_ai_gpt_o1_mini_base_uri',
             'open_ai_gpt_o1_mini_api_key',
             'open_ai_gpt_o1_mini_model',
+            'open_ai_gpt_o3_base_uri',
+            'open_ai_gpt_o3_api_key',
+            'open_ai_gpt_o3_model',
             'open_ai_gpt_o3_mini_base_uri',
             'open_ai_gpt_o3_mini_api_key',
             'open_ai_gpt_o3_mini_model',
@@ -212,6 +232,7 @@ class AiIntegrationsSettings extends Settings
             'open_ai_gpt_o4_mini_api_key',
             'open_ai_gpt_o4_mini_model',
             'jina_deepsearch_v1_api_key',
+            'llamaparse_api_key',
         ];
     }
 }

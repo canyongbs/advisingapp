@@ -34,33 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace App\Console\Commands;
+namespace App\Features;
 
-use App\Models\Tenant;
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
+use App\Support\AbstractFeatureFlag;
 
-class PrintApiSchema extends Command
+class LlamaParse extends AbstractFeatureFlag
 {
-    protected $signature = 'api:print-schema';
-
-    protected $description = 'Compiles and prints the API schema.';
-
-    public function handle(): int
+    public function resolve(mixed $scope): mixed
     {
-        $tenant = Tenant::query()->first();
-
-        if (! $tenant) {
-            $this->error('No tenant found.');
-
-            return static::FAILURE;
-        }
-
-        Artisan::call(
-            command: "tenants:artisan \"lighthouse:print-schema -W -D public\" --tenant={$tenant->id}",
-            outputBuffer: $this->output,
-        );
-
-        return static::SUCCESS;
+        return false;
     }
 }

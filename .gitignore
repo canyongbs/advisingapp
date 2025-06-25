@@ -30,13 +30,8 @@ app-modules/**/vendor
 app-modules/**/resources/js/dist/*
 /.phpactor.json
 **/.DS_Store
-public/api-docs/*
-/_lighthouse_ide_helper.php
-/programmatic-types.graphql
-/schema-directives.graphql
 /*tinkerwell.php
 .vault-password
 /rr
-_temp_graphql_parse_ide_helper_models.php
 /.bash_history
 **/psysh_history

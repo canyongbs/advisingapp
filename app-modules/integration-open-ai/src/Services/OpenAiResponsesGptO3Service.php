@@ -34,12 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace App\GraphQL\Scalars;
+namespace AdvisingApp\IntegrationOpenAi\Services;
 
-use GraphQL\Type\Definition\StringType;
-
-/** Read more about scalars here: https://webonyx.github.io/graphql-php/type-definitions/scalars. */
-class InteractableId extends StringType
+class OpenAiResponsesGptO3Service extends BaseOpenAiResponsesService
 {
-    public ?string $description = 'The `InteractableId` scalar type represents a unique identifier of an interactable entity. Due to the differences between some of the educatable entities, the type of the identifier may vary. A Prospect has a UUID, a Student has a sisid, which can be an integer, string, or UUID, and a Service Request has a UUID.';
+    public function getApiKey(): string
+    {
+        return $this->settings->open_ai_gpt_o3_api_key ?? config('integration-open-ai.gpt_o3_api_key');
+    }
+
+    public function getApiVersion(): string
+    {
+        return config('integration-open-ai.gpt_o3_api_version');
+    }
+
+    public function getModel(): string
+    {
+        return $this->settings->open_ai_gpt_o3_model ?? config('integration-open-ai.gpt_o3_model');
+    }
+
+    public function getDeployment(): ?string
+    {
+        return $this->settings->open_ai_gpt_o3_base_uri ?? config('integration-open-ai.gpt_o3_base_uri');
+    }
+
+    public function hasReasoning(): bool
+    {
+        return true;
+    }
+
+    public function hasTemperature(): bool
+    {
+        return false;
+    }
 }

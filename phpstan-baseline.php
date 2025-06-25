@@ -78,12 +78,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/ai/src/Enums/AiModel.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Enums\\\\AiThreadShareTarget\\:\\:getLabel\\(\\) never returns null so it can be removed from the return type\\.$#',
-    'identifier' => 'return.unusedType',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Enums/AiThreadShareTarget.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Ai\\\\Events\\\\AssistantFilesFinishedUploading\\:\\:__construct\\(\\) has parameter \\$files with generic class Illuminate\\\\Support\\\\Collection but does not specify its types\\: TKey, TValue$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
@@ -138,12 +132,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/AiAssistantResource/Forms/AiAssistantForm.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$model\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/AiAssistantResource/Pages/CreateAiAssistant.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Ai\\\\Filament\\\\Resources\\\\AiAssistantResource\\\\Pages\\\\CreateAiAssistant\\:\\:attemptingToUploadAssistantFilesWhenItsNotSupported\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -180,12 +168,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/AiAssistantResource/Pages/CreateAiAssistant.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\$assistant of method AdvisingApp\\\\Ai\\\\Filament\\\\Resources\\\\AiAssistantResource\\\\Pages\\\\CreateAiAssistant\\:\\:uploadFilesToAssistant\\(\\) expects AdvisingApp\\\\Ai\\\\Models\\\\AiAssistant, Illuminate\\\\Database\\\\Eloquent\\\\Model given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/AiAssistantResource/Pages/CreateAiAssistant.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$archived_at\\.$#',
     'identifier' => 'property.notFound',
     'count' => 5,
@@ -194,7 +176,7 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$model\\.$#',
     'identifier' => 'property.notFound',
-    'count' => 3,
+    'count' => 2,
     'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/AiAssistantResource/Pages/EditAiAssistant.php',
 ];
 $ignoreErrors[] = [
@@ -247,12 +229,6 @@ $ignoreErrors[] = [
 ];
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$assistant of callable AdvisingApp\\\\Ai\\\\Actions\\\\ResetAiServiceIdsForAssistant expects AdvisingApp\\\\Ai\\\\Models\\\\AiAssistant, Illuminate\\\\Database\\\\Eloquent\\\\Model given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/AiAssistantResource/Pages/EditAiAssistant.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\$assistant of method AdvisingApp\\\\Ai\\\\Filament\\\\Resources\\\\AiAssistantResource\\\\Pages\\\\EditAiAssistant\\:\\:uploadFilesToAssistant\\(\\) expects AdvisingApp\\\\Ai\\\\Models\\\\AiAssistant, Illuminate\\\\Database\\\\Eloquent\\\\Model given\\.$#',
     'identifier' => 'argument.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/AiAssistantResource/Pages/EditAiAssistant.php',
@@ -2802,18 +2778,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/consent/src/Filament/Resources/ConsentAgreementResource/Pages/EditConsentAgreement.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Consent\\\\GraphQL\\\\Mutations\\\\ConsentUserToConsentAgreement\\:\\:__invoke\\(\\) has parameter \\$args with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/consent/src/GraphQL/Mutations/ConsentUserToConsentAgreement.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Consent\\\\GraphQL\\\\Mutations\\\\UpdateConsentAgreement\\:\\:__invoke\\(\\) has parameter \\$args with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/consent/src/GraphQL/Mutations/UpdateConsentAgreement.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Consent\\\\Models\\\\ConsentAgreement\\:\\:newMorphToMany\\(\\) return type with generic class AdvisingApp\\\\Audit\\\\Overrides\\\\MorphToMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
@@ -2956,18 +2920,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/engagement/src/Filament/Actions/BulkDraftWithAiAction.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Filament\\\\Forms\\\\Components\\\\Field\\:\\:getTemporaryImages\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Actions/BulkEngagementAction.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Engagement\\\\Filament\\\\Actions\\\\BulkEngagementAction\\:\\:make\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Actions/BulkEngagementAction.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\:\\:\\$full_name\\.$#',
@@ -3228,78 +3180,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/engagement/src/Filament/Resources/EngagementResponseResource/Pages/ViewEngagementResponse.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Engagement\\\\GraphQL\\\\Mutations\\\\DeleteEngagement\\:\\:__invoke\\(\\) has parameter \\$args with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/GraphQL/Mutations/DeleteEngagement.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Match arm comparison between AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\|AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student and \'AdvisingApp\\\\\\\\Prospect\\\\\\\\Models\\\\\\\\Prospect\' is always false\\.$#',
-    'identifier' => 'match.alwaysFalse',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/GraphQL/Mutations/SendEmail.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Match arm comparison between AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\|AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student and \'AdvisingApp\\\\\\\\StudentDataModel\\\\\\\\Models\\\\\\\\Student\' is always false\\.$#',
-    'identifier' => 'match.alwaysFalse',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/GraphQL/Mutations/SendEmail.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Match expression does not handle remaining values\\: AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\|AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student$#',
-    'identifier' => 'match.unhandled',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/GraphQL/Mutations/SendEmail.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Engagement\\\\GraphQL\\\\Mutations\\\\SendEmail\\:\\:__invoke\\(\\) has parameter \\$args with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/GraphQL/Mutations/SendEmail.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$type of static method AdvisingApp\\\\Engagement\\\\Models\\\\Engagement\\:\\:getMergeTags\\(\\) expects class\\-string, AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\|AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/GraphQL/Mutations/SendEmail.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Match expression does not handle remaining values\\: class\\-string\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\|null$#',
-    'identifier' => 'match.unhandled',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/GraphQL/Mutations/SendSMS.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Engagement\\\\GraphQL\\\\Mutations\\\\SendSMS\\:\\:__invoke\\(\\) has parameter \\$args with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/GraphQL/Mutations/SendSMS.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Engagement\\\\GraphQL\\\\Mutations\\\\UpdateEmail\\:\\:__invoke\\(\\) has parameter \\$args with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/GraphQL/Mutations/UpdateEmail.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Engagement\\\\GraphQL\\\\Mutations\\\\UpdateSMS\\:\\:__invoke\\(\\) has parameter \\$args with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/GraphQL/Mutations/UpdateSMS.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Engagement\\\\GraphQL\\\\Rules\\\\RecipientIdExists\\:\\:setData\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/GraphQL/Rules/RecipientIdExists.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\Engagement\\\\GraphQL\\\\Rules\\\\RecipientIdExists\\:\\:\\$data type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/GraphQL/Rules/RecipientIdExists.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Engagement\\\\Http\\\\Controllers\\\\EngagementFileDownloadController\\:\\:__invoke\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
     'count' => 1,
@@ -3514,12 +3394,6 @@ $ignoreErrors[] = [
     'identifier' => 'booleanAnd.alwaysFalse',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/engagement/src/Observers/EngagementBatchObserver.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Using nullsafe method call on non\\-nullable type AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\. Use \\-\\> instead\\.$#',
-    'identifier' => 'nullsafe.neverNull',
-    'count' => 5,
-    'path' => __DIR__ . '/app-modules/engagement/src/Policies/EngagementPolicy.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Parameter \\$recipient of class AdvisingApp\\\\Engagement\\\\DataTransferObjects\\\\EngagementCreationData constructor expects AdvisingApp\\\\Notification\\\\Models\\\\Contracts\\\\CanBeNotified\\|Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, AdvisingApp\\\\Notification\\\\Models\\\\Contracts\\\\CanBeNotified&Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\> given\\.$#',
@@ -5280,12 +5154,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/interaction/src/Models/InteractionType.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Interaction\\\\Models\\\\Scopes\\\\InteractionConfidentialScope\\:\\:apply\\(\\) has parameter \\$builder with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/interaction/src/Models/Scopes/InteractionConfidentialScope.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to function is_null\\(\\) with Illuminate\\\\Support\\\\Carbon will always evaluate to false\\.$#',
     'identifier' => 'function.impossibleType',
     'count' => 1,
@@ -5818,12 +5686,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.property',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/notification/src/Exceptions/SubscriptionAlreadyExistsException.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$callback of method Illuminate\\\\Support\\\\Collection\\<\\(int\\|string\\),Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:each\\(\\) expects callable\\(Illuminate\\\\Database\\\\Eloquent\\\\Model, int\\|string\\)\\: mixed, Closure\\(AdvisingApp\\\\Notification\\\\Models\\\\Contracts\\\\Subscribable\\)\\: void given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/notification/src/Filament/Actions/SubscribeBulkAction.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:displayNameKey\\(\\)\\.$#',
@@ -7542,12 +7404,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/segment/database/factories/SegmentFactory.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Segment\\\\Actions\\\\TranslateSegmentFilters\\:\\:handle\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/segment/src/Actions/TranslateSegmentFilters.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Segment\\\\Enums\\\\SegmentModel\\:\\:getLabel\\(\\) never returns null so it can be removed from the return type\\.$#',
     'identifier' => 'return.unusedType',
     'count' => 1,
@@ -8106,42 +7962,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/StudentResource/Pages/CreateStudent.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:addresses\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/StudentResource/Pages/CreateStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:emailAddresses\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/StudentResource/Pages/CreateStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:phoneNumbers\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/StudentResource/Pages/CreateStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:primaryAddress\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/StudentResource/Pages/CreateStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:primaryEmailAddress\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/StudentResource/Pages/CreateStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:primaryPhoneNumber\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/StudentResource/Pages/CreateStudent.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$dfw\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
@@ -8211,42 +8031,6 @@ $ignoreErrors[] = [
     'message' => '#^Anonymous function never returns null so it can be removed from the return type\\.$#',
     'identifier' => 'return.unusedType',
     'count' => 3,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/StudentResource/Pages/EditStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:addresses\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/StudentResource/Pages/EditStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:emailAddresses\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/StudentResource/Pages/EditStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:phoneNumbers\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/StudentResource/Pages/EditStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:primaryAddress\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/StudentResource/Pages/EditStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:primaryEmailAddress\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/StudentResource/Pages/EditStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:primaryPhoneNumber\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/StudentResource/Pages/EditStudent.php',
 ];
 $ignoreErrors[] = [
@@ -8881,12 +8665,6 @@ $ignoreErrors[] = [
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\:\\:careTeam\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany does not specify its types\\: TRelatedModel, TDeclaringModel, TPivotModel, TAccessor \\(2\\-4 required\\)$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Contracts/Educatable.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\:\\:eventAttendeeRecords\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\HasMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Contracts/Educatable.php',
@@ -9978,36 +9756,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Console/Commands/DispatchMigrations.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method App\\\\Console\\\\Commands\\\\ValidateGraphQL\\:\\:checkModel\\(\\) has parameter \\$fail with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Console/Commands/ValidateGraphQL.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Console\\\\Commands\\\\ValidateGraphQL\\:\\:checkModel\\(\\) has parameter \\$models with generic class Illuminate\\\\Support\\\\Collection but does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Console/Commands/ValidateGraphQL.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Console\\\\Commands\\\\ValidateGraphQL\\:\\:checkModel\\(\\) has parameter \\$types with generic class Illuminate\\\\Support\\\\Collection but does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Console/Commands/ValidateGraphQL.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Unable to resolve the template type TKey in call to function collect$#',
-    'identifier' => 'argument.templateType',
-    'count' => 2,
-    'path' => __DIR__ . '/app/Console/Commands/ValidateGraphQL.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Unable to resolve the template type TValue in call to function collect$#',
-    'identifier' => 'argument.templateType',
-    'count' => 2,
-    'path' => __DIR__ . '/app/Console/Commands/ValidateGraphQL.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method App\\\\DataTransferObjects\\\\Casts\\\\DataCast\\:\\:get\\(\\) has parameter \\$payload with no type specified\\.$#',
     'identifier' => 'missingType.parameter',
     'count' => 1,
@@ -10042,12 +9790,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app/DataTransferObjects/Casts/MoneySettingCast.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Exceptions\\\\IntegrationException\\:\\:context\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Exceptions/IntegrationException.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method App\\\\Exceptions\\\\IntegrationException\\:\\:make\\(\\) should return static\\(App\\\\Exceptions\\\\IntegrationException\\) but returns App\\\\Exceptions\\\\IntegrationNotConfigured\\.$#',
@@ -10284,78 +10026,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Filament/Widgets/RecentProspectsList.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property GraphQL\\\\Language\\\\AST\\\\TypeExtensionNode\\:\\:\\$directives\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app/GraphQL/Directives/AddonDirective.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property GraphQL\\\\Language\\\\AST\\\\TypeExtensionNode\\:\\:\\$fields\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app/GraphQL/Directives/AddonDirective.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property GraphQL\\\\Language\\\\AST\\\\TypeExtensionNode\\:\\:\\$interfaces\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app/GraphQL/Directives/AddonDirective.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property GraphQL\\\\Language\\\\AST\\\\TypeExtensionNode\\:\\:\\$name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app/GraphQL/Directives/AddonDirective.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$typeWithFields of static method Nuwave\\\\Lighthouse\\\\Schema\\\\AST\\\\ASTHelper\\:\\:addDirectiveToFields\\(\\) expects GraphQL\\\\Language\\\\AST\\\\InterfaceTypeDefinitionNode\\|GraphQL\\\\Language\\\\AST\\\\InterfaceTypeExtensionNode\\|GraphQL\\\\Language\\\\AST\\\\ObjectTypeDefinitionNode\\|GraphQL\\\\Language\\\\AST\\\\ObjectTypeExtensionNode, GraphQL\\\\Language\\\\AST\\\\Node&GraphQL\\\\Language\\\\AST\\\\TypeDefinitionNode given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app/GraphQL/Directives/AddonDirective.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property GraphQL\\\\Language\\\\AST\\\\FieldDefinitionNode\\:\\:\\$directives \\(GraphQL\\\\Language\\\\AST\\\\NodeList\\<GraphQL\\\\Language\\\\AST\\\\DirectiveNode\\>\\) does not accept GraphQL\\\\Language\\\\AST\\\\NodeList\\<GraphQL\\\\Language\\\\AST\\\\Node\\>\\.$#',
-    'identifier' => 'assign.propertyType',
-    'count' => 1,
-    'path' => __DIR__ . '/app/GraphQL/Directives/AddonDirective.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Argument of an invalid type Nuwave\\\\Lighthouse\\\\Execution\\\\Arguments\\\\Argument supplied for foreach, only iterables are supported\\.$#',
-    'identifier' => 'foreach.nonIterable',
-    'count' => 1,
-    'path' => __DIR__ . '/app/GraphQL/Directives/MorphToRelationDirective.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\GraphQL\\\\Directives\\\\MorphToRelationDirective\\:\\:build\\(\\) has parameter \\$builder with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app/GraphQL/Directives/MorphToRelationDirective.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\GraphQL\\\\Directives\\\\MorphToRelationDirective\\:\\:build\\(\\) has parameter \\$relationshipTypes with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app/GraphQL/Directives/MorphToRelationDirective.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\GraphQL\\\\Scalars\\\\UUID\\:\\:getTypeDefinition\\(\\) should return class\\-string\\<\\(GraphQL\\\\Type\\\\Definition\\\\NamedType&GraphQL\\\\Type\\\\Definition\\\\Type\\)\\|UnitEnum\\>\\|\\(GraphQL\\\\Language\\\\AST\\\\Node&GraphQL\\\\Language\\\\AST\\\\TypeDefinitionNode\\)\\|null but returns \\$this\\(App\\\\GraphQL\\\\Scalars\\\\UUID\\)\\.$#',
-    'identifier' => 'return.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app/GraphQL/Scalars/UUID.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\GraphQL\\\\Scalars\\\\UUID\\:\\:validateUUID\\(\\) has parameter \\$value with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app/GraphQL/Scalars/UUID.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property GraphQL\\\\Language\\\\AST\\\\Node&GraphQL\\\\Language\\\\AST\\\\ValueNode\\:\\:\\$value\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app/GraphQL/Scalars/Year.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method App\\\\Http\\\\Controllers\\\\ViewPublicUserProfileController\\:\\:formatHours\\(\\) has parameter \\$hours with no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -10420,24 +10090,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app/Jobs/CreateTenantUser.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Jobs\\\\DispatchTenantSetupCompleteEvent\\:\\:middleware\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Jobs/DispatchTenantSetupCompleteEvent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Jobs\\\\MigrateTenantDatabase\\:\\:middleware\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Jobs/MigrateTenantDatabase.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Jobs\\\\SeedTenantDatabase\\:\\:middleware\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Jobs/SeedTenantDatabase.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method App\\\\Livewire\\\\BrandingBar\\:\\:refreshBrandingBar\\(\\) has no return type specified\\.$#',

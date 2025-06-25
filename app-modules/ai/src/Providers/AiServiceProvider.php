@@ -52,7 +52,6 @@ use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiThreadFolder;
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Models\PromptType;
-use App\Concerns\ImplementsGraphQL;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Event;
@@ -60,8 +59,6 @@ use Illuminate\Support\ServiceProvider;
 
 class AiServiceProvider extends ServiceProvider
 {
-    use ImplementsGraphQL;
-
     protected $listen = [
         AssistantFilesFinishedUploading::class => [
             HandleAssistantFilesFinishedUploading::class,
@@ -98,8 +95,6 @@ class AiServiceProvider extends ServiceProvider
             'prompt_type' => PromptType::class,
             'prompt' => Prompt::class,
         ]);
-
-        $this->discoverSchema(__DIR__ . '/../../graphql/*');
 
         $this->mergeConfigFrom(__DIR__ . '/../../config/ai.php', 'ai');
     }

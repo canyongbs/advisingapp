@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -32,31 +30,28 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
-
-namespace App\Overrides\LastDragon_ru\LaraASP\GraphQL\SearchBy\Types;
-
-use App\GraphQL\Directives\CanUseInQueryDirective;
-use LastDragon_ru\LaraASP\GraphQL\Builder\Contracts\Context;
-use LastDragon_ru\LaraASP\GraphQL\Builder\Manipulator;
-use LastDragon_ru\LaraASP\GraphQL\Builder\Sources\InputFieldSource;
-use LastDragon_ru\LaraASP\GraphQL\Builder\Sources\InterfaceFieldSource;
-use LastDragon_ru\LaraASP\GraphQL\Builder\Sources\ObjectFieldSource;
-use LastDragon_ru\LaraASP\GraphQL\SearchBy\Types\Condition\Condition as BaseCondition;
-use Nuwave\Lighthouse\Support\Contracts\Directive;
-
-class Condition extends BaseCondition
-{
-    protected function isFieldDirectiveAllowed(
-        Manipulator $manipulator,
-        InputFieldSource|ObjectFieldSource|InterfaceFieldSource $field,
-        Context $context,
-        Directive $directive,
-    ): bool {
-        if ($directive instanceof CanUseInQueryDirective) {
-            return true;
-        }
-
-        return parent::isFieldDirectiveAllowed($manipulator, $field, $context, $directive);
-    }
-}
+--}}
+@php
+    use function Filament\Support\prepare_inherited_attributes;
+@endphp
+<div class="flex items-center gap-2">
+    <x-filament::button
+        :attributes="prepare_inherited_attributes($attributes)"
+        :icon="$action->getIcon()"
+        :color="$action->getColor()"
+        :size="$action->getSize()"
+        wire:click="mountAction('{{ $action->getName() }}')"
+    >
+        {{ $action->getLabel() ?? $action->getName() }}
+    </x-filament::button>
+    @php
+        $tooltipText = "When you subscribe to a {$record->getMorphClass()}, you will receive updates via notifications on that {$record->getMorphClass()}'s activities. You may subscribe or unsubscribe at any time.";
+    @endphp
+    <div
+        class="cursor-help"
+        x-data
+        x-tooltip.raw="{{ $tooltipText }}"
+    >
+        <x-heroicon-o-question-mark-circle class="h-5 w-5" />
+    </div>
+</div>

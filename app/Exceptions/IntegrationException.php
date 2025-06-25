@@ -38,9 +38,8 @@ namespace App\Exceptions;
 
 use App\Enums\Integration;
 use Exception;
-use GraphQL\Error\ClientAware;
 
-class IntegrationException extends Exception implements ClientAware
+class IntegrationException extends Exception
 {
     protected $message = 'Something has gone wrong. Please contact your administrator.';
 
@@ -61,15 +60,5 @@ class IntegrationException extends Exception implements ClientAware
         }
 
         return new static($integration);
-    }
-
-    public function context(): array
-    {
-        return ['integration' => $this->integration->value];
-    }
-
-    public function isClientSafe(): bool
-    {
-        return true;
     }
 }

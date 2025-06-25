@@ -34,33 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace App\Concerns;
+use App\Features\LlamaParse;
+use Illuminate\Support\Facades\DB;
+use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use GraphQL\Type\Definition\PhpEnumType;
-use Illuminate\Support\Facades\Event;
-use Nuwave\Lighthouse\Events\BuildSchemaString;
-use Nuwave\Lighthouse\Exceptions\DefinitionException;
-use Nuwave\Lighthouse\Schema\Source\SchemaStitcher;
-use Nuwave\Lighthouse\Schema\TypeRegistry;
-
-trait ImplementsGraphQL
-{
-    public function discoverSchema(string $path): void
+return new class () extends SettingsMigration {
+    public function up(): void
     {
-        foreach (glob($path) as $schema) {
-            Event::listen(function (BuildSchemaString $event) use ($schema) {
-                return (new SchemaStitcher($schema))->getSchemaString();
-            });
-        }
+        DB::transaction(function () {
+            try {
+                $this->migrator->add('ai.llamaparse_model_name');
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
+
+            try {
+                $this->migrator->add('ai.llamaparse_api_key', encrypted: true);
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
+
+            LlamaParse::activate();
+        });
     }
 
-    /**
-     * @param class-string $enumClass
-     *
-     * @throws DefinitionException
-     */
-    public function registerEnum(string $enumClass): void
+    public function down(): void
     {
-        app(TypeRegistry::class)->register(new PhpEnumType($enumClass));
+        DB::transaction(function () {
+            LlamaParse::purge();
+
+            $this->migrator->deleteIfExists('ai.llamaparse_model_name');
+            $this->migrator->deleteIfExists('ai.llamaparse_api_key');
+        });
     }
-}
+};

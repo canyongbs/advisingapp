@@ -34,36 +34,49 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\GraphQL\Rules;
+use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use Closure;
-use Illuminate\Contracts\Validation\DataAwareRule;
-use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\Relation;
-
-class RecipientIdExists implements DataAwareRule, ValidationRule
-{
-    protected array $data = [];
-
-    public function validate(string $attribute, mixed $value, Closure $fail): void
+return new class () extends SettingsMigration {
+    public function up(): void
     {
-        $type = $this->data['input']['recipient_type'];
+        try {
+            $this->migrator->add('ai.open_ai_gpt_o3_model_name');
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
 
-        /** @var ?Model $morph */
-        $morph = Relation::getMorphedModel($type);
+        try {
+            $this->migrator->add('ai.open_ai_gpt_o3_base_uri', config('integration-open-ai.gpt_o3_base_uri'), encrypted: true);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
 
-        if (! $morph) {
-            $fail('The type must be either student or prospect.');
-        } elseif ($morph::query()->whereKey($value)->doesntExist()) {
-            $fail('The recipient does not exist.');
+        try {
+            $this->migrator->add('ai.open_ai_gpt_o3_api_key', config('integration-open-ai.gpt_o3_api_key'), encrypted: true);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
+
+        try {
+            $this->migrator->add('ai.open_ai_gpt_o3_model', config('integration-open-ai.gpt_o3_model'), encrypted: true);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
+
+        try {
+            $this->migrator->add('ai.open_ai_gpt_o3_applicable_features', []);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
         }
     }
 
-    public function setData(array $data): static
+    public function down(): void
     {
-        $this->data = $data;
-
-        return $this;
+        $this->migrator->deleteIfExists('ai.open_ai_gpt_o3_model_name');
+        $this->migrator->deleteIfExists('ai.open_ai_gpt_o3_base_uri');
+        $this->migrator->deleteIfExists('ai.open_ai_gpt_o3_api_key');
+        $this->migrator->deleteIfExists('ai.open_ai_gpt_o3_model');
+        $this->migrator->deleteIfExists('ai.open_ai_gpt_o3_applicable_features');
     }
-}
+};
