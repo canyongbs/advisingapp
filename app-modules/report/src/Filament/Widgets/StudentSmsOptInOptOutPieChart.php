@@ -66,17 +66,28 @@ class StudentSmsOptInOptOutPieChart extends PieChartReportWidget
 
     public function getData(): array
     {
-        $smsOptInCount = Cache::tags(["{{$this->cacheTag}}"])->remember('sms_opt_in_count', now()->addHours(24), function (): int {
-            return Student::where('sms_opt_out', false)->count();
-        });
+        $startDate = $this->getStartDate();
+        $endDate = $this->getEndDate();
 
-        $smsOptOutCount = Cache::tags(["{{$this->cacheTag}}"])->remember('sms_opt_out_count', now()->addHours(24), function (): int {
-            return Student::where('sms_opt_out', true)->count();
-        });
+        $shouldBypassCache = filled($startDate) || filled($endDate);
 
-        $smsNullCount = Cache::tags(["{{$this->cacheTag}}"])->remember('sms_null_count', now()->addHours(24), function (): int {
-            return Student::whereNull('sms_opt_out')->count();
-        });
+        $smsOptInCount = $shouldBypassCache
+            ? Student::where('sms_opt_out', false)->whereBetween('created_at_source', [$startDate, $endDate])->count()
+            : Cache::tags(["{{$this->cacheTag}}"])->remember('sms_opt_in_count', now()->addHours(24), function (): int {
+                return Student::where('sms_opt_out', false)->count();
+            });
+
+        $smsOptOutCount = $shouldBypassCache
+            ? Student::where('sms_opt_out', true)->whereBetween('created_at_source', [$startDate, $endDate])->count()
+            : Cache::tags(["{{$this->cacheTag}}"])->remember('sms_opt_out_count', now()->addHours(24), function (): int {
+                return Student::where('sms_opt_out', true)->count();
+            });
+
+        $smsNullCount = $shouldBypassCache
+            ? Student::whereNull('sms_opt_out')->whereBetween('created_at_source', [$startDate, $endDate])->count()
+            : Cache::tags(["{{$this->cacheTag}}"])->remember('sms_null_count', now()->addHours(24), function (): int {
+                return Student::whereNull('sms_opt_out')->count();
+            });
 
         return [
             'labels' => ['Can receive texts', 'Cannot receive texts', 'Data unavailable'],

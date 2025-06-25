@@ -54,37 +54,95 @@ class TaskStats extends StatsOverviewReportWidget
         'lg' => 4,
     ];
 
-    protected function getStats(): array
+    public function getStats(): array
     {
+        $startDate = $this->getStartDate();
+        $endDate = $this->getEndDate();
+
+        $shouldBypassCache = filled($startDate) || filled($endDate);
+
         return [
             Stat::make('Total Tasks', Number::abbreviate(
-                Cache::tags(["{{$this->cacheTag}}"])->remember('tasks-count', now()->addHours(24), function (): int {
-                    return Task::count();
-                }),
+                $shouldBypassCache
+                    ? Task::query()
+                        ->when(
+                            $startDate && $endDate,
+                            fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                        )
+                        ->count()
+                    : Cache::tags(["{{$this->cacheTag}}"])->remember('tasks-count', now()->addHours(24), fn () => Task::query()->count()),
                 maxPrecision: 2,
             )),
+
             Stat::make('Staff with Open Tasks', Number::abbreviate(
-                Cache::tags(["{{$this->cacheTag}}"])->remember('users-with-open-tasks-count', now()->addHours(24), function (): int {
-                    return User::query()->whereHas('assignedTasks', function (Builder $query) {
-                        $query->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress]);
-                    })->count();
-                }),
+                $shouldBypassCache
+                    ? User::query()
+                        ->whereHas(
+                            'assignedTasks',
+                            fn ($query) => $query
+                                ->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress])
+                                ->when(
+                                    $startDate && $endDate,
+                                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                                )
+                        )->count()
+                    : Cache::tags(["{{$this->cacheTag}}"])->remember(
+                        'users-with-open-tasks-count',
+                        now()->addHours(24),
+                        fn () => User::query()
+                            ->whereHas(
+                                'assignedTasks',
+                                fn (Builder $query): Builder => $query->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress])
+                            )->count()
+                    ),
                 maxPrecision: 2,
             )),
+
             Stat::make('Students with Open Tasks', Number::abbreviate(
-                Cache::tags(["{{$this->cacheTag}}"])->remember('students-with-open-tasks-count', now()->addHours(24), function (): int {
-                    return Student::query()->whereHas('tasks', function (Builder $query) {
-                        $query->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress]);
-                    })->count();
-                }),
+                $shouldBypassCache
+                    ? Student::query()
+                        ->whereHas(
+                            'tasks',
+                            fn ($query) => $query
+                                ->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress])
+                                ->when(
+                                    $startDate && $endDate,
+                                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                                )
+                        )->count()
+                    : Cache::tags(["{{$this->cacheTag}}"])->remember(
+                        'students-with-open-tasks-count',
+                        now()->addHours(24),
+                        fn () => Student::query()
+                            ->whereHas(
+                                'tasks',
+                                fn (Builder $query): Builder => $query->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress])
+                            )->count()
+                    ),
                 maxPrecision: 2,
             )),
+
             Stat::make('Prospects with Open Tasks', Number::abbreviate(
-                Cache::tags(["{{$this->cacheTag}}"])->remember('prospects-with-open-tasks-count', now()->addHours(24), function (): int {
-                    return Prospect::query()->whereHas('tasks', function (Builder $query) {
-                        $query->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress]);
-                    })->count();
-                }),
+                $shouldBypassCache
+                    ? Prospect::query()
+                        ->whereHas(
+                            'tasks',
+                            fn ($query) => $query
+                                ->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress])
+                                ->when(
+                                    $startDate && $endDate,
+                                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                                )
+                        )->count()
+                    : Cache::tags(["{{$this->cacheTag}}"])->remember(
+                        'prospects-with-open-tasks-count',
+                        now()->addHours(24),
+                        fn () => Prospect::query()
+                            ->whereHas(
+                                'tasks',
+                                fn (Builder $query): Builder => $query->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress])
+                            )->count()
+                    ),
                 maxPrecision: 2,
             )),
         ];

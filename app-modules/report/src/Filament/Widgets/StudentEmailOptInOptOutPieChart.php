@@ -66,17 +66,28 @@ class StudentEmailOptInOptOutPieChart extends PieChartReportWidget
 
     public function getData(): array
     {
-        $emailOptInPercentage = Cache::tags(["{{$this->cacheTag}}"])->remember('email_opt_in_count', now()->addHours(24), function (): int {
-            return Student::where('email_bounce', false)->count();
-        });
+        $startDate = $this->getStartDate();
+        $endDate = $this->getEndDate();
 
-        $emailOptOutPercentage = Cache::tags(["{{$this->cacheTag}}"])->remember('email_opt_out_count', now()->addHours(24), function (): int {
-            return Student::where('email_bounce', true)->count();
-        });
+        $shouldBypassCache = filled($startDate) || filled($endDate);
 
-        $emailNullPercentage = Cache::tags(["{{$this->cacheTag}}"])->remember('email_null_count', now()->addHours(24), function (): int {
-            return Student::whereNull('email_bounce')->count();
-        });
+        $emailOptInPercentage = $shouldBypassCache
+            ? Student::where('email_bounce', false)->whereBetween('created_at_source', [$startDate, $endDate])->count()
+            : Cache::tags(["{{$this->cacheTag}}"])->remember('email_opt_in_count', now()->addHours(24), function (): int {
+                return Student::where('email_bounce', false)->count();
+            });
+
+        $emailOptOutPercentage = $shouldBypassCache
+            ? Student::where('email_bounce', true)->whereBetween('created_at_source', [$startDate, $endDate])->count()
+            : Cache::tags(["{{$this->cacheTag}}"])->remember('email_opt_out_count', now()->addHours(24), function (): int {
+                return Student::where('email_bounce', true)->count();
+            });
+
+        $emailNullPercentage = $shouldBypassCache
+            ? Student::whereNull('email_bounce')->whereBetween('created_at_source', [$startDate, $endDate])->count()
+            : Cache::tags(["{{$this->cacheTag}}"])->remember('email_null_count', now()->addHours(24), function (): int {
+                return Student::whereNull('email_bounce')->count();
+            });
 
         return [
             'labels' => ['Can receive emails', 'Cannot receive emails', 'Data unavailable'],

@@ -36,14 +36,18 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
+use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\On;
 
 class MostEngagedStudentsTable extends BaseWidget
 {
+    use InteractsWithPageFilters;
+
     public string $cacheTag;
 
     protected static ?string $pollingInterval = null;
@@ -64,11 +68,34 @@ class MostEngagedStudentsTable extends BaseWidget
 
     public function table(Table $table): Table
     {
+        $startDate = $this->getStartDate();
+        $endDate = $this->getEndDate();
+
         return $table
             ->query(
                 Student::with('primaryEmailAddress:id,address')
                     ->select('sisid', 'full_name', 'primary_email_id')
-                    ->withCount('engagements')
+                    ->withCount([
+                        'engagements as engagements_count' => function (Builder $query) use ($startDate, $endDate): Builder {
+                            if ($startDate && $endDate) {
+                                $query->whereBetween('created_at', [$startDate, $endDate]);
+                            }
+
+                            return $query;
+                        },
+                    ])
+                    ->when(
+                        $startDate && $endDate,
+                        function (Builder $query) use ($startDate, $endDate): Builder {
+                            return $query->whereHas(
+                                'engagements',
+                                function (Builder $query) use ($startDate, $endDate): Builder {
+                                    return $query->whereBetween('created_at', [$startDate, $endDate]);
+                                }
+                            );
+                        }
+                    )
+
                     ->orderBy('engagements_count', 'desc')
                     ->limit(10)
             )

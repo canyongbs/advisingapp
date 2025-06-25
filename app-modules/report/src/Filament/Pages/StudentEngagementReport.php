@@ -75,4 +75,11 @@ class StudentEngagementReport extends StudentReport
             MostEngagedStudentsTable::make(['cacheTag' => $this->cacheTag]),
         ];
     }
+
+    public function getWidgetData(): array
+    {
+        return [
+            'filters' => $this->filters,
+        ];
+    }
 }

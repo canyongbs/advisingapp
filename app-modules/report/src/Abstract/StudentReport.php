@@ -37,10 +37,15 @@
 namespace AdvisingApp\Report\Abstract;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
 use Filament\Pages\Dashboard;
 
 abstract class StudentReport extends Dashboard
 {
+    use HasFiltersForm;
+
+    protected static string $view = 'report::filament.pages.report';
+
     public static function canAccess(): bool
     {
         /** @var User $user */

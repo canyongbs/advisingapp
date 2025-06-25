@@ -41,6 +41,7 @@ use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Models\User;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Number;
 
@@ -52,41 +53,89 @@ class ProspectEngagementState extends StatsOverviewReportWidget
         'lg' => 4,
     ];
 
-    protected function getStats(): array
+    public function getStats(): array
     {
+        $startDate = $this->getStartDate();
+        $endDate = $this->getEndDate();
+
+        $shouldBypassCache = filled($startDate) || filled($endDate);
+
+        $prospectsCount = $shouldBypassCache
+            ? Prospect::query()
+                ->when(
+                    $startDate && $endDate,
+                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                )
+                ->count()
+            : Cache::tags(["{{$this->cacheTag}}"])->remember(
+                'total-prospects-count',
+                now()->addHours(24),
+                fn (): int => Prospect::query()->count()
+            );
+
+        $emailsCount = $shouldBypassCache
+            ? Engagement::query()
+                ->whereHasMorph('recipient', Prospect::class)
+                ->where('channel', NotificationChannel::Email)
+                ->when(
+                    $startDate && $endDate,
+                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                )
+                ->count()
+            : Cache::tags(["{{$this->cacheTag}}"])->remember(
+                'total-emails-sent',
+                now()->addHours(24),
+                fn (): int => Engagement::query()
+                    ->whereHasMorph('recipient', Prospect::class)
+                    ->where('channel', NotificationChannel::Email)
+                    ->count()
+            );
+
+        $textsCount = $shouldBypassCache
+            ? Engagement::query()
+                ->whereHasMorph('recipient', Prospect::class)
+                ->where('channel', NotificationChannel::Sms)
+                ->when(
+                    $startDate && $endDate,
+                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                )
+                ->count()
+            : Cache::tags(["{{$this->cacheTag}}"])->remember(
+                'total-texts-sent',
+                now()->addHours(24),
+                fn (): int => Engagement::query()
+                    ->whereHasMorph('recipient', Prospect::class)
+                    ->where('channel', NotificationChannel::Sms)
+                    ->count()
+            );
+
+        $engagementFilter = function (Builder $query) use ($startDate, $endDate): void {
+            $query->whereHasMorph('recipient', Prospect::class)
+                ->when(
+                    $startDate && $endDate,
+                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                );
+        };
+
+        $staffCount = $shouldBypassCache
+            ? User::query()
+                ->whereHas('engagements', $engagementFilter)
+                ->count()
+            : Cache::tags(["{{$this->cacheTag}}"])->remember(
+                'staff-sending-engagement-count',
+                now()->addHours(24),
+                fn (): int => User::query()
+                    ->whereHas(
+                        'engagements',
+                        fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                    )->count()
+            );
+
         return [
-            Stat::make('Total Prospects', Number::abbreviate(
-                Cache::tags(["{{$this->cacheTag}}"])->remember('total-prospects-count', now()->addHours(24), function (): int {
-                    return Prospect::count();
-                }),
-                maxPrecision: 2,
-            )),
-            Stat::make('Total Emails Sent', Number::abbreviate(
-                Cache::tags(["{{$this->cacheTag}}"])->remember('total-emails-sent', now()->addHours(24), function (): int {
-                    return Engagement::query()
-                        ->whereHasMorph('recipient', Prospect::class)
-                        ->where('channel', NotificationChannel::Email)
-                        ->count();
-                }),
-                maxPrecision: 2,
-            )),
-            Stat::make('Total Texts Sent', Number::abbreviate(
-                Cache::tags(["{{$this->cacheTag}}"])->remember('total-texts-sent', now()->addHours(24), function (): int {
-                    return Engagement::query()
-                        ->whereHasMorph('recipient', Prospect::class)
-                        ->where('channel', NotificationChannel::Sms)
-                        ->count();
-                }),
-                maxPrecision: 2,
-            )),
-            Stat::make('Staff Sending Enagements', Number::abbreviate(
-                Cache::tags(["{{$this->cacheTag}}"])->remember('staff-sending-engagement-count', now()->addHours(24), function (): int {
-                    return User::whereHas('engagements', function ($q) {
-                        return $q->whereHasMorph('recipient', Prospect::class);
-                    })->count();
-                }),
-                maxPrecision: 2,
-            )),
+            Stat::make('Total Prospects', Number::abbreviate($prospectsCount, maxPrecision: 2)),
+            Stat::make('Total Emails Sent', Number::abbreviate($emailsCount, maxPrecision: 2)),
+            Stat::make('Total Texts Sent', Number::abbreviate($textsCount, maxPrecision: 2)),
+            Stat::make('Staff Sending Enagements', Number::abbreviate($staffCount, maxPrecision: 2)),
         ];
     }
 }

@@ -53,3 +53,35 @@ it('checks prospect interactions monthly line chart', function () {
 
     expect($widgetInstance->getData())->toMatchSnapshot();
 });
+
+it('returns correct data for prospect interactions within the given date range', function () {
+    $interactionStartDate = now()->subDays(90);
+    $interactionEndDate = now()->subDays(5);
+
+    Prospect::factory()->count(5)->has(
+        Interaction::factory()
+            ->count(5)
+            ->state([
+                'created_at' => $interactionStartDate,
+            ]),
+        'interactions'
+    )->create();
+
+    Prospect::factory()->count(5)->has(
+        Interaction::factory()
+            ->count(5)
+            ->state([
+                'created_at' => $interactionEndDate,
+            ]),
+        'interactions'
+    )->create();
+
+    $widgetInstance = new ProspectInteractionLineChart();
+    $widgetInstance->cacheTag = 'report-prospect-interaction';
+    $widgetInstance->filters = [
+        'startDate' => $interactionStartDate->toDateString(),
+        'endDate' => $interactionEndDate->toDateString(),
+    ];
+
+    expect($widgetInstance->getData())->toMatchSnapshot();
+});

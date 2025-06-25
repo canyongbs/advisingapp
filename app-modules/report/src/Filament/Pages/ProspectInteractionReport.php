@@ -79,4 +79,11 @@ class ProspectInteractionReport extends ProspectReport
             ProspectInteractionUsersTable::make(['cacheTag' => $this->cacheTag]),
         ];
     }
+
+    public function getWidgetData(): array
+    {
+        return [
+            'filters' => $this->filters,
+        ];
+    }
 }

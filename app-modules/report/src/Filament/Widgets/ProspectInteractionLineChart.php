@@ -49,26 +49,16 @@ class ProspectInteractionLineChart extends LineChartReportWidget
 
     public function getData(): array
     {
-        $runningTotalPerMonth = Cache::tags(["{{$this->cacheTag}}"])->remember('prospect_interactions_line_chart', now()->addHours(24), function (): array {
-            $totalInteractionPerMonth = Interaction::query()
-                ->whereHasMorph('interactable', Prospect::class)
-                ->toBase()
-                ->selectRaw('date_trunc(\'month\', created_at) as month')
-                ->selectRaw('count(*) as total')
-                ->where('created_at', '>', now()->subYear())
-                ->groupBy('month')
-                ->orderBy('month')
-                ->pluck('total', 'month');
+        $startDate = $this->getStartDate();
+        $endDate = $this->getEndDate();
 
-            $runningTotalPerMonth = [];
+        $shouldBypassCache = filled($startDate) || filled($endDate);
 
-            foreach (range(11, 0) as $month) {
-                $month = Carbon::now()->subMonths($month);
-                $runningTotalPerMonth[$month->format('M Y')] = $totalInteractionPerMonth[$month->startOfMonth()->toDateTimeString()] ?? 0;
-            }
-
-            return $runningTotalPerMonth;
-        });
+        $runningTotalPerMonth = $shouldBypassCache
+           ? $this->getProspectInteractionData($startDate, $endDate)
+           : Cache::tags(["{{$this->cacheTag}}"])->remember('prospect_interactions_line_chart', now()->addHours(24), function () {
+               return $this->getProspectInteractionData();
+           });
 
         return [
             'datasets' => [
@@ -97,5 +87,39 @@ class ProspectInteractionLineChart extends LineChartReportWidget
                 ],
             ],
         ];
+    }
+
+    /**
+     * @return array<string, int>
+     */
+    protected function getProspectInteractionData(?Carbon $startDate = null, ?Carbon $endDate = null): array
+    {
+        $startDate = $startDate ?? Carbon::now()->subMonths(11)->startOfMonth();
+        $endDate = $endDate ?? Carbon::now()->endOfMonth();
+
+        $months = $this->getMonthRange($startDate, $endDate);
+
+        $monthlyData = Interaction::query()
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->where('interactable_type', app(Prospect::class)->getMorphClass())
+            ->selectRaw("date_trunc('month', created_at) AS month, COUNT(*) AS monthly_total")
+            ->groupByRaw("date_trunc('month', created_at)")
+            ->get()
+            ->mapWithKeys(function (object $item): array {
+                return [
+                    Carbon::parse($item['month'])->startOfMonth()->toDateString() => (int) $item['monthly_total'],
+                ];
+            });
+
+        $result = [];
+
+        foreach ($months as $month) {
+            $key = $month->toDateString();
+            $label = $month->format('M Y');
+            $count = $monthlyData[$key] ?? 0;
+            $result[$label] = $count;
+        }
+
+        return $result;
     }
 }

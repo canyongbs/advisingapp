@@ -36,15 +36,19 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
+use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\On;
 
 class StudentDeliverableTable extends BaseWidget
 {
+    use InteractsWithPageFilters;
+
     public string $cacheTag;
 
     protected static ?string $pollingInterval = null;
@@ -65,11 +69,30 @@ class StudentDeliverableTable extends BaseWidget
 
     public function table(Table $table): Table
     {
+        $startDate = $this->getStartDate();
+        $endDate = $this->getEndDate();
+
         return $table
             ->query(
                 Student::select('sisid', 'full_name', 'email_bounce', 'sms_opt_out')
-                    ->where('sms_opt_out', true)
-                    ->orWhere('email_bounce', true)
+                    ->when(
+                        $startDate && $endDate,
+                        function (Builder $query) use ($startDate, $endDate): Builder {
+                            return $query->whereBetween('created_at_source', [$startDate, $endDate])
+                                ->where(function (Builder $communicationFilter): Builder {
+                                    return $communicationFilter
+                                        ->where('sms_opt_out', true)
+                                        ->orWhere('email_bounce', true);
+                                });
+                        },
+                        function (Builder $query): Builder {
+                            return $query->where(function (Builder $communicationFilter): Builder {
+                                return $communicationFilter
+                                    ->where('sms_opt_out', true)
+                                    ->orWhere('email_bounce', true);
+                            });
+                        }
+                    )
             )
             ->columns([
                 TextColumn::make('full_name')

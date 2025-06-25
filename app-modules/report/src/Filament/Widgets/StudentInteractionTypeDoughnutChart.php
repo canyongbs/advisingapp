@@ -38,7 +38,9 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
 
@@ -69,24 +71,16 @@ class StudentInteractionTypeDoughnutChart extends ChartReportWidget
 
     public function getData(): array
     {
-        $interactionsByType = Cache::tags(["{{$this->cacheTag}}"])->remember('student_interactions_by_type', now()->addHours(24), function (): Collection {
-            $interactionsByTypeData = InteractionType::withCount([
-                'interactions' => function ($query) {
-                    $query->whereHasMorph(
-                        'interactable',
-                        Student::class,
-                    );
-                },
-            ])->get(['id', 'name']);
+        $startDate = $this->getStartDate();
+        $endDate = $this->getEndDate();
 
-            $interactionsByTypeData = $interactionsByTypeData->map(function (InteractionType $interactionType) {
-                $interactionType['bg_color'] = $this->getRgbString();
+        $shouldBypassCache = filled($startDate) || filled($endDate);
 
-                return $interactionType;
+        $interactionsByType = $shouldBypassCache
+            ? $this->getInteractionTypeData($startDate, $endDate)
+            : Cache::tags(["{{$this->cacheTag}}"])->remember('student_interactions_by_type', now()->addHours(24), function () {
+                return $this->getInteractionTypeData();
             });
-
-            return $interactionsByTypeData;
-        });
 
         return [
             'labels' => $interactionsByType->pluck('name'),
@@ -131,5 +125,27 @@ class StudentInteractionTypeDoughnutChart extends ChartReportWidget
     protected function getType(): string
     {
         return 'doughnut';
+    }
+
+    /**
+     * @return Collection<int, InteractionType>
+     */
+    protected function getInteractionTypeData(?Carbon $startDate = null, ?Carbon $endDate = null): Collection
+    {
+        $query = InteractionType::withCount([
+            'interactions' => function ($query) use ($startDate, $endDate) {
+                $query->whereHasMorph('interactable', Student::class)
+                    ->when(
+                        $startDate && $endDate,
+                        fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                    );
+            },
+        ])->get(['id', 'name']);
+
+        return $query->map(function (InteractionType $interactionType) {
+            $interactionType['bg_color'] = $this->getRgbString();
+
+            return $interactionType;
+        });
     }
 }

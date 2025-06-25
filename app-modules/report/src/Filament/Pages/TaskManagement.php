@@ -77,4 +77,11 @@ class TaskManagement extends EngagementReport
             'lg' => 4,
         ];
     }
+
+    public function getWidgetData(): array
+    {
+        return [
+            'filters' => $this->filters,
+        ];
+    }
 }

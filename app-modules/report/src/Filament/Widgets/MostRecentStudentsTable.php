@@ -36,14 +36,18 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
+use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
+use Illuminate\Database\Query\Builder;
 use Livewire\Attributes\On;
 
 class MostRecentStudentsTable extends BaseWidget
 {
+    use InteractsWithPageFilters;
+
     public string $cacheTag;
 
     protected static ?string $heading = 'Most Recent Students Added';
@@ -69,24 +73,33 @@ class MostRecentStudentsTable extends BaseWidget
     public function table(Table $table): Table
     {
         return $table
-            ->query(
-                function () {
-                    $key = (new Student())->getKeyName();
+            ->query(function () {
+                $key = (new Student())->getKeyName();
 
-                    return Student::whereIn($key, function ($query) use ($key) {
-                        $query->select($key)
-                            ->from((new Student())->getTable())
-                            ->whereNotNull('created_at_source')
-                            ->whereNull('deleted_at')
-                            ->orderBy('created_at_source', 'desc')
-                            ->take(100);
-                    })->orderBy('created_at_source', 'desc');
-                }
-            )
+                $startDate = $this->getStartDate();
+                $endDate = $this->getEndDate();
+
+                return Student::whereIn($key, function ($query) use ($key, $startDate, $endDate) {
+                    $query->select($key)
+                        ->from((new Student())->getTable())
+                        ->whereNotNull('created_at_source')
+                        ->whereNull('deleted_at')
+                        ->when(
+                            $startDate && $endDate,
+                            function (Builder $query) use ($startDate, $endDate): Builder {
+                                return $query->whereBetween('created_at_source', [$startDate, $endDate]);
+                            }
+                        )
+                        ->orderBy('created_at_source', 'desc')
+                        ->take(100);
+                })
+                    ->orderBy('created_at_source', 'desc');
+            })
             ->columns([
                 TextColumn::make(Student::displayNameKey())
                     ->label('Name'),
-                TextColumn::make('email'),
+                TextColumn::make('primaryEmailAddress.address')
+                    ->label('Email'),
                 TextColumn::make('sisid')
                     ->label('SIS ID'),
                 TextColumn::make('otherid')

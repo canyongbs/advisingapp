@@ -37,13 +37,17 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\On;
 
 class MostEngagedProspectsTable extends BaseWidget
 {
+    use InteractsWithPageFilters;
+
     public string $cacheTag;
 
     protected int | string | array $columnSpan = 'full';
@@ -64,12 +68,36 @@ class MostEngagedProspectsTable extends BaseWidget
 
     public function table(Table $table): Table
     {
+        $startDate = $this->getStartDate();
+        $endDate = $this->getEndDate();
+
         return $table
             ->query(
                 Prospect::select('id', 'full_name', 'primary_email_id', 'status_id', 'created_by_id', 'created_at')
                     ->with('primaryEmailAddress:id,address')
                     ->with(['status', 'createdBy:id,name'])
-                    ->withCount('engagements')
+                    ->withCount([
+                        'engagements as engagements_count' => function (Builder $query) use ($startDate, $endDate): Builder {
+                            return $query->when(
+                                $startDate && $endDate,
+                                function (Builder $query) use ($startDate, $endDate): Builder {
+                                    return $query->whereBetween('created_at', [$startDate, $endDate]);
+                                }
+                            );
+                        },
+                    ])
+                    ->when(
+                        $startDate && $endDate,
+                        function (Builder $query) use ($startDate, $endDate): Builder {
+                            return $query->whereHas(
+                                'engagements',
+                                function (Builder $query) use ($startDate, $endDate): Builder {
+                                    return $query->whereBetween('created_at', [$startDate, $endDate]);
+                                }
+                            );
+                        }
+                    )
+
                     ->orderBy('engagements_count', 'desc')
                     ->limit(10)
             )

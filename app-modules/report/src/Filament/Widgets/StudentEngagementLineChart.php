@@ -48,57 +48,18 @@ class StudentEngagementLineChart extends LineChartReportWidget
 
     protected int | string | array $columnSpan = 'full';
 
-    protected function getOptions(): array
+    public function getData(): array
     {
-        return [
-            'plugins' => [
-                'legend' => [
-                    'display' => false,
-                ],
-            ],
-            'scales' => [
-                'y' => [
-                    'min' => 0,
-                ],
-            ],
-        ];
-    }
+        $startDate = $this->getStartDate();
+        $endDate = $this->getEndDate();
 
-    protected function getData(): array
-    {
-        $runningTotalPerMonth = Cache::tags(["{{$this->cacheTag}}"])->remember('student_engagements_line_chart', now()->addHours(24), function (): array {
-            $totalEmailEngagementsPerMonth = Engagement::query()
-                ->whereHasMorph('recipient', Student::class)
-                ->toBase()
-                ->where('channel', NotificationChannel::Email)
-                ->selectRaw('date_trunc(\'month\', created_at) as month')
-                ->selectRaw('count(*) as total')
-                ->where('created_at', '>', now()->subYear())
-                ->groupBy('month')
-                ->orderBy('month')
-                ->pluck('total', 'month');
+        $shouldBypassCache = filled($startDate) || filled($endDate);
 
-            $totalTextEnagagementsPerMonth = Engagement::query()
-                ->whereHasMorph('recipient', Student::class)
-                ->toBase()
-                ->where('channel', NotificationChannel::Sms)
-                ->selectRaw('date_trunc(\'month\', created_at) as month')
-                ->selectRaw('count(*) as total')
-                ->where('created_at', '>', now()->subYear())
-                ->groupBy('month')
-                ->orderBy('month')
-                ->pluck('total', 'month');
-
-            $data = [];
-
-            foreach (range(11, 0) as $month) {
-                $month = Carbon::now()->subMonths($month);
-                $data['emailEngagement'][$month->format('M Y')] = $totalEmailEngagementsPerMonth[$month->startOfMonth()->toDateTimeString()] ?? 0;
-                $data['textEnagagment'][$month->format('M Y')] = $totalTextEnagagementsPerMonth[$month->startOfMonth()->toDateTimeString()] ?? 0;
-            }
-
-            return $data;
-        });
+        $runningTotalPerMonth = $shouldBypassCache
+           ? $this->getStudentEngagementData($startDate, $endDate)
+           : Cache::tags(["{{$this->cacheTag}}"])->remember('student_engagements_line_chart', now()->addHours(24), function () {
+               return $this->getStudentEngagementData();
+           });
 
         return [
             'datasets' => [
@@ -117,5 +78,63 @@ class StudentEngagementLineChart extends LineChartReportWidget
             ],
             'labels' => array_keys($runningTotalPerMonth['emailEngagement']),
         ];
+    }
+
+    protected function getOptions(): array
+    {
+        return [
+            'plugins' => [
+                'legend' => [
+                    'display' => false,
+                ],
+            ],
+            'scales' => [
+                'y' => [
+                    'min' => 0,
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @return array<string, array<string, int>>
+     */
+    protected function getStudentEngagementData(?Carbon $startDate = null, ?Carbon $endDate = null): array
+    {
+        $startDate = $startDate ?? Carbon::now()->subMonths(11)->startOfMonth();
+        $endDate = $endDate ?? Carbon::now()->endOfMonth();
+
+        $months = $this->getMonthRange($startDate, $endDate);
+
+        $studentType = app(Student::class)->getMorphClass();
+
+        $baseQuery = fn (string $channel) => Engagement::query()
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->where('recipient_type', $studentType)
+            ->where('channel', $channel)
+            ->selectRaw("date_trunc('month', created_at) AS month, COUNT(*) AS monthly_total")
+            ->groupByRaw("date_trunc('month', created_at)")
+            ->get()
+            ->mapWithKeys(fn (object $item) => [
+                Carbon::parse($item['month'])->startOfMonth()->toDateString() => (int) $item['monthly_total'],
+            ]);
+
+        $emailData = $baseQuery(NotificationChannel::Email->value);
+        $smsData = $baseQuery(NotificationChannel::Sms->value);
+
+        $result = [
+            'emailEngagement' => [],
+            'textEnagagment' => [],
+        ];
+
+        foreach ($months as $month) {
+            $key = $month->toDateString();
+            $label = $month->format('M Y');
+
+            $result['emailEngagement'][$label] = $emailData[$key] ?? 0;
+            $result['textEnagagment'][$label] = $smsData[$key] ?? 0;
+        }
+
+        return $result;
     }
 }

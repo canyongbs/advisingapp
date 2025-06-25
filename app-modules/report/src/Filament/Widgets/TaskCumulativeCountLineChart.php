@@ -48,66 +48,18 @@ class TaskCumulativeCountLineChart extends LineChartReportWidget
 
     protected int | string | array $columnSpan = 'full';
 
-    protected function getOptions(): array
+    public function getData(): array
     {
-        return [
-            'plugins' => [
-                'legend' => [
-                    'display' => false,
-                ],
-            ],
-            'scales' => [
-                'y' => [
-                    'min' => 0,
-                ],
-            ],
-        ];
-    }
+        $startDate = $this->getStartDate();
+        $endDate = $this->getEndDate();
 
-    protected function getData(): array
-    {
-        $runningTotalPerMonth = Cache::tags(["{{$this->cacheTag}}"])->remember('task_cumulative_count_line_chart', now()->addHours(24), function (): array {
-            $totalStudentTasksPerMonth = Task::query()
-                ->whereHasMorph('concern', Student::class)
-                ->toBase()
-                ->selectRaw('date_trunc(\'month\', created_at) as month')
-                ->selectRaw('count(*) as total')
-                ->where('created_at', '>', now()->subYear())
-                ->groupBy('month')
-                ->orderBy('month')
-                ->pluck('total', 'month');
+        $shouldBypassCache = filled($startDate) || filled($endDate);
 
-            $totalProspectTasksPerMonth = Task::query()
-                ->whereHasMorph('concern', Prospect::class)
-                ->toBase()
-                ->selectRaw('date_trunc(\'month\', created_at) as month')
-                ->selectRaw('count(*) as total')
-                ->where('created_at', '>', now()->subYear())
-                ->groupBy('month')
-                ->orderBy('month')
-                ->pluck('total', 'month');
-
-            $totalUnrelatedTasksPerMonth = Task::query()
-                ->whereNull('concern_id')
-                ->whereNull('concern_type')
-                ->selectRaw('date_trunc(\'month\', created_at) as month')
-                ->selectRaw('count(*) as total')
-                ->where('created_at', '>', now()->subYear())
-                ->groupBy('month')
-                ->orderBy('month')
-                ->pluck('total', 'month');
-
-            $data = [];
-
-            foreach (range(11, 0) as $month) {
-                $month = Carbon::now()->subMonths($month);
-                $data['studentTasks'][$month->format('M Y')] = $totalStudentTasksPerMonth[$month->startOfMonth()->toDateTimeString()] ?? 0;
-                $data['prospectTasks'][$month->format('M Y')] = $totalProspectTasksPerMonth[$month->startOfMonth()->toDateTimeString()] ?? 0;
-                $data['unrelatedTasks'][$month->format('M Y')] = $totalUnrelatedTasksPerMonth[$month->startOfMonth()->toDateTimeString()] ?? 0;
-            }
-
-            return $data;
-        });
+        $runningTotalPerMonth = $shouldBypassCache
+            ? $this->getTaskCumulativeData($startDate, $endDate)
+            : Cache::tags(["{{$this->cacheTag}}"])->remember('task_cumulative_count_line_chart', now()->addHours(24), function (): array {
+                return $this->getTaskCumulativeData();
+            });
 
         return [
             'datasets' => [
@@ -132,5 +84,87 @@ class TaskCumulativeCountLineChart extends LineChartReportWidget
             ],
             'labels' => array_keys($runningTotalPerMonth['studentTasks']),
         ];
+    }
+
+    protected function getOptions(): array
+    {
+        return [
+            'plugins' => [
+                'legend' => [
+                    'display' => false,
+                ],
+            ],
+            'scales' => [
+                'y' => [
+                    'min' => 0,
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @return array{
+     *     studentTasks: array<string, int>,
+     *     prospectTasks: array<string, int>,
+     *     unrelatedTasks: array<string, int>
+     * }
+     */
+    protected function getTaskCumulativeData(?Carbon $startDate = null, ?Carbon $endDate = null): array
+    {
+        $startDate = $startDate ?? Carbon::now()->subMonths(11)->startOfMonth();
+        $endDate = $endDate ?? Carbon::now()->endOfMonth();
+
+        $months = $this->getMonthRange($startDate, $endDate);
+
+        $studentType = app(Student::class)->getMorphClass();
+        $prospectType = app(Prospect::class)->getMorphClass();
+
+        $studentTasks = $this->getTaskCounts($startDate, $endDate, ['concern_type' => $studentType]);
+        $prospectTasks = $this->getTaskCounts($startDate, $endDate, ['concern_type' => $prospectType]);
+        $unrelatedTasks = $this->getTaskCounts($startDate, $endDate, ['concern_type' => null, 'concern_id' => null]);
+
+        $result = [
+            'studentTasks' => [],
+            'prospectTasks' => [],
+            'unrelatedTasks' => [],
+        ];
+
+        foreach ($months as $month) {
+            $key = $month->toDateString();
+            $label = $month->format('M Y');
+
+            $result['studentTasks'][$label] = $studentTasks[$key] ?? 0;
+            $result['prospectTasks'][$label] = $prospectTasks[$key] ?? 0;
+            $result['unrelatedTasks'][$label] = $unrelatedTasks[$key] ?? 0;
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param array<string, mixed> $filters
+     *
+     * @return array<string, int>
+     */
+    protected function getTaskCounts(Carbon $startDate, Carbon $endDate, array $filters): array
+    {
+        $query = Task::query()
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->selectRaw("date_trunc('month', created_at) as month, COUNT(*) as total")
+            ->groupByRaw("date_trunc('month', created_at)");
+
+        foreach ($filters as $column => $value) {
+            if (is_null($value)) {
+                $query->whereNull($column);
+            } else {
+                $query->where($column, $value);
+            }
+        }
+
+        return $query->get()
+            ->mapWithKeys(fn ($item) => [
+                Carbon::parse($item['month'])->startOfMonth()->toDateString() => (int) $item['total'],
+            ])
+            ->all();
     }
 }

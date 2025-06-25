@@ -37,13 +37,17 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
+use Illuminate\Database\Query\Builder;
 use Livewire\Attributes\On;
 
 class ProspectReportTableChart extends TableWidget
 {
+    use InteractsWithPageFilters;
+
     public string $cacheTag;
 
     protected int | string | array $columnSpan = 'full';
@@ -69,9 +73,15 @@ class ProspectReportTableChart extends TableWidget
                 function () {
                     $key = (new Prospect())->getKeyName();
 
-                    return Prospect::whereIn($key, function ($query) use ($key) {
+                    $startDate = $this->getStartDate();
+                    $endDate = $this->getEndDate();
+
+                    return Prospect::whereIn($key, function ($query) use ($key, $startDate, $endDate) {
                         $query->select($key)
                             ->from((new Prospect())->getTable())
+                            ->when($startDate && $endDate, function (Builder $query) use ($startDate, $endDate): Builder {
+                                return $query->whereBetween('created_at', [$startDate, $endDate]);
+                            })
                             ->orderBy('created_at', 'desc')
                             ->take(100);
                     })->orderBy('created_at', 'desc');
@@ -81,7 +91,8 @@ class ProspectReportTableChart extends TableWidget
             ->columns([
                 TextColumn::make('full_name')
                     ->label('Name'),
-                TextColumn::make('email'),
+                TextColumn::make('primaryEmailAddress.address')
+                    ->label('Email'),
                 TextColumn::make('status.name')
                     ->badge()
                     ->color(fn (Prospect $record) => $record->status->color->value),
