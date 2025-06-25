@@ -42,6 +42,7 @@ use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
 use AdvisingApp\Ai\Http\Requests\RetryMessageRequest;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThread;
+use App\Features\LlamaParse;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
@@ -55,7 +56,7 @@ class RetryMessageController
                 app(RetryMessage::class)(
                     $thread,
                     $request->validated('content'),
-                    AiMessageFile::query()->whereKey($request->validated('files'))->whereNotNull('parsing_results')->get()->all(),
+                    LlamaParse::active() ? AiMessageFile::query()->whereKey($request->validated('files'))->whereNotNull('parsing_results')->get()->all() : [],
                 ),
                 headers: [
                     'Content-Type' => 'text/html; charset=utf-8;',

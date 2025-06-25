@@ -38,6 +38,7 @@ namespace AdvisingApp\Ai\Filament\Pages\Assistant\Concerns;
 
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use App\Features\LlamaParse;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Notifications\Notification;
@@ -110,6 +111,10 @@ trait CanUploadFiles
     #[Computed]
     public function isParsingFiles(): bool
     {
+        if (! LlamaParse::active()) {
+            return false;
+        }
+
         return AiMessageFile::query()
             ->whereKey($this->files)
             ->whereNull('parsing_results')
