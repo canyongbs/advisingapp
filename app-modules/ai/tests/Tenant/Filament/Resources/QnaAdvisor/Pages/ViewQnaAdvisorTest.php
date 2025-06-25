@@ -45,7 +45,6 @@ use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 test('View QnA Advisor is gated with proper access control', function () {
-    
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->qnaAdvisor = true;
@@ -75,7 +74,6 @@ test('View QnA Advisor is gated with proper access control', function () {
 });
 
 test('archive action visible when QnA Advisor is not archived', function () {
-
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->qnaAdvisor = true;
@@ -100,7 +98,6 @@ test('archive action visible when QnA Advisor is not archived', function () {
 });
 
 test('restore action visible when QnA Advisor is archived', function () {
-    
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->qnaAdvisor = true;

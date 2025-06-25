@@ -51,7 +51,7 @@ use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
 
 test('Create QnA Advisor Question is gated with proper access control', function () {
-     $settings = app(LicenseSettings::class);
+    $settings = app(LicenseSettings::class);
 
     $settings->data->addons->qnaAdvisor = true;
 
@@ -72,7 +72,6 @@ test('Create QnA Advisor Question is gated with proper access control', function
     livewire(ManageQnaQuestions::class, ['record' => $qnaAdvisor->getKey()])
         ->assertForbidden();
 
-        
     $user->givePermissionTo([
         'qna_advisor.view-any',
         'qna_advisor.*.view',
@@ -88,7 +87,6 @@ test('Create QnA Advisor Question is gated with proper access control', function
 });
 
 test('can create QnA Advisor Question', function () {
-
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->qnaAdvisor = true;
@@ -122,7 +120,6 @@ test('can create QnA Advisor Question', function () {
 });
 
 test('Create QnA Advisor Question validates the inputs', function ($data, $errors) {
-
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->qnaAdvisor = true;
@@ -181,7 +178,6 @@ test('Create QnA Advisor Question validates the inputs', function ($data, $error
 );
 
 test('can edit QnA Advisor Question', function () {
-
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->qnaAdvisor = true;
@@ -219,7 +215,6 @@ test('can edit QnA Advisor Question', function () {
 });
 
 test('Edit QnA Advisor Question validates the inputs', function ($data, $errors) {
-
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->qnaAdvisor = true;
@@ -250,31 +245,31 @@ test('Edit QnA Advisor Question validates the inputs', function ($data, $errors)
         ->callTableAction('edit', record: $qnaAdvisorQuestion->getKey(), data: $request)
         ->assertHasTableActionErrors($errors);
 })
-->with(
-    [
-        'category_id required' => [
-            QnaAdvisorQuestionRequestFactory::new()->state(['category_id' => null]),
-            ['category_id' => 'required'],
-        ],
-        'question required' => [
-            QnaAdvisorQuestionRequestFactory::new()->state(['question' => null]),
-            ['question' => 'required'],
-        ],
-        'question string' => [
-            QnaAdvisorQuestionRequestFactory::new()->state(['question' => 1]),
-            ['question' => 'string'],
-        ],
-        'question max' => [
-            QnaAdvisorQuestionRequestFactory::new()->state(['question' => str()->random(257)]),
-            ['question' => 'max'],
-        ],
-        'answer required' => [
-            QnaAdvisorQuestionRequestFactory::new()->state(['answer' => null]),
-            ['answer' => 'required'],
-        ],
-        'answer max' => [
-            QnaAdvisorQuestionRequestFactory::new()->state(['answer' => str()->random(65537)]),
-            ['answer' => 'max'],
-        ],
-    ]
-);
+    ->with(
+        [
+            'category_id required' => [
+                QnaAdvisorQuestionRequestFactory::new()->state(['category_id' => null]),
+                ['category_id' => 'required'],
+            ],
+            'question required' => [
+                QnaAdvisorQuestionRequestFactory::new()->state(['question' => null]),
+                ['question' => 'required'],
+            ],
+            'question string' => [
+                QnaAdvisorQuestionRequestFactory::new()->state(['question' => 1]),
+                ['question' => 'string'],
+            ],
+            'question max' => [
+                QnaAdvisorQuestionRequestFactory::new()->state(['question' => str()->random(257)]),
+                ['question' => 'max'],
+            ],
+            'answer required' => [
+                QnaAdvisorQuestionRequestFactory::new()->state(['answer' => null]),
+                ['answer' => 'required'],
+            ],
+            'answer max' => [
+                QnaAdvisorQuestionRequestFactory::new()->state(['answer' => str()->random(65537)]),
+                ['answer' => 'max'],
+            ],
+        ]
+    );

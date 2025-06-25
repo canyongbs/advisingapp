@@ -71,7 +71,6 @@ test('Create QnA Advisor Category is gated with proper access control', function
     livewire(ManageCategories::class, ['record' => $qnaAdvisor->getKey()])
         ->assertForbidden();
 
-        
     $user->givePermissionTo(['qna_advisor.view-any', 'qna_advisor.*.view', 'qna_advisor.create']);
 
     actingAs($user)
@@ -83,7 +82,6 @@ test('Create QnA Advisor Category is gated with proper access control', function
 });
 
 test('can create QnA Advisor Category', function () {
-    
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->qnaAdvisor = true;
@@ -113,7 +111,6 @@ test('can create QnA Advisor Category', function () {
 });
 
 test('Create QnA Advisor Category validates the inputs', function ($data, $errors) {
-
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->qnaAdvisor = true;
@@ -180,7 +177,6 @@ test('Create QnA Advisor Category validates the inputs', function ($data, $error
 );
 
 test('can edit QnA Advisor Category', function () {
-
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->qnaAdvisor = true;
@@ -215,7 +211,6 @@ test('can edit QnA Advisor Category', function () {
 });
 
 test('Edit QnA Advisor Category validates the inputs', function ($data, $errors) {
-
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->qnaAdvisor = true;

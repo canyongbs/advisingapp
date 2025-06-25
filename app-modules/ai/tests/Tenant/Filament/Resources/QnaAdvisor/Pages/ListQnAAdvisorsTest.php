@@ -45,7 +45,6 @@ use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 test('List QnA Advisors is gated with proper access control', function () {
-
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->qnaAdvisor = true;
@@ -68,7 +67,6 @@ test('List QnA Advisors is gated with proper access control', function () {
 });
 
 it('render QnA Advisors default to without archived', function () {
-
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->qnaAdvisor = true;
@@ -95,13 +93,12 @@ it('render QnA Advisors default to without archived', function () {
 });
 
 it('filter QnA Advisors with archived', function () {
-
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->qnaAdvisor = true;
 
     $settings->save();
-    
+
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $user->givePermissionTo(['qna_advisor.view-any', 'qna_advisor.*.view']);
