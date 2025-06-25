@@ -92,7 +92,7 @@ class TaskStats extends StatsOverviewReportWidget
                         fn () => User::query()
                             ->whereHas(
                                 'assignedTasks',
-                                fn ($q) => $q->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress])
+                                fn (Builder $query): Builder => $query->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress])
                             )->count()
                     ),
                 maxPrecision: 2,
@@ -116,7 +116,7 @@ class TaskStats extends StatsOverviewReportWidget
                         fn () => Student::query()
                             ->whereHas(
                                 'tasks',
-                                fn ($q) => $q->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress])
+                                fn (Builder $query): Builder => $query->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress])
                             )->count()
                     ),
                 maxPrecision: 2,
@@ -140,7 +140,7 @@ class TaskStats extends StatsOverviewReportWidget
                         fn () => Prospect::query()
                             ->whereHas(
                                 'tasks',
-                                fn ($q) => $q->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress])
+                                fn (Builder $query): Builder => $query->whereIn('status', [TaskStatus::Pending, TaskStatus::InProgress])
                             )->count()
                     ),
                 maxPrecision: 2,

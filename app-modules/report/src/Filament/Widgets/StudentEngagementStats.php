@@ -62,7 +62,10 @@ class StudentEngagementStats extends StatsOverviewReportWidget
 
         $studentsCount = $shouldBypassCache
             ? Student::query()
-                ->when($startDate && $endDate, fn ($q) => $q->whereBetween('created_at_source', [$startDate, $endDate]))
+                ->when(
+                    $startDate && $endDate,
+                    fn (Builder $query): Builder => $query->whereBetween('created_at_source', [$startDate, $endDate])
+                )
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember('total-students-count', now()->addHours(24), fn () => Student::query()->count());
 
