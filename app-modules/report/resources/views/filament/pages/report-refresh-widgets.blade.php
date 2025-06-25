@@ -52,7 +52,7 @@
                 icon="heroicon-m-arrow-path"
                 labeled-from="sm"
                 tag="button"
-                wire:click="removeWidgetCache('{{ $this->cacheTag }}')"
+                wire:click="removeWidgetCache"
             >
                 {{ 'Refresh' }}
             </x-filament::button>
