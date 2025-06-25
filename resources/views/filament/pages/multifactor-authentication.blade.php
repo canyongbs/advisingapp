@@ -33,6 +33,7 @@
 --}}
 @php
     use AdvisingApp\MultifactorAuthentication\Livewire\MultifactorAuthenticationManagement;
+    use AdvisingApp\MultifactorAuthentication\Livewire\ExternalUserManagement;
 @endphp
 
 <x-filament-panels::page>
@@ -45,8 +46,6 @@
             Manage multifactor authentication for your account.
         </x-slot>
 
-        @if (!auth()->user()->is_external)
-            @livewire(MultifactorAuthenticationManagement::class)
-        @endif
+        @livewire(MultifactorAuthenticationManagement::class)
     </x-filament::section>
 </x-filament-panels::page>

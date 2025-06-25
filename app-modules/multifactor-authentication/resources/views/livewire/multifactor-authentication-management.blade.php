@@ -32,48 +32,53 @@
 </COPYRIGHT>
 --}}
 <div>
-    @unless ($user->hasEnabledMultifactor())
-        <h3 class="flex items-center gap-2 text-lg font-medium">
-            @svg('heroicon-o-exclamation-circle', 'w-6')
-            You have not enabled multifactor authentication.
-        </h3>
-        <p class="text-sm">When multifactor authentication is enabled, you will be prompted for a secure, random token during
-            authentication. You may retrieve this token from your Authenticator application.</p>
-
-        <div class="mt-3 flex justify-between">
-            {{ $this->enableAction }}
-        </div>
-    @else
-        @if ($user->hasConfirmedMultifactor())
+    @if (!auth()->user()->is_external)
+        @unless ($user->hasEnabledMultifactor())
             <h3 class="flex items-center gap-2 text-lg font-medium">
-                @svg('heroicon-o-shield-check', 'w-6')
-                You have enabled multifactor authentication!
+                @svg('heroicon-o-exclamation-circle', 'w-6')
+                You have not enabled multifactor authentication.
             </h3>
-            <p class="text-sm">Multifactor authentication is now enabled. This helps make your account more secure.</p>
+            <p class="text-sm">When multifactor authentication is enabled, you will be prompted for a secure, random token
+                during
+                authentication. You may retrieve this token from your Authenticator application.</p>
+
             <div class="mt-3 flex justify-between">
-                {{ $this->regenerateCodesAction }}
-                {{ $this->disableAction()->color('danger') }}
+                {{ $this->enableAction }}
             </div>
         @else
-            <h3 class="flex items-center gap-2 text-lg font-medium">
-                @svg('heroicon-o-question-mark-circle', 'w-6')
-                Finish enabling multifactor authentication.
-            </h3>
-            <p class="text-sm">To finish enabling multifactor authentication, scan the following QR code using your phone's
-                authenticator application or enter the setup key and provide the generated OTP code.</p>
-            <div class="mt-3 flex space-x-4">
-                <div>
-                    {!! $this->getMultifactorQrCode() !!}
-                    <p class="pt-2 text-sm">Setup key {{ decrypt($this->user->multifactor_secret) }}</p>
+            @if ($user->hasConfirmedMultifactor())
+                <h3 class="flex items-center gap-2 text-lg font-medium">
+                    @svg('heroicon-o-shield-check', 'w-6')
+                    You have enabled multifactor authentication!
+                </h3>
+                <p class="text-sm">Multifactor authentication is now enabled. This helps make your account more secure.</p>
+                <div class="mt-3 flex justify-between">
+                    {{ $this->regenerateCodesAction }}
+                    {{ $this->disableAction()->color('danger') }}
                 </div>
-            </div>
+            @else
+                <h3 class="flex items-center gap-2 text-lg font-medium">
+                    @svg('heroicon-o-question-mark-circle', 'w-6')
+                    Finish enabling multifactor authentication.
+                </h3>
+                <p class="text-sm">To finish enabling multifactor authentication, scan the following QR code using your
+                    phone's
+                    authenticator application or enter the setup key and provide the generated OTP code.</p>
+                <div class="mt-3 flex space-x-4">
+                    <div>
+                        {!! $this->getMultifactorQrCode() !!}
+                        <p class="pt-2 text-sm">Setup key {{ decrypt($this->user->multifactor_secret) }}</p>
+                    </div>
+                </div>
 
-            <div class="mt-3 flex justify-between">
-                {{ $this->confirmAction }}
-                {{ $this->disableAction }}
-            </div>
-        @endif
-
-    @endunless
-    <x-filament-actions::modals />
+                <div class="mt-3 flex justify-between">
+                    {{ $this->confirmAction }}
+                    {{ $this->disableAction }}
+                </div>
+            @endif
+        @endunless
+        <x-filament-actions::modals />
+    @else
+        {{ $this->form }}
+    @endif
 </div>
