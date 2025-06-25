@@ -34,39 +34,42 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Filament\Pages;
+namespace AdvisingApp\Ai\Models;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use App\Enums\Feature;
-use App\Models\User;
-use Filament\Pages\Page;
-use Illuminate\Support\Facades\Gate;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Auditable as AuditableTrait;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class QnAAdvisors extends Page
+/**
+ * @mixin IdeHelperQnaAdvisorCategory
+ */
+class QnaAdvisorCategory extends BaseModel implements Auditable
 {
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
+    use SoftDeletes;
+    use AuditableTrait;
 
-    protected static ?string $title = 'QnA Advisors';
+    protected $fillable = [
+        'name',
+        'description',
+        'qna_advisor_id',
+    ];
 
-    protected static ?string $slug = 'qna-advisors';
-
-    protected static ?int $navigationSort = 40;
-
-    protected static string $view = 'filament.pages.coming-soon';
-
-    public static function canAccess(): bool
+    /**
+     * @return BelongsTo<QnaAdvisor, $this>
+     */
+    public function qnaAdvisor(): BelongsTo
     {
-        /** @var User $user */
-        $user = auth()->user();
+        return $this->belongsTo(QnaAdvisor::class, 'qna_advisor_id');
+    }
 
-        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
-            return false;
-        }
-
-        if (! Gate::check(Feature::QnAAdvisor->getGateName())) {
-            return false;
-        }
-
-        return $user->can(['qna_advisor.view-any', 'qna_advisor.*.view']);
+    /**
+     * @return HasMany<QnaAdvisorQuestion, $this>
+     */
+    public function questions(): HasMany
+    {
+        return $this->hasMany(QnaAdvisorQuestion::class, 'category_id');
     }
 }

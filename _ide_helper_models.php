@@ -61,7 +61,6 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Export newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Export newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Export onlyTrashed()
@@ -170,7 +169,6 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\FailedImportRow> $failedRows
  * @property-read int|null $failed_rows_count
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Import newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Import newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Import onlyTrashed()
@@ -1206,6 +1204,115 @@ namespace AdvisingApp\Ai\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperPromptUse {}
+}
+
+namespace AdvisingApp\Ai\Models{
+/**
+ * 
+ *
+ * @property string $id
+ * @property string $name
+ * @property string|null $description
+ * @property \AdvisingApp\Ai\Enums\AiModel|null $model
+ * @property string|null $instructions
+ * @property string|null $knowledge
+ * @property \Illuminate\Support\Carbon|null $archived_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\QnaAdvisorCategory> $categories
+ * @property-read int|null $categories_count
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read int|null $media_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\QnaAdvisorQuestion> $questions
+ * @property-read int|null $questions_count
+ * @method static \AdvisingApp\Ai\Database\Factories\QnaAdvisorFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisor newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisor newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisor onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisor query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisor whereArchivedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisor whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisor whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisor whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisor whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisor whereInstructions($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisor whereKnowledge($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisor whereModel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisor whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisor whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisor withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisor withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperQnaAdvisor {}
+}
+
+namespace AdvisingApp\Ai\Models{
+/**
+ * 
+ *
+ * @property string $id
+ * @property string $name
+ * @property string $description
+ * @property string $qna_advisor_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \AdvisingApp\Ai\Models\QnaAdvisor $qnaAdvisor
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\QnaAdvisorQuestion> $questions
+ * @property-read int|null $questions_count
+ * @method static \AdvisingApp\Ai\Database\Factories\QnaAdvisorCategoryFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorCategory newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorCategory newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorCategory onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorCategory query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorCategory whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorCategory whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorCategory whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorCategory whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorCategory whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorCategory whereQnaAdvisorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorCategory whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorCategory withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorCategory withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperQnaAdvisorCategory {}
+}
+
+namespace AdvisingApp\Ai\Models{
+/**
+ * 
+ *
+ * @property string $id
+ * @property string $question
+ * @property string $answer
+ * @property string $category_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \AdvisingApp\Ai\Models\QnaAdvisorCategory $category
+ * @method static \AdvisingApp\Ai\Database\Factories\QnaAdvisorQuestionFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorQuestion newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorQuestion newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorQuestion onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorQuestion query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorQuestion whereAnswer($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorQuestion whereCategoryId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorQuestion whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorQuestion whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorQuestion whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorQuestion whereQuestion($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorQuestion whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorQuestion withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorQuestion withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperQnaAdvisorQuestion {}
 }
 
 namespace AdvisingApp\Alert\Models{
