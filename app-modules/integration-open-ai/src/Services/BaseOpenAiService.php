@@ -61,6 +61,7 @@ use Generator;
 use Illuminate\Support\Facades\Http;
 use OpenAI\Contracts\ClientContract;
 use OpenAI\Exceptions\ErrorException;
+use OpenAI\Responses\Threads\Messages\ThreadMessageResponse;
 use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
 use OpenAI\Responses\Threads\ThreadResponse;
 use OpenAI\Testing\ClientFake;
@@ -127,11 +128,6 @@ abstract class BaseOpenAiService implements AiService
             'model' => $this->getModel(),
             'metadata' => [
                 'last_updated_at' => now(),
-            ],
-            'tools' => [
-                [
-                    'type' => 'file_search',
-                ],
             ],
         ]);
 
@@ -282,7 +278,7 @@ abstract class BaseOpenAiService implements AiService
             $this->awaitPreviousThreadRunCompletion($latestRun);
         }
 
-        [$newMessageResponse, $createdFiles] = $this->createMessage($message->thread->thread_id, $message->content, $files);
+        $newMessageResponse = $this->createMessage($message->thread->thread_id, $message->content, $files);
 
         $instructions = $this->generateAssistantInstructions($message->thread->assistant, withDynamicContext: true);
 
@@ -290,17 +286,15 @@ abstract class BaseOpenAiService implements AiService
         $message->message_id = $newMessageResponse->id;
         $message->save();
 
+        foreach ($files as $file) {
+            $file->message()->associate($message);
+            $file->save();
+        }
+
         dispatch(new RecordTrackedEvent(
             type: TrackedEventType::AiExchange,
             occurredAt: now(),
         ));
-
-        if (! empty($createdFiles)) {
-            foreach ($createdFiles as $file) {
-                $file->message()->associate($message);
-                $file->save();
-            }
-        }
 
         try {
             if (is_null($message->thread->name)) {
@@ -326,7 +320,7 @@ abstract class BaseOpenAiService implements AiService
         return $this->streamRun($message, $instructions, $saveResponse);
     }
 
-    public function completeResponse(AiMessage $response, array $files, Closure $saveResponse): Closure
+    public function completeResponse(AiMessage $response, Closure $saveResponse): Closure
     {
         $latestRun = $this->client->threads()->runs()->list($response->thread->thread_id, [
             'order' => 'desc',
@@ -341,7 +335,6 @@ abstract class BaseOpenAiService implements AiService
         $this->createMessage(
             $response->thread->thread_id,
             'Continue generating the response, do not mention that I told you as I will paste it directly after the last message.',
-            $files,
         );
 
         return $this->streamRun($response, $this->generateAssistantInstructions($response->thread->assistant, withDynamicContext: true), $saveResponse);
@@ -387,11 +380,16 @@ abstract class BaseOpenAiService implements AiService
         $instructions = $this->generateAssistantInstructions($message->thread->assistant, withDynamicContext: true);
 
         if (blank($message->message_id)) {
-            [$newMessageResponse] = $this->createMessage($message->thread->thread_id, $message->content, $files);
+            $newMessageResponse = $this->createMessage($message->thread->thread_id, $message->content, $files);
 
             $message->context = $instructions;
             $message->message_id = $newMessageResponse->id;
             $message->save();
+        }
+
+        foreach ($files as $file) {
+            $file->message()->associate($message);
+            $file->save();
         }
 
         return $this->streamRun($message, $instructions, $saveResponse);
@@ -435,34 +433,37 @@ abstract class BaseOpenAiService implements AiService
         $this->client = new ClientFake();
     }
 
-    protected function createMessage(string $threadId, string $content, array $files): array
+    /**
+     * @param array<AiMessageFile> $files
+     */
+    protected function createMessage(string $threadId, string $content, array $files = []): ThreadMessageResponse
     {
-        $data = [
+        if (filled($files)) {
+            $content .= <<<'EOT'
+                                
+                ---
+
+                Consider the content from the following files. These have already been converted by Canyon GBS' technology to Markdown for improved processing. When you reference these files, reference the file names as user uploaded files as noted below:
+
+                EOT;
+
+            foreach ($files as $file) {
+                $content .= <<<EOT
+                    ---
+
+                    File Name: {$file->name}
+                    Type: {$file->mime_type}
+                    Source: User Uploaded
+                    Contents: {$file->parsing_results}
+
+                    EOT;
+            }
+        }
+
+        return $this->client->threads()->messages()->create($threadId, [
             'role' => 'user',
             'content' => $content,
-        ];
-
-        $createdFiles = [];
-
-        if (method_exists($this, 'createFiles') && ! empty($files)) {
-            $createdFiles = $this->createFiles($files);
-        }
-
-        if (! empty($createdFiles)) {
-            $data['attachments'] = array_map(
-                fn (AiMessageFile $createdFile): array => [
-                    'file_id' => $createdFile->file_id,
-                    'tools' => [
-                        [
-                            'type' => 'file_search',
-                        ],
-                    ],
-                ],
-                $createdFiles,
-            );
-        }
-
-        return [$this->client->threads()->messages()->create($threadId, $data), $createdFiles];
+        ]);
     }
 
     protected function isThreadRunCompleted(ThreadRunResponse $threadRunResponse): bool
@@ -555,13 +556,36 @@ abstract class BaseOpenAiService implements AiService
 
         $formattingInstructions = static::FORMATTING_INSTRUCTIONS;
 
-        if (! $withDynamicContext) {
-            return "{$assistantInstructions}.\n\n{$formattingInstructions}";
+        if ($withDynamicContext) {
+            $dynamicContext = rtrim(auth()->user()->getDynamicContext(), '. ');
+
+            $instructions = "{$dynamicContext}.\n\n{$assistantInstructions}.\n\n{$formattingInstructions}";
+        } else {
+            $instructions = "{$assistantInstructions}.\n\n{$formattingInstructions}";
         }
 
-        $dynamicContext = rtrim(auth()->user()->getDynamicContext(), '. ');
+        if (filled($files = $assistant->files()->whereNotNull('parsing_results')->get()->all())) {
+            $instructions .= <<<'EOT'
+                                
+                ---
 
-        return "{$dynamicContext}.\n\n{$assistantInstructions}.\n\n{$formattingInstructions}";
+                Consider the following additional knowledge, which has already been handled by Canyon GBS' technology to Markdown for improved processing. When you reference the information, describe that it is part of the assistant's knowledge:
+
+                EOT;
+
+            foreach ($files as $file) {
+                $instructions .= <<<EOT
+                    ---
+
+                    Type: {$file->mime_type}
+                    Source: Assistant Knowledge
+                    Contents: {$file->parsing_results}
+
+                    EOT;
+            }
+        }
+
+        return $instructions;
     }
 
     protected function streamRun(AiMessage $message, string $instructions, Closure $saveResponse): Closure

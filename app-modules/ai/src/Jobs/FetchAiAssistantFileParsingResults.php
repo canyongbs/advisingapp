@@ -34,32 +34,58 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services;
+namespace AdvisingApp\Ai\Jobs;
 
-class OpenAiResponsesGptO3Service extends BaseOpenAiResponsesService
+use AdvisingApp\Ai\Models\AiAssistantFile;
+use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use Illuminate\Bus\Batchable;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Http;
+use Spatie\Multitenancy\Jobs\TenantAware;
+
+class FetchAiAssistantFileParsingResults implements ShouldQueue, TenantAware, ShouldBeUnique
 {
-    public function getApiKey(): string
+    use Batchable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+
+    /**
+     * Unique for 15 minutes
+     *
+     * @var int
+     */
+    public $uniqueFor = 900;
+
+    public function __construct(
+        protected AiAssistantFile $file,
+    ) {}
+
+    public function handle(): void
     {
-        return $this->settings->open_ai_gpt_o3_api_key ?? config('integration-open-ai.gpt_o3_api_key');
+        if (filled($this->file->parsing_results)) {
+            return;
+        }
+
+        $response = Http::withToken(app(AiIntegrationsSettings::class)->llamaparse_api_key)
+            ->get("https://api.cloud.llamaindex.ai/api/v1/parsing/job/{$this->file->file_id}/result/text");
+
+        if ((! $response->successful()) || blank($response->json('text'))) {
+            return;
+        }
+
+        $this->file->parsing_results = $response->json('text');
+        $this->file->save();
     }
 
-    public function getModel(): string
+    public function uniqueId(): string
     {
-        return $this->settings->open_ai_gpt_o3_model ?? config('integration-open-ai.gpt_o3_model');
-    }
-
-    public function getDeployment(): ?string
-    {
-        return $this->settings->open_ai_gpt_o3_base_uri ?? config('integration-open-ai.gpt_o3_base_uri');
-    }
-
-    public function hasReasoning(): bool
-    {
-        return true;
-    }
-
-    public function hasTemperature(): bool
-    {
-        return false;
+        return $this->file->id;
     }
 }

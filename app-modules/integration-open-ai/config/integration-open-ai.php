@@ -39,15 +39,11 @@ return [
 
     'gpt_35_api_key' => env('OPEN_AI_GPT_35_API_KEY'),
 
-    'gpt_35_api_version' => env('OPEN_AI_GPT_35_API_VERSION'),
-
     'gpt_35_model' => env('OPEN_AI_GPT_35_MODEL'),
 
     'gpt_4_base_uri' => env('OPEN_AI_GPT_4_BASE_URI'),
 
     'gpt_4_api_key' => env('OPEN_AI_GPT_4_API_KEY'),
-
-    'gpt_4_api_version' => env('OPEN_AI_GPT_4_API_VERSION'),
 
     'gpt_4_model' => env('OPEN_AI_GPT_4_MODEL'),
 
@@ -55,15 +51,11 @@ return [
 
     'gpt_4o_api_key' => env('OPEN_AI_GPT_4O_API_KEY'),
 
-    'gpt_4o_api_version' => env('OPEN_AI_GPT_4O_API_VERSION'),
-
     'gpt_4o_model' => env('OPEN_AI_GPT_4O_MODEL'),
 
     'gpt_4o_mini_base_uri' => env('OPEN_AI_GPT_4O_MINI_BASE_URI'),
 
     'gpt_4o_mini_api_key' => env('OPEN_AI_GPT_4O_MINI_API_KEY'),
-
-    'gpt_4o_mini_api_version' => env('OPEN_AI_GPT_4O_MINI_API_VERSION'),
 
     'gpt_4o_mini_model' => env('OPEN_AI_GPT_4O_MINI_MODEL'),
 
@@ -71,15 +63,11 @@ return [
 
     'gpt_o1_mini_api_key' => env('OPEN_AI_GPT_O1_MINI_API_KEY'),
 
-    'gpt_o1_mini_api_version' => env('OPEN_AI_GPT_O1_MINI_API_VERSION'),
-
     'gpt_o1_mini_model' => env('OPEN_AI_GPT_O1_MINI_MODEL'),
 
     'gpt_o3_base_uri' => env('OPEN_AI_GPT_O3_BASE_URI'),
 
     'gpt_o3_api_key' => env('OPEN_AI_GPT_O3_API_KEY'),
-
-    'gpt_o3_api_version' => env('OPEN_AI_GPT_O3_API_VERSION'),
 
     'gpt_o3_model' => env('OPEN_AI_GPT_O3_MODEL'),
 
@@ -87,15 +75,11 @@ return [
 
     'gpt_o3_mini_api_key' => env('OPEN_AI_GPT_O3_MINI_API_KEY'),
 
-    'gpt_o3_mini_api_version' => env('OPEN_AI_GPT_O3_MINI_API_VERSION'),
-
     'gpt_o3_mini_model' => env('OPEN_AI_GPT_O3_MINI_MODEL'),
 
     'gpt_41_mini_base_uri' => env('OPEN_AI_GPT_41_MINI_BASE_URI'),
 
     'gpt_41_mini_api_key' => env('OPEN_AI_GPT_41_MINI_API_KEY'),
-
-    'gpt_41_mini_api_version' => env('OPEN_AI_GPT_41_MINI_API_VERSION'),
 
     'gpt_41_mini_model' => env('OPEN_AI_GPT_41_MINI_MODEL'),
 
@@ -103,15 +87,11 @@ return [
 
     'gpt_41_nano_api_key' => env('OPEN_AI_GPT_41_NANO_API_KEY'),
 
-    'gpt_41_nano_api_version' => env('OPEN_AI_GPT_41_NANO_API_VERSION'),
-
     'gpt_41_nano_model' => env('OPEN_AI_GPT_41_NANO_MODEL'),
 
     'gpt_o4_mini_base_uri' => env('OPEN_AI_GPT_O4_MINI_BASE_URI'),
 
     'gpt_o4_mini_api_key' => env('OPEN_AI_GPT_O4_MINI_API_KEY'),
-
-    'gpt_o4_mini_api_version' => env('OPEN_AI_GPT_O4_MINI_API_VERSION'),
 
     'gpt_o4_mini_model' => env('OPEN_AI_GPT_O4_MINI_MODEL'),
 ];

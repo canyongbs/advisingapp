@@ -54,6 +54,7 @@ use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use Closure;
 use Exception;
 use Generator;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Http;
 use Prism\Prism\Contracts\Message;
 use Prism\Prism\Enums\ChunkType;
@@ -76,7 +77,10 @@ abstract class BaseOpenAiResponsesService implements AiService
 
     abstract public function getApiKey(): string;
 
-    abstract public function getApiVersion(): string;
+    public function getApiVersion(): string
+    {
+        return 'preview';
+    }
 
     abstract public function getModel(): string;
 
@@ -91,6 +95,9 @@ abstract class BaseOpenAiResponsesService implements AiService
                     'apiKey' => $this->getApiKey(),
                     'apiVersion' => $this->getApiVersion(),
                     'deployment' => $this->getDeployment(),
+                ])
+                ->withProviderOptions([
+                    'truncation' => 'auto',
                 ])
                 ->withSystemPrompt($prompt)
                 ->withPrompt($content)
@@ -128,12 +135,13 @@ abstract class BaseOpenAiResponsesService implements AiService
 
         $previousResponseId = $this->getMessagePreviousResponseId($message);
 
-        if (blank($previousResponseId)) {
+        if (blank(value: $previousResponseId)) {
             $previousMessages = $message->thread->messages()
+                ->with(['files' => fn (HasMany $query) => $query->whereNotNull('parsing_results')]) /** @phpstan-ignore argument.type */
                 ->oldest()
                 ->get()
                 ->map(fn (AiMessage $message): Message => filled($message->user_id)
-                    ? new UserMessage($message->content)
+                    ? new UserMessage($this->attachFilesToMessageContent($message->content, $message->files->all()))
                     : new AssistantMessage($message->content))
                 ->all();
         }
@@ -149,10 +157,13 @@ abstract class BaseOpenAiResponsesService implements AiService
                     'apiVersion' => $this->getApiVersion(),
                     'deployment' => $this->getDeployment(),
                 ])
+                ->withProviderOptions([
+                    'truncation' => 'auto',
+                ])
                 ->withSystemPrompt($instructions)
                 ->withMessages([
                     ...$previousMessages,
-                    $userMessage ?? new UserMessage($message->content),
+                    $userMessage ?? new UserMessage($this->attachFilesToMessageContent($message->content, $files)),
                 ])
                 ->withMaxTokens($aiSettings->max_tokens->getTokens())
                 ->usingTemperature($this->hasTemperature() ? $aiSettings->temperature : null)
@@ -223,9 +234,8 @@ abstract class BaseOpenAiResponsesService implements AiService
         try {
             $response = Http::withHeaders([
                 'api-key' => $this->getApiKey(),
-                'api-version' => $this->getApiVersion(),
             ])
-                ->withQueryParameters(['api-version' => 'preview'])
+                ->withQueryParameters(['api-version' => $this->getApiVersion()])
                 ->baseUrl($this->getDeployment())
                 ->get("responses/{$previousResponseId}");
 
@@ -237,12 +247,9 @@ abstract class BaseOpenAiResponsesService implements AiService
         }
     }
 
-    /**
-     * @param array<AiMessageFile> $files
-     */
-    public function completeResponse(AiMessage $response, array $files, Closure $saveResponse): Closure
+    public function completeResponse(AiMessage $response, Closure $saveResponse): Closure
     {
-        return $this->sendMessage($response, $files, $saveResponse, new UserMessage('Continue generating the response, do not mention that I told you as I will paste it directly after the last message.'));
+        return $this->sendMessage($response, [], $saveResponse, new UserMessage('Continue generating the response, do not mention that I told you as I will paste it directly after the last message.'));
     }
 
     /**
@@ -337,6 +344,40 @@ abstract class BaseOpenAiResponsesService implements AiService
         return true;
     }
 
+    /**
+     * @param array<AiMessageFile> $files
+     */
+    protected function attachFilesToMessageContent(string $content, array $files): string
+    {
+        if (blank($files)) {
+            return $content;
+        }
+
+        if (filled($files)) {
+            $content .= <<<'EOT'
+                                
+                ---
+
+                Consider the content from the following files. These have already been converted by Canyon GBS' technology to Markdown for improved processing. When you reference these files, reference the file names as user uploaded files as noted below:
+
+                EOT;
+
+            foreach ($files as $file) {
+                $content .= <<<EOT
+                    ---
+
+                    File Name: {$file->name}
+                    Type: {$file->mime_type}
+                    Source: User Uploaded
+                    Contents: {$file->parsing_results}
+
+                    EOT;
+            }
+        }
+
+        return $content;
+    }
+
     protected function streamResponse(Generator $stream, AiMessage $message, Closure $saveResponse): Closure
     {
         return function () use ($message, $saveResponse, $stream): Generator {
@@ -410,12 +451,35 @@ abstract class BaseOpenAiResponsesService implements AiService
 
         $formattingInstructions = static::FORMATTING_INSTRUCTIONS;
 
-        if (! $withDynamicContext) {
-            return "{$assistantInstructions}.\n\n{$formattingInstructions}";
+        if ($withDynamicContext) {
+            $dynamicContext = rtrim(auth()->user()->getDynamicContext(), '. ');
+
+            $instructions = "{$dynamicContext}.\n\n{$assistantInstructions}.\n\n{$formattingInstructions}";
+        } else {
+            $instructions = "{$assistantInstructions}.\n\n{$formattingInstructions}";
         }
 
-        $dynamicContext = rtrim(auth()->user()->getDynamicContext(), '. ');
+        if (filled($files = $assistant->files->all())) {
+            $instructions .= <<<'EOT'
+                                
+                ---
 
-        return "{$dynamicContext}.\n\n{$assistantInstructions}.\n\n{$formattingInstructions}";
+                Consider the following additional knowledge, which has already been handled by Canyon GBS' technology to Markdown for improved processing. When you reference the information, describe that it is part of the assistant's knowledge:
+
+                EOT;
+
+            foreach ($files as $file) {
+                $instructions .= <<<EOT
+                    ---
+
+                    Type: {$file->mime_type}
+                    Source: Assistant Knowledge
+                    Contents: {$file->parsing_results}
+
+                    EOT;
+            }
+        }
+
+        return $instructions;
     }
 }

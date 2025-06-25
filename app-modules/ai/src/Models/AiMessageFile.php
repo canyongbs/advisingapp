@@ -61,6 +61,7 @@ class AiMessageFile extends BaseModel implements AiFile, HasMedia
         'mime_type',
         'name',
         'temporary_url',
+        'parsing_results',
     ];
 
     protected $dispatchesEvents = [

@@ -340,7 +340,7 @@ it('can complete a message response', function () {
             ]), 'thread')
         ->make();
 
-    $service->completeResponse($message, [], function () {});
+    $service->completeResponse($message, function () {});
 
     $client->assertSent(ThreadsRuns::class, 2);
     $client->assertSent(ThreadsMessages::class, 1);

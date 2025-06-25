@@ -92,15 +92,10 @@ class CreateAiAssistant extends CreateRecord
 
         $record->save();
 
-        if ($this->attemptingToUploadAssistantFilesWhenItsNotSupported($aiService, $data)) {
-            return $record;
-        }
-
-        if (isset($data['uploaded_files']) && ! empty($data['uploaded_files'])) {
+        if (filled($data['uploaded_files'] ?? null)) {
             $this->uploadFilesToAssistant(
-                aiService: $aiService,
                 assistant: $record,
-                uploadedFiles: $data['uploaded_files']
+                files: $data['uploaded_files']
             );
         }
 

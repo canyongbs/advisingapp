@@ -37,9 +37,7 @@
 namespace AdvisingApp\Ai\Models;
 
 use AdvisingApp\Ai\Models\Contracts\AiFile;
-use AdvisingApp\Ai\Observers\AiAssistantFileObserver;
 use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
@@ -48,7 +46,6 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 /**
  * @mixin IdeHelperAiAssistantFile
  */
-#[ObservedBy([AiAssistantFileObserver::class])]
 class AiAssistantFile extends BaseModel implements AiFile, HasMedia
 {
     use SoftDeletes;
@@ -56,10 +53,11 @@ class AiAssistantFile extends BaseModel implements AiFile, HasMedia
 
     protected $fillable = [
         'file_id',
-        'message_id',
+        'assistant_id',
         'mime_type',
         'name',
         'temporary_url',
+        'parsing_results',
     ];
 
     /**

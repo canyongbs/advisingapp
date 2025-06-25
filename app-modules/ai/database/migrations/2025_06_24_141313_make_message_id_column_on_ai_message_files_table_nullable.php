@@ -34,33 +34,22 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Models\AiMessageFile;
-use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4oService;
-use OpenAI\Resources\Files;
-use OpenAI\Responses\Files\DeleteResponse;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use function Tests\asSuperAdmin;
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::table('ai_message_files', function (Blueprint $table) {
+            $table->foreignUuid('message_id')->nullable()->change();
+        });
+    }
 
-it('can delete a file', function () {
-    asSuperAdmin();
-
-    /** @var OpenAiGpt4oService $service */
-    $service = AiModel::OpenAiGpt4o->getService();
-
-    $service->fake();
-
-    /** @var ClientFake $client */
-    $client = $service->getClient();
-
-    $client->addResponses([
-        DeleteResponse::fake(),
-    ]);
-
-    $aiMessageFile = AiMessageFile::factory()
-        ->make();
-
-    $service->beforeMessageFileForceDeleted($aiMessageFile);
-
-    $client->assertSent(Files::class, 1);
-});
+    public function down(): void
+    {
+        Schema::table('ai_message_files', function (Blueprint $table) {
+            $table->foreignUuid('message_id')->nullable(false)->change();
+        });
+    }
+};

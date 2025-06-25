@@ -814,6 +814,7 @@ namespace AdvisingApp\Ai\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property string|null $parsing_results
  * @property-read \AdvisingApp\Ai\Models\AiAssistant $assistant
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
@@ -829,6 +830,7 @@ namespace AdvisingApp\Ai\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AiAssistantFile whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AiAssistantFile whereMimeType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AiAssistantFile whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AiAssistantFile whereParsingResults($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AiAssistantFile whereTemporaryUrl($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AiAssistantFile whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AiAssistantFile withTrashed()
@@ -918,7 +920,7 @@ namespace AdvisingApp\Ai\Models{
  * 
  *
  * @property string $id
- * @property string $message_id
+ * @property string|null $message_id
  * @property string|null $file_id
  * @property string|null $name
  * @property string|null $temporary_url
@@ -926,9 +928,10 @@ namespace AdvisingApp\Ai\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property string|null $parsing_results
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
- * @property-read \AdvisingApp\Ai\Models\AiMessage $message
+ * @property-read \AdvisingApp\Ai\Models\AiMessage|null $message
  * @method static \AdvisingApp\Ai\Database\Factories\AiMessageFileFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AiMessageFile newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AiMessageFile newQuery()
@@ -941,6 +944,7 @@ namespace AdvisingApp\Ai\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AiMessageFile whereMessageId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AiMessageFile whereMimeType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AiMessageFile whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AiMessageFile whereParsingResults($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AiMessageFile whereTemporaryUrl($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AiMessageFile whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AiMessageFile withTrashed()

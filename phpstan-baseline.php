@@ -132,12 +132,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/AiAssistantResource/Forms/AiAssistantForm.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Filament\\\\Resources\\\\AiAssistantResource\\\\Pages\\\\CreateAiAssistant\\:\\:attemptingToUploadAssistantFilesWhenItsNotSupported\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/AiAssistantResource/Pages/CreateAiAssistant.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Ai\\\\Filament\\\\Resources\\\\AiAssistantResource\\\\Pages\\\\CreateAiAssistant\\:\\:couldNotUploadFilesToAssistant\\(\\) has parameter \\$aiAssistantFiles with generic class Illuminate\\\\Support\\\\Collection but does not specify its types\\: TKey, TValue$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
@@ -177,12 +171,6 @@ $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$model\\.$#',
     'identifier' => 'property.notFound',
     'count' => 2,
-    'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/AiAssistantResource/Pages/EditAiAssistant.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Filament\\\\Resources\\\\AiAssistantResource\\\\Pages\\\\EditAiAssistant\\:\\:attemptingToUploadAssistantFilesWhenItsNotSupported\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
     'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/AiAssistantResource/Pages/EditAiAssistant.php',
 ];
 $ignoreErrors[] = [
@@ -448,12 +436,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/ai/src/Models/Scopes/AuditableAiMessages.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method AdvisingApp\\\\Ai\\\\Services\\\\Contracts\\\\AiService\\:\\:deleteFile\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Observers/AiAssistantFileObserver.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Property AdvisingApp\\\\Ai\\\\Providers\\\\AiServiceProvider\\:\\:\\$listen has no type specified\\.$#',

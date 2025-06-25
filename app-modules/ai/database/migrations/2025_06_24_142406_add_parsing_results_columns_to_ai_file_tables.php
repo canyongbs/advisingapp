@@ -34,27 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Observers;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Ai\Models\AiAssistantFile;
-
-class AiAssistantFileObserver
-{
-    public function created(AiAssistantFile $file): void
+return new class () extends Migration {
+    public function up(): void
     {
-        /**
-         * For some reason an extra file is being created on the creation of an assistant
-         * So this is in place just to ensure that the file is deleted if it wasn't uploaded by the user
-         */
-        if (blank($file->temporary_url)) {
-            $file->forceDelete();
-        }
+        Schema::table('ai_assistant_files', function (Blueprint $table) {
+            $table->longText('parsing_results')->nullable();
+        });
+
+        Schema::table('ai_message_files', function (Blueprint $table) {
+            $table->longText('parsing_results')->nullable();
+        });
     }
 
-    public function deleted(AiAssistantFile $file): void
+    public function down(): void
     {
-        $service = $file->assistant->model->getService();
+        Schema::table('ai_assistant_files', function (Blueprint $table) {
+            $table->dropColumn('parsing_results');
+        });
 
-        $service->deleteFile($file);
+        Schema::table('ai_message_files', function (Blueprint $table) {
+            $table->dropColumn('parsing_results');
+        });
     }
-}
+};

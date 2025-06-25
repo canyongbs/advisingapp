@@ -39,6 +39,7 @@ namespace AdvisingApp\Ai\Actions;
 use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
 use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
 use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Report\Enums\TrackedEventType;
@@ -48,6 +49,9 @@ use Illuminate\Support\Arr;
 
 class SendMessage
 {
+    /**
+     * @param array<AiMessageFile> $files
+     */
     public function __invoke(AiThread $thread, string | Prompt $content, array $files = []): Closure
     {
         if ($thread->locked_at) {

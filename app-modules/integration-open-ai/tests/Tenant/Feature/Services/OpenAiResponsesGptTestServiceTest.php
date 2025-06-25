@@ -127,7 +127,7 @@ it('can complete a message response', function () {
     $chunkedResponseContent = '';
     $finalResponseContent = null;
 
-    $stream = $service->completeResponse($message, [], function (AiMessage $response) use (&$finalResponseContent) {
+    $stream = $service->completeResponse($message, function (AiMessage $response) use (&$finalResponseContent) {
         $finalResponseContent = $response->content;
     });
 

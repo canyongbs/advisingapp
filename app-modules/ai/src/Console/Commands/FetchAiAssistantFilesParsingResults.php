@@ -34,32 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services;
+namespace AdvisingApp\Ai\Console\Commands;
 
-class OpenAiResponsesGptO3Service extends BaseOpenAiResponsesService
+use AdvisingApp\Ai\Jobs\FetchAiAssistantFileParsingResults;
+use AdvisingApp\Ai\Models\AiAssistantFile;
+use App\Features\LlamaParse;
+use Illuminate\Console\Command;
+use Spatie\Multitenancy\Commands\Concerns\TenantAware;
+
+class FetchAiAssistantFilesParsingResults extends Command
 {
-    public function getApiKey(): string
-    {
-        return $this->settings->open_ai_gpt_o3_api_key ?? config('integration-open-ai.gpt_o3_api_key');
-    }
+    use TenantAware;
 
-    public function getModel(): string
-    {
-        return $this->settings->open_ai_gpt_o3_model ?? config('integration-open-ai.gpt_o3_model');
-    }
+    protected $signature = 'ai:fetch-assistant-files-parsing-results {--tenant=*}';
 
-    public function getDeployment(): ?string
-    {
-        return $this->settings->open_ai_gpt_o3_base_uri ?? config('integration-open-ai.gpt_o3_base_uri');
-    }
+    protected $description = 'Finds AI assistant files that were uploaded in the past hour and do not yet have parsed results.';
 
-    public function hasReasoning(): bool
+    public function handle(): void
     {
-        return true;
-    }
+        if (! LlamaParse::active()) {
+            return;
+        }
 
-    public function hasTemperature(): bool
-    {
-        return false;
+        AiAssistantFile::query()
+            ->whereNull('parsing_results')
+            ->where('created_at', '>=', now()->subHour())
+            ->eachById(fn (AiAssistantFile $file) => dispatch(new FetchAiAssistantFileParsingResults($file)));
     }
 }

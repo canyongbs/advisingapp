@@ -43,11 +43,6 @@ class OpenAiResponsesGpt41MiniService extends BaseOpenAiResponsesService
         return $this->settings->open_ai_gpt_41_mini_api_key ?? config('integration-open-ai.gpt_41_mini_api_key');
     }
 
-    public function getApiVersion(): string
-    {
-        return config('integration-open-ai.gpt_41_mini_api_version');
-    }
-
     public function getModel(): string
     {
         return $this->settings->open_ai_gpt_41_mini_model ?? config('integration-open-ai.gpt_41_mini_model');

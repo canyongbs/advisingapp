@@ -54,9 +54,8 @@ readonly class AzureOpenAi extends OpenAI
     {
         return Http::withHeaders([
             'api-key' => $options['apiKey'],
-            'api-version' => $options['apiVersion'],
         ])
-            ->withQueryParameters(['api-version' => 'preview'])
+            ->withQueryParameters(['api-version' => $options['apiVersion']])
             ->withOptions(Arr::except($options, ['apiKey', 'apiVersion', 'deployment']))
             ->retry(...$retry)
             ->baseUrl($options['deployment']);
