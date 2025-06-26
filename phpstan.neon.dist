@@ -4,6 +4,9 @@ includes:
     - ./phpstan-baseline.php
     - ./vendor/pestphp/pest/extension.neon
 
+rules:
+    - CanyonGBS\Common\PhpStan\Rules\MissingClosureParameterTypehintRule
+
 parameters:
     # This can be removed once we have fixed all errors in our baseline. But need to be here now, so we don't have to rebuild it in every new PR.
     reportUnmatchedIgnoredErrors: false
