@@ -94,7 +94,7 @@ class ViewUser extends ViewRecord
                             ->relationship('team', 'name')
                             ->disabled(),
                     ])
-                    ->hidden($this->record->IsAdmin),
+                    ->hidden(fn (?User $record) => $record->IsAdmin ?? false),
                 Licenses::make()
                     ->hidden(fn (?User $record) => is_null($record))
                     ->disabled(function () {
@@ -106,7 +106,7 @@ class ViewUser extends ViewRecord
             ]);
     }
 
-    public function boot()
+    public function boot(): void
     {
         FilamentView::registerRenderHook(
             PanelsRenderHook::PAGE_HEADER_ACTIONS_AFTER,

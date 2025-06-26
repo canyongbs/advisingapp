@@ -37,11 +37,12 @@
 namespace App\Actions;
 
 use Exception;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 class GetRecordFromMorphAndKey
 {
-    public function via(string $morphReference, string $key)
+    public function via(string $morphReference, string $key): Model
     {
         $className = Relation::getMorphedModel($morphReference);
 

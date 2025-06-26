@@ -39,6 +39,7 @@ namespace App\Filament\Resources\UserResource\RelationManagers;
 use AdvisingApp\Authorization\Models\Role;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Authenticatable;
+use App\Models\User;
 use App\Rules\ExcludeSuperAdmin;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;

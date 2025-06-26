@@ -82,7 +82,18 @@ class CreateUser extends CreateRecord
                         Toggle::make('is_external')
                             ->label('User can only login via Single Sign-On (SSO)')
                             ->live()
-                            ->afterStateUpdated(fn (Toggle $component, $state) => $state ? null : (($azureSsoSettings || $googleSsoSettings) ? $component->state(true) && $this->mountAction('showSSOModal') : null))
+                            ->afterStateUpdated(function (Toggle $component, $state) use ($azureSsoSettings, $googleSsoSettings) {
+                                if ($state) {
+                                    return null;
+                                }
+
+                                if ($azureSsoSettings || $googleSsoSettings) {
+                                    $component->state(true);
+                                    $this->mountAction('showSSOModal');
+                                }
+
+                                return null;
+                            })
                             ->default(($azureSsoSettings || $googleSsoSettings)),
                         TextInput::make('created_at')
                             ->formatStateUsing(fn ($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))

@@ -103,6 +103,9 @@ class ProspectGrowthChart extends ChartWidget
         ];
     }
 
+    /**
+      * @return array<string, array<string, array<string, bool|int>>>
+      */
     protected function getOptions(): array
     {
         return [

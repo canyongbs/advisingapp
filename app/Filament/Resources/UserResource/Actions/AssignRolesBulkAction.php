@@ -38,6 +38,7 @@ namespace App\Filament\Resources\UserResource\Actions;
 
 use AdvisingApp\Authorization\Models\Role;
 use App\Models\User;
+use Exception;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
@@ -65,7 +66,9 @@ class AssignRolesBulkAction extends BulkAction
                     ->multiple(),
             ])
             ->action(function (array $data, Collection $records) {
-                $records->each(function (User $record) use ($data) {
+                $records->each(function ($record) use ($data) {
+                    throw_unless($record instanceof User, new Exception('Record must be of type user.'));
+
                     if ($data['replace']) {
                         $record->syncRoles($data['roles']);
                     } else {
@@ -77,7 +80,8 @@ class AssignRolesBulkAction extends BulkAction
                     ->title('Assigned Roles')
                     ->success()
                     ->send();
-            });
+            })
+            ->deselectRecordsAfterCompletion();
     }
 
     public static function getDefaultName(): ?string
