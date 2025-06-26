@@ -24,10 +24,10 @@ class EditCaseTypeNotifications extends EditRecord
         return [];
     }
 
-    // public static function canAccess(array $parameters = []): bool
-    // {
-    //     return CaseTypeNotificationFeature::active() && parent::canAccess($parameters);
-    // }
+    public static function canAccess(array $parameters = []): bool
+    {
+        return CaseTypeNotificationFeature::active() && parent::canAccess($parameters);
+    }
 
     public function form(Form $form): Form
     {
