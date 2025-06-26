@@ -61,6 +61,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Export newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Export newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Export onlyTrashed()
@@ -169,6 +170,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\FailedImportRow> $failedRows
  * @property-read int|null $failed_rows_count
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Import newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Import newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Import onlyTrashed()
@@ -1224,6 +1226,8 @@ namespace AdvisingApp\Ai\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\QnaAdvisorCategory> $categories
  * @property-read int|null $categories_count
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
@@ -1264,6 +1268,8 @@ namespace AdvisingApp\Ai\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
  * @property-read \AdvisingApp\Ai\Models\QnaAdvisor $qnaAdvisor
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\QnaAdvisorQuestion> $questions
  * @property-read int|null $questions_count
@@ -1298,6 +1304,8 @@ namespace AdvisingApp\Ai\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
  * @property-read \AdvisingApp\Ai\Models\QnaAdvisorCategory $category
  * @method static \AdvisingApp\Ai\Database\Factories\QnaAdvisorQuestionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorQuestion newModelQuery()
@@ -2580,11 +2588,16 @@ namespace AdvisingApp\CaseManagement\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \AdvisingApp\CaseManagement\Models\CaseTypeManager|\AdvisingApp\CaseManagement\Models\CaseTypeAuditor|null $pivot
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Team\Models\Team> $auditors
+ * @property-read int|null $auditors_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseModel> $cases
  * @property-read int|null $cases_count
  * @property-read \AdvisingApp\CaseManagement\Models\CaseForm|null $form
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Team\Models\Team> $managers
+ * @property-read int|null $managers_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CasePriority> $priorities
  * @property-read int|null $priorities_count
  * @method static \AdvisingApp\CaseManagement\Database\Factories\CaseTypeFactory factory($count = null, $state = [])
@@ -2606,6 +2619,58 @@ namespace AdvisingApp\CaseManagement\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperCaseType {}
+}
+
+namespace AdvisingApp\CaseManagement\Models{
+/**
+ * 
+ *
+ * @property string $id
+ * @property string $case_type_id
+ * @property string $team_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \AdvisingApp\CaseManagement\Models\CaseType $caseType
+ * @property-read \AdvisingApp\Team\Models\Team $team
+ * @method static \AdvisingApp\CaseManagement\Database\Factories\CaseTypeAuditorFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeAuditor newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeAuditor newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeAuditor query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeAuditor whereCaseTypeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeAuditor whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeAuditor whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeAuditor whereTeamId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeAuditor whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperCaseTypeAuditor {}
+}
+
+namespace AdvisingApp\CaseManagement\Models{
+/**
+ * 
+ *
+ * @property string $id
+ * @property string $case_type_id
+ * @property string $team_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \AdvisingApp\CaseManagement\Models\CaseType $caseType
+ * @property-read \AdvisingApp\Team\Models\Team $team
+ * @method static \AdvisingApp\CaseManagement\Database\Factories\CaseTypeManagerFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeManager newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeManager newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeManager query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeManager whereCaseTypeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeManager whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeManager whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeManager whereTeamId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeManager whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperCaseTypeManager {}
 }
 
 namespace AdvisingApp\CaseManagement\Models{
@@ -5953,7 +6018,12 @@ namespace AdvisingApp\Team\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
+ * @property-read \AdvisingApp\CaseManagement\Models\CaseTypeManager|\AdvisingApp\CaseManagement\Models\CaseTypeAuditor|null $pivot
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseType> $auditableCaseTypes
+ * @property-read int|null $auditable_case_types_count
  * @property-read \AdvisingApp\Division\Models\Division|null $division
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseType> $managableCaseTypes
+ * @property-read int|null $managable_case_types_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
  * @property-read int|null $users_count
  * @method static \AdvisingApp\Team\Database\Factories\TeamFactory factory($count = null, $state = [])
