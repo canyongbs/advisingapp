@@ -288,16 +288,19 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: tmp
-          key: "phpstan-result-cache-${{ github.run_id }}"
+          key: "linting-result-cache-${{ github.run_id }}"
           restore-keys: |
-            phpstan-result-cache-
+            linting-result-cache-
 
-      - name: Linting
+      - name: Run PHPStan
         run: ./vendor/bin/phpstan analyse --configuration phpstan-ci.neon --no-progress
+
+      - name: Run PHP Mess Detector
+        run: ./vendor/bin/phpmd app/,app-modules/,database/,tests/,routes/ github phpmd.ruleset.xml
 
       - name: "Save result cache"
         uses: actions/cache/save@v4
         if: ${{ !cancelled() }}
         with:
           path: tmp
-          key: "phpstan-result-cache-${{ github.run_id }}"
+          key: "linting-result-cache-${{ github.run_id }}"
