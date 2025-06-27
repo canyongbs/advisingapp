@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5086b513b7b2e23c8f90554292646b97",
+    "content-hash": "0ac614777c24138a3d2644a44099b1cd",
     "packages": [
         {
             "name": "amphp/amp",
@@ -2777,6 +2777,41 @@
                     "AdvisingApp\\Segment\\Tests\\": "tests/",
                     "AdvisingApp\\Segment\\Database\\Factories\\": "database/factories/",
                     "AdvisingApp\\Segment\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/workflow",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/workflow",
+                "reference": "0b84c38453bafc7ffdfc8cbd065b7634c47845f3"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AdvisingApp\\Workflow\\Providers\\WorkflowServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AdvisingApp\\Workflow\\": "src/",
+                    "AdvisingApp\\Workflow\\Tests\\": "tests/",
+                    "AdvisingApp\\Workflow\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Workflow\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
