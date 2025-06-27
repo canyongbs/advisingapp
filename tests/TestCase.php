@@ -209,7 +209,8 @@ abstract class TestCase extends BaseTestCase
                     fromName: config('mail.from.name')
                 ),
             ),
-            licenseData: new LicenseData(
+            null,
+            new LicenseData(
                 updatedAt: now(),
                 subscription: new LicenseSubscriptionData(
                     clientName: 'Jane Smith',
@@ -240,7 +241,8 @@ abstract class TestCase extends BaseTestCase
                     scheduleAndAppointments: true,
                 ),
             ),
-            seedTenantDatabase: false
+            null,
+            false
         );
 
         Artisan::call(
