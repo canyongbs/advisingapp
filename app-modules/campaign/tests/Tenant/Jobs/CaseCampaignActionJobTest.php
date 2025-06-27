@@ -101,7 +101,7 @@ it('will execute appropriately on each educatable in the segment', function (Edu
     expect($campaignActionEducatable->succeeded_at)->toBeNull()
         ->and($campaignActionEducatable->last_failed_at)->toBeNull();
 
-    [$job] = new CaseCampaignActionJob($campaignActionEducatable)->withFakeBatch();
+    [$job] = (new CaseCampaignActionJob($campaignActionEducatable))->withFakeBatch();
 
     $job->handle();
 
@@ -182,7 +182,7 @@ it('will create the proper assignment if provided', function (Educatable $educat
     expect($campaignActionEducatable->succeeded_at)->toBeNull()
         ->and($campaignActionEducatable->last_failed_at)->toBeNull();
 
-    [$job] = new CaseCampaignActionJob($campaignActionEducatable)->withFakeBatch();
+    [$job] = (new CaseCampaignActionJob($campaignActionEducatable))->withFakeBatch();
 
     $job->handle();
 

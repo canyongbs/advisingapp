@@ -88,7 +88,7 @@ it('dispatches the correct job based on the CampaignAction type into the batch',
             'type' => $actionType,
         ]);
 
-    [$job, $batch] = new ExecuteCampaignAction($action)->withFakeBatch();
+    [$job, $batch] = (new ExecuteCampaignAction($action))->withFakeBatch();
 
     assertDatabaseCount(CampaignActionEducatable::class, 0);
 
@@ -199,7 +199,7 @@ it('re-uses the same CampaignActionEducatable if it already exists', function ()
         ]);
     });
 
-    [$job] = new ExecuteCampaignAction($action)->withFakeBatch();
+    [$job] = (new ExecuteCampaignAction($action))->withFakeBatch();
 
     assertDatabaseCount(CampaignActionEducatable::class, $educatables->count());
 

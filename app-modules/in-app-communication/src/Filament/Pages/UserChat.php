@@ -168,7 +168,7 @@ class UserChat extends Page implements HasForms, HasActions
                 /** @var TwilioConversation $conversation */
                 $conversation = $user->conversations()->find($arguments['id']);
 
-                app(TogglePinConversation::class)(user: $user, conversation: $conversation);
+                app(TogglePinConversation::class)($user, $conversation);
             });
     }
 
@@ -357,12 +357,12 @@ class UserChat extends Page implements HasForms, HasActions
                 $this->conversation->save();
 
                 collect($data['managers'])
-                    ->each(fn (string $id) => app(PromoteUserToChannelManager::class)(user: User::find($id), conversation: $this->conversation));
+                    ->each(fn (string $id) => app(PromoteUserToChannelManager::class)(User::find($id), $this->conversation));
 
                 $this->conversation->managers()
                     ->whereNotIn('id', $data['managers'])
                     ->whereNot('id', $user->id)
-                    ->each(fn (User $demote) => app(DemoteUserFromChannelManager::class)(user: $demote, conversation: $this->conversation));
+                    ->each(fn (User $demote) => app(DemoteUserFromChannelManager::class)($demote, $this->conversation));
 
                 Notification::make()
                     ->title('Channel updated.')

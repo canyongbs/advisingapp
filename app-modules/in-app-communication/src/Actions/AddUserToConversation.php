@@ -77,7 +77,7 @@ class AddUserToConversation
             ]);
 
         if ($manager) {
-            app(PromoteUserToChannelManager::class)(user: $user, conversation: $conversation);
+            app(PromoteUserToChannelManager::class)($user, $conversation);
         }
     }
 }
