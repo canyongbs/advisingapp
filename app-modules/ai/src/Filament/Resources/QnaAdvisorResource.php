@@ -44,7 +44,6 @@ use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource\Pages\ManageQnaQuestion
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource\Pages\QnaAdvisorEmbed;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource\Pages\ViewQnaAdvisor;
 use AdvisingApp\Ai\Models\QnaAdvisor;
-use App\Features\QnaAdvisorFeature;
 use Filament\Pages\Page;
 use Filament\Resources\Resource;
 
@@ -57,11 +56,6 @@ class QnaAdvisorResource extends Resource
     protected static ?string $modelLabel = 'QnA Advisor';
 
     protected static ?int $navigationSort = 50;
-
-    public static function canAccess(): bool
-    {
-        return QnaAdvisorFeature::active() && parent::canAccess();
-    }
 
     public static function getPages(): array
     {

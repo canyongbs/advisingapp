@@ -38,7 +38,6 @@ namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
-use App\Features\QnaAdvisorFeature;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -63,11 +62,6 @@ class ManageQnaQuestions extends ManageRelatedRecords
     protected static ?string $title = 'Questions';
 
     protected static ?string $navigationGroup = 'Configuration';
-
-    public static function canAccess(array $parameters = []): bool
-    {
-        return QnaAdvisorFeature::active() && parent::canAccess($parameters);
-    }
 
     public function form(Form $form): Form
     {
