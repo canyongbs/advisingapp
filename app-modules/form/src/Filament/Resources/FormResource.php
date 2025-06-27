@@ -75,8 +75,8 @@ class FormResource extends Resource
         return $page->generateNavigationItems([
             EditForm::class,
             SubmissionOnScreenResponse::class,
+            ViewWorkflow::class,
             ManageFormSubmissions::class,
-            WorkflowResource::class,
             ManageFormEmailAutoReply::class,
         ]);
     }
