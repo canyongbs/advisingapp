@@ -56,7 +56,7 @@ class SendMessageController
                 app(SendMessage::class)(
                     $thread,
                     $request->validated('prompt_id') ? Prompt::find($request->validated('prompt_id')) : $request->validated('content'),
-                    AiMessageFile::query()->whereKey($request->validated('files'))->whereNotNull('parsing_results')->get()->all(),
+                    AiMessageFile::query()->whereKey($request->validated('files'))->get()->all(),
                 ),
                 headers: [
                     'Content-Type' => 'text/html; charset=utf-8;',

@@ -38,6 +38,8 @@ namespace AdvisingApp\Ai\Models\Contracts;
 
 interface AiFile
 {
+    public function getKey(): string;
+
     public function getTemporaryUrl(): ?string;
 
     public function getName(): ?string;
@@ -45,4 +47,6 @@ interface AiFile
     public function getMimeType(): ?string;
 
     public function getFileId(): ?string;
+
+    public function getParsingResults(): ?string;
 }

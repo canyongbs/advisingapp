@@ -74,6 +74,11 @@ class AiAssistantFile extends BaseModel implements AiFile, HasMedia
             ->singleFile();
     }
 
+    public function getKey(): string
+    {
+        return parent::getKey();
+    }
+
     public function getTemporaryUrl(): ?string
     {
         return $this->temporary_url;
@@ -92,5 +97,10 @@ class AiAssistantFile extends BaseModel implements AiFile, HasMedia
     public function getFileId(): ?string
     {
         return $this->file_id;
+    }
+
+    public function getParsingResults(): ?string
+    {
+        return $this->parsing_results;
     }
 }
