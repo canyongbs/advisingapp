@@ -37,7 +37,6 @@
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages;
 
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
-use App\Features\CaseTypeManagerAuditor;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Actions\BulkActionGroup;
@@ -55,11 +54,6 @@ class ManageCaseTypeManagers extends ManageRelatedRecords
     public static function getNavigationLabel(): string
     {
         return 'Managers';
-    }
-
-    public static function canAccess(array $parameters = []): bool
-    {
-        return CaseTypeManagerAuditor::active() && parent::canAccess($parameters);
     }
 
     public function table(Table $table): Table
