@@ -55,7 +55,6 @@ use AdvisingApp\IntegrationOpenAi\Services\OpenAiResponsesGpt4oMiniService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiResponsesGpt4oService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiResponsesGptO3Service;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiResponsesGptO4MiniService;
-use App\Features\AiResponsesApi;
 use Exception;
 use Filament\Support\Contracts\HasLabel;
 
@@ -143,23 +142,21 @@ enum AiModel: string implements HasLabel
      */
     public function getServiceClass(): string
     {
-        if (! AiResponsesApi::active()) {
-            return match ($this) {
-                self::OpenAiGpt35 => OpenAiGpt35Service::class,
-                self::OpenAiGpt4 => OpenAiGpt4Service::class,
-                self::OpenAiGpt4o => OpenAiGpt4oService::class,
-                self::OpenAiGpt4oMini => OpenAiGpt4oMiniService::class,
-                self::OpenAiGptO1Mini => OpenAiGptO1MiniService::class,
-                self::OpenAiGptO3 => OpenAiResponsesGptO3Service::class,
-                self::OpenAiGptO3Mini => OpenAiGptO3MiniService::class,
-                self::OpenAiGpt41Mini => OpenAiGpt41MiniService::class,
-                self::OpenAiGpt41Nano => OpenAiGpt41NanoService::class,
-                self::OpenAiGptO4Mini => OpenAiGptO4MiniService::class,
-                self::OpenAiGptTest => OpenAiGptTestService::class,
-                self::Test => TestAiService::class,
-                default => throw new Exception('No Service class found for this model.'),
-            };
-        }
+        return match ($this) {
+            self::OpenAiGpt35 => OpenAiGpt35Service::class,
+            self::OpenAiGpt4 => OpenAiGpt4Service::class,
+            self::OpenAiGpt4o => OpenAiGpt4oService::class,
+            self::OpenAiGpt4oMini => OpenAiGpt4oMiniService::class,
+            self::OpenAiGptO1Mini => OpenAiGptO1MiniService::class,
+            self::OpenAiGptO3 => OpenAiResponsesGptO3Service::class,
+            self::OpenAiGptO3Mini => OpenAiGptO3MiniService::class,
+            self::OpenAiGpt41Mini => OpenAiGpt41MiniService::class,
+            self::OpenAiGpt41Nano => OpenAiGpt41NanoService::class,
+            self::OpenAiGptO4Mini => OpenAiGptO4MiniService::class,
+            self::OpenAiGptTest => OpenAiGptTestService::class,
+            self::Test => TestAiService::class,
+            default => throw new Exception('No Service class found for this model.'),
+        };
 
         $aiIntegrationSettings = app(AiIntegrationsSettings::class);
 
