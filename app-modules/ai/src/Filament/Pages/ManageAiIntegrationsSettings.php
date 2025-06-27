@@ -41,7 +41,6 @@ use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Jobs\ReInitializeAiModel;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
-use App\Features\AiReasoningEffort;
 use App\Features\AiResponsesApi;
 use App\Features\LlamaParse;
 use App\Filament\Clusters\GlobalArtificialIntelligence;
@@ -242,8 +241,7 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->options(AiModelApplicabilityFeature::class)
                                     ->multiple()
                                     ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
-                            ])
-                            ->visible(AiReasoningEffort::active()),
+                            ]),
                         Section::make('GPT o3 mini')
                             ->collapsible()
                             ->schema([
@@ -460,7 +458,7 @@ class ManageAiIntegrationsSettings extends SettingsPage
                 Action::make('justSave')
                     ->label('Just save the settings')
                     ->color('gray')
-                    ->action(fn () => $this->save())
+                    ->action(fn() => $this->save())
                     ->cancelParentActions(),
             ])
             ->action(function (AiIntegrationsSettings $originalSettings, ResetAiServiceIdsForModel $resetAiServiceIds) {

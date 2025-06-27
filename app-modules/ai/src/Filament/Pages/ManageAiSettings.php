@@ -46,7 +46,6 @@ use AdvisingApp\Ai\Enums\AiReasoningEffort;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiSettings;
 use AdvisingApp\Authorization\Enums\LicenseType;
-use App\Features\AiReasoningEffort as AiReasoningEffortFeature;
 use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
 use CanyonGBS\Common\Filament\Forms\Components\Slider;
@@ -112,7 +111,7 @@ class ManageAiSettings extends SettingsPage
                             ->searchable()
                             ->required()
                             ->columnSpanFull()
-                            ->visible(fn (Get $get): bool => filled($get('application'))),
+                            ->visible(fn(Get $get): bool => filled($get('application'))),
                         Textarea::make('description')
                             ->columnSpanFull()
                             ->required(),
@@ -123,7 +122,7 @@ class ManageAiSettings extends SettingsPage
                                     ->helperText('Instructions are used to provide context to the AI Assistant on how to respond to user queries.')
                                     ->required()
                                     ->rows(8)
-                                    ->maxLength(fn (?AiAssistant $record): int => ($record?->model ?? AiModel::OpenAiGpt4o)->getService()->getMaxAssistantInstructionsLength()),
+                                    ->maxLength(fn(?AiAssistant $record): int => ($record?->model ?? AiModel::OpenAiGpt4o)->getService()->getMaxAssistantInstructionsLength()),
                             ]),
                     ]),
                 Select::make('max_tokens')
@@ -135,8 +134,7 @@ class ManageAiSettings extends SettingsPage
                     ->label('Reasoning Effort')
                     ->options(AiReasoningEffort::class)
                     ->enum(AiReasoningEffort::class)
-                    ->required()
-                    ->visible(AiReasoningEffortFeature::active()),
+                    ->required(),
                 Slider::make('temperature')
                     ->label('Creativity')
                     ->required()
@@ -175,7 +173,7 @@ class ManageAiSettings extends SettingsPage
                 Action::make('justSave')
                     ->label('Just save the settings')
                     ->color('gray')
-                    ->action(fn () => $this->save())
+                    ->action(fn() => $this->save())
                     ->cancelParentActions(),
             ])
             ->action(function (ResetAiServiceIdsForAssistant $resetAiServiceIds, ReInitializeAiServiceAssistant $reInitializeAiServiceAssistant) {
