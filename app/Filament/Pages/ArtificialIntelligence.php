@@ -36,7 +36,6 @@
 
 namespace App\Filament\Pages;
 
-use App\Features\ActionCenterUpdateFeatureFlag;
 use App\Features\SubmitAiChatOnEnterFlag;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -76,8 +75,7 @@ class ArtificialIntelligence extends ProfilePage
                     ->schema([
                         Toggle::make('is_action_center_update_enabled')
                             ->label('Action Center Update Enabled'),
-                    ])
-                    ->visible(ActionCenterUpdateFeatureFlag::active()),
+                    ]),
             ]);
     }
 }
