@@ -33,7 +33,6 @@
 --}}
 @php
     use Filament\Support\Enums\ActionSize;
-    use App\Features\LlamaParse;
     use App\Features\SubmitAiChatOnEnterFlag;
 @endphp
 
@@ -658,7 +657,6 @@
                     <form x-on:submit.prevent="sendMessage()">
                         <div
                             class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
-                            @if (LlamaParse::active())
                                 <div class="flex items-center justify-start gap-x-4 gap-y-3 p-4">
                                     {{ $this->uploadFilesAction }}
 
@@ -689,7 +687,6 @@
                                         </x-filament::badge>
                                     @endforeach
                                 </div>
-                            @endif
                             <div class="bg-white dark:bg-gray-800">
                                 <label
                                     class="sr-only"

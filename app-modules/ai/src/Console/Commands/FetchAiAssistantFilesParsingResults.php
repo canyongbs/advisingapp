@@ -38,7 +38,6 @@ namespace AdvisingApp\Ai\Console\Commands;
 
 use AdvisingApp\Ai\Jobs\FetchAiAssistantFileParsingResults;
 use AdvisingApp\Ai\Models\AiAssistantFile;
-use App\Features\LlamaParse;
 use Illuminate\Console\Command;
 use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 
@@ -52,10 +51,6 @@ class FetchAiAssistantFilesParsingResults extends Command
 
     public function handle(): void
     {
-        if (! LlamaParse::active()) {
-            return;
-        }
-
         AiAssistantFile::query()
             ->whereNull('parsing_results')
             ->where('created_at', '>=', now()->subHour())
