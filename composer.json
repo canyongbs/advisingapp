@@ -55,7 +55,7 @@
         "canyon-gbs/research": "*",
         "canyon-gbs/segment": "*",
         "canyon-gbs/workflow": "*",
-        "canyongbs/common": "^1.1.1",
+        "canyongbs/common": "^1.7.0",
         "canyongbs/filament-tiptap-editor": "^1.2.5",
         "canyongbs/model-state-machine": "^2.0",
         "cknow/laravel-money": "^8.1",
@@ -107,7 +107,6 @@
         "stechstudio/filament-impersonate": "^3.5",
         "talkroute/message-segment-calculator": "^1.0",
         "tapp/filament-timezone-field": "^3.0",
-        "theiconic/name-parser": "^1.2",
         "tpetry/laravel-postgresql-enhanced": "^3.0",
         "twilio/sdk": "^8.5.0",
         "ysfkaya/filament-phone-input": "^3.1"

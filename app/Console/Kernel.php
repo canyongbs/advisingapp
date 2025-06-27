@@ -92,6 +92,16 @@ class Kernel extends ConsoleKernel
 
                     $schedule->call(function () use ($tenant) {
                         $tenant->execute(function () {
+                            dispatch(new UnmatchedInboundCommunicationsJob());
+                        });
+                    })
+                        ->daily()
+                        ->name("Process Unmatched Inbound Communications | Tenant {$tenant->domain}")
+                        ->monitorName("Process Unmatched Inbound Communications | Tenant {$tenant->domain}")
+                        ->withoutOverlapping(720);
+
+                    $schedule->call(function () use ($tenant) {
+                        $tenant->execute(function () {
                             dispatch(new SyncCalendars());
                         });
                     })
@@ -168,11 +178,6 @@ class Kernel extends ConsoleKernel
                         ->name("Prune Educatable Pipeline Stages | Tenant {$tenant->domain}")
                         ->monitorName("Prune Educatable Pipeline Stages | Tenant {$tenant->domain}")
                         ->withoutOverlapping(720);
-
-                    $schedule->job(new UnmatchedInboundCommunicationsJob())
-                        ->daily()
-                        ->name('Process Unmatched Inbound Communications')
-                        ->monitorName('Process Unmatched Inbound Communications');
 
                     $schedule->command("tenants:artisan \"health:check\" --tenant={$tenant->id}")
                         ->everyMinute()

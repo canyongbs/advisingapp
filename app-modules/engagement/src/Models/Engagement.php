@@ -57,6 +57,7 @@ use AdvisingApp\Timeline\Models\Timeline;
 use AdvisingApp\Timeline\Timelines\EngagementTimeline;
 use App\Models\BaseModel;
 use App\Models\User;
+use CanyonGBS\Common\Parser\Parser;
 use Exception;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
@@ -72,7 +73,6 @@ use League\HTMLToMarkdown\HtmlConverter;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use TheIconic\NameParser\Parser;
 
 /**
  * @property-read ?Educatable $recipient

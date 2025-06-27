@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0ac614777c24138a3d2644a44099b1cd",
+    "content-hash": "3a2d90c21d654200ae61eaf45d7b0428",
     "packages": [
         {
             "name": "amphp/amp",
@@ -2824,16 +2824,16 @@
         },
         {
             "name": "canyongbs/common",
-            "version": "1.5.0",
+            "version": "1.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/canyongbs/common.git",
-                "reference": "d1ac8f8b1670d211b87e8f1188c4468664e3c837"
+                "reference": "ac0ace12e20a34305a3618ffb3ce4a537adeabb9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/canyongbs/common/zipball/d1ac8f8b1670d211b87e8f1188c4468664e3c837",
-                "reference": "d1ac8f8b1670d211b87e8f1188c4468664e3c837",
+                "url": "https://api.github.com/repos/canyongbs/common/zipball/ac0ace12e20a34305a3618ffb3ce4a537adeabb9",
+                "reference": "ac0ace12e20a34305a3618ffb3ce4a537adeabb9",
                 "shasum": ""
             },
             "require": {
@@ -2841,8 +2841,14 @@
                 "laravel/framework": "^11.0|^12.0"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.60",
-                "phpstan/phpstan": "^2.1"
+                "friendsofphp/php-cs-fixer": "^3.75",
+                "orchestra/testbench": "^10.4",
+                "pestphp/pest": "^3.8",
+                "pestphp/pest-plugin-laravel": "^3.2",
+                "php-coveralls/php-coveralls": "^0.1.0",
+                "php-mock/php-mock-phpunit": "^2.13",
+                "phpstan/phpstan": "^2.1",
+                "phpunit/phpunit": "^11.5"
             },
             "type": "package",
             "extra": {
@@ -2854,7 +2860,8 @@
             },
             "autoload": {
                 "psr-4": {
-                    "CanyonGBS\\Common\\": "src/"
+                    "CanyonGBS\\Common\\": "src/",
+                    "CanyonGBS\\Common\\Tests\\": "tests"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -2868,9 +2875,9 @@
             ],
             "support": {
                 "issues": "https://github.com/canyongbs/common/issues",
-                "source": "https://github.com/canyongbs/common/tree/1.5.0"
+                "source": "https://github.com/canyongbs/common/tree/1.7.0"
             },
-            "time": "2025-05-12T16:51:32+00:00"
+            "time": "2025-06-26T13:49:06+00:00"
         },
         {
             "name": "canyongbs/filament-tiptap-editor",
@@ -18727,54 +18734,6 @@
                 "source": "https://github.com/TappNetwork/filament-timezone-field"
             },
             "time": "2025-04-02T20:08:38+00:00"
-        },
-        {
-            "name": "theiconic/name-parser",
-            "version": "v1.2.11",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/theiconic/name-parser.git",
-                "reference": "9a54a713bf5b2e7fd990828147d42de16bf8a253"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/theiconic/name-parser/zipball/9a54a713bf5b2e7fd990828147d42de16bf8a253",
-                "reference": "9a54a713bf5b2e7fd990828147d42de16bf8a253",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.1"
-            },
-            "require-dev": {
-                "php-coveralls/php-coveralls": "^2.1",
-                "php-mock/php-mock-phpunit": "^2.1",
-                "phpunit/phpunit": "^7.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "TheIconic\\NameParser\\": [
-                        "src/",
-                        "tests/"
-                    ]
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "The Iconic",
-                    "email": "engineering@theiconic.com.au"
-                }
-            ],
-            "description": "PHP library for parsing a string containing a full name into its parts",
-            "support": {
-                "issues": "https://github.com/theiconic/name-parser/issues",
-                "source": "https://github.com/theiconic/name-parser/tree/v1.2.11"
-            },
-            "time": "2019-11-14T14:08:48+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",
