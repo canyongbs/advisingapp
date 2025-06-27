@@ -17,8 +17,23 @@
     <!-- <rule ref="rulesets/codesize.xml/CyclomaticComplexity" /> -->
     <!-- <rule ref="rulesets/codesize.xml/NPathComplexity" /> -->
 
-    <!-- <rule ref="rulesets/controversial.xml/CamelCaseClassName" /> -->
-    <!-- <rule ref="rulesets/controversial.xml/CamelCasePropertyName" /> -->
+    <rule ref="rulesets/controversial.xml/CamelCaseClassName" />
+    <rule
+        name="CamelCasePropertyNameWithoutSettings"
+        message = "The property {0} is not named in camelCase."
+        class="App\PhpMd\CamelCasePropertyNameWithoutSettings"
+    >
+        <priority>1</priority>
+        <properties>
+            <property name="allow-underscore"
+                      description="Allow an optional, single underscore at the beginning."
+                      value="false" />
+            <property name="allow-underscore-test"
+                      description="Is it allowed to have underscores in test method names."
+                      value="false" />
+        </properties>
+    </rule>
+    
     <!-- <rule ref="rulesets/controversial.xml/CamelCaseMethodName" /> -->
     <!-- <rule ref="rulesets/controversial.xml/CamelCaseParameterName" /> -->
     <!-- <rule ref="rulesets/controversial.xml/CamelCaseVariableName" /> -->
