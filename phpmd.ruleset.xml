@@ -12,5 +12,34 @@
         For more information, see the PHPMD documentation at https://phpmd.org/.
     </description>
 
-    <rule ref="rulesets/cleancode.xml/MissingImport" />
+    <!-- <rule ref="rulesets/cleancode.xml/ElseExpression" /> -->
+    <!-- <rule ref="rulesets/cleancode.xml/IfStatementAssignment" /> -->
+    <!-- <rule ref="rulesets/codesize.xml/CyclomaticComplexity" /> -->
+    <!-- <rule ref="rulesets/codesize.xml/NPathComplexity" /> -->
+
+    <!-- <rule ref="rulesets/controversial.xml/CamelCaseClassName" /> -->
+    <!-- <rule ref="rulesets/controversial.xml/CamelCasePropertyName" /> -->
+    <!-- <rule ref="rulesets/controversial.xml/CamelCaseMethodName" /> -->
+    <!-- <rule ref="rulesets/controversial.xml/CamelCaseParameterName" /> -->
+    <!-- <rule ref="rulesets/controversial.xml/CamelCaseVariableName" /> -->
+
+    <!-- <rule ref="rulesets/design.xml/EmptyCatchBlock" /> -->
+
+    <!-- <rule ref="rulesets/naming.xml/ShortVariable">
+        <properties>
+            <property name="exceptions" value="id,at,to,as" />
+        </properties>
+    </rule> -->
+    <!-- <rule ref="rulesets/naming.xml/ShortMethodName">
+        <properties>
+            <property name="exceptions" value="up,to" />
+        </properties>
+    </rule> -->
+
+    <!-- <rule ref="rulesets/naming.xml/ConstantNamingConventions" /> -->
+    <!-- <rule ref="rulesets/naming.xml/BooleanGetMethodName">
+        <properties>
+            <property name="checkParameterizedMethods" value="true" />
+        </properties>
+    </rule> -->
 </ruleset>
