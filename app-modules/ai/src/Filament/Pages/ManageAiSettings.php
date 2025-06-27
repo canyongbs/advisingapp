@@ -111,7 +111,7 @@ class ManageAiSettings extends SettingsPage
                             ->searchable()
                             ->required()
                             ->columnSpanFull()
-                            ->visible(fn(Get $get): bool => filled($get('application'))),
+                            ->visible(fn (Get $get): bool => filled($get('application'))),
                         Textarea::make('description')
                             ->columnSpanFull()
                             ->required(),
@@ -122,7 +122,7 @@ class ManageAiSettings extends SettingsPage
                                     ->helperText('Instructions are used to provide context to the AI Assistant on how to respond to user queries.')
                                     ->required()
                                     ->rows(8)
-                                    ->maxLength(fn(?AiAssistant $record): int => ($record?->model ?? AiModel::OpenAiGpt4o)->getService()->getMaxAssistantInstructionsLength()),
+                                    ->maxLength(fn (?AiAssistant $record): int => ($record?->model ?? AiModel::OpenAiGpt4o)->getService()->getMaxAssistantInstructionsLength()),
                             ]),
                     ]),
                 Select::make('max_tokens')
@@ -173,7 +173,7 @@ class ManageAiSettings extends SettingsPage
                 Action::make('justSave')
                     ->label('Just save the settings')
                     ->color('gray')
-                    ->action(fn() => $this->save())
+                    ->action(fn () => $this->save())
                     ->cancelParentActions(),
             ])
             ->action(function (ResetAiServiceIdsForAssistant $resetAiServiceIds, ReInitializeAiServiceAssistant $reInitializeAiServiceAssistant) {
