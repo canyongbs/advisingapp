@@ -43,6 +43,8 @@ use AdvisingApp\Form\Filament\Resources\FormResource\Pages\ManageFormEmailAutoRe
 use AdvisingApp\Form\Filament\Resources\FormResource\Pages\ManageFormSubmissions;
 use AdvisingApp\Form\Filament\Resources\FormResource\Pages\SubmissionOnScreenResponse;
 use AdvisingApp\Form\Models\Form;
+use AdvisingApp\Workflow\Filament\Resources\WorkflowResource;
+use AdvisingApp\Workflow\Filament\Resources\WorkflowResource\Pages\ViewWorkflow;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
@@ -74,6 +76,7 @@ class FormResource extends Resource
             EditForm::class,
             SubmissionOnScreenResponse::class,
             ManageFormSubmissions::class,
+            WorkflowResource::class,
             ManageFormEmailAutoReply::class,
         ]);
     }
@@ -85,6 +88,7 @@ class FormResource extends Resource
             'create' => CreateForm::route('/create'),
             'edit' => EditForm::route('/{record}/edit'),
             'manage-on-screen-response' => SubmissionOnScreenResponse::route('/{record}/on-screen-response'),
+            'workflow' => ViewWorkflow::route('/{record}/workflow'),
             'manage-submissions' => ManageFormSubmissions::route('/{record}/submissions'),
             'manage-email-auto-reply' => ManageFormEmailAutoReply::route('/{record}/email-auto-reply'),
         ];

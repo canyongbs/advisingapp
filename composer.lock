@@ -2788,6 +2788,41 @@
             }
         },
         {
+            "name": "canyon-gbs/workflow",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/workflow",
+                "reference": "0b84c38453bafc7ffdfc8cbd065b7634c47845f3"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AdvisingApp\\Workflow\\Providers\\WorkflowServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AdvisingApp\\Workflow\\": "src/",
+                    "AdvisingApp\\Workflow\\Tests\\": "tests/",
+                    "AdvisingApp\\Workflow\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Workflow\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
             "name": "canyongbs/common",
             "version": "1.7.0",
             "source": {
