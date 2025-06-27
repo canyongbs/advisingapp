@@ -43,7 +43,6 @@ use AdvisingApp\Ai\Jobs\ReInitializeAiModel;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use App\Features\AiReasoningEffort;
 use App\Features\AiResponsesApi;
-use App\Features\LlamaParse;
 use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -397,8 +396,7 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->password()
                                     ->autocomplete(false),
                             ]),
-                    ])
-                    ->visible(LlamaParse::active()),
+                    ]),
             ]);
     }
 

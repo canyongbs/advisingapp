@@ -38,10 +38,11 @@ namespace AdvisingApp\Ai\Database\Factories;
 
 use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiModel;
+use AdvisingApp\Ai\Models\AiAssistant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Ai\Models\AiAssistant>
+ * @extends Factory<AiAssistant>
  */
 class AiAssistantFactory extends Factory
 {
