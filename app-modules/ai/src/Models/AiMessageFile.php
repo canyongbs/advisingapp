@@ -89,6 +89,11 @@ class AiMessageFile extends BaseModel implements AiFile, HasMedia
             ->where('deleted_at', '<=', now()->subDays(7));
     }
 
+    public function getKey(): string
+    {
+        return parent::getKey();
+    }
+
     public function getTemporaryUrl(): ?string
     {
         return $this->temporary_url;
@@ -107,5 +112,10 @@ class AiMessageFile extends BaseModel implements AiFile, HasMedia
     public function getFileId(): ?string
     {
         return $this->file_id;
+    }
+
+    public function getParsingResults(): ?string
+    {
+        return $this->parsing_results;
     }
 }

@@ -420,10 +420,15 @@ abstract class BaseOpenAiService implements AiService
 
     public function supportsMessageFileUploads(): bool
     {
-        return false;
+        return true;
     }
 
     public function supportsAssistantFileUploads(): bool
+    {
+        return true;
+    }
+
+    public function isFileReady(AiFile $file): bool
     {
         return true;
     }
