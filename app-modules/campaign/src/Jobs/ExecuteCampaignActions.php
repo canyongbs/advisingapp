@@ -39,7 +39,6 @@ namespace AdvisingApp\Campaign\Jobs;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Models\Scopes\CampaignActionNotCancelled;
 use AdvisingApp\Campaign\Notifications\CampaignActionFinished;
-use App\Features\CampaignActionTimestampColumnChanges;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Bus\Batch;
@@ -66,12 +65,6 @@ class ExecuteCampaignActions implements ShouldQueue
 
     public function handle(): void
     {
-        if (! CampaignActionTimestampColumnChanges::active()) {
-            // So much of the changes to the way we handle campaign actions now rely on
-            // the new column names. If this is not active, we should not run this job.
-            return;
-        }
-
         CampaignAction::query()
             ->where('execute_at', '<=', now())
             ->whereNull('execution_dispatched_at')
