@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Workflow\Providers;
 
+use AdvisingApp\Workflow\WorkflowPlugin;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
-use AdvisingApp\Workflow\WorkflowPlugin;
 
 class WorkflowServiceProvider extends ServiceProvider
 {
