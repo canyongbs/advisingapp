@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<ruleset name="Canyon GBS PHPMD rule set"
+         xmlns="http://pmd.sf.net/ruleset/1.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sf.net/ruleset/1.0.0
+                     http://pmd.sf.net/ruleset_xml_schema.xsd"
+         xsi:noNamespaceSchemaLocation="
+                     http://pmd.sf.net/ruleset_xml_schema.xsd">
+    <description>
+        The PHPMD ruleset for Canyon GBS projects.
+        This ruleset is used to enforce coding standards and best practices in PHP code to help maintain code quality and consistency across the project.
+        For more information, see the PHPMD documentation at https://phpmd.org/.
+    </description>
+
+    <rule ref="rulesets/cleancode.xml/MissingImport" />
+</ruleset>
