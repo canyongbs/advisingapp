@@ -46,7 +46,6 @@ use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Engagement\Models\UnmatchedInboundCommunication;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\UnMatchInboundCommunicationFeature;
 use App\Models\Tenant;
 use Aws\Crypto\KmsMaterialsProviderV2;
 use Aws\Kms\KmsClient;
@@ -204,14 +203,7 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
                         ->whereRelation('emailAddresses', 'address', $sender)
                         ->get();
 
-                    if (! UnMatchInboundCommunicationFeature::active()) {
-                        throw_if(
-                            $prospects->isEmpty(),
-                            new UnableToDetectAnyMatchingEducatablesFromSesS3EmailPayload($this->emailFilePath),
-                        );
-                    }
-
-                    if (UnMatchInboundCommunicationFeature::active() && $prospects->isEmpty()) {
+                    if ($prospects->isEmpty()) {
                         UnmatchedInboundCommunication::create([
                             'type' => EngagementResponseType::Email,
                             'subject' => $parser->getHeader('subject'),
