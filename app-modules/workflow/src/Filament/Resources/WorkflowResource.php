@@ -84,7 +84,6 @@ class WorkflowResource extends Resource
     {
         return [
             'index' => Pages\ListWorkflows::route('/'),
-            'create' => Pages\CreateWorkflow::route('/create'),
             'view' => Pages\ViewWorkflow::route('/{record}'),
             'edit' => Pages\EditWorkflow::route('/{record}/edit'),
         ];
