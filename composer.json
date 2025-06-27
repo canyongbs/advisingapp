@@ -122,6 +122,7 @@
         "pestphp/pest-plugin-faker": "^3.0",
         "pestphp/pest-plugin-laravel": "^3.0",
         "pestphp/pest-plugin-livewire": "^3.0",
+        "phpmd/phpmd": "^2.15",
         "phpstan/phpstan": "^2.0",
         "phpunit/phpunit": "^11.0",
         "rector/rector": "^2.0",
