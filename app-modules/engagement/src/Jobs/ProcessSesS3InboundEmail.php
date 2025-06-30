@@ -39,7 +39,6 @@ namespace AdvisingApp\Engagement\Jobs;
 use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Exceptions\SesS3InboundSpamOrVirusDetected;
-use AdvisingApp\Engagement\Exceptions\UnableToDetectAnyMatchingEducatablesFromSesS3EmailPayload;
 use AdvisingApp\Engagement\Exceptions\UnableToDetectTenantFromSesS3EmailPayload;
 use AdvisingApp\Engagement\Exceptions\UnableToRetrieveContentFromSesS3EmailPayload;
 use AdvisingApp\Engagement\Models\EngagementResponse;
@@ -245,7 +244,7 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
                 });
             });
         } catch (
-            UnableToRetrieveContentFromSesS3EmailPayload | SesS3InboundSpamOrVirusDetected | UnableToDetectTenantFromSesS3EmailPayload | UnableToDetectAnyMatchingEducatablesFromSesS3EmailPayload $e
+            UnableToRetrieveContentFromSesS3EmailPayload | SesS3InboundSpamOrVirusDetected | UnableToDetectTenantFromSesS3EmailPayload $e
         ) {
             DB::rollBack();
 
