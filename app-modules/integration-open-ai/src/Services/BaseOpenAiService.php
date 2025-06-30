@@ -43,6 +43,7 @@ use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Models\Contracts\AiFile;
 use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
 use AdvisingApp\Ai\Services\Contracts\AiService;
 use AdvisingApp\Ai\Settings\AiSettings;
@@ -286,10 +287,7 @@ abstract class BaseOpenAiService implements AiService
         $message->message_id = $newMessageResponse->id;
         $message->save();
 
-        foreach ($files as $file) {
-            $file->message()->associate($message);
-            $file->save();
-        }
+        $message->files()->saveMany($files);
 
         dispatch(new RecordTrackedEvent(
             type: TrackedEventType::AiExchange,

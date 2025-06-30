@@ -3,14 +3,18 @@
 namespace AdvisingApp\IntegrationOpenAi\Models;
 
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @mixin IdeHelperOpenAiVectorStore
+ */
 class OpenAiVectorStore extends BaseModel
 {
     use SoftDeletes;
 
-    public $filled = [
+    public $fillable = [
         'deployment_hash',
         'ready_until',
         'vector_store_id',

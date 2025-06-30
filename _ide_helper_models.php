@@ -1,39 +1,5 @@
 <?php
 
-/*
-<COPYRIGHT>
-
-    Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
-
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
-    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
-
-    Notice:
-
-    - You may not provide the software to third parties as a hosted or managed
-      service, where the service provides users with access to any substantial set of
-      the features or functionality of the software.
-    - You may not move, change, disable, or circumvent the license key functionality
-      in the software, and you may not remove or obscure any functionality in the
-      software that is protected by the license key.
-    - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
-      to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
-      vigorously.
-    - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
-    - Use of this software implies agreement to the license terms and conditions as stated
-      in the Elastic License 2.0.
-
-    For more information or inquiries please visit our website at
-    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
-
-</COPYRIGHT>
-*/
-
 // @formatter:off
 // phpcs:ignoreFile
 /**
@@ -2588,6 +2554,37 @@ namespace AdvisingApp\CaseManagement\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property bool $is_managers_case_created_email_enabled
+ * @property bool $is_managers_case_created_notification_enabled
+ * @property bool $is_managers_case_assigned_email_enabled
+ * @property bool $is_managers_case_assigned_notification_enabled
+ * @property bool $is_managers_case_closed_email_enabled
+ * @property bool $is_managers_case_closed_notification_enabled
+ * @property bool $is_auditors_case_created_email_enabled
+ * @property bool $is_auditors_case_created_notification_enabled
+ * @property bool $is_auditors_case_assigned_email_enabled
+ * @property bool $is_auditors_case_assigned_notification_enabled
+ * @property bool $is_auditors_case_closed_email_enabled
+ * @property bool $is_auditors_case_closed_notification_enabled
+ * @property bool $is_managers_case_update_email_enabled
+ * @property bool $is_managers_case_update_notification_enabled
+ * @property bool $is_managers_case_status_change_email_enabled
+ * @property bool $is_managers_case_status_change_notification_enabled
+ * @property bool $is_auditors_case_update_email_enabled
+ * @property bool $is_auditors_case_update_notification_enabled
+ * @property bool $is_auditors_case_status_change_email_enabled
+ * @property bool $is_auditors_case_status_change_notification_enabled
+ * @property bool $is_customers_case_created_email_enabled
+ * @property bool $is_customers_case_created_notification_enabled
+ * @property bool $is_customers_case_assigned_email_enabled
+ * @property bool $is_customers_case_assigned_notification_enabled
+ * @property bool $is_customers_case_update_email_enabled
+ * @property bool $is_customers_case_update_notification_enabled
+ * @property bool $is_customers_case_status_change_email_enabled
+ * @property bool $is_customers_case_status_change_notification_enabled
+ * @property bool $is_customers_case_closed_email_enabled
+ * @property bool $is_customers_case_closed_notification_enabled
+ * @property bool $is_customers_survey_response_email_enabled
  * @property-read \AdvisingApp\CaseManagement\Models\CaseTypeManager|\AdvisingApp\CaseManagement\Models\CaseTypeAuditor|null $pivot
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Team\Models\Team> $auditors
  * @property-read int|null $auditors_count
@@ -2611,6 +2608,37 @@ namespace AdvisingApp\CaseManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereHasEnabledFeedbackCollection($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereHasEnabledNps($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereIsAuditorsCaseAssignedEmailEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereIsAuditorsCaseAssignedNotificationEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereIsAuditorsCaseClosedEmailEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereIsAuditorsCaseClosedNotificationEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereIsAuditorsCaseCreatedEmailEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereIsAuditorsCaseCreatedNotificationEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereIsAuditorsCaseStatusChangeEmailEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereIsAuditorsCaseStatusChangeNotificationEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereIsAuditorsCaseUpdateEmailEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereIsAuditorsCaseUpdateNotificationEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereIsCustomersCaseAssignedEmailEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereIsCustomersCaseAssignedNotificationEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereIsCustomersCaseClosedEmailEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereIsCustomersCaseClosedNotificationEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereIsCustomersCaseCreatedEmailEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereIsCustomersCaseCreatedNotificationEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereIsCustomersCaseStatusChangeEmailEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereIsCustomersCaseStatusChangeNotificationEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereIsCustomersCaseUpdateEmailEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereIsCustomersCaseUpdateNotificationEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereIsCustomersSurveyResponseEmailEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereIsManagersCaseAssignedEmailEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereIsManagersCaseAssignedNotificationEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereIsManagersCaseClosedEmailEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereIsManagersCaseClosedNotificationEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereIsManagersCaseCreatedEmailEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereIsManagersCaseCreatedNotificationEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereIsManagersCaseStatusChangeEmailEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereIsManagersCaseStatusChangeNotificationEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereIsManagersCaseUpdateEmailEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereIsManagersCaseUpdateNotificationEnabled($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType withTrashed()
@@ -3536,6 +3564,43 @@ namespace AdvisingApp\InAppCommunication\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperTwilioConversationUser {}
+}
+
+namespace AdvisingApp\IntegrationOpenAi\Models{
+/**
+ * 
+ *
+ * @property string $id
+ * @property string $file_type
+ * @property string $file_id
+ * @property string $deployment_hash
+ * @property \Carbon\CarbonImmutable|null $ready_until
+ * @property string|null $vector_store_id
+ * @property string|null $vector_store_file_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read Model $file
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OpenAiVectorStore newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OpenAiVectorStore newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OpenAiVectorStore onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OpenAiVectorStore query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OpenAiVectorStore whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OpenAiVectorStore whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OpenAiVectorStore whereDeploymentHash($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OpenAiVectorStore whereFileId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OpenAiVectorStore whereFileType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OpenAiVectorStore whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OpenAiVectorStore whereReadyUntil($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OpenAiVectorStore whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OpenAiVectorStore whereVectorStoreFileId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OpenAiVectorStore whereVectorStoreId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OpenAiVectorStore withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OpenAiVectorStore withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperOpenAiVectorStore {}
 }
 
 namespace AdvisingApp\Interaction\Models{

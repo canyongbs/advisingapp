@@ -235,10 +235,7 @@ abstract class BaseOpenAiResponsesService implements AiService
             $message->context = $instructions;
             $message->save();
 
-            foreach ($files as $file) {
-                $file->message()->associate($message);
-                $file->save();
-            }
+            $message->files()->saveMany($files);
 
             dispatch(new RecordTrackedEvent(
                 type: TrackedEventType::AiExchange,
@@ -369,91 +366,177 @@ abstract class BaseOpenAiResponsesService implements AiService
 
     public function isFileReady(AiFile $file): bool
     {
-        $deploymentHash = md5($this->getDeployment());
-
-        $vectorStore = OpenAiVectorStore::query()
-            ->where('deployment_hash', $deploymentHash)
-            ->whereMorphedTo('file', $file)
-            ->first();
-
-        if (! $vectorStore) {
-            $vectorStore = new OpenAiVectorStore();
-            $vectorStore->file()->associate($file);
-            $vectorStore->deployment_hash = $deploymentHash;
-        }
+        $vectorStore = $this->findOrCreateVectorStoreRecordForFile($file);
 
         if ($vectorStore->ready_until?->isFuture()) {
             return true;
         }
 
-        if (filled($vectorStore->vector_store_id)) {
-            $getVectorStoreResponse = $this->vectorStoresHttpClient()
-                ->get("vector_stores/{$vectorStore->vector_store_id}");
-
-            $hasVectorStoreCompletedAllFiles = $getVectorStoreResponse->successful()
-                && ($getVectorStoreResponse->json('status') === 'completed')
-                && $getVectorStoreResponse->json('file_counts.completed')
-                && ($getVectorStoreResponse->json('file_counts.completed') === $getVectorStoreResponse->json('file_counts.total'));
-
-            $isVectorStoreProcessingFiles = $getVectorStoreResponse->successful()
-                && ($getVectorStoreResponse->json('status') === 'in_progress')
-                && $getVectorStoreResponse->json('file_counts.in_progress');
-
-            if ((! $hasVectorStoreCompletedAllFiles) && $isVectorStoreProcessingFiles) {
-                return false;
-            } elseif (
-                $hasVectorStoreCompletedAllFiles
-                && $getVectorStoreResponse->json('expires_at')
-                && (($vectorStoreExpiresAt = CarbonImmutable::createFromTimestampUTC($getVectorStoreResponse->json('expires_at')))->diffInHours() < -2)
-            ) {
-                $vectorStore->ready_until = $vectorStoreExpiresAt->subHour();
-
-                if (filled($vectorStore->vector_store_file_id)) {
-                    $deleteFileResponse = $this->filesHttpClient()
-                        ->delete("files/{$vectorStore->vector_store_file_id}");
-
-                    if ($deleteFileResponse->successful()) {
-                        $vectorStore->vector_store_file_id = null;
-                    } else {
-                        report(new Exception('Failed to delete file [' . $vectorStore->vector_store_file_id . '] associated with vector store [' . $vectorStore->vector_store_id . '] for file [' . $file->getKey() . '], as a [' . $deleteFileResponse->status() . '] response was returned: [' . $deleteFileResponse->body() . '].'));
-                    }
-                }
-
-                $vectorStore->save();
-
-                return true;
-            }
-
-            $vectorStore->vector_store_id = null;
+        if (($isFileReady = $this->isFileReadyInExistingVectorStore($file, $vectorStore)) !== null) {
+            return $isFileReady;
         }
 
-        if (filled($vectorStore->vector_store_file_id)) {
-            $getFileResponse = $this->filesHttpClient()
-                ->get("files/{$vectorStore->vector_store_file_id}");
+        $this->resetMissingVectorStoreFileId($vectorStore);
 
-            if (! $getFileResponse->successful()) {
-                $vectorStore->vector_store_file_id = null;
-            }
+        if (($isFileReady = $this->uploadNewFileForVectorStore($file, $vectorStore)) !== null) {
+            return $isFileReady;
         }
 
+        $this->createVectorStoreForFile($file, $vectorStore);
+
+        return false;
+    }
+
+    /**
+     * @param array<AiFile> $files
+     *
+     * @return array<string>
+     */
+    public function getReadyVectorStoreIds(array $files): array
+    {
+        if (blank($files)) {
+            return [];
+        }
+
+        $deploymentHash = md5($this->getDeployment());
+
+        return OpenAiVectorStore::query()
+            ->where('deployment_hash', $deploymentHash)
+            ->whereMorphedTo('file', $files) /** @phpstan-ignore argument.type */
+            ->whereNotNull('ready_until')
+            ->where('ready_until', '>=', now())
+            ->pluck('vector_store_id')
+            ->all();
+    }
+
+    public function hasReasoning(): bool
+    {
+        return false;
+    }
+
+    public function hasTemperature(): bool
+    {
+        return true;
+    }
+
+    protected function findOrCreateVectorStoreRecordForFile(AiFile $file): OpenAiVectorStore
+    {
+        $deploymentHash = md5($this->getDeployment());
+
+        $vectorStore = OpenAiVectorStore::query()
+            ->where('deployment_hash', $deploymentHash)
+            ->whereMorphedTo('file', $file) /** @phpstan-ignore argument.type */
+            ->first();
+
+        if ($vectorStore) {
+            return $vectorStore;
+        }
+
+        $vectorStore = new OpenAiVectorStore();
+        $vectorStore->file()->associate($file); /** @phpstan-ignore argument.type */
+        $vectorStore->deployment_hash = $deploymentHash;
+
+        return $vectorStore;
+    }
+
+    protected function deleteExistingVectorStoreFile(AiFile $file, OpenAiVectorStore $vectorStore): void
+    {
         if (blank($vectorStore->vector_store_file_id)) {
-            $createFileResponse = $this->filesHttpClient()
-                ->attach('file', $file->getParsingResults(), "{$file->getName()}.md", ['Content-Type' => 'text/markdown'])
-                ->post('files', [
-                    'purpose' => 'assistants',
-                ]);
-
-            if ((! $createFileResponse->successful()) || blank($createFileResponse->json('id'))) {
-                report(new Exception('Failed to create file [' . $file->getKey() . '] for vector store, as a [' . $createFileResponse->status() . '] response was returned: [' . $createFileResponse->body() . '].'));
-
-                $vectorStore->save();
-
-                return false;
-            }
-
-            $vectorStore->vector_store_file_id = $createFileResponse->json('id');
+            return;
         }
 
+        $deleteFileResponse = $this->filesHttpClient()
+            ->delete("files/{$vectorStore->vector_store_file_id}");
+
+        if (! $deleteFileResponse->successful()) {
+            report(new Exception('Failed to delete file [' . $vectorStore->vector_store_file_id . '] associated with vector store [' . $vectorStore->vector_store_id . '] for file [' . $file->getKey() . '], as a [' . $deleteFileResponse->status() . '] response was returned: [' . $deleteFileResponse->body() . '].'));
+
+            return;
+        }
+
+        $vectorStore->vector_store_file_id = null;
+    }
+
+    protected function isFileReadyInExistingVectorStore(AiFile $file, OpenAiVectorStore $vectorStore): ?bool
+    {
+        if (blank($vectorStore->vector_store_id)) {
+            return null;
+        }
+
+        $getVectorStoreResponse = $this->vectorStoresHttpClient()
+            ->get("vector_stores/{$vectorStore->vector_store_id}");
+
+        $hasVectorStoreCompletedAllFiles = $getVectorStoreResponse->successful()
+            && ($getVectorStoreResponse->json('status') === 'completed')
+            && $getVectorStoreResponse->json('file_counts.completed')
+            && ($getVectorStoreResponse->json('file_counts.completed') === $getVectorStoreResponse->json('file_counts.total'));
+
+        $isVectorStoreProcessingFiles = $getVectorStoreResponse->successful()
+            && ($getVectorStoreResponse->json('status') === 'in_progress')
+            && $getVectorStoreResponse->json('file_counts.in_progress');
+
+        if ((! $hasVectorStoreCompletedAllFiles) && $isVectorStoreProcessingFiles) {
+            return false;
+        } elseif (
+            $hasVectorStoreCompletedAllFiles
+            && $getVectorStoreResponse->json('expires_at')
+            && (($vectorStoreExpiresAt = CarbonImmutable::createFromTimestampUTC($getVectorStoreResponse->json('expires_at')))->diffInHours() < -2)
+        ) {
+            $vectorStore->ready_until = $vectorStoreExpiresAt->subHour();
+            $this->deleteExistingVectorStoreFile($file, $vectorStore);
+            $vectorStore->save();
+
+            return true;
+        }
+
+        $vectorStore->vector_store_id = null;
+
+        return null;
+    }
+
+    protected function uploadNewFileForVectorStore(AiFile $file, OpenAiVectorStore $vectorStore): ?bool
+    {
+        if (filled($vectorStore->vector_store_file_id)) {
+            return null;
+        }
+
+        $createFileResponse = $this->filesHttpClient()
+            ->attach('file', $file->getParsingResults(), "{$file->getName()}.md", ['Content-Type' => 'text/markdown'])
+            ->post('files', [
+                'purpose' => 'assistants',
+            ]);
+
+        if ((! $createFileResponse->successful()) || blank($createFileResponse->json('id'))) {
+            report(new Exception('Failed to create file [' . $file->getKey() . '] for vector store, as a [' . $createFileResponse->status() . '] response was returned: [' . $createFileResponse->body() . '].'));
+
+            $vectorStore->save();
+
+            return false;
+        }
+
+        $vectorStore->vector_store_file_id = $createFileResponse->json('id');
+
+        return null;
+    }
+
+    protected function resetMissingVectorStoreFileId(OpenAiVectorStore $vectorStore): void
+    {
+        if (blank($vectorStore->vector_store_file_id)) {
+            return;
+        }
+
+        $getFileResponse = $this->filesHttpClient()
+            ->get("files/{$vectorStore->vector_store_file_id}");
+
+        if ($getFileResponse->successful()) {
+            return;
+        }
+
+        $vectorStore->vector_store_file_id = null;
+    }
+
+    protected function createVectorStoreForFile(AiFile $file, OpenAiVectorStore $vectorStore): void
+    {
         $createVectorStoreResponse = $this->vectorStoresHttpClient()
             ->acceptJson()
             ->asJson()
@@ -471,43 +554,11 @@ abstract class BaseOpenAiResponsesService implements AiService
 
             $vectorStore->save();
 
-            return false;
+            return;
         }
 
         $vectorStore->vector_store_id = $createVectorStoreResponse->json('id');
         $vectorStore->save();
-
-        return false;
-    }
-
-    /**
-     * @var array<AiFile> $files
-     */
-    public function getReadyVectorStoreIds(array $files): array
-    {
-        if (blank($files)) {
-            return [];
-        }
-
-        $deploymentHash = md5($this->getDeployment());
-
-        return OpenAiVectorStore::query()
-            ->where('deployment_hash', $deploymentHash)
-            ->whereMorphedTo('file', $files)
-            ->whereNotNull('ready_until')
-            ->where('ready_until', '>=', now())
-            ->pluck('vector_store_id')
-            ->all();
-    }
-
-    public function hasReasoning(): bool
-    {
-        return false;
-    }
-
-    public function hasTemperature(): bool
-    {
-        return true;
     }
 
     protected function vectorStoresHttpClient(): PendingRequest
