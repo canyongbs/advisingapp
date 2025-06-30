@@ -40,6 +40,12 @@ use Spatie\LaravelData\Data;
 
 class TwilioApiKey extends Data
 {
+    /**
+     * Suppress PHPMD warning for CamelCase property names. As changing this now would require a database change.
+     *
+     * @SuppressWarnings(PHPMD.CamelCasePropertyName)
+     * @SuppressWarnings(PHPMD.CamelCaseParameterName)
+     */
     public function __construct(
         public string $api_sid,
         public string $secret,
