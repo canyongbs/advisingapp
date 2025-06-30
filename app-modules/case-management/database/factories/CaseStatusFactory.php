@@ -66,7 +66,7 @@ class CaseStatusFactory extends Factory
         });
     }
 
-    public function in_progress(): Factory
+    public function inProgress(): Factory
     {
         return $this->state(function (array $attributes) {
             return [
