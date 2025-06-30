@@ -62,7 +62,7 @@ class HealthServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $local = app()->isLocal() && str(config('app.url'))->contains(['localhost', '.local']);
-        $parsed_url = parse_url(config('app.url'));
+        $parsedUrl = parse_url(config('app.url'));
 
         Health::checks([
             CacheCheck::new(),
@@ -78,7 +78,7 @@ class HealthServiceProvider extends ServiceProvider
                 ->unless($local || app()->environment('staging')),
             // cloudflare dns
             PingCheck::new()
-                ->url($parsed_url['host'])
+                ->url($parsedUrl['host'])
                 ->timeout(2),
             QueueCheck::new(),
             RedisCheck::new(),
