@@ -12,11 +12,6 @@
         For more information, see the PHPMD documentation at https://phpmd.org/.
     </description>
 
-    <!-- <rule ref="rulesets/cleancode.xml/ElseExpression" /> -->
-    <!-- <rule ref="rulesets/cleancode.xml/IfStatementAssignment" /> -->
-    <!-- <rule ref="rulesets/codesize.xml/CyclomaticComplexity" /> -->
-    <!-- <rule ref="rulesets/codesize.xml/NPathComplexity" /> -->
-
     <rule ref="rulesets/controversial.xml/CamelCaseClassName" />
 
     <rule
@@ -56,7 +51,7 @@
 
     <rule ref="rulesets/naming.xml/ShortMethodName">
         <properties>
-            <property name="exceptions" value="up,to" />
+            <property name="minimum" value="2" />
         </properties>
     </rule>
 
