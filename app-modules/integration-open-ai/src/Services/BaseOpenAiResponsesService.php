@@ -398,10 +398,8 @@ abstract class BaseOpenAiResponsesService implements AiService
             return [];
         }
 
-        $deploymentHash = md5($this->getDeployment());
-
         return OpenAiVectorStore::query()
-            ->where('deployment_hash', $deploymentHash)
+            ->where('deployment_hash', $this->getDeploymentHash())
             ->whereMorphedTo('file', $files) /** @phpstan-ignore argument.type */
             ->whereNotNull('ready_until')
             ->where('ready_until', '>=', now())
@@ -419,9 +417,14 @@ abstract class BaseOpenAiResponsesService implements AiService
         return true;
     }
 
+    public function getDeploymentHash(): string
+    {
+        return md5($this->getDeployment());
+    }
+
     protected function findOrCreateVectorStoreRecordForFile(AiFile $file): OpenAiVectorStore
     {
-        $deploymentHash = md5($this->getDeployment());
+        $deploymentHash = $this->getDeploymentHash();
 
         $vectorStore = OpenAiVectorStore::query()
             ->where('deployment_hash', $deploymentHash)
@@ -480,9 +483,9 @@ abstract class BaseOpenAiResponsesService implements AiService
         } elseif (
             $hasVectorStoreCompletedAllFiles
             && $getVectorStoreResponse->json('expires_at')
-            && (($vectorStoreExpiresAt = CarbonImmutable::createFromTimestampUTC($getVectorStoreResponse->json('expires_at')))->diffInHours() < -2)
+            && (($vectorStoreExpiresAt = CarbonImmutable::createFromTimestampUTC($getVectorStoreResponse->json('expires_at')))->diffInHours() < -3)
         ) {
-            $vectorStore->ready_until = $vectorStoreExpiresAt->subHour();
+            $vectorStore->ready_until = $vectorStoreExpiresAt->subHours(2);
             $this->deleteExistingVectorStoreFile($file, $vectorStore);
             $vectorStore->save();
 

@@ -138,6 +138,14 @@ enum AiModel: string implements HasLabel
         return array_map(AiModelApplicabilityFeature::parse(...), $features);
     }
 
+    public function hasService(): bool
+    {
+        return match ($this) {
+            self::JinaDeepSearchV1, self::LlamaParse => false,
+            default => true,
+        };
+    }
+
     /**
      * @return class-string<AiService>
      */

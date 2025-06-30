@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Jobs;
+namespace AdvisingApp\IntegrationOpenAi\Jobs;
 
 use AdvisingApp\Ai\Models\AiAssistantFile;
-use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiResponsesService;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -45,10 +45,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Http;
 use Spatie\Multitenancy\Jobs\TenantAware;
 
-class FetchAiAssistantFileParsingResults implements ShouldQueue, TenantAware, ShouldBeUnique
+class UploadAssistantFileToVectorStore implements ShouldQueue, TenantAware, ShouldBeUnique
 {
     use Batchable;
     use Dispatchable;
@@ -62,19 +61,18 @@ class FetchAiAssistantFileParsingResults implements ShouldQueue, TenantAware, Sh
 
     public function handle(): void
     {
-        if (filled($this->file->parsing_results)) {
+        $service = $this->file->assistant->model->getService();
+
+        if (! ($service instanceof BaseOpenAiResponsesService)) {
             return;
         }
 
-        $response = Http::withToken(app(AiIntegrationsSettings::class)->llamaparse_api_key)
-            ->get("https://api.cloud.llamaindex.ai/api/v1/parsing/job/{$this->file->file_id}/result/text");
-
-        if ((! $response->successful()) || blank($response->json('text'))) {
+        if ($service->isFileReady($this->file)) {
             return;
         }
 
-        $this->file->parsing_results = $response->json('text');
-        $this->file->save();
+        dispatch(new static($this->file))
+            ->delay(now()->addMinutes(5));
     }
 
     public function uniqueId(): string

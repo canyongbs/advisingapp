@@ -41,6 +41,7 @@ use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Filesystem\AwsS3V3Adapter;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
@@ -118,6 +119,21 @@ trait CanUploadFiles
     public function isProcessingFiles(): bool
     {
         foreach ($this->getFiles() as $file) {
+            if (! $this->isFileReady($file)) {
+                return true;
+            }
+        }
+
+        $previousThreadMessageFiles = AiMessageFile::query()
+            ->whereNotNull('parsing_results')
+            ->whereHas(
+                'message',
+                fn (Builder $query) => $query->whereBelongsTo($this->thread, 'thread'),
+            )
+            ->get()
+            ->all();
+
+        foreach ($previousThreadMessageFiles as $file) {
             if (! $this->isFileReady($file)) {
                 return true;
             }

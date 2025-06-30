@@ -38,10 +38,12 @@ namespace AdvisingApp\Ai\Models;
 
 use AdvisingApp\Ai\Events\AiMessageFileForceDeleting;
 use AdvisingApp\Ai\Models\Contracts\AiFile;
+use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
 use App\Models\BaseModel;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -117,5 +119,13 @@ class AiMessageFile extends BaseModel implements AiFile, HasMedia
     public function getParsingResults(): ?string
     {
         return $this->parsing_results;
+    }
+
+    /**
+     * @return MorphOne<OpenAiVectorStore, $this>
+     */
+    public function openAiVectorStore(): MorphOne
+    {
+        return $this->morphOne(OpenAiVectorStore::class, 'file');
     }
 }

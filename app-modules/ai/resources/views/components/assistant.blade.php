@@ -671,7 +671,6 @@
                                             @if (!$this->isFileReady($file))
                                                 <x-filament::loading-indicator
                                                     class="h-4 w-4 shrink-0"
-                                                    wire:poll.5s="isFileReady('{{ $file->getKey() }}')"
                                                     wire:loading.remove
                                                     wire:target="removeUploadedFile('{{ $file->getKey() }}')"
                                                 />
@@ -715,6 +714,7 @@
                                     @if ($this->isProcessingFiles)
                                         <x-filament::button
                                             class="w-full sm:w-auto"
+                                            wire:poll.5s
                                             disabled
                                         >
                                             Processing files, please wait...

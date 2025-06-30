@@ -144,6 +144,12 @@ class Kernel extends ConsoleKernel
                         ->monitorName("Delete Unsaved AI Threads | Tenant {$tenant->domain}")
                         ->withoutOverlapping(720);
 
+                    $schedule->command("integration-open-ai:upload-assistant-files-to-vector-stores --tenant={$tenant->id}")
+                        ->everyFifteenMinutes()
+                        ->name("Upload AI Assistant Files To Open AI Vector Stores | Tenant {$tenant->domain}")
+                        ->monitorName("Upload AI Assistant Files To Open AI Vector Stores | Tenant {$tenant->domain}")
+                        ->withoutOverlapping(60);
+
                     $modelsToPrune = collect([
                         AiMessageFile::class,
                         AiMessage::class,
