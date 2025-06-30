@@ -548,7 +548,7 @@ abstract class BaseOpenAiResponsesService implements AiService
                 'file_ids' => [$vectorStore->vector_store_file_id],
                 'expires_after' => [
                     'anchor' => 'last_active_at',
-                    'days' => 30,
+                    'days' => $file instanceof AiMessageFile ? 7 : 28,
                 ],
             ]);
 

@@ -78,7 +78,10 @@ trait CanUploadFiles
             return $this->cachedIsFileReadyCache[$key];
         }
 
-        if (! in_array($key, $this->files)) {
+        if (
+            (! in_array($key, $this->files))
+            && ($file->message?->thread?->getKey() !== $this->thread?->getKey())
+        ) {
             return $this->cachedIsFileReadyCache[$key] = false;
         }
 
