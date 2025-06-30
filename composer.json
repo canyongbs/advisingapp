@@ -205,7 +205,7 @@
         ],
         "lint": [
             "./vendor/bin/phpstan analyse --memory-limit=2G",
-            "./vendor/bin/phpmd app/,app-modules/,database/,tests/,routes/ ansi phpmd.ruleset.xml"
+            "./vendor/bin/phpmd app/,app-modules/,database/,tests/,routes/ ansi phpmd.ruleset.xml --cache"
         ],
         "checks": [
             "@format-dryrun",
