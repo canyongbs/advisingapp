@@ -42,7 +42,6 @@ use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Jobs\ReInitializeAiModel;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use App\Features\AiReasoningEffort;
-use App\Features\AiResponsesApi;
 use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -110,8 +109,7 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
                                 Checkbox::make('is_open_ai_gpt_4o_responses_api_enabled')
                                     ->label('Enable Responses API')
-                                    ->helperText('Use the OpenAI Responses API for generating text. The Base URI must use /openai/v1 instead of /openai.')
-                                    ->visible(AiResponsesApi::active()),
+                                    ->helperText('Use the OpenAI Responses API for generating text. The Base URI must use /openai/v1 instead of /openai.'),
                             ]),
                         Section::make('GPT 4o mini')
                             ->collapsible()
@@ -139,8 +137,7 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
                                 Checkbox::make('is_open_ai_gpt_4o_mini_responses_api_enabled')
                                     ->label('Enable Responses API')
-                                    ->helperText('Use the OpenAI Responses API for generating text. The Base URI must use /openai/v1 instead of /openai.')
-                                    ->visible(AiResponsesApi::active()),
+                                    ->helperText('Use the OpenAI Responses API for generating text. The Base URI must use /openai/v1 instead of /openai.'),
                             ]),
                         Section::make('GPT o1 mini')
                             ->collapsible()
@@ -244,8 +241,7 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
                                 Checkbox::make('is_open_ai_gpt_41_mini_responses_api_enabled')
                                     ->label('Enable Responses API')
-                                    ->helperText('Use the OpenAI Responses API for generating text. The Base URI must use /openai/v1 instead of /openai.')
-                                    ->visible(AiResponsesApi::active()),
+                                    ->helperText('Use the OpenAI Responses API for generating text. The Base URI must use /openai/v1 instead of /openai.'),
                             ]),
                         Section::make('GPT 4.1 nano')
                             ->collapsible()
@@ -273,8 +269,7 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
                                 Checkbox::make('is_open_ai_gpt_41_nano_responses_api_enabled')
                                     ->label('Enable Responses API')
-                                    ->helperText('Use the OpenAI Responses API for generating text. The Base URI must use /openai/v1 instead of /openai.')
-                                    ->visible(AiResponsesApi::active()),
+                                    ->helperText('Use the OpenAI Responses API for generating text. The Base URI must use /openai/v1 instead of /openai.'),
                             ]),
                         Section::make('GPT o4 mini')
                             ->collapsible()
@@ -302,8 +297,7 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
                                 Checkbox::make('is_open_ai_gpt_o4_mini_responses_api_enabled')
                                     ->label('Enable Responses API')
-                                    ->helperText('Use the OpenAI Responses API for generating text. The Base URI must use /openai/v1 instead of /openai.')
-                                    ->visible(AiResponsesApi::active()),
+                                    ->helperText('Use the OpenAI Responses API for generating text. The Base URI must use /openai/v1 instead of /openai.'),
                             ]),
                     ]),
                 Section::make('Jina AI')
