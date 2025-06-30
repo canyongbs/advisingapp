@@ -247,11 +247,11 @@ trait UploadsFiles
         $apiKey = $this->getApiKey();
         $apiVersion = $this->getApiVersion();
 
-        $ch = curl_init();
+        $curl = curl_init();
 
-        curl_setopt($ch, CURLOPT_URL, $this->getDeployment() . '/files?api-version=' . $apiVersion);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_URL, $this->getDeployment() . '/files?api-version=' . $apiVersion);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_POST, true);
 
         $cfile = new CURLFile($file->getTemporaryUrl(), $file->getMimeType(), $file->getName());
 
@@ -260,7 +260,7 @@ trait UploadsFiles
             'file' => $cfile,
         ];
 
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $postFields);
 
         $headers = [
             'api-key: ' . $apiKey,
@@ -269,14 +269,14 @@ trait UploadsFiles
             'Content-Type: multipart/form-data',
         ];
 
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 
-        $response = curl_exec($ch);
+        $response = curl_exec($curl);
         $response = json_decode($response, true);
 
-        if (curl_errno($ch) || ! isset($response['id'])) {
-            if (! blank(curl_error($ch))) {
-                throw new FileUploadException(curl_error($ch));
+        if (curl_errno($curl) || ! isset($response['id'])) {
+            if (! blank(curl_error($curl))) {
+                throw new FileUploadException(curl_error($curl));
             }
 
             throw new FileUploadException();
@@ -301,7 +301,7 @@ trait UploadsFiles
             throw new FileUploadException('The uploaded file could not be processed. Please try again, or upload a different file.');
         }
 
-        curl_close($ch);
+        curl_close($curl);
 
         return $response['id'];
     }
