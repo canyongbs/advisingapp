@@ -181,7 +181,7 @@ test('Create QnA Advisor validates the inputs', function ($data, $errors) {
             ['model' => 'required'],
         ],
         'model must be correct enum' => [
-            QnaAdvisorRequestFactory::new()->state(['model' => AiModel::OpenAiGpt4]),
+            QnaAdvisorRequestFactory::new()->state(['model' => AiModel::OpenAiGpt4o]),
             ['model' => Enum::class],
         ],
     ]
