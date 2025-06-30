@@ -71,7 +71,7 @@ class UploadAssistantFileToVectorStore implements ShouldQueue, TenantAware, Shou
             return;
         }
 
-        dispatch(new static($this->file))
+        dispatch(new self($this->file))
             ->delay(now()->addMinutes(5));
     }
 
