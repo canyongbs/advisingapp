@@ -52,8 +52,6 @@ class CreateStudentCareTeamRole extends CreateRecord
 
     public string $name;
 
-    public bool $is_default;
-
     public CareTeamRoleType $type;
 
     public function form(Form $form): Form
