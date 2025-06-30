@@ -43,7 +43,6 @@ use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Engagement\Models\UnmatchedInboundCommunication;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\UnMatchInboundCommunicationFeature;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 
@@ -56,9 +55,6 @@ class UnmatchedInboundCommunicationsJob implements ShouldQueue
      */
     public function handle(): void
     {
-        if (! UnMatchInboundCommunicationFeature::active()) {
-            return;
-        }
         UnmatchedInboundCommunication::query()
             ->chunkById(100, function ($communications) {
                 foreach ($communications as $communication) {
