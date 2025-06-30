@@ -452,7 +452,7 @@ class ManageAiIntegrationsSettings extends SettingsPage
                 Action::make('justSave')
                     ->label('Just save the settings')
                     ->color('gray')
-                    ->action(fn() => $this->save())
+                    ->action(fn () => $this->save())
                     ->cancelParentActions(),
             ])
             ->action(function (AiIntegrationsSettings $originalSettings, ResetAiServiceIdsForModel $resetAiServiceIds) {
