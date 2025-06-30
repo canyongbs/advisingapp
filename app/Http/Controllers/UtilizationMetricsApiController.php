@@ -57,7 +57,6 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Survey\Models\Survey;
 use AdvisingApp\Survey\Models\SurveySubmission;
 use AdvisingApp\Task\Models\Task;
-use App\Features\CampaignActionTimestampColumnChanges;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Exception;
@@ -94,11 +93,7 @@ class UtilizationMetricsApiController extends Controller
                     'student_records' => Student::count(),
                     'prospect_records' => Prospect::count(),
                     'campaigns' => Campaign::count(),
-                    'journey_steps_executed' => CampaignAction::whereNotNull(
-                        CampaignActionTimestampColumnChanges::active()
-                            ? 'execution_finished_at'
-                            : 'successfully_executed_at'
-                    )->count(),
+                    'journey_steps_executed' => CampaignAction::whereNotNull('execution_finished_at')->count(),
                     'tasks' => Task::count(),
                     'alerts' => Alert::count(),
                     'segments' => Segment::count(),

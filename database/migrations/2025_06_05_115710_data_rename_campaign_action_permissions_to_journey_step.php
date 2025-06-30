@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\JourneyStepPermissionRename;
 use CanyonGBS\Common\Database\Migrations\Concerns\CanModifyPermissions;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
@@ -73,8 +72,6 @@ return new class () extends Migration {
             $this->renamePermissionGroups([
                 'Campaign Action' => 'Journey Step',
             ]);
-
-            JourneyStepPermissionRename::activate();
         });
     }
 
@@ -88,8 +85,6 @@ return new class () extends Migration {
             $this->renamePermissionGroups([
                 'Journey Step' => 'Campaign Action',
             ]);
-
-            JourneyStepPermissionRename::deactivate();
         });
     }
 };

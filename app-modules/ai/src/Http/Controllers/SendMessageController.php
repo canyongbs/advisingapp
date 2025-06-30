@@ -43,7 +43,6 @@ use AdvisingApp\Ai\Http\Requests\SendMessageRequest;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\Prompt;
-use App\Features\LlamaParse;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
@@ -57,7 +56,7 @@ class SendMessageController
                 app(SendMessage::class)(
                     $thread,
                     $request->validated('prompt_id') ? Prompt::find($request->validated('prompt_id')) : $request->validated('content'),
-                    LlamaParse::active() ? AiMessageFile::query()->whereKey($request->validated('files'))->whereNotNull('parsing_results')->get()->all() : [],
+                    AiMessageFile::query()->whereKey($request->validated('files'))->whereNotNull('parsing_results')->get()->all(),
                 ),
                 headers: [
                     'Content-Type' => 'text/html; charset=utf-8;',

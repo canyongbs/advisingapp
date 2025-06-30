@@ -38,7 +38,6 @@ namespace AdvisingApp\Campaign\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Campaign\Enums\CampaignActionType;
-use App\Features\CampaignActionTimestampColumnChanges;
 use App\Models\BaseModel;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -62,8 +61,6 @@ class CampaignAction extends BaseModel implements Auditable, HasMedia
         'type',
         'data',
         'execute_at',
-        'last_execution_attempt_at', // TODO: CampaignActionTimestampColumnChanges, remove when removing this Feature Flag
-        'successfully_executed_at', // TODO: CampaignActionTimestampColumnChanges, remove when removing this Feature Flag
         'cancelled_at',
         'execution_dispatched_at',
         'execution_finished_at',
@@ -101,10 +98,6 @@ class CampaignAction extends BaseModel implements Auditable, HasMedia
 
     public function hasBeenExecuted(): bool
     {
-        return ! is_null(
-            CampaignActionTimestampColumnChanges::active()
-                ? $this->execution_finished_at
-                : $this->successfully_executed_at // @phpstan-ignore-line property.notFound
-        );
+        return ! is_null($this->execution_finished_at);
     }
 }
