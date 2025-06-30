@@ -55,6 +55,9 @@ class CaseStatusFactory extends Factory
         ];
     }
 
+    /**
+     * @return Factory<CaseStatus>
+     */
     public function open(): Factory
     {
         return $this->state(function (array $attributes) {
@@ -66,6 +69,9 @@ class CaseStatusFactory extends Factory
         });
     }
 
+    /**
+     * @return Factory<CaseStatus>
+     */
     public function inProgress(): Factory
     {
         return $this->state(function (array $attributes) {
@@ -77,6 +83,9 @@ class CaseStatusFactory extends Factory
         });
     }
 
+    /**
+     * @return Factory<CaseStatus>
+     */
     public function closed(): Factory
     {
         return $this->state(function (array $attributes) {
