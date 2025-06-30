@@ -40,8 +40,6 @@
 
     <rule ref="rulesets/controversial.xml/CamelCaseVariableName" />
 
-    <rule ref="rulesets/design.xml/EmptyCatchBlock" />
-
     <!-- Does have a known issue of not detecting too short of variables in closures that are direct arguments https://github.com/phpmd/phpmd/issues/1239 -->
     <rule ref="rulesets/naming.xml/ShortVariable">
         <properties>
