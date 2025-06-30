@@ -296,7 +296,7 @@ jobs:
         run: ./vendor/bin/phpstan analyse --configuration phpstan-ci.neon --no-progress
 
       - name: Run PHP Mess Detector
-        run: ./vendor/bin/phpmd app/,app-modules/,database/,tests/,routes/ github phpmd.ruleset.xml
+        run: ./vendor/bin/phpmd app/,app-modules/,database/,tests/,routes/ github phpmd.ruleset.xml --cache
 
       - name: "Save result cache"
         uses: actions/cache/save@v4
