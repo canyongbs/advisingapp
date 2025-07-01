@@ -83,56 +83,6 @@ class ManageAiIntegrationsSettings extends SettingsPage
                 Section::make('Azure OpenAI')
                     ->collapsible()
                     ->schema([
-                        Section::make('GPT 3.5')
-                            ->collapsible()
-                            ->schema([
-                                TextInput::make('open_ai_gpt_35_model_name')
-                                    ->label('Model Name')
-                                    ->placeholder('Canyon 3.5')
-                                    ->string()
-                                    ->maxLength(255)
-                                    ->nullable(),
-                                TextInput::make('open_ai_gpt_35_base_uri')
-                                    ->label('Base URI')
-                                    ->placeholder('https://example.openai.azure.com/openai')
-                                    ->url(),
-                                TextInput::make('open_ai_gpt_35_api_key')
-                                    ->label('API Key')
-                                    ->password()
-                                    ->autocomplete(false),
-                                TextInput::make('open_ai_gpt_35_model')
-                                    ->label('Model'),
-                                Select::make('open_ai_gpt_35_applicable_features')
-                                    ->label('Applicability')
-                                    ->options(AiModelApplicabilityFeature::class)
-                                    ->multiple()
-                                    ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
-                            ]),
-                        Section::make('GPT 4')
-                            ->collapsible()
-                            ->schema([
-                                TextInput::make('open_ai_gpt_4_model_name')
-                                    ->label('Model Name')
-                                    ->placeholder('Canyon 4')
-                                    ->string()
-                                    ->maxLength(255)
-                                    ->nullable(),
-                                TextInput::make('open_ai_gpt_4_base_uri')
-                                    ->label('Base URI')
-                                    ->placeholder('https://example.openai.azure.com/openai')
-                                    ->url(),
-                                TextInput::make('open_ai_gpt_4_api_key')
-                                    ->label('API Key')
-                                    ->password()
-                                    ->autocomplete(false),
-                                TextInput::make('open_ai_gpt_4_model')
-                                    ->label('Model'),
-                                Select::make('open_ai_gpt_4_applicable_features')
-                                    ->label('Applicability')
-                                    ->options(AiModelApplicabilityFeature::class)
-                                    ->multiple()
-                                    ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
-                            ]),
                         Section::make('GPT 4o')
                             ->collapsible()
                             ->schema([
@@ -406,14 +356,6 @@ class ManageAiIntegrationsSettings extends SettingsPage
             ->modalHidden(function (AiIntegrationsSettings $originalSettings) {
                 $newSettings = $this->form->getRawState();
 
-                if ($originalSettings->open_ai_gpt_35_base_uri !== $newSettings['open_ai_gpt_35_base_uri']) {
-                    return false;
-                }
-
-                if ($originalSettings->open_ai_gpt_4_base_uri !== $newSettings['open_ai_gpt_4_base_uri']) {
-                    return false;
-                }
-
                 if ($originalSettings->open_ai_gpt_4o_base_uri !== $newSettings['open_ai_gpt_4o_base_uri']) {
                     return false;
                 }
@@ -459,8 +401,6 @@ class ManageAiIntegrationsSettings extends SettingsPage
                 $newSettings = $this->form->getState();
 
                 $changedModels = [
-                    ...(($originalSettings->open_ai_gpt_35_base_uri !== $newSettings['open_ai_gpt_35_base_uri']) ? [AiModel::OpenAiGpt35] : []),
-                    ...(($originalSettings->open_ai_gpt_4_base_uri !== $newSettings['open_ai_gpt_4_base_uri']) ? [AiModel::OpenAiGpt4] : []),
                     ...(($originalSettings->open_ai_gpt_4o_base_uri !== $newSettings['open_ai_gpt_4o_base_uri']) ? [AiModel::OpenAiGpt4o] : []),
                     ...(($originalSettings->open_ai_gpt_4o_mini_base_uri !== $newSettings['open_ai_gpt_4o_mini_base_uri']) ? [AiModel::OpenAiGpt4o] : []),
                     ...(($originalSettings->open_ai_gpt_o1_mini_base_uri !== $newSettings['open_ai_gpt_o1_mini_base_uri']) ? [AiModel::OpenAiGptO1Mini] : []),

@@ -34,42 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
-use OpenAI;
-
-class OpenAiGpt4Service extends BaseOpenAiService
-{
-    public function __construct(
-        protected AiIntegrationsSettings $settings,
-    ) {
-        $this->client = OpenAI::factory()
-            ->withBaseUri($this->getDeployment())
-            ->withHttpHeader('api-key', $this->settings->open_ai_gpt_4_api_key ?? config('integration-open-ai.gpt_4_api_key'))
-            ->withQueryParam('api-version', $this->getApiVersion())
-            ->withHttpHeader('OpenAI-Beta', 'assistants=v2')
-            ->withHttpHeader('Accept', '*/*')
-            ->make();
-    }
-
-    public function getApiKey(): string
+return new class () extends SettingsMigration {
+    public function up(): void
     {
-        return $this->settings->open_ai_gpt_4_api_key ?? config('integration-open-ai.gpt_4_api_key');
+        $this->migrator->deleteIfExists('ai.open_ai_gpt_35_base_uri');
+        $this->migrator->deleteIfExists('ai.open_ai_gpt_35_api_key');
+        $this->migrator->deleteIfExists('ai.open_ai_gpt_35_model');
+        $this->migrator->deleteIfExists('ai.open_ai_gpt_35_model_name');
+        $this->migrator->deleteIfExists('ai.open_ai_gpt_35_applicable_features');
+
+        $this->migrator->deleteIfExists('ai.open_ai_gpt_4_base_uri');
+        $this->migrator->deleteIfExists('ai.open_ai_gpt_4_api_key');
+        $this->migrator->deleteIfExists('ai.open_ai_gpt_4_model');
+        $this->migrator->deleteIfExists('ai.open_ai_gpt_4_model_name');
+        $this->migrator->deleteIfExists('ai.open_ai_gpt_4_applicable_features');
     }
 
-    public function getApiVersion(): string
+    public function down(): void
     {
-        return '2024-05-01-preview';
-    }
+        $this->migrator->add('ai.open_ai_gpt_35_base_uri');
+        $this->migrator->add('ai.open_ai_gpt_35_api_key');
+        $this->migrator->add('ai.open_ai_gpt_35_model');
+        $this->migrator->add('ai.open_ai_gpt_35_model_name');
+        $this->migrator->add('ai.open_ai_gpt_35_applicable_features', []);
 
-    public function getModel(): string
-    {
-        return $this->settings->open_ai_gpt_4_model ?? config('integration-open-ai.gpt_4_model');
+        $this->migrator->add('ai.open_ai_gpt_4_base_uri');
+        $this->migrator->add('ai.open_ai_gpt_4_api_key');
+        $this->migrator->add('ai.open_ai_gpt_4_model');
+        $this->migrator->add('ai.open_ai_gpt_4_model_name');
+        $this->migrator->add('ai.open_ai_gpt_4_applicable_features', []);
     }
-
-    public function getDeployment(): ?string
-    {
-        return $this->settings->open_ai_gpt_4_base_uri ?? config('integration-open-ai.gpt_4_base_uri');
-    }
-}
+};
