@@ -40,6 +40,7 @@ use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Models\AiAssistantFile;
 use AdvisingApp\IntegrationOpenAi\Jobs\UploadAssistantFileToVectorStore;
 use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiResponsesService;
+use App\Features\OpenAiVectorStoresFeature;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\Multitenancy\Commands\Concerns\TenantAware;
@@ -54,6 +55,10 @@ class UploadAssistantFilesToVectorStores extends Command
 
     public function handle(): void
     {
+        if (! OpenAiVectorStoresFeature::active()) {
+            return;
+        }
+
         foreach (AiModel::cases() as $model) {
             if (! $model->hasService()) {
                 continue;
