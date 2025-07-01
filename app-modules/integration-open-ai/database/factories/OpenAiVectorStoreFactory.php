@@ -34,14 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Database\Factories;
+namespace AdvisingApp\IntegrationOpenAi\Database\Factories;
 
+use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Ai\Models\AiAssistantFile>
+ * @extends Factory<OpenAiVectorStore>
  */
-class AiAssistantFileFactory extends Factory
+class OpenAiVectorStoreFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -51,8 +52,10 @@ class AiAssistantFileFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->word(),
-            'parsing_results' => $this->faker->text(),
+            'deployment_hash' => $this->faker->md5(),
+            'ready_until' => $this->faker->dateTimeBetween('+1 day', '+1 year'),
+            'vector_store_id' => $this->faker->uuid(),
+            'vector_store_file_id' => $this->faker->uuid(),
         ];
     }
 }
