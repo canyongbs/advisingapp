@@ -43,6 +43,13 @@ class ExportCompletionOverride extends ExportCompletion
 {
     public int $tries = 2;
 
+    /**
+     * The number of seconds the job can run before timing out.
+     *
+     * @var int
+     */
+    public $timeout = 60 * 10; // 10 minutes
+
     public function retryUntil(): ?CarbonInterface
     {
         return null;
