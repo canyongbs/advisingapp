@@ -52,7 +52,7 @@ return new class () extends Migration {
             $table->timestamps();
             $table->softDeletes();
         });
-        
+
         Schema::table('workflow_steps', function (Blueprint $table) {
             $table->foreignUuid('previous_step_id')->nullable()->constrained('workflow_steps', 'id');
         });
