@@ -53,13 +53,13 @@ class CampaignActionEducatableFactory extends Factory
         return [
             'campaign_action_id' => CampaignAction::factory(),
             'educatable_type' => $this->faker->randomElement([
-                new Student()->getMorphClass(),
-                new Prospect()->getMorphClass(),
+                (new Student())->getMorphClass(),
+                (new Prospect())->getMorphClass(),
             ]),
             'educatable_id' => function (array $attributes) {
                 return match ($attributes['educatable_type']) {
-                    new Student()->getMorphClass() => Student::factory(),
-                    new Prospect()->getMorphClass() => Prospect::factory(),
+                    (new Student())->getMorphClass() => Student::factory(),
+                    (new Prospect())->getMorphClass() => Prospect::factory(),
                     default => null,
                 };
             },

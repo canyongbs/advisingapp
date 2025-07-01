@@ -34,20 +34,42 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationTwilio\DataTransferObjects;
+namespace App\PhpMd;
 
-use Spatie\LaravelData\Data;
+use PHPMD\AbstractNode;
+use PHPMD\Rule\Controversial\CamelCasePropertyName;
 
-class TwilioApiKey extends Data
+class CamelCasePropertyNameWithoutSettings extends CamelCasePropertyName
 {
-    /**
-     * Suppress PHPMD warning for CamelCase property names. As changing this now would require a database change.
-     *
-     * @SuppressWarnings(PHPMD.CamelCasePropertyName)
-     * @SuppressWarnings(PHPMD.CamelCaseParameterName)
-     */
-    public function __construct(
-        public string $api_sid,
-        public string $secret,
-    ) {}
+    public function apply(AbstractNode $node)
+    {
+        // @phpstan-ignore method.notFound
+        foreach ($node->getParentClasses() as $parentClass) {
+            if ($parentClass->getNamespace()->getName() === 'Spatie\LaravelSettings') {
+                return; // Skip if the class extends Spatie\LaravelSettings
+            }
+        }
+
+        $allowUnderscore = $this->getBooleanProperty('allow-underscore');
+
+        $pattern = '/^\$[a-z][a-zA-Z0-9]*$/';
+
+        if ($allowUnderscore === true) {
+            $pattern = '/^\$[_]?[a-z][a-zA-Z0-9]*$/';
+        }
+
+        // @phpstan-ignore method.notFound
+        foreach ($node->getProperties() as $property) {
+            $propertyName = $property->getName();
+
+            if (! preg_match($pattern, $propertyName)) {
+                $this->addViolation(
+                    $node,
+                    [
+                        $propertyName,
+                    ]
+                );
+            }
+        }
+    }
 }

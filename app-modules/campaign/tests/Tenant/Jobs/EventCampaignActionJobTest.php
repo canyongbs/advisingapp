@@ -100,7 +100,7 @@ it('will execute appropriately on each educatable in the segment', function (Edu
     expect($campaignActionEducatable->succeeded_at)->toBeNull()
         ->and($campaignActionEducatable->last_failed_at)->toBeNull();
 
-    [$job] = new EventCampaignActionJob($campaignActionEducatable)->withFakeBatch();
+    [$job] = (new EventCampaignActionJob($campaignActionEducatable))->withFakeBatch();
 
     $job->handle();
 
@@ -188,7 +188,7 @@ it('will not duplicate an invite if the segment educatable was already invited',
     expect($campaignActionEducatable->succeeded_at)->toBeNull()
         ->and($campaignActionEducatable->last_failed_at)->toBeNull();
 
-    [$job] = new EventCampaignActionJob($campaignActionEducatable)->withFakeBatch();
+    [$job] = (new EventCampaignActionJob($campaignActionEducatable))->withFakeBatch();
 
     $job->handle();
 

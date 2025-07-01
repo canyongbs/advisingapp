@@ -103,7 +103,7 @@ it('will execute appropriately on each educatable in the segment', function (Edu
     expect($campaignActionEducatable->succeeded_at)->toBeNull()
         ->and($campaignActionEducatable->last_failed_at)->toBeNull();
 
-    [$job] = new EngagementCampaignActionJob($campaignActionEducatable)->withFakeBatch();
+    [$job] = (new EngagementCampaignActionJob($campaignActionEducatable))->withFakeBatch();
 
     $job->handle();
 
@@ -204,7 +204,7 @@ it('will throw an exception if a canRecieve check fails', function (Educatable $
     expect($campaignActionEducatable->succeeded_at)->toBeNull()
         ->and($campaignActionEducatable->last_failed_at)->toBeNull();
 
-    [$job] = new EngagementCampaignActionJob($campaignActionEducatable)->withFakeBatch();
+    [$job] = (new EngagementCampaignActionJob($campaignActionEducatable))->withFakeBatch();
 
     $job->handle();
 

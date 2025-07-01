@@ -71,11 +71,11 @@ class TagsBlock extends CampaignActionBlock
                 ->label('Which tags should be applied?')
                 ->options(function (Get $get, $livewire, string $operation) {
                     if ($livewire instanceof CreateCampaign) {
-                        $segment_id = $get('../../../segment_id');
+                        $segmentId = $get('../../../segment_id');
                     } else {
-                        $segment_id = $livewire->getOwnerRecord()->segment_id;
+                        $segmentId = $livewire->getOwnerRecord()->segment_id;
                     }
-                    $segment = Segment::find($segment_id);
+                    $segment = Segment::find($segmentId);
 
                     return Tag::where('type', $segment->model)->orderBy('name', 'ASC')->pluck('name', 'id');
                 })
