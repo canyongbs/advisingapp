@@ -99,7 +99,7 @@ it('will execute appropriately on each educatable in the segment', function (arr
     expect($campaignActionEducatable->succeeded_at)->toBeNull()
         ->and($campaignActionEducatable->last_failed_at)->toBeNull();
 
-    [$job] = new SubscriptionCampaignActionJob($campaignActionEducatable)->withFakeBatch();
+    [$job] = (new SubscriptionCampaignActionJob($campaignActionEducatable))->withFakeBatch();
 
     $job->handle();
 

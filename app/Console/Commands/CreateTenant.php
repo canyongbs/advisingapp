@@ -116,7 +116,8 @@ class CreateTenant extends Command
                     fromName: config('mail.from.name')
                 ),
             ),
-            licenseData: new LicenseData(
+            null,
+            new LicenseData(
                 updatedAt: now(),
                 subscription: new LicenseSubscriptionData(
                     clientName: 'Jane Smith',

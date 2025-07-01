@@ -56,7 +56,7 @@ class EditAiAssistantRequestFactory extends RequestFactory
     public function withOverMaxInstructions(): static
     {
         return $this->state(['instructions' => function ($properties) {
-            $model = AiModel::parse($properties['model']) ?? AiModel::OpenAiGpt35;
+            $model = AiModel::parse($properties['model']) ?? AiModel::OpenAiGpt4o;
 
             return str()->random($model->getService()->getMaxAssistantInstructionsLength() + 1);
         }]);

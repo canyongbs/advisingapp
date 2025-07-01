@@ -40,32 +40,6 @@ use Spatie\LaravelSettings\Settings;
 
 class AiIntegrationsSettings extends Settings
 {
-    public ?string $open_ai_gpt_35_model_name = null;
-
-    public ?string $open_ai_gpt_35_base_uri = null;
-
-    public ?string $open_ai_gpt_35_api_key = null;
-
-    public ?string $open_ai_gpt_35_model = null;
-
-    /**
-     * @var array<string>
-     */
-    public array $open_ai_gpt_35_applicable_features = [];
-
-    public ?string $open_ai_gpt_4_model_name = null;
-
-    public ?string $open_ai_gpt_4_base_uri = null;
-
-    public ?string $open_ai_gpt_4_api_key = null;
-
-    public ?string $open_ai_gpt_4_model = null;
-
-    /**
-     * @var array<string>
-     */
-    public array $open_ai_gpt_4_applicable_features = [];
-
     public ?string $open_ai_gpt_4o_model_name = null;
 
     public ?string $open_ai_gpt_4o_base_uri = null;
@@ -201,12 +175,6 @@ class AiIntegrationsSettings extends Settings
     public static function encrypted(): array
     {
         return [
-            'open_ai_gpt_35_base_uri',
-            'open_ai_gpt_35_api_key',
-            'open_ai_gpt_35_model',
-            'open_ai_gpt_4_base_uri',
-            'open_ai_gpt_4_api_key',
-            'open_ai_gpt_4_model',
             'open_ai_gpt_4o_base_uri',
             'open_ai_gpt_4o_api_key',
             'open_ai_gpt_4o_model',

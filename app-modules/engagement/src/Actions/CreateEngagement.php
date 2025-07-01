@@ -89,7 +89,7 @@ class CreateEngagement
             $engagement->save();
 
             if (! $engagement->scheduled_at) {
-                $notification = new EngagementNotification($engagement)->afterCommit();
+                $notification = (new EngagementNotification($engagement))->afterCommit();
 
                 if ($notifyNow) {
                     $engagement->recipient->notifyNow($notification);

@@ -34,42 +34,42 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services;
+namespace App\PhpMd;
 
-use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
-use OpenAI;
+use PHPMD\AbstractNode;
+use PHPMD\Rule\Controversial\CamelCasePropertyName;
 
-class OpenAiGpt4Service extends BaseOpenAiService
+class CamelCasePropertyNameWithoutSettings extends CamelCasePropertyName
 {
-    public function __construct(
-        protected AiIntegrationsSettings $settings,
-    ) {
-        $this->client = OpenAI::factory()
-            ->withBaseUri($this->getDeployment())
-            ->withHttpHeader('api-key', $this->settings->open_ai_gpt_4_api_key ?? config('integration-open-ai.gpt_4_api_key'))
-            ->withQueryParam('api-version', $this->getApiVersion())
-            ->withHttpHeader('OpenAI-Beta', 'assistants=v2')
-            ->withHttpHeader('Accept', '*/*')
-            ->make();
-    }
-
-    public function getApiKey(): string
+    public function apply(AbstractNode $node)
     {
-        return $this->settings->open_ai_gpt_4_api_key ?? config('integration-open-ai.gpt_4_api_key');
-    }
+        // @phpstan-ignore method.notFound
+        foreach ($node->getParentClasses() as $parentClass) {
+            if ($parentClass->getNamespace()->getName() === 'Spatie\LaravelSettings') {
+                return; // Skip if the class extends Spatie\LaravelSettings
+            }
+        }
 
-    public function getApiVersion(): string
-    {
-        return '2024-05-01-preview';
-    }
+        $allowUnderscore = $this->getBooleanProperty('allow-underscore');
 
-    public function getModel(): string
-    {
-        return $this->settings->open_ai_gpt_4_model ?? config('integration-open-ai.gpt_4_model');
-    }
+        $pattern = '/^\$[a-z][a-zA-Z0-9]*$/';
 
-    public function getDeployment(): ?string
-    {
-        return $this->settings->open_ai_gpt_4_base_uri ?? config('integration-open-ai.gpt_4_base_uri');
+        if ($allowUnderscore === true) {
+            $pattern = '/^\$[_]?[a-z][a-zA-Z0-9]*$/';
+        }
+
+        // @phpstan-ignore method.notFound
+        foreach ($node->getProperties() as $property) {
+            $propertyName = $property->getName();
+
+            if (! preg_match($pattern, $propertyName)) {
+                $this->addViolation(
+                    $node,
+                    [
+                        $propertyName,
+                    ]
+                );
+            }
+        }
     }
 }

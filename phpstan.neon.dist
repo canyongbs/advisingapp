@@ -58,3 +58,8 @@ parameters:
             paths:
                 - tests/*
                 - app-modules/*/tests/*
+        -
+            message: '#PHPDoc tag @SuppressWarnings has invalid value \(\(PHPMD.(CamelCasePropertyName|CamelCaseParameterName)\)\)\:.*#'
+            identifier: phpDoc.parseError
+            paths:
+                - app-modules/integration-twilio/src/DataTransferObjects/TwilioApiKey.php

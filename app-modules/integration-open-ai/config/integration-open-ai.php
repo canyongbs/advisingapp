@@ -35,18 +35,6 @@
 */
 
 return [
-    'gpt_35_base_uri' => env('OPEN_AI_GPT_35_BASE_URI'),
-
-    'gpt_35_api_key' => env('OPEN_AI_GPT_35_API_KEY'),
-
-    'gpt_35_model' => env('OPEN_AI_GPT_35_MODEL'),
-
-    'gpt_4_base_uri' => env('OPEN_AI_GPT_4_BASE_URI'),
-
-    'gpt_4_api_key' => env('OPEN_AI_GPT_4_API_KEY'),
-
-    'gpt_4_model' => env('OPEN_AI_GPT_4_MODEL'),
-
     'gpt_4o_base_uri' => env('OPEN_AI_GPT_4O_BASE_URI'),
 
     'gpt_4o_api_key' => env('OPEN_AI_GPT_4O_API_KEY'),
