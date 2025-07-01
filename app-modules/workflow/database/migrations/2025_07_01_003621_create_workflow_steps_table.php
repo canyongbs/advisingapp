@@ -47,7 +47,7 @@ return new class () extends Migration {
             $table->foreignUuid('details_id');
             $table->string('details_type');
             $table->integer('delay_minutes')->default(0);
-            $table->foreignUuid('workflow_id')->constrained('workflow');
+            $table->foreignUuid('workflow_id')->constrained('workflows');
             $table->foreignUuid('previous_step_id')->nullable()->constrained('workflow_steps');
 
             $table->timestamps();
