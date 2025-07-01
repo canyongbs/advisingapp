@@ -48,10 +48,13 @@ return new class () extends Migration {
             $table->string('details_type');
             $table->integer('delay_minutes')->default(0);
             $table->foreignUuid('workflow_id')->constrained('workflows');
-            $table->foreignUuid('previous_step_id')->nullable()->constrained('workflow_steps', 'id');
 
             $table->timestamps();
             $table->softDeletes();
+        });
+        
+        Schema::table('workflow_steps', function (Blueprint $table) {
+            $table->foreignUuid('previous_step_id')->nullable()->constrained('workflow_steps', 'id');
         });
     }
 
