@@ -820,6 +820,7 @@ namespace AdvisingApp\Ai\Models{
  * @property-read \AdvisingApp\Ai\Models\AiAssistant $assistant
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
+ * @property-read \AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore|null $openAiVectorStore
  * @method static \AdvisingApp\Ai\Database\Factories\AiAssistantFileFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AiAssistantFile newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AiAssistantFile newQuery()
@@ -934,6 +935,7 @@ namespace AdvisingApp\Ai\Models{
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
  * @property-read \AdvisingApp\Ai\Models\AiMessage|null $message
+ * @property-read \AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore|null $openAiVectorStore
  * @method static \AdvisingApp\Ai\Database\Factories\AiMessageFileFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AiMessageFile newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AiMessageFile newQuery()
@@ -3614,7 +3616,8 @@ namespace AdvisingApp\IntegrationOpenAi\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read Model $file
+ * @property-read \Illuminate\Database\Eloquent\Model $file
+ * @method static \AdvisingApp\IntegrationOpenAi\Database\Factories\OpenAiVectorStoreFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|OpenAiVectorStore newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|OpenAiVectorStore newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|OpenAiVectorStore onlyTrashed()
