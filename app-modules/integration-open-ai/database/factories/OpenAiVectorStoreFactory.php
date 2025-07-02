@@ -34,19 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models\Contracts;
+namespace AdvisingApp\IntegrationOpenAi\Database\Factories;
 
-interface AiFile
+use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends Factory<OpenAiVectorStore>
+ */
+class OpenAiVectorStoreFactory extends Factory
 {
-    public function getKey(): string;
-
-    public function getTemporaryUrl(): ?string;
-
-    public function getName(): ?string;
-
-    public function getMimeType(): ?string;
-
-    public function getFileId(): ?string;
-
-    public function getParsingResults(): ?string;
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'deployment_hash' => $this->faker->md5(),
+            'ready_until' => $this->faker->dateTimeBetween('+1 day', '+1 year'),
+            'vector_store_id' => $this->faker->uuid(),
+            'vector_store_file_id' => $this->faker->uuid(),
+        ];
+    }
 }

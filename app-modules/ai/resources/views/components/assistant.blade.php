@@ -661,16 +661,15 @@
 
                                 @foreach ($this->getFiles() as $file)
                                     <x-filament::badge
-                                        :tooltip="blank($file->parsing_results)
+                                        :tooltip="!$this->isFileReady($file)
                                             ? 'This file is currently being parsed'
                                             : null"
                                         wire:target="removeUploadedFile('{{ $file->getKey() }}')"
                                     >
                                         <span class="flex items-center gap-1">
-                                            @if (blank($file->parsing_results))
+                                            @if (!$this->isFileReady($file))
                                                 <x-filament::loading-indicator
                                                     class="h-4 w-4 shrink-0"
-                                                    wire:poll.5s="checkForParsingResults('{{ $file->getKey() }}')"
                                                     wire:loading.remove
                                                     wire:target="removeUploadedFile('{{ $file->getKey() }}')"
                                                 />
@@ -711,9 +710,10 @@
                             <div
                                 class="flex flex-col items-center border-t px-3 py-2 dark:border-gray-600 sm:flex-row sm:justify-between">
                                 <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
-                                    @if ($this->isParsingFiles)
+                                    @if ($this->isProcessingFiles)
                                         <x-filament::button
                                             class="w-full sm:w-auto"
+                                            wire:poll.5s
                                             disabled
                                         >
                                             Processing files, please wait...

@@ -56,13 +56,6 @@ class FetchAiAssistantFileParsingResults implements ShouldQueue, TenantAware, Sh
     use Queueable;
     use SerializesModels;
 
-    /**
-     * Unique for 15 minutes
-     *
-     * @var int
-     */
-    public $uniqueFor = 900;
-
     public function __construct(
         protected AiAssistantFile $file,
     ) {}

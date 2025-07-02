@@ -52,6 +52,7 @@ class AiAssistantFileFactory extends Factory
     {
         return [
             'name' => $this->faker->word(),
+            'parsing_results' => $this->faker->text(),
         ];
     }
 }

@@ -38,15 +38,13 @@ namespace AdvisingApp\Ai\Services;
 
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
-use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Models\Contracts\AiFile;
 use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
 use AdvisingApp\Ai\Services\Contracts\AiService;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use Closure;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 
 class TestAiService implements AiService
 {
@@ -96,8 +94,7 @@ class TestAiService implements AiService
         }
 
         if (! empty($files)) {
-            $createdFiles = $this->createFiles($message, $files);
-            $message->files()->saveMany($createdFiles);
+            $message->files()->saveMany($files);
         }
 
         $responseContent = fake()->paragraph();
@@ -151,16 +148,8 @@ class TestAiService implements AiService
         return true;
     }
 
-    protected function createFiles(AiMessage $message, array $files): Collection
+    public function isFileReady(AiFile $file): bool
     {
-        return collect($files)->map(function (string $file): AiMessageFile {
-            $fileRecord = new AiMessageFile();
-            $fileRecord->temporary_url = 'temp-url';
-            $fileRecord->name = 'test';
-            $fileRecord->mime_type = 'text/plain';
-            $fileRecord->file_id = Str::random(12);
-
-            return $fileRecord;
-        });
+        return true;
     }
 }

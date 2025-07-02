@@ -34,19 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models\Contracts;
+namespace AdvisingApp\IntegrationOpenAi\Models;
 
-interface AiFile
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+/**
+ * @mixin IdeHelperOpenAiVectorStore
+ */
+class OpenAiVectorStore extends BaseModel
 {
-    public function getKey(): string;
+    use SoftDeletes;
 
-    public function getTemporaryUrl(): ?string;
+    public $fillable = [
+        'deployment_hash',
+        'ready_until',
+        'vector_store_id',
+        'vector_store_file_id',
+    ];
 
-    public function getName(): ?string;
+    protected $casts = [
+        'ready_until' => 'immutable_datetime',
+    ];
 
-    public function getMimeType(): ?string;
-
-    public function getFileId(): ?string;
-
-    public function getParsingResults(): ?string;
+    /**
+     * @return MorphTo<Model, $this>
+     */
+    public function file(): MorphTo
+    {
+        return $this->morphTo('file');
+    }
 }

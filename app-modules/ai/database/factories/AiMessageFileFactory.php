@@ -57,6 +57,7 @@ class AiMessageFileFactory extends Factory
             'name' => $this->faker->word(),
             'temporary_url' => $this->faker->url(),
             'mime_type' => $this->faker->mimeType(),
+            'parsing_results' => $this->faker->text(),
         ];
     }
 }

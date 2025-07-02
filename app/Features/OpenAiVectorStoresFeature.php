@@ -34,19 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models\Contracts;
+namespace App\Features;
 
-interface AiFile
+use App\Support\AbstractFeatureFlag;
+
+class OpenAiVectorStoresFeature extends AbstractFeatureFlag
 {
-    public function getKey(): string;
-
-    public function getTemporaryUrl(): ?string;
-
-    public function getName(): ?string;
-
-    public function getMimeType(): ?string;
-
-    public function getFileId(): ?string;
-
-    public function getParsingResults(): ?string;
+    public function resolve(mixed $scope): mixed
+    {
+        return false;
+    }
 }

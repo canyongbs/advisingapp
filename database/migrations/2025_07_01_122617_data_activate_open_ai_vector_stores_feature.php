@@ -34,19 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models\Contracts;
+use App\Features\OpenAiVectorStoresFeature;
+use Illuminate\Database\Migrations\Migration;
 
-interface AiFile
-{
-    public function getKey(): string;
+return new class () extends Migration {
+    public function up(): void
+    {
+        OpenAiVectorStoresFeature::activate();
+    }
 
-    public function getTemporaryUrl(): ?string;
-
-    public function getName(): ?string;
-
-    public function getMimeType(): ?string;
-
-    public function getFileId(): ?string;
-
-    public function getParsingResults(): ?string;
-}
+    public function down(): void
+    {
+        OpenAiVectorStoresFeature::deactivate();
+    }
+};

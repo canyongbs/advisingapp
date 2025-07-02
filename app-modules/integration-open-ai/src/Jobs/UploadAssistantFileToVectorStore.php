@@ -34,19 +34,56 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models\Contracts;
+namespace AdvisingApp\IntegrationOpenAi\Jobs;
 
-interface AiFile
+use AdvisingApp\Ai\Models\AiAssistantFile;
+use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiResponsesService;
+use Illuminate\Bus\Batchable;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
+use Spatie\Multitenancy\Jobs\TenantAware;
+
+class UploadAssistantFileToVectorStore implements ShouldQueue, TenantAware, ShouldBeUnique
 {
-    public function getKey(): string;
+    use Batchable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
-    public function getTemporaryUrl(): ?string;
+    /**
+     * @var int
+     */
+    public $tries = 3;
 
-    public function getName(): ?string;
+    public function __construct(
+        protected AiAssistantFile $file,
+    ) {}
 
-    public function getMimeType(): ?string;
+    public function handle(): void
+    {
+        $service = $this->file->assistant->model->getService();
 
-    public function getFileId(): ?string;
+        if (! ($service instanceof BaseOpenAiResponsesService)) {
+            return;
+        }
 
-    public function getParsingResults(): ?string;
+        if ($service->isFileReady($this->file)) {
+            return;
+        }
+
+        Log::info("The AI assistant file [{$this->file->getKey()}] is not ready for use yet.");
+
+        $this->release(now()->addMinutes(5));
+    }
+
+    public function uniqueId(): string
+    {
+        return $this->file->id;
+    }
 }
