@@ -52,6 +52,7 @@ use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 Route::prefix('api')
     ->name('api.')
     ->middleware([
+        EnsureFrontendRequestsAreStateful::class,
         'api',
         NeedsTenant::class,
         EnsureResourceHubPortalIsEnabled::class,
@@ -102,7 +103,7 @@ Route::prefix('api')
                     ->name('request-authentication');
 
                 Route::post('/authenticate/{authentication}', ResourceHubPortalAuthenticateController::class)
-                    ->middleware(['signed:relative', EnsureFrontendRequestsAreStateful::class])
+                    ->middleware(['signed:relative'])
                     ->name('authenticate.embedded');
             });
     });
