@@ -63,7 +63,7 @@ trait CanUploadFiles
     /**
      * @var array<string, bool>
      */
-    protected array $cachedIsFileReadyCache = [];
+    protected array $cachedIsFileReady = [];
 
     public function removeUploadedFile(string $key): void
     {
@@ -74,32 +74,32 @@ trait CanUploadFiles
     {
         $key = $file->getKey();
 
-        if (array_key_exists($key, $this->cachedIsFileReadyCache)) {
-            return $this->cachedIsFileReadyCache[$key];
+        if (array_key_exists($key, $this->cachedIsFileReady)) {
+            return $this->cachedIsFileReady[$key];
         }
 
         if (
             (! in_array($key, $this->files))
             && ($file->message?->thread?->getKey() !== $this->thread?->getKey())
         ) {
-            return $this->cachedIsFileReadyCache[$key] = false;
+            return $this->cachedIsFileReady[$key] = false;
         }
 
         if (filled($file->parsing_results)) {
-            return $this->cachedIsFileReadyCache[$key] = $this->thread?->assistant?->model->getService()->isFileReady($file);
+            return $this->cachedIsFileReady[$key] = $this->thread?->assistant?->model->getService()->isFileReady($file);
         }
 
         $response = Http::withToken(app(AiIntegrationsSettings::class)->llamaparse_api_key)
             ->get("https://api.cloud.llamaindex.ai/api/v1/parsing/job/{$file->file_id}/result/text");
 
         if ((! $response->successful()) || blank($response->json('text'))) {
-            return $this->cachedIsFileReadyCache[$key] = false;
+            return $this->cachedIsFileReady[$key] = false;
         }
 
         $file->parsing_results = $response->json('text');
         $file->save();
 
-        return $this->cachedIsFileReadyCache[$key] = $this->thread?->assistant?->model->getService()->isFileReady($file);
+        return $this->cachedIsFileReady[$key] = $this->thread?->assistant?->model->getService()->isFileReady($file);
     }
 
     public function clearFiles(): void
