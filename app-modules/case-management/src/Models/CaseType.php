@@ -37,6 +37,7 @@
 namespace AdvisingApp\CaseManagement\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\CaseManagement\Enums\CaseTypeAssignmentTypes;
 use AdvisingApp\Team\Models\Team;
 use App\Models\BaseModel;
 use DateTimeInterface;
@@ -93,6 +94,7 @@ class CaseType extends BaseModel implements Auditable
         'is_customers_case_closed_email_enabled',
         'is_customers_case_closed_notification_enabled',
         'is_customers_survey_response_email_enabled',
+        'assignment_type',
     ];
 
     protected $casts = [
@@ -130,6 +132,7 @@ class CaseType extends BaseModel implements Auditable
         'is_customers_case_closed_email_enabled' => 'boolean',
         'is_customers_case_closed_notification_enabled' => 'boolean',
         'is_customers_survey_response_email_enabled' => 'boolean',
+        'assignment_type' => CaseTypeAssignmentTypes::class,
     ];
 
     public function getTable()
