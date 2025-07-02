@@ -45,6 +45,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Spatie\Multitenancy\Jobs\TenantAware;
 
 class UploadAssistantFileToVectorStore implements ShouldQueue, TenantAware, ShouldBeUnique
@@ -54,6 +55,11 @@ class UploadAssistantFileToVectorStore implements ShouldQueue, TenantAware, Shou
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+
+    /**
+     * @var int
+     */
+    public $tries = 3;
 
     public function __construct(
         protected AiAssistantFile $file,
@@ -71,8 +77,9 @@ class UploadAssistantFileToVectorStore implements ShouldQueue, TenantAware, Shou
             return;
         }
 
-        dispatch(new self($this->file))
-            ->delay(now()->addMinutes(5));
+        Log::info("The AI assistant file [{$this->file->getKey()}] is not ready for use yet.");
+
+        $this->release(now()->addMinutes(5));
     }
 
     public function uniqueId(): string
