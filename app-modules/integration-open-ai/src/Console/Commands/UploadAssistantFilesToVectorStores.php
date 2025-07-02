@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Console\Commands;
 
-use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Models\AiAssistantFile;
 use AdvisingApp\IntegrationOpenAi\Jobs\UploadAssistantFileToVectorStore;
 use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiResponsesService;
@@ -44,6 +43,7 @@ use App\Features\OpenAiVectorStoresFeature;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\Multitenancy\Commands\Concerns\TenantAware;
+use Throwable;
 
 class UploadAssistantFilesToVectorStores extends Command
 {
@@ -59,34 +59,30 @@ class UploadAssistantFilesToVectorStores extends Command
             return;
         }
 
-        foreach (AiModel::cases() as $model) {
-            if (! $model->hasService()) {
-                continue;
-            }
+        AiAssistantFile::query()
+            ->whereNotNull('parsing_results')
+            ->where(fn (Builder $query) => $query
+                ->whereDoesntHave('openAiVectorStore')
+                ->orWhereHas('openAiVectorStore', fn (Builder $query) => $query
+                    ->where('ready_until', '<=', now())
+                    ->orWhereNull('ready_until')
+                    ->orWhereNull('vector_store_id')))
+            ->eachById(function (AiAssistantFile $file) {
+                try {
+                    $service = $file->assistant->model->getService();
 
-            $service = $model->getService();
+                    if (! ($service instanceof BaseOpenAiResponsesService)) {
+                        return;
+                    }
 
-            if (! ($service instanceof BaseOpenAiResponsesService)) {
-                continue;
-            }
+                    $serviceDeploymentHash = $service->getDeploymentHash();
 
-            $serviceDeploymentHash = $service->getDeploymentHash();
-
-            AiAssistantFile::query()
-                ->whereNotNull('parsing_results')
-                ->whereHas(
-                    'assistant',
-                    fn (Builder $query) => $query
-                        ->where('model', $model),
-                )
-                ->where(fn (Builder $query) => $query
-                    ->whereDoesntHave('openAiVectorStore')
-                    ->orWhereHas('openAiVectorStore', fn (Builder $query) => $query
-                        ->where('deployment_hash', '!=', $serviceDeploymentHash)
-                        ->orWhere('ready_until', '<=', now())
-                        ->orWhereNull('ready_until')
-                        ->orWhereNull('vector_store_id')))
-                ->eachById(fn (AiAssistantFile $file) => dispatch(new UploadAssistantFileToVectorStore($file)));
-        }
+                    if (is_null($file->openAiVectorStore) || $file->openAiVectorStore->deployment_hash !== $serviceDeploymentHash) {
+                        dispatch(new UploadAssistantFileToVectorStore($file));
+                    }
+                } catch (Throwable $exception) {
+                    report($exception);
+                }
+            });
     }
 }
