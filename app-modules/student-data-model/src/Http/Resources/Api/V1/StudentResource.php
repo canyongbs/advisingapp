@@ -34,23 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace App\Http\Middleware;
+namespace AdvisingApp\StudentDataModel\Http\Resources\Api\V1;
 
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
+use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 
-class VerifyCsrfToken extends Middleware
+/**
+ * @property Student $resource
+ */
+class StudentResource extends JsonResource
 {
     /**
-     * The URIs that should be excluded from CSRF verification.
+     * Transform the resource into an array.
      *
-     * @var array<int, string>
+     * @return array<string, mixed>
      */
-    protected $except = [
-        '/api/forms/*',
-        '/api/applications/*',
-        '/api/surveys/*',
-        '/api/event-registration/*',
-        '/api/cases/*',
-        '/api/v1/*',
-    ];
+    public function toArray(Request $request): array
+    {
+        return parent::toArray($request);
+    }
 }

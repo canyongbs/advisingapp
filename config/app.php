@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use App\Providers\ApiServiceProvider;
 use App\Providers\AppServiceProvider;
 use App\Providers\EventServiceProvider;
 use App\Providers\Filament\AdminPanelProvider;
@@ -250,6 +251,7 @@ return [
         ValidationServiceProvider::class,
         ViewServiceProvider::class,
         AppServiceProvider::class,
+        ApiServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
         EventServiceProvider::class,
         RouteServiceProvider::class,

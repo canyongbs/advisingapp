@@ -73,8 +73,7 @@ class EditSystemUser extends EditRecord
         $systemUser = $this->getRecord();
 
         if (! $systemUser->tokens()->where('name', 'api')->first()) {
-            // TODO: Adjust this to scope to new API when it is created
-            $token = str($systemUser->createToken('api', ['*'])->plainTextToken)
+            $token = str($systemUser->createToken('api', ['api'])->plainTextToken)
                 ->after('|')
                 ->toString();
 
@@ -91,8 +90,7 @@ class EditSystemUser extends EditRecord
                 ->action(function (SystemUser $record) {
                     $record->tokens()->where('name', 'api')->delete();
 
-                    // TODO: Adjust this to scope to new API when it is created
-                    $token = str($record->createToken('api', ['*'])->plainTextToken)
+                    $token = str($record->createToken('api', ['api'])->plainTextToken)
                         ->after('|')
                         ->toString();
 

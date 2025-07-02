@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\ListStudentsController;
 use AdvisingApp\StudentDataModel\Http\Controllers\UpdateStudentInformationSystemSettingsController;
 use App\Http\Middleware\CheckOlympusKey;
 use Illuminate\Support\Facades\Route;
@@ -47,3 +48,11 @@ Route::prefix('api')
         Route::post('/update-sis-settings', UpdateStudentInformationSystemSettingsController::class)
             ->name('update-sis-settings');
     });
+
+Route::api(majorVersion: 1, routes: function () {
+    Route::name('students.')
+        ->prefix('students')
+        ->group(function () {
+            Route::get('/', ListStudentsController::class)->name('index');
+        });
+});

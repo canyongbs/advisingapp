@@ -34,23 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace App\Http\Middleware;
+namespace App\Scramble\Extensions;
 
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
+use Dedoc\Scramble\Extensions\OperationExtension;
+use Dedoc\Scramble\Support\Generator\Operation;
+use Dedoc\Scramble\Support\RouteInfo;
 
-class VerifyCsrfToken extends Middleware
+class OperationIdGeneratorExtension extends OperationExtension
 {
-    /**
-     * The URIs that should be excluded from CSRF verification.
-     *
-     * @var array<int, string>
-     */
-    protected $except = [
-        '/api/forms/*',
-        '/api/applications/*',
-        '/api/surveys/*',
-        '/api/event-registration/*',
-        '/api/cases/*',
-        '/api/v1/*',
-    ];
+    public function handle(Operation $operation, RouteInfo $routeInfo): void
+    {
+        if ($routeInfo->phpDoc()->getTagsByName('@operationId')) {
+            return;
+        }
+
+        $routeName = $routeInfo->route->getName();
+
+        // Remove `api.v1.` or `api.v2.` prefix from the route name
+        if (preg_match('/^api\.v\d+\./', $routeName)) {
+            $routeName = preg_replace('/^api\.v\d+\./', '', $routeName);
+        }
+
+        $operation->setOperationId($routeName);
+    }
 }
