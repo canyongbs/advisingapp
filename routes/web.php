@@ -39,3 +39,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/profiles/{user:public_profile_slug}', ViewPublicUserProfileController::class)
     ->name('users.profile.view.public');
+
+Route::redirect('/docs/api', '/docs/api/v1')
+    ->name('docs.api');

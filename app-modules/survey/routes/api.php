@@ -37,9 +37,11 @@
 use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
 use AdvisingApp\Survey\Http\Controllers\SurveyWidgetController;
 use AdvisingApp\Survey\Http\Middleware\EnsureSurveysFeatureIsActive;
+use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 Route::prefix('api')
     ->middleware([
+        EnsureFrontendRequestsAreStateful::class,
         'api',
         EnsureSurveysFeatureIsActive::class,
         EnsureSubmissibleIsEmbeddableAndAuthorized::class . ':survey',

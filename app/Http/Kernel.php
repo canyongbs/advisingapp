@@ -63,7 +63,6 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Laravel\Sanctum\Http\Middleware\CheckAbilities;
-use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 use Spatie\Multitenancy\Http\Middleware\EnsureValidTenantSession;
 
 class Kernel extends HttpKernel
@@ -104,7 +103,6 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
-            EnsureFrontendRequestsAreStateful::class,
             NeedsTenant::class,
             // \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
             SubstituteBindings::class,

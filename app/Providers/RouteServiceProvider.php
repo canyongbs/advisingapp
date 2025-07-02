@@ -41,6 +41,7 @@ use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvi
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
+use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -77,7 +78,7 @@ class RouteServiceProvider extends ServiceProvider
                 ->group(base_path('routes/landlord_api.php'));
 
             Route::prefix('api')
-                ->middleware('api')
+                ->middleware([EnsureFrontendRequestsAreStateful::class, 'api'])
                 ->namespace($this->namespace)
                 ->group(base_path('routes/api.php'));
 

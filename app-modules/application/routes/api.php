@@ -38,9 +38,11 @@ use AdvisingApp\Application\Http\Controllers\ApplicationWidgetController;
 use AdvisingApp\Application\Http\Middleware\EnsureOnlineAdmissionsFeatureIsActive;
 use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
 use Illuminate\Support\Facades\Route;
+use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 Route::prefix('api')
     ->middleware([
+        EnsureFrontendRequestsAreStateful::class,
         'api',
         EnsureOnlineAdmissionsFeatureIsActive::class,
         EnsureSubmissibleIsEmbeddableAndAuthorized::class . ':application',

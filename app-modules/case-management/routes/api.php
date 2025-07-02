@@ -41,9 +41,11 @@ use AdvisingApp\CaseManagement\Http\Middleware\EnsureCaseManagementFeatureIsActi
 use AdvisingApp\CaseManagement\Http\Middleware\FeedbackManagementIsOn;
 use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
 use Illuminate\Support\Facades\Route;
+use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 Route::prefix('api')
     ->middleware([
+        EnsureFrontendRequestsAreStateful::class,
         'api',
     ])
     ->group(function () {
