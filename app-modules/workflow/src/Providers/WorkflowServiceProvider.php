@@ -37,6 +37,7 @@
 namespace AdvisingApp\Workflow\Providers;
 
 use AdvisingApp\Workflow\Models\Workflow;
+use AdvisingApp\Workflow\Models\WorkflowProactiveAlertDetails;
 use AdvisingApp\Workflow\Models\WorkflowStep;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use AdvisingApp\Workflow\WorkflowPlugin;
@@ -57,6 +58,7 @@ class WorkflowServiceProvider extends ServiceProvider
             'workflow' => Workflow::class,
             'workflow_step' => WorkflowStep::class,
             'workflow_trigger' => WorkflowTrigger::class,
+            'workflow_proactive_alert_detail' => WorkflowProactiveAlertDetails::class,
         ]);
     }
 }

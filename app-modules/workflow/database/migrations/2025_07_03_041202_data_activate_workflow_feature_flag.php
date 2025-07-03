@@ -40,11 +40,12 @@ use Illuminate\Database\Migrations\Migration;
 return new class () extends Migration {
     public function up(): void
     {
-        WorkflowFeature::activate();
+        //TODO: uncomment when ticket is completed
+        //WorkflowFeature::activate();
     }
 
     public function down(): void
     {
-        WorkflowFeature::deactivate();
+        //WorkflowFeature::deactivate();
     }
 };
