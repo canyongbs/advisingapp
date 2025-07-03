@@ -45,8 +45,8 @@ return new class () extends Migration {
             $table->uuid('id')->primary();
 
             $table->string('channel');
-            $table->json('subject');
-            $table->json('body');
+            $table->jsonb('subject');
+            $table->jsonb('body');
             $table->foreignUuid('workflow_step_id')->constrained('workflow_steps');
 
             $table->timestamps();
