@@ -52,8 +52,6 @@ class WorkflowStep extends BaseModel implements Auditable
     use AuditableTrait;
     use HasUuids;
 
-    //TODO: relationship with details?
-
     /**
      * @return BelongsTo<Workflow, $this>
      */
