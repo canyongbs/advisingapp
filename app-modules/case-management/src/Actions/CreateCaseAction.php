@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 class CreateCaseAction
 {
-    public function execute(CaseDataObject $caseDataObject)
+    public function execute(CaseDataObject $caseDataObject): CaseModel
     {
         return DB::transaction(
             function () use ($caseDataObject) {
