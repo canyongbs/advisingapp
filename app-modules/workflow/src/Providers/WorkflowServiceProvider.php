@@ -43,6 +43,7 @@ use AdvisingApp\Workflow\Models\WorkflowEngagementSmsDetails;
 use AdvisingApp\Workflow\Models\WorkflowInteractionDetails;
 use AdvisingApp\Workflow\Models\WorkflowProactiveAlertDetails;
 use AdvisingApp\Workflow\Models\WorkflowStep;
+use AdvisingApp\Workflow\Models\WorkflowTaskDetails;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use AdvisingApp\Workflow\WorkflowPlugin;
 use Filament\Panel;
@@ -67,6 +68,7 @@ class WorkflowServiceProvider extends ServiceProvider
             'workflow_engagement_sms_details' => WorkflowEngagementSmsDetails::class,
             'workflow_interaction_details' => WorkflowInteractionDetails::class,
             'workflow_care_team_details' => WorkflowCareTeamDetails::class,
+            'workflow_task_details' => WorkflowTaskDetails::class,
         ]);
     }
 }
