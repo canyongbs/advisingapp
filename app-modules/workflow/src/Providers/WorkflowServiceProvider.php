@@ -38,6 +38,7 @@ namespace AdvisingApp\Workflow\Providers;
 
 use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowCareTeamDetails;
+use AdvisingApp\Workflow\Models\WorkflowCaseDetails;
 use AdvisingApp\Workflow\Models\WorkflowEngagementEmailDetails;
 use AdvisingApp\Workflow\Models\WorkflowEngagementSmsDetails;
 use AdvisingApp\Workflow\Models\WorkflowInteractionDetails;
@@ -71,6 +72,7 @@ class WorkflowServiceProvider extends ServiceProvider
             'workflow_care_team_details' => WorkflowCareTeamDetails::class,
             'workflow_task_details' => WorkflowTaskDetails::class,
             'workflow_subscription_details' => WorkflowSubscriptionDetails::class,
+            'workflow_case_details' => WorkflowCaseDetails::class,
         ]);
     }
 }
