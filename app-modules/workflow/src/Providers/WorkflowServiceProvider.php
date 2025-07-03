@@ -41,6 +41,7 @@ use AdvisingApp\Workflow\Models\WorkflowCareTeamDetails;
 use AdvisingApp\Workflow\Models\WorkflowCaseDetails;
 use AdvisingApp\Workflow\Models\WorkflowEngagementEmailDetails;
 use AdvisingApp\Workflow\Models\WorkflowEngagementSmsDetails;
+use AdvisingApp\Workflow\Models\WorkflowEventDetails;
 use AdvisingApp\Workflow\Models\WorkflowInteractionDetails;
 use AdvisingApp\Workflow\Models\WorkflowProactiveAlertDetails;
 use AdvisingApp\Workflow\Models\WorkflowStep;
@@ -73,6 +74,7 @@ class WorkflowServiceProvider extends ServiceProvider
             'workflow_task_details' => WorkflowTaskDetails::class,
             'workflow_subscription_details' => WorkflowSubscriptionDetails::class,
             'workflow_case_details' => WorkflowCaseDetails::class,
+            'workflow_event_details' => WorkflowEventDetails::class,
         ]);
     }
 }
