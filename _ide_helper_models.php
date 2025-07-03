@@ -6239,3 +6239,102 @@ namespace AdvisingApp\Webhook\Models{
 	class IdeHelperLandlordInboundWebhook {}
 }
 
+namespace AdvisingApp\Workflow\Models{
+/**
+ * 
+ *
+ * @property string $id
+ * @property string $workflow_trigger_id
+ * @property string $name
+ * @property bool $is_enabled
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Workflow\Models\WorkflowStep> $workflowSteps
+ * @property-read int|null $workflow_steps_count
+ * @property-read \AdvisingApp\Workflow\Models\WorkflowTrigger $workflowTrigger
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Workflow newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Workflow newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Workflow onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Workflow query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Workflow whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Workflow whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Workflow whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Workflow whereIsEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Workflow whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Workflow whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Workflow whereWorkflowTriggerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Workflow withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Workflow withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperWorkflow {}
+}
+
+namespace AdvisingApp\Workflow\Models{
+/**
+ * 
+ *
+ * @property string $id
+ * @property string $details_id
+ * @property string $details_type
+ * @property int $delay_minutes
+ * @property string $workflow_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property string|null $previous_step_id
+ * @property-read \AdvisingApp\Workflow\Models\Workflow $workflow
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowStep newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowStep newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowStep onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowStep query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowStep whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowStep whereDelayMinutes($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowStep whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowStep whereDetailsId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowStep whereDetailsType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowStep whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowStep wherePreviousStepId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowStep whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowStep whereWorkflowId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowStep withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowStep withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperWorkflowStep {}
+}
+
+namespace AdvisingApp\Workflow\Models{
+/**
+ * 
+ *
+ * @property string $id
+ * @property string $type
+ * @property string $related_id
+ * @property string $related_type
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \AdvisingApp\Workflow\Models\Workflow|null $workflow
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTrigger newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTrigger newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTrigger onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTrigger query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTrigger whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTrigger whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTrigger whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTrigger whereRelatedId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTrigger whereRelatedType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTrigger whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTrigger whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTrigger withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTrigger withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperWorkflowTrigger {}
+}
+
