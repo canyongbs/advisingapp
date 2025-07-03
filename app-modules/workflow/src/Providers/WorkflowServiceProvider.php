@@ -36,6 +36,9 @@
 
 namespace AdvisingApp\Workflow\Providers;
 
+use AdvisingApp\Workflow\Models\Workflow;
+use AdvisingApp\Workflow\Models\WorkflowStep;
+use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use AdvisingApp\Workflow\WorkflowPlugin;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -50,6 +53,10 @@ class WorkflowServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        Relation::morphMap([]);
+        Relation::morphMap([
+          'workflow' => Workflow::class,
+          'workflow_step' => WorkflowStep::class,
+          'workflow_trigger' => WorkflowTrigger::class,
+        ]);
     }
 }
