@@ -44,6 +44,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
+/**
+ * @mixin IdeHelperWorkflowInteractionDetails
+ */
 class WorkflowInteractionDetails extends BaseModel implements Auditable, WorkflowAction
 {
     use SoftDeletes;

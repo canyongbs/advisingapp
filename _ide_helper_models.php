@@ -6278,6 +6278,122 @@ namespace AdvisingApp\Workflow\Models{
 /**
  * 
  *
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \AdvisingApp\Workflow\Models\WorkflowStep|null $workflowStep
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowCareTeamDetails newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowCareTeamDetails newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowCareTeamDetails onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowCareTeamDetails query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowCareTeamDetails withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowCareTeamDetails withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperWorkflowCareTeamDetails {}
+}
+
+namespace AdvisingApp\Workflow\Models{
+/**
+ * 
+ *
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \AdvisingApp\Workflow\Models\WorkflowStep|null $workflowStep
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowCaseDetails newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowCaseDetails newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowCaseDetails onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowCaseDetails query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowCaseDetails withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowCaseDetails withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperWorkflowCaseDetails {}
+}
+
+namespace AdvisingApp\Workflow\Models{
+/**
+ * 
+ *
+ * @property \AdvisingApp\Notification\Enums\NotificationChannel $channel
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \AdvisingApp\Workflow\Models\WorkflowStep|null $workflowStep
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowEngagementEmailDetails newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowEngagementEmailDetails newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowEngagementEmailDetails onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowEngagementEmailDetails query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowEngagementEmailDetails withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowEngagementEmailDetails withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperWorkflowEngagementEmailDetails {}
+}
+
+namespace AdvisingApp\Workflow\Models{
+/**
+ * 
+ *
+ * @property \AdvisingApp\Notification\Enums\NotificationChannel $channel
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \AdvisingApp\Workflow\Models\WorkflowStep|null $workflowStep
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowEngagementSmsDetails newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowEngagementSmsDetails newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowEngagementSmsDetails onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowEngagementSmsDetails query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowEngagementSmsDetails withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowEngagementSmsDetails withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperWorkflowEngagementSmsDetails {}
+}
+
+namespace AdvisingApp\Workflow\Models{
+/**
+ * 
+ *
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \AdvisingApp\Workflow\Models\WorkflowStep|null $workflowStep
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowEventDetails newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowEventDetails newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowEventDetails onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowEventDetails query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowEventDetails withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowEventDetails withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperWorkflowEventDetails {}
+}
+
+namespace AdvisingApp\Workflow\Models{
+/**
+ * 
+ *
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \AdvisingApp\Workflow\Models\WorkflowStep|null $workflowStep
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowInteractionDetails newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowInteractionDetails newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowInteractionDetails onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowInteractionDetails query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowInteractionDetails withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowInteractionDetails withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperWorkflowInteractionDetails {}
+}
+
+namespace AdvisingApp\Workflow\Models{
+/**
+ * 
+ *
  * @property \AdvisingApp\Alert\Enums\AlertSeverity $severity
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
@@ -6329,6 +6445,63 @@ namespace AdvisingApp\Workflow\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperWorkflowStep {}
+}
+
+namespace AdvisingApp\Workflow\Models{
+/**
+ * 
+ *
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \AdvisingApp\Workflow\Models\WorkflowStep|null $workflowStep
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowSubscriptionDetails newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowSubscriptionDetails newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowSubscriptionDetails onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowSubscriptionDetails query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowSubscriptionDetails withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowSubscriptionDetails withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperWorkflowSubscriptionDetails {}
+}
+
+namespace AdvisingApp\Workflow\Models{
+/**
+ * 
+ *
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \AdvisingApp\Workflow\Models\WorkflowStep|null $workflowStep
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTagsDetails newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTagsDetails newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTagsDetails onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTagsDetails query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTagsDetails withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTagsDetails withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperWorkflowTagsDetails {}
+}
+
+namespace AdvisingApp\Workflow\Models{
+/**
+ * 
+ *
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \AdvisingApp\Workflow\Models\WorkflowStep|null $workflowStep
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTaskDetails newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTaskDetails newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTaskDetails onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTaskDetails query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTaskDetails withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTaskDetails withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperWorkflowTaskDetails {}
 }
 
 namespace AdvisingApp\Workflow\Models{
