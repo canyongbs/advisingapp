@@ -54,9 +54,9 @@ class WorkflowServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Relation::morphMap([
-          'workflow' => Workflow::class,
-          'workflow_step' => WorkflowStep::class,
-          'workflow_trigger' => WorkflowTrigger::class,
+            'workflow' => Workflow::class,
+            'workflow_step' => WorkflowStep::class,
+            'workflow_trigger' => WorkflowTrigger::class,
         ]);
     }
 }
