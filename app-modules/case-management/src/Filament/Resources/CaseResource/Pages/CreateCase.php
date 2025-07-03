@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages;
 
+use AdvisingApp\CaseManagement\Actions\CreateCaseAction;
+use AdvisingApp\CaseManagement\DataTransferObjects\CaseDataObject;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
 use AdvisingApp\CaseManagement\Models\CasePriority;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
@@ -52,6 +54,7 @@ use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Resources\RelationManagers\RelationManager;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 class CreateCase extends CreateRecord
@@ -111,5 +114,12 @@ class CreateCase extends CreateRecord
                     ->required()
                     ->hiddenOn([RelationManager::class, ManageRelatedRecords::class]),
             ]);
+    }
+
+    protected function handleRecordCreation(array $data): Model
+    {
+        $caseDataObject = CaseDataObject::fromData($data);
+
+        return app(CreateCaseAction::class)->execute($caseDataObject);
     }
 }

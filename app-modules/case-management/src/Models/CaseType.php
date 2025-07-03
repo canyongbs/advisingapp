@@ -40,8 +40,10 @@ use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\CaseManagement\Enums\CaseTypeAssignmentTypes;
 use AdvisingApp\Team\Models\Team;
 use App\Models\BaseModel;
+use App\Models\User;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
@@ -95,6 +97,7 @@ class CaseType extends BaseModel implements Auditable
         'is_customers_case_closed_notification_enabled',
         'is_customers_survey_response_email_enabled',
         'assignment_type',
+        'last_assigned_id',
     ];
 
     protected $casts = [
@@ -179,6 +182,20 @@ class CaseType extends BaseModel implements Auditable
         return $this->belongsToMany(Team::class, 'case_type_auditors', 'case_type_id', 'team_id')
             ->using(CaseTypeAuditor::class)
             ->withTimestamps();
+    }
+
+    public function assignmentTypeIndividual(): BelongsTo
+    {
+        return $this->belongsTo(
+            related: User::class,
+            foreignKey: 'assignment_type_individual_id',
+            relation: 'caseTypeIndividualAssignment',
+        );
+    }
+
+    public function lastAssignedUser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'last_assigned_id', 'id');
     }
 
     protected function serializeDate(DateTimeInterface $date): string
