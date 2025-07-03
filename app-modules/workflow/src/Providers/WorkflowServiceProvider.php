@@ -46,6 +46,7 @@ use AdvisingApp\Workflow\Models\WorkflowInteractionDetails;
 use AdvisingApp\Workflow\Models\WorkflowProactiveAlertDetails;
 use AdvisingApp\Workflow\Models\WorkflowStep;
 use AdvisingApp\Workflow\Models\WorkflowSubscriptionDetails;
+use AdvisingApp\Workflow\Models\WorkflowTagsDetails;
 use AdvisingApp\Workflow\Models\WorkflowTaskDetails;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use AdvisingApp\Workflow\WorkflowPlugin;
@@ -66,15 +67,16 @@ class WorkflowServiceProvider extends ServiceProvider
             'workflow' => Workflow::class,
             'workflow_step' => WorkflowStep::class,
             'workflow_trigger' => WorkflowTrigger::class,
-            'workflow_proactive_alert_details' => WorkflowProactiveAlertDetails::class,
+            'workflow_care_team_details' => WorkflowCareTeamDetails::class,
+            'workflow_case_details' => WorkflowCaseDetails::class,
             'workflow_engagement_email_details' => WorkflowEngagementEmailDetails::class,
             'workflow_engagement_sms_details' => WorkflowEngagementSmsDetails::class,
-            'workflow_interaction_details' => WorkflowInteractionDetails::class,
-            'workflow_care_team_details' => WorkflowCareTeamDetails::class,
-            'workflow_task_details' => WorkflowTaskDetails::class,
-            'workflow_subscription_details' => WorkflowSubscriptionDetails::class,
-            'workflow_case_details' => WorkflowCaseDetails::class,
             'workflow_event_details' => WorkflowEventDetails::class,
+            'workflow_interaction_details' => WorkflowInteractionDetails::class,
+            'workflow_proactive_alert_details' => WorkflowProactiveAlertDetails::class,
+            'workflow_subscription_details' => WorkflowSubscriptionDetails::class,
+            'workflow_tags_details' => WorkflowTagsDetails::class,
+            'workflow_task_details' => WorkflowTaskDetails::class,
         ]);
     }
 }
