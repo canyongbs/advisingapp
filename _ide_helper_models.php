@@ -2741,9 +2741,11 @@ namespace AdvisingApp\CaseManagement\Models{
  * @property \AdvisingApp\CaseManagement\Enums\CaseEmailTemplateType $type
  * @property array<array-key, mixed> $subject
  * @property array<array-key, mixed> $body
+ * @property \AdvisingApp\CaseManagement\Enums\CaseTypeEmailTemplateRole|null $role
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \AdvisingApp\CaseManagement\Models\CaseType $caseType
+ * @method static \AdvisingApp\CaseManagement\Database\Factories\CaseTypeEmailTemplateFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeEmailTemplate newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeEmailTemplate newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeEmailTemplate query()
@@ -2751,6 +2753,7 @@ namespace AdvisingApp\CaseManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeEmailTemplate whereCaseTypeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeEmailTemplate whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeEmailTemplate whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeEmailTemplate whereRole($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeEmailTemplate whereSubject($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeEmailTemplate whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeEmailTemplate whereUpdatedAt($value)

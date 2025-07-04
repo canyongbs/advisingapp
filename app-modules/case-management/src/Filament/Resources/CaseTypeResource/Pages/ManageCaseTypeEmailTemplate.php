@@ -4,6 +4,8 @@ namespace AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages;
 
 use AdvisingApp\CaseManagement\Enums\CaseEmailTemplateType;
 use AdvisingApp\CaseManagement\Enums\CaseTypeEmailTemplateRole;
+use AdvisingApp\CaseManagement\Filament\Blocks\CaseTypeEmailTemplateButtonBlock;
+use AdvisingApp\CaseManagement\Filament\Blocks\SurveyResponseEmailTemplateTakeSurveyButtonBlock;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
 use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\CaseManagement\Models\CaseTypeEmailTemplate;
@@ -13,6 +15,7 @@ use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 use FilamentTiptapEditor\TiptapEditor;
+use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 
@@ -48,7 +51,7 @@ class ManageCaseTypeEmailTemplate extends EditRecord
                     ->persistTab()
                     ->id('email-template-role-tabs')
                     ->tabs(array_map(
-                        fn(CaseTypeEmailTemplateRole $role) => Tab::make($role->getLabel())
+                        fn (CaseTypeEmailTemplateRole $role) => Tab::make($role->getLabel())
                             ->schema($this->getEmailTemplateFormSchema())
                             ->statePath($role->value),
                         $roles
@@ -102,18 +105,18 @@ class ManageCaseTypeEmailTemplate extends EditRecord
                 ->placeholder('Enter the email subject here...')
                 ->extraInputAttributes(['style' => 'min-height: 2rem; overflow-y:none;'])
                 ->disableToolbarMenus()
-                ->mergeTags(['service request number', 'created date', 'updated date', 'status', 'assigned to', 'title', 'type'])
+                ->mergeTags(['case number', 'created date', 'updated date', 'status', 'assigned to', 'title', 'type'])
                 ->showMergeTagsInBlocksPanel(false)
-                ->helperText('You may use “merge tags” to substitute information about a service request into your subject line. Insert a “{{“ in the subject line field to see a list of available merge tags'),
+                ->helperText('You may use “merge tags” to substitute information about a case into your subject line. Insert a “{{“ in the subject line field to see a list of available merge tags'),
 
             TiptapEditor::make('body')
                 ->label('Body')
                 ->profile('email_template')
                 ->placeholder('Enter the email body here...')
                 ->extraInputAttributes(['style' => 'min-height: 12rem;'])
-                ->mergeTags(['service request number', 'created date', 'updated date', 'status', 'assigned to', 'title', 'description', 'type'])
+                ->mergeTags(['case number', 'created date', 'updated date', 'status', 'assigned to', 'title', 'description', 'type'])
                 ->blocks([
-                    ServiceRequestTypeEmailTemplateButtonBlock::class,
+                    CaseTypeEmailTemplateButtonBlock::class,
                     SurveyResponseEmailTemplateTakeSurveyButtonBlock::class,
                 ])
                 ->columnSpanFull(),
@@ -122,12 +125,35 @@ class ManageCaseTypeEmailTemplate extends EditRecord
 
     protected function fillForm(): void
     {
-        $this->form->fill($this->template?->only(['subject', 'body']));
+        /** @var CaseType $record */
+        $record = $this->getRecord();
+
+        /** @var Collection<int, CaseTypeEmailTemplate> $templates */
+        $templates = $record
+            ->templates()
+            ->where('type', $this->type)
+            ->get();
+
+        /** @var Collection<string, CaseTypeEmailTemplate> $templates */
+        $templates = $templates->keyBy(fn (CaseTypeEmailTemplate $template) => $template->role->value);
+
+        $state = [];
+
+        foreach (CaseTypeEmailTemplateRole::cases() as $role) {
+            if ($template = $templates[$role->value] ?? null) {
+                $state[$role->value] = $template->only(['subject', 'body']);
+            }
+        }
+
+        $this->form->fill($state);
     }
 
-    #[Computed()]
+    #[Computed]
     protected function template(): ?CaseTypeEmailTemplate
     {
-        return $this->getRecord()?->templates()->where('type', $this->type)->first();
+        /** @var CaseType $record */
+        $record = $this->getRecord();
+
+        return $record->templates()->where('type', $this->type)->first();
     }
 }
