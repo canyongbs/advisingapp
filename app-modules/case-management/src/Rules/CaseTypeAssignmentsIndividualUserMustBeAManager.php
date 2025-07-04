@@ -5,6 +5,7 @@ namespace AdvisingApp\CaseManagement\Rules;
 use AdvisingApp\CaseManagement\Models\CaseType;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Translation\PotentiallyTranslatedString;
 
 class CaseTypeAssignmentsIndividualUserMustBeAManager implements ValidationRule
 {

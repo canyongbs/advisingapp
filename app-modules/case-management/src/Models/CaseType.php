@@ -184,6 +184,9 @@ class CaseType extends BaseModel implements Auditable
             ->withTimestamps();
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function assignmentTypeIndividual(): BelongsTo
     {
         return $this->belongsTo(
@@ -193,6 +196,9 @@ class CaseType extends BaseModel implements Auditable
         );
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function lastAssignedUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'last_assigned_id', 'id');
