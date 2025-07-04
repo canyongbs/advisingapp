@@ -47,6 +47,7 @@ use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
 use AdvisingApp\CaseManagement\Models\CaseAssignment;
+use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\Consent\Models\Concerns\CanConsent;
 use AdvisingApp\Engagement\Models\Concerns\HasManyEngagementBatches;
 use AdvisingApp\Engagement\Models\Concerns\HasManyEngagements;
@@ -665,6 +666,14 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function interactions(): HasMany
     {
         return $this->hasMany(Interaction::class, 'user_id');
+    }
+
+    /**
+     * @return HasMany<CaseType, $this>
+     */
+    public function caseTypeIndividualAssignment(): HasMany
+    {
+        return $this->hasMany(CaseType::class, 'assignment_type_individual_id', 'id');
     }
 
     protected function serializeDate(DateTimeInterface $date): string

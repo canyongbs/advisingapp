@@ -34,59 +34,45 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Team\Models;
+namespace AdvisingApp\CaseManagement\Services\CaseType;
 
-use AdvisingApp\CaseManagement\Models\CaseType;
-use AdvisingApp\CaseManagement\Models\CaseTypeAuditor;
-use AdvisingApp\CaseManagement\Models\CaseTypeManager;
-use AdvisingApp\Division\Models\Division;
-use App\Models\BaseModel;
+use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Builder;
 
-/**
- * @mixin IdeHelperTeam
- */
-class Team extends BaseModel
+class RoundRobinAssigner implements CaseTypeAssigner
 {
-    protected $fillable = [
-        'name',
-        'description',
-    ];
-
-    /** @return HasMany<User, $this> */
-    public function users(): HasMany
+    public function execute(CaseModel $case): void
     {
-        return $this->hasMany(User::class);
-    }
+        $caseType = $case->priority->type;
 
-    /**
-    * @return BelongsTo<Division, $this>
-    */
-    public function division(): BelongsTo
-    {
-        return $this->belongsTo(Division::class);
-    }
+        $lastAssignee = $caseType->lastAssignedUser;
+        $user = null;
 
-    /**
-     * @return BelongsToMany<CaseType, $this, covariant CaseTypeManager>
-     */
-    public function manageableCaseTypes(): BelongsToMany
-    {
-        return $this->belongsToMany(CaseType::class, 'case_type_managers')
-            ->using(CaseTypeManager::class)
-            ->withTimestamps();
-    }
+        if ($lastAssignee) {
+            $user = User::query()->whereRelation('team.manageableCaseTypes', 'case_types.id', $caseType->getKey())
+                ->where('name', '>=', $lastAssignee->name)
+                ->where(fn (Builder $query) => $query
+                    ->where('name', '!=', $lastAssignee->name)
+                    ->orWhere('users.id', '>', $lastAssignee->getKey()))
+                ->orderBy('name')->orderBy('id')->first();
+        }
 
-    /**
-     * @return BelongsToMany<CaseType, $this, CaseTypeAuditor>
-     */
-    public function auditableCaseTypes(): BelongsToMany
-    {
-        return $this->belongsToMany(CaseType::class, 'case_type_auditors')
-            ->using(CaseTypeAuditor::class)
-            ->withTimestamps();
+        if ($user === null) {
+            $user = User::query()->whereRelation('team.manageableCaseTypes', 'case_types.id', $caseType->getKey())
+                ->orderBy('name')->orderBy('id')->first();
+        }
+
+        if ($user !== null) {
+            $caseType->last_assigned_id = $user->getKey();
+            $caseType->save();
+            $case->assignments()->create([
+                'user_id' => $user->getKey(),
+                'assigned_by_id' => null,
+                'assigned_at' => now(),
+                'status' => CaseAssignmentStatus::Active,
+            ]);
+        }
     }
 }

@@ -38,6 +38,7 @@ namespace AdvisingApp\CaseManagement\Filament\Resources;
 
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\CreateCaseType;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\EditCaseType;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\EditCaseTypeAssignments;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\EditCaseTypeNotifications;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\ListCaseTypes;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\ManageCaseTypeAuditors;
@@ -83,6 +84,7 @@ class CaseTypeResource extends Resource
             'edit' => EditCaseType::route('/{record}/edit'),
             'case-type-managers' => ManageCaseTypeManagers::route('/{record}/managers'),
             'case-type-auditors' => ManageCaseTypeAuditors::route('/{record}/auditors'),
+            'case-type-assignments' => EditCaseTypeAssignments::route('/{record}/assignments'),
             'case-type-notifications' => EditCaseTypeNotifications::route('/{record}/notifications'),
         ];
     }
@@ -95,6 +97,7 @@ class CaseTypeResource extends Resource
                 EditCaseType::class,
                 ManageCaseTypeManagers::class,
                 ManageCaseTypeAuditors::class,
+                EditCaseTypeAssignments::class,
                 EditCaseTypeNotifications::class,
             ]),
         ];
