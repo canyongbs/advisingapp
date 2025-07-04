@@ -98,8 +98,6 @@ test('EditCaseTypeAssignments requires valid data', function (EditCaseTypeAssign
     ]
 );
 
-// Permission Tests
-
 test('EditCaseTypeAssignments is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
