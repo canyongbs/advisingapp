@@ -34,31 +34,30 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\CreateStudentController;
-use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\DeleteStudentController;
-use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\ListStudentsController;
-use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\ViewStudentController;
-use AdvisingApp\StudentDataModel\Http\Controllers\UpdateStudentInformationSystemSettingsController;
-use App\Http\Middleware\CheckOlympusKey;
-use Illuminate\Support\Facades\Route;
+namespace AdvisingApp\StudentDataModel\Http\Resources\Api\V1;
 
-Route::prefix('api')
-    ->middleware([
-        'api',
-        CheckOlympusKey::class,
-    ])
-    ->group(function () {
-        Route::post('/update-sis-settings', UpdateStudentInformationSystemSettingsController::class)
-            ->name('update-sis-settings');
-    });
+use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 
-Route::api(majorVersion: 1, routes: function () {
-    Route::name('students.')
-        ->prefix('students')
-        ->group(function () {
-            Route::get('/', ListStudentsController::class)->name('index');
-            Route::post('/', CreateStudentController::class)->name('create');
-            Route::get('/{student}', ViewStudentController::class)->name('view');
-            Route::delete('/{student}', DeleteStudentController::class)->name('delete');
-        });
-});
+/**
+ * @property StudentEmailAddress $resource
+ */
+class StudentEmailAddressResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(Request $request): array
+    {
+        return [
+            'id' => $this->resource->id,
+            'sisid' => $this->resource->sisid,
+            'address' => $this->resource->address,
+            'type' => $this->resource->type,
+            'order' => $this->resource->order,
+        ];
+    }
+}

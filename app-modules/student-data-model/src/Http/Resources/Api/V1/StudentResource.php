@@ -52,6 +52,35 @@ class StudentResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'sisid' => $this->resource->sisid,
+            'otherid' => $this->resource->otherid,
+            'first' => $this->resource->first,
+            'last' => $this->resource->last,
+            'full_name' => $this->resource->full_name,
+            'preferred' => $this->resource->preferred,
+            'birthdate' => $this->resource->birthdate ? $this->resource->birthdate->format('Y-m-d') : null,
+            'hsgrad' => $this->resource->hsgrad,
+            'gender' => $this->resource->gender,
+            'sms_opt_out' => $this->resource->sms_opt_out,
+            'email_bounce' => $this->resource->email_bounce,
+            'dual' => $this->resource->dual,
+            'ferpa' => $this->resource->ferpa,
+            'dfw' => $this->resource->dfw ? $this->resource->dfw->format('Y-m-d') : null,
+            'sap' => $this->resource->sap,
+            'holds' => $this->resource->holds,
+            'firstgen' => $this->resource->firstgen,
+            'ethnicity' => $this->resource->ethnicity,
+            'lastlmslogin' => $this->resource->lastlmslogin,
+            'f_e_term' => $this->resource->f_e_term,
+            'mr_e_term' => $this->resource->mr_e_term,
+            'primary_email_id' => $this->resource->primary_email_id,
+            'primary_phone_id' => $this->resource->primary_phone_id,
+            'primary_address_id' => $this->resource->primary_address_id,
+            'created_at_source' => $this->resource->created_at_source,
+            'updated_at_source' => $this->resource->updated_at_source,
+            'email_addresses' => StudentEmailAddressResource::collection($this->whenLoaded('emailAddresses')),
+            'primary_email_address' => $this->whenLoaded('primaryEmailAddress', fn (): StudentEmailAddressResource => new StudentEmailAddressResource($this->resource->primaryEmailAddress)),
+        ];
     }
 }
