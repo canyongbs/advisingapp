@@ -9,7 +9,7 @@ class IndividualAssigner implements CaseTypeAssigner
 {
     public function execute(CaseModel $case): void
     {
-        $manager = $case?->priority->type?->assignmentTypeIndividual;
+        $manager = $case->priority->type->assignmentTypeIndividual;
 
         if ($manager) {
             $case->assignments()->create([

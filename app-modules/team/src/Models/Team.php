@@ -73,7 +73,7 @@ class Team extends BaseModel
     /**
      * @return BelongsToMany<CaseType, $this, covariant CaseTypeManager>
      */
-    public function managableCaseTypes(): BelongsToMany
+    public function manageableCaseTypes(): BelongsToMany
     {
         return $this->belongsToMany(CaseType::class, 'case_type_managers')
             ->using(CaseTypeManager::class)

@@ -13,7 +13,7 @@ class CreateCaseAction
         return DB::transaction(
             function () use ($caseDataObject) {
                 $case = new CaseModel($caseDataObject->toArray());
-                $assignmentClass = $case->priority->type?->assignment_type?->getAssignerClass();
+                $assignmentClass = $case->priority->type->assignment_type->getAssignerClass();
                 $case->save();
 
                 if ($assignmentClass) {
