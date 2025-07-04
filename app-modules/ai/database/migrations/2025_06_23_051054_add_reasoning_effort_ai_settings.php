@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\AiReasoningEffort;
 use Illuminate\Support\Facades\DB;
 use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
@@ -48,16 +47,12 @@ return new class () extends SettingsMigration {
             } catch (SettingAlreadyExists $exception) {
                 // do nothing
             }
-
-            AiReasoningEffort::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function () {
-            AiReasoningEffort::purge();
-
             $this->migrator->deleteIfExists('ai.reasoning_effort');
         });
     }
