@@ -3,19 +3,23 @@
 namespace AdvisingApp\CaseManagement\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\CaseManagement\Database\Factories\CaseTypeEmailTemplateFactory;
 use AdvisingApp\CaseManagement\Enums\CaseEmailTemplateType;
+use AdvisingApp\CaseManagement\Enums\CaseTypeEmailTemplateRole;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @mixin IdeHelperCaseTypeEmailTemplate
  */
-class CaseTypeEmailTemplate extends Model
+class CaseTypeEmailTemplate extends Model implements Auditable
 {
-    // /** @use HasFactory<CaseTypeEmailTemplateFactory> */
-    // use HasFactory;
+    /** @use HasFactory<CaseTypeEmailTemplateFactory> */
+    use HasFactory;
+
     use HasUuids;
     use AuditableTrait;
 
@@ -24,12 +28,14 @@ class CaseTypeEmailTemplate extends Model
         'type',
         'subject',
         'body',
+        'role',
     ];
 
     protected $casts = [
         'subject' => 'array',
         'body' => 'array',
         'type' => CaseEmailTemplateType::class,
+        'role' => CaseTypeEmailTemplateRole::class,
     ];
 
     /**
