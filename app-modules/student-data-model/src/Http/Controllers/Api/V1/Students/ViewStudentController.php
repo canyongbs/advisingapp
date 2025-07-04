@@ -34,31 +34,38 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\CreateStudentController;
-use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\DeleteStudentController;
-use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\ListStudentsController;
-use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\ViewStudentController;
-use AdvisingApp\StudentDataModel\Http\Controllers\UpdateStudentInformationSystemSettingsController;
-use App\Http\Middleware\CheckOlympusKey;
-use Illuminate\Support\Facades\Route;
+namespace AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students;
 
-Route::prefix('api')
-    ->middleware([
-        'api',
-        CheckOlympusKey::class,
-    ])
-    ->group(function () {
-        Route::post('/update-sis-settings', UpdateStudentInformationSystemSettingsController::class)
-            ->name('update-sis-settings');
-    });
+use AdvisingApp\StudentDataModel\Http\Resources\Api\V1\StudentResource;
+use AdvisingApp\StudentDataModel\Models\Student;
+use App\Http\Controllers\Api\Concerns\CanIncludeRelationships;
+use Dedoc\Scramble\Attributes\Example;
+use Dedoc\Scramble\Attributes\QueryParameter;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Gate;
 
-Route::api(majorVersion: 1, routes: function () {
-    Route::name('students.')
-        ->prefix('students')
-        ->group(function () {
-            Route::get('/', ListStudentsController::class)->name('index');
-            Route::post('/', CreateStudentController::class)->name('create');
-            Route::get('/{student}', ViewStudentController::class)->name('view');
-            Route::delete('/{student}', DeleteStudentController::class)->name('delete');
-        });
-});
+class ViewStudentController
+{
+    use CanIncludeRelationships;
+
+    /**
+     * @response StudentResource
+     */
+    #[QueryParameter('include', description: 'Include related resources in the response.', type: 'string', examples: [
+        'email_addresses' => new Example('email_addresses'),
+        'primary_email_address' => new Example('primary_email_address'),
+    ])]
+    public function __invoke(Request $request, Student $student): JsonResource
+    {
+        Gate::authorize('viewAny', Student::class);
+        Gate::authorize('view', $student);
+
+        return $student
+            ->load($this->getIncludedRelationshipsToLoad($request, [
+                'email_addresses' => 'emailAddresses',
+                'primary_email_address' => 'primaryEmailAddress',
+            ]))
+            ->toResource(StudentResource::class);
+    }
+}

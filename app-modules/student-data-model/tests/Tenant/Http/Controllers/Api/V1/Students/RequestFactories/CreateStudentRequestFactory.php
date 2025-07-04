@@ -34,31 +34,24 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\CreateStudentController;
-use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\DeleteStudentController;
-use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\ListStudentsController;
-use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\ViewStudentController;
-use AdvisingApp\StudentDataModel\Http\Controllers\UpdateStudentInformationSystemSettingsController;
-use App\Http\Middleware\CheckOlympusKey;
-use Illuminate\Support\Facades\Route;
+namespace AdvisingApp\StudentDataModel\Tests\Tenant\Http\Controllers\Api\V1\Students\RequestFactories;
 
-Route::prefix('api')
-    ->middleware([
-        'api',
-        CheckOlympusKey::class,
-    ])
-    ->group(function () {
-        Route::post('/update-sis-settings', UpdateStudentInformationSystemSettingsController::class)
-            ->name('update-sis-settings');
-    });
+use Worksome\RequestFactories\RequestFactory;
 
-Route::api(majorVersion: 1, routes: function () {
-    Route::name('students.')
-        ->prefix('students')
-        ->group(function () {
-            Route::get('/', ListStudentsController::class)->name('index');
-            Route::post('/', CreateStudentController::class)->name('create');
-            Route::get('/{student}', ViewStudentController::class)->name('view');
-            Route::delete('/{student}', DeleteStudentController::class)->name('delete');
-        });
-});
+class CreateStudentRequestFactory extends RequestFactory
+{
+    public function definition(): array
+    {
+        $firstName = $this->faker->firstName();
+        $lastName = $this->faker->lastName();
+
+        return [
+            'sisid' => $this->faker->unique()->numerify('########'),
+            'otherid' => $this->faker->numerify('##########'),
+            'first' => $firstName,
+            'last' => $lastName,
+            'full_name' => "{$firstName} {$lastName}",
+            'preferred' => $this->faker->firstName(),
+        ];
+    }
+}

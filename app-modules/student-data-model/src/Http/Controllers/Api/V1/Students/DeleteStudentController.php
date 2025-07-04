@@ -34,31 +34,22 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\CreateStudentController;
-use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\DeleteStudentController;
-use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\ListStudentsController;
-use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\ViewStudentController;
-use AdvisingApp\StudentDataModel\Http\Controllers\UpdateStudentInformationSystemSettingsController;
-use App\Http\Middleware\CheckOlympusKey;
-use Illuminate\Support\Facades\Route;
+namespace AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students;
 
-Route::prefix('api')
-    ->middleware([
-        'api',
-        CheckOlympusKey::class,
-    ])
-    ->group(function () {
-        Route::post('/update-sis-settings', UpdateStudentInformationSystemSettingsController::class)
-            ->name('update-sis-settings');
-    });
+use AdvisingApp\StudentDataModel\Actions\DeleteStudent;
+use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Gate;
 
-Route::api(majorVersion: 1, routes: function () {
-    Route::name('students.')
-        ->prefix('students')
-        ->group(function () {
-            Route::get('/', ListStudentsController::class)->name('index');
-            Route::post('/', CreateStudentController::class)->name('create');
-            Route::get('/{student}', ViewStudentController::class)->name('view');
-            Route::delete('/{student}', DeleteStudentController::class)->name('delete');
-        });
-});
+class DeleteStudentController
+{
+    public function __invoke(DeleteStudent $deleteStudent, Student $student): Response
+    {
+        Gate::authorize('viewAny', Student::class);
+        Gate::authorize('delete', $student);
+
+        $deleteStudent->execute($student);
+
+        return response()->noContent(204);
+    }
+}

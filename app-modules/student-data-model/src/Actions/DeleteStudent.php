@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\DB;
 
 class DeleteStudent
 {
-    public function execute(Student $student)
+    public function execute(Student $student): void
     {
         DB::transaction(function () use ($student) {
             $student->enrollments()->delete();
