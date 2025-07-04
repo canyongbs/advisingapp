@@ -269,7 +269,7 @@ test('CreateCase is gated with proper feature access control', function () {
 
     $case = CaseModel::first();
 
-    expect($case->division->id)->toEqual($request['division_id']);
+    expect($case->division->getKey())->toEqual($request['division_id']);
 });
 
 test('assignment type individual manager will auto assign to new cases', function () {
@@ -316,7 +316,7 @@ test('assignment type individual manager will auto assign to new cases', functio
 
     $case = CaseModel::first();
 
-    expect($case->assignments()->first())->user->id->toBe($user->getKey());
+    expect($case->assignments()->first())->user->getKey()->toBe($user->getKey());
 });
 
 test('assignment type round robin will auto-assign to new cases', function () {

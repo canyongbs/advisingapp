@@ -48,7 +48,7 @@ class WorkloadAssigner implements CaseTypeAssigner
                 ->where('name', '>=', $lastAssignee->name)
                 ->where(fn (Builder $query) => $query
                     ->where('name', '!=', $lastAssignee->name)
-                    ->orWhere('users.id', '>', $lastAssignee->id))
+                    ->orWhere('users.id', '>', $lastAssignee->getKey()))
                 ->orderBy('name')->orderBy('id')->first();
         }
 

@@ -84,7 +84,7 @@ class CaseTypeResource extends Resource
             'edit' => EditCaseType::route('/{record}/edit'),
             'case-type-managers' => ManageCaseTypeManagers::route('/{record}/managers'),
             'case-type-auditors' => ManageCaseTypeAuditors::route('/{record}/auditors'),
-            'service-request-type-assignments' => EditCaseTypeAssignments::route('/{record}/assignments'),
+            'case-type-assignments' => EditCaseTypeAssignments::route('/{record}/assignments'),
             'case-type-notifications' => EditCaseTypeNotifications::route('/{record}/notifications'),
         ];
     }
