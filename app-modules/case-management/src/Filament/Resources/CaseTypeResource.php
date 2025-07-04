@@ -36,20 +36,26 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources;
 
+use AdvisingApp\CaseManagement\Enums\CaseEmailTemplateType;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\CreateCaseType;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\EditCaseType;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\EditCaseTypeNotifications;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\ListCaseTypes;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\ManageCaseTypeAuditors;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\ManageCaseTypeEmailTemplate;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\ManageCaseTypeManagers;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\ViewCaseType;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\RelationManagers\CasePrioritiesRelationManager;
 use AdvisingApp\CaseManagement\Models\CaseType;
+use App\Features\CaseTypeEmailTemplateFeature;
 use App\Filament\Clusters\CaseManagementAdministration;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class CaseTypeResource extends Resource
 {
@@ -84,6 +90,7 @@ class CaseTypeResource extends Resource
             'case-type-managers' => ManageCaseTypeManagers::route('/{record}/managers'),
             'case-type-auditors' => ManageCaseTypeAuditors::route('/{record}/auditors'),
             'case-type-notifications' => EditCaseTypeNotifications::route('/{record}/notifications'),
+            'case-type-email-template' => ManageCaseTypeEmailTemplate::route('/{record}/email-template/{type}'),
         ];
     }
 
@@ -97,6 +104,12 @@ class CaseTypeResource extends Resource
                 ManageCaseTypeAuditors::class,
                 EditCaseTypeNotifications::class,
             ]),
+            ...(CaseTypeEmailTemplateFeature::active() ? array_map(
+                fn (CaseEmailTemplateType $type): NavigationItem => Arr::first(ManageCaseTypeEmailTemplate::getNavigationItems(['record' => $page->record, 'type' => $type]))
+                    ->label($type->getLabel())
+                    ->isActiveWhen(fn (): bool => Str::endsWith(request()->path(), $type)),
+                CaseEmailTemplateType::cases(),
+            ) : []),
         ];
     }
 }

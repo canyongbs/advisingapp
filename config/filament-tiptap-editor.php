@@ -74,6 +74,11 @@ return [
             'bold', 'italic', 'strike', 'underline', 'superscript', 'subscript', 'lead', 'small', 'color', 'highlight', 'align-left', 'align-center', 'align-right', '|',
             'link', 'media', 'oembed', 'table', 'grid', 'grid-builder', 'details', 'hurdle', '|', 'code', 'code-block', 'source',
         ],
+        'email_template' => [
+            'heading', 'bullet-list', 'ordered-list', 'checked-list', 'blockquote', 'hr', '|',
+            'bold', 'italic', 'strike', 'underline', 'superscript', 'subscript', 'lead', 'small', 'color', 'highlight', 'align-left', 'align-center', 'align-right', '|',
+            'link', 'media', 'oembed', 'table', 'grid', 'grid-builder', 'details', 'hurdle', '|', 'code', 'code-block', 'source', 'blocks',
+        ],
         'simple' => ['heading', 'hr', 'bullet-list', 'ordered-list', 'checked-list', '|', 'bold', 'italic', 'lead', 'small', '|', 'link', 'media'],
         'minimal' => ['bold', 'italic', 'link', 'bullet-list', 'ordered-list'],
         'email' => ['bold', 'italic', 'small', 'link', 'color', '|', 'heading', 'bullet-list', 'ordered-list', 'hr', 'media', '|', 'clear-formatting'],
