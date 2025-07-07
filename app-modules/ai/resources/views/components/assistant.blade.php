@@ -33,8 +33,6 @@
 --}}
 @php
     use Filament\Support\Enums\ActionSize;
-    use App\Features\LlamaParse;
-    use App\Features\SubmitAiChatOnEnterFlag;
 @endphp
 
 <div class="h-[calc(100dvh-4rem)]">
@@ -658,38 +656,35 @@
                     <form x-on:submit.prevent="sendMessage()">
                         <div
                             class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
-                            @if (LlamaParse::active())
-                                <div class="flex items-center justify-start gap-x-4 gap-y-3 p-4">
-                                    {{ $this->uploadFilesAction }}
+                            <div class="flex items-center justify-start gap-x-4 gap-y-3 p-4">
+                                {{ $this->uploadFilesAction }}
 
-                                    @foreach ($this->getFiles() as $file)
-                                        <x-filament::badge
-                                            :tooltip="blank($file->parsing_results)
-                                                ? 'This file is currently being parsed'
-                                                : null"
-                                            wire:target="removeUploadedFile('{{ $file->getKey() }}')"
-                                        >
-                                            <span class="flex items-center gap-1">
-                                                @if (blank($file->parsing_results))
-                                                    <x-filament::loading-indicator
-                                                        class="h-4 w-4 shrink-0"
-                                                        wire:poll.5s="checkForParsingResults('{{ $file->getKey() }}')"
-                                                        wire:loading.remove
-                                                        wire:target="removeUploadedFile('{{ $file->getKey() }}')"
-                                                    />
-                                                @endif
-                                                {{ $file->name }}
-                                            </span>
+                                @foreach ($this->getFiles() as $file)
+                                    <x-filament::badge
+                                        :tooltip="!$this->isFileReady($file)
+                                            ? 'This file is currently being parsed'
+                                            : null"
+                                        wire:target="removeUploadedFile('{{ $file->getKey() }}')"
+                                    >
+                                        <span class="flex items-center gap-1">
+                                            @if (!$this->isFileReady($file))
+                                                <x-filament::loading-indicator
+                                                    class="h-4 w-4 shrink-0"
+                                                    wire:loading.remove
+                                                    wire:target="removeUploadedFile('{{ $file->getKey() }}')"
+                                                />
+                                            @endif
+                                            {{ $file->name }}
+                                        </span>
 
-                                            <x-slot
-                                                name="deleteButton"
-                                                label="Remove uploaded file {{ $file->name }}"
-                                                wire:click="removeUploadedFile('{{ $file->getKey() }}')"
-                                            ></x-slot>
-                                        </x-filament::badge>
-                                    @endforeach
-                                </div>
-                            @endif
+                                        <x-slot
+                                            name="deleteButton"
+                                            label="Remove uploaded file {{ $file->name }}"
+                                            wire:click="removeUploadedFile('{{ $file->getKey() }}')"
+                                        ></x-slot>
+                                    </x-filament::badge>
+                                @endforeach
+                            </div>
                             <div class="bg-white dark:bg-gray-800">
                                 <label
                                     class="sr-only"
@@ -708,16 +703,17 @@
                                     placeholder="Type here..."
                                     required
                                     maxlength="25000"
-                                    @if (SubmitAiChatOnEnterFlag::active() && auth()->user()->is_submit_ai_chat_on_enter_enabled) x-on:keydown.enter.prevent="sendMessage()" @endif
+                                    @if (auth()->user()->is_submit_ai_chat_on_enter_enabled) x-on:keydown.enter.prevent="sendMessage()" @endif
                                 >                                
                                 </textarea>
                             </div>
                             <div
                                 class="flex flex-col items-center border-t px-3 py-2 dark:border-gray-600 sm:flex-row sm:justify-between">
                                 <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
-                                    @if ($this->isParsingFiles)
+                                    @if ($this->isProcessingFiles)
                                         <x-filament::button
                                             class="w-full sm:w-auto"
+                                            wire:poll.5s
                                             disabled
                                         >
                                             Processing files, please wait...

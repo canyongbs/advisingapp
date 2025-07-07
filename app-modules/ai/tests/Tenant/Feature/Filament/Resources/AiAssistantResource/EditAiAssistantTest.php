@@ -206,7 +206,7 @@ it('validates the inputs', function ($data, $errors) use ($licenses, $permission
             ['model' => 'required'],
         ],
         'model must be correct enum' => [
-            EditAiAssistantRequestFactory::new()->state(['model' => AiModel::OpenAiGpt4]),
+            EditAiAssistantRequestFactory::new()->state(['model' => AiModel::OpenAiGpt4o]),
             ['model' => Enum::class],
         ],
         'description required' => [

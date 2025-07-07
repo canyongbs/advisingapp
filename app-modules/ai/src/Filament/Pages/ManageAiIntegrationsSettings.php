@@ -42,8 +42,6 @@ use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Jobs\ReInitializeAiModel;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use App\Features\AiReasoningEffort;
-use App\Features\AiResponsesApi;
-use App\Features\LlamaParse;
 use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -85,56 +83,6 @@ class ManageAiIntegrationsSettings extends SettingsPage
                 Section::make('Azure OpenAI')
                     ->collapsible()
                     ->schema([
-                        Section::make('GPT 3.5')
-                            ->collapsible()
-                            ->schema([
-                                TextInput::make('open_ai_gpt_35_model_name')
-                                    ->label('Model Name')
-                                    ->placeholder('Canyon 3.5')
-                                    ->string()
-                                    ->maxLength(255)
-                                    ->nullable(),
-                                TextInput::make('open_ai_gpt_35_base_uri')
-                                    ->label('Base URI')
-                                    ->placeholder('https://example.openai.azure.com/openai')
-                                    ->url(),
-                                TextInput::make('open_ai_gpt_35_api_key')
-                                    ->label('API Key')
-                                    ->password()
-                                    ->autocomplete(false),
-                                TextInput::make('open_ai_gpt_35_model')
-                                    ->label('Model'),
-                                Select::make('open_ai_gpt_35_applicable_features')
-                                    ->label('Applicability')
-                                    ->options(AiModelApplicabilityFeature::class)
-                                    ->multiple()
-                                    ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
-                            ]),
-                        Section::make('GPT 4')
-                            ->collapsible()
-                            ->schema([
-                                TextInput::make('open_ai_gpt_4_model_name')
-                                    ->label('Model Name')
-                                    ->placeholder('Canyon 4')
-                                    ->string()
-                                    ->maxLength(255)
-                                    ->nullable(),
-                                TextInput::make('open_ai_gpt_4_base_uri')
-                                    ->label('Base URI')
-                                    ->placeholder('https://example.openai.azure.com/openai')
-                                    ->url(),
-                                TextInput::make('open_ai_gpt_4_api_key')
-                                    ->label('API Key')
-                                    ->password()
-                                    ->autocomplete(false),
-                                TextInput::make('open_ai_gpt_4_model')
-                                    ->label('Model'),
-                                Select::make('open_ai_gpt_4_applicable_features')
-                                    ->label('Applicability')
-                                    ->options(AiModelApplicabilityFeature::class)
-                                    ->multiple()
-                                    ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
-                            ]),
                         Section::make('GPT 4o')
                             ->collapsible()
                             ->schema([
@@ -161,8 +109,7 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
                                 Checkbox::make('is_open_ai_gpt_4o_responses_api_enabled')
                                     ->label('Enable Responses API')
-                                    ->helperText('Use the OpenAI Responses API for generating text. The Base URI must use /openai/v1 instead of /openai.')
-                                    ->visible(AiResponsesApi::active()),
+                                    ->helperText('Use the OpenAI Responses API for generating text. The Base URI must use /openai/v1 instead of /openai.'),
                             ]),
                         Section::make('GPT 4o mini')
                             ->collapsible()
@@ -190,8 +137,7 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
                                 Checkbox::make('is_open_ai_gpt_4o_mini_responses_api_enabled')
                                     ->label('Enable Responses API')
-                                    ->helperText('Use the OpenAI Responses API for generating text. The Base URI must use /openai/v1 instead of /openai.')
-                                    ->visible(AiResponsesApi::active()),
+                                    ->helperText('Use the OpenAI Responses API for generating text. The Base URI must use /openai/v1 instead of /openai.'),
                             ]),
                         Section::make('GPT o1 mini')
                             ->collapsible()
@@ -295,8 +241,7 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
                                 Checkbox::make('is_open_ai_gpt_41_mini_responses_api_enabled')
                                     ->label('Enable Responses API')
-                                    ->helperText('Use the OpenAI Responses API for generating text. The Base URI must use /openai/v1 instead of /openai.')
-                                    ->visible(AiResponsesApi::active()),
+                                    ->helperText('Use the OpenAI Responses API for generating text. The Base URI must use /openai/v1 instead of /openai.'),
                             ]),
                         Section::make('GPT 4.1 nano')
                             ->collapsible()
@@ -324,8 +269,7 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
                                 Checkbox::make('is_open_ai_gpt_41_nano_responses_api_enabled')
                                     ->label('Enable Responses API')
-                                    ->helperText('Use the OpenAI Responses API for generating text. The Base URI must use /openai/v1 instead of /openai.')
-                                    ->visible(AiResponsesApi::active()),
+                                    ->helperText('Use the OpenAI Responses API for generating text. The Base URI must use /openai/v1 instead of /openai.'),
                             ]),
                         Section::make('GPT o4 mini')
                             ->collapsible()
@@ -353,8 +297,7 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
                                 Checkbox::make('is_open_ai_gpt_o4_mini_responses_api_enabled')
                                     ->label('Enable Responses API')
-                                    ->helperText('Use the OpenAI Responses API for generating text. The Base URI must use /openai/v1 instead of /openai.')
-                                    ->visible(AiResponsesApi::active()),
+                                    ->helperText('Use the OpenAI Responses API for generating text. The Base URI must use /openai/v1 instead of /openai.'),
                             ]),
                     ]),
                 Section::make('Jina AI')
@@ -397,8 +340,7 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->password()
                                     ->autocomplete(false),
                             ]),
-                    ])
-                    ->visible(LlamaParse::active()),
+                    ]),
             ]);
     }
 
@@ -413,14 +355,6 @@ class ManageAiIntegrationsSettings extends SettingsPage
             ->modalSubmitActionLabel('Save and sync all chats')
             ->modalHidden(function (AiIntegrationsSettings $originalSettings) {
                 $newSettings = $this->form->getRawState();
-
-                if ($originalSettings->open_ai_gpt_35_base_uri !== $newSettings['open_ai_gpt_35_base_uri']) {
-                    return false;
-                }
-
-                if ($originalSettings->open_ai_gpt_4_base_uri !== $newSettings['open_ai_gpt_4_base_uri']) {
-                    return false;
-                }
 
                 if ($originalSettings->open_ai_gpt_4o_base_uri !== $newSettings['open_ai_gpt_4o_base_uri']) {
                     return false;
@@ -467,8 +401,6 @@ class ManageAiIntegrationsSettings extends SettingsPage
                 $newSettings = $this->form->getState();
 
                 $changedModels = [
-                    ...(($originalSettings->open_ai_gpt_35_base_uri !== $newSettings['open_ai_gpt_35_base_uri']) ? [AiModel::OpenAiGpt35] : []),
-                    ...(($originalSettings->open_ai_gpt_4_base_uri !== $newSettings['open_ai_gpt_4_base_uri']) ? [AiModel::OpenAiGpt4] : []),
                     ...(($originalSettings->open_ai_gpt_4o_base_uri !== $newSettings['open_ai_gpt_4o_base_uri']) ? [AiModel::OpenAiGpt4o] : []),
                     ...(($originalSettings->open_ai_gpt_4o_mini_base_uri !== $newSettings['open_ai_gpt_4o_mini_base_uri']) ? [AiModel::OpenAiGpt4o] : []),
                     ...(($originalSettings->open_ai_gpt_o1_mini_base_uri !== $newSettings['open_ai_gpt_o1_mini_base_uri']) ? [AiModel::OpenAiGptO1Mini] : []),

@@ -39,12 +39,10 @@ namespace AdvisingApp\Ai\Enums;
 use AdvisingApp\Ai\Services\Contracts\AiService;
 use AdvisingApp\Ai\Services\TestAiService;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
-use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt35Service;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt41MiniService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt41NanoService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4oMiniService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4oService;
-use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4Service;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptO1MiniService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptO3MiniService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptO4MiniService;
@@ -55,16 +53,11 @@ use AdvisingApp\IntegrationOpenAi\Services\OpenAiResponsesGpt4oMiniService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiResponsesGpt4oService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiResponsesGptO3Service;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiResponsesGptO4MiniService;
-use App\Features\AiResponsesApi;
 use Exception;
 use Filament\Support\Contracts\HasLabel;
 
 enum AiModel: string implements HasLabel
 {
-    case OpenAiGpt35 = 'openai_gpt_3.5';
-
-    case OpenAiGpt4 = 'openai_gpt_4';
-
     case OpenAiGpt4o = 'openai_gpt_4o';
 
     case OpenAiGpt4oMini = 'openai_gpt_4o_mini';
@@ -94,8 +87,6 @@ enum AiModel: string implements HasLabel
         $aiIntegrationSettings = app(AiIntegrationsSettings::class);
 
         return match ($this) {
-            self::OpenAiGpt35 => $aiIntegrationSettings->open_ai_gpt_35_model_name ?? 'Canyon 3.5',
-            self::OpenAiGpt4 => $aiIntegrationSettings->open_ai_gpt_4_model_name ?? 'Canyon 4',
             self::OpenAiGpt4o => $aiIntegrationSettings->open_ai_gpt_4o_model_name ?? 'Canyon 4o',
             self::OpenAiGpt4oMini => $aiIntegrationSettings->open_ai_gpt_4o_mini_model_name ?? 'Canyon 4o mini',
             self::OpenAiGptO1Mini => $aiIntegrationSettings->open_ai_gpt_o1_mini_model_name ?? 'Canyon o1 mini',
@@ -119,8 +110,6 @@ enum AiModel: string implements HasLabel
         $aiIntegrationSettings = app(AiIntegrationsSettings::class);
 
         $features = match ($this) {
-            self::OpenAiGpt35 => $aiIntegrationSettings->open_ai_gpt_35_applicable_features,
-            self::OpenAiGpt4 => $aiIntegrationSettings->open_ai_gpt_4_applicable_features,
             self::OpenAiGpt4o => $aiIntegrationSettings->open_ai_gpt_4o_applicable_features,
             self::OpenAiGpt4oMini => $aiIntegrationSettings->open_ai_gpt_4o_mini_applicable_features,
             self::OpenAiGptO1Mini => $aiIntegrationSettings->open_ai_gpt_o1_mini_applicable_features,
@@ -138,34 +127,22 @@ enum AiModel: string implements HasLabel
         return array_map(AiModelApplicabilityFeature::parse(...), $features);
     }
 
+    public function hasService(): bool
+    {
+        return match ($this) {
+            self::JinaDeepSearchV1, self::LlamaParse => false,
+            default => true,
+        };
+    }
+
     /**
      * @return class-string<AiService>
      */
     public function getServiceClass(): string
     {
-        if (! AiResponsesApi::active()) {
-            return match ($this) {
-                self::OpenAiGpt35 => OpenAiGpt35Service::class,
-                self::OpenAiGpt4 => OpenAiGpt4Service::class,
-                self::OpenAiGpt4o => OpenAiGpt4oService::class,
-                self::OpenAiGpt4oMini => OpenAiGpt4oMiniService::class,
-                self::OpenAiGptO1Mini => OpenAiGptO1MiniService::class,
-                self::OpenAiGptO3 => OpenAiResponsesGptO3Service::class,
-                self::OpenAiGptO3Mini => OpenAiGptO3MiniService::class,
-                self::OpenAiGpt41Mini => OpenAiGpt41MiniService::class,
-                self::OpenAiGpt41Nano => OpenAiGpt41NanoService::class,
-                self::OpenAiGptO4Mini => OpenAiGptO4MiniService::class,
-                self::OpenAiGptTest => OpenAiGptTestService::class,
-                self::Test => TestAiService::class,
-                default => throw new Exception('No Service class found for this model.'),
-            };
-        }
-
         $aiIntegrationSettings = app(AiIntegrationsSettings::class);
 
         return match ($this) {
-            self::OpenAiGpt35 => OpenAiGpt35Service::class,
-            self::OpenAiGpt4 => OpenAiGpt4Service::class,
             self::OpenAiGpt4o => $aiIntegrationSettings->is_open_ai_gpt_4o_responses_api_enabled ? OpenAiResponsesGpt4oService::class : OpenAiGpt4oService::class,
             self::OpenAiGpt4oMini => $aiIntegrationSettings->is_open_ai_gpt_4o_mini_responses_api_enabled ? OpenAiResponsesGpt4oMiniService::class : OpenAiGpt4oMiniService::class,
             self::OpenAiGptO1Mini => OpenAiGptO1MiniService::class,
@@ -189,7 +166,7 @@ enum AiModel: string implements HasLabel
     {
         // TODO: Not actually sure mini supports files, need to confirm
         return match ($this) {
-            self::OpenAiGpt35, self::OpenAiGpt4, self::OpenAiGpt4o, self::OpenAiGpt4oMini, self::OpenAiGptO1Mini, self::OpenAiGptO3Mini, self::OpenAiGpt41Mini, self::OpenAiGpt41Nano, self::OpenAiGptO4Mini => true,
+            self::OpenAiGpt4o, self::OpenAiGpt4oMini, self::OpenAiGptO1Mini, self::OpenAiGptO3Mini, self::OpenAiGpt41Mini, self::OpenAiGpt41Nano, self::OpenAiGptO4Mini => true,
             default => false,
         };
     }

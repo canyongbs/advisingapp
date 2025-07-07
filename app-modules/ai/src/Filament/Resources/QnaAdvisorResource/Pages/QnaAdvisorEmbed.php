@@ -37,7 +37,6 @@
 namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource;
-use App\Features\QnaAdvisorFeature;
 use App\Models\User;
 use Filament\Resources\Pages\Page;
 
@@ -56,6 +55,6 @@ class QnaAdvisorEmbed extends Page
         /** @var User $user */
         $user = auth()->user();
 
-        return QnaAdvisorFeature::active() && $user->can('qna_advisor_embed.view-any') && $user->can('qna_advisor_embed.*.view') && parent::canAccess($parameters);
+        return $user->can('qna_advisor_embed.view-any') && $user->can('qna_advisor_embed.*.view') && parent::canAccess($parameters);
     }
 }

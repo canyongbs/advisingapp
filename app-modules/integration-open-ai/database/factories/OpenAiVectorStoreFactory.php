@@ -34,14 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+namespace AdvisingApp\IntegrationOpenAi\Database\Factories;
 
-use App\Support\AbstractFeatureFlag;
+use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class UnMatchInboundCommunicationFeature extends AbstractFeatureFlag
+/**
+ * @extends Factory<OpenAiVectorStore>
+ */
+class OpenAiVectorStoreFactory extends Factory
 {
-    public function resolve(mixed $scope): mixed
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
-        return false;
+        return [
+            'deployment_hash' => $this->faker->md5(),
+            'ready_until' => $this->faker->dateTimeBetween('+1 day', '+1 year'),
+            'vector_store_id' => $this->faker->uuid(),
+            'vector_store_file_id' => $this->faker->uuid(),
+        ];
     }
 }

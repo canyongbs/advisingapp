@@ -39,6 +39,7 @@ namespace AdvisingApp\Ai\Services\Contracts;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Models\Contracts\AiFile;
 use Closure;
 
 interface AiService
@@ -111,6 +112,8 @@ interface AiService
     public function supportsMessageFileUploads(): bool;
 
     public function supportsAssistantFileUploads(): bool;
+
+    public function isFileReady(AiFile $file): bool;
 
     public function getDeployment(): ?string;
 }

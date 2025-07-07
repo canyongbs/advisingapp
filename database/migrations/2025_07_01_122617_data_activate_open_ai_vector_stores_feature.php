@@ -34,42 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services;
+use App\Features\OpenAiVectorStoresFeature;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
-use OpenAI;
-
-class OpenAiGpt4Service extends BaseOpenAiService
-{
-    public function __construct(
-        protected AiIntegrationsSettings $settings,
-    ) {
-        $this->client = OpenAI::factory()
-            ->withBaseUri($this->getDeployment())
-            ->withHttpHeader('api-key', $this->settings->open_ai_gpt_4_api_key ?? config('integration-open-ai.gpt_4_api_key'))
-            ->withQueryParam('api-version', $this->getApiVersion())
-            ->withHttpHeader('OpenAI-Beta', 'assistants=v2')
-            ->withHttpHeader('Accept', '*/*')
-            ->make();
-    }
-
-    public function getApiKey(): string
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->settings->open_ai_gpt_4_api_key ?? config('integration-open-ai.gpt_4_api_key');
+        OpenAiVectorStoresFeature::activate();
     }
 
-    public function getApiVersion(): string
+    public function down(): void
     {
-        return '2024-05-01-preview';
+        OpenAiVectorStoresFeature::deactivate();
     }
-
-    public function getModel(): string
-    {
-        return $this->settings->open_ai_gpt_4_model ?? config('integration-open-ai.gpt_4_model');
-    }
-
-    public function getDeployment(): ?string
-    {
-        return $this->settings->open_ai_gpt_4_base_uri ?? config('integration-open-ai.gpt_4_base_uri');
-    }
-}
+};

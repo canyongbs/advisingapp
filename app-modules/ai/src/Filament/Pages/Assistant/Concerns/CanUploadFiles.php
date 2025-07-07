@@ -38,10 +38,10 @@ namespace AdvisingApp\Ai\Filament\Pages\Assistant\Concerns;
 
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
-use App\Features\LlamaParse;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Filesystem\AwsS3V3Adapter;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
@@ -50,7 +50,7 @@ use Livewire\Attributes\Locked;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 /**
- * @property-read bool $isParsingFiles
+ * @property-read bool $isProcessingFiles
  */
 trait CanUploadFiles
 {
@@ -60,36 +60,46 @@ trait CanUploadFiles
     #[Locked]
     public array $files = [];
 
+    /**
+     * @var array<string, bool>
+     */
+    protected array $cachedIsFileReady = [];
+
     public function removeUploadedFile(string $key): void
     {
         $this->files = array_filter($this->files, fn (string $file): bool => $file !== $key);
     }
 
-    public function checkForParsingResults(string $key): void
+    public function isFileReady(AiMessageFile $file): bool
     {
-        if (! in_array($key, $this->files)) {
-            return;
+        $key = $file->getKey();
+
+        if (array_key_exists($key, $this->cachedIsFileReady)) {
+            return $this->cachedIsFileReady[$key];
         }
 
-        $file = AiMessageFile::find($key);
-
-        if (! $file) {
-            return;
+        if (
+            (! in_array($key, $this->files))
+            && ($file->message?->thread?->getKey() !== $this->thread?->getKey())
+        ) {
+            return $this->cachedIsFileReady[$key] = false;
         }
 
         if (filled($file->parsing_results)) {
-            return;
+            return $this->cachedIsFileReady[$key] = $this->thread?->assistant?->model->getService()->isFileReady($file);
         }
 
         $response = Http::withToken(app(AiIntegrationsSettings::class)->llamaparse_api_key)
             ->get("https://api.cloud.llamaindex.ai/api/v1/parsing/job/{$file->file_id}/result/text");
 
         if ((! $response->successful()) || blank($response->json('text'))) {
-            return;
+            return $this->cachedIsFileReady[$key] = false;
         }
 
         $file->parsing_results = $response->json('text');
         $file->save();
+
+        return $this->cachedIsFileReady[$key] = $this->thread?->assistant?->model->getService()->isFileReady($file);
     }
 
     public function clearFiles(): void
@@ -109,16 +119,30 @@ trait CanUploadFiles
     }
 
     #[Computed]
-    public function isParsingFiles(): bool
+    public function isProcessingFiles(): bool
     {
-        if (! LlamaParse::active()) {
-            return false;
+        foreach ($this->getFiles() as $file) {
+            if (! $this->isFileReady($file)) {
+                return true;
+            }
         }
 
-        return AiMessageFile::query()
-            ->whereKey($this->files)
-            ->whereNull('parsing_results')
-            ->exists();
+        $previousThreadMessageFiles = AiMessageFile::query()
+            ->whereNotNull('parsing_results')
+            ->whereHas(
+                'message',
+                fn (Builder $query) => $query->whereBelongsTo($this->thread, 'thread'),
+            )
+            ->get()
+            ->all();
+
+        foreach ($previousThreadMessageFiles as $file) {
+            if (! $this->isFileReady($file)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function uploadFilesAction(): Action

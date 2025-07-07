@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\AiResponsesApi;
 use Illuminate\Support\Facades\DB;
 use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
@@ -72,15 +71,11 @@ return new class () extends SettingsMigration {
             } catch (SettingAlreadyExists $exception) {
                 // do nothing
             }
-
-            AiResponsesApi::activate();
         });
     }
 
     public function down(): void
     {
-        AiResponsesApi::purge();
-
         $this->migrator->deleteIfExists('ai.is_open_ai_gpt_4o_responses_api_enabled');
         $this->migrator->deleteIfExists('ai.is_open_ai_gpt_4o_mini_responses_api_enabled');
         $this->migrator->deleteIfExists('ai.is_open_ai_gpt_41_mini_responses_api_enabled');

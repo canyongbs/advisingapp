@@ -65,15 +65,15 @@ class CreatePermissionMigration extends MigrateMakeCommand
         $path = parent::getMigrationPath();
 
         if ($module = $this->module()) {
-            $app_directory = $this->laravel->databasePath('migrations');
-            $module_directory = $module->path('database/migrations');
+            $appDirectory = $this->laravel->databasePath('migrations');
+            $moduleDirectory = $module->path('database/migrations');
 
-            $path = str_replace($app_directory, $module_directory, $path);
+            $path = str_replace($appDirectory, $moduleDirectory, $path);
 
             $filesystem = $this->getLaravel()->make(Filesystem::class);
 
-            if (! $filesystem->isDirectory($module_directory)) {
-                $filesystem->makeDirectory($module_directory, 0755, true);
+            if (! $filesystem->isDirectory($moduleDirectory)) {
+                $filesystem->makeDirectory($moduleDirectory, 0755, true);
             }
         }
 

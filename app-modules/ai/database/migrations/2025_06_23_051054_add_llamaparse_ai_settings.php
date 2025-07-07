@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\LlamaParse;
 use Illuminate\Support\Facades\DB;
 use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
@@ -54,16 +53,12 @@ return new class () extends SettingsMigration {
             } catch (SettingAlreadyExists $exception) {
                 // do nothing
             }
-
-            LlamaParse::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function () {
-            LlamaParse::purge();
-
             $this->migrator->deleteIfExists('ai.llamaparse_model_name');
             $this->migrator->deleteIfExists('ai.llamaparse_api_key');
         });

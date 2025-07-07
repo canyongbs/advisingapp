@@ -41,7 +41,6 @@ use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiCustomAdvisorSettings;
-use App\Features\LlamaParse;
 use App\Models\User;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Component;
@@ -197,8 +196,7 @@ class AiAssistantForm
 
                                 return 1;
                             }),
-                    ])
-                    ->visible(LlamaParse::active()),
+                    ]),
             ]);
     }
 }

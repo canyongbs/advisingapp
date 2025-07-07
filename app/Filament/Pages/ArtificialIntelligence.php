@@ -36,8 +36,6 @@
 
 namespace App\Filament\Pages;
 
-use App\Features\ActionCenterUpdateFeatureFlag;
-use App\Features\SubmitAiChatOnEnterFlag;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
@@ -69,15 +67,13 @@ class ArtificialIntelligence extends ProfilePage
                                 false => 'New Line',
                                 true => 'Enter',
                             ]),
-                    ])
-                    ->visible(SubmitAiChatOnEnterFlag::active()),
+                    ]),
                 Section::make('Action Center Update')
                     ->description('Opt-in to a daily update by your AI Institutional Advisor on activity in the last 24 hours.')
                     ->schema([
                         Toggle::make('is_action_center_update_enabled')
                             ->label('Action Center Update Enabled'),
-                    ])
-                    ->visible(ActionCenterUpdateFeatureFlag::active()),
+                    ]),
             ]);
     }
 }

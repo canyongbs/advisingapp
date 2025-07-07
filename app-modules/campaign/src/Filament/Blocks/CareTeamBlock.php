@@ -76,11 +76,11 @@ class CareTeamBlock extends CampaignActionBlock
                         ->label('User')
                         ->options(function (Get $get, $livewire, string $operation) {
                             if ($livewire instanceof CreateCampaign) {
-                                $segment_id = $get('../../../../../segment_id');
+                                $segmentId = $get('../../../../../segment_id');
                             } else {
-                                $segment_id = $livewire->getOwnerRecord()->segment_id;
+                                $segmentId = $livewire->getOwnerRecord()->segment_id;
                             }
-                            $segment = Segment::find($segment_id);
+                            $segment = Segment::find($segmentId);
 
                             return User::query()->tap(new HasLicense(match ($segment->model->getLabel()) {
                                 CareTeamRoleType::Student->getLabel() => Student::getLicenseType(),
@@ -95,11 +95,11 @@ class CareTeamBlock extends CampaignActionBlock
                         ->label('Role')
                         ->relationship('careTeamRole', 'name', function (Builder $query, Get $get, $livewire, string $operation) {
                             if ($livewire instanceof CreateCampaign) {
-                                $segment_id = $get('../../../../../segment_id');
+                                $segmentId = $get('../../../../../segment_id');
                             } else {
-                                $segment_id = $livewire->getOwnerRecord()->segment_id;
+                                $segmentId = $livewire->getOwnerRecord()->segment_id;
                             }
-                            $segment = Segment::find($segment_id);
+                            $segment = Segment::find($segmentId);
 
                             $query->where('type', match ($segment->model->getLabel()) {
                                 CareTeamRoleType::Student->getLabel() => CareTeamRoleType::Student,
@@ -110,11 +110,11 @@ class CareTeamBlock extends CampaignActionBlock
                         ->searchable()
                         ->default(function (Get $get, $livewire, string $operation) {
                             if ($livewire instanceof CreateCampaign) {
-                                $segment_id = $get('../../../../../segment_id');
+                                $segmentId = $get('../../../../../segment_id');
                             } else {
-                                $segment_id = $livewire->getOwnerRecord()->segment_id;
+                                $segmentId = $livewire->getOwnerRecord()->segment_id;
                             }
-                            $segment = Segment::find($segment_id);
+                            $segment = Segment::find($segmentId);
 
                             return match ($segment->model->getLabel()) {
                                 CareTeamRoleType::Student->getLabel() => CareTeamRoleType::studentDefault()?->getKey(),
@@ -125,11 +125,11 @@ class CareTeamBlock extends CampaignActionBlock
                         ->model(CareTeam::class)
                         ->visible(function (Get $get, $livewire, string $operation) {
                             if ($livewire instanceof CreateCampaign) {
-                                $segment_id = $get('../../../../../segment_id');
+                                $segmentId = $get('../../../../../segment_id');
                             } else {
-                                $segment_id = $livewire->getOwnerRecord()->segment_id;
+                                $segmentId = $livewire->getOwnerRecord()->segment_id;
                             }
-                            $segment = Segment::find($segment_id);
+                            $segment = Segment::find($segmentId);
 
                             return CareTeamRole::where('type', match ($segment->model->getLabel()) {
                                 CareTeamRoleType::Student->getLabel() => CareTeamRoleType::Student,

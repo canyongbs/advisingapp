@@ -34,17 +34,14 @@
 </COPYRIGHT>
 */
 
-use App\Features\QnaAdvisorFeature;
-use Illuminate\Database\Migrations\Migration;
+namespace App\Features;
 
-return new class () extends Migration {
-    public function up(): void
-    {
-        QnaAdvisorFeature::activate();
-    }
+use App\Support\AbstractFeatureFlag;
 
-    public function down(): void
+class OpenAiVectorStoresFeature extends AbstractFeatureFlag
+{
+    public function resolve(mixed $scope): mixed
     {
-        QnaAdvisorFeature::deactivate();
+        return false;
     }
-};
+}
