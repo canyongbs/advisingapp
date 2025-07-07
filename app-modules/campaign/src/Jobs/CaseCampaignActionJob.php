@@ -38,6 +38,7 @@ namespace AdvisingApp\Campaign\Jobs;
 
 use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
 use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\Division\Models\Division;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use App\Models\User;
 use App\Settings\LicenseSettings;
@@ -74,19 +75,22 @@ class CaseCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
                 'respondent_id' => $educatable->getKey(),
                 'close_details' => $action->data['close_details'],
                 'res_details' => $action->data['res_details'],
-                'division_id' => $action->data['division_id'],
+                'division_id' => $action->data['division_id'] ?? Division::where('is_default', true)->value('id') ?? Division::first()->getKey(),
                 'status_id' => $action->data['status_id'],
                 'priority_id' => $action->data['priority_id'],
                 'created_by_id' => $userId,
             ]);
 
-            if (isset($action->data['assigned_to_id'])) {
+            if (isset($action->data['assigned_to_id']) && $action->data['assigned_to_id'] !== 'automatic') {
                 $case->assignments()->create([
                     'user_id' => $action->data['assigned_to_id'],
                     'assigned_by_id' => $userId,
                     'assigned_at' => now(),
                     'status' => CaseAssignmentStatus::Active,
                 ]);
+            } else {
+                $assignmentClass = $case->priority->type->assignment_type->getAssignerClass();
+                $assignmentClass->execute($case);
             }
 
             $this->actionEducatable->succeeded_at = now();

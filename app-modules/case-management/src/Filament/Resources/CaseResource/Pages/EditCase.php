@@ -72,9 +72,27 @@ class EditCase extends EditRecord
 
         return $form
             ->schema([
+                // Select::make('division_id')
+                //     ->relationship('division', 'name')
+                //     ->label('Division')
+                //     ->required()
+                //     ->exists((new Division())->getTable(), 'id'),
                 Select::make('division_id')
                     ->relationship('division', 'name')
+                    ->model(CaseModel::class)
+                    ->default(
+                        fn () => auth()->user()->team?->division?->getKey()
+                            ?? Division::query()
+                                ->where('is_default', true)
+                                ->value('id')
+                    )
                     ->label('Division')
+                    ->visible(function () {
+                        $divisionCount = Division::count();
+                        $hasDefault = Division::where('is_default', true)->exists();
+
+                        return $divisionCount > 1 && ! $hasDefault;
+                    })
                     ->required()
                     ->exists((new Division())->getTable(), 'id'),
                 Select::make('status_id')

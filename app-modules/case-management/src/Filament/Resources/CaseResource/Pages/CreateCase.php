@@ -39,6 +39,7 @@ namespace AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages;
 use AdvisingApp\CaseManagement\Actions\CreateCaseAction;
 use AdvisingApp\CaseManagement\DataTransferObjects\CaseDataObject;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Models\CasePriority;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\CaseManagement\Models\CaseType;
@@ -66,9 +67,27 @@ class CreateCase extends CreateRecord
     {
         return $form
             ->schema([
+                // Select::make('division_id')
+                //     ->relationship('division', 'name')
+                //     ->label('Division')
+                //     ->required()
+                //     ->exists((new Division())->getTable(), 'id'),
                 Select::make('division_id')
                     ->relationship('division', 'name')
+                    ->model(CaseModel::class)
+                    ->default(
+                        fn () => auth()->user()->team?->division?->getKey()
+                            ?? Division::query()
+                                ->where('is_default', true)
+                                ->value('id')
+                    )
                     ->label('Division')
+                    ->visible(function () {
+                        $divisionCount = Division::count();
+                        $hasDefault = Division::where('is_default', true)->exists();
+
+                        return $divisionCount > 1 && ! $hasDefault;
+                    })
                     ->required()
                     ->exists((new Division())->getTable(), 'id'),
                 Select::make('status_id')
@@ -113,12 +132,15 @@ class CreateCase extends CreateRecord
                 EducatableSelect::make('respondent')
                     ->label('Related To')
                     ->required()
+                    ->preload()
                     ->hiddenOn([RelationManager::class, ManageRelatedRecords::class]),
             ]);
     }
 
     protected function handleRecordCreation(array $data): Model
     {
+        $data['division_id'] = $data['division_id'] ?? Division::where('is_default', true)->value('id') ?? Division::first()->getKey();
+
         if (AssignmentsFeature::active()) {
             $caseDataObject = CaseDataObject::fromData($data);
 
