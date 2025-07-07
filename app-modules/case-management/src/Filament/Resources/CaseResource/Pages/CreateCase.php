@@ -74,7 +74,8 @@ class CreateCase extends CreateRecord
                         fn () => auth()->user()->team?->division?->getKey()
                             ?? Division::query()
                                 ->where('is_default', true)
-                                ->value('id')
+                                ->first()
+                                ?->getKey()
                     )
                     ->label('Division')
                     ->visible(function () {

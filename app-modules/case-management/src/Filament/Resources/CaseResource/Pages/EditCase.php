@@ -72,11 +72,6 @@ class EditCase extends EditRecord
 
         return $form
             ->schema([
-                // Select::make('division_id')
-                //     ->relationship('division', 'name')
-                //     ->label('Division')
-                //     ->required()
-                //     ->exists((new Division())->getTable(), 'id'),
                 Select::make('division_id')
                     ->relationship('division', 'name')
                     ->model(CaseModel::class)
@@ -84,7 +79,8 @@ class EditCase extends EditRecord
                         fn () => auth()->user()->team?->division?->getKey()
                             ?? Division::query()
                                 ->where('is_default', true)
-                                ->value('id')
+                                ->first()
+                                ?->getKey()
                     )
                     ->label('Division')
                     ->visible(function () {

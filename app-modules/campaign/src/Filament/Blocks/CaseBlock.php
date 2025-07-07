@@ -76,7 +76,8 @@ class CaseBlock extends CampaignActionBlock
                     fn () => auth()->user()->team?->division?->getKey()
                         ?? Division::query()
                             ->where('is_default', true)
-                            ->value('id')
+                            ->first()
+                            ?->getKey()
                 )
                 ->label('Division')
                 ->visible(function () {
@@ -113,7 +114,7 @@ class CaseBlock extends CampaignActionBlock
                 )
                 ->label('Priority')
                 ->required()
-                ->exists(CasePriority::class, 'id')
+                ->exists((new CasePriority())->getTable(), 'id')
                 ->visible(fn (Get $get): bool => filled($get('type_id'))),
             Select::make($fieldPrefix . 'assigned_to_id')
                 ->label('Assign Case to')
