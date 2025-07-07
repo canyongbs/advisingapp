@@ -39,10 +39,10 @@ namespace AdvisingApp\StudentDataModel\DataTransferObjects;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Optional;
 
-class CreateStudentEmailAddressData extends Data
+class UpdateStudentEmailAddressData extends Data
 {
     public function __construct(
-        public string $address,
+        public string | Optional | null $address,
         public string | Optional | null $type,
         public int | Optional | null $order,
     ) {}

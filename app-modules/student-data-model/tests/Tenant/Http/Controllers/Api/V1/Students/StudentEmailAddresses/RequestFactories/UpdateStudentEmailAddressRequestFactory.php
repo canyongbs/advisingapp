@@ -34,16 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\DataTransferObjects;
+namespace AdvisingApp\StudentDataModel\Tests\Tenant\Http\Controllers\Api\V1\Students\StudentEmailAddresses\RequestFactories;
 
-use Spatie\LaravelData\Data;
-use Spatie\LaravelData\Optional;
+use Worksome\RequestFactories\RequestFactory;
 
-class CreateStudentEmailAddressData extends Data
+class UpdateStudentEmailAddressRequestFactory extends RequestFactory
 {
-    public function __construct(
-        public string $address,
-        public string | Optional | null $type,
-        public int | Optional | null $order,
-    ) {}
+    public function definition(): array
+    {
+        return array_filter([
+            'address' => $this->faker->optional()->safeEmail(),
+            'type' => $this->faker->optional()->word(),
+            'order' => $this->faker->optional()->numberBetween(1, 10),
+        ], filled(...));
+    }
 }

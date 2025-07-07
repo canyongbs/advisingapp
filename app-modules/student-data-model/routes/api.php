@@ -38,6 +38,7 @@ use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\DeleteStudentC
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\ListStudentsController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentEmailAddresses\CreateStudentEmailAddressController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentEmailAddresses\DeleteStudentEmailAddressController;
+use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentEmailAddresses\UpdateStudentEmailAddressController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\UpdateStudentController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\ViewStudentController;
 use AdvisingApp\StudentDataModel\Http\Controllers\UpdateStudentInformationSystemSettingsController;
@@ -68,6 +69,7 @@ Route::api(majorVersion: 1, routes: function () {
                 ->prefix('{student}/email-addresses')
                 ->group(function () {
                     Route::post('/', CreateStudentEmailAddressController::class)->name('create');
+                    Route::patch('/{studentEmailAddress}', UpdateStudentEmailAddressController::class)->name('update');
                     Route::delete('/{studentEmailAddress}', DeleteStudentEmailAddressController::class)->name('delete');
                 });
         });
