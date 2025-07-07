@@ -71,6 +71,21 @@ class CreateStudentController
             'last' => ['required', 'max:255'],
             'full_name' => ['required', 'max:255'],
             'preferred' => ['sometimes', 'max:255'],
+            'birthdate' => ['sometimes', 'date', 'date_format:Y-m-d'],
+            'hsgrad' => ['sometimes', 'numeric'],
+            'gender' => ['sometimes', 'max:255'],
+            'sms_opt_out' => ['sometimes', 'boolean'],
+            'email_bounce' => ['sometimes', 'boolean'],
+            'dual' => ['sometimes', 'boolean'],
+            'ferpa' => ['sometimes', 'boolean'],
+            'firstgen' => ['sometimes', 'boolean'],
+            'sap' => ['sometimes', 'boolean'],
+            'holds' => ['sometimes', 'max:255'],
+            'dfw' => ['sometimes', 'date', 'date_format:Y-m-d'],
+            'ethnicity' => ['sometimes', 'max:255'],
+            'lastlmslogin' => ['sometimes', 'date', 'date_format:Y-m-d H:i:s'],
+            'f_e_term' => ['sometimes', 'max:255'],
+            'mr_e_term' => ['sometimes', 'max:255'],
         ]);
 
         $student = $createStudent->execute(CreateStudentData::from($data));

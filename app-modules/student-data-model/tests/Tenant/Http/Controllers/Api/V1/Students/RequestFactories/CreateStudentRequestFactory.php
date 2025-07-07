@@ -45,13 +45,28 @@ class CreateStudentRequestFactory extends RequestFactory
         $firstName = $this->faker->firstName();
         $lastName = $this->faker->lastName();
 
-        return [
+        return array_filter([
             'sisid' => $this->faker->unique()->numerify('########'),
             'otherid' => $this->faker->numerify('##########'),
             'first' => $firstName,
             'last' => $lastName,
             'full_name' => "{$firstName} {$lastName}",
             'preferred' => $this->faker->firstName(),
-        ];
+            'birthdate' => $this->faker->optional()->randomElement([$this->faker->date('Y-m-d'), null]),
+            'hsgrad' => $this->faker->optional()->randomElement([$this->faker->numberBetween(1980, 2030), null]),
+            'gender' => $this->faker->optional()->text(10),
+            'sms_opt_out' => $this->faker->optional()->randomElement([true, false, null]),
+            'email_bounce' => $this->faker->optional()->randomElement([true, false, null]),
+            'dual' => $this->faker->optional()->randomElement([true, false, null]),
+            'ferpa' => $this->faker->optional()->randomElement([true, false, null]),
+            'firstgen' => $this->faker->optional()->randomElement([true, false, null]),
+            'sap' => $this->faker->optional()->randomElement([true, false, null]),
+            'holds' => $this->faker->optional()->text(10),
+            'dfw' => $this->faker->optional()->randomElement([$this->faker->date('Y-m-d'), null]),
+            'ethnicity' => $this->faker->optional()->text(10),
+            'lastlmslogin' => $this->faker->optional()->randomElement([$this->faker->date('Y-m-d H:i:s'), null]),
+            'f_e_term' => $this->faker->optional()->text(10),
+            'mr_e_term' => $this->faker->optional()->text(10),
+        ], filled(...));
     }
 }

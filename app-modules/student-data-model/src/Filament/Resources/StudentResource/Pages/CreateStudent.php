@@ -113,11 +113,13 @@ class CreateStudent extends CreateRecord
                         TextInput::make('first')
                             ->label('First Name')
                             ->required()
+                            ->maxLength(255)
                             ->live(onBlur: true)
                             ->afterStateUpdated($generateFullName),
                         TextInput::make('last')
                             ->label('Last Name')
                             ->required()
+                            ->maxLength(255)
                             ->live(onBlur: true)
                             ->afterStateUpdated($generateFullName),
                         TextInput::make(Student::displayNameKey())
@@ -283,7 +285,8 @@ class CreateStudent extends CreateRecord
                             ->label('SAP')
                             ->boolean(),
                         TextInput::make('holds')
-                            ->label('Holds'),
+                            ->label('Holds')
+                            ->maxLength(255),
                         DatePicker::make('dfw')
                             ->label('DFW')
                             ->native(false)
@@ -291,7 +294,8 @@ class CreateStudent extends CreateRecord
                             ->format('Y-m-d')
                             ->displayFormat('Y-m-d'),
                         TextInput::make('ethnicity')
-                            ->label('Ethnicity'),
+                            ->label('Ethnicity')
+                            ->maxLength(255),
                         DateTimePicker::make('lastlmslogin')
                             ->label('Last LMS login')
                             ->native(false)
