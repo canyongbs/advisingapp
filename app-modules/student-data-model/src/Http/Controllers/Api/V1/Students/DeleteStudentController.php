@@ -38,11 +38,13 @@ namespace AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students;
 
 use AdvisingApp\StudentDataModel\Actions\DeleteStudent;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
 
 class DeleteStudentController
 {
+    #[Group('Students')]
     public function __invoke(DeleteStudent $deleteStudent, Student $student): Response
     {
         Gate::authorize('viewAny', Student::class);

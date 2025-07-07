@@ -40,6 +40,7 @@ use AdvisingApp\StudentDataModel\Http\Resources\Api\V1\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Http\Controllers\Api\Concerns\CanIncludeRelationships;
 use Dedoc\Scramble\Attributes\Example;
+use Dedoc\Scramble\Attributes\Group;
 use Dedoc\Scramble\Attributes\QueryParameter;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -52,6 +53,7 @@ class ViewStudentController
     /**
      * @response StudentResource
      */
+    #[Group('Students')]
     #[QueryParameter('include', description: 'Include related resources in the response.', type: 'string', examples: [
         'email_addresses' => new Example('email_addresses'),
         'primary_email_address' => new Example('primary_email_address'),

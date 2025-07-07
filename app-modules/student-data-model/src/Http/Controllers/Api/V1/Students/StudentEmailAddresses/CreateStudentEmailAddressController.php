@@ -40,6 +40,7 @@ use AdvisingApp\StudentDataModel\Actions\CreateStudentEmailAddress;
 use AdvisingApp\StudentDataModel\DataTransferObjects\CreateStudentEmailAddressData;
 use AdvisingApp\StudentDataModel\Http\Resources\Api\V1\StudentEmailAddressResource;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Gate;
@@ -49,6 +50,7 @@ class CreateStudentEmailAddressController
     /**
      * @response StudentEmailAddressResource
      */
+    #[Group('Students')]
     public function __invoke(Request $request, CreateStudentEmailAddress $createStudentEmailAddress, Student $student): JsonResource
     {
         Gate::authorize('viewAny', Student::class);
