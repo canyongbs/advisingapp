@@ -53,7 +53,7 @@ class CreateStudentData extends Data
         public string | Optional | null $otherid,
         public string $first,
         public string $last,
-        public string $full_name,
+        public string $fullName,
         public string | Optional | null $preferred,
         public string | Optional | null $birthdate,
         public int | Optional | null $hsgrad,
