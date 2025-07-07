@@ -36,11 +36,15 @@
 
 namespace AdvisingApp\StudentDataModel\DataTransferObjects;
 
+use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Optional;
 
 class CreateStudentData extends Data
 {
+    /**
+     * @param array<CreateStudentEmailAddressData> | Optional | null $email_addresses
+     */
     public function __construct(
         public string $sisid,
         public string | Optional | null $otherid,
@@ -63,5 +67,7 @@ class CreateStudentData extends Data
         public string | Optional | null $lastlmslogin,
         public string | Optional | null $f_e_term,
         public string | Optional | null $mr_e_term,
+        #[DataCollectionOf(CreateStudentEmailAddressData::class)]
+        public array | Optional | null $email_addresses,
     ) {}
 }

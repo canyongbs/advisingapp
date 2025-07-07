@@ -6,7 +6,6 @@ use AdvisingApp\StudentDataModel\Tests\Tenant\Http\Controllers\Api\V1\Students\R
 use App\Models\SystemUser;
 use Laravel\Sanctum\Sanctum;
 
-use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\putJson;
 
 beforeEach(function () {

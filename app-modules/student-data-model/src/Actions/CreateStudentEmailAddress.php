@@ -36,33 +36,19 @@
 
 namespace AdvisingApp\StudentDataModel\Actions;
 
-use AdvisingApp\StudentDataModel\DataTransferObjects\CreateStudentData;
+use AdvisingApp\StudentDataModel\DataTransferObjects\CreateStudentEmailAddressData;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Support\Facades\DB;
+use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 
-class CreateStudent
+class CreateStudentEmailAddress
 {
-    public function __construct(
-        protected CreateStudentEmailAddress $createStudentEmailAddress,
-    ) {}
-
-    public function execute(CreateStudentData $data): Student
+    public function execute(Student $student, CreateStudentEmailAddressData $data): StudentEmailAddress
     {
-        return DB::transaction(function () use ($data) {
-            $student = new Student();
-            $student->fill($data->except('email_addresses')->toArray());
-            $student->save();
+        $emailAddress = new StudentEmailAddress();
+        $emailAddress->student()->associate($student);
+        $emailAddress->fill($data->toArray());
+        $emailAddress->save();
 
-            if (filled($data->email_addresses)) {
-                foreach ($data->email_addresses as $emailData) {
-                    $this->createStudentEmailAddress->execute($student, $emailData);
-                }
-
-                $student->primaryEmailAddress()->associate($student->emailAddresses->first());
-                $student->save();
-            }
-
-            return $student;
-        });
+        return $emailAddress;
     }
 }

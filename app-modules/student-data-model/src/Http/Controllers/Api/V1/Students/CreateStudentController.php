@@ -86,11 +86,16 @@ class CreateStudentController
             'lastlmslogin' => ['sometimes', 'date', 'date_format:Y-m-d H:i:s'],
             'f_e_term' => ['sometimes', 'max:255'],
             'mr_e_term' => ['sometimes', 'max:255'],
+            'email_addresses' => ['sometimes', 'array'],
+            'email_addresses.*' => ['array'],
+            'email_addresses.*.address' => ['required', 'email'],
+            'email_addresses.*.type' => ['sometimes', 'max:255'],
         ]);
 
         $student = $createStudent->execute(CreateStudentData::from($data));
 
         return $student
+            ->withoutRelations()
             ->load($this->getIncludedRelationshipsToLoad($request, [
                 'email_addresses' => 'emailAddresses',
                 'primary_email_address' => 'primaryEmailAddress',

@@ -2,6 +2,7 @@
 
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
+use AdvisingApp\StudentDataModel\Tests\Tenant\Http\Controllers\Api\V1\StudentEmailAddresses\RequestFactories\CreateStudentEmailAddressRequestFactory;
 use AdvisingApp\StudentDataModel\Tests\Tenant\Http\Controllers\Api\V1\Students\RequestFactories\CreateStudentRequestFactory;
 use App\Models\SystemUser;
 use Laravel\Sanctum\Sanctum;
@@ -170,6 +171,63 @@ it('creates a student', function () {
     ]);
 });
 
+it('creates student email addresses', function () {
+    $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
+    $studentConfigurationSettings->is_enabled = true;
+    $studentConfigurationSettings->save();
+
+    $user = SystemUser::factory()->create();
+    $user->givePermissionTo(['student.view-any', 'student.create']);
+    Sanctum::actingAs($user, ['api']);
+
+    $createStudentRequestData = CreateStudentRequestFactory::new()->create([
+        'email_addresses' => [
+            CreateStudentEmailAddressRequestFactory::new()->create(),
+            CreateStudentEmailAddressRequestFactory::new()->create(),
+        ],
+    ]);
+
+    $response = postJson(route('api.v1.students.create', ['include' => 'email_addresses,primary_email_address'], false), $createStudentRequestData);
+    $response->assertCreated();
+    $response->assertJsonStructure([
+        'data',
+    ]);
+
+    expect($response['data']['email_addresses'] ?? null)
+        ->toBeArray()
+        ->toHaveCount(2);
+
+    expect($response['data']['email_addresses'][0]['address'] ?? null)
+        ->toBe($createStudentRequestData['email_addresses'][0]['address']);
+
+    if (isset($createStudentRequestData['email_addresses'][0]['type'])) {
+        expect($response['data']['email_addresses'][0]['type'] ?? null)
+            ->toBe($createStudentRequestData['email_addresses'][0]['type']);
+    }
+
+    expect($response['data']['email_addresses'][1]['address'] ?? null)
+        ->toBe($createStudentRequestData['email_addresses'][1]['address']);
+
+    if (isset($createStudentRequestData['email_addresses'][1]['type'])) {
+        expect($response['data']['email_addresses'][1]['type'] ?? null)
+            ->toBe($createStudentRequestData['email_addresses'][1]['type']);
+    }
+
+    expect($response['data']['primary_email_id'])
+        ->toBe($response['data']['email_addresses'][0]['id']);
+
+    expect($response['data']['primary_email_address'] ?? null)
+        ->toBeArray();
+
+    expect($response['data']['primary_email_address']['address'] ?? null)
+        ->toBe($response['data']['email_addresses'][0]['address']);
+
+    if (isset($createStudentRequestData['email_addresses'][0]['type'])) {
+        expect($response['data']['primary_email_address']['type'] ?? null)
+            ->toBe($createStudentRequestData['email_addresses'][0]['type']);
+    }
+});
+
 it('validates', function (array $requestAttributes, string $invalidAttribute, string $validationMessage, ?Closure $before = null) {
     $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
     $studentConfigurationSettings->is_enabled = true;
@@ -181,7 +239,12 @@ it('validates', function (array $requestAttributes, string $invalidAttribute, st
 
     $before?->call($this);
 
-    $createStudentRequestData = CreateStudentRequestFactory::new()->create($requestAttributes);
+    $createStudentRequestData = CreateStudentRequestFactory::new()->create([
+        'email_addresses' => [
+            CreateStudentEmailAddressRequestFactory::new()->create(),
+        ],
+        ...$requestAttributes,
+    ]);
 
     $response = postJson(route('api.v1.students.create', [], false), $createStudentRequestData);
     $response->assertUnprocessable();
@@ -221,6 +284,11 @@ it('validates', function (array $requestAttributes, string $invalidAttribute, st
     '`lastlmslogin` is Y-m-d H:i:s format' => [['lastlmslogin' => '2020-01-01'], 'lastlmslogin', 'The lastlmslogin does not match the format Y-m-d H:i:s.'],
     '`f_e_term` is max 255 characters' => [['f_e_term' => str_repeat('a', 256)], 'f_e_term', 'The f e term may not be greater than 255 characters.'],
     '`mr_e_term` is max 255 characters' => [['mr_e_term' => str_repeat('a', 256)], 'mr_e_term', 'The mr e term may not be greater than 255 characters.'],
+    '`email_addresses` is an array' => [['email_addresses' => 'not-an-array'], 'email_addresses', 'The email addresses must be an array.'],
+    '`email_addresses.*` is an array' => [['email_addresses' => ['not-an-array']], 'email_addresses.0', 'The email_addresses.0 must be an array.'],
+    '`email_addresses.*.address` is required' => [['email_addresses' => [['address' => null]]], 'email_addresses.0.address', 'The email_addresses.0.address field is required.'],
+    '`email_addresses.*.address` is a valid email' => [['email_addresses' => [['address' => 'not-an-email']]], 'email_addresses.0.address', 'The email_addresses.0.address must be a valid email address.'],
+    '`email_addresses.*.type` is max 255 characters' => [['email_addresses' => [['address' => 'test@example.com', 'type' => str_repeat('a', 256)]]], 'email_addresses.0.type', 'The email_addresses.0.type may not be greater than 255 characters.'],
 ]);
 
 it('can include related student relationships', function (string $relationship, string $responseKey) {

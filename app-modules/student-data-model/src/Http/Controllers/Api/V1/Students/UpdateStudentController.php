@@ -68,6 +68,7 @@ class UpdateStudentController
         $student = $updateStudent->execute($student, UpdateStudentData::from($data));
 
         return $student
+            ->withoutRelations()
             ->load($this->getIncludedRelationshipsToLoad($request, [
                 'email_addresses' => 'emailAddresses',
                 'primary_email_address' => 'primaryEmailAddress',

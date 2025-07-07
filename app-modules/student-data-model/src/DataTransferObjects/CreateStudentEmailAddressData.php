@@ -34,35 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Actions;
+namespace AdvisingApp\StudentDataModel\DataTransferObjects;
 
-use AdvisingApp\StudentDataModel\DataTransferObjects\CreateStudentData;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Support\Facades\DB;
+use Spatie\LaravelData\Data;
+use Spatie\LaravelData\Optional;
 
-class CreateStudent
+class CreateStudentEmailAddressData extends Data
 {
     public function __construct(
-        protected CreateStudentEmailAddress $createStudentEmailAddress,
+        public string $address,
+        public string|Optional|null $type,
     ) {}
-
-    public function execute(CreateStudentData $data): Student
-    {
-        return DB::transaction(function () use ($data) {
-            $student = new Student();
-            $student->fill($data->except('email_addresses')->toArray());
-            $student->save();
-
-            if (filled($data->email_addresses)) {
-                foreach ($data->email_addresses as $emailData) {
-                    $this->createStudentEmailAddress->execute($student, $emailData);
-                }
-
-                $student->primaryEmailAddress()->associate($student->emailAddresses->first());
-                $student->save();
-            }
-
-            return $student;
-        });
-    }
 }

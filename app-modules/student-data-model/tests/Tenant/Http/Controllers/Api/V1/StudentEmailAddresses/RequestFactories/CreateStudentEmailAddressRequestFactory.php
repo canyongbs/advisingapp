@@ -34,35 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Actions;
+namespace AdvisingApp\StudentDataModel\Tests\Tenant\Http\Controllers\Api\V1\StudentEmailAddresses\RequestFactories;
 
-use AdvisingApp\StudentDataModel\DataTransferObjects\CreateStudentData;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Support\Facades\DB;
+use Worksome\RequestFactories\RequestFactory;
 
-class CreateStudent
+class CreateStudentEmailAddressRequestFactory extends RequestFactory
 {
-    public function __construct(
-        protected CreateStudentEmailAddress $createStudentEmailAddress,
-    ) {}
-
-    public function execute(CreateStudentData $data): Student
+    public function definition(): array
     {
-        return DB::transaction(function () use ($data) {
-            $student = new Student();
-            $student->fill($data->except('email_addresses')->toArray());
-            $student->save();
-
-            if (filled($data->email_addresses)) {
-                foreach ($data->email_addresses as $emailData) {
-                    $this->createStudentEmailAddress->execute($student, $emailData);
-                }
-
-                $student->primaryEmailAddress()->associate($student->emailAddresses->first());
-                $student->save();
-            }
-
-            return $student;
-        });
+        return array_filter([
+            'address' => $this->faker->unique()->safeEmail(),
+            'type' => $this->faker->optional()->word(),
+        ], filled(...));
     }
 }
