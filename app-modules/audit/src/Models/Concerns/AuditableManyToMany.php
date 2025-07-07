@@ -65,6 +65,9 @@ trait AuditableManyToMany
         );
     }
 
+    /**
+     * @return MorphToMany<covariant Model, covariant Model>
+     */
     protected function newMorphToMany(
         Builder $query,
         Model $parent,
