@@ -16,25 +16,25 @@ it('is gated with proper access control', function () {
 
     $user = SystemUser::factory()->create();
     Sanctum::actingAs($user, ['api']);
-    getJson(route('api.v1.students.view', $student, false))
+    getJson(route('api.v1.students.view', ['student' => $student], false))
         ->assertForbidden();
 
     $user = SystemUser::factory()->create();
     $user->givePermissionTo('student.view-any');
     Sanctum::actingAs($user, ['api']);
-    getJson(route('api.v1.students.view', $student, false))
+    getJson(route('api.v1.students.view', ['student' => $student], false))
         ->assertForbidden();
 
     $user = SystemUser::factory()->create();
     $user->givePermissionTo('student.*.view');
     Sanctum::actingAs($user, ['api']);
-    getJson(route('api.v1.students.view', $student, false))
+    getJson(route('api.v1.students.view', ['student' => $student], false))
         ->assertForbidden();
 
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['student.view-any', 'student.*.view']);
     Sanctum::actingAs($user, ['api']);
-    getJson(route('api.v1.students.view', $student, false))
+    getJson(route('api.v1.students.view', ['student' => $student], false))
         ->assertOk();
 });
 
@@ -45,7 +45,7 @@ it('returns a student resource', function () {
 
     $student = Student::factory()->create();
 
-    $response = getJson(route('api.v1.students.view', $student, false));
+    $response = getJson(route('api.v1.students.view', ['student' => $student], false));
     $response->assertOk();
     $response->assertJsonStructure([
         'data',
@@ -62,7 +62,7 @@ it('can include related student relationships', function (string $relationship, 
 
     $student = Student::factory()->create();
 
-    $response = getJson(route('api.v1.students.view', [$student], false));
+    $response = getJson(route('api.v1.students.view', ['student' => $student], false));
     $response->assertOk();
 
     expect($response['data'])

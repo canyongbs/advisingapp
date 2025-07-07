@@ -37,6 +37,7 @@
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\CreateStudentController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\DeleteStudentController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\ListStudentsController;
+use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\UpdateStudentController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\ViewStudentController;
 use AdvisingApp\StudentDataModel\Http\Controllers\UpdateStudentInformationSystemSettingsController;
 use App\Http\Middleware\CheckOlympusKey;
@@ -59,6 +60,7 @@ Route::api(majorVersion: 1, routes: function () {
             Route::get('/', ListStudentsController::class)->name('index');
             Route::post('/', CreateStudentController::class)->name('create');
             Route::get('/{student}', ViewStudentController::class)->name('view');
+            Route::put('/{student}', UpdateStudentController::class)->name('update');
             Route::delete('/{student}', DeleteStudentController::class)->name('delete');
         });
 });

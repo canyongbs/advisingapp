@@ -18,25 +18,25 @@ it('is gated with proper access control', function () {
 
     $user = SystemUser::factory()->create();
     Sanctum::actingAs($user, ['api']);
-    deleteJson(route('api.v1.students.delete', $student, false))
+    deleteJson(route('api.v1.students.delete', ['student' => $student], false))
         ->assertForbidden();
 
     $user = SystemUser::factory()->create();
     $user->givePermissionTo('student.view-any');
     Sanctum::actingAs($user, ['api']);
-    deleteJson(route('api.v1.students.delete', $student, false))
+    deleteJson(route('api.v1.students.delete', ['student' => $student], false))
         ->assertForbidden();
 
     $user = SystemUser::factory()->create();
     $user->givePermissionTo('student.*.delete');
     Sanctum::actingAs($user, ['api']);
-    deleteJson(route('api.v1.students.delete', $student, false))
+    deleteJson(route('api.v1.students.delete', ['student' => $student], false))
         ->assertForbidden();
 
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['student.view-any', 'student.*.delete']);
     Sanctum::actingAs($user, ['api']);
-    deleteJson(route('api.v1.students.delete', $student, false))
+    deleteJson(route('api.v1.students.delete', ['student' => $student], false))
         ->assertForbidden();
 
     $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
@@ -46,7 +46,7 @@ it('is gated with proper access control', function () {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['student.view-any', 'student.*.delete']);
     Sanctum::actingAs($user, ['api']);
-    deleteJson(route('api.v1.students.delete', $student, false))
+    deleteJson(route('api.v1.students.delete', ['student' => $student], false))
         ->assertNoContent();
 });
 
@@ -61,7 +61,7 @@ it('deletes a student', function () {
 
     $student = Student::factory()->create();
 
-    $response = deleteJson(route('api.v1.students.delete', $student, false));
+    $response = deleteJson(route('api.v1.students.delete', ['student' => $student], false));
     $response->assertNoContent();
 
     assertSoftDeleted(Student::class, [
