@@ -50,11 +50,11 @@ class CreateStudent
     {
         return DB::transaction(function () use ($data) {
             $student = new Student();
-            $student->fill($data->except('email_addresses')->toArray());
+            $student->fill($data->except('emailAddresses')->toArray());
             $student->save();
 
-            if (filled($data->email_addresses)) {
-                foreach ($data->email_addresses as $emailData) {
+            if (filled($data->emailAddresses)) {
+                foreach ($data->emailAddresses as $emailData) {
                     $this->createStudentEmailAddress->execute($student, $emailData);
                 }
 

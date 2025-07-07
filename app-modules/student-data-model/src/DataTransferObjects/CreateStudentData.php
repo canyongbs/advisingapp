@@ -37,13 +37,16 @@
 namespace AdvisingApp\StudentDataModel\DataTransferObjects;
 
 use Spatie\LaravelData\Attributes\DataCollectionOf;
+use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Data;
+use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 use Spatie\LaravelData\Optional;
 
+#[MapName(SnakeCaseMapper::class)]
 class CreateStudentData extends Data
 {
     /**
-     * @param array<CreateStudentEmailAddressData> | Optional | null $email_addresses
+     * @param array<CreateStudentEmailAddressData> | Optional | null $emailAddresses
      */
     public function __construct(
         public string $sisid,
@@ -55,8 +58,8 @@ class CreateStudentData extends Data
         public string | Optional | null $birthdate,
         public int | Optional | null $hsgrad,
         public string | Optional | null $gender,
-        public bool | Optional | null $sms_opt_out,
-        public bool | Optional | null $email_bounce,
+        public bool | Optional | null $smsOptOut,
+        public bool | Optional | null $emailBounce,
         public bool | Optional | null $dual,
         public bool | Optional | null $ferpa,
         public bool | Optional | null $firstgen,
@@ -65,9 +68,9 @@ class CreateStudentData extends Data
         public string | Optional | null $dfw,
         public string | Optional | null $ethnicity,
         public string | Optional | null $lastlmslogin,
-        public string | Optional | null $f_e_term,
-        public string | Optional | null $mr_e_term,
+        public string | Optional | null $fETerm,
+        public string | Optional | null $mrETerm,
         #[DataCollectionOf(CreateStudentEmailAddressData::class)]
-        public array | Optional | null $email_addresses,
+        public array | Optional | null $emailAddresses,
     ) {}
 }
