@@ -67,11 +67,6 @@ class CreateCase extends CreateRecord
     {
         return $form
             ->schema([
-                // Select::make('division_id')
-                //     ->relationship('division', 'name')
-                //     ->label('Division')
-                //     ->required()
-                //     ->exists((new Division())->getTable(), 'id'),
                 Select::make('division_id')
                     ->relationship('division', 'name')
                     ->model(CaseModel::class)

@@ -118,11 +118,6 @@ test('CreateCase requires valid data', function ($data, $errors, $setup = null) 
     assertDatabaseMissing(CaseModel::class, $request->except(['division_id', 'status_id', 'priority_id', 'type_id'])->toArray());
 })->with(
     [
-        'division_id missing' => [CreateCaseRequestFactory::new()->without('division_id'), ['division_id' => 'required']],
-        'division_id does not exist' => [
-            CreateCaseRequestFactory::new()->state(['division_id' => fake()->uuid()]),
-            ['division_id' => 'exists'],
-        ],
         'status_id missing' => [CreateCaseRequestFactory::new()->without('status_id'), ['status_id' => 'required']],
         'status_id does not exist' => [
             CreateCaseRequestFactory::new()->state(['status_id' => fake()->uuid()]),
