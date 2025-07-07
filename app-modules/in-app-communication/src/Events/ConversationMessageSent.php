@@ -52,10 +52,10 @@ class ConversationMessageSent
     public readonly CarbonInterface $messageSentAt;
 
     public function __construct(
-        readonly public TwilioConversation $conversation,
-        readonly public User $author,
-        readonly public string $messageSid,
-        readonly public array $messageContent,
+        public readonly TwilioConversation $conversation,
+        public readonly User $author,
+        public readonly string $messageSid,
+        public readonly array $messageContent,
     ) {
         $this->messageSentAt = now();
     }

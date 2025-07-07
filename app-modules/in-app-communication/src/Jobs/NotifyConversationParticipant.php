@@ -55,8 +55,8 @@ class NotifyConversationParticipant implements ShouldQueue
     use SerializesModels;
 
     public function __construct(
-        readonly public ConversationMessageSent $event,
-        readonly public User $participant,
+        public readonly ConversationMessageSent $event,
+        public readonly User $participant,
     ) {}
 
     public function handle(
