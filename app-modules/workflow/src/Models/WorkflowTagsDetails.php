@@ -56,6 +56,7 @@ class WorkflowTagsDetails extends BaseModel implements Auditable, WorkflowAction
     protected $fillable = [
         'tag_ids',
         'remove_prior',
+        'workflow_step_id',
     ];
 
     protected $casts = [

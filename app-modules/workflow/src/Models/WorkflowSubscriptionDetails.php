@@ -56,6 +56,7 @@ class WorkflowSubscriptionDetails extends BaseModel implements Auditable, Workfl
     protected $fillable = [
         'user_ids',
         'remove_prior',
+        'workflow_step_id',
     ];
 
     protected $casts = [

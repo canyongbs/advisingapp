@@ -59,6 +59,7 @@ class WorkflowProactiveAlertDetails extends BaseModel implements Auditable, Work
         'severity',
         'suggested_intervention',
         'status_id',
+        'workflow_step_id',
     ];
 
     protected $casts = [

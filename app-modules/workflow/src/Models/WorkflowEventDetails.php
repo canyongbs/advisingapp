@@ -55,6 +55,7 @@ class WorkflowEventDetails extends BaseModel implements Auditable, WorkflowActio
 
     protected $fillable = [
         'event_id',
+        'workflow_step_id',
     ];
 
     /**

@@ -56,6 +56,7 @@ class WorkflowCareTeamDetails extends BaseModel implements Auditable, WorkflowAc
     protected $fillable = [
         'care_team',
         'remove_prior',
+        'workflow_step_id',
     ];
 
     protected $casts = [

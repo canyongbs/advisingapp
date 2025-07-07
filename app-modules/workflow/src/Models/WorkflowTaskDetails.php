@@ -57,6 +57,7 @@ class WorkflowTaskDetails extends BaseModel implements Auditable, WorkflowAction
         'title',
         'description',
         'due',
+        'workflow_step_id',
     ];
 
     protected $casts = [

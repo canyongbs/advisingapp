@@ -65,6 +65,7 @@ class WorkflowInteractionDetails extends BaseModel implements Auditable, Workflo
         'end_datetime',
         'subject',
         'description',
+        'workflow_step_id',
     ];
 
     protected $casts = [

@@ -57,6 +57,7 @@ class WorkflowEngagementSmsDetails extends BaseModel implements Auditable, Workf
     protected $fillable = [
         'channel',
         'body',
+        'workflow_step_id',
     ];
 
     protected $casts = [

@@ -58,6 +58,7 @@ class WorkflowEngagementEmailDetails extends BaseModel implements Auditable, Wor
         'channel',
         'subject',
         'body',
+        'workflow_step_id',
     ];
 
     protected $casts = [

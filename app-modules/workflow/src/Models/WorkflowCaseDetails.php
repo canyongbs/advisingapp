@@ -60,6 +60,7 @@ class WorkflowCaseDetails extends BaseModel implements Auditable, WorkflowAction
         'assigned_to_id',
         'close_details',
         'res_details',
+        'workflow_step_id',
     ];
 
     /**
