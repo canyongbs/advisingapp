@@ -58,6 +58,7 @@ class ApiServiceProvider extends ServiceProvider
             ])
                 ->prefix("api/v{$majorVersion}")
                 ->name("api.v{$majorVersion}.")
+                ->scopeBindings()
                 ->group($routes);
         });
     }
