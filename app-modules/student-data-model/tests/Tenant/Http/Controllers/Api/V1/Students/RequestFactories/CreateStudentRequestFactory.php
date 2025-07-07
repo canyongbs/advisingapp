@@ -47,11 +47,11 @@ class CreateStudentRequestFactory extends RequestFactory
 
         return array_filter([
             'sisid' => $this->faker->unique()->numerify('########'),
-            'otherid' => $this->faker->numerify('##########'),
+            'otherid' => $this->faker->optional()->numerify('##########'),
             'first' => $firstName,
             'last' => $lastName,
             'full_name' => "{$firstName} {$lastName}",
-            'preferred' => $this->faker->firstName(),
+            'preferred' => $this->faker->optional()->firstName(),
             'birthdate' => $this->faker->optional()->randomElement([$this->faker->date('Y-m-d'), null]),
             'hsgrad' => $this->faker->optional()->randomElement([$this->faker->numberBetween(1980, 2030), null]),
             'gender' => $this->faker->optional()->text(10),

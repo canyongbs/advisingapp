@@ -68,8 +68,102 @@ it('creates a student', function () {
         'data',
     ]);
 
-    expect($response['data']['sisid'])
+    expect($response['data']['sisid'] ?? null)
         ->toBe($createStudentRequestData['sisid']);
+
+    if (isset($createStudentRequestData['otherid'])) {
+        expect($response['data']['otherid'] ?? null)
+            ->toBe($createStudentRequestData['otherid']);
+    }
+
+    expect($response['data']['first'] ?? null)
+        ->toBe($createStudentRequestData['first']);
+
+    expect($response['data']['last'] ?? null)
+        ->toBe($createStudentRequestData['last']);
+
+    expect($response['data']['full_name'] ?? null)
+        ->toBe($createStudentRequestData['full_name']);
+
+    if (isset($createStudentRequestData['preferred'])) {
+        expect($response['data']['preferred'] ?? null)
+            ->toBe($createStudentRequestData['preferred']);
+    }
+
+    if (isset($createStudentRequestData['birthdate'])) {
+        expect($response['data']['birthdate'] ?? null)
+            ->toBe($createStudentRequestData['birthdate']);
+    }
+
+    if (isset($createStudentRequestData['hsgrad'])) {
+        expect($response['data']['hsgrad'] ?? null)
+            ->toBe($createStudentRequestData['hsgrad']);
+    }
+
+    if (isset($createStudentRequestData['gender'])) {
+        expect($response['data']['gender'] ?? null)
+            ->toBe($createStudentRequestData['gender']);
+    }
+
+    if (isset($createStudentRequestData['sms_opt_out'])) {
+        expect($response['data']['sms_opt_out'] ?? null)
+            ->toBe($createStudentRequestData['sms_opt_out']);
+    }
+
+    if (isset($createStudentRequestData['email_bounce'])) {
+        expect($response['data']['email_bounce'] ?? null)
+            ->toBe($createStudentRequestData['email_bounce']);
+    }
+
+    if (isset($createStudentRequestData['dual'])) {
+        expect($response['data']['dual'] ?? null)
+            ->toBe($createStudentRequestData['dual']);
+    }
+
+    if (isset($createStudentRequestData['ferpa'])) {
+        expect($response['data']['ferpa'] ?? null)
+            ->toBe($createStudentRequestData['ferpa']);
+    }
+
+    if (isset($createStudentRequestData['firstgen'])) {
+        expect($response['data']['firstgen'] ?? null)
+            ->toBe($createStudentRequestData['firstgen']);
+    }
+
+    if (isset($createStudentRequestData['sap'])) {
+        expect($response['data']['sap'] ?? null)
+            ->toBe($createStudentRequestData['sap']);
+    }
+
+    if (isset($createStudentRequestData['holds'])) {
+        expect($response['data']['holds'] ?? null)
+            ->toBe($createStudentRequestData['holds']);
+    }
+
+    if (isset($createStudentRequestData['dfw'])) {
+        expect($response['data']['dfw'] ?? null)
+            ->toBe($createStudentRequestData['dfw']);
+    }
+
+    if (isset($createStudentRequestData['ethnicity'])) {
+        expect($response['data']['ethnicity'] ?? null)
+            ->toBe($createStudentRequestData['ethnicity']);
+    }
+
+    if (isset($createStudentRequestData['lastlmslogin'])) {
+        expect($response['data']['lastlmslogin'] ?? null)
+            ->toBe($createStudentRequestData['lastlmslogin']);
+    }
+
+    if (isset($createStudentRequestData['f_e_term'])) {
+        expect($response['data']['f_e_term'] ?? null)
+            ->toBe($createStudentRequestData['f_e_term']);
+    }
+
+    if (isset($createStudentRequestData['mr_e_term'])) {
+        expect($response['data']['mr_e_term'] ?? null)
+            ->toBe($createStudentRequestData['mr_e_term']);
+    }
 
     assertDatabaseHas(Student::class, [
         'sisid' => $createStudentRequestData['sisid'],
