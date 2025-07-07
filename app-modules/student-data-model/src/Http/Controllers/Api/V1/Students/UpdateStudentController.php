@@ -19,12 +19,14 @@ use AdvisingApp\StudentDataModel\Actions\UpdateStudent;
 use AdvisingApp\StudentDataModel\DataTransferObjects\UpdateStudentData;
 use AdvisingApp\StudentDataModel\Http\Resources\Api\V1\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use App\Http\Controllers\Api\Concerns\CanIncludeRelationships;
 use Dedoc\Scramble\Attributes\Example;
 use Dedoc\Scramble\Attributes\QueryParameter;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 
 class UpdateStudentController
 {
@@ -63,6 +65,7 @@ class UpdateStudentController
             'lastlmslogin' => ['sometimes', 'date', 'date_format:Y-m-d H:i:s'],
             'f_e_term' => ['sometimes', 'max:255'],
             'mr_e_term' => ['sometimes', 'max:255'],
+            'primary_email_id' => ['sometimes', 'uuid:4', Rule::exists(StudentEmailAddress::class, 'id')->where('sisid', $student->sisid)],
         ]);
 
         $student = $updateStudent->execute($student, UpdateStudentData::from($data));

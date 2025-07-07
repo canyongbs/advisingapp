@@ -41,5 +41,6 @@ class UpdateStudentData extends Data
         public string | Optional | null $lastlmslogin,
         public string | Optional | null $f_e_term,
         public string | Optional | null $mr_e_term,
+        public string | Optional | null $primary_email_id = null,
     ) {}
 }

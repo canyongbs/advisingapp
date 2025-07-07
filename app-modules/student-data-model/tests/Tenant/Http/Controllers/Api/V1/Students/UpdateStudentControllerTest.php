@@ -1,9 +1,11 @@
 <?php
 
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use AdvisingApp\StudentDataModel\Tests\Tenant\Http\Controllers\Api\V1\Students\RequestFactories\UpdateStudentRequestFactory;
 use App\Models\SystemUser;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\Sanctum;
 
 use function Pest\Laravel\putJson;
@@ -165,6 +167,36 @@ it('updates a student', function () {
     }
 });
 
+it('updates a student\'s primary email address', function () {
+    $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
+    $studentConfigurationSettings->is_enabled = true;
+    $studentConfigurationSettings->save();
+
+    $user = SystemUser::factory()->create();
+    $user->givePermissionTo(['student.view-any', 'student.*.update']);
+    Sanctum::actingAs($user, ['api']);
+
+    $student = Student::factory()->create();
+
+    $studentEmailAddress = StudentEmailAddress::factory()
+        ->for($student)
+        ->create();
+
+    expect($student->refresh()->primary_email_id)
+        ->not->toBe($studentEmailAddress->getKey());
+
+    $response = putJson(route('api.v1.students.update', ['student' => $student], false), [
+        'primary_email_id' => $studentEmailAddress->getKey(),
+    ]);
+    $response->assertOk();
+    $response->assertJsonStructure([
+        'data',
+    ]);
+
+    expect($response['data']['primary_email_id'] ?? null)
+        ->toBe($studentEmailAddress->getKey());
+});
+
 it('validates', function (array $requestAttributes, string $invalidAttribute, string $validationMessage, ?Closure $before = null) {
     $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
     $studentConfigurationSettings->is_enabled = true;
@@ -185,6 +217,7 @@ it('validates', function (array $requestAttributes, string $invalidAttribute, st
         $invalidAttribute => [$validationMessage],
     ]);
 })->with([
+    // requestAttributes, invalidAttribute, validationMessage, before
     '`first` is max 255 characters' => [['first' => str_repeat('a', 256)], 'first', 'The first may not be greater than 255 characters.'],
     '`last` is max 255 characters' => [['last' => str_repeat('a', 256)], 'last', 'The last may not be greater than 255 characters.'],
     '`full_name` is max 255 characters' => [['full_name' => str_repeat('a', 256)], 'full_name', 'The full name may not be greater than 255 characters.'],
@@ -207,6 +240,15 @@ it('validates', function (array $requestAttributes, string $invalidAttribute, st
     '`lastlmslogin` is Y-m-d H:i:s format' => [['lastlmslogin' => '2020-01-01'], 'lastlmslogin', 'The lastlmslogin does not match the format Y-m-d H:i:s.'],
     '`f_e_term` is max 255 characters' => [['f_e_term' => str_repeat('a', 256)], 'f_e_term', 'The f e term may not be greater than 255 characters.'],
     '`mr_e_term` is max 255 characters' => [['mr_e_term' => str_repeat('a', 256)], 'mr_e_term', 'The mr e term may not be greater than 255 characters.'],
+    '`primary_email_id` is a valid UUID' => [['primary_email_id' => 'not-a-uuid'], 'primary_email_id', 'The primary email id must be a valid UUID.'],
+    '`primary_email_id` is an existing email address ID' => [['primary_email_id' => (string) Str::orderedUuid()], 'primary_email_id', 'The selected primary email id is invalid.'],
+    '`primary_email_id` is an email address ID for the current student' => [['primary_email_id' => ($primaryEmailId = (string) Str::orderedUuid())], 'primary_email_id', 'The selected primary email id is invalid.', function () use ($primaryEmailId) {
+        StudentEmailAddress::factory()
+            ->for(Student::factory())
+            ->create([
+                'id' => $primaryEmailId,
+            ]);
+    }],
 ]);
 
 it('can include related student relationships', function (string $relationship, string $responseKey) {
@@ -230,5 +272,6 @@ it('can include related student relationships', function (string $relationship, 
     expect($response['data'])
         ->toHaveKey($responseKey);
 })->with([
+    // relationship, responseKey
     '`primaryEmailAddress`' => ['primary_email_address', 'primary_email_address'],
 ]);
