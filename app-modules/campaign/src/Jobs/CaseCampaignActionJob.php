@@ -81,16 +81,18 @@ class CaseCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
                 'created_by_id' => $userId,
             ]);
 
-            if (isset($action->data['assigned_to_id']) && $action->data['assigned_to_id'] !== 'automatic') {
-                $case->assignments()->create([
-                    'user_id' => $action->data['assigned_to_id'],
-                    'assigned_by_id' => $userId,
-                    'assigned_at' => now(),
-                    'status' => CaseAssignmentStatus::Active,
-                ]);
-            } else {
-                $assignmentClass = $case->priority->type->assignment_type->getAssignerClass();
-                $assignmentClass->execute($case);
+            if (isset($action->data['assigned_to_id'])) {
+                if ($action->data['assigned_to_id'] === 'automatic') {
+                    $assignmentClass = $case->priority->type->assignment_type->getAssignerClass();
+                    $assignmentClass->execute($case);
+                } else {
+                    $case->assignments()->create([
+                        'user_id' => $action->data['assigned_to_id'],
+                        'assigned_by_id' => $userId,
+                        'assigned_at' => now(),
+                        'status' => CaseAssignmentStatus::Active,
+                    ]);
+                }
             }
 
             $this->actionEducatable->succeeded_at = now();
