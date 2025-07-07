@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\CreateStudentController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\DeleteStudentController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\ListStudentsController;
+use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentEmailAddresses\CreateStudentEmailAddressController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\UpdateStudentController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\ViewStudentController;
 use AdvisingApp\StudentDataModel\Http\Controllers\UpdateStudentInformationSystemSettingsController;
@@ -58,9 +58,15 @@ Route::api(majorVersion: 1, routes: function () {
         ->prefix('students')
         ->group(function () {
             Route::get('/', ListStudentsController::class)->name('index');
-            Route::post('/', CreateStudentController::class)->name('create');
-            Route::get('/{student}', ViewStudentController::class)->name('view');
-            Route::put('/{student}', UpdateStudentController::class)->name('update');
-            Route::delete('/{student}', DeleteStudentController::class)->name('delete');
+            Route::post('/', CreateStudentEmailAddressController::class)->name('create');
+            Route::get('{student}', ViewStudentController::class)->name('view');
+            Route::patch('{student}', UpdateStudentController::class)->name('update');
+            Route::delete('{student}', DeleteStudentController::class)->name('delete');
+
+            Route::name('email-addresses.')
+                ->prefix('{student}/email-addresses')
+                ->group(function () {
+                    Route::post('/', CreateStudentEmailAddressController::class)->name('create');
+                });
         });
 });

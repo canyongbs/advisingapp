@@ -2,8 +2,8 @@
 
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
-use AdvisingApp\StudentDataModel\Tests\Tenant\Http\Controllers\Api\V1\StudentEmailAddresses\RequestFactories\CreateStudentEmailAddressRequestFactory;
 use AdvisingApp\StudentDataModel\Tests\Tenant\Http\Controllers\Api\V1\Students\RequestFactories\CreateStudentRequestFactory;
+use AdvisingApp\StudentDataModel\Tests\Tenant\Http\Controllers\Api\V1\Students\StudentEmailAddresses\RequestFactories\CreateStudentEmailAddressRequestFactory;
 use App\Models\SystemUser;
 use Laravel\Sanctum\Sanctum;
 

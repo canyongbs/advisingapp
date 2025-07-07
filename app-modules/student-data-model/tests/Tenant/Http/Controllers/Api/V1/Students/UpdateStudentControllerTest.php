@@ -8,7 +8,7 @@ use App\Models\SystemUser;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\Sanctum;
 
-use function Pest\Laravel\putJson;
+use function Pest\Laravel\patchJson;
 
 beforeEach(function () {
     config()->set('audit.enabled', false);
@@ -20,22 +20,22 @@ it('is gated with proper access control', function () {
 
     $user = SystemUser::factory()->create();
     Sanctum::actingAs($user, ['api']);
-    putJson(route('api.v1.students.update', ['student' => $student], false), $updateStudentRequestData);
+    patchJson(route('api.v1.students.update', ['student' => $student], false), $updateStudentRequestData);
 
     $user = SystemUser::factory()->create();
     $user->givePermissionTo('student.view-any');
     Sanctum::actingAs($user, ['api']);
-    putJson(route('api.v1.students.update', ['student' => $student], false), $updateStudentRequestData);
+    patchJson(route('api.v1.students.update', ['student' => $student], false), $updateStudentRequestData);
 
     $user = SystemUser::factory()->create();
     $user->givePermissionTo('student.*.update');
     Sanctum::actingAs($user, ['api']);
-    putJson(route('api.v1.students.update', ['student' => $student], false), $updateStudentRequestData);
+    patchJson(route('api.v1.students.update', ['student' => $student], false), $updateStudentRequestData);
 
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['student.view-any', 'student.*.update']);
     Sanctum::actingAs($user, ['api']);
-    putJson(route('api.v1.students.update', ['student' => $student], false), $updateStudentRequestData);
+    patchJson(route('api.v1.students.update', ['student' => $student], false), $updateStudentRequestData);
 
     $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
     $studentConfigurationSettings->is_enabled = true;
@@ -44,7 +44,7 @@ it('is gated with proper access control', function () {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['student.view-any', 'student.*.update']);
     Sanctum::actingAs($user, ['api']);
-    putJson(route('api.v1.students.update', ['student' => $student], false), $updateStudentRequestData)
+    patchJson(route('api.v1.students.update', ['student' => $student], false), $updateStudentRequestData)
         ->assertOk();
 });
 
@@ -60,7 +60,7 @@ it('updates a student', function () {
     $student = Student::factory()->create();
     $updateStudentRequestData = UpdateStudentRequestFactory::new()->create();
 
-    $response = putJson(route('api.v1.students.update', ['student' => $student], false), $updateStudentRequestData);
+    $response = patchJson(route('api.v1.students.update', ['student' => $student], false), $updateStudentRequestData);
     $response->assertOk();
     $response->assertJsonStructure([
         'data',
@@ -185,7 +185,7 @@ it('updates a student\'s primary email address', function () {
     expect($student->refresh()->primary_email_id)
         ->not->toBe($studentEmailAddress->getKey());
 
-    $response = putJson(route('api.v1.students.update', ['student' => $student], false), [
+    $response = patchJson(route('api.v1.students.update', ['student' => $student], false), [
         'primary_email_id' => $studentEmailAddress->getKey(),
     ]);
     $response->assertOk();
@@ -211,7 +211,7 @@ it('validates', function (array $requestAttributes, string $invalidAttribute, st
     $student = Student::factory()->create();
     $updateStudentRequestData = UpdateStudentRequestFactory::new()->create($requestAttributes);
 
-    $response = putJson(route('api.v1.students.update', ['student' => $student], false), $updateStudentRequestData);
+    $response = patchJson(route('api.v1.students.update', ['student' => $student], false), $updateStudentRequestData);
     $response->assertUnprocessable();
     $response->assertJsonValidationErrors([
         $invalidAttribute => [$validationMessage],
@@ -263,7 +263,7 @@ it('can include related student relationships', function (string $relationship, 
     $student = Student::factory()->create();
     $updateStudentRequestData = UpdateStudentRequestFactory::new()->create();
 
-    $response = putJson(route('api.v1.students.update', ['student' => $student, 'include' => $relationship], false), $updateStudentRequestData);
+    $response = patchJson(route('api.v1.students.update', ['student' => $student, 'include' => $relationship], false), $updateStudentRequestData);
     $response->assertOk();
     $response->assertJsonStructure([
         'data',

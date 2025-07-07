@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Tests\Tenant\Http\Controllers\Api\V1\StudentEmailAddresses\RequestFactories;
+namespace AdvisingApp\StudentDataModel\Tests\Tenant\Http\Controllers\Api\V1\Students\StudentEmailAddresses\RequestFactories;
 
 use Worksome\RequestFactories\RequestFactory;
 
@@ -45,6 +45,7 @@ class CreateStudentEmailAddressRequestFactory extends RequestFactory
         return array_filter([
             'address' => $this->faker->unique()->safeEmail(),
             'type' => $this->faker->optional()->word(),
+            'order' => $this->faker->optional()->numberBetween(1, 10),
         ], filled(...));
     }
 }

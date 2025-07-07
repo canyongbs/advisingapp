@@ -34,29 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Actions;
+namespace AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentEmailAddresses;
 
+use AdvisingApp\StudentDataModel\Actions\CreateStudentEmailAddress;
 use AdvisingApp\StudentDataModel\DataTransferObjects\CreateStudentEmailAddressData;
+use AdvisingApp\StudentDataModel\Http\Resources\Api\V1\StudentEmailAddressResource;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Gate;
 
-class CreateStudentEmailAddress
+class CreateStudentEmailAddressController
 {
-    public function execute(Student $student, CreateStudentEmailAddressData $data): StudentEmailAddress
+    /**
+     * @response StudentEmailAddressResource
+     */
+    public function __invoke(Request $request, CreateStudentEmailAddress $createStudentEmailAddress, Student $student): JsonResource
     {
-        return DB::transaction(function () use ($data, $student) {
-            $emailAddress = new StudentEmailAddress();
-            $emailAddress->student()->associate($student);
-            $emailAddress->fill($data->toArray());
-            $emailAddress->save();
+        Gate::authorize('viewAny', Student::class);
+        Gate::authorize('update', $student);
 
-            if (! $student->primaryEmailAddress()->exists()) {
-                $student->primaryEmailAddress()->associate($student->emailAddresses->first());
-                $student->save();
-            }
+        $data = $request->validate([
+            'address' => ['required', 'email'],
+            'type' => ['sometimes', 'max:255'],
+            'order' => ['sometimes', 'integer'],
+        ]);
 
-            return $emailAddress;
-        });
+        $studentEmailAddress = $createStudentEmailAddress->execute($student, CreateStudentEmailAddressData::from($data));
+
+        return $studentEmailAddress->toResource(StudentEmailAddressResource::class);
     }
 }

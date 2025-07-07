@@ -43,6 +43,7 @@ class CreateStudentEmailAddressData extends Data
 {
     public function __construct(
         public string $address,
-        public string|Optional|null $type,
+        public string | Optional | null $type,
+        public int | Optional | null $order = null,
     ) {}
 }

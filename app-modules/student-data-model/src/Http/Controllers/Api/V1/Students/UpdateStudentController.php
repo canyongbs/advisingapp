@@ -39,7 +39,7 @@ class UpdateStudentController
         'email_addresses' => new Example('email_addresses'),
         'primary_email_address' => new Example('primary_email_address'),
     ])]
-    public function __invoke(Request $request, Student $student, UpdateStudent $updateStudent): JsonResource
+    public function __invoke(Request $request, UpdateStudent $updateStudent, Student $student): JsonResource
     {
         Gate::authorize('viewAny', Student::class);
         Gate::authorize('update', $student);

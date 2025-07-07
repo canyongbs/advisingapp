@@ -48,7 +48,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
-class CreateStudentController
+class CreateStudentEmailAddressController
 {
     use CanIncludeRelationships;
 

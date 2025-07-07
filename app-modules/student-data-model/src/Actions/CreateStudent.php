@@ -57,9 +57,6 @@ class CreateStudent
                 foreach ($data->emailAddresses as $emailData) {
                     $this->createStudentEmailAddress->execute($student, $emailData);
                 }
-
-                $student->primaryEmailAddress()->associate($student->emailAddresses->first());
-                $student->save();
             }
 
             return $student;
