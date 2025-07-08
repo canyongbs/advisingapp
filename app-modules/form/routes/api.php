@@ -37,9 +37,11 @@
 use AdvisingApp\Form\Http\Controllers\FormWidgetController;
 use AdvisingApp\Form\Http\Middleware\EnsureFormsFeatureIsActive;
 use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
+use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 Route::prefix('api')
     ->middleware([
+        EnsureFrontendRequestsAreStateful::class,
         'api',
         EnsureFormsFeatureIsActive::class,
         EnsureSubmissibleIsEmbeddableAndAuthorized::class . ':form',

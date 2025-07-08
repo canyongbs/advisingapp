@@ -37,9 +37,11 @@
 use AdvisingApp\MeetingCenter\Http\Controllers\EventRegistrationWidgetController;
 use AdvisingApp\MeetingCenter\Http\Middleware\EnsureEventRegistrationFormIsEmbeddableAndAuthorized;
 use Illuminate\Support\Facades\Route;
+use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 Route::prefix('api')
     ->middleware([
+        EnsureFrontendRequestsAreStateful::class,
         'api',
         EnsureEventRegistrationFormIsEmbeddableAndAuthorized::class . ':event',
     ])

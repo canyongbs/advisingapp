@@ -34,6 +34,14 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\CreateStudentController;
+use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\DeleteStudentController;
+use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\ListStudentsController;
+use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentEmailAddresses\CreateStudentEmailAddressController;
+use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentEmailAddresses\DeleteStudentEmailAddressController;
+use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentEmailAddresses\UpdateStudentEmailAddressController;
+use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\UpdateStudentController;
+use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\ViewStudentController;
 use AdvisingApp\StudentDataModel\Http\Controllers\UpdateStudentInformationSystemSettingsController;
 use App\Http\Middleware\CheckOlympusKey;
 use Illuminate\Support\Facades\Route;
@@ -47,3 +55,23 @@ Route::prefix('api')
         Route::post('/update-sis-settings', UpdateStudentInformationSystemSettingsController::class)
             ->name('update-sis-settings');
     });
+
+Route::api(majorVersion: 1, routes: function () {
+    Route::name('students.')
+        ->prefix('students')
+        ->group(function () {
+            Route::get('/', ListStudentsController::class)->name('index');
+            Route::post('/', CreateStudentController::class)->name('create');
+            Route::get('{student}', ViewStudentController::class)->name('view');
+            Route::patch('{student}', UpdateStudentController::class)->name('update');
+            Route::delete('{student}', DeleteStudentController::class)->name('delete');
+
+            Route::name('email-addresses.')
+                ->prefix('{student}/email-addresses')
+                ->group(function () {
+                    Route::post('/', CreateStudentEmailAddressController::class)->name('create');
+                    Route::patch('/{studentEmailAddress}', UpdateStudentEmailAddressController::class)->name('update');
+                    Route::delete('/{studentEmailAddress}', DeleteStudentEmailAddressController::class)->name('delete');
+                });
+        });
+});

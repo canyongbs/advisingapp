@@ -515,4 +515,15 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
             }
         );
     }
+
+    /**
+     * @param  string  $childType
+     */
+    protected function childRouteBindingRelationshipName($childType): string
+    {
+        return match ($childType) {
+            'studentEmailAddress' => 'emailAddresses',
+            default => parent::childRouteBindingRelationshipName($childType),
+        };
+    }
 }
