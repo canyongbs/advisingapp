@@ -37,7 +37,6 @@
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages;
 
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
-use App\Features\CaseTypeNotificationFeature;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\ViewField;
@@ -60,7 +59,7 @@ class EditCaseTypeNotifications extends EditRecord
 
     public static function canAccess(array $parameters = []): bool
     {
-        return CaseTypeNotificationFeature::active() && parent::canAccess($parameters);
+        return parent::canAccess($parameters);
     }
 
     public function form(Form $form): Form
