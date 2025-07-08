@@ -266,7 +266,8 @@ class EditStudent extends EditRecord
                             ->label('SAP')
                             ->boolean(),
                         TextInput::make('holds')
-                            ->label('Holds'),
+                            ->label('Holds')
+                            ->maxLength(255),
                         DatePicker::make('dfw')
                             ->label('DFW')
                             ->native(false)
@@ -274,7 +275,8 @@ class EditStudent extends EditRecord
                             ->format('Y-m-d')
                             ->displayFormat('Y-m-d'),
                         TextInput::make('ethnicity')
-                            ->label('Ethnicity'),
+                            ->label('Ethnicity')
+                            ->maxLength(255),
                         DateTimePicker::make('lastlmslogin')
                             ->label('Last LMS login')
                             ->native(false)
