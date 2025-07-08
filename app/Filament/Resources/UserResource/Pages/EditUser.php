@@ -83,16 +83,30 @@ class EditUser extends EditRecord
                             ->email()
                             ->required()
                             ->maxLength(255)
-                            ->rules([
-                                new EmailNotInUseOrSoftDeleted($this->record->id),
-                            ]),
+                            ->rules(function (?User $record) {
+                                return [
+                                    new EmailNotInUseOrSoftDeleted($record?->id),
+                                ];
+                            }),
                         TextInput::make('job_title')
                             ->string()
                             ->maxLength(255),
                         Toggle::make('is_external')
                             ->label('User can only login via Single Sign-On (SSO)')
                             ->live()
-                            ->afterStateUpdated(fn (Toggle $component, $state) => $state ? null : (($azureSsoSettings || $googleSsoSettings) ? $component->state(true) && $this->mountAction('showSSOModal') : null)),
+                            ->afterStateUpdated(function (Toggle $component, $state) use ($azureSsoSettings, $googleSsoSettings) {
+                                if ($state) {
+                                    return null;
+                                }
+
+                                if ($azureSsoSettings || $googleSsoSettings) {
+                                    $component->state(true);
+
+                                    return $this->mountAction('showSSOModal');
+                                }
+
+                                return null;
+                            }),
                         TextInput::make('created_at')
                             ->formatStateUsing(fn ($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
                             ->disabled(),
@@ -107,7 +121,7 @@ class EditUser extends EditRecord
                             ->options(Team::all()->pluck('name', 'id'))
                             ->relationship('team', 'name'),
                     ])
-                    ->hidden($this->record->IsAdmin),
+                    ->hidden(fn (?User $record) => $record->IsAdmin ?? false),
                 Licenses::make()
                     ->disabled(function () {
                         /** @var User $user */
