@@ -117,6 +117,11 @@ class BulkCreateCaseAction
                     ->label('Assign Case to')
                     ->options(function (Get $get) {
                         $caseTypeId = $get('type_id');
+
+                        if (! $caseTypeId) {
+                            return [];
+                        }
+
                         $caseType = CaseType::find($caseTypeId);
 
                         if (! $caseType) {
