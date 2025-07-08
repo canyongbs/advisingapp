@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\CaseManagement\Notifications;
 
+use AdvisingApp\CaseManagement\Enums\CaseTypeEmailTemplateRole;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Models\CaseTypeEmailTemplate;
 use AdvisingApp\CaseManagement\Notifications\Concerns\HandlesCaseTemplateContent;
@@ -53,7 +54,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Notification;
 
-class EducatableCaseOpenedNotification extends Notification implements ShouldQueue, HasBeforeSendHook
+class EducatableCaseAssignedNotification extends Notification implements ShouldQueue, HasBeforeSendHook
 {
     use Queueable;
     use HandlesCaseTemplateContent;
@@ -77,26 +78,23 @@ class EducatableCaseOpenedNotification extends Notification implements ShouldQue
         $educatable = $notifiable;
 
         $name = ($notifiable instanceof Student || $notifiable instanceof Prospect)
-          ? $educatable->displayNameKey()
-          : '';
+            ? $educatable->displayNameKey()
+            : '';
 
-        $status = $this->case->status;
-        $type = $this->case->priority->type;
         $template = $this->emailTemplate;
 
         if (! $template) {
             return MailMessage::make()
                 ->settings($this->resolveNotificationSetting($notifiable))
-                ->subject("{$this->case->case_number} - is now {$status->name}")
+                ->subject("Your case {$this->case->case_number} has been assigned to agent")
                 ->greeting("Hello {$name},")
-                ->line("A new {$type->name} case has been created and is now in a {$status->name} status. Your new ticket number is: {$this->case->case_number}.")
-                ->line('The details of your case are shown below:')
-                ->lines(str(nl2br($this->case->close_details))->explode('<br />'));
+                ->line("We’ve assigned an agent to your case {$this->case->case_number}. They will review it and follow up shortly.")
+                ->action('View case', route('portal.case.show', $this->case));
         }
 
         $subject = $this->getSubject($template->subject);
 
-        $body = $this->getBody($template->body);
+        $body = $this->getBody($template->body, CaseTypeEmailTemplateRole::Customer);
 
         return MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable))

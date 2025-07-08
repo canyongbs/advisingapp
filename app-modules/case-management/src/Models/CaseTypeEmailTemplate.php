@@ -40,7 +40,7 @@ use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\CaseManagement\Database\Factories\CaseTypeEmailTemplateFactory;
 use AdvisingApp\CaseManagement\Enums\CaseEmailTemplateType;
 use AdvisingApp\CaseManagement\Enums\CaseTypeEmailTemplateRole;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

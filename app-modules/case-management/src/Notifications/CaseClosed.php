@@ -107,6 +107,6 @@ class CaseClosed extends BaseNotification implements ShouldQueue
 
     private function resolveNotificationSetting(object $notifiable): ?NotificationSetting
     {
-        return $this->case->division?->notificationSetting?->setting;
+        return $this->case->division->notificationSetting?->setting;
     }
 }

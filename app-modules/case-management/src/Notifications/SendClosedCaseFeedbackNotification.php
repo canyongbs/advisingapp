@@ -73,16 +73,14 @@ class SendClosedCaseFeedbackNotification extends Notification implements ShouldQ
 
     public function toMail(object $notifiable): MailMessage
     {
-        $template = $this->emailTemplate;
-
         /** @var Educatable $educatable */
         $educatable = $notifiable;
 
-        $name = match ($notifiable::class) {
-            Student::class => $educatable->first,
-            Prospect::class => $educatable->first_name,
-            default => 'Unknown',
-        };
+        $name = ($notifiable instanceof Student || $notifiable instanceof Prospect)
+                ? $educatable->displayNameKey()
+                : '';
+
+        $template = $this->emailTemplate;
 
         if (! $template) {
             return MailMessage::make()

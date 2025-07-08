@@ -44,11 +44,17 @@ use AdvisingApp\CaseManagement\Enums\CaseTypeEmailTemplateRole;
 use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
 use AdvisingApp\CaseManagement\Exceptions\CaseNumberUpdateAttemptException;
 use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\CaseManagement\Notifications\CaseClosed;
+use AdvisingApp\CaseManagement\Notifications\CaseCreated;
+use AdvisingApp\CaseManagement\Notifications\CaseStatusChanged;
 use AdvisingApp\CaseManagement\Notifications\Concerns\FetchCaseTemplate;
 use AdvisingApp\CaseManagement\Notifications\EducatableCaseClosedNotification;
 use AdvisingApp\CaseManagement\Notifications\EducatableCaseOpenedNotification;
+use AdvisingApp\CaseManagement\Notifications\EducatableCaseStatusChangeNotification;
 use AdvisingApp\CaseManagement\Notifications\SendClosedCaseFeedbackNotification;
 use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
+use AdvisingApp\Notification\Notifications\Channels\DatabaseChannel;
+use AdvisingApp\Notification\Notifications\Channels\MailChannel;
 use App\Enums\Feature;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
@@ -70,10 +76,19 @@ class CaseObserver
             TriggeredAutoSubscription::dispatch($user, $case);
         }
 
-        if ($case->status->classification === SystemCaseClassification::Open) {
-            if ($case->respondent->canReceiveEmail()) {
-                $case->respondent->notify(new EducatableCaseOpenedNotification($case));
-            }
+        $customerEmailTemplate = $this->fetchTemplate(
+            $case->priority->type,
+            CaseEmailTemplateType::Created,
+            CaseTypeEmailTemplateRole::Customer
+        );
+
+        if (
+            $case->status?->classification === SystemCaseClassification::Open
+            && $case->priority?->type->is_customers_case_created_email_enabled
+        ) {
+            $case->respondent->notify(
+                new EducatableCaseOpenedNotification($case, $customerEmailTemplate)
+            );
         }
 
         $customerEmailTemplate = $this->fetchTemplate(
@@ -148,13 +163,18 @@ class CaseObserver
     {
         CreateCaseHistory::dispatch($case, $case->getChanges(), $case->getOriginal());
 
+        $customerEmailTemplate = $this->fetchTemplate(
+            $case->priority->type,
+            CaseEmailTemplateType::Closed,
+            CaseTypeEmailTemplateRole::Customer
+        );
+
         if (
             $case->wasChanged('status_id')
             && $case->status->classification === SystemCaseClassification::Closed
+            && $case->priority?->type->is_customers_case_closed_email_enabled
         ) {
-            if ($case->respondent->canReceiveEmail()) {
-                $case->respondent->notify(new EducatableCaseClosedNotification($case));
-            }
+            $case->respondent->notify(new EducatableCaseClosedNotification($case, $customerEmailTemplate));
         }
 
         if (
@@ -163,8 +183,113 @@ class CaseObserver
             $case?->status?->classification == SystemCaseClassification::Closed &&
             ! $case?->feedback()->count()
         ) {
-            if ($case->respondent->canReceiveEmail()) {
-                $case->respondent->notify(new SendClosedCaseFeedbackNotification($case));
+            if ($case->priority->type->is_customers_survey_response_email_enabled) {
+                $customerEmailTemplateForSurveyResponse = $this->fetchTemplate(
+                    $case->priority->type,
+                    CaseEmailTemplateType::SurveyResponse,
+                    CaseTypeEmailTemplateRole::Customer
+                );
+
+                $case->respondent->notify(new SendClosedCaseFeedbackNotification($case, $customerEmailTemplateForSurveyResponse));
+            } else {
+                $case->respondent->notify(new SendClosedCaseFeedbackNotification($case, null));
+            }
+        }
+    }
+
+    public function updated(CaseModel $case): void
+    {
+        if ($case->wasChanged('status_id')) {
+            if ($case->status?->classification === SystemCaseClassification::Closed) {
+                $managerEmailTemplate = $this->fetchTemplate(
+                    $case->priority->type,
+                    CaseEmailTemplateType::Closed,
+                    CaseTypeEmailTemplateRole::Manager
+                );
+
+                $auditorEmailTemplate = $this->fetchTemplate(
+                    $case->priority->type,
+                    CaseEmailTemplateType::Closed,
+                    CaseTypeEmailTemplateRole::Auditor
+                );
+
+                app(NotifyCaseUsers::class)->execute(
+                    $case,
+                    new CaseClosed($case, $managerEmailTemplate, MailChannel::class),
+                    $case->priority?->type->is_managers_case_closed_email_enabled ?? false,
+                    false,
+                );
+
+                app(NotifyCaseUsers::class)->execute(
+                    $case,
+                    new CaseClosed($case, $auditorEmailTemplate, MailChannel::class),
+                    false,
+                    $case->priority?->type->is_auditors_case_closed_email_enabled ?? false,
+                );
+
+                app(NotifyCaseUsers::class)->execute(
+                    $case,
+                    new CaseClosed($case, $managerEmailTemplate, DatabaseChannel::class),
+                    $case->priority?->type->is_managers_case_closed_notification_enabled ?? false,
+                    false,
+                );
+
+                app(NotifyCaseUsers::class)->execute(
+                    $case,
+                    new CaseClosed($case, $auditorEmailTemplate, DatabaseChannel::class),
+                    false,
+                    $case->priority?->type->is_auditors_case_closed_notification_enabled ?? false,
+                );
+            } elseif ($case->status) {
+                $customerEmailTemplate = $this->fetchTemplate(
+                    $case->priority->type,
+                    CaseEmailTemplateType::StatusChange,
+                    CaseTypeEmailTemplateRole::Customer
+                );
+
+                if ($case->priority?->type->is_customers_case_status_change_email_enabled) {
+                    $case->respondent->notify(new EducatableCaseStatusChangeNotification($case, $customerEmailTemplate));
+                }
+
+                $managerEmailTemplate = $this->fetchTemplate(
+                    $case->priority->type,
+                    CaseEmailTemplateType::StatusChange,
+                    CaseTypeEmailTemplateRole::Manager
+                );
+
+                $auditorEmailTemplate = $this->fetchTemplate(
+                    $case->priority->type,
+                    CaseEmailTemplateType::StatusChange,
+                    CaseTypeEmailTemplateRole::Auditor
+                );
+
+                app(NotifyCaseUsers::class)->execute(
+                    $case,
+                    new CaseStatusChanged($case, $managerEmailTemplate, MailChannel::class),
+                    $case->priority?->type->is_managers_case_status_change_email_enabled ?? false,
+                    false,
+                );
+
+                app(NotifyCaseUsers::class)->execute(
+                    $case,
+                    new CaseStatusChanged($case, $auditorEmailTemplate, MailChannel::class),
+                    false,
+                    $case->priority?->type->is_auditors_case_status_change_email_enabled ?? false,
+                );
+
+                app(NotifyCaseUsers::class)->execute(
+                    $case,
+                    new CaseStatusChanged($case, $managerEmailTemplate, DatabaseChannel::class),
+                    $case->priority?->type->is_managers_case_status_change_notification_enabled ?? false,
+                    false,
+                );
+
+                app(NotifyCaseUsers::class)->execute(
+                    $case,
+                    new CaseStatusChanged($case, $auditorEmailTemplate, DatabaseChannel::class),
+                    false,
+                    $case->priority?->type->is_auditors_case_status_change_notification_enabled ?? false,
+                );
             }
         }
     }

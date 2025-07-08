@@ -36,7 +36,10 @@
 
 namespace AdvisingApp\CaseManagement\Notifications;
 
+use AdvisingApp\CaseManagement\Enums\CaseTypeEmailTemplateRole;
 use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\CaseManagement\Models\CaseTypeEmailTemplate;
+use AdvisingApp\CaseManagement\Notifications\Concerns\HandlesCaseTemplateContent;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\Contracts\Message;
@@ -54,9 +57,11 @@ use Illuminate\Notifications\Notification;
 class EducatableCaseClosedNotification extends Notification implements ShouldQueue, HasBeforeSendHook
 {
     use Queueable;
+    use HandlesCaseTemplateContent;
 
     public function __construct(
         protected CaseModel $case,
+        protected ?CaseTypeEmailTemplate $emailTemplate,
     ) {}
 
     /**
@@ -72,18 +77,30 @@ class EducatableCaseClosedNotification extends Notification implements ShouldQue
         /** @var Educatable $educatable */
         $educatable = $notifiable;
 
-        $name = match ($notifiable::class) {
-            Student::class => $educatable->first,
-            Prospect::class => $educatable->first_name,
-        };
+        $name = ($notifiable instanceof Student || $notifiable instanceof Prospect)
+          ? $educatable->displayNameKey()
+          : '';
 
         $status = $this->case->status;
 
+        $template = $this->emailTemplate;
+
+        if (! $template) {
+            return MailMessage::make()
+                ->settings($this->resolveNotificationSetting($notifiable))
+                ->subject("{$this->case->case_number} - is now {$status->name}")
+                ->greeting("Hi {$name},")
+                ->line("Your request {$this->case->case_number} for case is now {$status->name}.");
+        }
+
+        $subject = $this->getSubject($template->subject);
+
+        $body = $this->getBody($template->body, CaseTypeEmailTemplateRole::Customer);
+
         return MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable))
-            ->subject("{$this->case->case_number} - is now {$status->name}")
-            ->greeting("Hi {$name},")
-            ->line("Your request {$this->case->case_number} for case is now {$status->name}.");
+            ->subject(strip_tags($subject))
+            ->content($body);
     }
 
     public function beforeSend(AnonymousNotifiable|CanBeNotified $notifiable, Message $message, NotificationChannel $channel): void
@@ -93,6 +110,6 @@ class EducatableCaseClosedNotification extends Notification implements ShouldQue
 
     private function resolveNotificationSetting(object $notifiable): ?NotificationSetting
     {
-        return $this->case->division?->notificationSetting?->setting;
+        return $this->case->division->notificationSetting?->setting;
     }
 }
