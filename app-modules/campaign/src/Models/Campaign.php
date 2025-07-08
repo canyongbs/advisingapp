@@ -103,15 +103,4 @@ class Campaign extends BaseModel implements Auditable
     {
         return $this->morphTo();
     }
-
-    protected static function booted(): void
-    {
-        static::addGlobalScope('licensed', function (Builder $builder) {
-            if (! auth()->check()) {
-                return;
-            }
-
-            $builder->whereHas('segment');
-        });
-    }
 }
