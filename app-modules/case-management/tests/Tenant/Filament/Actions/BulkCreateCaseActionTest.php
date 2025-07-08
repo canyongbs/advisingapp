@@ -77,7 +77,7 @@ it('shows the form and validation', function (BulkCreateCaseActionRequestFactory
         ['priority_id' => 'required'],
     ],
     'priority_id does not exist' => [
-        BulkCreateCaseActionRequestFactory::new()->state(['priority_id' => fake()->uuid()]),
+        BulkCreateCaseActionRequestFactory::new()->state(['priority_id' => (string) Str::uuid()]),
         ['priority_id' => 'exists'],
     ],
 ]);
