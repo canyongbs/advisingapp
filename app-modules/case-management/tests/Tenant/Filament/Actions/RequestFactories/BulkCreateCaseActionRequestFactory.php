@@ -49,7 +49,7 @@ class BulkCreateCaseActionRequestFactory extends RequestFactory
         $priority = CasePriority::factory()->create();
 
         return [
-            'division_id' => Division::inRandomOrder()->first()->getKey() ?? Division::factory()->create()->getKey(),
+            'division_id' => Division::inRandomOrder()->first()->id ?? Division::factory()->create()->getKey(),
             'status_id' => CaseStatus::factory()->create()->getKey(),
             'type_id' => $priority->type_id,
             'priority_id' => $priority->getKey(),
