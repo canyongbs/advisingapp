@@ -34,30 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Actions;
+namespace AdvisingApp\CaseManagement\Notifications\Concerns;
 
-use AdvisingApp\CaseManagement\Filament\Blocks\CaseTypeEmailTemplateButtonBlock;
-use AdvisingApp\CaseManagement\Filament\Blocks\SurveyResponseEmailTemplateTakeSurveyButtonBlock;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\HtmlString;
+use AdvisingApp\CaseManagement\Enums\CaseEmailTemplateType;
+use AdvisingApp\CaseManagement\Enums\CaseTypeEmailTemplateRole;
+use AdvisingApp\CaseManagement\Models\CaseType;
+use AdvisingApp\CaseManagement\Models\CaseTypeEmailTemplate;
 
-class GenerateCaseTypeEmailTemplateContent
+trait FetchCaseTemplate
 {
-    /**
-     * @param string|array<int, string|array<string, mixed>> $content
-     * @param array<string, mixed> $mergeData
-     */
-    public function __invoke(string|array $content, array $mergeData, Model $record, string $recordAttribute): HtmlString
-    {
-        $content = tiptap_converter()
-            ->mergeTagsMap($mergeData)
-            ->record($record, $recordAttribute)
-            ->blocks([
-                CaseTypeEmailTemplateButtonBlock::class,
-                SurveyResponseEmailTemplateTakeSurveyButtonBlock::class,
-            ])
-            ->asHTML($content);
-
-        return str($content)->sanitizeHtml()->toHtmlString();
+    public function fetchTemplate(
+        CaseType $caseType,
+        CaseEmailTemplateType $templateType,
+        CaseTypeEmailTemplateRole $templateRole
+    ): ?CaseTypeEmailTemplate {
+        return CaseTypeEmailTemplate::query()
+            ->where('case_type_id', $caseType->getKey())
+            ->where('type', $templateType)
+            ->where('role', $templateRole)
+            ->first();
     }
 }

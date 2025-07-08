@@ -37,10 +37,14 @@
 namespace AdvisingApp\CaseManagement\Observers;
 
 use AdvisingApp\CaseManagement\Actions\CreateCaseHistory;
+use AdvisingApp\CaseManagement\Actions\NotifyCaseUsers;
 use AdvisingApp\CaseManagement\Cases\CaseNumber\Contracts\CaseNumberGenerator;
+use AdvisingApp\CaseManagement\Enums\CaseEmailTemplateType;
+use AdvisingApp\CaseManagement\Enums\CaseTypeEmailTemplateRole;
 use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
 use AdvisingApp\CaseManagement\Exceptions\CaseNumberUpdateAttemptException;
 use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\CaseManagement\Notifications\Concerns\FetchCaseTemplate;
 use AdvisingApp\CaseManagement\Notifications\EducatableCaseClosedNotification;
 use AdvisingApp\CaseManagement\Notifications\EducatableCaseOpenedNotification;
 use AdvisingApp\CaseManagement\Notifications\SendClosedCaseFeedbackNotification;
@@ -51,6 +55,8 @@ use Illuminate\Support\Facades\Gate;
 
 class CaseObserver
 {
+    use FetchCaseTemplate;
+
     public function creating(CaseModel $case): void
     {
         $case->case_number ??= app(CaseNumberGenerator::class)->generate();
@@ -69,6 +75,61 @@ class CaseObserver
                 $case->respondent->notify(new EducatableCaseOpenedNotification($case));
             }
         }
+
+        $customerEmailTemplate = $this->fetchTemplate(
+            $case->priority->type,
+            CaseEmailTemplateType::Created,
+            CaseTypeEmailTemplateRole::Customer
+        );
+
+        if (
+            $case->status?->classification === SystemCaseClassification::Open
+            && $case->priority?->type->is_customers_case_created_email_enabled
+        ) {
+            $case->respondent->notify(
+                new EducatableCaseOpenedNotification($case, $customerEmailTemplate)
+            );
+        }
+
+        $managerEmailTemplate = $this->fetchTemplate(
+            $case->priority->type,
+            CaseEmailTemplateType::Created,
+            CaseTypeEmailTemplateRole::Manager
+        );
+
+        $auditorEmailTemplate = $this->fetchTemplate(
+            $case->priority->type,
+            CaseEmailTemplateType::Created,
+            CaseTypeEmailTemplateRole::Auditor
+        );
+
+        app(NotifyCaseUsers::class)->execute(
+            $case,
+            new CaseCreated($case, $managerEmailTemplate, MailChannel::class),
+            $case->priority?->type->is_managers_case_created_email_enabled ?? false,
+            false,
+        );
+
+        app(NotifyCaseUsers::class)->execute(
+            $case,
+            new CaseCreated($case, $auditorEmailTemplate, MailChannel::class),
+            false,
+            $case->priority?->type->is_auditors_case_created_email_enabled ?? false,
+        );
+
+        app(NotifyCaseUsers::class)->execute(
+            $case,
+            new CaseCreated($case, $managerEmailTemplate, DatabaseChannel::class),
+            $case->priority?->type->is_managers_case_created_notification_enabled ?? false,
+            false,
+        );
+
+        app(NotifyCaseUsers::class)->execute(
+            $case,
+            new CaseCreated($case, $auditorEmailTemplate, DatabaseChannel::class),
+            false,
+            $case->priority?->type->is_auditors_case_created_notification_enabled ?? false,
+        );
     }
 
     public function updating(CaseModel $case): void

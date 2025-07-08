@@ -37,13 +37,30 @@
 namespace AdvisingApp\CaseManagement\Notifications;
 
 use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\CaseManagement\Models\CaseTypeEmailTemplate;
+use AdvisingApp\CaseManagement\Notifications\Concerns\HandlesCaseTemplateContent;
+use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
+use AdvisingApp\Notification\Models\Contracts\Message;
+use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\NotificationSetting;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Notification;
 
-class SendClosedCaseFeedbackNotification extends Notification
+class SendClosedCaseFeedbackNotification extends Notification implements ShouldQueue, HasBeforeSendHook
 {
+    use Queueable;
+    use HandlesCaseTemplateContent;
+
     public function __construct(
         protected CaseModel $case,
+        public ?CaseTypeEmailTemplate $emailTemplate,
     ) {}
 
     /**
@@ -56,12 +73,47 @@ class SendClosedCaseFeedbackNotification extends Notification
 
     public function toMail(object $notifiable): MailMessage
     {
-        return MailMessage::make()
-            ->subject("Feedback survey for {$this->case->case_number}")
-            ->greeting("Hi {$notifiable->display_name},")
-            ->line('To help us serve you better in the future, we’d love to hear about your experience with our support team.')
-            ->action('Rate Service', route('feedback.case', $this->case->getKey()))
-            ->line('We appreciate your time and we value your feedback!')
-            ->salutation('Thank you.');
+        $template = $this->emailTemplate;
+
+        /** @var Educatable $educatable */
+        $educatable = $notifiable;
+
+        $name = match ($notifiable::class) {
+            Student::class => $educatable->first,
+            Prospect::class => $educatable->first_name,
+            default => 'Unknown',
+        };
+
+        if (! $template) {
+            return MailMessage::make()
+                ->settings($this->resolveNotificationSetting($notifiable))
+                ->subject("Feedback survey for {$this->case->case_number}")
+                ->greeting("Hi {$name},")
+                ->line('To help us serve you better in the future, we’d love to hear about your experience with our support team.')
+                ->action('Rate Service', route('feedback.case', $this->case->id))
+                ->line('We appreciate your time and we value your feedback!')
+                ->salutation('Thank you.');
+        }
+
+        $subject = $this->getSubject($template->subject);
+
+        $body = $this->getBody($template->body);
+
+        $test = MailMessage::make()
+            ->settings($this->resolveNotificationSetting($notifiable))
+            ->subject(strip_tags($subject))
+            ->content($body);
+
+        return $test;
+    }
+
+    public function beforeSend(AnonymousNotifiable|CanBeNotified $notifiable, Message $message, NotificationChannel $channel): void
+    {
+        $message->related()->associate($this->case);
+    }
+
+    private function resolveNotificationSetting(object $notifiable): ?NotificationSetting
+    {
+        return $this->case->division->notificationSetting?->setting;
     }
 }

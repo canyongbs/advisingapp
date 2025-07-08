@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -32,32 +30,25 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
-
-namespace AdvisingApp\CaseManagement\Actions;
-
-use AdvisingApp\CaseManagement\Filament\Blocks\CaseTypeEmailTemplateButtonBlock;
-use AdvisingApp\CaseManagement\Filament\Blocks\SurveyResponseEmailTemplateTakeSurveyButtonBlock;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\HtmlString;
-
-class GenerateCaseTypeEmailTemplateContent
-{
-    /**
-     * @param string|array<int, string|array<string, mixed>> $content
-     * @param array<string, mixed> $mergeData
-     */
-    public function __invoke(string|array $content, array $mergeData, Model $record, string $recordAttribute): HtmlString
-    {
-        $content = tiptap_converter()
-            ->mergeTagsMap($mergeData)
-            ->record($record, $recordAttribute)
-            ->blocks([
-                CaseTypeEmailTemplateButtonBlock::class,
-                SurveyResponseEmailTemplateTakeSurveyButtonBlock::class,
-            ])
-            ->asHTML($content);
-
-        return str($content)->sanitizeHtml()->toHtmlString();
-    }
-}
+--}}
+<div style="text-align: {{ $alignment }}">
+    <a
+        href="{{ $url ?? '#' }}"
+        style="display: inline-block; 
+               border-width: 8px; 
+               border-color: #3B82F6; 
+               background-color: #3B82F6; 
+               padding: 0.50rem 1rem;
+               font-size: 0.875rem; 
+               font-weight: 700; 
+               color: white; 
+               transition: border-color 0.3s ease, background-color 0.3s ease; 
+               text-decoration: none; 
+               border-radius: 0.375rem; 
+               cursor: pointer; 
+               box-sizing: border-box;"
+        target="_blank"
+    >
+        {{ $label ?? 'Take Survey' }}
+    </a>
+</div>
