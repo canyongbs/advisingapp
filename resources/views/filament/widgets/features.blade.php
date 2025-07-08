@@ -54,8 +54,12 @@
                 </div>
 
                 <div class="flex items-center justify-center">
-                    <x-filament::button :href="$hasFeature ? RecruitmentCrmDashboard::getUrl() : null" size="xl" tag="a"
-                        color="gray">
+                    <x-filament::button
+                        :href="$hasFeature ? RecruitmentCrmDashboard::getUrl() : null"
+                        size="xl"
+                        tag="a"
+                        color="gray"
+                    >
                         Start now
                     </x-filament::button>
                 </div>
@@ -80,8 +84,12 @@
                 </div>
 
                 <div class="flex items-center justify-center">
-                    <x-filament::button :href="$hasFeature ? RetentionCrmDashboard::getUrl() : null" size="xl" tag="a"
-                        color="gray">
+                    <x-filament::button
+                        :href="$hasFeature ? RetentionCrmDashboard::getUrl() : null"
+                        size="xl"
+                        tag="a"
+                        color="gray"
+                    >
                         Start now
                     </x-filament::button>
                 </div>
@@ -106,8 +114,12 @@
                 </div>
 
                 <div class="flex items-center justify-center">
-                    <x-filament::button :href="$hasFeature ? InstitutionalAdvisor::getUrl() : null" size="xl" tag="a"
-                        color="gray">
+                    <x-filament::button
+                        :href="$hasFeature ? InstitutionalAdvisor::getUrl() : null"
+                        size="xl"
+                        tag="a"
+                        color="gray"
+                    >
                         Start now
                     </x-filament::button>
                 </div>
