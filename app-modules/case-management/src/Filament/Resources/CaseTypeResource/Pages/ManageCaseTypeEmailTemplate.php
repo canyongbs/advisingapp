@@ -86,7 +86,7 @@ class ManageCaseTypeEmailTemplate extends EditRecord
                     ->id('email-template-role-tabs')
                     ->tabs(array_map(
                         fn (CaseTypeEmailTemplateRole $role) => Tab::make($role->getLabel())
-                            ->schema($this->getEmailTemplateFormSchema())
+                            ->schema($this->getEmailTemplateFormSchema($role))
                             ->statePath($role->value),
                         $roles
                     ))
@@ -131,7 +131,7 @@ class ManageCaseTypeEmailTemplate extends EditRecord
     }
 
     /** @return array<int, TiptapEditor> */
-    protected function getEmailTemplateFormSchema(): array
+    protected function getEmailTemplateFormSchema(CaseTypeEmailTemplateRole $role): array
     {
         return [
             TiptapEditor::make('subject')
@@ -139,7 +139,7 @@ class ManageCaseTypeEmailTemplate extends EditRecord
                 ->placeholder('Enter the email subject here...')
                 ->extraInputAttributes(['style' => 'min-height: 2rem; overflow-y:none;'])
                 ->disableToolbarMenus()
-                ->mergeTags(['case number', 'created date', 'updated date', 'status', 'assigned to', 'title', 'type'])
+                ->mergeTags(['case number', 'created date', 'updated date', 'status', 'assigned to', 'type'])
                 ->showMergeTagsInBlocksPanel(false)
                 ->helperText('You may use “merge tags” to substitute information about a case into your subject line. Insert a “{{“ in the subject line field to see a list of available merge tags'),
 
@@ -148,8 +148,8 @@ class ManageCaseTypeEmailTemplate extends EditRecord
                 ->profile('email_template')
                 ->placeholder('Enter the email body here...')
                 ->extraInputAttributes(['style' => 'min-height: 12rem;'])
-                ->mergeTags(['case number', 'created date', 'updated date', 'status', 'assigned to', 'title', 'description', 'type'])
-                ->blocks([
+                ->mergeTags(['case number', 'created date', 'updated date', 'status', 'assigned to', 'description', 'type'])
+                ->blocks($role === CaseTypeEmailTemplateRole::Customer ? [] : [
                     CaseTypeEmailTemplateButtonBlock::class,
                     SurveyResponseEmailTemplateTakeSurveyButtonBlock::class,
                 ])
