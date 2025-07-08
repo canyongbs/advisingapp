@@ -104,12 +104,12 @@ class Segment extends BaseModel
     protected static function booted(): void
     {
         static::addGlobalScope('licensed', function (Builder $builder) {
-            if (! auth()->check()) {
+            if (! auth()->guard('web')->check()) {
                 return;
             }
 
             /** @var Authenticatable $user */
-            $user = auth()->user();
+            $user = auth()->guard('web')->user();
 
             foreach (SegmentModel::cases() as $model) {
                 if (! $user->hasLicense($model->class()::getLicenseType())) {
