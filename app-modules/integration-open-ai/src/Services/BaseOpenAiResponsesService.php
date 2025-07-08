@@ -53,7 +53,6 @@ use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeEnabled;
 use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
-use App\Features\OpenAiVectorStoresFeature;
 use Carbon\CarbonImmutable;
 use Closure;
 use Exception;
@@ -367,10 +366,6 @@ abstract class BaseOpenAiResponsesService implements AiService
 
     public function isFileReady(AiFile $file): bool
     {
-        if (! OpenAiVectorStoresFeature::active()) {
-            return true;
-        }
-
         $vectorStore = $this->findOrCreateVectorStoreRecordForFile($file);
 
         if ($vectorStore->ready_until?->isFuture()) {
@@ -399,10 +394,6 @@ abstract class BaseOpenAiResponsesService implements AiService
      */
     public function getReadyVectorStoreIds(array $files): array
     {
-        if (! OpenAiVectorStoresFeature::active()) {
-            return [];
-        }
-
         if (blank($files)) {
             return [];
         }

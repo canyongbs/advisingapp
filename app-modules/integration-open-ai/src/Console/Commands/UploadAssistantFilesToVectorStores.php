@@ -39,7 +39,6 @@ namespace AdvisingApp\IntegrationOpenAi\Console\Commands;
 use AdvisingApp\Ai\Models\AiAssistantFile;
 use AdvisingApp\IntegrationOpenAi\Jobs\UploadAssistantFileToVectorStore;
 use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiResponsesService;
-use App\Features\OpenAiVectorStoresFeature;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\Multitenancy\Commands\Concerns\TenantAware;
@@ -55,10 +54,6 @@ class UploadAssistantFilesToVectorStores extends Command
 
     public function handle(): void
     {
-        if (! OpenAiVectorStoresFeature::active()) {
-            return;
-        }
-
         AiAssistantFile::query()
             ->whereNotNull('parsing_results')
             ->where(fn (Builder $query) => $query
