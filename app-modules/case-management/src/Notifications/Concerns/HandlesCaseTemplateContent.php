@@ -103,7 +103,7 @@ trait HandlesCaseTemplateContent
             return $content;
         }
 
-        $content['content'] = array_map(function ($block) use ($urlType) {
+        $content['content'] = array_map(function (mixed $block) use ($urlType) {
             if (
                 $block['type'] === 'tiptapBlock' &&
                 ($block['attrs']['type'] ?? null) === 'CaseTypeEmailTemplateButtonBlock'

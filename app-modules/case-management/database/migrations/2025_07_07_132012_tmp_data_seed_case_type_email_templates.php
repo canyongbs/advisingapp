@@ -333,7 +333,7 @@ return new class () extends Migration {
                             'type' => 'tiptapBlock',
                             'attrs' => [
                                 'data' => ['alignment' => 'center'],
-                                'type' => 'caseRequestTypeEmailTemplateButtonBlock',
+                                'type' => 'caseTypeEmailTemplateButtonBlock',
                             ],
                         ],
                     ],
@@ -359,7 +359,7 @@ return new class () extends Migration {
                             'type' => 'tiptapBlock',
                             'attrs' => [
                                 'data' => ['alignment' => 'center'],
-                                'type' => 'caseRequestTypeEmailTemplateButtonBlock',
+                                'type' => 'caseTypeEmailTemplateButtonBlock',
                             ],
                         ],
                     ],
@@ -426,7 +426,7 @@ return new class () extends Migration {
                             'type' => 'tiptapBlock',
                             'attrs' => [
                                 'data' => ['alignment' => 'center'],
-                                'type' => 'caseRequestTypeEmailTemplateButtonBlock',
+                                'type' => 'caseTypeEmailTemplateButtonBlock',
                             ],
                         ],
                     ],
@@ -452,7 +452,7 @@ return new class () extends Migration {
                             'type' => 'tiptapBlock',
                             'attrs' => [
                                 'data' => ['alignment' => 'center'],
-                                'type' => 'caseRequestTypeEmailTemplateButtonBlock',
+                                'type' => 'caseTypeEmailTemplateButtonBlock',
                             ],
                         ],
                     ],
@@ -482,7 +482,7 @@ return new class () extends Migration {
                             'type' => 'tiptapBlock',
                             'attrs' => [
                                 'data' => ['alignment' => 'center'],
-                                'type' => 'caseRequestTypeEmailTemplateButtonBlock',
+                                'type' => 'caseTypeEmailTemplateButtonBlock',
                             ],
                         ],
                     ],
@@ -510,7 +510,7 @@ return new class () extends Migration {
                             'type' => 'tiptapBlock',
                             'attrs' => [
                                 'data' => ['alignment' => 'center'],
-                                'type' => 'caseRequestTypeEmailTemplateButtonBlock',
+                                'type' => 'caseTypeEmailTemplateButtonBlock',
                             ],
                         ],
                     ],
@@ -536,7 +536,7 @@ return new class () extends Migration {
                             'type' => 'tiptapBlock',
                             'attrs' => [
                                 'data' => ['alignment' => 'center'],
-                                'type' => 'caseRequestTypeEmailTemplateButtonBlock',
+                                'type' => 'caseTypeEmailTemplateButtonBlock',
                             ],
                         ],
                         [
@@ -570,7 +570,7 @@ return new class () extends Migration {
                             'type' => 'tiptapBlock',
                             'attrs' => [
                                 'data' => ['alignment' => 'center'],
-                                'type' => 'caseRequestTypeEmailTemplateButtonBlock',
+                                'type' => 'caseTypeEmailTemplateButtonBlock',
                             ],
                         ],
                     ],
@@ -600,7 +600,7 @@ return new class () extends Migration {
                             'type' => 'tiptapBlock',
                             'attrs' => [
                                 'data' => ['alignment' => 'center'],
-                                'type' => 'caseRequestTypeEmailTemplateButtonBlock',
+                                'type' => 'caseTypeEmailTemplateButtonBlock',
                             ],
                         ],
                     ],
@@ -628,7 +628,7 @@ return new class () extends Migration {
                             'type' => 'tiptapBlock',
                             'attrs' => [
                                 'data' => ['alignment' => 'center'],
-                                'type' => 'caseRequestTypeEmailTemplateButtonBlock',
+                                'type' => 'caseTypeEmailTemplateButtonBlock',
                             ],
                         ],
                     ],
@@ -665,7 +665,7 @@ return new class () extends Migration {
                             'type' => 'tiptapBlock',
                             'attrs' => [
                                 'data' => ['alignment' => 'center'],
-                                'type' => 'caseRequestTypeEmailTemplateButtonBlock',
+                                'type' => 'caseTypeEmailTemplateButtonBlock',
                             ],
                         ],
                     ],
@@ -693,7 +693,7 @@ return new class () extends Migration {
                             'type' => 'tiptapBlock',
                             'attrs' => [
                                 'data' => ['alignment' => 'center'],
-                                'type' => 'caseRequestTypeEmailTemplateButtonBlock',
+                                'type' => 'caseTypeEmailTemplateButtonBlock',
                             ],
                         ],
                     ],
@@ -719,7 +719,7 @@ return new class () extends Migration {
                             'type' => 'tiptapBlock',
                             'attrs' => [
                                 'data' => ['alignment' => 'center'],
-                                'type' => 'caseRequestTypeEmailTemplateButtonBlock',
+                                'type' => 'caseTypeEmailTemplateButtonBlock',
                             ],
                         ],
                     ],
