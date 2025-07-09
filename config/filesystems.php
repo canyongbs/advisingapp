@@ -117,6 +117,19 @@ return [
             'root' => ltrim(env('AWS_S3_ROOT') . '/inbound-email', '/'),
             'media_library_visibility' => 'private',
         ],
+
+        'sqs-payloads' => [
+            'driver' => 's3',
+            'key' => env('AWS_S3_ACCESS_KEY_ID'),
+            'secret' => env('AWS_S3_SECRET_ACCESS_KEY'),
+            'region' => env('AWS_S3_DEFAULT_REGION'),
+            'bucket' => env('AWS_S3_BUCKET'),
+            'url' => env('AWS_S3_URL'),
+            'endpoint' => env('AWS_S3_ENDPOINT'),
+            'use_path_style_endpoint' => env('AWS_S3_USE_PATH_STYLE_ENDPOINT', false),
+            'throw' => true,
+            'root' => ltrim(env('AWS_S3_ROOT') . '/sqs-payloads', '/'),
+        ],
     ],
 
     /*

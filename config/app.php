@@ -242,7 +242,7 @@ return [
         PaginationServiceProvider::class,
         PipelineServiceProvider::class,
         QueueServiceProvider::class,
-        ProvidersQueueServiceProvider::class,
+        // ProvidersQueueServiceProvider::class,
         MultitenancyServiceProvider::class,
         RedisServiceProvider::class,
         PasswordResetServiceProvider::class,
