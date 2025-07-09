@@ -479,12 +479,12 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
     protected static function booted(): void
     {
         static::addGlobalScope('licensed', function (Builder $builder) {
-            if (! Auth::check()) {
+            if (! Auth::guard('web')->check()) {
                 return;
             }
 
             /** @var Authenticatable $user */
-            $user = Auth::user();
+            $user = Auth::guard('web')->user();
 
             if (! $user->hasLicense(Prospect::getLicenseType())) {
                 $builder->whereRaw('1 = 0');
