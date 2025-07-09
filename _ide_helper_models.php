@@ -5137,7 +5137,10 @@ namespace AdvisingApp\Research\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
  * @property string|null $folder_id
+ * @property array<array-key, mixed>|null $links
  * @property-read \AdvisingApp\Research\Models\ResearchRequestFolder|null $folder
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read int|null $media_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Research\Models\ResearchRequestQuestion> $questions
  * @property-read int|null $questions_count
  * @property-read \App\Models\User $user
@@ -5150,6 +5153,7 @@ namespace AdvisingApp\Research\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereFinishedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereFolderId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereLinks($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereResults($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereTopic($value)
