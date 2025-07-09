@@ -34,72 +34,42 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Audit\Models\Concerns;
+namespace AdvisingApp\Workflow\Models;
 
-use AdvisingApp\Audit\Overrides\BelongsToMany;
-use AdvisingApp\Audit\Overrides\MorphToMany;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-trait AuditableManyToMany
+/**
+ * @mixin IdeHelperWorkflow
+ */
+class Workflow extends BaseModel implements Auditable
 {
-    protected function newBelongsToMany(
-        Builder $query,
-        Model $parent,
-        $table,
-        $foreignPivotKey,
-        $relatedPivotKey,
-        $parentKey,
-        $relatedKey,
-        $relationName = null
-    ): BelongsToMany {
-        return new BelongsToMany(
-            $query,
-            $parent,
-            $table,
-            $foreignPivotKey,
-            $relatedPivotKey,
-            $parentKey,
-            $relatedKey,
-            $relationName
-        );
+    use SoftDeletes;
+    use AuditableTrait;
+    use HasUuids;
+
+    protected $casts = [
+        'is_enabled' => 'boolean',
+    ];
+
+    /**
+     * @return BelongsTo<WorkflowTrigger, $this>
+     */
+    public function workflowTrigger(): BelongsTo
+    {
+        return $this->belongsTo(WorkflowTrigger::class);
     }
 
     /**
-     * @param mixed $name
-     * @param mixed $table
-     * @param mixed $foreignPivotKey
-     * @param mixed $relatedPivotKey
-     * @param mixed $parentKey
-     * @param mixed $relatedKey
-     * @param null|mixed $relationName
-     * @param mixed $inverse
-     *
-     * @return MorphToMany<covariant Model, covariant Model>
+     * @return HasMany<WorkflowStep, $this>
      */
-    protected function newMorphToMany(
-        Builder $query,
-        Model $parent,
-        $name,
-        $table,
-        $foreignPivotKey,
-        $relatedPivotKey,
-        $parentKey,
-        $relatedKey,
-        $relationName = null,
-        $inverse = false
-    ): MorphToMany {
-        return new MorphToMany(
-            $query,
-            $parent,
-            $name,
-            $table,
-            $foreignPivotKey,
-            $relatedPivotKey,
-            $parentKey,
-            $relatedKey,
-            $relationName,
-            $inverse
-        );
+    public function workflowSteps(): HasMany
+    {
+        return $this->hasMany(WorkflowStep::class);
     }
 }

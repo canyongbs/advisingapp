@@ -34,72 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Audit\Models\Concerns;
+namespace AdvisingApp\Workflow;
 
-use AdvisingApp\Audit\Overrides\BelongsToMany;
-use AdvisingApp\Audit\Overrides\MorphToMany;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
+use Filament\Contracts\Plugin;
+use Filament\Panel;
 
-trait AuditableManyToMany
+class WorkflowPlugin implements Plugin
 {
-    protected function newBelongsToMany(
-        Builder $query,
-        Model $parent,
-        $table,
-        $foreignPivotKey,
-        $relatedPivotKey,
-        $parentKey,
-        $relatedKey,
-        $relationName = null
-    ): BelongsToMany {
-        return new BelongsToMany(
-            $query,
-            $parent,
-            $table,
-            $foreignPivotKey,
-            $relatedPivotKey,
-            $parentKey,
-            $relatedKey,
-            $relationName
+    public function getId(): string
+    {
+        return 'workflow';
+    }
+
+    public function register(Panel $panel): void
+    {
+        $panel->discoverResources(
+            in: __DIR__ . '/Filament/Resources',
+            for: 'AdvisingApp\\Workflow\\Filament\\Resources'
         );
     }
 
-    /**
-     * @param mixed $name
-     * @param mixed $table
-     * @param mixed $foreignPivotKey
-     * @param mixed $relatedPivotKey
-     * @param mixed $parentKey
-     * @param mixed $relatedKey
-     * @param null|mixed $relationName
-     * @param mixed $inverse
-     *
-     * @return MorphToMany<covariant Model, covariant Model>
-     */
-    protected function newMorphToMany(
-        Builder $query,
-        Model $parent,
-        $name,
-        $table,
-        $foreignPivotKey,
-        $relatedPivotKey,
-        $parentKey,
-        $relatedKey,
-        $relationName = null,
-        $inverse = false
-    ): MorphToMany {
-        return new MorphToMany(
-            $query,
-            $parent,
-            $name,
-            $table,
-            $foreignPivotKey,
-            $relatedPivotKey,
-            $parentKey,
-            $relatedKey,
-            $relationName,
-            $inverse
-        );
-    }
+    public function boot(Panel $panel): void {}
 }

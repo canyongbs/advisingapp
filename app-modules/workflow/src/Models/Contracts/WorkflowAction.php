@@ -34,72 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Audit\Models\Concerns;
+namespace AdvisingApp\Workflow\Models\Contracts;
 
-use AdvisingApp\Audit\Overrides\BelongsToMany;
-use AdvisingApp\Audit\Overrides\MorphToMany;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-trait AuditableManyToMany
+interface WorkflowAction
 {
-    protected function newBelongsToMany(
-        Builder $query,
-        Model $parent,
-        $table,
-        $foreignPivotKey,
-        $relatedPivotKey,
-        $parentKey,
-        $relatedKey,
-        $relationName = null
-    ): BelongsToMany {
-        return new BelongsToMany(
-            $query,
-            $parent,
-            $table,
-            $foreignPivotKey,
-            $relatedPivotKey,
-            $parentKey,
-            $relatedKey,
-            $relationName
-        );
-    }
-
     /**
-     * @param mixed $name
-     * @param mixed $table
-     * @param mixed $foreignPivotKey
-     * @param mixed $relatedPivotKey
-     * @param mixed $parentKey
-     * @param mixed $relatedKey
-     * @param null|mixed $relationName
-     * @param mixed $inverse
-     *
-     * @return MorphToMany<covariant Model, covariant Model>
+     * @return BelongsTo<covariant Model, covariant Model>
      */
-    protected function newMorphToMany(
-        Builder $query,
-        Model $parent,
-        $name,
-        $table,
-        $foreignPivotKey,
-        $relatedPivotKey,
-        $parentKey,
-        $relatedKey,
-        $relationName = null,
-        $inverse = false
-    ): MorphToMany {
-        return new MorphToMany(
-            $query,
-            $parent,
-            $name,
-            $table,
-            $foreignPivotKey,
-            $relatedPivotKey,
-            $parentKey,
-            $relatedKey,
-            $relationName,
-            $inverse
-        );
-    }
+    public function workflowStep(): BelongsTo;
 }
