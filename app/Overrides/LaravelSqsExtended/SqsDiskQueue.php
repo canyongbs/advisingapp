@@ -75,6 +75,14 @@ class SqsDiskQueue extends BaseSqsDiskQueue
 
             $message['MessageBody'] = json_encode([
                 'pointer' => $filepath,
+                /**
+                 * This is no longer where the Tenant ID is stored, so this fails to find the Tenant ID
+                 * everytime. It was changed to be stored in Context.
+                 *
+                 * If we want to restore storing these in specific folders we will need to get the Tenant from Context here.
+                 *
+                 * @see https://github.com/spatie/laravel-multitenancy/commit/dc2778631a0cc79e13e1a0fda78f45d64dbc0f2b#diff-73052ce4b303be522a9a79519b797b43834aff46d26536aa8f665b6637143fff
+                 */
                 ...(isset($decodedPayload->tenantId) ? ['tenantId' => $decodedPayload->tenantId] : []),
             ]);
         }
