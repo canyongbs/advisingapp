@@ -42,13 +42,16 @@ use DefectiveCode\LaravelSqsExtended\SqsDiskJob;
 use DefectiveCode\LaravelSqsExtended\SqsDiskQueue as BaseSqsDiskQueue;
 use Illuminate\Contracts\Queue\Job;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Context;
 use Spatie\Multitenancy\Concerns\BindAsCurrentTenant;
+use Spatie\Multitenancy\Concerns\UsesMultitenancyConfig;
 use Spatie\Multitenancy\Exceptions\CurrentTenantCouldNotBeDeterminedInTenantAwareJob;
 use Spatie\Multitenancy\Models\Tenant;
 
 class SqsDiskQueue extends BaseSqsDiskQueue
 {
     use BindAsCurrentTenant;
+    use UsesMultitenancyConfig;
 
     /**
      * Push a raw payload onto the queue.
@@ -75,7 +78,7 @@ class SqsDiskQueue extends BaseSqsDiskQueue
 
             $message['MessageBody'] = json_encode([
                 'pointer' => $filepath,
-                ...(isset($decodedPayload->tenantId) ? ['tenantId' => $decodedPayload->tenantId] : []),
+                ...(filled(Context::get($this->currentTenantContextKey())) ? ['tenantId' => Context::get($this->currentTenantContextKey())] : []),
             ]);
         }
 
