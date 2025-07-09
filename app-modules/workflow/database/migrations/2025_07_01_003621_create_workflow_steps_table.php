@@ -44,8 +44,7 @@ return new class () extends Migration {
         Schema::create('workflow_steps', function (Blueprint $table) {
             $table->uuid('id')->primary();
 
-            $table->foreignUuid('details_id');
-            $table->string('details_type');
+            $table->uuidMorphs('details');
             $table->integer('delay_minutes')->default(0);
             $table->foreignUuid('workflow_id')->constrained('workflows');
 

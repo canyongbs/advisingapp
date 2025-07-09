@@ -39,7 +39,8 @@ namespace AdvisingApp\Workflow\Models;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
@@ -53,10 +54,10 @@ class WorkflowStep extends BaseModel implements Auditable
     use HasUuids;
 
     /**
-     * @return BelongsTo<Workflow, $this>
+     * @return MorphTo<Model, $this>
      */
-    public function workflow(): BelongsTo
+    public function workflow(): MorphTo
     {
-        return $this->belongsTo(Workflow::class);
+        return $this->morphTo();
     }
 }

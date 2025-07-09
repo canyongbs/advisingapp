@@ -50,6 +50,8 @@ return new class () extends Migration {
 
             $table->timestamps();
             $table->softDeletes();
+
+            $table->index(["related_type", "related_id"]);
         });
     }
 
