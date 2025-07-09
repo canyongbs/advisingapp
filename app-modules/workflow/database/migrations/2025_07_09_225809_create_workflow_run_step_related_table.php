@@ -38,8 +38,7 @@ use Illuminate\Database\Migrations\Migration;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     public function up(): void
     {
         Schema::create('workflow_run_step_related', function (Blueprint $table) {
@@ -47,7 +46,7 @@ return new class extends Migration
 
             $table->foreignUuid('workflow_run_id')->constrained('workflow_runs');
             $table->uuidMorphs('related');
-            
+
             $table->timestamps();
             $table->softDeletes();
         });
