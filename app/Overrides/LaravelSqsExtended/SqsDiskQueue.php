@@ -45,6 +45,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Context;
 use Spatie\Multitenancy\Concerns\BindAsCurrentTenant;
 use Spatie\Multitenancy\Concerns\UsesMultitenancyConfig;
+use Spatie\Multitenancy\Contracts\IsTenant;
 use Spatie\Multitenancy\Exceptions\CurrentTenantCouldNotBeDeterminedInTenantAwareJob;
 use Spatie\Multitenancy\Models\Tenant;
 
@@ -104,6 +105,8 @@ class SqsDiskQueue extends BaseSqsDiskQueue
         ]);
 
         if (! is_null($response['Messages']) && count($response['Messages']) > 0) {
+            app(IsTenant::class)::forgetCurrent();
+
             if (isset(json_decode($response['Messages'][0]['Body'])->tenantId)) {
                 /** @var Tenant $tenant */
                 $tenant = config('multitenancy.tenant_model')::find(json_decode($response['Messages'][0]['Body'])->tenantId);
