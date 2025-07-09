@@ -220,6 +220,7 @@ class NewResearchRequest extends Page
                                     ->collection('files')
                                     ->multiple()
                                     ->helperText('The maximum file size is 20MB.')
+                                    ->acceptedFileTypes(config('ai.supported_file_types'))
                                     ->maxSize(20000)
                                     ->maxFiles(5),
                             ])

@@ -108,6 +108,7 @@ class ResearchRequest extends BaseModel implements HasMedia
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('files');
+        $this->addMediaCollection('files')
+            ->acceptsMimeTypes(config('ai.supported_file_types'));
     }
 }
