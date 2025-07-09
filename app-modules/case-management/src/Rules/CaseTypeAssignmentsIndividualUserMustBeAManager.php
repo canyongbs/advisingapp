@@ -34,59 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Team\Models;
+namespace AdvisingApp\CaseManagement\Rules;
 
 use AdvisingApp\CaseManagement\Models\CaseType;
-use AdvisingApp\CaseManagement\Models\CaseTypeAuditor;
-use AdvisingApp\CaseManagement\Models\CaseTypeManager;
-use AdvisingApp\Division\Models\Division;
-use App\Models\BaseModel;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Closure;
+use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Translation\PotentiallyTranslatedString;
 
-/**
- * @mixin IdeHelperTeam
- */
-class Team extends BaseModel
+class CaseTypeAssignmentsIndividualUserMustBeAManager implements ValidationRule
 {
-    protected $fillable = [
-        'name',
-        'description',
-    ];
-
-    /** @return HasMany<User, $this> */
-    public function users(): HasMany
-    {
-        return $this->hasMany(User::class);
-    }
+    public function __construct(
+        protected CaseType $caseType
+    ) {}
 
     /**
-    * @return BelongsTo<Division, $this>
-    */
-    public function division(): BelongsTo
-    {
-        return $this->belongsTo(Division::class);
-    }
-
-    /**
-     * @return BelongsToMany<CaseType, $this, covariant CaseTypeManager>
+     * Run the validation rule.
+     *
+     * @param Closure(string): PotentiallyTranslatedString $fail
      */
-    public function manageableCaseTypes(): BelongsToMany
+    public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        return $this->belongsToMany(CaseType::class, 'case_type_managers')
-            ->using(CaseTypeManager::class)
-            ->withTimestamps();
-    }
-
-    /**
-     * @return BelongsToMany<CaseType, $this, CaseTypeAuditor>
-     */
-    public function auditableCaseTypes(): BelongsToMany
-    {
-        return $this->belongsToMany(CaseType::class, 'case_type_auditors')
-            ->using(CaseTypeAuditor::class)
-            ->withTimestamps();
+        if ($this->caseType->managers()->whereRelation('users', 'users.id', $value)->doesntExist()) {
+            $fail('The selected user must be in a team designated as managers of this Case Type.');
+        }
     }
 }

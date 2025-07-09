@@ -34,59 +34,43 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Team\Models;
+namespace AdvisingApp\CaseManagement\DataTransferObjects;
 
-use AdvisingApp\CaseManagement\Models\CaseType;
-use AdvisingApp\CaseManagement\Models\CaseTypeAuditor;
-use AdvisingApp\CaseManagement\Models\CaseTypeManager;
-use AdvisingApp\Division\Models\Division;
-use App\Models\BaseModel;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\LaravelData\Attributes\MapName;
+use Spatie\LaravelData\Data;
+use Spatie\LaravelData\Mappers\SnakeCaseMapper;
+use Spatie\LaravelData\Optional;
 
-/**
- * @mixin IdeHelperTeam
- */
-class Team extends BaseModel
+#[MapName(SnakeCaseMapper::class)]
+class CaseDataObject extends Data
 {
-    protected $fillable = [
-        'name',
-        'description',
-    ];
-
-    /** @return HasMany<User, $this> */
-    public function users(): HasMany
-    {
-        return $this->hasMany(User::class);
-    }
-
-    /**
-    * @return BelongsTo<Division, $this>
-    */
-    public function division(): BelongsTo
-    {
-        return $this->belongsTo(Division::class);
-    }
+    public function __construct(
+        public string|Optional $divisionId,
+        public string|Optional $statusId,
+        public string $typeId,
+        public string|Optional $priorityId,
+        public string|Optional $closeDetails,
+        public string|Optional $resDetails,
+        public string $respondentType,
+        public string $respondentId,
+    ) {}
 
     /**
-     * @return BelongsToMany<CaseType, $this, covariant CaseTypeManager>
+     * @param array<string, string|Optional|null> $data
+     *
+     * @return self
      */
-    public function manageableCaseTypes(): BelongsToMany
+    public static function fromData(array $data): self
     {
-        return $this->belongsToMany(CaseType::class, 'case_type_managers')
-            ->using(CaseTypeManager::class)
-            ->withTimestamps();
-    }
-
-    /**
-     * @return BelongsToMany<CaseType, $this, CaseTypeAuditor>
-     */
-    public function auditableCaseTypes(): BelongsToMany
-    {
-        return $this->belongsToMany(CaseType::class, 'case_type_auditors')
-            ->using(CaseTypeAuditor::class)
-            ->withTimestamps();
+        return new self(
+            divisionId: $data['division_id'] ?? Optional::create(),
+            statusId: $data['status_id'] ?? Optional::create(),
+            typeId: $data['type_id'],
+            priorityId: $data['priority_id'] ?? Optional::create(),
+            closeDetails: $data['close_details'] ?? Optional::create(),
+            resDetails: $data['res_details'] ?? Optional::create(),
+            respondentType: $data['respondent_type'],
+            respondentId: $data['respondent_id'],
+        );
     }
 }

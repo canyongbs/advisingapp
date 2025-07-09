@@ -34,59 +34,49 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Team\Models;
+namespace AdvisingApp\CaseManagement\Tests\Tenant\RequestFactories;
 
-use AdvisingApp\CaseManagement\Models\CaseType;
-use AdvisingApp\CaseManagement\Models\CaseTypeAuditor;
-use AdvisingApp\CaseManagement\Models\CaseTypeManager;
-use AdvisingApp\Division\Models\Division;
-use App\Models\BaseModel;
+use AdvisingApp\CaseManagement\Enums\CaseTypeAssignmentTypes;
+use AdvisingApp\Team\Models\Team;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Worksome\RequestFactories\RequestFactory;
 
-/**
- * @mixin IdeHelperTeam
- */
-class Team extends BaseModel
+class EditCaseTypeAssignmentsRequestFactory extends RequestFactory
 {
-    protected $fillable = [
-        'name',
-        'description',
-    ];
-
-    /** @return HasMany<User, $this> */
-    public function users(): HasMany
+    public function definition(): array
     {
-        return $this->hasMany(User::class);
+        return [
+            'assignment_type' => fake()->randomElement(CaseTypeAssignmentTypes::cases())->value,
+        ];
     }
 
-    /**
-    * @return BelongsTo<Division, $this>
-    */
-    public function division(): BelongsTo
+    public function withRandomTypeNotIncludingIndividual(): static
     {
-        return $this->belongsTo(Division::class);
+        return $this->state([
+            'assignment_type' => fake()->randomElement(array_filter(CaseTypeAssignmentTypes::cases(), fn (CaseTypeAssignmentTypes $type) => $type !== CaseTypeAssignmentTypes::Individual))->value,
+        ]);
     }
 
-    /**
-     * @return BelongsToMany<CaseType, $this, covariant CaseTypeManager>
-     */
-    public function manageableCaseTypes(): BelongsToMany
+    public function withIndividualType(): static
     {
-        return $this->belongsToMany(CaseType::class, 'case_type_managers')
-            ->using(CaseTypeManager::class)
-            ->withTimestamps();
+        return $this->state([
+            'assignment_type' => CaseTypeAssignmentTypes::Individual->value,
+        ]);
     }
 
-    /**
-     * @return BelongsToMany<CaseType, $this, CaseTypeAuditor>
-     */
-    public function auditableCaseTypes(): BelongsToMany
+    public function withIndividualId(?Team $team = null): static
     {
-        return $this->belongsToMany(CaseType::class, 'case_type_auditors')
-            ->using(CaseTypeAuditor::class)
-            ->withTimestamps();
+        $userFactory = User::factory();
+
+        if ($team) {
+            $userFactory = $userFactory->for(
+                factory: $team,
+                relationship: 'team'
+            );
+        }
+
+        return $this->state([
+            'assignment_type_individual_id' => $userFactory,
+        ]);
     }
 }

@@ -625,6 +625,8 @@ namespace App\Models{
  * @property-read int|null $care_teams_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseAssignment> $caseAssignments
  * @property-read int|null $case_assignments_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseType> $caseTypeIndividualAssignment
+ * @property-read int|null $case_type_individual_assignment_count
  * @property-read \AdvisingApp\Notification\Models\Subscription|\AdvisingApp\CareTeam\Models\CareTeam|\AdvisingApp\Consent\Models\UserConsentAgreement|null $pivot
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Consent\Models\ConsentAgreement> $consentAgreements
  * @property-read int|null $consent_agreements_count
@@ -2621,6 +2623,10 @@ namespace AdvisingApp\CaseManagement\Models{
  * @property bool $is_customers_case_closed_email_enabled
  * @property bool $is_customers_case_closed_notification_enabled
  * @property bool $is_customers_survey_response_email_enabled
+ * @property \AdvisingApp\CaseManagement\Enums\CaseTypeAssignmentTypes $assignment_type
+ * @property string|null $assignment_type_individual_id
+ * @property string|null $last_assigned_id
+ * @property-read \App\Models\User|null $assignmentTypeIndividual
  * @property-read \AdvisingApp\CaseManagement\Models\CaseTypeManager|\AdvisingApp\CaseManagement\Models\CaseTypeAuditor|null $pivot
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Team\Models\Team> $auditors
  * @property-read int|null $auditors_count
@@ -2629,6 +2635,7 @@ namespace AdvisingApp\CaseManagement\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseModel> $cases
  * @property-read int|null $cases_count
  * @property-read \AdvisingApp\CaseManagement\Models\CaseForm|null $form
+ * @property-read \App\Models\User|null $lastAssignedUser
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Team\Models\Team> $managers
  * @property-read int|null $managers_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CasePriority> $priorities
@@ -2638,6 +2645,8 @@ namespace AdvisingApp\CaseManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereAssignmentType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereAssignmentTypeIndividualId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereHasEnabledCsat($value)
@@ -2675,6 +2684,7 @@ namespace AdvisingApp\CaseManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereIsManagersCaseStatusChangeNotificationEnabled($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereIsManagersCaseUpdateEmailEnabled($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereIsManagersCaseUpdateNotificationEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereLastAssignedId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType withTrashed()
@@ -6124,8 +6134,8 @@ namespace AdvisingApp\Team\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseType> $auditableCaseTypes
  * @property-read int|null $auditable_case_types_count
  * @property-read \AdvisingApp\Division\Models\Division|null $division
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseType> $managableCaseTypes
- * @property-read int|null $managable_case_types_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseType> $manageableCaseTypes
+ * @property-read int|null $manageable_case_types_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
  * @property-read int|null $users_count
  * @method static \AdvisingApp\Team\Database\Factories\TeamFactory factory($count = null, $state = [])

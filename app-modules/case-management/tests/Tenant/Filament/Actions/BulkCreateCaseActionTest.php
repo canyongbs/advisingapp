@@ -54,24 +54,16 @@ it('shows the form and validation', function (BulkCreateCaseActionRequestFactory
 
     $student = Student::factory()->create();
 
-    $request = BulkCreateCaseActionRequestFactory::new($data)->without('assigned_to_id')->create();
+    $request = collect(BulkCreateCaseActionRequestFactory::new($data)->create());
 
     livewire(ListStudents::class)
         ->mountTableBulkAction('createCase', [$student->getKey()])
-        ->setTableBulkActionData($request)
+        ->setTableBulkActionData($request->toArray())
         ->callMountedTableBulkAction()
         ->assertHasTableBulkActionErrors($errors);
 
-    assertDatabaseMissing(CaseModel::class, $request);
+    assertDatabaseMissing(CaseModel::class, $request->except(['division_id', 'status_id', 'priority_id', 'type_id', 'assigned_to_id'])->toArray());
 })->with([
-    'division_id required' => [
-        BulkCreateCaseActionRequestFactory::new()->without('division_id'),
-        ['division_id' => 'required'],
-    ],
-    'division_id exists' => [
-        BulkCreateCaseActionRequestFactory::new()->state(['division_id' => (string) Str::uuid()]),
-        ['division_id' => 'exists'],
-    ],
     'status_id required' => [
         BulkCreateCaseActionRequestFactory::new()->without('status_id'),
         ['status_id' => 'required'],
@@ -80,11 +72,11 @@ it('shows the form and validation', function (BulkCreateCaseActionRequestFactory
         BulkCreateCaseActionRequestFactory::new()->state(['status_id' => (string) Str::uuid()]),
         ['status_id' => 'exists'],
     ],
-    'priority_id required' => [
+    'priority_id missing' => [
         BulkCreateCaseActionRequestFactory::new()->without('priority_id'),
         ['priority_id' => 'required'],
     ],
-    'priority_id exists' => [
+    'priority_id does not exist' => [
         BulkCreateCaseActionRequestFactory::new()->state(['priority_id' => (string) Str::uuid()]),
         ['priority_id' => 'exists'],
     ],
@@ -126,7 +118,7 @@ it('can successfully create bulk case with student', function () {
 
     assertDatabaseHas(CaseAssignment::class, $expectedAssignments);
 
-    $request = BulkCreateCaseActionRequestFactory::new()->without('assigned_to_id')->create();
+    $request = BulkCreateCaseActionRequestFactory::new()->create();
 
     livewire(ListStudents::class)
         ->mountTableBulkAction('createCase', [$student->getKey()])
@@ -194,7 +186,7 @@ it('can successfully create bulk case with prospect', function () {
 
     assertDatabaseHas(CaseAssignment::class, $expectedAssignments);
 
-    $request = BulkCreateCaseActionRequestFactory::new()->without('assigned_to_id')->create();
+    $request = BulkCreateCaseActionRequestFactory::new()->create();
 
     livewire(ListProspects::class)
         ->mountTableBulkAction('createCase', [$prospect->getKey()])
