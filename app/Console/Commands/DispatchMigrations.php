@@ -42,7 +42,7 @@ use Symfony\Component\Console\Command\Command as CommandAlias;
 
 abstract class DispatchMigrations extends Command
 {
-    protected function getVersionTag(): string
+    protected function getVersionTag(): string|int
     {
         $tagProcess = Process::run('git describe --tags --abbrev=0');
 

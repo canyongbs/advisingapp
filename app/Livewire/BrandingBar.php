@@ -68,7 +68,7 @@ class BrandingBar extends Component
     }
 
     #[On('refresh-branding-bar')]
-    public function refreshBrandingBar()
+    public function refreshBrandingBar(): void
     {
         $this->updateVisibility();
     }

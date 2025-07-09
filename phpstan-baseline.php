@@ -3400,7 +3400,7 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$recordModel of method AdvisingApp\\\\Timeline\\\\Actions\\\\SyncTimelineData\\:\\:now\\(\\) expects Illuminate\\\\Database\\\\Eloquent\\\\Model, AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\|null given\\.$#',
     'identifier' => 'argument.type',
-    'count' => 2,
+    'count' => 1,
     'path' => __DIR__ . '/app-modules/engagement/src/Filament/Pages/MessageCenter.php',
 ];
 $ignoreErrors[] = [
@@ -3412,6 +3412,12 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Property AdvisingApp\\\\Engagement\\\\Filament\\\\Pages\\\\MessageCenter\\:\\:\\$modelsToTimeline type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Pages/MessageCenter.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Property AdvisingApp\\\\Engagement\\\\Filament\\\\Pages\\\\MessageCenter\\:\\:\\$recordModel \\(AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\|null\\) does not accept Illuminate\\\\Database\\\\Eloquent\\\\Model\\.$#',
+    'identifier' => 'assign.propertyType',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/engagement/src/Filament/Pages/MessageCenter.php',
 ];
@@ -10466,12 +10472,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/webhook/src/Actions/StoreInboundWebhook.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Webhook\\\\DataTransferObjects\\\\SnsMessage\\:\\:fromRequest\\(\\) should return static\\(AdvisingApp\\\\Webhook\\\\DataTransferObjects\\\\SnsMessage\\) but returns AdvisingApp\\\\Webhook\\\\DataTransferObjects\\\\SnsMessage\\.$#',
-    'identifier' => 'return.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/webhook/src/DataTransferObjects/SnsMessage.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to function is_array\\(\\) with string will always evaluate to false\\.$#',
     'identifier' => 'function.impossibleType',
     'count' => 1,
@@ -10514,18 +10514,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Actions/Finders/ApplicationModels.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method App\\\\Actions\\\\Finders\\\\ApplicationModules\\:\\:moduleConfig\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Actions/Finders/ApplicationModules.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Actions\\\\GetRecordFromMorphAndKey\\:\\:via\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Actions/GetRecordFromMorphAndKey.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Class App\\\\Casts\\\\Encrypted implements generic interface Illuminate\\\\Contracts\\\\Database\\\\Eloquent\\\\CastsAttributes but does not specify its types\\: TGet, TSet$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
@@ -10542,12 +10530,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app/Casts/TenantEncrypted.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Console\\\\Commands\\\\DispatchMigrations\\:\\:getVersionTag\\(\\) should return string but returns int\\.$#',
-    'identifier' => 'return.type',
-    'count' => 2,
-    'path' => __DIR__ . '/app/Console/Commands/DispatchMigrations.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method App\\\\DataTransferObjects\\\\Casts\\\\DataCast\\:\\:get\\(\\) has parameter \\$payload with no type specified\\.$#',
@@ -10652,24 +10634,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Filament/Pages/AmazonS3.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method App\\\\Filament\\\\Pages\\\\ManageDisplaySettings\\:\\:getFormActions\\(\\) has invalid return type App\\\\Filament\\\\Pages\\\\Action\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Filament/Pages/ManageDisplaySettings.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Filament\\\\Pages\\\\ManageDisplaySettings\\:\\:getFormActions\\(\\) has invalid return type App\\\\Filament\\\\Pages\\\\ActionGroup\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Filament/Pages/ManageDisplaySettings.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Filament\\\\Pages\\\\ManageDisplaySettings\\:\\:getFormActions\\(\\) should return array\\<App\\\\Filament\\\\Pages\\\\Action\\|App\\\\Filament\\\\Pages\\\\ActionGroup\\> but returns array\\<Filament\\\\Actions\\\\Action\\|Filament\\\\Actions\\\\ActionGroup\\>\\.$#',
-    'identifier' => 'return.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Filament/Pages/ManageDisplaySettings.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method App\\\\Filament\\\\Pages\\\\ProductHealth\\:\\:getNavigationBadge\\(\\) should return string\\|null but returns int\\<1, max\\>\\|null\\.$#',
     'identifier' => 'return.type',
     'count' => 1,
@@ -10688,8 +10652,8 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Filament/Resources/UserResource/Actions/AssignLicensesBulkAction.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$callback of method Illuminate\\\\Support\\\\Collection\\<\\(int\\|string\\),Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:each\\(\\) expects callable\\(Illuminate\\\\Database\\\\Eloquent\\\\Model, int\\|string\\)\\: mixed, Closure\\(App\\\\Models\\\\User\\)\\: void given\\.$#',
-    'identifier' => 'argument.type',
+    'message' => '#^Parameter \\#1 \\$record of anonymous function has no typehint\\.$#',
+    'identifier' => 'closure.parameterMissingTypehint',
     'count' => 1,
     'path' => __DIR__ . '/app/Filament/Resources/UserResource/Actions/AssignLicensesBulkAction.php',
 ];
@@ -10700,44 +10664,26 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Filament/Resources/UserResource/Actions/AssignLicensesBulkAction.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Property App\\\\Filament\\\\Resources\\\\UserResource\\\\Actions\\\\AssignLicensesBulkAction\\:\\:\\$licenseTypes type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Filament/Resources/UserResource/Actions/AssignLicensesBulkAction.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$callback of method Illuminate\\\\Support\\\\Collection\\<\\(int\\|string\\),Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:each\\(\\) expects callable\\(Illuminate\\\\Database\\\\Eloquent\\\\Model, int\\|string\\)\\: mixed, Closure\\(App\\\\Models\\\\User\\)\\: void given\\.$#',
-    'identifier' => 'argument.type',
+    'message' => '#^Parameter \\#1 \\$record of anonymous function has no typehint\\.$#',
+    'identifier' => 'closure.parameterMissingTypehint',
     'count' => 1,
     'path' => __DIR__ . '/app/Filament/Resources/UserResource/Actions/AssignRolesBulkAction.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$callback of method Illuminate\\\\Support\\\\Collection\\<\\(int\\|string\\),Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:each\\(\\) expects callable\\(Illuminate\\\\Database\\\\Eloquent\\\\Model, int\\|string\\)\\: mixed, Closure\\(App\\\\Models\\\\User\\)\\: void given\\.$#',
-    'identifier' => 'argument.type',
+    'message' => '#^Parameter \\#1 \\$record of anonymous function has no typehint\\.$#',
+    'identifier' => 'closure.parameterMissingTypehint',
     'count' => 1,
     'path' => __DIR__ . '/app/Filament/Resources/UserResource/Actions/AssignTeamBulkAction.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Left side of && is always true\\.$#',
-    'identifier' => 'booleanAnd.leftAlwaysTrue',
+    'message' => '#^Parameter \\#2 \\$state of anonymous function has no typehint\\.$#',
+    'identifier' => 'closure.parameterMissingTypehint',
     'count' => 1,
     'path' => __DIR__ . '/app/Filament/Resources/UserResource/Pages/CreateUser.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Cannot access property \\$IsAdmin on Illuminate\\\\Database\\\\Eloquent\\\\Model\\|int\\|string\\.$#',
-    'identifier' => 'property.nonObject',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Filament/Resources/UserResource/Pages/EditUser.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Cannot access property \\$id on Illuminate\\\\Database\\\\Eloquent\\\\Model\\|int\\|string\\.$#',
-    'identifier' => 'property.nonObject',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Filament/Resources/UserResource/Pages/EditUser.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Left side of && is always true\\.$#',
-    'identifier' => 'booleanAnd.leftAlwaysTrue',
+    'message' => '#^Parameter \\#2 \\$state of anonymous function has no typehint\\.$#',
+    'identifier' => 'closure.parameterMissingTypehint',
     'count' => 1,
     'path' => __DIR__ . '/app/Filament/Resources/UserResource/Pages/EditUser.php',
 ];
@@ -10746,42 +10692,6 @@ $ignoreErrors[] = [
     'identifier' => 'closure.parameterMissingTypehint',
     'count' => 6,
     'path' => __DIR__ . '/app/Filament/Resources/UserResource/Pages/ListUsers.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Cannot access property \\$IsAdmin on Illuminate\\\\Database\\\\Eloquent\\\\Model\\|int\\|string\\.$#',
-    'identifier' => 'property.nonObject',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Filament/Resources/UserResource/Pages/ViewUser.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Filament\\\\Resources\\\\UserResource\\\\Pages\\\\ViewUser\\:\\:boot\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Filament/Resources/UserResource/Pages/ViewUser.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to method has\\(\\) on an unknown class App\\\\Filament\\\\Resources\\\\UserResource\\\\RelationManagers\\\\User\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Filament/Resources/UserResource/RelationManagers/RolesRelationManager.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to method roles\\(\\) on an unknown class App\\\\Filament\\\\Resources\\\\UserResource\\\\RelationManagers\\\\User\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Filament/Resources/UserResource/RelationManagers/RolesRelationManager.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^PHPDoc tag @var for variable \\$user contains unknown class App\\\\Filament\\\\Resources\\\\UserResource\\\\RelationManagers\\\\User\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Filament/Resources/UserResource/RelationManagers/RolesRelationManager.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^PHPDoc tag @var with type App\\\\Filament\\\\Resources\\\\UserResource\\\\RelationManagers\\\\User is not subtype of native type Illuminate\\\\Database\\\\Eloquent\\\\Model\\.$#',
-    'identifier' => 'varTag.nativeType',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Filament/Resources/UserResource/RelationManagers/RolesRelationManager.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property AdvisingApp\\\\CaseManagement\\\\Models\\\\CaseModel\\:\\:\\$case_model_id\\.$#',
@@ -10826,18 +10736,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Filament/Widgets/Notifications.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method App\\\\Filament\\\\Widgets\\\\ProspectGrowthChart\\:\\:getOptions\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Filament/Widgets/ProspectGrowthChart.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Filament\\\\Widgets\\\\RecentProspectsList\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Filament/Widgets/RecentProspectsList.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method App\\\\Http\\\\Controllers\\\\ViewPublicUserProfileController\\:\\:formatHours\\(\\) has parameter \\$hours with no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -10848,66 +10746,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app/Http/Controllers/ViewPublicUserProfileController.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Empty array passed to foreach\\.$#',
-    'identifier' => 'foreach.emptyArray',
-    'count' => 2,
-    'path' => __DIR__ . '/app/Http/Middleware/AuthGates.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Http\\\\Middleware\\\\AuthGates\\:\\:handle\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Http/Middleware/AuthGates.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Http\\\\Middleware\\\\AuthGates\\:\\:handle\\(\\) has parameter \\$request with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Http/Middleware/AuthGates.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Http\\\\Middleware\\\\SetPreferredLocale\\:\\:handle\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Http/Middleware/SetPreferredLocale.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Http\\\\Middleware\\\\SetPreferredLocale\\:\\:handle\\(\\) has parameter \\$request with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Http/Middleware/SetPreferredLocale.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Http\\\\Requests\\\\SetAzureSsoSettingRequest\\:\\:rules\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Http/Requests/SetAzureSsoSettingRequest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Http\\\\Requests\\\\Tenants\\\\CreateTenantRequest\\:\\:rules\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Http/Requests/Tenants/CreateTenantRequest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Http\\\\Requests\\\\Tenants\\\\SyncTenantRequest\\:\\:rules\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Http/Requests/Tenants/SyncTenantRequest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Jobs\\\\CreateTenantUser\\:\\:middleware\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Jobs/CreateTenantUser.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Livewire\\\\BrandingBar\\:\\:refreshBrandingBar\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Livewire/BrandingBar.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method App\\\\Livewire\\\\ProspectPipelineKanban\\:\\:getPipelineSubjects\\(\\) return type with generic class Illuminate\\\\Support\\\\Collection does not specify its types\\: TKey, TValue$#',
@@ -10990,30 +10828,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Method App\\\\Livewire\\\\TaskKanban\\:\\:getTasks\\(\\) return type with generic class Illuminate\\\\Support\\\\Collection does not specify its types\\: TKey, TValue$#',
     'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Livewire/TaskKanban.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Livewire\\\\TaskKanban\\:\\:render\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Livewire/TaskKanban.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Livewire\\\\TaskKanban\\:\\:viewAction\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Livewire/TaskKanban.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Livewire\\\\TaskKanban\\:\\:viewTask\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Livewire/TaskKanban.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property App\\\\Livewire\\\\TaskKanban\\:\\:\\$statuses type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app/Livewire/TaskKanban.php',
 ];
@@ -11258,30 +11072,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Multitenancy/Exceptions/UnableToResolveTenantForEncryptionKey.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method App\\\\Multitenancy\\\\Http\\\\Middleware\\\\NeedsTenant\\:\\:handleInvalidRequest\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Multitenancy/Http/Middleware/NeedsTenant.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Multitenancy\\\\Tasks\\\\PrefixCacheTask\\:\\:setCachePrefix\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Multitenancy/Tasks/PrefixCacheTask.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Multitenancy\\\\Tasks\\\\SwitchAppUrl\\:\\:setAppUrl\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Multitenancy/Tasks/SwitchAppUrl.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Overrides\\\\LaravelSqsExtended\\\\SqsDiskConnector\\:\\:connect\\(\\) has parameter \\$config with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Overrides/LaravelSqsExtended/SqsDiskConnector.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method App\\\\Overrides\\\\LaravelSqsExtended\\\\SqsDiskQueue\\:\\:pop\\(\\) should return Illuminate\\\\Contracts\\\\Queue\\\\Job\\|null but return statement is missing\\.$#',
     'identifier' => 'return.missing',
     'count' => 1,
@@ -11442,42 +11232,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.property',
     'count' => 1,
     'path' => __DIR__ . '/app/Support/FilterQueryBuilder.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$view of function view expects view\\-string\\|null, string given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app/View/Components/DatePicker.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$view of function view expects view\\-string\\|null, string given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app/View/Components/Dropzone.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$view of function view expects view\\-string\\|null, string given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app/View/Components/SelectList.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Trait Database\\\\Factories\\\\Concerns\\\\RandomizeState is used zero times and is not analysed\\.$#',
-    'identifier' => 'trait.unused',
-    'count' => 1,
-    'path' => __DIR__ . '/database/factories/Concerns/RandomizeState.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method Illuminate\\\\Database\\\\Migrations\\\\Migration@anonymous/database/migrations/2024_07_31_202514_data_rename_checkbox_form_fields\\.php\\:40\\:\\:fixTipTapBlock\\(\\) has parameter \\$block with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/database/migrations/2024_07_31_202514_data_rename_checkbox_form_fields.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method Illuminate\\\\Database\\\\Migrations\\\\Migration@anonymous/database/migrations/2024_07_31_202514_data_rename_checkbox_form_fields\\.php\\:40\\:\\:fixTipTapBlock\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/database/migrations/2024_07_31_202514_data_rename_checkbox_form_fields.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$email of anonymous function has no typehint\\.$#',

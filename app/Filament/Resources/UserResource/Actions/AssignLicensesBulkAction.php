@@ -40,6 +40,7 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Models\License;
 use App\Models\User;
 use Closure;
+use Exception;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Get;
@@ -52,6 +53,9 @@ use Illuminate\Database\Eloquent\Collection;
 
 class AssignLicensesBulkAction extends BulkAction
 {
+    /**
+     * @var LicenseType[]
+     */
     protected array $licenseTypes = [
         LicenseType::ConversationalAi,
         LicenseType::RetentionCrm,
@@ -81,7 +85,9 @@ class AssignLicensesBulkAction extends BulkAction
                     ->map(fn (LicenseType $licenseType): Toggle => $this->getToggleForLicenseType($licenseType)),
             ])
             ->action(function (array $data, Collection $records) {
-                $records->each(function (User $record) use ($data) {
+                $records->each(function ($record) use ($data) {
+                    throw_unless($record instanceof User, new Exception('Record must be of type user.'));
+
                     collect($this->licenseTypes)->each(function (LicenseType $licenseType) use ($record, $data) {
                         if ($data[$licenseType->value]) {
                             $record->grantLicense($licenseType);
