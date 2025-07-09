@@ -98,6 +98,8 @@ class CaseTypeResource extends Resource
 
     public static function getRecordSubNavigation(Page $page): array
     {
+        assert(isset($page->record));
+
         return [
             ...$page->generateNavigationItems([
                 ViewCaseType::class,
@@ -110,7 +112,7 @@ class CaseTypeResource extends Resource
             ...(CaseTypeEmailTemplateFeature::active() ? array_map(
                 fn (CaseEmailTemplateType $type): NavigationItem => Arr::first(ManageCaseTypeEmailTemplate::getNavigationItems(['record' => $page->record, 'type' => $type]))
                     ->label($type->getLabel())
-                    ->isActiveWhen(fn (): bool => Str::endsWith(request()->path(), $type)),
+                    ->isActiveWhen(fn (): bool => Str::endsWith(request()->path(), $type->value)),
                 CaseEmailTemplateType::cases(),
             ) : []),
         ];
