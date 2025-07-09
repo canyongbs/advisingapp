@@ -44,7 +44,7 @@ return new class () extends Migration {
         Schema::create('workflow_run_step_related', function (Blueprint $table) {
             $table->uuid('id')->primary();
 
-            $table->foreignUuid('workflow_run_id')->constrained('workflow_runs');
+            $table->foreignUuid('workflow_run_step_id')->constrained('workflow_run_steps');
             $table->uuidMorphs('related');
 
             $table->timestamps();
