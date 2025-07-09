@@ -42,7 +42,9 @@ use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentEmailAd
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentEmailAddresses\UpdateStudentEmailAddressController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\UpdateStudentController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\ViewStudentController;
+use AdvisingApp\StudentDataModel\Http\Controllers\StudentPrograms\StudentProgramsController;
 use AdvisingApp\StudentDataModel\Http\Controllers\UpdateStudentInformationSystemSettingsController;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Http\Middleware\CheckOlympusKey;
 use Illuminate\Support\Facades\Route;
 
@@ -73,5 +75,7 @@ Route::api(majorVersion: 1, routes: function () {
                     Route::patch('/{studentEmailAddress}', UpdateStudentEmailAddressController::class)->name('update');
                     Route::delete('/{studentEmailAddress}', DeleteStudentEmailAddressController::class)->name('delete');
                 });
+
+            Route::get('{student}/programs', StudentProgramsController::class)->name('programs.index');
         });
 });
