@@ -124,7 +124,7 @@ class CaseBlock extends CampaignActionBlock
                     if (! $caseTypeId) {
                         return [];
                     }
-                    
+
                     $caseType = CaseType::find($caseTypeId);
 
                     if (! $caseType) {
