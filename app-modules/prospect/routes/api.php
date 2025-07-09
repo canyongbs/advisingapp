@@ -8,7 +8,7 @@ Route::api(majorVersion: 1, routes: function () {
         ->prefix('prospects')
         ->group(function () {
             Route::get('/', ListProspectsController::class)->name('index');
-            Route::post('/', CreateProspectController::class)->name('create');
+            // Route::post('/', CreateProspectController::class)->name('create');
             // Route::get('{prospect}', ViewProspectController::class)->name('view');
             // Route::patch('{prospect}', UpdateProspectController::class)->name('update');
             // Route::delete('{prospect}', DeleteProspectController::class)->name('delete');
