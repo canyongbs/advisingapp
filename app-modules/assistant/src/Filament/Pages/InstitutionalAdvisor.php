@@ -46,7 +46,7 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use Filament\Pages\Page;
 
-class PersonalAssistant extends Page
+class InstitutionalAdvisor extends Page
 {
     use CanManageConsent;
     use CanManageFolders;

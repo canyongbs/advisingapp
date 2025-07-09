@@ -32,7 +32,7 @@
 </COPYRIGHT>
 --}}
 @php
-    use AdvisingApp\Assistant\Filament\Pages\PersonalAssistant;
+    use AdvisingApp\Assistant\Filament\Pages\InstitutionalAdvisor;
     use AdvisingApp\Authorization\Enums\LicenseType;
     use AdvisingApp\Prospect\Filament\Pages\RecruitmentCrmDashboard;
     use AdvisingApp\StudentDataModel\Filament\Pages\RetentionCrmDashboard;
@@ -115,7 +115,7 @@
 
                 <div class="flex items-center justify-center">
                     <x-filament::button
-                        :href="$hasFeature ? PersonalAssistant::getUrl() : null"
+                        :href="$hasFeature ? InstitutionalAdvisor::getUrl() : null"
                         size="xl"
                         tag="a"
                         color="gray"
