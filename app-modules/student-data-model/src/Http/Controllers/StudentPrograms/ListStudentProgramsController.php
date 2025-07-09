@@ -17,7 +17,7 @@ use Spatie\QueryBuilder\QueryBuilder;
 use Dedoc\Scramble\Attributes\QueryParameter;
 use Dedoc\Scramble\Attributes\Example;
 
-class StudentProgramsController {
+class ListStudentProgramsController {
 
     /**
      * @response AnonymousResourceCollection<LengthAwarePaginator<StudentProgramsResource>>

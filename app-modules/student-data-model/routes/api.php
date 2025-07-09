@@ -45,6 +45,7 @@ use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentPhoneNu
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentPhoneNumbers\UpdateStudentPhoneNumberController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\UpdateStudentController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\ViewStudentController;
+use AdvisingApp\StudentDataModel\Http\Controllers\StudentPrograms\ListStudentProgramsController;
 use AdvisingApp\StudentDataModel\Http\Controllers\StudentPrograms\StudentProgramsController;
 use AdvisingApp\StudentDataModel\Http\Controllers\UpdateStudentInformationSystemSettingsController;
 use App\Http\Middleware\CheckOlympusKey;
@@ -85,6 +86,7 @@ Route::api(majorVersion: 1, routes: function () {
                     Route::patch('/{studentPhoneNumber}', UpdateStudentPhoneNumberController::class)->name('update');
                     Route::delete('/{studentPhoneNumber}', StudentPhoneNumbersDeleteStudentPhoneNumberController::class)->name('delete');
                 });
-            Route::get('{student}/programs', StudentProgramsController::class)->name('programs.index');
+                Route::get('{student}/programs', ListStudentProgramsController::class)->name('programs.index');
+                Route::put('{student}/programs', StudentProgramsController::class)->name('programs.put');
         });
 });
