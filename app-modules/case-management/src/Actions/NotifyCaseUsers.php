@@ -57,7 +57,7 @@ class NotifyCaseUsers
                         fn (Builder $query) => $query->whereHas(
                             'managableCaseTypes',
                             fn (Builder $query) => $query->where('case_type_id', $case->priority->type->getKey())->whereHas(
-                                'caseType',
+                                'cases',
                                 fn (Builder $query) => $query->whereKey($case),
                             ),
                         ),
@@ -70,13 +70,13 @@ class NotifyCaseUsers
                         fn (Builder $query) => $query->whereHas(
                             'auditableCaseTypes',
                             fn (Builder $query) => $query->where('case_type_id', $case->priority->type->getKey())->whereHas(
-                                'caseType',
+                                'cases',
                                 fn (Builder $query) => $query->whereKey($case),
                             ),
                         )->whereDoesntHave(
                             'managableCaseTypes',
                             fn (Builder $query) => $query->where('case_type_id', $case->priority->type->getKey())->whereHas(
-                                'caseType',
+                                'cases',
                                 fn (Builder $query) => $query->whereKey($case),
                             ),
                         ),
