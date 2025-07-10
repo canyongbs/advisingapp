@@ -63,7 +63,7 @@ class TriggerFormSubmissionWorkflows implements ShouldQueue
 
         $steps->each(function (WorkflowStep $step) use ($event, $workflowTriggerId) {
             WorkflowRunStep::create([
-                'scheduled_at' => $this->getStepScheduledAt($step, $event),
+                'execute_at' => $this->getStepScheduledAt($step, $event),
                 'workflow_run_id' => WorkflowRun::whereWorkflowTriggerId($workflowTriggerId),
                 'details_id' => $step->details_id,
                 'details_type' => $step->details_type,
