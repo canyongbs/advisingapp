@@ -94,7 +94,7 @@ test('A successful action on the EditCase page', function () {
         ->toEqual($request->get('priority_id'));
 });
 
-test('EditCase requires valid data', function ($data, $errors) {
+test('EditCase requires valid data', function (EditCaseRequestFactory $data, array $errors) {
     $case = CaseModel::factory()->create();
 
     asSuperAdmin();
@@ -304,3 +304,17 @@ test('send feedback email if case is closed', function () {
         SendClosedCaseFeedbackNotification::class
     );
 });
+
+test('for a specific case type, which have notifications on for managers, if the status is changed then the managers are notified')->todo();
+
+test('for a specific case type, which have notifications on for auditors, if the status is changed then the auditors are notified')->todo();
+
+test('for a specific case type, which have notifications on for customers, if the status is changed then the customers are notified')->todo();
+
+test('for a specific case type, which have notifications on for managers, if the status of the case is changed as closed then the managers are notified')->todo();
+
+test('for a specific case type, which have notifications on for auditors, if the status of the case is changed as closed then the auditors are notified')->todo();
+
+test('for a specific case type, which have notifications on for customers, if the status of the case is changed as closed then the customers are notified')->todo();
+
+test('for a survey response case type, if notifications is on for customers, if the status of the case is changed as closed then the customers are notified')->todo();

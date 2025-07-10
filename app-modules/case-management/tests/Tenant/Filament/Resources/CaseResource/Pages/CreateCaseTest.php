@@ -101,7 +101,7 @@ test('A successful action on the CreateCase page', function () {
         ->toEqual($request->get('priority_id'));
 });
 
-test('CreateCase requires valid data', function ($data, $errors, $setup = null) {
+test('CreateCase requires valid data', function (CreateCaseRequestFactory $data, array $errors, ?Closure $setup = null) {
     if ($setup) {
         $setup();
     }
