@@ -38,7 +38,6 @@ declare(strict_types = 1);
 
 namespace App\Overrides\LaravelSqsExtended;
 
-use DefectiveCode\LaravelSqsExtended\SqsDiskJob;
 use DefectiveCode\LaravelSqsExtended\SqsDiskQueue as BaseSqsDiskQueue;
 use Illuminate\Contracts\Queue\Job;
 use Illuminate\Support\Arr;
