@@ -74,12 +74,12 @@ class EducatableCaseAssignedNotification extends Notification implements ShouldQ
 
     public function toMail(object $notifiable): MailMessage
     {
-        /** @var Educatable $educatable */
         $educatable = $notifiable;
+        assert($educatable instanceof Educatable);
 
         $name = ($notifiable instanceof Student || $notifiable instanceof Prospect)
-            ? $educatable->displayNameKey()
-            : '';
+          ? $educatable->displayNameKey()
+          : '';
 
         $template = $this->emailTemplate;
 
