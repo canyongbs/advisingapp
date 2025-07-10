@@ -45,6 +45,7 @@ use AdvisingApp\Ai\Services\Contracts\AiService;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use Closure;
+use Prism\Prism\Contracts\Schema;
 
 class TestAiService implements AiService
 {
@@ -60,6 +61,19 @@ class TestAiService implements AiService
         }
 
         return fake()->paragraph();
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    public function structured(string $prompt, string $content, Schema $schema): array
+    {
+        dispatch(new RecordTrackedEvent(
+            type: TrackedEventType::AiExchange,
+            occurredAt: now(),
+        ));
+
+        return ['text' => fake()->paragraph()];
     }
 
     public function createAssistant(AiAssistant $assistant): void {}

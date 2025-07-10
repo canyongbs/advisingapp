@@ -41,6 +41,7 @@ use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\Contracts\AiFile;
 use Closure;
+use Prism\Prism\Contracts\Schema;
 
 interface AiService
 {
@@ -48,6 +49,14 @@ interface AiService
      * This method is passed a prompt and should return a completion for it.
      */
     public function complete(string $prompt, string $content, bool $shouldTrack = true): string;
+
+    /**
+     * This method is passed a prompt and should return a completion for it that
+     * adheres to the structure of the provided schema.
+     *
+     * @return array<mixed>
+     */
+    public function structured(string $prompt, string $content, Schema $schema): array;
 
     /**
      * This method is passed an unsaved `AiAssistant` model and should return

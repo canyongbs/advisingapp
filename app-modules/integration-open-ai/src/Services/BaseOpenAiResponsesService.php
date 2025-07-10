@@ -61,6 +61,7 @@ use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 use Prism\Prism\Contracts\Message;
+use Prism\Prism\Contracts\Schema;
 use Prism\Prism\Enums\ChunkType;
 use Prism\Prism\Enums\FinishReason;
 use Prism\Prism\Exceptions\PrismRateLimitedException;
@@ -130,6 +131,55 @@ abstract class BaseOpenAiResponsesService implements AiService
         }
 
         return $response->text;
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    public function structured(string $prompt, string $content, Schema $schema): array
+    {
+        $aiSettings = app(AiSettings::class);
+
+        try {
+            $response = Prism::structured()
+                ->using('azure_open_ai', $this->getModel())
+                ->withClientOptions([
+                    'apiKey' => $this->getApiKey(),
+                    'apiVersion' => $this->getApiVersion(),
+                    'deployment' => $this->getDeployment(),
+                ])
+                ->withProviderOptions([
+                    'schema' => [
+                        'strict' => true,
+                    ],
+                    'truncation' => 'auto',
+                ])
+                ->withSystemPrompt($prompt)
+                ->withPrompt($content)
+                ->withSchema($schema)
+                ->withMaxTokens($aiSettings->max_tokens->getTokens())
+                ->usingTemperature($this->hasTemperature() ? $aiSettings->temperature : null)
+                ->asStructured();
+        } catch (PrismRateLimitedException $exception) {
+            foreach ($exception->rateLimits as $rateLimit) {
+                if ($rateLimit->resetsAt?->isFuture()) {
+                    throw new MessageResponseException("Rate limit exceeded, retry at {$rateLimit->resetsAt}.");
+                }
+            }
+
+            throw new MessageResponseException('Rate limit exceeded, please try again later.');
+        } catch (Throwable $exception) {
+            report($exception);
+
+            throw new MessageResponseException('Failed to complete the prompt: [' . $exception->getMessage() . '].');
+        }
+
+        dispatch(new RecordTrackedEvent(
+            type: TrackedEventType::AiExchange,
+            occurredAt: now(),
+        ));
+
+        return $response->structured;
     }
 
     /**

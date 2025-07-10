@@ -50,4 +50,13 @@ enum AiResearchReasoningEffort: string implements HasLabel
     {
         return $this->name;
     }
+
+    public function getNumberOfSearchQueries(): int
+    {
+        return match ($this) {
+            self::High => 5,
+            self::Medium => 3,
+            self::Low => 1,
+        };
+    }
 }
