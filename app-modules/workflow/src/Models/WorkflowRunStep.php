@@ -43,6 +43,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
+/**
+ * @mixin IdeHelperWorkflowRunStep
+ */
 class WorkflowRunStep extends BaseModel implements Auditable
 {
     use SoftDeletes;
@@ -51,6 +54,9 @@ class WorkflowRunStep extends BaseModel implements Auditable
 
     protected $fillable = [
         'execute_at',
+        'dispatched_at',
+        'succeeded_at',
+        'last_failed_at',
         'workflow_run_id',
         'details_id',
         'details_type',
