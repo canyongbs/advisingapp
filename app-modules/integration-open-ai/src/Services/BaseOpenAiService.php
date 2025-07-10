@@ -66,6 +66,7 @@ use OpenAI\Responses\Threads\Messages\ThreadMessageResponse;
 use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
 use OpenAI\Responses\Threads\ThreadResponse;
 use OpenAI\Testing\ClientFake;
+use Prism\Prism\Contracts\Schema;
 use Throwable;
 
 abstract class BaseOpenAiService implements AiService
@@ -121,6 +122,14 @@ abstract class BaseOpenAiService implements AiService
             key: 'choices.0.message.content',
             default: fn () => throw new MessageResponseException('Missing response content when completing a prompt: [' . $response->body() . '].'),
         );
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    public function structured(string $prompt, string $content, Schema $schema): array
+    {
+        throw new Exception('Structured responses are not supported by this AI service.');
     }
 
     public function createAssistant(AiAssistant $assistant): void

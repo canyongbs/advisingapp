@@ -34,49 +34,50 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Jobs;
+namespace AdvisingApp\Research\Jobs;
 
-use AdvisingApp\Ai\Actions\FetchFileParsingResults;
-use AdvisingApp\Ai\Models\AiAssistantFile;
+use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use AdvisingApp\Research\Models\ResearchRequest;
+use AdvisingApp\Research\Models\ResearchRequestParsedSearchResults;
 use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\SerializesModels;
-use Spatie\Multitenancy\Jobs\TenantAware;
+use Illuminate\Support\Facades\Http;
 
-class FetchAiAssistantFileParsingResults implements ShouldQueue, TenantAware, ShouldBeUnique
+class FetchResearchRequestSearchQueryParsingResults implements ShouldQueue
 {
     use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
 
+    public int $timeout = 600;
+
+    public int $tries = 60;
+
     public function __construct(
-        protected AiAssistantFile $file,
+        protected ResearchRequest $researchRequest,
+        protected string $searchQuery,
     ) {}
 
-    public function handle(FetchFileParsingResults $fetchFileParsingResults): void
+    public function handle(): void
     {
-        if (filled($this->file->parsing_results)) {
+        $response = Http::withToken(app(AiIntegrationsSettings::class)->jina_deepsearch_v1_api_key)
+            ->withHeaders([
+                'X-Engine' => 'direct',
+            ])
+            ->get('https://s.jina.ai', ['q' => $this->searchQuery]);
+
+        if (! $response->successful()) {
+            $this->fail('Failed to fetch search query results: ' . $response->body());
+
             return;
         }
 
-        $result = app(FetchFileParsingResults::class)->execute($this->file->file_id, $this->file->mime_type);
-
-        if (blank($result)) {
-            return;
-        }
-
-        $this->file->parsing_results = $result;
-        $this->file->save();
-    }
-
-    public function uniqueId(): string
-    {
-        return $this->file->id;
+        $researchRequestParsedSearchResults = new ResearchRequestParsedSearchResults();
+        $researchRequestParsedSearchResults->researchRequest()->associate($this->researchRequest);
+        $researchRequestParsedSearchResults->results = $response->body();
+        $researchRequestParsedSearchResults->search_query = $this->searchQuery;
+        $researchRequestParsedSearchResults->save();
     }
 }

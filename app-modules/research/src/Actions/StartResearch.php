@@ -34,49 +34,39 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Jobs;
+namespace AdvisingApp\Research\Actions;
 
-use AdvisingApp\Ai\Actions\FetchFileParsingResults;
-use AdvisingApp\Ai\Models\AiAssistantFile;
-use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use Spatie\Multitenancy\Jobs\TenantAware;
+use AdvisingApp\Research\Jobs\FetchResearchRequestLinkParsingResults;
+use AdvisingApp\Research\Jobs\GenerateResearchRequestSearchQueries;
+use AdvisingApp\Research\Jobs\UploadResearchRequestFileForParsing;
+use AdvisingApp\Research\Models\ResearchRequest;
+use Illuminate\Support\Facades\Bus;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class FetchAiAssistantFileParsingResults implements ShouldQueue, TenantAware, ShouldBeUnique
+class StartResearch
 {
-    use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
-    public function __construct(
-        protected AiAssistantFile $file,
-    ) {}
-
-    public function handle(FetchFileParsingResults $fetchFileParsingResults): void
+    public function execute(ResearchRequest $researchRequest): void
     {
-        if (filled($this->file->parsing_results)) {
-            return;
-        }
-
-        $result = app(FetchFileParsingResults::class)->execute($this->file->file_id, $this->file->mime_type);
-
-        if (blank($result)) {
-            return;
-        }
-
-        $this->file->parsing_results = $result;
-        $this->file->save();
-    }
-
-    public function uniqueId(): string
-    {
-        return $this->file->id;
+        Bus::chain([
+            Bus::batch([
+                ...$researchRequest->getMedia('files')->map(function (Media $media): UploadResearchRequestFileForParsing {
+                    return app(UploadResearchRequestFileForParsing::class, [
+                        'media' => $media,
+                    ]);
+                })->all(),
+                ...array_map(
+                    function (string $link) use ($researchRequest): FetchResearchRequestLinkParsingResults {
+                        return app(FetchResearchRequestLinkParsingResults::class, [
+                            'researchRequest' => $researchRequest,
+                            'link' => $link,
+                        ]);
+                    },
+                    $researchRequest->links,
+                ),
+                app(GenerateResearchRequestSearchQueries::class, [
+                    'researchRequest' => $researchRequest,
+                ]),
+            ]),
+        ])->dispatch();
     }
 }

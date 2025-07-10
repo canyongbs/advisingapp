@@ -45,12 +45,12 @@ class FetchFileParsingResults
         protected AiIntegrationsSettings $aiIntegrationsSettings,
     ) {}
 
-    public function execute(string $fileId, string $mimetype): ?string
+    public function execute(string $fileId, string $mimeType): ?string
     {
         // TODO: Check the status of the file parsing job, if it is not completed, return null. If it is in an ERROR state then throw an exeception that upstream needs to handle.
 
         $outputFormat = match (true) {
-            str($mimetype)->startsWith(['audio/', 'video/']) => 'text',
+            str($mimeType)->startsWith(['audio/', 'video/']) => 'text',
             default => 'markdown',
         };
 
