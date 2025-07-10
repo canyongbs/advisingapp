@@ -6479,6 +6479,120 @@ namespace AdvisingApp\Workflow\Models{
 
 namespace AdvisingApp\Workflow\Models{
 /**
+ * 
+ *
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \AdvisingApp\Workflow\Models\WorkflowTrigger|null $workflowTrigger
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperWorkflowRun {}
+}
+
+namespace AdvisingApp\Workflow\Models{
+/**
+ * 
+ *
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read WorkflowRunStep|null $workflowRunStep
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperWorkflowRunStep {}
+}
+
+namespace AdvisingApp\Workflow\Models{
+/**
+ * 
+ *
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \AdvisingApp\Workflow\Models\WorkflowRun|null $workflowRun
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperWorkflowRunStepRelated {}
+}
+
+namespace AdvisingApp\Workflow\Models{
+/**
+ * 
+ *
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \AdvisingApp\Workflow\Models\WorkflowTrigger|null $workflowTrigger
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperWorkflowRun {}
+}
+
+namespace AdvisingApp\Workflow\Models{
+/**
+ * 
+ *
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read WorkflowRunStep|null $workflowRunStep
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperWorkflowRunStep {}
+}
+
+namespace AdvisingApp\Workflow\Models{
+/**
+ * 
+ *
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \AdvisingApp\Workflow\Models\WorkflowRun|null $workflowRun
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperWorkflowRunStepRelated {}
+}
+
+namespace AdvisingApp\Workflow\Models{
+/**
  * @property string $id
  * @property string $details_type
  * @property string $details_id
@@ -6490,6 +6604,7 @@ namespace AdvisingApp\Workflow\Models{
  * @property string|null $previous_step_id
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
+ * @property-read WorkflowStep|null $previousWorkflowStep
  * @property-read \AdvisingApp\Workflow\Models\Workflow $workflow
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowStep newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowStep newQuery()
