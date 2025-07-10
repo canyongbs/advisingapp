@@ -21,6 +21,8 @@ class SqsDiskJob extends PackageSqsDiskJob
         try {
             return parent::getRawBody();
         } catch (TypeError $error) {
+            report($error);
+
             /*
              *  If we are unable to retrieve the raw body with this known error type,
              *  we should remove the item from the queue.
