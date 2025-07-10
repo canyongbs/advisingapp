@@ -40,11 +40,11 @@ use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\ListStudentsCo
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentEmailAddresses\CreateStudentEmailAddressController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentEmailAddresses\DeleteStudentEmailAddressController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentEmailAddresses\UpdateStudentEmailAddressController;
+use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentPrograms\ListStudentProgramsController;
+use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentPrograms\StudentProgramController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\UpdateStudentController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\ViewStudentController;
-use AdvisingApp\StudentDataModel\Http\Controllers\StudentPrograms\ListStudentProgramsController;
 use AdvisingApp\StudentDataModel\Http\Controllers\UpdateStudentInformationSystemSettingsController;
-use AdvisingApp\StudentDataModel\Models\Student;
 use App\Http\Middleware\CheckOlympusKey;
 use Illuminate\Support\Facades\Route;
 
@@ -77,5 +77,6 @@ Route::api(majorVersion: 1, routes: function () {
                 });
 
             Route::get('{student}/programs', ListStudentProgramsController::class)->name('programs.index');
+            Route::put('{student}/programs', StudentProgramController::class)->name('programs.put');
         });
 });
