@@ -34,49 +34,47 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Jobs;
+namespace AdvisingApp\Ai\Actions;
 
-use AdvisingApp\Ai\Actions\FetchFileParsingResults;
-use AdvisingApp\Ai\Models\AiAssistantFile;
-use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use Spatie\Multitenancy\Jobs\TenantAware;
+use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use Illuminate\Filesystem\AwsS3V3Adapter;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 
-class FetchAiAssistantFileParsingResults implements ShouldQueue, TenantAware, ShouldBeUnique
+class UploadFileForParsing
 {
-    use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
     public function __construct(
-        protected AiAssistantFile $file,
+        protected AiIntegrationsSettings $aiIntegrationsSettings,
     ) {}
 
-    public function handle(FetchFileParsingResults $fetchFileParsingResults): void
+    public function execute(string $path, string $name, string $mimeType): ?string
     {
-        if (filled($this->file->parsing_results)) {
-            return;
+        /** @var AwsS3V3Adapter $s3Adapter */
+        $s3Adapter = Storage::disk('s3')->getAdapter();
+
+        invade($s3Adapter)->client->registerStreamWrapper(); /** @phpstan-ignore-line */
+        $fileS3Path = (string) str('s3://' . config('filesystems.disks.s3.bucket') . '/' . $path)->replace('\\', '/');
+
+        $resource = fopen($fileS3Path, mode: 'r', context: stream_context_create([
+            's3' => [
+                'seekable' => true,
+            ],
+        ]));
+
+        $response = Http::attach(
+            'file',
+            $resource,
+            $name,
+            ['Content-Type' => $mimeType]
+        )
+            ->withToken($this->aiIntegrationsSettings->llamaparse_api_key)
+            ->acceptJson()
+            ->post('https://api.cloud.llamaindex.ai/api/v1/parsing/upload');
+
+        if ((! $response->successful()) || blank($response->json('id'))) {
+            return null;
         }
 
-        $results = $fetchFileParsingResults->execute($this->file->file_id);
-
-        if (blank($results)) {
-            return;
-        }
-
-        $this->file->parsing_results = $results;
-        $this->file->save();
-    }
-
-    public function uniqueId(): string
-    {
-        return $this->file->id;
+        return $response->json('id');
     }
 }
