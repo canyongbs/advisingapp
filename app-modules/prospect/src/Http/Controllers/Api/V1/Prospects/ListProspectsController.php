@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Gate;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\AllowedInclude;
 use Spatie\QueryBuilder\AllowedSort;
+use Spatie\QueryBuilder\Enums\FilterOperator;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class ListProspectsController
@@ -22,7 +23,6 @@ class ListProspectsController
      */
     #[Group('Prospects')]
     #[QueryParameter('filter[id]', description: 'Filter the results where the prospect\'s ID contains the provided string.', type: 'string')]
-    // #[QueryParameter('filter[otherid]', description: 'Filter the results where the prospect\'s OTHERID contains the provided string.', type: 'string')]
     #[QueryParameter('filter[first_name]', description: 'Filter the results where the prospect\'s first name contains the provided string.', type: 'string')]
     #[QueryParameter('filter[last_name]', description: 'Filter the results where the prospect\'s last name contains the provided string.', type: 'string')]
     #[QueryParameter('filter[full_name]', description: 'Filter the results where the prospect\'s full name contains the provided string.', type: 'string')]
@@ -45,7 +45,6 @@ class ListProspectsController
     #[QueryParameter('page[size]', description: 'Control how many prospects are returned in the response.', type: 'int', default: 30)]
     #[QueryParameter('sort', description: 'Control the order of prospects that are returned in the response. Ascending order is used by default, prepend the sort with `-` to sort descending.', type: 'string', default: 'sisid', examples: [
         'id' => new Example('id'),
-        // 'otherid' => new Example('otherid'),
         'first_name' => new Example('first_name'),
         'last_name' => new Example('last_name'),
         'full_name' => new Example('full_name'),
@@ -63,14 +62,13 @@ class ListProspectsController
         return QueryBuilder::for(Prospect::class)
             ->allowedFilters([
                 AllowedFilter::partial('id'),
-                // AllowedFilter::partial('otherid'),
                 AllowedFilter::partial('first_name'),
                 AllowedFilter::partial('last_name'),
                 AllowedFilter::partial('full_name'),
                 AllowedFilter::partial('preferred'),
                 AllowedFilter::exact('sms_opt_out'),
                 AllowedFilter::exact('email_bounce'),
-                AllowedFilter::exact('birthdate'),
+                AllowedFilter::operator('birthdate', FilterOperator::DYNAMIC),
                 AllowedFilter::exact('hsgrad'),
                 AllowedFilter::exact('primary_email_id'),
                 AllowedFilter::exact('primary_phone_id'),
@@ -84,7 +82,6 @@ class ListProspectsController
             ])
             ->allowedSorts([
                 AllowedSort::field('id'),
-                // AllowedSort::field('otherid'),
                 AllowedSort::field('first_name'),
                 AllowedSort::field('last_name'),
                 AllowedSort::field('full_name'),
