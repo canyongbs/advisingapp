@@ -511,4 +511,15 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
             }
         );
     }
+
+    /**
+     * @param  string  $childType
+     */
+    protected function childRouteBindingRelationshipName($childType): string
+    {
+        return match ($childType) {
+            'prospectEmailAddress' => 'emailAddresses',
+            default => parent::childRouteBindingRelationshipName($childType),
+        };
+    }
 }
