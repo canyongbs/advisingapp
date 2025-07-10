@@ -1,24 +1,24 @@
 <?php
 
-namespace AdvisingApp\StudentDataModel\Http\Controllers\StudentPrograms;
+namespace AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentPrograms;
 
-use AdvisingApp\StudentDataModel\Http\Resources\Api\V1\StudentProgramsResource;
+use AdvisingApp\StudentDataModel\Http\Resources\Api\V1\StudentProgramResource;
 use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
+use Dedoc\Scramble\Attributes\Example;
 use Dedoc\Scramble\Attributes\Group;
+use Dedoc\Scramble\Attributes\QueryParameter;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Gate;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\AllowedSort;
 use Spatie\QueryBuilder\Enums\FilterOperator;
 use Spatie\QueryBuilder\QueryBuilder;
-use Dedoc\Scramble\Attributes\QueryParameter;
-use Dedoc\Scramble\Attributes\Example;
 
-class ListStudentProgramsController {
-
+class ListStudentProgramsController
+{
     /**
      * @response AnonymousResourceCollection<LengthAwarePaginator<StudentProgramsResource>>
      */
@@ -53,7 +53,7 @@ class ListStudentProgramsController {
         'graduation_dt' => new Example('graduation_dt'),
         'conferred_dt' => new Example('conferred_dt'),
     ])]
-    public function __invoke(Request $request,Student $student): AnonymousResourceCollection
+    public function __invoke(Request $request, Student $student): AnonymousResourceCollection
     {
         Gate::authorize('viewAny', Student::class);
         Gate::authorize('view', $student);
@@ -92,6 +92,6 @@ class ListStudentProgramsController {
             ])
             ->defaultSort(AllowedSort::field('sisid'))
             ->jsonPaginate()
-            ->toResourceCollection(StudentProgramsResource::class);
+            ->toResourceCollection(StudentProgramResource::class);
     }
 }
