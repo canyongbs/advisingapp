@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Form\Listeners;
 
-use AdvisingApp\Form\Events\FormSubmitted;
+use AdvisingApp\Form\Events\FormSubmissionCreated;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowRun;
@@ -48,10 +48,10 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 class TriggerFormSubmissionWorkflows implements ShouldQueue
 {
-    public function handle(FormSubmitted $event): void
+    public function handle(FormSubmissionCreated $event): void
     {
         $workflowTriggerId = WorkflowTrigger::whereRelatedType(Form::class)
-            ->whereRelatedId($event->formSubmission->getKey())
+            ->whereRelatedId($event->submission->getKey())
             ->first()
             ->getKey();
 
@@ -71,10 +71,10 @@ class TriggerFormSubmissionWorkflows implements ShouldQueue
         });
     }
 
-    private function getStepScheduledAt(WorkflowStep $step, FormSubmitted $event): DateTime
+    private function getStepScheduledAt(WorkflowStep $step, FormSubmissionCreated $event): DateTime
     {
         //TODO: nullsafe property access here???
-        $delayFrom = $step->previousWorkflowStep->scheduled_at ?? $event->formSubmission->submitted_at;
+        $delayFrom = $step->previousWorkflowStep->scheduled_at ?? $event->submission->submitted_at;
 
         assert($delayFrom instanceof DateTime);
 
