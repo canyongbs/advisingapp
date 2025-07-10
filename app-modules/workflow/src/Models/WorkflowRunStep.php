@@ -50,15 +50,14 @@ class WorkflowRunStep extends BaseModel implements Auditable
     use HasUuids;
 
     protected $fillable = [
-        'scheduled_at',
+        'execute_at',
         'workflow_run_id',
         'details_id',
         'details_type',
     ];
 
     protected $casts = [
-        'scheduled_at' => 'datetime',
-        'executed_at' => 'datetime',
+        'execute_at' => 'datetime',
         'dispatched_at' => 'datetime',
         'succeeded_at' => 'datetime',
         'last_failed_at' => 'datetime',
