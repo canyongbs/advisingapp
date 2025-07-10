@@ -129,7 +129,6 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
         'source_id',
         'birthdate',
         'hsgrad',
-        'assigned_to_id',
         'created_by_id',
         'primary_email_id',
         'primary_phone_id',
@@ -511,5 +510,16 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
                 return $this->primaryAddress?->full;
             }
         );
+    }
+
+    /**
+     * @param  string  $childType
+     */
+    protected function childRouteBindingRelationshipName($childType): string
+    {
+        return match ($childType) {
+            'prospectEmailAddress' => 'emailAddresses',
+            default => parent::childRouteBindingRelationshipName($childType),
+        };
     }
 }
