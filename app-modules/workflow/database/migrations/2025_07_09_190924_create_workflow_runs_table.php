@@ -46,10 +46,13 @@ return new class () extends Migration {
 
             $table->dateTime('started_at')->nullable();
             $table->foreignUuid('workflow_trigger_id')->constrained('workflow_triggers');
-            $table->uuidMorphs('related');
+            $table->string('details_id');
+            $table->string('details_type');
 
             $table->timestamps();
             $table->softDeletes();
+
+            $table->index(['details_type', 'details_id']);
         });
     }
 
