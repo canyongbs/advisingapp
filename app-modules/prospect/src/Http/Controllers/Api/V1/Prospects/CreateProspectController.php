@@ -13,7 +13,6 @@ use Dedoc\Scramble\Attributes\QueryParameter;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Validation\Rule;
 
 class CreateProspectController
 {
@@ -33,16 +32,15 @@ class CreateProspectController
         Gate::authorize('create', Prospect::class);
 
         $data = $request->validate([
-            // 'id' => ['required', 'max:255', 'alpha_dash', Rule::unique('prospects', 'id')],
-            'first' => ['required', 'max:255'],
-            'last' => ['required', 'max:255'],
+            'first_name' => ['required', 'max:255'],
+            'last_name' => ['required', 'max:255'],
             'full_name' => ['required', 'max:255'],
             'preferred' => ['sometimes', 'max:255'],
             'description' => ['sometimes', 'max:65535'],
             'sms_opt_out' => ['sometimes', 'boolean'],
             'email_bounce' => ['sometimes', 'boolean'],
-            'status' => ['sometimes', 'max:255'],
-            'source' => ['sometimes', 'max:255'],
+            'status_id' => ['sometimes', 'max:255'],
+            'source_id' => ['sometimes', 'max:255'],
             'birthdate' => ['sometimes', 'date', 'date_format:Y-m-d'],
             'hsgrad' => ['sometimes', 'numeric'],
             'created_by' => ['sometimes', 'max:255'],

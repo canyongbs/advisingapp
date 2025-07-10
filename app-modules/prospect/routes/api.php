@@ -1,7 +1,13 @@
 <?php
 
 use AdvisingApp\Prospect\Http\Controllers\Api\V1\Prospects\CreateProspectController;
+use AdvisingApp\Prospect\Http\Controllers\Api\V1\Prospects\DeleteProspectController;
 use AdvisingApp\Prospect\Http\Controllers\Api\V1\Prospects\ListProspectsController;
+use AdvisingApp\Prospect\Http\Controllers\Api\V1\Prospects\ProspectEmailAddresses\CreateProspectEmailAddressController;
+use AdvisingApp\Prospect\Http\Controllers\Api\V1\Prospects\ProspectEmailAddresses\DeleteProspectEmailAddressController;
+use AdvisingApp\Prospect\Http\Controllers\Api\V1\Prospects\ProspectEmailAddresses\UpdateProspectEmailAddressController;
+use AdvisingApp\Prospect\Http\Controllers\Api\V1\Prospects\UpdateProspectController;
+use AdvisingApp\Prospect\Http\Controllers\Api\V1\Prospects\ViewProspectController;
 use Illuminate\Support\Facades\Route;
 
 Route::api(majorVersion: 1, routes: function () {
@@ -10,16 +16,16 @@ Route::api(majorVersion: 1, routes: function () {
         ->group(function () {
             Route::get('/', ListProspectsController::class)->name('index');
             Route::post('/', CreateProspectController::class)->name('create');
-            // Route::get('{prospect}', ViewProspectController::class)->name('view');
-            // Route::patch('{prospect}', UpdateProspectController::class)->name('update');
-            // Route::delete('{prospect}', DeleteProspectController::class)->name('delete');
+            Route::get('{prospect}', ViewProspectController::class)->name('view');
+            Route::patch('{prospect}', UpdateProspectController::class)->name('update');
+            Route::delete('{prospect}', DeleteProspectController::class)->name('delete');
 
-            // Route::name('email-addresses.')
-            //     ->prefix('{prospect}/email-addresses')
-            //     ->group(function () {
-            //         Route::post('/', CreateProspectEmailAddressController::class)->name('create');
-            //         Route::patch('/{prospectEmailAddress}', UpdateProspectEmailAddressController::class)->name('update');
-            //         Route::delete('/{prospectEmailAddress}', DeleteProspectEmailAddressController::class)->name('delete');
-            //     });
+            Route::name('email-addresses.')
+                ->prefix('{prospect}/email-addresses')
+                ->group(function () {
+                    Route::post('/', CreateProspectEmailAddressController::class)->name('create');
+                    Route::patch('/{prospectEmailAddress}', UpdateProspectEmailAddressController::class)->name('update');
+                    Route::delete('/{prospectEmailAddress}', DeleteProspectEmailAddressController::class)->name('delete');
+                });
         });
 });
