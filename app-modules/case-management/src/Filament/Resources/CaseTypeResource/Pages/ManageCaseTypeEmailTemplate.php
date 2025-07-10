@@ -49,7 +49,6 @@ use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 use FilamentTiptapEditor\TiptapEditor;
-use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 
@@ -159,16 +158,14 @@ class ManageCaseTypeEmailTemplate extends EditRecord
 
     protected function fillForm(): void
     {
-        /** @var CaseType $record */
         $record = $this->getRecord();
+        assert($record instanceof CaseType);
 
-        /** @var Collection<int, CaseTypeEmailTemplate> $templates */
         $templates = $record
             ->templates()
             ->where('type', $this->type)
             ->get();
 
-        /** @var Collection<string, CaseTypeEmailTemplate> $templates */
         $templates = $templates->keyBy(fn (CaseTypeEmailTemplate $template) => $template->role->value);
 
         $state = [];
@@ -185,8 +182,8 @@ class ManageCaseTypeEmailTemplate extends EditRecord
     #[Computed]
     protected function template(): ?CaseTypeEmailTemplate
     {
-        /** @var CaseType $record */
         $record = $this->getRecord();
+        assert($record instanceof CaseType);
 
         return $record->templates()->where('type', $this->type)->first();
     }

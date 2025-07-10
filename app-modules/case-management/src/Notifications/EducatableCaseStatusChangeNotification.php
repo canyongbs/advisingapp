@@ -45,6 +45,9 @@ use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\Contracts\Message;
 use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\NotificationSetting;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -71,7 +74,12 @@ class EducatableCaseStatusChangeNotification extends Notification implements Sho
 
     public function toMail(object $notifiable): MailMessage
     {
-        $name = $notifiable->first_name;
+        $educatable = $notifiable;
+        assert($educatable instanceof Educatable);
+
+        $name = ($notifiable instanceof Student || $notifiable instanceof Prospect)
+          ? $educatable->displayNameKey()
+          : '';
 
         $template = $this->emailTemplate;
 
