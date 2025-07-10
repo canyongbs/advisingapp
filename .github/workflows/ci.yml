@@ -8,10 +8,38 @@ on:
   workflow_dispatch:
 
 jobs:
-  enforce-copyright:
+  cqse:
+    name: Code Quality Standard Enforcements
+
     runs-on: ubuntu-22.04
 
-    timeout-minutes: 10
+    timeout-minutes: 15
+
+    env:
+      DB_PORT: 5432
+      DB_HOST: 127.0.0.1
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      DB_DATABASE: ci_db
+
+    services:
+      postgres:
+        # Docker Hub image
+        image: postgres:15
+        ports:
+          - 5432:5432
+        # Provide the password for postgres
+        env:
+          PGPASSWORD: ${{ env.DB_PASSWORD }}
+          POSTGRES_DB: ${{ env.DB_DATABASE }}
+          POSTGRES_USER: ${{ env.DB_USERNAME }}
+          POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - name: Checkout code | Internal
@@ -30,53 +58,23 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
 
-      - name: Run Ruby Script
+      - name: Run Copyright Enforcement
         run: ruby ./copyright.rb
 
-      - name: Commit changes
-        if: ${{ github.event_name != 'merge_group' && github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
-        # SHA of release v6.0.0
-        uses: stefanzweifel/git-auto-commit-action@3cc016cfc892e0844046da36fc68da4e525e081f
-        with:
-          commit_message: >
-            chore: fix enforcement of copyright on all files
-
-      - name: Check for changes
-        if: ${{ github.event_name == 'merge_group' || github.event.pull_request.head.repo.full_name != github.repository || github.actor == 'dependabot[bot]' }}
-        # SHA of release v20.0.1
-        uses: tj-actions/verify-changed-files@6ed7632824d235029086612d4330d659005af687
-        with:
-          fail-if-changed: "true"
-
-  fix-code-style:
-    runs-on: ubuntu-22.04
-
-    timeout-minutes: 10
-
-    needs: [enforce-copyright]
-
-    steps:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.4"
           coverage: none
           extensions: mailparse
 
-      - name: Checkout code | Internal
-        if: ${{ github.event_name == 'merge_group' || github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
-          token: ${{ secrets.pat-token }}
-
-      - name: Checkout code | External
-        if: ${{ github.event_name != 'merge_group' && github.event.pull_request.head.repo.full_name != github.repository || github.actor == 'dependabot[bot]' }}
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
+      - name: Copy .env
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
       - name: Setup Dependencies
         uses: ./.github/actions/composer-dependency-setup
+
+      - name: Generate key
+        run: php artisan key:generate
 
       - uses: actions/setup-node@v4
         with:
@@ -100,6 +98,12 @@ jobs:
           restore-keys: |
             ${{ runner.OS }}-${{ github.repository }}-prettier-
 
+      - name: Create Test Tenant
+        run: php artisan tenants:create test test.advisingapp.local -y
+
+      - name: Generate Helper Files
+        run: php artisan app:generate-helper-files ; ./vendor/bin/rector
+
       - name: Run Formatters
         run: composer format
 
@@ -109,7 +113,7 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@3cc016cfc892e0844046da36fc68da4e525e081f
         with:
           commit_message: >
-            chore: fix code style
+            Enforce code quality standards
 
       - name: Check for changes
         if: ${{ github.event_name == 'merge_group' || github.event.pull_request.head.repo.full_name != github.repository || github.actor == 'dependabot[bot]' }}
@@ -117,6 +121,76 @@ jobs:
         uses: tj-actions/verify-changed-files@6ed7632824d235029086612d4330d659005af687
         with:
           fail-if-changed: "true"
+
+#   fix-code-style:
+#     runs-on: ubuntu-22.04
+
+#     timeout-minutes: 10
+
+#     needs: [enforce-copyright]
+
+#     steps:
+#       - uses: shivammathur/setup-php@v2
+#         with:
+#           php-version: "8.4"
+#           coverage: none
+#           extensions: mailparse
+
+#       - name: Checkout code | Internal
+#         if: ${{ github.event_name == 'merge_group' || github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
+#         uses: actions/checkout@v4
+#         with:
+#           ref: ${{ github.head_ref }}
+#           token: ${{ secrets.pat-token }}
+
+#       - name: Checkout code | External
+#         if: ${{ github.event_name != 'merge_group' && github.event.pull_request.head.repo.full_name != github.repository || github.actor == 'dependabot[bot]' }}
+#         uses: actions/checkout@v4
+#         with:
+#           ref: ${{ github.head_ref }}
+
+#       - name: Setup Dependencies
+#         uses: ./.github/actions/composer-dependency-setup
+
+#       - uses: actions/setup-node@v4
+#         with:
+#           node-version-file: ".nvmrc"
+#           cache: "npm"
+#       - run: npm install
+
+#       - name: Cache PHP CS Fixer
+#         uses: actions/cache@v4
+#         with:
+#           path: .php-cs-fixer.cache
+#           key: ${{ runner.OS }}-${{ github.repository }}-phpcsfixer-${{ github.run_id }}
+#           restore-keys: |
+#             ${{ runner.OS }}-${{ github.repository }}-phpcsfixer-
+
+#       - name: Cache Prettier
+#         uses: actions/cache@v4
+#         with:
+#           path: ./node_modules/.cache/prettier/.prettier-cache
+#           key: ${{ runner.OS }}-${{ github.repository }}-prettier-${{ github.run_id }}
+#           restore-keys: |
+#             ${{ runner.OS }}-${{ github.repository }}-prettier-
+
+#       - name: Run Formatters
+#         run: composer format
+
+#       - name: Commit changes
+#         if: ${{ github.event_name != 'merge_group' && github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
+#         # SHA of release v6.0.0
+#         uses: stefanzweifel/git-auto-commit-action@3cc016cfc892e0844046da36fc68da4e525e081f
+#         with:
+#           commit_message: >
+#             chore: fix code style
+
+#       - name: Check for changes
+#         if: ${{ github.event_name == 'merge_group' || github.event.pull_request.head.repo.full_name != github.repository || github.actor == 'dependabot[bot]' }}
+#         # SHA of release v20.0.1
+#         uses: tj-actions/verify-changed-files@6ed7632824d235029086612d4330d659005af687
+#         with:
+#           fail-if-changed: "true"
 
   test:
     strategy:
@@ -134,8 +208,6 @@ jobs:
       REDIS_HOST: 127.0.0.1
 
     timeout-minutes: 15
-
-    needs: [enforce-copyright, fix-code-style]
 
     services:
       postgres:
@@ -233,8 +305,6 @@ jobs:
       PENNANT_STORE: array
 
     timeout-minutes: 15
-
-    needs: [enforce-copyright, fix-code-style]
 
     services:
       postgres:
