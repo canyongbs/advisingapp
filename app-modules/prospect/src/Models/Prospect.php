@@ -131,7 +131,6 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
         'source_id',
         'birthdate',
         'hsgrad',
-        'assigned_to_id',
         'created_by_id',
         'primary_email_id',
         'primary_phone_id',

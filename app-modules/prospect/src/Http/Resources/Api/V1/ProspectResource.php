@@ -20,7 +20,6 @@ class ProspectResource extends JsonResource
     {
         return [
             'id' => $this->resource->id,
-            // 'otherid' => $this->resource->otherid,
             'first_name' => $this->resource->first_name,
             'last_name' => $this->resource->last_name,
             'full_name' => $this->resource->full_name,
@@ -28,11 +27,11 @@ class ProspectResource extends JsonResource
             'description' => $this->resource->description,
             'sms_opt_out' => $this->resource->sms_opt_out,
             'email_bounce' => $this->resource->email_bounce,
-            // 'status' => $this->resource->status_id,
-            // 'status' => new ProspectStatusResource($this->resource->status),
-            // 'status' => ProspectEmailAddressResource::collection($this->whenLoaded('emailAddresses')),
+            'status' => $this->resource->status->name,
+            'source' => $this->resource->source->name,
             'birthdate' => $this->resource->birthdate ? $this->resource->birthdate->format('Y-m-d') : null,
             'hsgrad' => $this->resource->hsgrad,
+            'created_by' => $this->resource->createdBy?->name,
             'primary_email_id' => $this->resource->primary_email_id,
             'primary_phone_id' => $this->resource->primary_phone_id,
             'primary_address_id' => $this->resource->primary_address_id,
