@@ -66,6 +66,6 @@ class WorkflowStep extends BaseModel implements Auditable
      */
     public function previousWorkflowStep(): ?HasOne
     {
-      return $this->hasOne(WorkflowStep::class, 'previous_step_id');
+        return $this->hasOne(WorkflowStep::class, 'previous_step_id');
     }
 }

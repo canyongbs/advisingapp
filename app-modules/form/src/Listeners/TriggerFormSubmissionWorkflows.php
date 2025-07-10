@@ -48,7 +48,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 class TriggerFormSubmissionWorkflows implements ShouldQueue
 {
-
     public function handle(FormSubmitted $event): void
     {
         $workflowTriggerId = WorkflowTrigger::whereRelatedType(Form::class)
