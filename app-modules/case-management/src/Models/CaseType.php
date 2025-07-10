@@ -203,10 +203,10 @@ class CaseType extends BaseModel implements Auditable
     {
         return $this->belongsTo(User::class, 'last_assigned_id', 'id');
     }
-    
-   /**
-     * @return HasMany<CaseTypeEmailTemplate, $this>
-     */
+
+    /**
+      * @return HasMany<CaseTypeEmailTemplate, $this>
+      */
     public function templates(): HasMany
     {
         return $this->hasMany(CaseTypeEmailTemplate::class, 'case_type_id');
