@@ -41,15 +41,14 @@ use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Spatie\LaravelData\DataCollection;
 
 class UpdateStudentProgram
 {
-    
-  /**
-   * @param StudentProgramData[] $programs
-   * @return Collection<int, Program>
-   */
+    /**
+     * @param StudentProgramData[] $programs
+     *
+     * @return Collection<int, Program>
+     */
     public function execute(Student $student, array $programs): Collection
     {
         $student->programs()->delete();

@@ -58,7 +58,7 @@ class StudentProgramController
         Gate::authorize('create', Program::class);
         Gate::authorize('program.*.update', Program::class);
         Gate::authorize('program.*.delete', Program::class);
-        
+
         $data = $request->validate([
             '*.acad_career' => ['sometimes', 'string', 'max:255'],
             '*.division' => ['sometimes', 'string', 'max:255'],
