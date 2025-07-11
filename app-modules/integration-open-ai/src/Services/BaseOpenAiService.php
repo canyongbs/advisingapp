@@ -88,7 +88,7 @@ abstract class BaseOpenAiService implements AiService
         return $this->client;
     }
 
-    public function complete(string $prompt, string $content): string
+    public function complete(string $prompt, string $content, bool $shouldTrack = true): string
     {
         try {
             $response = Http::asJson()
@@ -110,10 +110,12 @@ abstract class BaseOpenAiService implements AiService
             throw new MessageResponseException('Failed to complete the prompt: [' . $response->body() . '].');
         }
 
-        dispatch(new RecordTrackedEvent(
-            type: TrackedEventType::AiExchange,
-            occurredAt: now(),
-        ));
+        if ($shouldTrack) {
+            dispatch(new RecordTrackedEvent(
+                type: TrackedEventType::AiExchange,
+                occurredAt: now(),
+            ));
+        }
 
         return $response->json(
             key: 'choices.0.message.content',
@@ -443,7 +445,7 @@ abstract class BaseOpenAiService implements AiService
     {
         if (filled($files)) {
             $content .= <<<'EOT'
-                                
+
                 ---
 
                 Consider the content from the following files. These have already been converted by Canyon GBS' technology to Markdown for improved processing. When you reference these files, reference the file names as user uploaded files as noted below:
@@ -569,7 +571,7 @@ abstract class BaseOpenAiService implements AiService
 
         if (filled($files = $assistant->files()->whereNotNull('parsing_results')->get()->all())) {
             $instructions .= <<<'EOT'
-                                
+
                 ---
 
                 Consider the following additional knowledge, which has already been handled by Canyon GBS' technology to Markdown for improved processing. When you reference the information, describe that it is part of the assistant's knowledge:
