@@ -57,7 +57,7 @@ class ProspectInteractionReport extends ProspectReport
 
     protected string $cacheTag = 'report-prospect-interaction';
 
-    protected static ?int $navigationSort = 20;
+    protected static ?int $navigationSort = 30;
 
     public function getColumns(): int | string | array
     {
