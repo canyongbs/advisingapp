@@ -34,49 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Jobs;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Ai\Actions\FetchFileParsingResults;
-use AdvisingApp\Ai\Models\AiAssistantFile;
-use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use Spatie\Multitenancy\Jobs\TenantAware;
-
-class FetchAiAssistantFileParsingResults implements ShouldQueue, TenantAware, ShouldBeUnique
-{
-    use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
-    public function __construct(
-        protected AiAssistantFile $file,
-    ) {}
-
-    public function handle(FetchFileParsingResults $fetchFileParsingResults): void
+return new class () extends Migration {
+    public function up(): void
     {
-        if (filled($this->file->parsing_results)) {
-            return;
-        }
-
-        $results = $fetchFileParsingResults->execute($this->file->file_id);
-
-        if (blank($results)) {
-            return;
-        }
-
-        $this->file->parsing_results = $results;
-        $this->file->save();
+        Schema::table('research_requests', function (Blueprint $table) {
+            $table->string('research_model')->nullable();
+        });
     }
 
-    public function uniqueId(): string
+    public function down(): void
     {
-        return $this->file->id;
+        Schema::table('research_requests', function (Blueprint $table) {
+            $table->dropColumn('research_model');
+        });
     }
-}
+};

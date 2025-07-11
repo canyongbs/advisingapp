@@ -34,49 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Jobs;
+namespace AdvisingApp\Research\Models;
 
-use AdvisingApp\Ai\Actions\FetchFileParsingResults;
-use AdvisingApp\Ai\Models\AiAssistantFile;
-use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use Spatie\Multitenancy\Jobs\TenantAware;
+use AdvisingApp\Research\Database\Factories\ResearchRequestParsedLinkFactory;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class FetchAiAssistantFileParsingResults implements ShouldQueue, TenantAware, ShouldBeUnique
+/**
+ * @mixin IdeHelperResearchRequestParsedLink
+ */
+class ResearchRequestParsedLink extends BaseModel
 {
-    use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
+    /** @use HasFactory<ResearchRequestParsedLinkFactory> */
+    use HasFactory;
 
-    public function __construct(
-        protected AiAssistantFile $file,
-    ) {}
+    use SoftDeletes;
 
-    public function handle(FetchFileParsingResults $fetchFileParsingResults): void
+    public $fillable = [
+        'research_request_id',
+        'results',
+        'url',
+    ];
+
+    /**
+     * @return BelongsTo<ResearchRequest, $this>
+     */
+    public function researchRequest(): BelongsTo
     {
-        if (filled($this->file->parsing_results)) {
-            return;
-        }
-
-        $results = $fetchFileParsingResults->execute($this->file->file_id);
-
-        if (blank($results)) {
-            return;
-        }
-
-        $this->file->parsing_results = $results;
-        $this->file->save();
-    }
-
-    public function uniqueId(): string
-    {
-        return $this->file->id;
+        return $this->belongsTo(ResearchRequest::class);
     }
 }

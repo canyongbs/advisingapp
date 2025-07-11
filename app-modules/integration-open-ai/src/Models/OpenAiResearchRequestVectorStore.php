@@ -34,49 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Jobs;
+namespace AdvisingApp\IntegrationOpenAi\Models;
 
-use AdvisingApp\Ai\Actions\FetchFileParsingResults;
-use AdvisingApp\Ai\Models\AiAssistantFile;
-use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use Spatie\Multitenancy\Jobs\TenantAware;
+use AdvisingApp\Research\Models\ResearchRequest;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class FetchAiAssistantFileParsingResults implements ShouldQueue, TenantAware, ShouldBeUnique
+/**
+ * @mixin IdeHelperOpenAiResearchRequestVectorStore
+ */
+class OpenAiResearchRequestVectorStore extends BaseModel
 {
-    use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
+    use SoftDeletes;
 
-    public function __construct(
-        protected AiAssistantFile $file,
-    ) {}
+    public $fillable = [
+        'research_request_id',
+        'deployment_hash',
+        'ready_until',
+        'vector_store_id',
+    ];
 
-    public function handle(FetchFileParsingResults $fetchFileParsingResults): void
+    protected $casts = [
+        'ready_until' => 'immutable_datetime',
+    ];
+
+    /**
+     * @return BelongsTo<ResearchRequest, $this>
+     */
+    public function researchRequest(): BelongsTo
     {
-        if (filled($this->file->parsing_results)) {
-            return;
-        }
-
-        $results = $fetchFileParsingResults->execute($this->file->file_id);
-
-        if (blank($results)) {
-            return;
-        }
-
-        $this->file->parsing_results = $results;
-        $this->file->save();
-    }
-
-    public function uniqueId(): string
-    {
-        return $this->file->id;
+        return $this->belongsTo(ResearchRequest::class);
     }
 }

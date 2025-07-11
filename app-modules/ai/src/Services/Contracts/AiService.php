@@ -40,7 +40,9 @@ use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\Contracts\AiFile;
+use AdvisingApp\Research\Models\ResearchRequest;
 use Closure;
+use Prism\Prism\Contracts\Schema;
 
 interface AiService
 {
@@ -48,6 +50,14 @@ interface AiService
      * This method is passed a prompt and should return a completion for it.
      */
     public function complete(string $prompt, string $content): string;
+
+    /**
+     * This method is passed a prompt and should return a completion for it that
+     * adheres to the structure of the provided schema.
+     *
+     * @return array<mixed>
+     */
+    public function structured(string $prompt, string $content, Schema $schema): array;
 
     /**
      * This method is passed an unsaved `AiAssistant` model and should return
@@ -114,6 +124,8 @@ interface AiService
     public function supportsAssistantFileUploads(): bool;
 
     public function isFileReady(AiFile $file): bool;
+
+    public function isResearchRequestReady(ResearchRequest $researchRequest): bool;
 
     public function getDeployment(): ?string;
 }

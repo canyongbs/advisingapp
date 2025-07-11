@@ -34,49 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Jobs;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Ai\Actions\FetchFileParsingResults;
-use AdvisingApp\Ai\Models\AiAssistantFile;
-use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use Spatie\Multitenancy\Jobs\TenantAware;
-
-class FetchAiAssistantFileParsingResults implements ShouldQueue, TenantAware, ShouldBeUnique
-{
-    use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
-    public function __construct(
-        protected AiAssistantFile $file,
-    ) {}
-
-    public function handle(FetchFileParsingResults $fetchFileParsingResults): void
+return new class () extends Migration {
+    public function up(): void
     {
-        if (filled($this->file->parsing_results)) {
-            return;
-        }
-
-        $results = $fetchFileParsingResults->execute($this->file->file_id);
-
-        if (blank($results)) {
-            return;
-        }
-
-        $this->file->parsing_results = $results;
-        $this->file->save();
+        Schema::create('research_request_parsed_files', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->foreignUuid('research_request_id')->constrained()->cascadeOnDelete();
+            $table->dateTime('uploaded_at');
+            $table->longText('results');
+            $table->foreignId('media_id')->constrained();
+            $table->string('file_id');
+            $table->timestamps();
+            $table->softDeletes();
+        });
     }
 
-    public function uniqueId(): string
+    public function down(): void
     {
-        return $this->file->id;
+        Schema::dropIfExists('research_request_parsed_files');
     }
-}
+};

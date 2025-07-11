@@ -432,6 +432,7 @@ namespace App\Models{
  * @property-read int|null $roles_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laravel\Sanctum\PersonalAccessToken> $tokens
  * @property-read int|null $tokens_count
+ * @method static \Database\Factories\SystemUserFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUser newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUser newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUser onlyTrashed()
@@ -3617,6 +3618,39 @@ namespace AdvisingApp\IntegrationOpenAi\Models{
  * 
  *
  * @property string $id
+ * @property string $research_request_id
+ * @property string $deployment_hash
+ * @property \Carbon\CarbonImmutable|null $ready_until
+ * @property string|null $vector_store_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \AdvisingApp\Research\Models\ResearchRequest $researchRequest
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OpenAiResearchRequestVectorStore newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OpenAiResearchRequestVectorStore newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OpenAiResearchRequestVectorStore onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OpenAiResearchRequestVectorStore query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OpenAiResearchRequestVectorStore whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OpenAiResearchRequestVectorStore whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OpenAiResearchRequestVectorStore whereDeploymentHash($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OpenAiResearchRequestVectorStore whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OpenAiResearchRequestVectorStore whereReadyUntil($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OpenAiResearchRequestVectorStore whereResearchRequestId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OpenAiResearchRequestVectorStore whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OpenAiResearchRequestVectorStore whereVectorStoreId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OpenAiResearchRequestVectorStore withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OpenAiResearchRequestVectorStore withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperOpenAiResearchRequestVectorStore {}
+}
+
+namespace AdvisingApp\IntegrationOpenAi\Models{
+/**
+ * 
+ *
+ * @property string $id
  * @property string $file_type
  * @property string $file_id
  * @property string $deployment_hash
@@ -5061,7 +5095,11 @@ namespace AdvisingApp\Research\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
  * @property string|null $folder_id
+ * @property array<array-key, mixed>|null $links
+ * @property \AdvisingApp\Ai\Enums\AiModel|null $research_model
  * @property-read \AdvisingApp\Research\Models\ResearchRequestFolder|null $folder
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read int|null $media_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Research\Models\ResearchRequestQuestion> $questions
  * @property-read int|null $questions_count
  * @property-read \App\Models\User $user
@@ -5074,6 +5112,8 @@ namespace AdvisingApp\Research\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereFinishedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereFolderId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereLinks($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereResearchModel($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereResults($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereTopic($value)
@@ -5114,6 +5154,107 @@ namespace AdvisingApp\Research\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperResearchRequestFolder {}
+}
+
+namespace AdvisingApp\Research\Models{
+/**
+ * 
+ *
+ * @property string $id
+ * @property string $research_request_id
+ * @property string $uploaded_at
+ * @property string $results
+ * @property int $media_id
+ * @property string $file_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Media $media
+ * @property-read \AdvisingApp\Research\Models\ResearchRequest $researchRequest
+ * @method static \AdvisingApp\Research\Database\Factories\ResearchRequestParsedFileFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedFile newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedFile newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedFile onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedFile query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedFile whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedFile whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedFile whereFileId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedFile whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedFile whereMediaId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedFile whereResearchRequestId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedFile whereResults($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedFile whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedFile whereUploadedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedFile withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedFile withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperResearchRequestParsedFile {}
+}
+
+namespace AdvisingApp\Research\Models{
+/**
+ * 
+ *
+ * @property string $id
+ * @property string $research_request_id
+ * @property string $results
+ * @property string $url
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \AdvisingApp\Research\Models\ResearchRequest $researchRequest
+ * @method static \AdvisingApp\Research\Database\Factories\ResearchRequestParsedLinkFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedLink newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedLink newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedLink onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedLink query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedLink whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedLink whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedLink whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedLink whereResearchRequestId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedLink whereResults($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedLink whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedLink whereUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedLink withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedLink withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperResearchRequestParsedLink {}
+}
+
+namespace AdvisingApp\Research\Models{
+/**
+ * 
+ *
+ * @property string $id
+ * @property string $research_request_id
+ * @property string $results
+ * @property string $search_query
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \AdvisingApp\Research\Models\ResearchRequest $researchRequest
+ * @method static \AdvisingApp\Research\Database\Factories\ResearchRequestParsedSearchResultsFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedSearchResults newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedSearchResults newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedSearchResults onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedSearchResults query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedSearchResults whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedSearchResults whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedSearchResults whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedSearchResults whereResearchRequestId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedSearchResults whereResults($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedSearchResults whereSearchQuery($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedSearchResults whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedSearchResults withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequestParsedSearchResults withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperResearchRequestParsedSearchResults {}
 }
 
 namespace AdvisingApp\Research\Models{
