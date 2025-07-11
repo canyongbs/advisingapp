@@ -42,7 +42,7 @@ use AdvisingApp\Ai\Models\QnaAdvisorFile;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
-use Filament\Actions\Action;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
