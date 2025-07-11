@@ -54,14 +54,14 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Notification;
 
-class EducatableCaseClosedNotification extends Notification implements ShouldQueue, HasBeforeSendHook
+class EducatableCaseUpdatedNotification extends Notification implements ShouldQueue, HasBeforeSendHook
 {
     use Queueable;
     use HandlesCaseTemplateContent;
 
     public function __construct(
         protected CaseModel $case,
-        protected ?CaseTypeEmailTemplate $emailTemplate,
+        public ?CaseTypeEmailTemplate $emailTemplate,
     ) {}
 
     /**
@@ -81,16 +81,15 @@ class EducatableCaseClosedNotification extends Notification implements ShouldQue
           ? $educatable->displayNameKey()
           : '';
 
-        $status = $this->case->status;
-
         $template = $this->emailTemplate;
 
         if (! $template) {
             return MailMessage::make()
                 ->settings($this->resolveNotificationSetting($notifiable))
-                ->subject("{$this->case->case_number} - is now {$status->name}")
-                ->greeting("Hi {$name},")
-                ->line("Your request {$this->case->case_number} for case is now {$status->name}.");
+                ->subject("There’s an update on your case {$this->case->case_number}")
+                ->greeting("Hello {$name},")
+                ->line("There’s been a new update to your case {$this->case->case_number}. Please check the latest details.")
+                ->action('View case', route('portal.case.show', $this->case));
         }
 
         $subject = $this->getSubject($template->subject);

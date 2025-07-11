@@ -54,7 +54,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Notification;
 
-class EducatableCaseClosedNotification extends Notification implements ShouldQueue, HasBeforeSendHook
+class EducatableCaseAssignedNotification extends Notification implements ShouldQueue, HasBeforeSendHook
 {
     use Queueable;
     use HandlesCaseTemplateContent;
@@ -81,16 +81,15 @@ class EducatableCaseClosedNotification extends Notification implements ShouldQue
           ? $educatable->displayNameKey()
           : '';
 
-        $status = $this->case->status;
-
         $template = $this->emailTemplate;
 
         if (! $template) {
             return MailMessage::make()
                 ->settings($this->resolveNotificationSetting($notifiable))
-                ->subject("{$this->case->case_number} - is now {$status->name}")
-                ->greeting("Hi {$name},")
-                ->line("Your request {$this->case->case_number} for case is now {$status->name}.");
+                ->subject("Your case {$this->case->case_number} has been assigned to agent")
+                ->greeting("Hello {$name},")
+                ->line("We’ve assigned an agent to your case {$this->case->case_number}. They will review it and follow up shortly.")
+                ->action('View case', route('portal.case.show', $this->case));
         }
 
         $subject = $this->getSubject($template->subject);
