@@ -65,6 +65,18 @@ trait AuditableManyToMany
         );
     }
 
+    /**
+     * @param mixed $name
+     * @param mixed $table
+     * @param mixed $foreignPivotKey
+     * @param mixed $relatedPivotKey
+     * @param mixed $parentKey
+     * @param mixed $relatedKey
+     * @param null|mixed $relationName
+     * @param mixed $inverse
+     *
+     * @return MorphToMany<covariant Model, covariant Model>
+     */
     protected function newMorphToMany(
         Builder $query,
         Model $parent,

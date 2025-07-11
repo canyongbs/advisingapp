@@ -32,7 +32,9 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/ declare(strict_types = 1);
+*/
+
+declare(strict_types = 1);
 
 $ignoreErrors = [];
 $ignoreErrors[] = [
@@ -1095,121 +1097,103 @@ $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, AdvisingApp\\\\Ai\\\\Models\\\\Prompt\\>\\:\\:isUpvoted\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 2,
-    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/PersonalAssistant.php',
+    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/InstitutionalAdvisor.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, AdvisingApp\\\\Ai\\\\Models\\\\Prompt\\>\\:\\:toggleUpvote\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/PersonalAssistant.php',
+    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/InstitutionalAdvisor.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, AdvisingApp\\\\Ai\\\\Models\\\\Prompt\\>\\:\\:upvotes\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/PersonalAssistant.php',
+    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/InstitutionalAdvisor.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Match expression does not handle remaining value\\: mixed$#',
-    'identifier' => 'match.unhandled',
-    'count' => 6,
-    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/PersonalAssistant.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Assistant\\\\Filament\\\\Pages\\\\PersonalAssistant\\:\\:customAssistants\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\Assistant\\\\Filament\\\\Pages\\\\InstitutionalAdvisor\\:\\:customAssistants\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/PersonalAssistant.php',
+    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/InstitutionalAdvisor.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Assistant\\\\Filament\\\\Pages\\\\PersonalAssistant\\:\\:getCanManageThreadsForms\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\Assistant\\\\Filament\\\\Pages\\\\InstitutionalAdvisor\\:\\:getCanManageThreadsForms\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/PersonalAssistant.php',
+    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/InstitutionalAdvisor.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Assistant\\\\Filament\\\\Pages\\\\PersonalAssistant\\:\\:getFolders\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\Assistant\\\\Filament\\\\Pages\\\\InstitutionalAdvisor\\:\\:getFolders\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/PersonalAssistant.php',
+    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/InstitutionalAdvisor.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Assistant\\\\Filament\\\\Pages\\\\PersonalAssistant\\:\\:getThreadsWithoutAFolder\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\Assistant\\\\Filament\\\\Pages\\\\InstitutionalAdvisor\\:\\:getThreadsWithoutAFolder\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/PersonalAssistant.php',
+    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/InstitutionalAdvisor.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Assistant\\\\Filament\\\\Pages\\\\PersonalAssistant\\:\\:selectThread\\(\\) has parameter \\$thread with no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\Assistant\\\\Filament\\\\Pages\\\\InstitutionalAdvisor\\:\\:selectThread\\(\\) has parameter \\$thread with no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/PersonalAssistant.php',
+    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/InstitutionalAdvisor.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Negated boolean expression is always false\\.$#',
     'identifier' => 'booleanNot.alwaysFalse',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/PersonalAssistant.php',
+    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/InstitutionalAdvisor.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$component of anonymous function has no typehint\\.$#',
     'identifier' => 'closure.parameterMissingTypehint',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/PersonalAssistant.php',
+    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/InstitutionalAdvisor.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$relations of method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<AdvisingApp\\\\Ai\\\\Models\\\\AiThreadFolder\\>\\:\\:with\\(\\) expects array\\<array\\|\\(Closure\\(Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\Relation\\<\\*, \\*, \\*\\>\\)\\: mixed\\)\\|string\\>\\|string, array\\{threads\\: Closure\\(Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\HasMany\\)\\: Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\HasMany\\} given\\.$#',
     'identifier' => 'argument.type',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/PersonalAssistant.php',
+    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/InstitutionalAdvisor.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$state of anonymous function has no typehint\\.$#',
     'identifier' => 'closure.parameterMissingTypehint',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/PersonalAssistant.php',
+    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/InstitutionalAdvisor.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#2 \\$state of anonymous function has no typehint\\.$#',
     'identifier' => 'closure.parameterMissingTypehint',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/PersonalAssistant.php',
+    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/InstitutionalAdvisor.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#3 \\$state of anonymous function has no typehint\\.$#',
     'identifier' => 'closure.parameterMissingTypehint',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/PersonalAssistant.php',
+    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/InstitutionalAdvisor.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\Assistant\\\\Filament\\\\Pages\\\\PersonalAssistant\\:\\:\\$assistantSwitcher has no type specified\\.$#',
-    'identifier' => 'missingType.property',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/PersonalAssistant.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\Assistant\\\\Filament\\\\Pages\\\\PersonalAssistant\\:\\:\\$assistantSwitcherMobile has no type specified\\.$#',
-    'identifier' => 'missingType.property',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/PersonalAssistant.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\Assistant\\\\Filament\\\\Pages\\\\PersonalAssistant\\:\\:\\$folders type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Property AdvisingApp\\\\Assistant\\\\Filament\\\\Pages\\\\InstitutionalAdvisor\\:\\:\\$folders type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/PersonalAssistant.php',
+    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/InstitutionalAdvisor.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\Assistant\\\\Filament\\\\Pages\\\\PersonalAssistant\\:\\:\\$threadsWithoutAFolder type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Property AdvisingApp\\\\Assistant\\\\Filament\\\\Pages\\\\InstitutionalAdvisor\\:\\:\\$threadsWithoutAFolder type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/PersonalAssistant.php',
+    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/InstitutionalAdvisor.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Using nullsafe property access on non\\-nullable type App\\\\Models\\\\User\\. Use \\-\\> instead\\.$#',
     'identifier' => 'nullsafe.neverNull',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/PersonalAssistant.php',
+    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/InstitutionalAdvisor.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Audit\\\\Actions\\\\Finders\\\\AuditableModels\\:\\:all\\(\\) return type with generic class Illuminate\\\\Support\\\\Collection does not specify its types\\: TKey, TValue$#',
@@ -8386,12 +8370,6 @@ $ignoreErrors[] = [
     'identifier' => 'assign.propertyType',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Actions/CompleteStudentDataImport.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Actions\\\\DeleteStudent\\:\\:execute\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Actions/DeleteStudent.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^If condition is always true\\.$#',

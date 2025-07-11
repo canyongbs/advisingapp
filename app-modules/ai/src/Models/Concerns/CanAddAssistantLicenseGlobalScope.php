@@ -45,12 +45,12 @@ trait CanAddAssistantLicenseGlobalScope
     protected static function addAssistantLicenseGlobalScope(): void
     {
         static::addGlobalScope('licensed', function (Builder $builder) {
-            if (! auth()->check()) {
+            if (! auth()->guard('web')->check()) {
                 return;
             }
 
             /** @var Authenticatable $user */
-            $user = auth()->user();
+            $user = auth()->guard('web')->user();
 
             if (! $user->hasLicense(LicenseType::ConversationalAi)) {
                 $builder->whereRaw('1 = 0');

@@ -52,7 +52,7 @@ class ManageCaseAssignment extends ManageRelatedRecords
     // TODO: Obsolete when there is no table, remove from Filament
     protected static string $relationship = 'assignedTo';
 
-    protected static ?string $navigationLabel = 'Case Assignments';
+    protected static ?string $navigationLabel = 'Assignments';
 
     protected static ?string $breadcrumb = 'Assignments';
 

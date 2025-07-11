@@ -37,7 +37,7 @@
 namespace AdvisingApp\Ai\Jobs;
 
 use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Assistant\Filament\Pages\PersonalAssistant;
+use AdvisingApp\Assistant\Filament\Pages\InstitutionalAdvisor;
 use App\Models\User;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
@@ -106,7 +106,7 @@ class CloneAiThread implements ShouldQueue
                 ->actions([
                     Action::make('view')
                         ->link()
-                        ->url(PersonalAssistant::getUrl(['thread' => $threadReplica->getKey()])),
+                        ->url(InstitutionalAdvisor::getUrl(['thread' => $threadReplica->getKey()])),
                 ])
                 ->sendToDatabase($this->recipient);
 

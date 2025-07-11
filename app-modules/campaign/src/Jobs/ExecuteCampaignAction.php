@@ -99,34 +99,35 @@ class ExecuteCampaignAction implements ShouldQueue, ShouldBeUnique
                     $this->action->campaign->segment->model->instance()->getKeyName(),
                 )
                 ->each(function (Model $educatable) {
-                    throw_if(
-                        ! $educatable instanceof Educatable,
-                        new Exception('Educatable is not an instance of ' . Educatable::class)
-                    );
+                    try {
+                        assert($educatable instanceof Educatable);
 
-                    $campaignActionEducatable = CampaignActionEducatable::query()
-                        ->where([
-                            'campaign_action_id' => $this->action->getKey(),
-                            'educatable_id' => $educatable->getKey(),
-                            'educatable_type' => $educatable->getMorphClass(),
-                        ])
-                        ->first();
+                        $campaignActionEducatable = CampaignActionEducatable::query()
+                            ->where([
+                                'campaign_action_id' => $this->action->getKey(),
+                                'educatable_id' => $educatable->getKey(),
+                                'educatable_type' => $educatable->getMorphClass(),
+                            ])
+                            ->first();
 
-                    if (! $campaignActionEducatable) {
-                        $campaignActionEducatable = new CampaignActionEducatable();
-                        $campaignActionEducatable->educatable()->associate($educatable);
-                        $campaignActionEducatable->campaignAction()->associate($this->action);
-                        $campaignActionEducatable->save();
+                        if (! $campaignActionEducatable) {
+                            $campaignActionEducatable = new CampaignActionEducatable();
+                            $campaignActionEducatable->educatable()->associate($educatable);
+                            $campaignActionEducatable->campaignAction()->associate($this->action);
+                            $campaignActionEducatable->save();
+                        }
+
+                        $this
+                            ->batch()
+                            ->add(
+                                $this
+                                    ->action
+                                    ->type
+                                    ->getActionExecutionJob($campaignActionEducatable)
+                            );
+                    } catch (Exception $exception) {
+                        report($exception);
                     }
-
-                    $this
-                        ->batch()
-                        ->add(
-                            $this
-                                ->action
-                                ->type
-                                ->getActionExecutionJob($campaignActionEducatable)
-                        );
                 });
         } finally {
             // Reset the Auth user to avoid issues with subsequent jobs

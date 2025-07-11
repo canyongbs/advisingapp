@@ -47,6 +47,7 @@ use AdvisingApp\Ai\Services\Contracts\AiServiceLifecycleHooks;
 use AdvisingApp\Team\Models\Team;
 use App\Models\Scopes\WithoutSuperAdmin;
 use App\Models\User;
+use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\StaticAction;
 use Filament\Forms\Components\Radio;
@@ -73,8 +74,16 @@ trait CanManageThreads
 
     public ?string $selectedThreadId = null;
 
+    /**
+     * @phpstan-ignore-next-line
+     * This doesn't seem to be used at this point.
+     */
     public $assistantSwitcher = null;
 
+    /**
+     * @phpstan-ignore-next-line
+     * This doesn't seem to be used at this point.
+     */
     public $assistantSwitcherMobile = null;
 
     #[Locked]
@@ -355,12 +364,14 @@ trait CanManageThreads
                     ->label(fn (Get $get): string => match ($get('targetType')) {
                         AiThreadShareTarget::Team->value => 'Select Teams',
                         AiThreadShareTarget::User->value => 'Select Users',
+                        default => throw new Exception('Target type is not valid.')
                     })
                     ->visible(fn (Get $get): bool => filled($get('targetType')))
                     ->options(function (Get $get): Collection {
                         return match ($get('targetType')) {
                             AiThreadShareTarget::Team->value => Team::orderBy('name')->pluck('name', 'id'),
                             AiThreadShareTarget::User->value => User::tap(new WithoutSuperAdmin())->whereKeyNot(auth()->id())->orderBy('name')->pluck('name', 'id'),
+                            default => throw new Exception('Target type is not valid.')
                         };
                     })
                     ->searchable()
@@ -370,6 +381,7 @@ trait CanManageThreads
                         fn (Get $get) => match ($get('targetType')) {
                             AiThreadShareTarget::User->value => new RestrictSuperAdmin('clone'),
                             AiThreadShareTarget::Team->value => null,
+                            default => throw new Exception('Target type not valid.')
                         },
                     ]),
             ])
@@ -411,12 +423,14 @@ trait CanManageThreads
                     ->label(fn (Get $get): string => match ($get('targetType')) {
                         AiThreadShareTarget::Team->value => 'Select Teams',
                         AiThreadShareTarget::User->value => 'Select Users',
+                        default => throw new Exception('Target type is not valid.')
                     })
                     ->visible(fn (Get $get): bool => filled($get('targetType')))
                     ->options(function (Get $get): Collection {
                         return match ($get('targetType')) {
                             AiThreadShareTarget::Team->value => Team::orderBy('name')->pluck('name', 'id'),
                             AiThreadShareTarget::User->value => User::tap(new WithoutSuperAdmin())->orderBy('name')->pluck('name', 'id'),
+                            default => throw new Exception('Target type is not valid.')
                         };
                     })
                     ->searchable()
@@ -426,6 +440,7 @@ trait CanManageThreads
                         fn (Get $get) => match ($get('targetType')) {
                             AiThreadShareTarget::User->value => new RestrictSuperAdmin('email'),
                             AiThreadShareTarget::Team->value => null,
+                            default => throw new Exception('Target type is not valid.')
                         },
                     ]),
             ])

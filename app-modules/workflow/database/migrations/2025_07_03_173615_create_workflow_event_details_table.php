@@ -34,47 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Filament\Pages;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Ai\Enums\AiAssistantApplication;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageConsent;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageFolders;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManagePromptLibrary;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageThreads;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanUploadFiles;
-use AdvisingApp\Authorization\Enums\LicenseType;
-use App\Models\User;
-use Filament\Pages\Page;
-
-class PersonalAssistant extends Page
-{
-    use CanManageConsent;
-    use CanManageFolders;
-    use CanManagePromptLibrary;
-    use CanManageThreads;
-    use CanUploadFiles;
-
-    public const APPLICATION = AiAssistantApplication::PersonalAssistant;
-
-    protected static string $view = 'assistant::filament.pages.personal-assistant';
-
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
-
-    protected static ?string $navigationLabel = 'Institutional Advisor';
-
-    protected static ?string $modelLabel = 'Institutional Advisor';
-
-    protected static ?int $navigationSort = 10;
-
-    public static function canAccess(): bool
+return new class () extends Migration {
+    public function up(): void
     {
-        /** @var User $user */
-        $user = auth()->user();
+        Schema::create('workflow_event_details', function (Blueprint $table) {
+            $table->uuid('id')->primary();
 
-        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
-            return false;
-        }
+            $table->foreignUuid('event_id')->nullable()->constrained('events');
+            $table->foreignUuid('workflow_step_id')->constrained('workflow_steps');
 
-        return $user->can(['assistant.view-any', 'assistant.*.view']);
+            $table->timestamps();
+            $table->softDeletes();
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::dropIfExists('workflow_event_details');
+    }
+};

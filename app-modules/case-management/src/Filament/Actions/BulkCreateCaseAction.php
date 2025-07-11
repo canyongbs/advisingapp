@@ -37,9 +37,11 @@
 namespace AdvisingApp\CaseManagement\Filament\Actions;
 
 use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
+use AdvisingApp\CaseManagement\Enums\CaseTypeAssignmentTypes;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Models\CasePriority;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
+use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -47,9 +49,10 @@ use App\Models\User;
 use Exception;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Tables\Actions\BulkAction;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -68,16 +71,18 @@ class BulkCreateCaseAction
                     ->model(CaseModel::class)
                     ->default(
                         fn () => auth()->user()->team?->division?->getKey()
-                               ?? Division::query()
-                                   ->where('is_default', true)
-                                   ->first()
-                                   ?->getKey()
+                            ?? Division::query()
+                                ->where('is_default', true)
+                                ->first()
+                                ?->getKey()
                     )
                     ->label('Division')
                     ->visible(function () {
-                        return Division::query()->where('is_default', false)->exists();
+                        $divisionCount = Division::count();
+                        $hasDefault = Division::where('is_default', true)->exists();
+
+                        return $divisionCount > 1 && ! $hasDefault;
                     })
-                    ->dehydratedWhenHidden()
                     ->required()
                     ->exists((new Division())->getTable(), 'id'),
                 Select::make('status_id')
@@ -87,23 +92,56 @@ class BulkCreateCaseAction
                     ->label('Status')
                     ->required()
                     ->exists((new CaseStatus())->getTable(), 'id'),
+                Select::make('type_id')
+                    ->options(CaseType::pluck('name', 'id'))
+                    ->afterStateUpdated(function (Set $set) {
+                        $set('priority_id', null);
+                        $set('assigned_to_id', null);
+                    })
+                    ->label('Type')
+                    ->required()
+                    ->live()
+                    ->exists(CaseType::class, 'id'),
                 Select::make('priority_id')
-                    ->relationship(
-                        name: 'priority',
-                        titleAttribute: 'name',
-                        modifyQueryUsing: fn (Builder $query) => $query->orderBy('order'),
+                    ->options(
+                        fn (Get $get) => CasePriority::query()
+                            ->where('type_id', $get('type_id'))
+                            ->orderBy('order')
+                            ->pluck('name', 'id')
                     )
-                    ->model(CaseModel::class)
                     ->label('Priority')
                     ->required()
-                    ->exists((new CasePriority())->getTable(), 'id'),
+                    ->exists((new CasePriority())->getTable(), 'id')
+                    ->visible(fn (Get $get): bool => filled($get('type_id'))),
                 Select::make('assigned_to_id')
-                    ->relationship('assignedTo.user', 'name')
-                    ->model(CaseModel::class)
-                    ->searchable()
                     ->label('Assign Case to')
-                    ->nullable()
-                    ->exists((new User())->getTable(), 'id'),
+                    ->options(function (Get $get) {
+                        $caseTypeId = $get('type_id');
+
+                        if (! $caseTypeId) {
+                            return [];
+                        }
+
+                        $caseType = CaseType::find($caseTypeId);
+
+                        if (! $caseType) {
+                            return [];
+                        }
+
+                        $managers = User::query()
+                            ->whereHas('team.manageableCaseTypes', fn ($q) => $q->where('case_types.id', $caseTypeId))
+                            ->pluck('name', 'id')
+                            ->toArray();
+
+                        if ($caseType->assignment_type !== CaseTypeAssignmentTypes::None) {
+                            return ['automatic' => 'Automatic Assignment'] + $managers;
+                        }
+
+                        return $managers;
+                    })
+                    ->searchable()
+                    ->preload()
+                    ->required(),
                 Textarea::make('close_details')
                     ->label('Close Details/Description')
                     ->nullable()
@@ -119,22 +157,28 @@ class BulkCreateCaseAction
 
                     $records->each(function ($record) use ($data) {
                         throw_unless($record instanceof Student || $record instanceof Prospect, new Exception('Record must be of type student or prospect.'));
+
                         $case = $record->cases()->create([
                             'close_details' => $data['close_details'],
                             'res_details' => $data['res_details'],
-                            'division_id' => $data['division_id'],
+                            'division_id' => $data['division_id'] ?? Division::where('is_default', true)->value('id') ?? Division::first()->getKey(),
                             'status_id' => $data['status_id'],
                             'priority_id' => $data['priority_id'],
                             'created_by_id' => auth()->user()->getKey(),
                         ]);
 
                         if (isset($data['assigned_to_id'])) {
-                            $case->assignments()->create([
-                                'user_id' => $data['assigned_to_id'],
-                                'assigned_by_id' => auth()->user()->getKey(),
-                                'assigned_at' => now(),
-                                'status' => CaseAssignmentStatus::Active,
-                            ]);
+                            if ($data['assigned_to_id'] === 'automatic') {
+                                $assignmentClass = $case->priority->type->assignment_type->getAssignerClass();
+                                $assignmentClass->execute($case);
+                            } else {
+                                $case->assignments()->create([
+                                    'user_id' => $data['assigned_to_id'],
+                                    'assigned_by_id' => auth()->user()->getKey(),
+                                    'assigned_at' => now(),
+                                    'status' => CaseAssignmentStatus::Active,
+                                ]);
+                            }
                         }
                     });
 

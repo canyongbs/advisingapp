@@ -46,7 +46,7 @@ use AdvisingApp\Ai\Models\AiThreadFolder;
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Models\PromptUpvote;
 use AdvisingApp\Ai\Models\PromptUse;
-use AdvisingApp\Assistant\Filament\Pages\PersonalAssistant;
+use AdvisingApp\Assistant\Filament\Pages\InstitutionalAdvisor;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Consent\Enums\ConsentAgreementType;
 use AdvisingApp\Consent\Models\ConsentAgreement;
@@ -106,7 +106,7 @@ it('renders successfully', function () {
 
     asSuperAdmin();
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->assertStatus(200);
 });
 
@@ -119,13 +119,13 @@ it('is properly gated with access control', function () {
 
     actingAs($user);
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->assertStatus(403);
 
     $user->givePermissionTo('assistant.view-any');
     $user->givePermissionTo('assistant.*.view');
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->assertStatus(200);
 });
 
@@ -134,7 +134,7 @@ it('will show a consent modal if the user has not yet agreed to the terms and co
         hasUserConsented: false,
     );
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->assertSet('isConsented', false)
         ->assertSee($consentAgreement->title)
         ->assertSeeHtml(str($consentAgreement->description)->markdown()->sanitizeHtml()->toHtmlString())
@@ -144,7 +144,7 @@ it('will show a consent modal if the user has not yet agreed to the terms and co
 it('will show the AI Assistant interface if the user has agreed to the terms and conditions of use', function () use ($setUp) {
     ['consentAgreement' => $consentAgreement] = $setUp();
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->assertSet('isConsented', true)
         ->assertDontSee($consentAgreement->title)
         ->assertDontSee($consentAgreement->description)
@@ -156,7 +156,7 @@ it('will redirect the user back to the dashboard if they dismiss the consent mod
         hasUserConsented: false,
     );
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->call('denyConsent')
         ->assertRedirect(Dashboard::getUrl());
 });
@@ -168,7 +168,7 @@ it('will allow a user to access the AI Assistant interface if they agree to the 
 
     expect($user->hasConsentedTo($consentAgreement))->toBeFalse();
 
-    $livewire = Livewire::test(PersonalAssistant::class);
+    $livewire = Livewire::test(InstitutionalAdvisor::class);
 
     $livewire
         ->assertSet('isConsented', false)
@@ -188,7 +188,7 @@ it('will allow a user to access the AI Assistant interface if they agree to the 
 it('will automatically set the current thread when it does not have a folder', function () use ($setUp) {
     ['thread' => $thread] = $setUp();
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->call('loadFirstThread')
         ->assertSet('thread.id', $thread->id);
 });
@@ -204,7 +204,7 @@ it('will automatically set the current thread to the most recently updated one w
             'updated_at' => now()->addMinute(),
         ]);
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->call('loadFirstThread')
         ->assertSet('thread.id', $newerThread->id);
 });
@@ -217,7 +217,7 @@ it('will not automatically set the current thread to one with a folder', functio
     ]));
     $thread->save();
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->call('loadFirstThread')
         ->assertNotSet('thread.id', $thread->id);
 });
@@ -228,7 +228,7 @@ it('will not automatically set the current thread to one belonging to another us
     $thread->user()->associate(User::factory()->create());
     $thread->save();
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->call('loadFirstThread')
         ->assertNotSet('thread.id', $thread->id);
 });
@@ -267,7 +267,7 @@ it('can select a thread', function () use ($setUp) {
         ->has(AiMessage::factory()->count(5), 'messages')
         ->create();
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->call('loadFirstThread')
         ->assertSet('thread.id', $thread->id)
         ->call('selectThread', $newThread->toArray())
@@ -286,7 +286,7 @@ it('can not select a thread belonging to a different user', function () use ($se
         ->has(AiMessage::factory()->count(5), 'messages')
         ->create();
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->call('loadFirstThread')
         ->assertSet('thread.id', $thread->id)
         ->call('selectThread', $newThread->toArray())
@@ -296,7 +296,7 @@ it('can not select a thread belonging to a different user', function () use ($se
 it('can start a new thread', function () use ($setUp) {
     ['thread' => $thread] = $setUp();
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->call('loadFirstThread')
         ->assertSet('thread.id', $thread->id)
         ->call('createThread')
@@ -306,7 +306,7 @@ it('can start a new thread', function () use ($setUp) {
 it('can create a folder', function () use ($setUp) {
     ['user' => $user] = $setUp();
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->callAction('newFolder', [
             'name' => $name = AiThreadFolder::factory()->make()->name,
         ])
@@ -321,7 +321,7 @@ it('can create a folder', function () use ($setUp) {
 it('can not create a folder without a name', function () use ($setUp) {
     $setUp();
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->callAction('newFolder', [
             'name' => null,
         ])
@@ -337,7 +337,7 @@ it('can not create a folder with a duplicate name', function () use ($setUp) {
             'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->callAction('newFolder', [
             'name' => $folder->name,
         ])
@@ -353,7 +353,7 @@ it('can create a folder with a duplicate name but belonging to a different user'
             'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->callAction('newFolder', [
             'name' => $folder->name,
         ])
@@ -374,7 +374,7 @@ it('can rename a folder', function () use ($setUp) {
             'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->callAction('renameFolder', [
             'name' => $name = AiThreadFolder::factory()->make()->name,
         ], arguments: [
@@ -397,7 +397,7 @@ it('can not rename a folder without a name', function () use ($setUp) {
             'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->callAction('renameFolder', [
             'name' => null,
         ], arguments: [
@@ -421,7 +421,7 @@ it('can not rename a folder with a duplicate name', function () use ($setUp) {
             'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->callAction('renameFolder', [
             'name' => $otherFolder->name,
         ], arguments: [
@@ -445,7 +445,7 @@ it('can rename a folder with a duplicate name but belonging to a different user'
             'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->callAction('renameFolder', [
             'name' => $otherFolder->name,
         ], arguments: [
@@ -470,7 +470,7 @@ it('can not rename a folder belonging to a different user', function () use ($se
 
     $oldFolderName = $folder->name;
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->callAction('renameFolder', [
             'name' => $newFolderName = AiThreadFolder::factory()->make()->name,
         ], arguments: [
@@ -495,7 +495,7 @@ it('can delete a folder', function () use ($setUp) {
             'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->callAction('deleteFolder', arguments: [
             'folder' => $folder->getKey(),
         ]);
@@ -514,7 +514,7 @@ it('can not delete a folder belonging to a different user', function () use ($se
             'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->callAction('deleteFolder', arguments: [
             'folder' => $folder->getKey(),
         ]);
@@ -533,7 +533,7 @@ it('can move a thread in to a folder', function () use ($setUp) {
             'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->callAction('moveThread', [
             'folder' => $folder->getKey(),
         ], arguments: [
@@ -564,7 +564,7 @@ it('can move a thread between folders', function () use ($setUp) {
             'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->callAction('moveThread', [
             'folder' => $newFolder->getKey(),
         ], arguments: [
@@ -589,7 +589,7 @@ it('can move a thread out of a folder', function () use ($setUp) {
     $thread->folder()->associate($folder);
     $thread->save();
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->callAction('moveThread', [
             'folder' => null,
         ], arguments: [
@@ -614,7 +614,7 @@ it('can not move a thread belonging to a different user in to a folder', functio
             'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->callAction('moveThread', [
             'folder' => $folder->getKey(),
         ], arguments: [
@@ -636,7 +636,7 @@ it('can not move a thread in to a folder belonging to a different user', functio
             'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->callAction('moveThread', [
             'folder' => $folder->getKey(),
         ], arguments: [
@@ -658,7 +658,7 @@ it('can move a thread in to a folder with drag and drop', function () use ($setU
             'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->call('movedThread', $thread->getKey(), $folder->getKey())
         ->assertOk();
 
@@ -686,7 +686,7 @@ it('can move a thread between folders with drag and drop', function () use ($set
             'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->call('movedThread', $thread->getKey(), $newFolder->getKey())
         ->assertOk();
 
@@ -708,7 +708,7 @@ it('can move a thread out of a folder with drag and drop', function () use ($set
     $thread->folder()->associate($folder);
     $thread->save();
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->call('movedThread', $thread->getKey(), null)
         ->assertOk();
 
@@ -730,7 +730,7 @@ it('can not move a thread belonging to a different user in to a folder with drag
             'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->call('movedThread', $thread->getKey(), $folder->getKey())
         ->assertOk();
 
@@ -749,7 +749,7 @@ it('can not move a thread in to a folder belonging to a different user with drag
             'application' => AiAssistantApplication::PersonalAssistant,
         ]);
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->call('movedThread', $thread->getKey(), $folder->getKey())
         ->assertOk();
 
@@ -762,7 +762,7 @@ it('can not move a thread in to a folder belonging to a different user with drag
 it('can delete a thread', function () use ($setUp) {
     ['thread' => $thread] = $setUp();
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->callAction('deleteThread', arguments: [
             'thread' => $thread->getKey(),
         ]);
@@ -778,7 +778,7 @@ it('can not delete a thread belonging to a different user', function () use ($se
         ->for(User::factory()->create())
         ->create();
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->callAction('deleteThread', arguments: [
             'thread' => $threadBelongingToAnotherUser->getKey(),
         ]);
@@ -798,7 +798,7 @@ it('can insert a prompt from the library', function () use ($setUp) {
         'user_id' => $user->getKey(),
     ]);
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->callAction('insertFromPromptLibrary', [
             'isSmart' => 0,
             'promptId' => $prompt->getKey(),
@@ -815,7 +815,7 @@ it('can insert a prompt from the library', function () use ($setUp) {
 it('can not insert a missing prompt from the library', function () use ($setUp) {
     $setUp();
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->callAction('insertFromPromptLibrary', [
             'isSmart' => 0,
             'promptId' => null,
@@ -833,7 +833,7 @@ it('can upvote a prompt from the library while inserting it', function () use ($
         'user_id' => $user->getKey(),
     ]);
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->mountAction('insertFromPromptLibrary')
         ->setActionData([
             'isSmart' => 0,
@@ -858,7 +858,7 @@ it('can remove upvote from a prompt from the library while inserting it', functi
         'user_id' => $user->getKey(),
     ]);
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->mountAction('insertFromPromptLibrary')
         ->setActionData([
             'isSmart' => 0,
@@ -875,7 +875,7 @@ it('can remove upvote from a prompt from the library while inserting it', functi
 it('can rename a thread', function () use ($setUp) {
     ['thread' => $thread] = $setUp();
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->callAction('editThread', [
             'name' => $name = AiThread::factory()->make()->name,
         ], arguments: [
@@ -892,7 +892,7 @@ it('can rename a thread', function () use ($setUp) {
 it('can not rename a thread without a name', function () use ($setUp) {
     ['thread' => $thread] = $setUp();
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->callAction('editThread', [
             'name' => null,
         ], arguments: [
@@ -909,7 +909,7 @@ it('can not rename a thread belonging to a different user', function () use ($se
 
     $oldThreadName = $thread->name;
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->callAction('editThread', [
             'name' => $newThreadName = AiThread::factory()->make()->name,
         ], arguments: [
@@ -933,7 +933,7 @@ it('can clone a thread to a user', function () use ($setUp) {
 
     $otherUser = User::factory()->create();
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->callAction('cloneThread', [
             'targetType' => AiThreadShareTarget::User,
             'targetIds' => [$otherUser->getKey()],
@@ -970,7 +970,7 @@ it('can clone a thread to a team', function () use ($setUp) {
 
     $team = Team::factory()->create();
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->callAction('cloneThread', [
             'targetType' => AiThreadShareTarget::Team,
             'targetIds' => [$team->getKey()],
@@ -1005,7 +1005,7 @@ it('can not clone a thread without a target type', function () use ($setUp) {
 
     $otherUser = User::factory()->create();
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->callAction('cloneThread', [
             'targetType' => null,
             'targetIds' => [$otherUser->getKey()],
@@ -1018,7 +1018,7 @@ it('can not clone a thread without a target type', function () use ($setUp) {
 it('can not clone a thread without any targets', function () use ($setUp) {
     ['thread' => $thread] = $setUp();
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->callAction('cloneThread', [
             'targetType' => AiThreadShareTarget::User,
             'targetIds' => [],
@@ -1038,7 +1038,7 @@ it('can not clone a thread belonging to a different user', function () use ($set
 
     $otherUser = User::factory()->create();
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->callAction('cloneThread', [
             'targetType' => AiThreadShareTarget::User,
             'targetIds' => [$otherUser->getKey()],
@@ -1056,7 +1056,7 @@ it('can email a thread to a user', function () use ($setUp) {
 
     $otherUser = User::factory()->create();
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->callAction('emailThread', [
             'targetType' => AiThreadShareTarget::User->value,
             'targetIds' => [$otherUser->getKey()],
@@ -1093,7 +1093,7 @@ it('can email a thread to a team', function () use ($setUp) {
 
     $team = Team::factory()->create();
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->callAction('emailThread', [
             'targetType' => AiThreadShareTarget::Team->value,
             'targetIds' => [$team->getKey()],
@@ -1128,7 +1128,7 @@ it('can not email a thread without a target type', function () use ($setUp) {
 
     $otherUser = User::factory()->create();
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->callAction('emailThread', [
             'targetType' => null,
             'targetIds' => [$otherUser->getKey()],
@@ -1141,7 +1141,7 @@ it('can not email a thread without a target type', function () use ($setUp) {
 it('can not email a thread without any targets', function () use ($setUp) {
     ['thread' => $thread] = $setUp();
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->callAction('emailThread', [
             'targetType' => AiThreadShareTarget::User->value,
             'targetIds' => [],
@@ -1161,7 +1161,7 @@ it('can not email a thread belonging to a different user', function () use ($set
 
     $otherUser = User::factory()->create();
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->callAction('emailThread', [
             'targetType' => AiThreadShareTarget::User->value,
             'targetIds' => [$otherUser->getKey()],
@@ -1179,7 +1179,7 @@ it('can not email a thread to a super admin', function () use ($setUp) {
 
     $superAdmin->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->callAction('emailThread', [
             'targetType' => AiThreadShareTarget::User->value,
             'targetIds' => [$superAdmin->getKey()],
@@ -1196,7 +1196,7 @@ it('can not clone a thread to a super admin', function () use ($setUp) {
 
     $superAdmin->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->callAction('cloneThread', [
             'targetType' => AiThreadShareTarget::User,
             'targetIds' => [$superAdmin->getKey()],
@@ -1213,7 +1213,7 @@ test('super admin users do not show up in email user search', function () use ($
 
     $superAdmin->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->mountAction('emailThread')
         ->assertFormFieldExists('targetIds', 'mountedActionForm', function (Select $select) use ($superAdmin) {
             $options = $select->getOptions();
@@ -1230,7 +1230,7 @@ test('super admin users do not show up in clone user search', function () use ($
 
     $superAdmin->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
 
-    Livewire::test(PersonalAssistant::class)
+    Livewire::test(InstitutionalAdvisor::class)
         ->mountAction('cloneThread')
         ->assertFormFieldExists('targetIds', 'mountedActionForm', function (Select $select) use ($superAdmin) {
             $options = $select->getOptions();
