@@ -43,7 +43,9 @@ expect()->extend('toHaveDefaultsForAllProperties', function (): ArchExpectation 
     return Targeted::make(
         // @phpstan-ignore-next-line
         $this,
-        fn (ObjectDescription $object): bool => collect($object->reflectionClass->getProperties())->every(fn ($property) => $property->hasDefaultValue()),
+        fn (ObjectDescription $object): bool => collect($object->reflectionClass->getProperties())
+            ->filter(fn ($property) => $property->getDeclaringClass()->getName() == $object->reflectionClass->getName())
+            ->every(fn ($property) => $property->hasDefaultValue()),
         'to have default for all properties',
         FileLineFinder::where(fn (string $line): bool => str_contains($line, 'class')),
     );
