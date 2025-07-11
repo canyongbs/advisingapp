@@ -58,7 +58,7 @@ class ExecuteWorkflowActionJob implements ShouldQueue
             $step->save();
 
             try {
-                $actionStep = WorkflowStep::whereDetailsType($step->details_type)->whereDetailsId($step->details_id)->first()->workflowAction->getNewModel();
+                //$actionStep = WorkflowStep::whereDetailsType($step->details_type)->whereDetailsId($step->details_id)->first()->workflowAction->getNewModel();
                 //execute action; save related model into WorkflowRunStepRelated
                 //strip id and timestamps out to get array to use to create model?
 
