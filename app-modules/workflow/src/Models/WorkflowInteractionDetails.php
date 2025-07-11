@@ -37,9 +37,11 @@
 namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Workflow\Models\Contracts\WorkflowAction;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -72,6 +74,11 @@ class WorkflowInteractionDetails extends BaseModel implements Auditable, Workflo
         'start_datetime' => 'datetime',
         'end_datetime' => 'datetime',
     ];
+
+    public function getNewModel(): Interaction
+    {
+      return new Interaction();
+    }
 
     /**
      * @return BelongsTo<WorkflowStep, $this>
