@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Research\Models;
 
+use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Research\Database\Factories\ResearchRequestFactory;
 use App\Models\BaseModel;
 use App\Models\User;
@@ -62,11 +63,13 @@ class ResearchRequest extends BaseModel implements HasMedia
         'user_id',
         'finished_at',
         'links',
+        'research_model',
     ];
 
     protected $casts = [
         'finished_at' => 'immutable_datetime',
         'links' => 'array',
+        'research_model' => AiModel::class,
     ];
 
     /**
@@ -110,5 +113,29 @@ class ResearchRequest extends BaseModel implements HasMedia
     {
         $this->addMediaCollection('files')
             ->acceptsMimeTypes(config('ai.supported_file_types'));
+    }
+
+    /**
+     * @return HasMany<ResearchRequestParsedFile, $this>
+     */
+    public function parsedFiles(): HasMany
+    {
+        return $this->hasMany(ResearchRequestParsedFile::class);
+    }
+
+    /**
+     * @return HasMany<ResearchRequestParsedLink, $this>
+     */
+    public function parsedLinks(): HasMany
+    {
+        return $this->hasMany(ResearchRequestParsedLink::class);
+    }
+
+    /**
+     * @return HasMany<ResearchRequestParsedSearchResults, $this>
+     */
+    public function parsedSearchResults(): HasMany
+    {
+        return $this->hasMany(ResearchRequestParsedSearchResults::class);
     }
 }

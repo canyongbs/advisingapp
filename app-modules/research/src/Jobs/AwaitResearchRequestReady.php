@@ -34,43 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Research\Actions;
+namespace AdvisingApp\Research\Jobs;
 
-use AdvisingApp\Research\Jobs\AwaitResearchRequestReady;
-use AdvisingApp\Research\Jobs\FetchResearchRequestLinkParsingResults;
-use AdvisingApp\Research\Jobs\GenerateResearchRequestSearchQueries;
-use AdvisingApp\Research\Jobs\UploadResearchRequestFileForParsing;
 use AdvisingApp\Research\Models\ResearchRequest;
-use Illuminate\Support\Facades\Bus;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Illuminate\Bus\Batchable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\SerializesModels;
 
-class StartResearch
+class AwaitResearchRequestReady implements ShouldQueue
 {
-    public function execute(ResearchRequest $researchRequest): void
+    use Batchable;
+    use Queueable;
+    use SerializesModels;
+
+    public int $timeout = 600;
+
+    public int $tries = 60;
+
+    public function __construct(
+        protected ResearchRequest $researchRequest,
+    ) {}
+
+    public function handle(): void
     {
-        Bus::chain([
-            Bus::batch([
-                ...$researchRequest->getMedia('files')->map(function (Media $media): UploadResearchRequestFileForParsing {
-                    return app(UploadResearchRequestFileForParsing::class, [
-                        'media' => $media,
-                    ]);
-                })->all(),
-                ...array_map(
-                    function (string $link) use ($researchRequest): FetchResearchRequestLinkParsingResults {
-                        return app(FetchResearchRequestLinkParsingResults::class, [
-                            'researchRequest' => $researchRequest,
-                            'link' => $link,
-                        ]);
-                    },
-                    $researchRequest->links,
-                ),
-                app(GenerateResearchRequestSearchQueries::class, [
-                    'researchRequest' => $researchRequest,
-                ]),
-            ]),
-            app(AwaitResearchRequestReady::class, [
-                'researchRequest' => $researchRequest,
-            ]),
-        ])->dispatch();
+        $isReady = $this->researchRequest->research_model
+            ->getService()
+            ->isResearchRequestReady($this->researchRequest);
+
+        if ($isReady) {
+            return;
+        }
+
+        $this->release(delay: 5);
     }
 }

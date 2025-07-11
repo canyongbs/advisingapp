@@ -50,16 +50,20 @@ use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Assistants\AssistantsDataT
 use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Threads\ThreadsDataTransferObject;
 use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeDisabled;
 use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeEnabled;
+use AdvisingApp\IntegrationOpenAi\Models\OpenAiResearchRequestVectorStore;
 use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
+use AdvisingApp\Research\Models\ResearchRequest;
 use Carbon\CarbonImmutable;
 use Closure;
 use Exception;
 use Generator;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use Prism\Prism\Contracts\Message;
 use Prism\Prism\Contracts\Schema;
 use Prism\Prism\Enums\ChunkType;
@@ -472,6 +476,191 @@ abstract class BaseOpenAiResponsesService implements AiService
     public function getDeploymentHash(): string
     {
         return md5($this->getDeployment());
+    }
+
+    public function isResearchRequestReady(ResearchRequest $researchRequest): bool
+    {
+        $vectorStore = $this->findOrCreateVectorStoreRecordForResearchRequest($researchRequest);
+
+        if ($vectorStore->ready_until?->isFuture()) {
+            return true;
+        }
+
+        if (($isResearchRequestReady = $this->isResearchRequestReadyInExistingVectorStore($researchRequest, $vectorStore)) !== null) {
+            return $isResearchRequestReady;
+        }
+
+        $this->createVectorStoreForResearchRequest($researchRequest, $vectorStore);
+
+        return false;
+    }
+
+    protected function findOrCreateVectorStoreRecordForResearchRequest(ResearchRequest $researchRequest): OpenAiResearchRequestVectorStore
+    {
+        $deploymentHash = $this->getDeploymentHash();
+
+        $vectorStore = OpenAiResearchRequestVectorStore::query()
+            ->whereBelongsTo($researchRequest)
+            ->where('deployment_hash', $deploymentHash)
+            ->first();
+
+        if ($vectorStore) {
+            return $vectorStore;
+        }
+
+        $vectorStore = new OpenAiResearchRequestVectorStore();
+        $vectorStore->researchRequest()->associate($researchRequest);
+        $vectorStore->deployment_hash = $deploymentHash;
+
+        return $vectorStore;
+    }
+
+    protected function isResearchRequestReadyInExistingVectorStore(ResearchRequest $researchRequest, OpenAiResearchRequestVectorStore $vectorStore): ?bool
+    {
+        if (blank($vectorStore->vector_store_id)) {
+            return null;
+        }
+
+        $getVectorStoreResponse = $this->vectorStoresHttpClient()
+            ->get("vector_stores/{$vectorStore->vector_store_id}");
+
+        $hasVectorStoreCompletedAllFiles = $getVectorStoreResponse->successful()
+            && ($getVectorStoreResponse->json('status') === 'completed')
+            && $getVectorStoreResponse->json('file_counts.completed')
+            && ($getVectorStoreResponse->json('file_counts.completed') === $getVectorStoreResponse->json('file_counts.total'));
+
+        $isVectorStoreProcessingFiles = $getVectorStoreResponse->successful()
+            && ($getVectorStoreResponse->json('status') === 'in_progress')
+            && $getVectorStoreResponse->json('file_counts.in_progress');
+
+        if ((! $hasVectorStoreCompletedAllFiles) && $isVectorStoreProcessingFiles) {
+            return false;
+        } elseif (
+            $hasVectorStoreCompletedAllFiles
+            && $getVectorStoreResponse->json('expires_at')
+            && (($vectorStoreExpiresAt = CarbonImmutable::createFromTimestampUTC($getVectorStoreResponse->json('expires_at')))->diffInHours() < -3)
+        ) {
+            $vectorStore->ready_until = $vectorStoreExpiresAt->subHours(2);
+            $this->deleteExistingResearchRequestVectorStoreFiles($researchRequest, $vectorStore);
+            $vectorStore->save();
+
+            return true;
+        }
+
+        $vectorStore->vector_store_id = null;
+
+        return null;
+    }
+
+    protected function deleteExistingResearchRequestVectorStoreFiles(ResearchRequest $researchRequest, OpenAiResearchRequestVectorStore $vectorStore): void
+    {
+        $listFilesResponse = $this->vectorStoresHttpClient()
+            ->get("vector_stores/{$vectorStore->vector_store_id}/files");
+
+        if ((! $listFilesResponse->successful()) || ! is_array($listFilesResponse->json('data'))) {
+            report(new Exception('Failed to list files for vector store [' . $vectorStore->vector_store_id . '] for research request [' . $researchRequest->getKey() . '], as a [' . $listFilesResponse->status() . '] response was returned: [' . $listFilesResponse->body() . '].'));
+
+            return;
+        }
+
+        foreach (Arr::pluck($listFilesResponse->json('data'), 'id') as $fileId) {
+            $deleteFileResponse = $this->filesHttpClient()
+                ->delete("files/{$fileId}");
+
+            if (! $deleteFileResponse->successful()) {
+                report(new Exception('Failed to delete file [' . $fileId . '] associated with vector store [' . $vectorStore->vector_store_id . '] for research request [' . $researchRequest->getKey() . '], as a [' . $deleteFileResponse->status() . '] response was returned: [' . $deleteFileResponse->body() . '].'));
+            }
+        }
+    }
+
+    protected function createVectorStoreForResearchRequest(ResearchRequest $researchRequest, OpenAiResearchRequestVectorStore $vectorStore): void
+    {
+        $fileIds = $this->uploadResearchRequestFilesForVectorStore($researchRequest, $vectorStore);
+
+        if (blank($fileIds)) {
+            return;
+        }
+
+        $createVectorStoreResponse = $this->vectorStoresHttpClient()
+            ->acceptJson()
+            ->asJson()
+            ->post('vector_stores', [
+                'name' => Str::limit($researchRequest->topic, 100),
+                'file_ids' => $fileIds,
+                'expires_after' => [
+                    'anchor' => 'last_active_at',
+                    'days' => 1,
+                ],
+            ]);
+
+        if ((! $createVectorStoreResponse->successful()) || blank($createVectorStoreResponse->json('id'))) {
+            report(new Exception('Failed to create vector store for research request [' . $researchRequest->getKey() . '], as a [' . $createVectorStoreResponse->status() . '] response was returned: [' . $createVectorStoreResponse->body() . '].'));
+
+            $vectorStore->save();
+
+            return;
+        }
+
+        $vectorStore->vector_store_id = $createVectorStoreResponse->json('id');
+        $vectorStore->save();
+    }
+
+    /**
+     * @return ?array<string>
+     */
+    protected function uploadResearchRequestFilesForVectorStore(ResearchRequest $researchRequest, OpenAiResearchRequestVectorStore $vectorStore): ?array
+    {
+        $fileIds = [];
+
+        foreach ($researchRequest->parsedFiles as $file) {
+            $createFileResponse = $this->filesHttpClient()
+                ->attach('file', $file->results, "{$file->media->name}.md", ['Content-Type' => 'text/markdown'])
+                ->post('files', [
+                    'purpose' => 'assistants',
+                ]);
+
+            if ((! $createFileResponse->successful()) || blank($createFileResponse->json('id'))) {
+                report(new Exception('Failed to create research request file [' . $file->getKey() . '] for vector store, as a [' . $createFileResponse->status() . '] response was returned: [' . $createFileResponse->body() . '].'));
+
+                continue;
+            }
+
+            $fileIds[] = $createFileResponse->json('id');
+        }
+
+        foreach ($researchRequest->parsedLinks as $link) {
+            $createFileResponse = $this->filesHttpClient()
+                ->attach('file', $link->results, Str::limit($link->url, 100) . '.md', ['Content-Type' => 'text/markdown'])
+                ->post('files', [
+                    'purpose' => 'assistants',
+                ]);
+
+            if ((! $createFileResponse->successful()) || blank($createFileResponse->json('id'))) {
+                report(new Exception('Failed to create research request link file [' . $link->getKey() . '] for vector store, as a [' . $createFileResponse->status() . '] response was returned: [' . $createFileResponse->body() . '].'));
+
+                continue;
+            }
+
+            $fileIds[] = $createFileResponse->json('id');
+        }
+
+        foreach ($researchRequest->parsedSearchResults as $searchResult) {
+            $createFileResponse = $this->filesHttpClient()
+                ->attach('file', $searchResult->results, Str::limit($searchResult->search_query, 100) . '.md', ['Content-Type' => 'text/markdown'])
+                ->post('files', [
+                    'purpose' => 'assistants',
+                ]);
+
+            if ((! $createFileResponse->successful()) || blank($createFileResponse->json('id'))) {
+                report(new Exception('Failed to create research request search result file [' . $searchResult->getKey() . '] for vector store, as a [' . $createFileResponse->status() . '] response was returned: [' . $createFileResponse->body() . '].'));
+
+                continue;
+            }
+
+            $fileIds[] = $createFileResponse->json('id');
+        }
+
+        return $fileIds;
     }
 
     protected function findOrCreateVectorStoreRecordForFile(AiFile $file): OpenAiVectorStore
