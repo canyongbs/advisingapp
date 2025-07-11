@@ -41,7 +41,6 @@ use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\Workflow\Models\Contracts\WorkflowAction;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -68,7 +67,7 @@ class WorkflowCareTeamDetails extends BaseModel implements Auditable, WorkflowAc
 
     public function getNewModel(): CareTeam
     {
-      return new CareTeam();
+        return new CareTeam();
     }
 
     /**
