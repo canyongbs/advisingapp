@@ -119,4 +119,12 @@ class QnaAdvisor extends BaseModel implements HasMedia, Auditable
             ->width(32)
             ->height(32);
     }
+
+    /**
+     * @return HasMany<QnaAdvisorFile, $this>
+     */
+    public function files(): HasMany
+    {
+        return $this->hasMany(QnaAdvisorFile::class, 'advisor_id');
+    }
 }

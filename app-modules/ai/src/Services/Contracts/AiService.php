@@ -116,4 +116,6 @@ interface AiService
     public function isFileReady(AiFile $file): bool;
 
     public function getDeployment(): ?string;
+
+    public function hasTemperature(): bool;
 }

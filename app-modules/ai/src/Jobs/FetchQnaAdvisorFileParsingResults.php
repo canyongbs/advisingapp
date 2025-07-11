@@ -34,33 +34,51 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Console\Commands;
+namespace AdvisingApp\Ai\Jobs;
 
-use AdvisingApp\Ai\Jobs\FetchAiAssistantFileParsingResults;
-use AdvisingApp\Ai\Jobs\FetchQnaAdvisorFileParsingResults;
-use AdvisingApp\Ai\Models\AiAssistantFile;
 use AdvisingApp\Ai\Models\QnaAdvisorFile;
-use Illuminate\Console\Command;
-use Spatie\Multitenancy\Commands\Concerns\TenantAware;
+use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use Illuminate\Bus\Batchable;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Http;
+use Spatie\Multitenancy\Jobs\TenantAware;
 
-class FetchAiAssistantFilesParsingResults extends Command
+class FetchQnaAdvisorFileParsingResults implements ShouldQueue, TenantAware, ShouldBeUnique
 {
-    use TenantAware;
+    use Batchable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
-    protected $signature = 'ai:fetch-assistant-files-parsing-results {--tenant=*}';
-
-    protected $description = 'Finds AI assistant files that were uploaded in the past hour and do not yet have parsed results.';
+    public function __construct(
+        protected QnaAdvisorFile $file,
+    ) {}
 
     public function handle(): void
     {
-        AiAssistantFile::query()
-            ->whereNull('parsing_results')
-            ->where('created_at', '>=', now()->subHour())
-            ->eachById(fn (AiAssistantFile $file) => dispatch(new FetchAiAssistantFileParsingResults($file)));
+        if (filled($this->file->parsing_results)) {
+            return;
+        }
 
-        QnaAdvisorFile::query()
-            ->whereNull('parsing_results')
-            ->where('created_at', '>=', now()->subHour())
-            ->eachById(fn (QnaAdvisorFile $file) => dispatch(new FetchQnaAdvisorFileParsingResults($file)));
+        $response = Http::withToken(app(AiIntegrationsSettings::class)->llamaparse_api_key)
+            ->get("https://api.cloud.llamaindex.ai/api/v1/parsing/job/{$this->file->file_id}/result/text");
+
+        if ((! $response->successful()) || blank($response->json('text'))) {
+            return;
+        }
+
+        $this->file->parsing_results = $response->json('text');
+        $this->file->save();
+    }
+
+    public function uniqueId(): string
+    {
+        return $this->file->id;
     }
 }

@@ -82,7 +82,12 @@ class OpenAiGptO3MiniService extends BaseOpenAiService implements AiServiceLifec
 
     public function getApiVersion(): string
     {
-        return '2024-05-01-preview';
+        return '2025-04-01-preview';
+    }
+
+    public function hasTemperature(): bool
+    {
+        return false;
     }
 
     public function getModel(): string
