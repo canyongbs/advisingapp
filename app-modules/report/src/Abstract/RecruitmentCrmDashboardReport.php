@@ -34,52 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Filament\Pages;
+namespace AdvisingApp\Report\Abstract;
 
-use AdvisingApp\Report\Abstract\ProspectReport as AbstractProspectReport;
-use AdvisingApp\Report\Filament\Widgets\ProspectReportLineChart;
-use AdvisingApp\Report\Filament\Widgets\ProspectReportStats;
-use AdvisingApp\Report\Filament\Widgets\ProspectReportTableChart;
-use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
-use App\Filament\Clusters\ReportLibrary;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
+use Filament\Pages\Dashboard;
 
-class ProspectReport extends AbstractProspectReport
+abstract class RecruitmentCrmDashboardReport extends Dashboard
 {
-    protected static ?string $navigationGroup = 'Prospects';
+    use HasFiltersForm;
 
-    protected static string $routePath = 'prospect-report';
+    protected static string $view = 'report::filament.pages.report';
 
-    protected static ?string $title = 'Overview';
-
-    protected static ?string $cluster = ReportLibrary::class;
-
-    protected static ?int $navigationSort = 20;
-
-    protected $cacheTag = 'prospect-report-cache';
-
-    public function getWidgets(): array
+    public static function canAccess(): bool
     {
-        return [
-            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-            ProspectReportStats::make(['cacheTag' => $this->cacheTag]),
-            ProspectReportLineChart::make(['cacheTag' => $this->cacheTag]),
-            ProspectReportTableChart::make(['cacheTag' => $this->cacheTag]),
-        ];
-    }
+        /** @var User $user */
+        $user = auth()->user();
 
-    public function getColumns(): int | string | array
-    {
-        return [
-            'sm' => 2,
-            'md' => 4,
-            'lg' => 4,
-        ];
-    }
-
-    public function getWidgetData(): array
-    {
-        return [
-            'filters' => $this->filters,
-        ];
+        return $user->hasLicense(LicenseType::RecruitmentCrm) && $user->can('report-library.view-any');
     }
 }
