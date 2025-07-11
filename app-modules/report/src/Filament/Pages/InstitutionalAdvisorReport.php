@@ -34,31 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace Tests\Helpers;
+namespace AdvisingApp\Report\Filament\Pages;
 
-use Exception;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\DB;
+use AdvisingApp\Report\Abstract\AiReport;
+use App\Filament\Clusters\ReportLibrary;
 
-function rollbackToBefore(string $migrationToRollbackTo): void
+class InstitutionalAdvisorReport extends AiReport
 {
-    if (app()->environment('production')) {
-        throw new Exception('This cannot safely be run in production environments.');
-    }
+    protected static ?string $cluster = ReportLibrary::class;
 
-    $targetMigration = DB::table('migrations')
-        ->where('migration', $migrationToRollbackTo)
-        ->first();
+    protected static ?string $navigationGroup = 'Artificial Intelligence';
 
-    if (! $targetMigration) {
-        throw new Exception("Migration not found: {$migrationToRollbackTo}");
-    }
+    protected static ?string $title = 'Institutional Advisor';
 
-    $rollbackSteps = DB::table('migrations')
-        ->where('id', '>', $targetMigration->id)
-        ->count();
+    protected static string $routePath = 'institutional-advisor-report';
 
-    if ($rollbackSteps > 0) {
-        Artisan::call('migrate:rollback', ['--step' => $rollbackSteps + 1]);
-    }
+    protected static ?int $navigationSort = 20;
+
+    protected string $cacheTag = 'institutional-advisor-report';
+
+    protected static string $view = 'filament.pages.coming-soon';
 }
