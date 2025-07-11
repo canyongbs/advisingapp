@@ -37,6 +37,7 @@
 namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Alert\Enums\AlertSeverity;
+use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Workflow\Filament\Blocks\ProactiveAlertBlock;
 use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
