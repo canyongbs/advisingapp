@@ -45,7 +45,7 @@ class QnaAdvisorReport extends AiReport
 
     protected static ?string $navigationGroup = 'Artificial Intelligence';
 
-    protected static ?string $title = 'QnA Advisor Report';
+    protected static ?string $title = 'QnA Advisor';
 
     protected static string $routePath = 'qna-advisor-report';
 
