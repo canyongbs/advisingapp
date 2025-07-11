@@ -69,6 +69,8 @@ class ManageQnaAdditionalKnowledge extends EditRecord
 
     protected static ?string $navigationGroup = 'Configuration';
 
+    protected static ?string $breadcrumb = 'Additional Knowledge';
+
     /**
      * @return array<int|string, string|null>
      */
