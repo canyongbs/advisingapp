@@ -34,41 +34,42 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Models;
+namespace AdvisingApp\Workflow\Jobs;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\Workflow\Models\Contracts\WorkflowAction;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Workflow\Models\WorkflowRunStep;
+use AdvisingApp\Workflow\Models\WorkflowStep;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
+use Throwable;
 
-/**
- * @mixin IdeHelperWorkflowEventDetails
- */
-class WorkflowEventDetails extends BaseModel implements Auditable, WorkflowAction
+class ExecuteWorkflowActionJob implements ShouldQueue
 {
-    use SoftDeletes;
-    use AuditableTrait;
-    use HasUuids;
+    use Queueable;
 
-    protected $fillable = [
-        'event_id',
-        'workflow_step_id',
-    ];
+    public function __construct(public WorkflowAction $action) {}
 
-    public function getNewModel(): Event
+    public function handle(): void
     {
-        return new Event();
-    }
+        $steps = WorkflowRunStep::where('execute_at', '<', now())->whereNull('dispatched_at');
 
-    /**
-     * @return BelongsTo<WorkflowStep, $this>
-     */
-    public function workflowStep(): BelongsTo
-    {
-        return $this->belongsTo(WorkflowStep::class);
+        $steps->each(function (WorkflowRunStep $step) {
+            $step->dispatched_at = now();
+            $step->save();
+
+            try {
+                //$actionStep = WorkflowStep::whereDetailsType($step->details_type)->whereDetailsId($step->details_id)->first()->workflowAction->getNewModel();
+                //execute action; save related model into WorkflowRunStepRelated
+                //strip id and timestamps out to get array to use to create model?
+
+                $step->succeeded_at = now();
+                $step->save();
+            } catch (Throwable $exception) {
+                $step->last_failed_at = now();
+                $step->save();
+
+                throw $exception;
+            }
+        });
     }
 }

@@ -37,8 +37,6 @@
 namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\MeetingCenter\Models\Event;
-use AdvisingApp\Workflow\Models\Contracts\WorkflowAction;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -46,29 +44,36 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
- * @mixin IdeHelperWorkflowEventDetails
+ * @mixin IdeHelperWorkflowRunStep
  */
-class WorkflowEventDetails extends BaseModel implements Auditable, WorkflowAction
+class WorkflowRunStep extends BaseModel implements Auditable
 {
     use SoftDeletes;
     use AuditableTrait;
     use HasUuids;
 
     protected $fillable = [
-        'event_id',
-        'workflow_step_id',
+        'execute_at',
+        'dispatched_at',
+        'succeeded_at',
+        'last_failed_at',
+        'workflow_run_id',
+        'details_id',
+        'details_type',
     ];
 
-    public function getNewModel(): Event
-    {
-        return new Event();
-    }
+    protected $casts = [
+        'execute_at' => 'datetime',
+        'dispatched_at' => 'datetime',
+        'succeeded_at' => 'datetime',
+        'last_failed_at' => 'datetime',
+    ];
 
     /**
-     * @return BelongsTo<WorkflowStep, $this>
+     * @return BelongsTo<WorkflowRunStep, $this>
      */
-    public function workflowStep(): BelongsTo
+    public function workflowRunStep(): BelongsTo
     {
-        return $this->belongsTo(WorkflowStep::class);
+        return $this->belongsTo(WorkflowRunStep::class);
     }
 }

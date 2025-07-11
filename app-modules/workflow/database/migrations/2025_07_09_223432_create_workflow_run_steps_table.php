@@ -34,41 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Models;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\MeetingCenter\Models\Event;
-use AdvisingApp\Workflow\Models\Contracts\WorkflowAction;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
-
-/**
- * @mixin IdeHelperWorkflowEventDetails
- */
-class WorkflowEventDetails extends BaseModel implements Auditable, WorkflowAction
-{
-    use SoftDeletes;
-    use AuditableTrait;
-    use HasUuids;
-
-    protected $fillable = [
-        'event_id',
-        'workflow_step_id',
-    ];
-
-    public function getNewModel(): Event
+return new class () extends Migration {
+    public function up(): void
     {
-        return new Event();
+        Schema::create('workflow_run_steps', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+
+            $table->dateTime('execute_at');
+            $table->dateTime('dispatched_at')->nullable();
+            $table->dateTime('succeeded_at')->nullable();
+            $table->dateTime('last_failed_at')->nullable();
+            $table->foreignUuid('workflow_run_id')->constrained('workflow_runs');
+            $table->string('details_id');
+            $table->string('details_type');
+
+            $table->timestamps();
+            $table->softDeletes();
+
+            $table->index(['details_type', 'details_id']);
+        });
     }
 
-    /**
-     * @return BelongsTo<WorkflowStep, $this>
-     */
-    public function workflowStep(): BelongsTo
+    public function down(): void
     {
-        return $this->belongsTo(WorkflowStep::class);
+        Schema::dropIfExists('workflow_run_steps');
     }
-}
+};

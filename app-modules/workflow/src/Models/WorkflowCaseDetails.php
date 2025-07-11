@@ -37,6 +37,7 @@
 namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Workflow\Models\Contracts\WorkflowAction;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
@@ -62,6 +63,11 @@ class WorkflowCaseDetails extends BaseModel implements Auditable, WorkflowAction
         'res_details',
         'workflow_step_id',
     ];
+
+    public function getNewModel(): CaseModel
+    {
+        return new CaseModel();
+    }
 
     /**
      * @return BelongsTo<WorkflowStep, $this>

@@ -37,6 +37,7 @@
 namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\Workflow\Models\Contracts\WorkflowAction;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
@@ -63,6 +64,11 @@ class WorkflowCareTeamDetails extends BaseModel implements Auditable, WorkflowAc
         'care_team' => 'array',
         'remove_prior' => 'boolean',
     ];
+
+    public function getNewModel(): CareTeam
+    {
+        return new CareTeam();
+    }
 
     /**
      * @return BelongsTo<WorkflowStep, $this>

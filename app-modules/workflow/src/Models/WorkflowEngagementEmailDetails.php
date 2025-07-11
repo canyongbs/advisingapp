@@ -37,6 +37,7 @@
 namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Workflow\Models\Contracts\WorkflowAction;
 use App\Models\BaseModel;
@@ -66,6 +67,11 @@ class WorkflowEngagementEmailDetails extends BaseModel implements Auditable, Wor
         'subject' => 'array',
         'body' => 'array',
     ];
+
+    public function getNewModel(): Engagement
+    {
+        return new Engagement();
+    }
 
     /**
      * @return BelongsTo<WorkflowStep, $this>

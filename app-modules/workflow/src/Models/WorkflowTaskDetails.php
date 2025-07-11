@@ -37,6 +37,7 @@
 namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Workflow\Models\Contracts\WorkflowAction;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
@@ -63,6 +64,11 @@ class WorkflowTaskDetails extends BaseModel implements Auditable, WorkflowAction
     protected $casts = [
         'due' => 'datetime',
     ];
+
+    public function getNewModel(): Task
+    {
+        return new Task();
+    }
 
     /**
      * @return BelongsTo<WorkflowStep, $this>
