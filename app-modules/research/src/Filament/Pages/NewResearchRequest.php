@@ -37,12 +37,14 @@
 namespace AdvisingApp\Research\Filament\Pages;
 
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use AdvisingApp\Ai\Settings\AiResearchAssistantSettings;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Research\Actions\GenerateResearchQuestion;
 use AdvisingApp\Research\Jobs\Research;
 use AdvisingApp\Research\Models\ResearchRequest;
 use App\Enums\Feature;
 use App\Models\User;
+use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -148,10 +150,18 @@ class NewResearchRequest extends Page
                                     return;
                                 }
 
+                                $settings = app(AiResearchAssistantSettings::class);
+
+                                throw_if(
+                                    ! $settings->research_model,
+                                    new Exception('Research model is not set in the settings.')
+                                );
+
                                 /** @var User $user */
                                 $user = auth()->user();
 
                                 $researchRequest = new ResearchRequest();
+                                $researchRequest->research_model = $settings->research_model;
                                 $researchRequest->topic = $state['topic'];
                                 $researchRequest->user()->associate($user);
                                 $researchRequest->save();

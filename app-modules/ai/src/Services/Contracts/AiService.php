@@ -40,6 +40,7 @@ use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\Contracts\AiFile;
+use AdvisingApp\Research\Models\ResearchRequest;
 use Closure;
 use Prism\Prism\Contracts\Schema;
 
@@ -123,6 +124,8 @@ interface AiService
     public function supportsAssistantFileUploads(): bool;
 
     public function isFileReady(AiFile $file): bool;
+
+    public function isResearchRequestReady(ResearchRequest $researchRequest): bool;
 
     public function getDeployment(): ?string;
 

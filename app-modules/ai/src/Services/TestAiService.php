@@ -44,6 +44,7 @@ use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
 use AdvisingApp\Ai\Services\Contracts\AiService;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
+use AdvisingApp\Research\Models\ResearchRequest;
 use Closure;
 use Prism\Prism\Contracts\Schema;
 
@@ -170,6 +171,11 @@ class TestAiService implements AiService
     }
 
     public function hasTemperature(): bool
+    {
+        return true;
+    }
+    
+    public function isResearchRequestReady(ResearchRequest $researchRequest): bool
     {
         return true;
     }
