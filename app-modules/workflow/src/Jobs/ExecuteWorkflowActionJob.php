@@ -38,8 +38,10 @@ namespace AdvisingApp\Workflow\Jobs;
 
 use AdvisingApp\Workflow\Models\Contracts\WorkflowAction;
 use AdvisingApp\Workflow\Models\WorkflowRunStep;
+use AdvisingApp\Workflow\Models\WorkflowStep;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Throwable;
 
 class ExecuteWorkflowActionJob implements ShouldQueue
 {
@@ -52,11 +54,22 @@ class ExecuteWorkflowActionJob implements ShouldQueue
         $steps = WorkflowRunStep::where('execute_at', '<', now())->whereNull('dispatched_at');
 
         $steps->each(function (WorkflowRunStep $step) {
-            //$step->dispatched_at = now();
-            //$step->save();
-            //get class for that action
-            //execute action; save related model into WorkflowRunStepRelated
-            //set succeeded_at or last_failed_at
+            $step->dispatched_at = now();
+            $step->save();
+            
+            try {
+              $actionStep = WorkflowStep::whereDetailsType($step->details_type)->whereDetailsId($step->details_id)->first()->workflowAction->getNewModel();
+              //execute action; save related model into WorkflowRunStepRelated
+              //strip id and timestamps out to get array to use to create model?
+
+              $step->succeeded_at = now();
+              $step->save();
+            } catch (Throwable $exception) {
+              $step->last_failed_at = now();
+              $step->save();
+
+              throw $exception;
+            }
         });
     }
 }

@@ -44,7 +44,7 @@ return new class () extends Migration {
         Schema::create('workflow_run_steps', function (Blueprint $table) {
             $table->uuid('id')->primary();
 
-            $table->dateTime('execute_at')->nullable();
+            $table->dateTime('execute_at');
             $table->dateTime('dispatched_at')->nullable();
             $table->dateTime('succeeded_at')->nullable();
             $table->dateTime('last_failed_at')->nullable();
