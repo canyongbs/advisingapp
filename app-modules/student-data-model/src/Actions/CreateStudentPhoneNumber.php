@@ -34,38 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\DataTransferObjects;
+namespace AdvisingApp\StudentDataModel\Actions;
 
-use Spatie\LaravelData\Attributes\MapName;
-use Spatie\LaravelData\Data;
-use Spatie\LaravelData\Mappers\SnakeCaseMapper;
-use Spatie\LaravelData\Optional;
+use AdvisingApp\StudentDataModel\DataTransferObjects\CreateStudentPhoneNumberData;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
+use Illuminate\Support\Facades\DB;
 
-#[MapName(SnakeCaseMapper::class)]
-class UpdateStudentData extends Data
+class CreateStudentPhoneNumber
 {
-    public function __construct(
-        public string | Optional | null $otherid,
-        public string | Optional | null $first,
-        public string | Optional | null $last,
-        public string | Optional | null $fullName,
-        public string | Optional | null $preferred,
-        public string | Optional | null $birthdate,
-        public int | Optional | null $hsgrad,
-        public string | Optional | null $gender,
-        public bool | Optional | null $smsOptOut,
-        public bool | Optional | null $emailBounce,
-        public bool | Optional | null $dual,
-        public bool | Optional | null $ferpa,
-        public bool | Optional | null $firstgen,
-        public bool | Optional | null $sap,
-        public string | Optional | null $holds,
-        public string | Optional | null $dfw,
-        public string | Optional | null $ethnicity,
-        public string | Optional | null $lastlmslogin,
-        public string | Optional | null $fETerm,
-        public string | Optional | null $mrETerm,
-        public string | Optional | null $primaryEmailId = null,
-        public string | Optional | null $primaryPhoneId = null,
-    ) {}
+    public function execute(Student $student, CreateStudentPhoneNumberData $data): StudentPhoneNumber
+    {
+        return DB::transaction(function () use ($data, $student) {
+            $phoneNumber = new StudentPhoneNumber();
+            $phoneNumber->student()->associate($student);
+            $phoneNumber->fill($data->toArray());
+            $phoneNumber->save();
+
+            if (! $student->primaryPhoneNumber()->exists()) {
+                $student->primaryPhoneNumber()->associate($student->phoneNumbers->first());
+                $student->save();
+            }
+
+            return $phoneNumber;
+        });
+    }
 }

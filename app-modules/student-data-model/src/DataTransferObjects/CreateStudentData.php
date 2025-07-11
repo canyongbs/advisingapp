@@ -47,6 +47,7 @@ class CreateStudentData extends Data
 {
     /**
      * @param array<CreateStudentEmailAddressData> | Optional | null $emailAddresses
+     * @param array<CreateStudentPhoneNumberData> | Optional | null $phoneNumbers
      */
     public function __construct(
         public string $sisid,
@@ -72,5 +73,7 @@ class CreateStudentData extends Data
         public string | Optional | null $mrETerm,
         #[DataCollectionOf(CreateStudentEmailAddressData::class)]
         public array | Optional | null $emailAddresses,
+        #[DataCollectionOf(CreateStudentPhoneNumberData::class)]
+        public array | Optional | null $phoneNumbers,
     ) {}
 }

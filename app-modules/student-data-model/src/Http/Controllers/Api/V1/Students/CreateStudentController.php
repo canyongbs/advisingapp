@@ -60,6 +60,8 @@ class CreateStudentController
     #[QueryParameter('include', description: 'Include related resources in the response.', type: 'string', examples: [
         'email_addresses' => new Example('email_addresses'),
         'primary_email_address' => new Example('primary_email_address'),
+        'phone_numbers' => new Example('phone_numbers'),
+        'primary_phone_number' => new Example('primary_phone_number'),
     ])]
     public function __invoke(Request $request, CreateStudent $createStudent): JsonResource
     {
@@ -92,6 +94,13 @@ class CreateStudentController
             'email_addresses.*' => ['array'],
             'email_addresses.*.address' => ['required', 'email'],
             'email_addresses.*.type' => ['sometimes', 'max:255'],
+            'phone_numbers' => ['sometimes', 'array'],
+            'phone_numbers.*' => ['array'],
+            'phone_numbers.*.number' => ['required'],
+            'phone_numbers.*.type' => ['sometimes', 'max:255'],
+            'phone_numbers.*.order' => ['sometimes', 'integer'],
+            'phone_numbers.*.ext' => ['sometimes', 'integer'],
+            'phone_numbers.*.can_receive_sms' => ['sometimes', 'boolean'],
         ]);
 
         $student = $createStudent->execute(CreateStudentData::from($data));
@@ -101,6 +110,8 @@ class CreateStudentController
             ->load($this->getIncludedRelationshipsToLoad($request, [
                 'email_addresses' => 'emailAddresses',
                 'primary_email_address' => 'primaryEmailAddress',
+                'phone_numbers' => 'phoneNumbers',
+                'primary_phone_number' => 'primaryPhoneNumber',
             ]))
             ->toResource(StudentResource::class);
     }
