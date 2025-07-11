@@ -56,6 +56,7 @@ use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeEnabled;
 use AdvisingApp\IntegrationOpenAi\Services\Concerns\UploadsFiles;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
+use AdvisingApp\Research\Models\ResearchRequest;
 use Closure;
 use Exception;
 use Generator;
@@ -443,6 +444,11 @@ abstract class BaseOpenAiService implements AiService
     public function fake(): void
     {
         $this->client = new ClientFake();
+    }
+
+    public function isResearchRequestReady(ResearchRequest $researchRequest): bool
+    {
+        return true;
     }
 
     /**
