@@ -37,48 +37,21 @@
 namespace AdvisingApp\Report\Filament\Pages;
 
 use AdvisingApp\Report\Abstract\AiReport;
-use AdvisingApp\Report\Filament\Widgets\AiStats;
-use AdvisingApp\Report\Filament\Widgets\ExchangesByMonthLineChart;
-use AdvisingApp\Report\Filament\Widgets\PromptsByCategoryDoughnutChart;
-use AdvisingApp\Report\Filament\Widgets\PromptsCreatedLineChart;
-use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
-use AdvisingApp\Report\Filament\Widgets\SpecialActionsDoughnutChart;
 use App\Filament\Clusters\ReportLibrary;
 
-class ArtificialIntelligence extends AiReport
+class QnaAdvisorReport extends AiReport
 {
     protected static ?string $cluster = ReportLibrary::class;
 
     protected static ?string $navigationGroup = 'Artificial Intelligence';
 
-    protected static ?string $navigationLabel = 'Utilization';
+    protected static ?string $title = 'QnA Advisor Report';
 
-    protected static ?string $title = 'Utilization';
+    protected static string $routePath = 'qna-advisor-report';
 
-    protected static string $routePath = 'artificial-intelligence-utilization';
+    protected static ?int $navigationSort = 50;
 
-    protected static ?int $navigationSort = 10;
+    protected string $cacheTag = 'qna-advisor-report';
 
-    protected $cacheTag = 'report-artificial-intelligence';
-
-    public function getWidgets(): array
-    {
-        return [
-            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-            AiStats::make(['cacheTag' => $this->cacheTag]),
-            ExchangesByMonthLineChart::make(['cacheTag' => $this->cacheTag]),
-            SpecialActionsDoughnutChart::make(['cacheTag' => $this->cacheTag]),
-            PromptsByCategoryDoughnutChart::make(['cacheTag' => $this->cacheTag]),
-            PromptsCreatedLineChart::make(['cacheTag' => $this->cacheTag]),
-        ];
-    }
-
-    public function getColumns(): int | string | array
-    {
-        return [
-            'sm' => 12,
-            'md' => 12,
-            'lg' => 12,
-        ];
-    }
+    protected static string $view = 'filament.pages.coming-soon';
 }
