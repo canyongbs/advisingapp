@@ -55,7 +55,7 @@ class Students extends StudentReport
 
     protected static string $routePath = 'students';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 2;
 
     protected $cacheTag = 'report-students';
 

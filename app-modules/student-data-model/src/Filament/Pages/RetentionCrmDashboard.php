@@ -36,20 +36,25 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Pages;
 
+use AdvisingApp\Report\Abstract\RecruitmentCrmDashboardReport;
 use AdvisingApp\StudentDataModel\Enums\ActionCenterTab;
 use AdvisingApp\StudentDataModel\Filament\Widgets\StudentsActionCenterWidget;
 use AdvisingApp\StudentDataModel\Filament\Widgets\StudentStats;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Filament\Clusters\ReportLibrary;
 use App\Models\User;
 use Filament\Pages\Dashboard as BaseDashboard;
 use Livewire\Attributes\Url;
 use Symfony\Component\HttpFoundation\Response;
 
-class RetentionCrmDashboard extends BaseDashboard
+class RetentionCrmDashboard extends RecruitmentCrmDashboardReport
 {
-    protected static ?string $navigationGroup = 'Retention CRM';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?string $cluster = ReportLibrary::class;
+
+    protected static ?string $navigationGroup = 'Students';
+
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $navigationLabel = 'Action Center';
 
