@@ -41,6 +41,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 interface WorkflowAction
 {
+    public function getNewModel(): Model;
+
     /**
      * @return BelongsTo<covariant Model, covariant Model>
      */
