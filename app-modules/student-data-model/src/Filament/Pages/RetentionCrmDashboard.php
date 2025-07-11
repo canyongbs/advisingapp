@@ -43,13 +43,11 @@ use AdvisingApp\StudentDataModel\Filament\Widgets\StudentStats;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Clusters\ReportLibrary;
 use App\Models\User;
-use Filament\Pages\Dashboard as BaseDashboard;
 use Livewire\Attributes\Url;
 use Symfony\Component\HttpFoundation\Response;
 
 class RetentionCrmDashboard extends RecruitmentCrmDashboardReport
 {
-
     protected static ?string $cluster = ReportLibrary::class;
 
     protected static ?string $navigationGroup = 'Students';
