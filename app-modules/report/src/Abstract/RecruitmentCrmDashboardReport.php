@@ -38,6 +38,7 @@ namespace AdvisingApp\Report\Abstract;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
+use App\Models\User;
 use Filament\Pages\Dashboard;
 
 abstract class RecruitmentCrmDashboardReport extends Dashboard
