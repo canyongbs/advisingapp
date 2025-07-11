@@ -56,19 +56,19 @@ class ExecuteWorkflowActionJob implements ShouldQueue
         $steps->each(function (WorkflowRunStep $step) {
             $step->dispatched_at = now();
             $step->save();
-            
+
             try {
-              $actionStep = WorkflowStep::whereDetailsType($step->details_type)->whereDetailsId($step->details_id)->first()->workflowAction->getNewModel();
-              //execute action; save related model into WorkflowRunStepRelated
-              //strip id and timestamps out to get array to use to create model?
+                $actionStep = WorkflowStep::whereDetailsType($step->details_type)->whereDetailsId($step->details_id)->first()->workflowAction->getNewModel();
+                //execute action; save related model into WorkflowRunStepRelated
+                //strip id and timestamps out to get array to use to create model?
 
-              $step->succeeded_at = now();
-              $step->save();
+                $step->succeeded_at = now();
+                $step->save();
             } catch (Throwable $exception) {
-              $step->last_failed_at = now();
-              $step->save();
+                $step->last_failed_at = now();
+                $step->save();
 
-              throw $exception;
+                throw $exception;
             }
         });
     }
