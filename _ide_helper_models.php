@@ -6481,13 +6481,29 @@ namespace AdvisingApp\Workflow\Models{
 /**
  * 
  *
+ * @property string $id
+ * @property \Illuminate\Support\Carbon|null $started_at
+ * @property string $workflow_trigger_id
+ * @property string $related_id
+ * @property string $related_type
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \AdvisingApp\Workflow\Models\WorkflowTrigger|null $workflowTrigger
+ * @property-read \AdvisingApp\Workflow\Models\WorkflowTrigger $workflowTrigger
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun whereRelatedId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun whereRelatedType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun whereStartedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun whereWorkflowTriggerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun withoutTrashed()
  * @mixin \Eloquent
@@ -6500,6 +6516,17 @@ namespace AdvisingApp\Workflow\Models{
 /**
  * 
  *
+ * @property string $id
+ * @property \Illuminate\Support\Carbon|null $execute_at
+ * @property \Illuminate\Support\Carbon|null $dispatched_at
+ * @property \Illuminate\Support\Carbon|null $succeeded_at
+ * @property \Illuminate\Support\Carbon|null $last_failed_at
+ * @property string $workflow_run_id
+ * @property string $details_id
+ * @property string $details_type
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read WorkflowRunStep|null $workflowRunStep
@@ -6507,6 +6534,17 @@ namespace AdvisingApp\Workflow\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep whereDetailsId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep whereDetailsType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep whereDispatchedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep whereExecuteAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep whereLastFailedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep whereSucceededAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep whereWorkflowRunId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep withoutTrashed()
  * @mixin \Eloquent
@@ -6519,6 +6557,13 @@ namespace AdvisingApp\Workflow\Models{
 /**
  * 
  *
+ * @property string $id
+ * @property string $workflow_run_step_id
+ * @property string $related_type
+ * @property string $related_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \AdvisingApp\Workflow\Models\WorkflowRun|null $workflowRun
@@ -6526,6 +6571,13 @@ namespace AdvisingApp\Workflow\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated whereRelatedId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated whereRelatedType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated whereWorkflowRunStepId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated withoutTrashed()
  * @mixin \Eloquent
