@@ -41,7 +41,6 @@ use AdvisingApp\Workflow\Models\Contracts\WorkflowAction;
 use App\Models\BaseModel;
 use App\Models\Tag;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -68,7 +67,7 @@ class WorkflowTagsDetails extends BaseModel implements Auditable, WorkflowAction
 
     public function getNewModel(): Tag
     {
-      return new Tag();
+        return new Tag();
     }
 
     /**
