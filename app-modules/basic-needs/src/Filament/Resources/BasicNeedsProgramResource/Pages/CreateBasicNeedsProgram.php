@@ -66,7 +66,6 @@ class CreateBasicNeedsProgram extends CreateRecord
                     ->label('Program Category')
                     ->required()
                     ->relationship('basicNeedsCategories', 'name')
-                    ->native(false)
                     ->searchable()
                     ->preload(),
                 TextInput::make('contact_person')

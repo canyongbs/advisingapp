@@ -60,7 +60,6 @@ class ConvertToStudent extends Action
             ->form([
                 Select::make('student_id')
                     ->relationship('student', 'full_name')
-                    ->native(false)
                     ->required()
                     ->label('Select Student')
                     ->searchable(),

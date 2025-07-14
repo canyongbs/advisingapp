@@ -107,7 +107,7 @@ class ListBasicNeedsPrograms extends ListRecords
                 SelectFilter::make('basic_category_id')
                     ->label('Program Category')
                     ->relationship('basicNeedsCategories', 'name')
-                    ->native(false)
+                    ->native(condition: false)
                     ->searchable()
                     ->preload(),
             ])
