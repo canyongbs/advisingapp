@@ -37,7 +37,6 @@
 namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Workflow\Models\WorkflowDetails;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -84,6 +83,6 @@ class WorkflowRunStep extends BaseModel implements Auditable
      */
     public function workflowDetails(): MorphTo
     {
-      return $this->morphTo();
+        return $this->morphTo();
     }
 }

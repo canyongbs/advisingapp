@@ -66,5 +66,4 @@ class WorkflowSubscriptionDetails extends WorkflowDetails implements Auditable
     {
         return new Subscription();
     }
-
 }
