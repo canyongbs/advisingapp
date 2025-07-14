@@ -38,8 +38,6 @@ namespace AdvisingApp\Ai\Services\Contracts;
 
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
-
-
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\Contracts\AiFile;
 use Closure;
