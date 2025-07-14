@@ -208,7 +208,11 @@ class ManageQnaAdditionalKnowledge extends EditRecord
                 )
                     ->withToken(app(AiIntegrationsSettings::class)->llamaparse_api_key)
                     ->acceptJson()
-                    ->post('https://api.cloud.llamaindex.ai/api/v1/parsing/upload');
+                    ->post('https://api.cloud.llamaindex.ai/api/v1/parsing/upload', [
+                        'invalidate_cache' => true,
+                        'parse_mode' => 'parse_page_with_lvm',
+                        'user_prompt' => 'If the upload has images retrieve text from it and also describe the image in detail. If the upload seems to be just an image with no text in it, just return the image description.',
+                    ]);
 
                 if ((! $response->successful()) || blank($response->json('id'))) {
                     Notification::make()
