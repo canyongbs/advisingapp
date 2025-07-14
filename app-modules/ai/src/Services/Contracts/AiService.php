@@ -38,6 +38,8 @@ namespace AdvisingApp\Ai\Services\Contracts;
 
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
+
+
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\Contracts\AiFile;
 use Closure;
@@ -47,7 +49,7 @@ interface AiService
     /**
      * This method is passed a prompt and should return a completion for it.
      */
-    public function complete(string $prompt, string $content): string;
+    public function complete(string $prompt, string $content, bool $shouldTrack = true): string;
 
     /**
      * This method is passed an unsaved `AiAssistant` model and should return

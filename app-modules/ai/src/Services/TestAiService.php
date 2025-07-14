@@ -50,12 +50,14 @@ class TestAiService implements AiService
 {
     use HasAiServiceHelpers;
 
-    public function complete(string $prompt, string $content): string
+    public function complete(string $prompt, string $content, bool $shouldTrack): string
     {
-        dispatch(new RecordTrackedEvent(
-            type: TrackedEventType::AiExchange,
-            occurredAt: now(),
-        ));
+        if ($shouldTrack) {
+            dispatch(new RecordTrackedEvent(
+                type: TrackedEventType::AiExchange,
+                occurredAt: now(),
+            ));
+        }
 
         return fake()->paragraph();
     }

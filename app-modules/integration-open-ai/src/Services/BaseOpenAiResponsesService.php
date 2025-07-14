@@ -88,7 +88,7 @@ abstract class BaseOpenAiResponsesService implements AiService
 
     abstract public function getModel(): string;
 
-    public function complete(string $prompt, string $content): string
+    public function complete(string $prompt, string $content, bool $shouldTrack): string
     {
         $aiSettings = app(AiSettings::class);
 
@@ -122,10 +122,12 @@ abstract class BaseOpenAiResponsesService implements AiService
             throw new MessageResponseException('Failed to complete the prompt: [' . $exception->getMessage() . '].');
         }
 
-        dispatch(new RecordTrackedEvent(
-            type: TrackedEventType::AiExchange,
-            occurredAt: now(),
-        ));
+        if ($shouldTrack) {
+            dispatch(new RecordTrackedEvent(
+                type: TrackedEventType::AiExchange,
+                occurredAt: now(),
+            ));
+        }
 
         return $response->text;
     }
