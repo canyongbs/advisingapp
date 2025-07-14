@@ -59,7 +59,7 @@ class ProspectResource extends Resource
 
     protected static ?int $navigationSort = 20;
 
-    protected static ?string $navigationGroup = 'Recruitment CRM';
+    protected static ?string $navigationGroup = 'CRM';
 
     protected static ?string $recordTitleAttribute = 'full_name';
 
