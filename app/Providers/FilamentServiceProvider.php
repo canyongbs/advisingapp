@@ -36,30 +36,31 @@
 
 namespace App\Providers;
 
-use App\Models\Export;
-use App\Models\FailedImportRow;
-use App\Models\Import;
 use App\Models\User;
-use App\Settings\DisplaySettings;
-use Filament\Actions\Exports\Models\Export as BaseExport;
-use Filament\Actions\Imports\Models\FailedImportRow as BaseFailedImportRow;
-use Filament\Actions\Imports\Models\Import as BaseImport;
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Toggle;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
-use Filament\Support\Colors\Color;
-use Filament\Support\Facades\FilamentColor;
-use Filament\Support\Facades\FilamentView;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
-use Illuminate\Support\ServiceProvider;
+use App\Models\Export;
+use App\Models\Import;
 use Illuminate\View\View;
+use Filament\Tables\Table;
+use App\Models\FailedImportRow;
+use Filament\Infolists\Infolist;
+use App\Settings\DisplaySettings;
+use Filament\Support\Colors\Color;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Checkbox;
+use Filament\Tables\Columns\TextColumn;
+use Illuminate\Support\ServiceProvider;
+use Filament\Forms\Components\DatePicker;
+use Filament\Support\Facades\FilamentView;
+use Filament\Support\Facades\FilamentColor;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Forms\Components\DateTimePicker;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 use Ysfkaya\FilamentPhoneInput\Infolists\PhoneEntry;
 use Ysfkaya\FilamentPhoneInput\PhoneInputNumberType;
+use Filament\Actions\Exports\Models\Export as BaseExport;
+use Filament\Actions\Imports\Models\Import as BaseImport;
+use Filament\Actions\Imports\Models\FailedImportRow as BaseFailedImportRow;
 
 class FilamentServiceProvider extends ServiceProvider
 {
@@ -193,6 +194,11 @@ class FilamentServiceProvider extends ServiceProvider
             'panels::footer',
             fn (): View => view('filament.footer'),
         );
+
+        Select::configureUsing(function (Select $component) {
+            $component
+                ->native(false);
+        });
 
         DateTimePicker::configureUsing(function (DateTimePicker $component) {
             if ($component instanceof DatePicker) {
