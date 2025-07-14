@@ -39,6 +39,7 @@ namespace AdvisingApp\BasicNeeds\Policies;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\SettingsPermissions;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
@@ -55,6 +56,12 @@ class BasicNeedsProgramPolicy
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
+        if (SettingsPermissions::active()) {
+            return $authenticatable->canOrElse(
+                abilities: 'settings.view-any',
+                denyResponse: 'You do not have permission to view basic needs programs.'
+            );
+        }
         return $authenticatable->canOrElse(
             abilities: 'product_admin.view-any',
             denyResponse: 'You do not have permission to view basic needs programs.'
@@ -63,6 +70,12 @@ class BasicNeedsProgramPolicy
 
     public function view(Authenticatable $authenticatable, BasicNeedsProgram $basicNeedsProgram): Response
     {
+        if (SettingsPermissions::active()) {
+            return $authenticatable->canOrElse(
+                abilities: 'settings.*.view',
+                denyResponse: 'You do not have permission to view this basic needs program.'
+            );
+        }
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$basicNeedsProgram->getKey()}.view"],
             denyResponse: 'You do not have permission to view this basic needs program.'
@@ -71,6 +84,13 @@ class BasicNeedsProgramPolicy
 
     public function create(Authenticatable $authenticatable): Response
     {
+        if (SettingsPermissions::active()) {
+            return $authenticatable->canOrElse(
+                abilities: 'settings.create',
+                denyResponse: 'You do not have permission to create basic needs programs.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: 'product_admin.create',
             denyResponse: 'You do not have permission to create basic needs programs.'
@@ -79,6 +99,13 @@ class BasicNeedsProgramPolicy
 
     public function update(Authenticatable $authenticatable, BasicNeedsProgram $basicNeedsProgram): Response
     {
+        if (SettingsPermissions::active()) {
+            return $authenticatable->canOrElse(
+                abilities: ['settings.*.update'],
+                denyResponse: 'You do not have permission to update this basic needs program.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$basicNeedsProgram->getKey()}.update"],
             denyResponse: 'You do not have permission to update this basic needs program.'
@@ -87,6 +114,13 @@ class BasicNeedsProgramPolicy
 
     public function delete(Authenticatable $authenticatable, BasicNeedsProgram $basicNeedsProgram): Response
     {
+        if (SettingsPermissions::active()) {
+            return $authenticatable->canOrElse(
+                abilities: ['settings.*.delete'],
+                denyResponse: 'You do not have permission to delete this basic needs program.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$basicNeedsProgram->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this basic needs program.'
@@ -95,6 +129,13 @@ class BasicNeedsProgramPolicy
 
     public function restore(Authenticatable $authenticatable, BasicNeedsProgram $basicNeedsProgram): Response
     {
+        if (SettingsPermissions::active()) {
+            return $authenticatable->canOrElse(
+                abilities: ['settings.*.restore'],
+                denyResponse: 'You do not have permission to restore this basic needs program.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$basicNeedsProgram->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore this basic needs program.'
@@ -103,6 +144,13 @@ class BasicNeedsProgramPolicy
 
     public function forceDelete(Authenticatable $authenticatable, BasicNeedsProgram $basicNeedsProgram): Response
     {
+        if (SettingsPermissions::active()) {
+            return $authenticatable->canOrElse(
+                abilities: ['settings.*.force-delete'],
+                denyResponse: 'You do not have permission to force delete this basic needs program.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$basicNeedsProgram->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to force delete this basic needs program.'

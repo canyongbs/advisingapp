@@ -36,7 +36,7 @@
 
 namespace App\Filament\Pages;
 
-use App\Features\SettingsPermissons;
+use App\Features\SettingsPermissions;
 use App\Filament\Clusters\DisplaySettings as DisplaySettingsCluster;
 use App\Models\User;
 use App\Settings\DisplaySettings;
@@ -61,7 +61,7 @@ class ManageDisplaySettings extends SettingsPage
         /** @var User $user */
         $user = auth()->user();
 
-        return SettingsPermissons::active() ? $user->can(['settings.view-any']) : $user->can(['product_admin.view-any']);
+        return SettingsPermissions::active() ? $user->can(['settings.view-any']) : $user->can(['product_admin.view-any']);
     }
 
     public function form(Form $form): Form

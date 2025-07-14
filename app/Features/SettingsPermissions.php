@@ -4,7 +4,7 @@ namespace App\Features;
 
 use App\Support\AbstractFeatureFlag;
 
-class SettingsPermissons extends AbstractFeatureFlag
+class SettingsPermissions extends AbstractFeatureFlag
 {
     public function resolve(mixed $scope): mixed
     {

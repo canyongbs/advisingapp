@@ -39,7 +39,7 @@ namespace AdvisingApp\Interaction\Policies;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\SettingsPermissons;
+use App\Features\SettingsPermissions;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
@@ -56,7 +56,7 @@ class InteractionTypePolicy
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissons::active()) {
+        if (SettingsPermissions::active()) {
             return $authenticatable->canOrElse(
                 abilities: 'settings.view-any',
                 denyResponse: 'You do not have permission to view interaction types.'
@@ -71,7 +71,7 @@ class InteractionTypePolicy
 
     public function view(Authenticatable $authenticatable, InteractionType $type): Response
     {
-        if (SettingsPermissons::active()) {
+        if (SettingsPermissions::active()) {
             return $authenticatable->canOrElse(
                 abilities: 'settings.*.view',
                 denyResponse: 'You do not have permission to view this interaction type.'
@@ -86,7 +86,7 @@ class InteractionTypePolicy
 
     public function create(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissons::active()) {
+        if (SettingsPermissions::active()) {
             return $authenticatable->canOrElse(
                 abilities: 'settings.create',
                 denyResponse: 'You do not have permission to create interaction types.'
@@ -101,7 +101,7 @@ class InteractionTypePolicy
 
     public function update(Authenticatable $authenticatable, InteractionType $type): Response
     {
-        if (SettingsPermissons::active()) {
+        if (SettingsPermissions::active()) {
             return $authenticatable->canOrElse(
                 abilities: 'settings.*.update',
                 denyResponse: 'You do not have permission to update this interaction type.'
@@ -116,7 +116,7 @@ class InteractionTypePolicy
 
     public function delete(Authenticatable $authenticatable, InteractionType $type): Response
     {
-        if (SettingsPermissons::active()) {
+        if (SettingsPermissions::active()) {
             return $authenticatable->canOrElse(
                 abilities: 'settings.*.delete',
                 denyResponse: 'You do not have permission to delete this interaction type.'
@@ -131,7 +131,7 @@ class InteractionTypePolicy
 
     public function restore(Authenticatable $authenticatable, InteractionType $type): Response
     {
-        if (SettingsPermissons::active()) {
+        if (SettingsPermissions::active()) {
             return $authenticatable->canOrElse(
                 abilities: 'settings.*.restore',
                 denyResponse: 'You do not have permission to restore this interaction type.'
@@ -146,7 +146,7 @@ class InteractionTypePolicy
 
     public function forceDelete(Authenticatable $authenticatable, InteractionType $type): Response
     {
-        if (SettingsPermissons::active()) {
+        if (SettingsPermissions::active()) {
             return $authenticatable->canOrElse(
                 abilities: 'settings.*.force-delete',
                 denyResponse: 'You do not have permission to permanently delete this interaction type.'

@@ -38,6 +38,7 @@ namespace AdvisingApp\Prospect\Policies;
 
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
+use App\Features\SettingsPermissions;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
@@ -54,6 +55,13 @@ class ProspectSourcePolicy
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
+        if (SettingsPermissions::active()) {
+            return $authenticatable->canOrElse(
+                abilities: 'settings.view-any',
+                denyResponse: 'You do not have permission to view prospect sources.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: 'product_admin.view-any',
             denyResponse: 'You do not have permission to view prospect sources.'
@@ -62,6 +70,13 @@ class ProspectSourcePolicy
 
     public function view(Authenticatable $authenticatable, ProspectSource $prospectSource): Response
     {
+        if (SettingsPermissions::active()) {
+            return $authenticatable->canOrElse(
+                abilities: 'settings.*.view',
+                denyResponse: 'You do not have permission to view this prospect source.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$prospectSource->getKey()}.view"],
             denyResponse: 'You do not have permission to view this prospect source.'
@@ -70,6 +85,13 @@ class ProspectSourcePolicy
 
     public function create(Authenticatable $authenticatable): Response
     {
+        if (SettingsPermissions::active()) {
+            return $authenticatable->canOrElse(
+                abilities: 'settings.create',
+                denyResponse: 'You do not have permission to create prospect sources.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: 'product_admin.create',
             denyResponse: 'You do not have permission to create prospect sources.'
@@ -78,6 +100,13 @@ class ProspectSourcePolicy
 
     public function update(Authenticatable $authenticatable, ProspectSource $prospectSource): Response
     {
+        if (SettingsPermissions::active()) {
+            return $authenticatable->canOrElse(
+                abilities: 'settings.*.update',
+                denyResponse: 'You do not have permission to update this prospect source.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$prospectSource->getKey()}.update"],
             denyResponse: 'You do not have permission to update this prospect source.'
@@ -86,6 +115,13 @@ class ProspectSourcePolicy
 
     public function delete(Authenticatable $authenticatable, ProspectSource $prospectSource): Response
     {
+        if (SettingsPermissions::active()) {
+            return $authenticatable->canOrElse(
+                abilities: 'settings.*.delete',
+                denyResponse: 'You do not have permission to delete this prospect source.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$prospectSource->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this prospect source.'
@@ -94,6 +130,13 @@ class ProspectSourcePolicy
 
     public function restore(Authenticatable $authenticatable, ProspectSource $prospectSource): Response
     {
+        if (SettingsPermissions::active()) {
+            return $authenticatable->canOrElse(
+                abilities: 'settings.*.restore',
+                denyResponse: 'You do not have permission to restore this prospect source.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$prospectSource->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore this prospect source.'
@@ -102,6 +145,13 @@ class ProspectSourcePolicy
 
     public function forceDelete(Authenticatable $authenticatable, ProspectSource $prospectSource): Response
     {
+        if (SettingsPermissions::active()) {
+            return $authenticatable->canOrElse(
+                abilities: 'settings.*.force-delete',
+                denyResponse: 'You do not have permission to force delete this prospect source.'
+            );
+        }
+        
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$prospectSource->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to force delete this prospect source.'

@@ -39,7 +39,7 @@ namespace AdvisingApp\Engagement\Policies;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\SettingsPermissons;
+use App\Features\SettingsPermissions;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
@@ -56,7 +56,7 @@ class EmailTemplatePolicy
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissons::active()) {
+        if (SettingsPermissions::active()) {
             return $authenticatable->canOrElse(
                 abilities: 'settings.view-any',
                 denyResponse: 'You do not have permission to view email templates.'
@@ -71,7 +71,7 @@ class EmailTemplatePolicy
 
     public function view(Authenticatable $authenticatable, EmailTemplate $emailTemplate): Response
     {
-        if (SettingsPermissons::active()) {
+        if (SettingsPermissions::active()) {
             return $authenticatable->canOrElse(
                 abilities: 'settings.*.view',
                 denyResponse: 'You do not have permission to view this email template.'
@@ -86,7 +86,7 @@ class EmailTemplatePolicy
 
     public function create(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissons::active()) {
+        if (SettingsPermissions::active()) {
             return $authenticatable->canOrElse(
                 abilities: 'settings.create',
                 denyResponse: 'You do not have permission to create email templates.'
@@ -101,7 +101,7 @@ class EmailTemplatePolicy
 
     public function update(Authenticatable $authenticatable, EmailTemplate $emailTemplate): Response
     {
-        if (SettingsPermissons::active()) {
+        if (SettingsPermissions::active()) {
             return $authenticatable->canOrElse(
                 abilities: 'settings.*.update',
                 denyResponse: 'You do not have permission to update this email template.'
@@ -116,7 +116,7 @@ class EmailTemplatePolicy
 
     public function delete(Authenticatable $authenticatable, EmailTemplate $emailTemplate): Response
     {
-        if (SettingsPermissons::active()) {
+        if (SettingsPermissions::active()) {
             return $authenticatable->canOrElse(
                 abilities: 'settings.*.delete',
                 denyResponse: 'You do not have permission to delete this email template.'
@@ -131,7 +131,7 @@ class EmailTemplatePolicy
 
     public function restore(Authenticatable $authenticatable, EmailTemplate $emailTemplate): Response
     {
-        if (SettingsPermissons::active()) {
+        if (SettingsPermissions::active()) {
             return $authenticatable->canOrElse(
                 abilities: 'settings.*.restore',
                 denyResponse: 'You do not have permission to restore this email template.'
@@ -146,7 +146,7 @@ class EmailTemplatePolicy
 
     public function forceDelete(Authenticatable $authenticatable, EmailTemplate $emailTemplate): Response
     {
-        if (SettingsPermissons::active()) {
+        if (SettingsPermissions::active()) {
             return $authenticatable->canOrElse(
                 abilities: 'settings.*.force-delete',
                 denyResponse: 'You do not have permission to permanently delete this email template.'

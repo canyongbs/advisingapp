@@ -36,7 +36,7 @@
 
 namespace App\Policies;
 
-use App\Features\SettingsPermissons;
+use App\Features\SettingsPermissions;
 use App\Models\Authenticatable;
 use App\Models\Pronouns;
 use Illuminate\Auth\Access\Response;
@@ -45,7 +45,7 @@ class PronounsPolicy
 {
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissons::active()) {
+        if (SettingsPermissions::active()) {
             return $authenticatable->canOrElse(
                 abilities: 'settings.view-any',
                 denyResponse: 'You do not have permission to view pronouns.'
@@ -60,7 +60,7 @@ class PronounsPolicy
 
     public function view(Authenticatable $authenticatable, Pronouns $model): Response
     {
-        if (SettingsPermissons::active()) {
+        if (SettingsPermissions::active()) {
             return $authenticatable->canOrElse(
                 abilities: 'settings.*.view',
                 denyResponse: 'You do not have permission to view this pronoun.'
@@ -75,7 +75,7 @@ class PronounsPolicy
 
     public function create(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissons::active()) {
+        if (SettingsPermissions::active()) {
             return $authenticatable->canOrElse(
                 abilities: 'settings.create',
                 denyResponse: 'You do not have permission to create pronouns.'
@@ -90,7 +90,7 @@ class PronounsPolicy
 
     public function update(Authenticatable $authenticatable, Pronouns $model): Response
     {
-        if (SettingsPermissons::active()) {
+        if (SettingsPermissions::active()) {
             return $authenticatable->canOrElse(
                 abilities: 'settings.*.update',
                 denyResponse: 'You do not have permission to update these pronoun.'
@@ -105,7 +105,7 @@ class PronounsPolicy
 
     public function delete(Authenticatable $authenticatable, Pronouns $model): Response
     {
-        if (SettingsPermissons::active()) {
+        if (SettingsPermissions::active()) {
             return $authenticatable->canOrElse(
                 abilities: 'settings.*.delete',
                 denyResponse: 'You do not have permission to delete these pronoun.'
@@ -120,7 +120,7 @@ class PronounsPolicy
 
     public function restore(Authenticatable $authenticatable, Pronouns $model): Response
     {
-        if (SettingsPermissons::active()) {
+        if (SettingsPermissions::active()) {
             return $authenticatable->canOrElse(
                 abilities: 'settings.*.restore',
                 denyResponse: 'You do not have permission to restore these pronoun.'
@@ -135,7 +135,7 @@ class PronounsPolicy
 
     public function forceDelete(Authenticatable $authenticatable, Pronouns $model): Response
     {
-        if (SettingsPermissons::active()) {
+        if (SettingsPermissions::active()) {
             return $authenticatable->canOrElse(
                 abilities: 'settings.*.force-delete',
                 denyResponse: 'You do not have permission to permanently delete these pronoun.'

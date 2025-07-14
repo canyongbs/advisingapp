@@ -41,7 +41,7 @@ use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use App\Concerns\PerformsFeatureChecks;
 use App\Concerns\PerformsLicenseChecks;
 use App\Enums\Feature;
-use App\Features\SettingsPermissons;
+use App\Features\SettingsPermissions;
 use App\Models\Authenticatable;
 use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
 use Illuminate\Auth\Access\Response;
@@ -66,7 +66,7 @@ class ResourceHubCategoryPolicy implements PerformsChecksBeforeAuthorization
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissons::active()) {
+        if (SettingsPermissions::active()) {
             return $authenticatable->canOrElse(
                 abilities: 'settings.view-any',
                 denyResponse: 'You do not have permission to view resource hub categories.'
@@ -81,7 +81,7 @@ class ResourceHubCategoryPolicy implements PerformsChecksBeforeAuthorization
 
     public function view(Authenticatable $authenticatable, ResourceHubCategory $resourceHubCategory): Response
     {
-        if (SettingsPermissons::active()) {
+        if (SettingsPermissions::active()) {
             return $authenticatable->canOrElse(
                 abilities: 'settings.*.view',
                 denyResponse: 'You do not have permission to view this resource hub category.'
@@ -96,7 +96,7 @@ class ResourceHubCategoryPolicy implements PerformsChecksBeforeAuthorization
 
     public function create(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissons::active()) {
+        if (SettingsPermissions::active()) {
             return $authenticatable->canOrElse(
                 abilities: 'settings.create',
                 denyResponse: 'You do not have permission to create resource hub categories.'
@@ -111,7 +111,7 @@ class ResourceHubCategoryPolicy implements PerformsChecksBeforeAuthorization
 
     public function update(Authenticatable $authenticatable, ResourceHubCategory $resourceHubCategory): Response
     {
-        if (SettingsPermissons::active()) {
+        if (SettingsPermissions::active()) {
             return $authenticatable->canOrElse(
                 abilities: 'settings.*.update',
                 denyResponse: 'You do not have permission to update this resource hub category.'
@@ -126,7 +126,7 @@ class ResourceHubCategoryPolicy implements PerformsChecksBeforeAuthorization
 
     public function delete(Authenticatable $authenticatable, ResourceHubCategory $resourceHubCategory): Response
     {
-        if (SettingsPermissons::active()) {
+        if (SettingsPermissions::active()) {
             return $authenticatable->canOrElse(
                 abilities: 'settings.*.delete',
                 denyResponse: 'You do not have permissions to delete this resource hub category.'
@@ -141,7 +141,7 @@ class ResourceHubCategoryPolicy implements PerformsChecksBeforeAuthorization
 
     public function restore(Authenticatable $authenticatable, ResourceHubCategory $resourceHubCategory): Response
     {
-        if (SettingsPermissons::active()) {
+        if (SettingsPermissions::active()) {
             return $authenticatable->canOrElse(
                 abilities: 'settings.*.restore',
                 denyResponse: 'You do not have permission to restore this resource hub category.'
@@ -156,7 +156,7 @@ class ResourceHubCategoryPolicy implements PerformsChecksBeforeAuthorization
 
     public function forceDelete(Authenticatable $authenticatable, ResourceHubCategory $resourceHubCategory): Response
     {
-        if (SettingsPermissons::active()) {
+        if (SettingsPermissions::active()) {
             return $authenticatable->canOrElse(
                 abilities: 'settings.*.force-delete',
                 denyResponse: 'You do not have permission to permanently delete this resource hub category.'

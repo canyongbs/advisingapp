@@ -39,7 +39,7 @@ namespace AdvisingApp\Ai\Policies;
 use AdvisingApp\Ai\Models\PromptType;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Concerns\PerformsLicenseChecks;
-use App\Features\SettingsPermissons;
+use App\Features\SettingsPermissions;
 use App\Models\Authenticatable;
 use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
 use Illuminate\Auth\Access\Response;
@@ -59,7 +59,7 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissons::active()) {
+        if (SettingsPermissions::active()) {
             return $authenticatable->canOrElse(
                 abilities: 'settings.view-any',
                 denyResponse: 'You do not have permission to view prompt types.'
@@ -74,7 +74,7 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
 
     public function view(Authenticatable $authenticatable, PromptType $promptType): Response
     {
-        if (SettingsPermissons::active()) {
+        if (SettingsPermissions::active()) {
             return $authenticatable->canOrElse(
                 abilities: ['settings.*.view'],
                 denyResponse: 'You do not have permission to view this prompt type.'
@@ -89,7 +89,7 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
 
     public function create(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissons::active()) {
+        if (SettingsPermissions::active()) {
             return $authenticatable->canOrElse(
                 abilities: 'settings.create',
                 denyResponse: 'You do not have permission to create prompt types.'
@@ -108,7 +108,7 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
             return Response::deny('The prompt type cannot be updated because it has a smart prompt.');
         }
 
-        if (SettingsPermissons::active()) {
+        if (SettingsPermissions::active()) {
             return $authenticatable->canOrElse(
                 abilities: ['settings.*.update'],
                 denyResponse: 'You do not have permission to update this prompt type.'
@@ -127,7 +127,7 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
             return Response::deny('The prompt type cannot be deleted because it is associated with a prompt.');
         }
 
-        if (SettingsPermissons::active()) {
+        if (SettingsPermissions::active()) {
             return $authenticatable->canOrElse(
                 abilities: ['settings.*.delete'],
                 denyResponse: 'You do not have permission to delete this prompt type.'
@@ -142,7 +142,7 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
 
     public function restore(Authenticatable $authenticatable, PromptType $promptType): Response
     {
-        if (SettingsPermissons::active()) {
+        if (SettingsPermissions::active()) {
             return $authenticatable->canOrElse(
                 abilities: ['settings.*.restore'],
                 denyResponse: 'You do not have permission to restore this prompt type.'
@@ -161,7 +161,7 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
             return Response::deny('The prompt type cannot be deleted because it is associated with a prompt.');
         }
 
-        if (SettingsPermissons::active()) {
+        if (SettingsPermissions::active()) {
             return $authenticatable->canOrElse(
                 abilities: ['settings.*.force-delete'],
                 denyResponse: 'You do not have permission to permanently delete this prompt type.'

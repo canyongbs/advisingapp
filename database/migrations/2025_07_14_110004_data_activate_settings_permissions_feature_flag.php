@@ -1,16 +1,16 @@
 <?php
 
-use App\Features\SettingsPermissons;
+use App\Features\SettingsPermissions;
 use Illuminate\Database\Migrations\Migration;
 
 return new class () extends Migration {
     public function up(): void
     {
-        SettingsPermissons::activate();
+        SettingsPermissions::activate();
     }
 
     public function down(): void
     {
-        SettingsPermissons::deactivate();
+        SettingsPermissions::deactivate();
     }
 };
