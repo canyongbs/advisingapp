@@ -36,7 +36,10 @@
 
 namespace AdvisingApp\Ai\Actions;
 
+use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiResponsesService;
+use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService;
 use Illuminate\Filesystem\AwsS3V3Adapter;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
@@ -61,6 +64,30 @@ class UploadFileForParsing
             ],
         ]));
 
+        $institutionalAdvisor = AiAssistant::query()
+            ->where('is_default', true)
+            ->firstOrFail();
+
+        $service = $institutionalAdvisor->model->getService();
+
+        $data = [
+            'invalidate_cache' => true,
+            'parse_mode' => 'parse_page_with_lvm',
+            'user_prompt' => 'If the upload has images retrieve text from it and also describe the image in detail. If the upload seems to be just an image with no text in it, just return the image description.',
+        ];
+
+        if ($service instanceof BaseOpenAiService || $service instanceof BaseOpenAiResponsesService) {
+            $deploymentName = $service->getModel();
+            $baseUri = rtrim($service->getDeployment(), '/v1');
+            $apiVersion = $service->getApiVersion();
+
+            $data['vendor_multimodal_model_name'] = 'custom-azure-model';
+            $data['azure_openai_deployment_name'] = $deploymentName;
+            $data['azure_openai_api_version'] = $apiVersion;
+            $data['azure_openai_endpoint'] = "{$baseUri}/deployments/{$deploymentName}/chat/completions?api-version={$apiVersion}";
+            $data['azure_openai_key'] = $service->getApiKey();
+        }
+
         $response = Http::attach(
             'file',
             $resource,
@@ -69,10 +96,8 @@ class UploadFileForParsing
         )
             ->withToken($this->aiIntegrationsSettings->llamaparse_api_key)
             ->acceptJson()
-            ->post('https://api.cloud.llamaindex.ai/api/v1/parsing/upload', [
-                'parse_mode' => 'parse_page_with_lvm',
-                'user_prompt' => 'If the upload has images retrieve text from it and also describe the image in detail. If the upload seems to be just an image with no text in it, just return the image description.',
-            ]);
+            ->post('https://api.cloud.llamaindex.ai/api/v1/parsing/upload', $data)
+            ->throw();
 
         if ((! $response->successful()) || blank($response->json('id'))) {
             return null;
