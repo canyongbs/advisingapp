@@ -144,12 +144,8 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('heroicon-o-sparkles')
                     ->collapsed(),
                 NavigationGroup::make()
-                    ->label('Retention CRM')
+                    ->label('CRM')
                     ->icon('heroicon-o-academic-cap')
-                    ->collapsed(),
-                NavigationGroup::make()
-                    ->label('Recruitment CRM')
-                    ->icon('heroicon-o-magnifying-glass')
                     ->collapsed(),
                 NavigationGroup::make()
                     ->label('Product Features')
