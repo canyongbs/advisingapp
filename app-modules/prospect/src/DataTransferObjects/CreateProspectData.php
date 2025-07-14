@@ -22,8 +22,8 @@ class CreateProspectData extends Data
         public string | Optional | null $description,
         public bool | Optional | null $smsOptOut,
         public bool | Optional | null $emailBounce,
-        public string $status_id,
-        public string $source_id,
+        public string $status,
+        public string $source,
         public string | Optional | null $birthdate,
         public int | Optional | null $hsgrad,
         #[DataCollectionOf(CreateProspectEmailAddressData::class)]
