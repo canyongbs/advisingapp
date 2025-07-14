@@ -85,5 +85,4 @@ class WorkflowStep extends BaseModel implements Auditable
     {
         return $this->morphTo();
     }
-
 }
