@@ -50,7 +50,7 @@ class TestAiService implements AiService
 {
     use HasAiServiceHelpers;
 
-    public function complete(string $prompt, string $content, bool $shouldTrack): string
+    public function complete(string $prompt, string $content, bool $shouldTrack = true): string
     {
         if ($shouldTrack) {
             dispatch(new RecordTrackedEvent(
