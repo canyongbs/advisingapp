@@ -88,7 +88,7 @@ abstract class BaseOpenAiResponsesService implements AiService
 
     abstract public function getModel(): string;
 
-    public function complete(string $prompt, string $content, bool $shouldTrack): string
+    public function complete(string $prompt, string $content, bool $shouldTrack = true): string
     {
         $aiSettings = app(AiSettings::class);
 
