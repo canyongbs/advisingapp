@@ -37,9 +37,11 @@
 namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Workflow\Models\WorkflowDetails;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
@@ -75,5 +77,13 @@ class WorkflowRunStep extends BaseModel implements Auditable
     public function workflowRunStep(): BelongsTo
     {
         return $this->belongsTo(WorkflowRunStep::class);
+    }
+
+    /**
+     * @return MorphTo<covariant WorkflowDetails, $this>
+     */
+    public function workflowDetails(): MorphTo
+    {
+      return $this->morphTo();
     }
 }
