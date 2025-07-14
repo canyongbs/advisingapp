@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource\Pages;
 
+use AdvisingApp\Ai\Actions\UploadFileForParsing;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Ai\Models\QnaAdvisorFile;
-use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
 use Filament\Forms\Components\Actions\Action;
@@ -53,9 +53,6 @@ use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Filesystem\AwsS3V3Adapter;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
@@ -188,33 +185,13 @@ class ManageQnaAdditionalKnowledge extends EditRecord
                 $file->mime_type = $attachment->getMimeType();
                 $file->temporary_url = $attachment->temporaryUrl();
 
-                /** @var AwsS3V3Adapter $s3Adapter */
-                $s3Adapter = Storage::disk('s3')->getAdapter();
+                $fileId = app(UploadFileForParsing::class)->execute(
+                    path: $attachment->getRealPath(),
+                    name: $file->name,
+                    mimeType: $file->mime_type,
+                );
 
-                invade($s3Adapter)->client->registerStreamWrapper(); /** @phpstan-ignore-line */
-                $fileS3Path = (string) str('s3://' . config('filesystems.disks.s3.bucket') . '/' . $attachment->getRealPath())->replace('\\', '/');
-
-                $resource = fopen($fileS3Path, mode: 'r', context: stream_context_create([
-                    's3' => [
-                        'seekable' => true,
-                    ],
-                ]));
-
-                $response = Http::attach(
-                    'file',
-                    $resource,
-                    $file->name,
-                    ['Content-Type' => $file->mime_type]
-                )
-                    ->withToken(app(AiIntegrationsSettings::class)->llamaparse_api_key)
-                    ->acceptJson()
-                    ->post('https://api.cloud.llamaindex.ai/api/v1/parsing/upload', [
-                        'invalidate_cache' => true,
-                        'parse_mode' => 'parse_page_with_lvm',
-                        'user_prompt' => 'If the upload has images retrieve text from it and also describe the image in detail. If the upload seems to be just an image with no text in it, just return the image description.',
-                    ]);
-
-                if ((! $response->successful()) || blank($response->json('id'))) {
+                if (blank($fileId)) {
                     Notification::make()
                         ->title('File Upload Failed')
                         ->body('There was an error uploading the file. Please try again later.')
@@ -224,7 +201,7 @@ class ManageQnaAdditionalKnowledge extends EditRecord
                     continue;
                 }
 
-                $file->file_id = $response->json('id');
+                $file->file_id = $fileId;
                 $file->save();
 
                 $file->addMediaFromUrl($file->temporary_url)->toMediaCollection('file');
