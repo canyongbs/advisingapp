@@ -70,6 +70,6 @@ class WorkflowRun extends BaseModel implements Auditable
      */
     public function workflowRunSteps(): HasMany
     {
-      return $this->hasMany(WorkflowRunStep::class);
+        return $this->hasMany(WorkflowRunStep::class);
     }
 }

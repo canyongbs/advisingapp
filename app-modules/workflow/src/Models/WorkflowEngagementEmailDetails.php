@@ -69,5 +69,4 @@ class WorkflowEngagementEmailDetails extends WorkflowDetails implements Auditabl
     {
         return new Engagement();
     }
-
 }

@@ -66,5 +66,4 @@ class WorkflowTaskDetails extends WorkflowDetails implements Auditable
     {
         return new Task();
     }
-
 }
