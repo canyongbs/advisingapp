@@ -37,6 +37,7 @@
 namespace AdvisingApp\Workflow\Jobs;
 
 use AdvisingApp\Workflow\Models\Contracts\WorkflowAction;
+use AdvisingApp\Workflow\Models\WorkflowDetails;
 use AdvisingApp\Workflow\Models\WorkflowRunStep;
 use AdvisingApp\Workflow\Models\WorkflowStep;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -47,7 +48,7 @@ class ExecuteWorkflowActionJob implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct(public WorkflowAction $action) {}
+    public function __construct(public WorkflowDetails $details) {}
 
     public function handle(): void
     {

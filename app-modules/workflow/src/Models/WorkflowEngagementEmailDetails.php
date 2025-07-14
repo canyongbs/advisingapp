@@ -39,17 +39,14 @@ namespace AdvisingApp\Workflow\Models;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Workflow\Models\Contracts\WorkflowAction;
-use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @mixin IdeHelperWorkflowEngagementEmailDetails
  */
-class WorkflowEngagementEmailDetails extends BaseModel implements Auditable, WorkflowAction
+class WorkflowEngagementEmailDetails extends WorkflowDetails implements Auditable
 {
     use SoftDeletes;
     use AuditableTrait;
@@ -68,16 +65,9 @@ class WorkflowEngagementEmailDetails extends BaseModel implements Auditable, Wor
         'body' => 'array',
     ];
 
-    public function getNewModel(): Engagement
+    public function getServiceClass(): Engagement
     {
         return new Engagement();
     }
 
-    /**
-     * @return BelongsTo<WorkflowStep, $this>
-     */
-    public function workflowStep(): BelongsTo
-    {
-        return $this->belongsTo(WorkflowStep::class);
-    }
 }
