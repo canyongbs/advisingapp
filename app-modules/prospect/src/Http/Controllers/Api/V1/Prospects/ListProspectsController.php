@@ -27,10 +27,11 @@ class ListProspectsController
     #[QueryParameter('filter[last_name]', description: 'Filter the results where the prospect\'s last name contains the provided string.', type: 'string')]
     #[QueryParameter('filter[full_name]', description: 'Filter the results where the prospect\'s full name contains the provided string.', type: 'string')]
     #[QueryParameter('filter[preferred]', description: 'Filter the results where the prospect\'s preferred name contains the provided string.', type: 'string')]
-    #[QueryParameter('filter[description]', description: 'Filter the results where the prospect\'s description contains the provided string.', type: 'string')]
     #[QueryParameter('filter[sms_opt_out]', description: 'Filter the results where the prospect\'s sms_opt_out matches the provided boolean.', type: 'boolean')]
     #[QueryParameter('filter[email_bounce]', description: 'Filter the results where the prospect\'s email_bounce matches the provided boolean.', type: 'boolean')]
     #[QueryParameter('filter[birthdate]', description: 'Filter the results where the prospect\'s birthdate matches the provided date.', type: 'date')]
+    //filter of status msg
+    //filter of source msg
     #[QueryParameter('filter[hsgrad]', description: 'Filter the results where the prospect\'s high school graduation year matches the provided integer.', type: 'integer')]
     #[QueryParameter('filter[primary_email_id]', description: 'Filter the results where the prospect\'s primary_email_id matches the provided integer.', type: 'integer')]
     #[QueryParameter('filter[primary_phone_id]', description: 'Filter the results where the prospect\'s primary_phone_id matches the provided integer.', type: 'integer')]
@@ -70,6 +71,8 @@ class ListProspectsController
                 AllowedFilter::exact('email_bounce'),
                 AllowedFilter::operator('birthdate', FilterOperator::DYNAMIC),
                 AllowedFilter::exact('hsgrad'),
+                AllowedFilter::exact('status'),
+                AllowedFilter::exact('source'),
                 AllowedFilter::exact('primary_email_id'),
                 AllowedFilter::exact('primary_phone_id'),
                 AllowedFilter::exact('primary_address_id'),
@@ -88,6 +91,8 @@ class ListProspectsController
                 AllowedSort::field('preferred'),
                 AllowedSort::field('birthdate'),
                 AllowedSort::field('hsgrad'),
+                AllowedSort::field('status'),
+                AllowedSort::field('source'),
                 AllowedSort::field('primary_email_id'),
                 AllowedSort::field('primary_phone_id'),
                 AllowedSort::field('primary_address_id'),

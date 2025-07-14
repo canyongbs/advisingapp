@@ -18,11 +18,10 @@ class UpdateProspectData extends Data
         public string | Optional | null $description,
         public bool | Optional | null $smsOptOut,
         public bool | Optional | null $emailBounce,
-        public string $status,
-        public string $source,
+        public string | Optional | null $status,
+        public string | Optional | null $source,
         public string | Optional | null $birthdate,
         public int | Optional | null $hsgrad,
-        public string | Optional | null $gender,
         public string | Optional | null $primaryEmailId = null,
     ) {}
 }

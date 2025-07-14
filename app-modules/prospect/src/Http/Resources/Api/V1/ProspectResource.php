@@ -19,7 +19,7 @@ class ProspectResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->resource->id,
+            'id' => $this->resource->getKey(),
             'first_name' => $this->resource->first_name,
             'last_name' => $this->resource->last_name,
             'full_name' => $this->resource->full_name,
@@ -31,7 +31,6 @@ class ProspectResource extends JsonResource
             'source' => $this->resource->source->name,
             'birthdate' => $this->resource->birthdate ? $this->resource->birthdate->format('Y-m-d') : null,
             'hsgrad' => $this->resource->hsgrad,
-            'created_by' => $this->resource->createdBy?->name,
             'primary_email_id' => $this->resource->primary_email_id,
             'primary_phone_id' => $this->resource->primary_phone_id,
             'primary_address_id' => $this->resource->primary_address_id,

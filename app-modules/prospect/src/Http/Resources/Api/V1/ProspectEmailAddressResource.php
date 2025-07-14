@@ -19,6 +19,7 @@ class ProspectEmailAddressResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id' => $this->resource->id,
             'prospect_id' => $this->resource->prospect_id,
             'address' => $this->resource->address,
             'type' => $this->resource->type,

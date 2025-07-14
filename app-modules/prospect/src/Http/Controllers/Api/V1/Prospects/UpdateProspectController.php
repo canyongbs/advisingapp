@@ -49,7 +49,7 @@ class UpdateProspectController
             'email_addresses.*' => ['array'],
             'email_addresses.*.address' => ['required', 'email'],
             'email_addresses.*.type' => ['sometimes', 'max:255'],
-            'primary_email_id' => ['sometimes', 'uuid:4', Rule::exists(ProspectEmailAddress::class, 'id')->where('id', $prospect->id)],
+            'primary_email_id' => ['sometimes', 'uuid:4', Rule::exists(ProspectEmailAddress::class, 'id')->where('prospect_id', $prospect->getKey())],
         ]);
 
         $prospect = $updateProspect->execute($prospect, UpdateProspectData::from($data));
