@@ -67,6 +67,13 @@ class FetchQnaAdvisorFileParsingResults implements ShouldQueue, TenantAware, Sho
         }
 
         $response = Http::withToken(app(AiIntegrationsSettings::class)->llamaparse_api_key)
+            ->get("https://api.cloud.llamaindex.ai/api/v1/parsing/job/{$this->file->file_id}/details");
+
+        logger()->debug('FetchQnaAdvisorFileParsingResults response', [
+            'response' => $response->json(),
+        ]);
+
+        $response = Http::withToken(app(AiIntegrationsSettings::class)->llamaparse_api_key)
             ->get("https://api.cloud.llamaindex.ai/api/v1/parsing/job/{$this->file->file_id}/result/markdown");
 
         if ((! $response->successful()) || blank($response->json('markdown'))) {
