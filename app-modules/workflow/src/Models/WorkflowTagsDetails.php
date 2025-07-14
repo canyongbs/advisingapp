@@ -66,5 +66,4 @@ class WorkflowTagsDetails extends WorkflowDetails implements Auditable
     {
         return new Tag();
     }
-
 }
