@@ -154,4 +154,9 @@ class TestAiService implements AiService
     {
         return true;
     }
+
+    public function hasTemperature(): bool
+    {
+        return true;
+    }
 }

@@ -61,7 +61,13 @@
         </div>
         <div class="flex flex-col pt-3">
             <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Assigned To</dt>
-            <dd class="text-sm font-semibold">{{ User::find($action['assigned_to_id'])?->name ?? 'No one' }}</dd>
+            <dd class="text-sm font-semibold">
+                @if ($action['assigned_to_id'] === 'automatic')
+                    Automatic Assignment
+                @else
+                    {{ User::find($action['assigned_to_id'])?->name ?? 'No one' }}
+                @endif
+            </dd>
         </div>
         <div class="flex flex-col pt-3">
             <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Close Details/Description</dt>

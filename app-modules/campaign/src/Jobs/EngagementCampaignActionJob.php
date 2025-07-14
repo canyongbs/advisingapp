@@ -72,12 +72,8 @@ class EngagementCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
 
             $educatable = $this->actionEducatable->educatable;
 
-            throw_if(
-                ! $educatable instanceof Educatable,
-                new Exception('The educatable model must implement the Educatable contract.')
-            );
+            assert($educatable instanceof Educatable);
 
-            /** @var Educatable $educatable */
             $action = $this->actionEducatable->campaignAction;
 
             $channel = NotificationChannel::parse($action->data['channel']);

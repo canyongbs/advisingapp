@@ -38,17 +38,20 @@ declare(strict_types = 1);
 
 namespace App\Overrides\LaravelSqsExtended;
 
-use DefectiveCode\LaravelSqsExtended\SqsDiskJob;
 use DefectiveCode\LaravelSqsExtended\SqsDiskQueue as BaseSqsDiskQueue;
 use Illuminate\Contracts\Queue\Job;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Context;
 use Spatie\Multitenancy\Concerns\BindAsCurrentTenant;
+use Spatie\Multitenancy\Concerns\UsesMultitenancyConfig;
+use Spatie\Multitenancy\Contracts\IsTenant;
 use Spatie\Multitenancy\Exceptions\CurrentTenantCouldNotBeDeterminedInTenantAwareJob;
 use Spatie\Multitenancy\Models\Tenant;
 
 class SqsDiskQueue extends BaseSqsDiskQueue
 {
     use BindAsCurrentTenant;
+    use UsesMultitenancyConfig;
 
     /**
      * Push a raw payload onto the queue.
@@ -75,7 +78,7 @@ class SqsDiskQueue extends BaseSqsDiskQueue
 
             $message['MessageBody'] = json_encode([
                 'pointer' => $filepath,
-                ...(isset($decodedPayload->tenantId) ? ['tenantId' => $decodedPayload->tenantId] : []),
+                ...(filled(Context::get($this->currentTenantContextKey())) ? ['tenantId' => Context::get($this->currentTenantContextKey())] : []),
             ]);
         }
 
@@ -101,6 +104,8 @@ class SqsDiskQueue extends BaseSqsDiskQueue
         ]);
 
         if (! is_null($response['Messages']) && count($response['Messages']) > 0) {
+            app(IsTenant::class)::forgetCurrent();
+
             if (isset(json_decode($response['Messages'][0]['Body'])->tenantId)) {
                 /** @var Tenant $tenant */
                 $tenant = config('multitenancy.tenant_model')::find(json_decode($response['Messages'][0]['Body'])->tenantId);

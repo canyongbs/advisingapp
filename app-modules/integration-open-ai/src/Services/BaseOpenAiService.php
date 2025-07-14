@@ -442,6 +442,11 @@ abstract class BaseOpenAiService implements AiService
         $this->client = new ClientFake();
     }
 
+    public function hasTemperature(): bool
+    {
+        return true;
+    }
+
     /**
      * @param array<AiMessageFile> $files
      */
@@ -605,7 +610,7 @@ abstract class BaseOpenAiService implements AiService
             'assistant_id' => $message->thread->assistant->assistant_id,
             'instructions' => $instructions,
             'max_completion_tokens' => $aiSettings->max_tokens->getTokens(),
-            'temperature' => $aiSettings->temperature,
+            ...($this->hasTemperature() ? ['temperature' => $aiSettings->temperature] : []),
         ];
 
         if ($message->thread->messages()->whereHas('files')->exists()) {

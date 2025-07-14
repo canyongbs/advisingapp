@@ -56,9 +56,9 @@ function rollbackToBefore(string $migrationToRollbackTo): void
 
     $rollbackSteps = DB::table('migrations')
         ->where('id', '>', $targetMigration->id)
-        ->count() + 1;
+        ->count();
 
     if ($rollbackSteps > 0) {
-        Artisan::call('migrate:rollback', ['--step' => $rollbackSteps]);
+        Artisan::call('migrate:rollback', ['--step' => $rollbackSteps + 1]);
     }
 }

@@ -107,7 +107,7 @@ class Campaign extends BaseModel implements Auditable
     protected static function booted(): void
     {
         static::addGlobalScope('licensed', function (Builder $builder) {
-            if (! auth()->check()) {
+            if (! auth()->guard('web')->check()) {
                 return;
             }
 

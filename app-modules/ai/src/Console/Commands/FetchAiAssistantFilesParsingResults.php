@@ -37,7 +37,9 @@
 namespace AdvisingApp\Ai\Console\Commands;
 
 use AdvisingApp\Ai\Jobs\FetchAiAssistantFileParsingResults;
+use AdvisingApp\Ai\Jobs\FetchQnaAdvisorFileParsingResults;
 use AdvisingApp\Ai\Models\AiAssistantFile;
+use AdvisingApp\Ai\Models\QnaAdvisorFile;
 use Illuminate\Console\Command;
 use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 
@@ -55,5 +57,10 @@ class FetchAiAssistantFilesParsingResults extends Command
             ->whereNull('parsing_results')
             ->where('created_at', '>=', now()->subHour())
             ->eachById(fn (AiAssistantFile $file) => dispatch(new FetchAiAssistantFileParsingResults($file)));
+
+        QnaAdvisorFile::query()
+            ->whereNull('parsing_results')
+            ->where('created_at', '>=', now()->subHour())
+            ->eachById(fn (QnaAdvisorFile $file) => dispatch(new FetchQnaAdvisorFileParsingResults($file)));
     }
 }

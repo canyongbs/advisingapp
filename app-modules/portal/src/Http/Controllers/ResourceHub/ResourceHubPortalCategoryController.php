@@ -37,6 +37,7 @@
 namespace AdvisingApp\Portal\Http\Controllers\ResourceHub;
 
 use AdvisingApp\Portal\DataTransferObjects\ResourceHubCategoryData;
+use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
@@ -74,12 +75,12 @@ class ResourceHubPortalCategoryController extends Controller
                 ->select(['title', 'category_id', 'id'])
                 ->public()
                 ->paginate(10)
-                ->through(function ($category) {
-                    $category->name = $category->title;
-                    $category->categoryId = $category->category_id;
-                    $category->id = $category->getKey();
+                ->through(function (ResourceHubArticle $article) {
+                    $article->name = $article->title;
+                    $article->categoryId = $article->category_id;
+                    $article->id = $article->getKey();
 
-                    return $category;
+                    return $article;
                 }),
         ]);
     }

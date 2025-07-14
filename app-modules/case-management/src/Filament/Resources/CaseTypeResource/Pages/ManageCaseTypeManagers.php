@@ -60,7 +60,7 @@ class ManageCaseTypeManagers extends ManageRelatedRecords
     {
         return $table
             ->recordTitleAttribute('name')
-            ->inverseRelationship('managableCaseTypes')
+            ->inverseRelationship('manageableCaseTypes')
             ->columns([
                 TextColumn::make('name')
                     ->label('Team'),

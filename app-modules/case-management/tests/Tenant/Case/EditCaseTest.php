@@ -118,11 +118,6 @@ test('EditCase requires valid data', function ($data, $errors) {
         ->toEqual($case->priority->id);
 })->with(
     [
-        'division_id missing' => [EditCaseRequestFactory::new()->state(['division_id' => null]), ['division_id' => 'required']],
-        'division_id does not exist' => [
-            EditCaseRequestFactory::new()->state(['division_id' => fake()->uuid()]),
-            ['division_id' => 'exists'],
-        ],
         'status_id missing' => [EditCaseRequestFactory::new()->state(['status_id' => null]), ['status_id' => 'required']],
         'status_id does not exist' => [
             EditCaseRequestFactory::new()->state(['status_id' => fake()->uuid()]),

@@ -160,7 +160,7 @@ class ManageFormSubmissions extends ManageRelatedRecords
                 fn (): int => $ownerRecord->submissions()->count(),
             );
 
-        $item->badge($formSubmissionsCount);
+        $item->badge((string) $formSubmissionsCount);
 
         return [$item];
     }
