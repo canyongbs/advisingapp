@@ -46,7 +46,7 @@ class ReportResource extends Resource
 {
     protected static ?string $model = Report::class;
 
-    protected static ?string $navigationGroup = 'Reporting';
+    protected static ?string $navigationGroup = 'Analytics';
 
     protected static ?int $navigationSort = 40;
 
