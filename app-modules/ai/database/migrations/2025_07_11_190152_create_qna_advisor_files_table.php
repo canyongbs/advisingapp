@@ -34,33 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Console\Commands;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Ai\Jobs\FetchAiAssistantFileParsingResults;
-use AdvisingApp\Ai\Jobs\FetchQnaAdvisorFileParsingResults;
-use AdvisingApp\Ai\Models\AiAssistantFile;
-use AdvisingApp\Ai\Models\QnaAdvisorFile;
-use Illuminate\Console\Command;
-use Spatie\Multitenancy\Commands\Concerns\TenantAware;
-
-class FetchAiAssistantFilesParsingResults extends Command
-{
-    use TenantAware;
-
-    protected $signature = 'ai:fetch-assistant-files-parsing-results {--tenant=*}';
-
-    protected $description = 'Finds AI assistant files that were uploaded in the past hour and do not yet have parsed results.';
-
-    public function handle(): void
+return new class () extends Migration {
+    public function up(): void
     {
-        AiAssistantFile::query()
-            ->whereNull('parsing_results')
-            ->where('created_at', '>=', now()->subHour())
-            ->eachById(fn (AiAssistantFile $file) => dispatch(new FetchAiAssistantFileParsingResults($file)));
-
-        QnaAdvisorFile::query()
-            ->whereNull('parsing_results')
-            ->where('created_at', '>=', now()->subHour())
-            ->eachById(fn (QnaAdvisorFile $file) => dispatch(new FetchQnaAdvisorFileParsingResults($file)));
+        Schema::create('qna_advisor_files', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->foreignUuid('advisor_id')->constrained('qna_advisors')->cascadeOnDelete();
+            $table->string('file_id')->nullable();
+            $table->string('name')->nullable();
+            $table->text('temporary_url')->nullable();
+            $table->string('mime_type')->nullable();
+            $table->longText('parsing_results')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::dropIfExists('qna_advisor_files');
+    }
+};
