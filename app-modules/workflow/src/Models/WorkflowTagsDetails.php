@@ -37,18 +37,15 @@
 namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Workflow\Models\Contracts\WorkflowAction;
-use App\Models\BaseModel;
 use App\Models\Tag;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @mixin IdeHelperWorkflowTagsDetails
  */
-class WorkflowTagsDetails extends BaseModel implements Auditable, WorkflowAction
+class WorkflowTagsDetails extends WorkflowDetails implements Auditable
 {
     use SoftDeletes;
     use AuditableTrait;
@@ -65,16 +62,9 @@ class WorkflowTagsDetails extends BaseModel implements Auditable, WorkflowAction
         'remove_prior' => 'boolean',
     ];
 
-    public function getNewModel(): Tag
+    public function getServiceClass(): Tag
     {
         return new Tag();
     }
 
-    /**
-     * @return BelongsTo<WorkflowStep, $this>
-     */
-    public function workflowStep(): BelongsTo
-    {
-        return $this->belongsTo(WorkflowStep::class);
-    }
 }

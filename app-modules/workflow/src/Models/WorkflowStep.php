@@ -37,7 +37,6 @@
 namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Workflow\Models\Contracts\WorkflowAction;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -70,11 +69,4 @@ class WorkflowStep extends BaseModel implements Auditable
         return $this->hasOne(WorkflowStep::class, 'previous_step_id');
     }
 
-    // /**
-    //  * @return HasOne<covariant WorkflowAction, $this>
-    //  */
-    // public function workflowAction(): HasOne
-    // {
-    //   return $this->hasOne(WorkflowAction::class);
-    // }
 }

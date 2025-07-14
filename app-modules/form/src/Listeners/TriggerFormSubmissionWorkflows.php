@@ -73,7 +73,6 @@ class TriggerFormSubmissionWorkflows implements ShouldQueue
 
     private function getStepScheduledAt(WorkflowStep $step, FormSubmissionCreated $event): DateTime
     {
-        //TODO: nullsafe property access here???
         $delayFrom = $step->previousWorkflowStep->scheduled_at ?? $event->submission->submitted_at;
 
         assert($delayFrom instanceof DateTime);

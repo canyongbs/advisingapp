@@ -39,17 +39,14 @@ namespace AdvisingApp\Workflow\Models;
 use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Workflow\Models\Contracts\WorkflowAction;
-use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @mixin IdeHelperWorkflowProactiveAlertDetails
  */
-class WorkflowProactiveAlertDetails extends BaseModel implements Auditable, WorkflowAction
+class WorkflowProactiveAlertDetails extends WorkflowDetails implements Auditable
 {
     use SoftDeletes;
     use AuditableTrait;
@@ -67,16 +64,9 @@ class WorkflowProactiveAlertDetails extends BaseModel implements Auditable, Work
         'severity' => AlertSeverity::class,
     ];
 
-    public function getNewModel(): Alert
+    public function getServiceClass(): Alert
     {
         return new Alert();
     }
 
-    /**
-     * @return BelongsTo<WorkflowStep, $this>
-     */
-    public function workflowStep(): BelongsTo
-    {
-        return $this->belongsTo(WorkflowStep::class);
-    }
 }

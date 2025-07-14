@@ -34,17 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Models\Contracts;
+namespace AdvisingApp\Workflow\Models;
 
+use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-interface WorkflowAction
+abstract class WorkflowDetails extends BaseModel
 {
-    public function getNewModel(): Model;
-
-    /**
-     * @return BelongsTo<covariant Model, covariant Model>
-     */
-    public function workflowStep(): BelongsTo;
+    abstract public function getServiceClass(): Model;
 }
