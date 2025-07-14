@@ -41,6 +41,7 @@ use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
 use App\Concerns\PerformsFeatureChecks;
 use App\Concerns\PerformsLicenseChecks;
 use App\Enums\Feature;
+use App\Features\SettingsPermissons;
 use App\Models\Authenticatable;
 use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
 use Illuminate\Auth\Access\Response;
@@ -65,6 +66,13 @@ class ResourceHubStatusPolicy implements PerformsChecksBeforeAuthorization
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
+        if (SettingsPermissons::active()) {
+            return $authenticatable->canOrElse(
+                abilities: 'settings.view-any',
+                denyResponse: 'You do not have permission to view any resource hub statuses.'
+            );
+        }
+        
         return $authenticatable->canOrElse(
             abilities: 'product_admin.view-any',
             denyResponse: 'You do not have permission to view any resource hub statuses.'
@@ -73,6 +81,13 @@ class ResourceHubStatusPolicy implements PerformsChecksBeforeAuthorization
 
     public function view(Authenticatable $authenticatable, ResourceHubStatus $resourceHubStatus): Response
     {
+        if (SettingsPermissons::active()) {
+            return $authenticatable->canOrElse(
+                abilities: 'settings.*.view',
+                denyResponse: 'You do not have permission to view this resource hub status.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$resourceHubStatus->getKey()}.view"],
             denyResponse: 'You do not have permission to view this resource hub status.'
@@ -81,6 +96,13 @@ class ResourceHubStatusPolicy implements PerformsChecksBeforeAuthorization
 
     public function create(Authenticatable $authenticatable): Response
     {
+        if (SettingsPermissons::active()) {
+            return $authenticatable->canOrElse(
+                abilities: 'settings.create',
+                denyResponse: 'You do not have permission to create resource hub statuses.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: 'product_admin.create',
             denyResponse: 'You do not have permission to create resource hub statuses.'
@@ -89,6 +111,13 @@ class ResourceHubStatusPolicy implements PerformsChecksBeforeAuthorization
 
     public function update(Authenticatable $authenticatable, ResourceHubStatus $resourceHubStatus): Response
     {
+        if (SettingsPermissons::active()) {
+            return $authenticatable->canOrElse(
+                abilities: 'settings.*.update',
+                denyResponse: 'You do not have permission to update this resource hub status.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$resourceHubStatus->getKey()}.update"],
             denyResponse: 'You do not have permission to update this resource hub status.'
@@ -97,6 +126,13 @@ class ResourceHubStatusPolicy implements PerformsChecksBeforeAuthorization
 
     public function delete(Authenticatable $authenticatable, ResourceHubStatus $resourceHubStatus): Response
     {
+        if (SettingsPermissons::active()) {
+            return $authenticatable->canOrElse(
+                abilities: 'settings.*.delete',
+                denyResponse: 'You do not have permission to delete this resource hub status.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$resourceHubStatus->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this resource hub status.'
@@ -105,6 +141,13 @@ class ResourceHubStatusPolicy implements PerformsChecksBeforeAuthorization
 
     public function restore(Authenticatable $authenticatable, ResourceHubStatus $resourceHubStatus): Response
     {
+        if (SettingsPermissons::active()) {
+            return $authenticatable->canOrElse(
+                abilities: 'settings.*.restore',
+                denyResponse: 'You do not have permission to restore this resource hub status.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$resourceHubStatus->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore this resource hub status.'
@@ -113,6 +156,13 @@ class ResourceHubStatusPolicy implements PerformsChecksBeforeAuthorization
 
     public function forceDelete(Authenticatable $authenticatable, ResourceHubStatus $resourceHubStatus): Response
     {
+        if (SettingsPermissons::active()) {
+            return $authenticatable->canOrElse(
+                abilities: 'settings.*.force-delete',
+                denyResponse: 'You do not have permission to permanently delete this resource hub status.'
+            );  
+        }
+        
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$resourceHubStatus->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this resource hub status.'

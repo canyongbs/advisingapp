@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Theme\Filament\Pages;
 
+use App\Features\SettingsPermissons;
 use App\Filament\Clusters\DisplaySettings;
 use App\Filament\Forms\Components\ColorSelect;
 use App\Models\User;
@@ -63,7 +64,7 @@ class ManageCollegeBrandingSettings extends SettingsPage
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->can(['product_admin.view-any']);
+        return SettingsPermissons::active() ? $user->can(['settings.view-any']) : $user->can(['product_admin.view-any']);
     }
 
     public function form(Form $form): Form

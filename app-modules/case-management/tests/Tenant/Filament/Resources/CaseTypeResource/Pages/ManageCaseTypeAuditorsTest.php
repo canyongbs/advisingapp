@@ -59,7 +59,7 @@ it('can attach audit member to case type', function () {
             ])
         )->assertForbidden();
 
-    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('settings.view-any');
     $user->givePermissionTo('team.view-any');
 
     livewire(ManageCaseTypeAuditors::class, [

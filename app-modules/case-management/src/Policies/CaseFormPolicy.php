@@ -41,6 +41,7 @@ use AdvisingApp\CaseManagement\Models\CaseForm;
 use App\Concerns\PerformsFeatureChecks;
 use App\Concerns\PerformsLicenseChecks;
 use App\Enums\Feature;
+use App\Features\SettingsPermissons;
 use App\Models\Authenticatable;
 use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
 use Illuminate\Auth\Access\Response;
@@ -65,6 +66,13 @@ class CaseFormPolicy implements PerformsChecksBeforeAuthorization
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
+        if (SettingsPermissons::active()) {
+            return $authenticatable->canOrElse(
+                abilities: 'settings.view-any',
+                denyResponse: 'You do not have permission to view case forms.'
+            );
+        }
+        
         return $authenticatable->canOrElse(
             abilities: 'product_admin.view-any',
             denyResponse: 'You do not have permission to view case forms.'
@@ -73,6 +81,13 @@ class CaseFormPolicy implements PerformsChecksBeforeAuthorization
 
     public function view(Authenticatable $authenticatable, CaseForm $caseForm): Response
     {
+        if (SettingsPermissons::active()) {
+            return $authenticatable->canOrElse(
+                abilities: ['settings.*.view'],
+                denyResponse: 'You do not have permission to view this case form.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$caseForm->getKey()}.view"],
             denyResponse: 'You do not have permission to view this case form.'
@@ -81,6 +96,13 @@ class CaseFormPolicy implements PerformsChecksBeforeAuthorization
 
     public function create(Authenticatable $authenticatable): Response
     {
+        if (SettingsPermissons::active()) {
+            return $authenticatable->canOrElse(
+                abilities: 'settings.create',
+                denyResponse: 'You do not have permission to create case forms.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: 'product_admin.create',
             denyResponse: 'You do not have permission to create case forms.'
@@ -89,6 +111,13 @@ class CaseFormPolicy implements PerformsChecksBeforeAuthorization
 
     public function update(Authenticatable $authenticatable, CaseForm $caseForm): Response
     {
+        if (SettingsPermissons::active()) {
+            return $authenticatable->canOrElse(
+                abilities: ['settings.*.update'],
+                denyResponse: 'You do not have permission to update this case form.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$caseForm->getKey()}.update"],
             denyResponse: 'You do not have permission to update this case form.'
@@ -97,6 +126,13 @@ class CaseFormPolicy implements PerformsChecksBeforeAuthorization
 
     public function delete(Authenticatable $authenticatable, CaseForm $caseForm): Response
     {
+        if (SettingsPermissons::active()) {
+            return $authenticatable->canOrElse(
+                abilities: ['settings.*.delete'],
+                denyResponse: 'You do not have permission to delete this case form.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$caseForm->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this case form.'
@@ -105,6 +141,13 @@ class CaseFormPolicy implements PerformsChecksBeforeAuthorization
 
     public function restore(Authenticatable $authenticatable, CaseForm $caseForm): Response
     {
+        if (SettingsPermissons::active()) {
+            return $authenticatable->canOrElse(
+                abilities: ['settings.*.restore'],
+                denyResponse: 'You do not have permission to restore this case form.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$caseForm->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore this case form.'
@@ -113,6 +156,13 @@ class CaseFormPolicy implements PerformsChecksBeforeAuthorization
 
     public function forceDelete(Authenticatable $authenticatable, CaseForm $caseForm): Response
     {
+        if (SettingsPermissons::active()) {
+            return $authenticatable->canOrElse(
+                abilities: ['settings.*.force-delete'],
+                denyResponse: 'You do not have permission to permanently delete this case form.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$caseForm->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this case form.'
