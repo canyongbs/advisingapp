@@ -65,6 +65,7 @@ class UploadFileForParsing
         ]));
 
         $data = [
+            // TODO: Remove invalidate_cache
             'invalidate_cache' => true,
             'parse_mode' => 'parse_page_with_lvm',
             'user_prompt' => 'If the upload has images retrieve text from it and also describe the image in detail. If the upload seems to be just an image with no text in it, just return the image description.',

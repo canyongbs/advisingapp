@@ -34,58 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Jobs;
+namespace AdvisingApp\Ai\Actions;
 
-use AdvisingApp\Ai\Actions\FetchFileParsingResults;
-use AdvisingApp\Ai\Models\QnaAdvisorFile;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
-use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
-use Spatie\Multitenancy\Jobs\TenantAware;
 
-class FetchQnaAdvisorFileParsingResults implements ShouldQueue, TenantAware, ShouldBeUnique
+class FetchFileParsingResults
 {
-    use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
     public function __construct(
-        protected QnaAdvisorFile $file,
+        protected AiIntegrationsSettings $aiIntegrationsSettings,
     ) {}
 
-    public function handle(): void
+    public function execute(string $fileId, string $mimetype): ?string
     {
-        if (filled($this->file->parsing_results)) {
-            return;
+        $outputFormat = match (true) {
+            str($mimetype)->startsWith(['audio/', 'video/']) => 'text',
+            default => 'markdown',
+        };
+
+        $response = Http::withToken(app(AiIntegrationsSettings::class)->llamaparse_api_key)
+            ->get("https://api.cloud.llamaindex.ai/api/v1/parsing/job/{$fileId}/result/{$outputFormat}");
+
+        if ((! $response->successful()) || blank($response->json($outputFormat))) {
+            return null;
         }
 
-        // $response = Http::withToken(app(AiIntegrationsSettings::class)->llamaparse_api_key)
-        //     ->get("https://api.cloud.llamaindex.ai/api/v1/parsing/job/{$this->file->file_id}/details");
-
-        // logger()->debug('FetchQnaAdvisorFileParsingResults response', [
-        //     'response' => $response->json(),
-        // ]);
-
-        $result = app(FetchFileParsingResults::class)->execute($this->file->file_id, $this->file->mime_type);
-
-        if (blank($result)) {
-            return;
-        }
-
-        $this->file->parsing_results = $result;
-        $this->file->save();
-    }
-
-    public function uniqueId(): string
-    {
-        return $this->file->id;
+        return $response->json($outputFormat);
     }
 }
