@@ -36,19 +36,19 @@
 
 namespace AdvisingApp\Workflow\Jobs;
 
-use AdvisingApp\Workflow\Models\Contracts\WorkflowAction;
-use AdvisingApp\Workflow\Models\WorkflowDetails;
 use AdvisingApp\Workflow\Models\WorkflowRunStep;
-use AdvisingApp\Workflow\Models\WorkflowStep;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Facades\Bus;
 use Throwable;
 
 class ExecuteWorkflowActionJob implements ShouldQueue
 {
+    use Dispatchable;
+    use InteractsWithQueue;
     use Queueable;
-
-    public function __construct(public WorkflowDetails $details) {}
 
     public function handle(): void
     {
@@ -59,12 +59,14 @@ class ExecuteWorkflowActionJob implements ShouldQueue
             $step->save();
 
             try {
-                //$actionStep = WorkflowStep::whereDetailsType($step->details_type)->whereDetailsId($step->details_id)->first()->workflowAction->getNewModel();
-                //execute action; save related model into WorkflowRunStepRelated
-                //strip id and timestamps out to get array to use to create model?
-
-                $step->succeeded_at = now();
-                $step->save();
+                Bus::batch([
+                    new ExecuteWorkflowAction($step),
+                ])
+                    ->allowFailures()
+                    ->finally(function () use ($step) {
+                        $step->succeeded_at = now();
+                        $step->save();
+                    });
             } catch (Throwable $exception) {
                 $step->last_failed_at = now();
                 $step->save();

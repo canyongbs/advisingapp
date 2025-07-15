@@ -43,7 +43,7 @@ use AdvisingApp\Workflow\Models\WorkflowRun;
 use AdvisingApp\Workflow\Models\WorkflowRunStep;
 use AdvisingApp\Workflow\Models\WorkflowStep;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
-use DateTime;
+use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class TriggerFormSubmissionWorkflows implements ShouldQueue
@@ -71,12 +71,20 @@ class TriggerFormSubmissionWorkflows implements ShouldQueue
         });
     }
 
-    private function getStepScheduledAt(WorkflowStep $step, FormSubmissionCreated $event): DateTime
+    private function getStepScheduledAt(WorkflowStep $step, FormSubmissionCreated $event): Carbon
     {
-        $delayFrom = $step->previousWorkflowStep->scheduled_at ?? $event->submission->submitted_at;
+        $delayFrom = $event->submission->submitted_at->toMutable();
 
-        assert($delayFrom instanceof DateTime);
+        $delayFrom->addMinutes($step->delay_minutes);
 
-        return $delayFrom->modify("+{$step->delay_minutes} minutes");
+        $prevStep = $step->previousWorkflowStep;
+
+        while (! is_null($prevStep)) {
+            $delayFrom->addMinutes($prevStep->delay_minutes);
+
+            $prevStep = $prevStep->previousWorkflowStep;
+        }
+
+        return $delayFrom;
     }
 }
