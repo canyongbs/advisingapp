@@ -34,25 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Settings;
+use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
+use Spatie\LaravelSettings\Migrations\SettingsBlueprint;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use AdvisingApp\Ai\Enums\AiModel;
-use Spatie\LaravelSettings\Settings;
-
-class AiQnaAdvisorSettings extends Settings
-{
-    public bool $allow_selection_of_model = true;
-
-    public ?AiModel $preselected_model = null;
-
-    public ?string $instructions = null;
-
-    public ?string $background_information = null;
-
-    public ?string $restrictions = null;
-
-    public static function group(): string
+return new class () extends SettingsMigration {
+    public function up(): void
     {
-        return 'ai-qna-advisor';
+        $this->migrator->inGroup('ai-qna-advisor', function (SettingsBlueprint $blueprint) {
+            try {
+                $blueprint->add('restrictions', null);
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
+        });
     }
-}
+
+    public function down(): void
+    {
+        $this->migrator->inGroup('ai-qna-advisor', function (SettingsBlueprint $blueprint) {
+            $blueprint->delete('restrictions');
+        });
+    }
+};
