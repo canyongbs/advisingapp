@@ -70,6 +70,11 @@ class UploadFileForParsing
             'user_prompt' => 'If the upload has images retrieve text from it and also describe the image in detail. If the upload seems to be just an image with no text in it, just return the image description.',
         ];
 
+        /**
+         * For right now, we have been asked to use the default Institutional Advisor
+         * as the LVM Model for parsing.
+         * In the future we may want this to be configurable.
+         */
         $service = AiAssistant::query()
             ->where('is_default', true)
             ->first()
