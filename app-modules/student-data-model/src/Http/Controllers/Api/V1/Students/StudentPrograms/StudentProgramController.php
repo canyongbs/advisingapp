@@ -24,19 +24,22 @@ class StudentProgramController
         Gate::authorize('create', Program::class);
         Gate::authorize('program.*.update', Program::class);
         Gate::authorize('program.*.delete', Program::class);
-        
+
         $data = $request->validate([
-            '*.acad_career' => ['sometimes', 'string', 'max:255'],
-            '*.division' => ['sometimes', 'string', 'max:255'],
-            '*.acad_plan' => ['required', 'string'],
-            '*.prog_status' => ['sometimes', 'string', 'max:255'],
-            '*.cum_gpa' => ['sometimes', 'decimal:0,2', 'regex:/^\d{1,3}(\.\d{1,2})?$/'],
-            '*.semester' => ['sometimes', 'string', 'max:255'],
-            '*.descr' => ['sometimes', 'string', 'max:255'],
-            '*.foi' => ['sometimes', 'string', 'max:255'],
-            '*.change_dt' => ['sometimes', 'date', 'date_format:Y-m-d H:i:s'],
-            '*.declare_dt' => ['required', 'date', 'date_format:Y-m-d H:i:s'],
+            'program' => ['required','array'],
+            'program.*.acad_career' => ['sometimes', 'string', 'max:255'],
+            'program.*.division' => ['sometimes', 'string', 'max:255'],
+            'program.*.acad_plan' => ['required', 'string'],
+            'program.*.prog_status' => ['sometimes', 'string', 'max:255'],
+            'program.*.cum_gpa' => ['sometimes', 'decimal:0,2', 'regex:/^\d{1,3}(\.\d{1,2})?$/'],
+            'program.*.semester' => ['sometimes', 'string', 'max:255'],
+            'program.*.descr' => ['sometimes', 'string', 'max:255'],
+            'program.*.foi' => ['sometimes', 'string', 'max:255'],
+            'program.*.change_dt' => ['sometimes', 'date', 'date_format:Y-m-d H:i:s'],
+            'program.*.declare_dt' => ['required', 'date', 'date_format:Y-m-d H:i:s'],
         ]);
+
+        $data = $data['program'];
 
         $programData = $program->execute($student, StudentProgramData::collect($data));
 

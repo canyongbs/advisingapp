@@ -8,6 +8,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use Dedoc\Scramble\Attributes\Example;
 use Dedoc\Scramble\Attributes\Group;
 use Dedoc\Scramble\Attributes\QueryParameter;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -20,10 +21,9 @@ use Spatie\QueryBuilder\QueryBuilder;
 class ListStudentProgramsController
 {
     /**
-     * @response AnonymousResourceCollection<LengthAwarePaginator<StudentProgramsResource>>
+     * @response AnonymousResourceCollection<LengthAwarePaginator<StudentProgramResource>>
      */
     #[Group('Students')]
-    #[QueryParameter('filter[sisid]', description: 'Filter the results where the program\'s SISID contains the provided string.', type: 'string')]
     #[QueryParameter('filter[acad_career]', description: 'Filter the results where the program\'s academic career contains the provided string.', type: 'string')]
     #[QueryParameter('filter[division]', description: 'Filter the results where the program\'s division contains the provided string.', type: 'string')]
     #[QueryParameter('filter[acad_plan]', description: 'Filter the results where the program\'s acad_plan contains the provided string.', type: 'string')]
@@ -39,7 +39,6 @@ class ListStudentProgramsController
     #[QueryParameter('page[number]', description: 'Control which page of students\'s programs is returned in the response.', type: 'int', default: 1)]
     #[QueryParameter('page[size]', description: 'Control how many students\'s programs are returned in the response.', type: 'int', default: 30)]
     #[QueryParameter('sort', description: 'Control the order of students\'s programs that are returned in the response. Ascending order is used by default, prepend the sort with `-` to sort descending.', type: 'string', default: 'sisid', examples: [
-        'sisid' => new Example('sisid'),
         'acad_career' => new Example('acad_career'),
         'division' => new Example('division'),
         'acad_plan' => new Example('acad_plan'),
@@ -50,8 +49,6 @@ class ListStudentProgramsController
         'foi' => new Example('foi'),
         'change_dt' => new Example('change_dt'),
         'declare_dt' => new Example('declare_dt'),
-        'graduation_dt' => new Example('graduation_dt'),
-        'conferred_dt' => new Example('conferred_dt'),
     ])]
     public function __invoke(Request $request, Student $student): AnonymousResourceCollection
     {
@@ -64,7 +61,9 @@ class ListStudentProgramsController
                 AllowedFilter::partial('sisid'),
                 AllowedFilter::partial('acad_career'),
                 AllowedFilter::partial('division'),
-                AllowedFilter::partial('acad_plan'),
+                AllowedFilter::callback('acad_plan', function (Builder $query, string $value) {
+                    $query->whereRaw("acad_plan::text ILIKE ?", ["%{$value}%"]);
+                }),
                 AllowedFilter::partial('prog_status'),
                 AllowedFilter::operator('cum_gpa', FilterOperator::DYNAMIC),
                 AllowedFilter::partial('semester'),

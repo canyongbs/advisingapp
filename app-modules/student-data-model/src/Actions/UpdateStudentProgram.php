@@ -46,10 +46,10 @@ use Spatie\LaravelData\DataCollection;
 class UpdateStudentProgram
 {
     
-  /**
-   * @param StudentProgramData[] $programs
-   * @return Collection<int, Program>
-   */
+    /**
+     * @param StudentProgramData[] $programs
+     * @return Collection<int, Program>
+     */
     public function execute(Student $student, array $programs): Collection
     {
         $student->programs()->delete();
