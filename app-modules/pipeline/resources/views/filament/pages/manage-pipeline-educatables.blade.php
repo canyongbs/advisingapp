@@ -108,6 +108,6 @@
         <x-filament-actions::modals />
     @endif
 
-    @vite('app-module/pipeline/resources/js/kanban.js')
+    @vite('app-modules/pipeline/resources/js/kanban.js')
 
 </x-filament-panels::page>
