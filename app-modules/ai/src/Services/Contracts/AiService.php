@@ -47,7 +47,7 @@ interface AiService
     /**
      * This method is passed a prompt and should return a completion for it.
      */
-    public function complete(string $prompt, string $content): string;
+    public function complete(string $prompt, string $content, bool $shouldTrack = true): string;
 
     /**
      * This method is passed an unsaved `AiAssistant` model and should return
