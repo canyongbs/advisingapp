@@ -148,10 +148,6 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('heroicon-o-academic-cap')
                     ->collapsed(),
                 NavigationGroup::make()
-                    ->label('Product Features')
-                    ->icon('heroicon-o-signal')
-                    ->collapsed(),
-                NavigationGroup::make()
                     ->label('Premium Features')
                     ->icon('heroicon-o-rocket-launch')
                     ->collapsed(),
