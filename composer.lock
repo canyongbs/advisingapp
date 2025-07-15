@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "73575621b9a6706d7e6e52e457afdf86",
+    "content-hash": "f94293828c25ea765fc039bafae3dfec",
     "packages": [
         {
             "name": "amphp/amp",
@@ -2707,6 +2707,41 @@
                     "AdvisingApp\\MultifactorAuthentication\\Tests\\": "tests/",
                     "AdvisingApp\\MultifactorAuthentication\\Database\\Factories\\": "database/factories/",
                     "AdvisingApp\\MultifactorAuthentication\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/pipeline",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/pipeline",
+                "reference": "0d48b9cc85e6d9e1937b255dc9a2da3cdaf8ef1e"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AdvisingApp\\Pipeline\\Providers\\PipelineServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AdvisingApp\\Pipeline\\": "src/",
+                    "AdvisingApp\\Pipeline\\Tests\\": "tests/",
+                    "AdvisingApp\\Pipeline\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Pipeline\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [

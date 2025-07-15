@@ -55,6 +55,8 @@ use AdvisingApp\Notification\Models\Concerns\NotifiableViaSms;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Notification\Models\Subscription;
+use AdvisingApp\Pipeline\Models\EducatablePipelineStage;
+use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Prospect\Database\Factories\ProspectFactory;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Observers\ProspectObserver;
@@ -422,7 +424,7 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
     }
 
     /**
-     * @return MorphToMany<Pipeline>
+     * @return MorphToMany<Pipeline, $this, covariant EducatablePipelineStage>
      */
     public function educatablePipelineStages(): MorphToMany
     {

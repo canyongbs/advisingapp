@@ -1,0 +1,26 @@
+{
+    "name": "canyon-gbs/pipeline",
+    "description": "",
+    "type": "library",
+    "version": "1.0",
+    "license": "proprietary",
+    "require": {
+        "filament/filament": "^3.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "AdvisingApp\\Pipeline\\": "src/",
+            "AdvisingApp\\Pipeline\\Tests\\": "tests/",
+            "AdvisingApp\\Pipeline\\Database\\Factories\\": "database/factories/",
+            "AdvisingApp\\Pipeline\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AdvisingApp\\Pipeline\\Providers\\PipelineServiceProvider"
+            ]
+        }
+    }
+}
