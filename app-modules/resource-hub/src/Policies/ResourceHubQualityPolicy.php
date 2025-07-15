@@ -162,7 +162,7 @@ class ResourceHubQualityPolicy implements PerformsChecksBeforeAuthorization
                 denyResponse: 'You do not have permission to permanently delete this resource hub quality.'
             );
         }
-        
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$resourceHubQuality->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this resource hub quality.'

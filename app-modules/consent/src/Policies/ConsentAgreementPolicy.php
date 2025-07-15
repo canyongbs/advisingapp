@@ -114,7 +114,7 @@ class ConsentAgreementPolicy
     }
 
     public function forceDelete(Authenticatable $authenticatable, ConsentAgreement $agreement): Response
-    {   
+    {
         return Response::deny('Consent Agreements cannot be permanently deleted.');
     }
 }

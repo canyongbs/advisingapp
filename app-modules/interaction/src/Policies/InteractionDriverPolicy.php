@@ -122,6 +122,7 @@ class InteractionDriverPolicy
                 denyResponse: 'You do not have permission to delete this interaction driver.'
             );
         }
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$driver->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this interaction driver.'
@@ -151,7 +152,7 @@ class InteractionDriverPolicy
                 denyResponse: 'You do not have permission to permanently delete this interaction driver.'
             );
         }
-        
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$driver->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this interaction driver.'

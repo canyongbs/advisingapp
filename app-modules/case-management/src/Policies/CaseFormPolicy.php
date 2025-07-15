@@ -72,7 +72,7 @@ class CaseFormPolicy implements PerformsChecksBeforeAuthorization
                 denyResponse: 'You do not have permission to view case forms.'
             );
         }
-        
+
         return $authenticatable->canOrElse(
             abilities: 'product_admin.view-any',
             denyResponse: 'You do not have permission to view case forms.'

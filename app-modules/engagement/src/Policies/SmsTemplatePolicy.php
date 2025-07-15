@@ -62,7 +62,7 @@ class SmsTemplatePolicy
                 denyResponse: 'You do not have permission to view sms templates.'
             );
         }
-        
+
         return $authenticatable->canOrElse(
             abilities: 'product_admin.view-any',
             denyResponse: 'You do not have permission to view sms templates.'
@@ -152,7 +152,7 @@ class SmsTemplatePolicy
                 denyResponse: 'You do not have permission to permanently delete this sms template.'
             );
         }
-        
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$smsTemplate->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this sms template.'

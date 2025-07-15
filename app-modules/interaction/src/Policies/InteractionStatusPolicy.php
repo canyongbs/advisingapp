@@ -152,7 +152,7 @@ class InteractionStatusPolicy
                 denyResponse: 'You do not have permission to permanently delete this interaction status.'
             );
         }
-        
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$status->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this interaction status.'

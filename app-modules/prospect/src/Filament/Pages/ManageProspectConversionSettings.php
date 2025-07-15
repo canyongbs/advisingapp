@@ -103,7 +103,7 @@ class ManageProspectConversionSettings extends SettingsPage
 
     public function save(): void
     {
-        if (!SettingsPermissions::active() && ! auth()->user()->can('product_admin.*.update')) {
+        if (! SettingsPermissions::active() && ! auth()->user()->can('product_admin.*.update')) {
             return;
         }
 
@@ -119,7 +119,7 @@ class ManageProspectConversionSettings extends SettingsPage
      */
     public function getFormActions(): array
     {
-        if (!SettingsPermissions::active() && ! auth()->user()->can('product_admin.*.update')) {
+        if (! SettingsPermissions::active() && ! auth()->user()->can('product_admin.*.update')) {
             return [];
         }
 

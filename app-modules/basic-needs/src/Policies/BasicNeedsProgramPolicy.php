@@ -62,6 +62,7 @@ class BasicNeedsProgramPolicy
                 denyResponse: 'You do not have permission to view basic needs programs.'
             );
         }
+
         return $authenticatable->canOrElse(
             abilities: 'product_admin.view-any',
             denyResponse: 'You do not have permission to view basic needs programs.'
@@ -76,6 +77,7 @@ class BasicNeedsProgramPolicy
                 denyResponse: 'You do not have permission to view this basic needs program.'
             );
         }
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$basicNeedsProgram->getKey()}.view"],
             denyResponse: 'You do not have permission to view this basic needs program.'

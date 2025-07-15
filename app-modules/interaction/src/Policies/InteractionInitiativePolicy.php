@@ -92,7 +92,7 @@ class InteractionInitiativePolicy
                 denyResponse: 'You do not have permission to create interaction initiatives.'
             );
         }
-        
+
         return $authenticatable->canOrElse(
             abilities: 'product_admin.create',
             denyResponse: 'You do not have permission to create interaction initiatives.'
@@ -152,7 +152,7 @@ class InteractionInitiativePolicy
                 denyResponse: 'You do not have permission to permanently delete this interaction initiative.'
             );
         }
-        
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$initiative->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this interaction initiative.'

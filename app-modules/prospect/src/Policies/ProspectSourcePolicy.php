@@ -151,7 +151,7 @@ class ProspectSourcePolicy
                 denyResponse: 'You do not have permission to force delete this prospect source.'
             );
         }
-        
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$prospectSource->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to force delete this prospect source.'

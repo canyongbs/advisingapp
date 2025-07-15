@@ -65,7 +65,7 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
                 denyResponse: 'You do not have permission to view prompt types.'
             );
         }
-        
+
         return $authenticatable->canOrElse(
             abilities: 'product_admin.view-any',
             denyResponse: 'You do not have permission to view prompt types.'

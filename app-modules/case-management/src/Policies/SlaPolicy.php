@@ -71,7 +71,7 @@ class SlaPolicy
                 denyResponse: 'You do not have permission to view SLAs.'
             );
         }
-        
+
         return $authenticatable->canOrElse(
             abilities: 'product_admin.view-any',
             denyResponse: 'You do not have permission to view SLAs.'

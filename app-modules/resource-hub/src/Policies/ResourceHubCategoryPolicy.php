@@ -162,7 +162,7 @@ class ResourceHubCategoryPolicy implements PerformsChecksBeforeAuthorization
                 denyResponse: 'You do not have permission to permanently delete this resource hub category.'
             );
         }
-        
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$resourceHubCategory->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this resource hub category.'

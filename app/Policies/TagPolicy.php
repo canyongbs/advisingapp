@@ -53,7 +53,7 @@ class TagPolicy
                 denyResponse: 'You do not have permission to view tags.'
             );
         }
-        
+
         return $authenticatable->canOrElse(
             abilities: ['product_admin.view-any'],
             denyResponse: 'You do not have permission to view tags.'

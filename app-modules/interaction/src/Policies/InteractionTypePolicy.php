@@ -62,7 +62,7 @@ class InteractionTypePolicy
                 denyResponse: 'You do not have permission to view interaction types.'
             );
         }
-        
+
         return $authenticatable->canOrElse(
             abilities: 'product_admin.view-any',
             denyResponse: 'You do not have permission to view interaction types.'

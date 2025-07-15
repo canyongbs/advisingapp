@@ -51,7 +51,7 @@ class NotificationSettingPolicy
                 denyResponse: 'You do not have permission to view notification settings.'
             );
         }
-        
+
         return $authenticatable->canOrElse(
             abilities: 'product_admin.view-any',
             denyResponse: 'You do not have permission to view notification settings.'
@@ -141,7 +141,7 @@ class NotificationSettingPolicy
                 denyResponse: 'You do not have permission to permanently delete this notification setting.'
             );
         }
-        
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$notificationSetting->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this notification setting.'

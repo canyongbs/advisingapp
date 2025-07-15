@@ -71,7 +71,7 @@ class CaseStatusPolicy
                 denyResponse: 'You do not have permissions to view case statuses.'
             );
         }
-        
+
         return $authenticatable->canOrElse(
             abilities: 'product_admin.view-any',
             denyResponse: 'You do not have permissions to view case statuses.'

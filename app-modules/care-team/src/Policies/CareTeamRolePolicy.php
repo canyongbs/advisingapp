@@ -51,7 +51,7 @@ class CareTeamRolePolicy
                 denyResponse: 'You do not have permission to view care team roles.'
             );
         }
-        
+
         return $authenticatable->canOrElse(
             abilities: 'product_admin.view-any',
             denyResponse: 'You do not have permission to view care team roles.'
@@ -141,7 +141,7 @@ class CareTeamRolePolicy
                 denyResponse: 'You do not have permission to permanently delete this care team role.'
             );
         }
-        
+
         return $authenticatable->canOrElse(
             abilities: ['product_admin.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete this care team role.'

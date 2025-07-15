@@ -62,7 +62,7 @@ class InteractionRelationPolicy
                 denyResponse: 'You do not have permission to view interaction relations.'
             );
         }
-        
+
         return $authenticatable->canOrElse(
             abilities: 'product_admin.view-any',
             denyResponse: 'You do not have permission to view interaction relations.'
@@ -152,7 +152,7 @@ class InteractionRelationPolicy
                 denyResponse: 'You do not have permission to permanently delete this interaction relation.'
             );
         }
-        
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$relation->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this interaction relation.'

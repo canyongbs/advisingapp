@@ -62,7 +62,7 @@ class EmailTemplatePolicy
                 denyResponse: 'You do not have permission to view email templates.'
             );
         }
-        
+
         return $authenticatable->canOrElse(
             abilities: 'product_admin.view-any',
             denyResponse: 'You do not have permission to view email templates.'
@@ -152,7 +152,7 @@ class EmailTemplatePolicy
                 denyResponse: 'You do not have permission to permanently delete this email template.'
             );
         }
-        
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$emailTemplate->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this email template.'

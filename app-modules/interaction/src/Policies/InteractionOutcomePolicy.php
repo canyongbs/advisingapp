@@ -152,7 +152,7 @@ class InteractionOutcomePolicy
                 denyResponse: 'You do not have permission to permanently delete this interaction outcome.'
             );
         }
-        
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$outcome->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this interaction outcome.'

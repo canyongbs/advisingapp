@@ -61,7 +61,7 @@ class ProspectStatusPolicy
                 denyResponse: 'You do not have permission to view prospect statuses.'
             );
         }
-        
+
         return $authenticatable->canOrElse(
             abilities: 'product_admin.view-any',
             denyResponse: 'You do not have permission to view prospect statuses.'

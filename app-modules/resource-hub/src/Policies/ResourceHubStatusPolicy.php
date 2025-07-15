@@ -72,7 +72,7 @@ class ResourceHubStatusPolicy implements PerformsChecksBeforeAuthorization
                 denyResponse: 'You do not have permission to view any resource hub statuses.'
             );
         }
-        
+
         return $authenticatable->canOrElse(
             abilities: 'product_admin.view-any',
             denyResponse: 'You do not have permission to view any resource hub statuses.'
@@ -160,9 +160,9 @@ class ResourceHubStatusPolicy implements PerformsChecksBeforeAuthorization
             return $authenticatable->canOrElse(
                 abilities: 'settings.*.force-delete',
                 denyResponse: 'You do not have permission to permanently delete this resource hub status.'
-            );  
+            );
         }
-        
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$resourceHubStatus->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this resource hub status.'
