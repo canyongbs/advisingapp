@@ -34,54 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Filament\Pages;
+namespace AdvisingApp\Report\Abstract;
 
-use AdvisingApp\Report\Abstract\StudentReport;
-use AdvisingApp\Report\Filament\Widgets\MostRecentStudentsTable;
-use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
-use AdvisingApp\Report\Filament\Widgets\StudentCumulativeCountLineChart;
-use AdvisingApp\Report\Filament\Widgets\StudentsStats;
-use App\Filament\Clusters\ReportLibrary;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
+use App\Models\User;
+use Filament\Pages\Dashboard;
 
-class Students extends StudentReport
+abstract class RetentionCrmDashboardReport extends Dashboard
 {
-    protected static ?string $cluster = ReportLibrary::class;
+    use HasFiltersForm;
 
-    protected static ?string $navigationGroup = 'Students';
+    protected static string $view = 'report::filament.pages.report';
 
-    protected static ?string $navigationLabel = 'Overview';
-
-    protected static ?string $title = 'Students (Overview)';
-
-    protected static string $routePath = 'students';
-
-    protected static ?int $navigationSort = 2;
-
-    protected $cacheTag = 'report-students';
-
-    public function getWidgets(): array
+    public static function canAccess(): bool
     {
-        return [
-            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-            StudentsStats::make(['cacheTag' => $this->cacheTag]),
-            StudentCumulativeCountLineChart::make(['cacheTag' => $this->cacheTag]),
-            MostRecentStudentsTable::make(['cacheTag' => $this->cacheTag]),
-        ];
-    }
+        /** @var User $user */
+        $user = auth()->user();
 
-    public function getColumns(): int | string | array
-    {
-        return [
-            'sm' => 2,
-            'md' => 4,
-            'lg' => 4,
-        ];
-    }
-
-    public function getWidgetData(): array
-    {
-        return [
-            'filters' => $this->filters,
-        ];
+        return $user->hasLicense(LicenseType::RetentionCrm) && $user->can('report-library.view-any');
     }
 }
