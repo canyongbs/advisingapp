@@ -37,6 +37,7 @@
 namespace AdvisingApp\IntegrationOpenAi\Prism;
 
 use AdvisingApp\IntegrationOpenAi\Prism\AzureOpenAi\Handlers\Stream;
+use AdvisingApp\IntegrationOpenAi\Prism\AzureOpenAi\Handlers\Structured;
 use Closure;
 use Generator;
 use Illuminate\Http\Client\PendingRequest;
@@ -44,6 +45,8 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 use Override;
 use Prism\Prism\Providers\OpenAI\OpenAI;
+use Prism\Prism\Structured\Request as StructuredRequest;
+use Prism\Prism\Structured\Response as StructuredResponse;
 use Prism\Prism\Text\Request as TextRequest;
 
 readonly class AzureOpenAi extends OpenAI
@@ -54,6 +57,17 @@ readonly class AzureOpenAi extends OpenAI
     public function stream(TextRequest $request): Generator
     {
         $handler = new Stream($this->client(
+            $request->clientOptions(),
+            $request->clientRetry()
+        ));
+
+        return $handler->handle($request);
+    }
+
+    #[Override]
+    public function structured(StructuredRequest $request): StructuredResponse
+    {
+        $handler = new Structured($this->client(
             $request->clientOptions(),
             $request->clientRetry()
         ));

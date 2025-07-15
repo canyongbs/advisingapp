@@ -463,6 +463,18 @@ abstract class BaseOpenAiService implements AiService
     }
 
     /**
+     * @param array<string, mixed> $options
+     *
+     * @return array{response: array<mixed>, nextRequestOptions: array<string, mixed>}
+     */
+    public function structuredResearchRequestRequest(ResearchRequest $researchRequest, string $prompt, string $content, Schema $schema, array $options = []): array
+    {
+        return ['response' => [], 'nextRequestOptions' => []];
+    }
+
+    public function afterResearchRequestSearchQueriesParsed(ResearchRequest $researchRequest): void {}
+
+    /**
      * @param array<AiMessageFile> $files
      */
     protected function createMessage(string $threadId, string $content, array $files = []): ThreadMessageResponse

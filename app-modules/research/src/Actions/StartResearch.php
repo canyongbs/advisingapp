@@ -36,8 +36,10 @@
 
 namespace AdvisingApp\Research\Actions;
 
+use AdvisingApp\Research\Jobs\AfterResearchRequestSearchQueriesParsed;
 use AdvisingApp\Research\Jobs\AwaitResearchRequestReady;
 use AdvisingApp\Research\Jobs\FetchResearchRequestLinkParsingResults;
+use AdvisingApp\Research\Jobs\GenerateResearchRequestOutline;
 use AdvisingApp\Research\Jobs\GenerateResearchRequestSearchQueries;
 use AdvisingApp\Research\Jobs\UploadResearchRequestFileForParsing;
 use AdvisingApp\Research\Models\ResearchRequest;
@@ -48,29 +50,49 @@ class StartResearch
 {
     public function execute(ResearchRequest $researchRequest): void
     {
-        Bus::chain([
-            Bus::batch([
-                ...$researchRequest->getMedia('files')->map(function (Media $media): UploadResearchRequestFileForParsing {
-                    return app(UploadResearchRequestFileForParsing::class, [
-                        'media' => $media,
+        Bus::batch([
+            ...$researchRequest->getMedia('files')->map(function (Media $media): UploadResearchRequestFileForParsing {
+                return app(UploadResearchRequestFileForParsing::class, [
+                    'media' => $media,
+                ]);
+            })->all(),
+            ...array_map(
+                function (string $link) use ($researchRequest): FetchResearchRequestLinkParsingResults {
+                    return app(FetchResearchRequestLinkParsingResults::class, [
+                        'researchRequest' => $researchRequest,
+                        'link' => $link,
                     ]);
-                })->all(),
-                ...array_map(
-                    function (string $link) use ($researchRequest): FetchResearchRequestLinkParsingResults {
-                        return app(FetchResearchRequestLinkParsingResults::class, [
+                },
+                $researchRequest->links,
+            ),
+        ])
+            ->then(function () use ($researchRequest) {
+                Bus::chain([
+                    app(AwaitResearchRequestReady::class, [
+                        'researchRequest' => $researchRequest,
+                    ]),
+                    Bus::batch([
+                        app(GenerateResearchRequestSearchQueries::class, [
                             'researchRequest' => $researchRequest,
-                            'link' => $link,
-                        ]);
-                    },
-                    $researchRequest->links,
-                ),
-                app(GenerateResearchRequestSearchQueries::class, [
-                    'researchRequest' => $researchRequest,
-                ]),
-            ]),
-            app(AwaitResearchRequestReady::class, [
-                'researchRequest' => $researchRequest,
-            ]),
-        ])->dispatch();
+                        ]),
+                    ])
+                        ->then(function () use ($researchRequest) {
+                            Bus::chain([
+                                app(AfterResearchRequestSearchQueriesParsed::class, [
+                                    'researchRequest' => $researchRequest,
+                                ]),
+                                app(AwaitResearchRequestReady::class, [
+                                    'researchRequest' => $researchRequest,
+                                ]),
+                                Bus::batch([
+                                    app(GenerateResearchRequestOutline::class, [
+                                        'researchRequest' => $researchRequest,
+                                    ]),
+                                ]),
+                            ])->dispatch();
+                        }),
+                ])->dispatch();
+            })
+            ->dispatch();
     }
 }

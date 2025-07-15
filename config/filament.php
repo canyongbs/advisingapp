@@ -48,12 +48,14 @@ return [
     */
 
     'broadcasting' => [
-        // 'echo' => [
-        //     'broadcaster' => 'pusher',
-        //     'key' => env('VITE_PUSHER_APP_KEY'),
-        //     'cluster' => env('VITE_PUSHER_APP_CLUSTER'),
-        //     'forceTLS' => true,
-        // ],
+        'echo' => [
+            'broadcaster' => 'pusher',
+            'key' => env('VITE_ABLY_PUBLIC_KEY'),
+            'wsHost' => 'realtime-pusher.ably.io',
+            'wsPort' => 443,
+            'disableStats' => true,
+            'encrypted' => true,
+        ],
     ],
 
     /*

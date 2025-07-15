@@ -13,6 +13,7 @@
         "php": "8.4.*",
         "ext-gd": "*",
         "ext-pdo": "*",
+        "ably/ably-php": "^1.1",
         "aws/aws-php-sns-message-validator": "^1.9",
         "aws/aws-sdk-php": "^3.316",
         "barryvdh/laravel-debugbar": "^3.9",
