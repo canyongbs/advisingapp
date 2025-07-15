@@ -46,12 +46,8 @@ class PipelinePolicy
 {
     public function before(Authenticatable $authenticatable): ?Response
     {
-        if (! $authenticatable->hasLicense(Prospect::getLicenseType())) {
-            return Response::deny('You are not licensed for the Recruitment CRM.');
-        }
-
-        if (! $authenticatable->hasLicense(Student::getLicenseType())) {
-            return Response::deny('You are not licensed for the Retention CRM.');
+        if (! $authenticatable->hasLicense(Student::getLicenseType()) && ! $authenticatable->hasLicense(Prospect::getLicenseType())) {
+            return Response::deny('You are not licensed for any CRM.');
         }
 
         return null;

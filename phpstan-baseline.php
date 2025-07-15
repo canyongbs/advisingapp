@@ -194,30 +194,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/PromptTypeResource/Pages/ListPromptTypes.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\QnaAdvisorFile\\:\\:\\$file_id\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/QnaAdvisorResource/Pages/ManageQnaAdditionalKnowledge.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\QnaAdvisorFile\\:\\:\\$mime_type\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/QnaAdvisorResource/Pages/ManageQnaAdditionalKnowledge.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\QnaAdvisorFile\\:\\:\\$name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/QnaAdvisorResource/Pages/ManageQnaAdditionalKnowledge.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\QnaAdvisorFile\\:\\:\\$temporary_url\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/QnaAdvisorResource/Pages/ManageQnaAdditionalKnowledge.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$query of anonymous function has no typehint\\.$#',
     'identifier' => 'closure.parameterMissingTypehint',
     'count' => 2,
@@ -234,24 +210,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/ai/src/Jobs/EmailAiThread.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\QnaAdvisorFile\\:\\:\\$file_id\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Jobs/FetchQnaAdvisorFileParsingResults.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\QnaAdvisorFile\\:\\:\\$parsing_results\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/ai/src/Jobs/FetchQnaAdvisorFileParsingResults.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Jobs\\\\FetchQnaAdvisorFileParsingResults\\:\\:uniqueId\\(\\) should return string but returns int\\.$#',
-    'identifier' => 'return.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Jobs/FetchQnaAdvisorFileParsingResults.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Filament\\\\Notifications\\\\Notification\\:\\:error\\(\\)\\.$#',
@@ -390,36 +348,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/ai/src/Models/AiThreadFolder.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\QnaAdvisorFile\\:\\:\\$file_id\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Models/QnaAdvisorFile.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\QnaAdvisorFile\\:\\:\\$mime_type\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Models/QnaAdvisorFile.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\QnaAdvisorFile\\:\\:\\$name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Models/QnaAdvisorFile.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\QnaAdvisorFile\\:\\:\\$parsing_results\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Models/QnaAdvisorFile.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\QnaAdvisorFile\\:\\:\\$temporary_url\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Models/QnaAdvisorFile.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Ai\\\\Models\\\\Scopes\\\\AuditableAiMessages\\:\\:__invoke\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',

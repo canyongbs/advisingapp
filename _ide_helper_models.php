@@ -1,39 +1,5 @@
 <?php
 
-/*
-<COPYRIGHT>
-
-    Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
-
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
-    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
-
-    Notice:
-
-    - You may not provide the software to third parties as a hosted or managed
-      service, where the service provides users with access to any substantial set of
-      the features or functionality of the software.
-    - You may not move, change, disable, or circumvent the license key functionality
-      in the software, and you may not remove or obscure any functionality in the
-      software that is protected by the license key.
-    - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
-      to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
-      vigorously.
-    - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
-    - Use of this software implies agreement to the license terms and conditions as stated
-      in the Elastic License 2.0.
-
-    For more information or inquiries please visit our website at
-    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
-
-</COPYRIGHT>
-*/
-
 // @formatter:off
 // phpcs:ignoreFile
 /**
@@ -1304,7 +1270,17 @@ namespace AdvisingApp\Ai\Models{
 /**
  * 
  *
- * @property-read \AdvisingApp\Ai\Models\QnaAdvisor|null $advisor
+ * @property string $id
+ * @property string $advisor_id
+ * @property string|null $file_id
+ * @property string|null $name
+ * @property string|null $temporary_url
+ * @property string|null $mime_type
+ * @property string|null $parsing_results
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \AdvisingApp\Ai\Models\QnaAdvisor $advisor
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
  * @property-read \AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore|null $openAiVectorStore
@@ -1312,6 +1288,16 @@ namespace AdvisingApp\Ai\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorFile newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorFile onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorFile query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorFile whereAdvisorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorFile whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorFile whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorFile whereFileId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorFile whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorFile whereMimeType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorFile whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorFile whereParsingResults($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorFile whereTemporaryUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorFile whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorFile withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorFile withoutTrashed()
  * @mixin \Eloquent
@@ -4546,18 +4532,18 @@ namespace AdvisingApp\Pipeline\Models{
 /**
  * 
  *
- * @property-read Model $educatable
- * @property-read Pipeline|null $pipeline
- * @property-read PipelineStage|null $stage
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EducatablePipelineStage newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EducatablePipelineStage newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EducatablePipelineStage query()
  * @property string $pipeline_id
  * @property string $pipeline_stage_id
  * @property string $educatable_type
  * @property string $educatable_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Model $educatable
+ * @property-read \AdvisingApp\Pipeline\Models\Pipeline $pipeline
+ * @property-read \AdvisingApp\Pipeline\Models\PipelineStage $stage
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EducatablePipelineStage newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EducatablePipelineStage newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EducatablePipelineStage query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EducatablePipelineStage whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EducatablePipelineStage whereEducatableId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EducatablePipelineStage whereEducatableType($value)
@@ -4613,19 +4599,19 @@ namespace AdvisingApp\Pipeline\Models{
 /**
  * 
  *
- * @property-read Collection<int, EducatablePipelineStage> $educatables
- * @property-read int|null $educatables_count
- * @property-read Pipeline|null $pipeline
- * @method static \AdvisingApp\Pipeline\Database\Factories\PipelineStageFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PipelineStage newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PipelineStage newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PipelineStage query()
  * @property string $id
  * @property string $name
  * @property string $pipeline_id
  * @property int $order
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Pipeline\Models\EducatablePipelineStage> $educatables
+ * @property-read int|null $educatables_count
+ * @property-read \AdvisingApp\Pipeline\Models\Pipeline $pipeline
+ * @method static \AdvisingApp\Pipeline\Database\Factories\PipelineStageFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PipelineStage newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PipelineStage newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PipelineStage query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PipelineStage whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PipelineStage whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PipelineStage whereName($value)

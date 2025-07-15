@@ -49,7 +49,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
 
-class ManageProspectPipelineSettings extends SettingsPage
+class PipelineSettings extends SettingsPage
 {
     protected static string $resource = ProspectResource::class;
 
@@ -68,11 +68,7 @@ class ManageProspectPipelineSettings extends SettingsPage
         /** @var User $user */
         $user = auth()->user();
 
-        if (! $user->hasLicense(Prospect::getLicenseType())) {
-            return false;
-        }
-
-        if (! $user->hasLicense(Student::getLicenseType())) {
+        if (! $user->hasLicense(Student::getLicenseType()) || ! $user->hasLicense(Prospect::getLicenseType())) {
             return false;
         }
 

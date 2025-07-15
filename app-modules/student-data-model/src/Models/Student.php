@@ -486,7 +486,7 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     }
 
     /**
-    * @return MorphToMany<Pipeline, $this, covariant EducatablePipelineStage>
+    * @return MorphToMany<Pipeline, $this, EducatablePipelineStage>
     */
     public function educatablePipelineStages(): MorphToMany
     {

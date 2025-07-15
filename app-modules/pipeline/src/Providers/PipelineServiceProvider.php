@@ -36,6 +36,9 @@
 
 namespace AdvisingApp\Pipeline\Providers;
 
+use AdvisingApp\Pipeline\Models\EducatablePipelineStage;
+use AdvisingApp\Pipeline\Models\Pipeline;
+use AdvisingApp\Pipeline\Models\PipelineStage;
 use AdvisingApp\Pipeline\PipelinePlugin;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -50,6 +53,10 @@ class PipelineServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        Relation::morphMap([]);
+        Relation::morphMap([
+            'pipeline' => Pipeline::class,
+            'pipeline_stage' => PipelineStage::class,
+            'educatable_pipeline_stage' => EducatablePipelineStage::class,
+        ]);
     }
 }
