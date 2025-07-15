@@ -56,6 +56,8 @@ class ListProspectsController
         'preferred' => new Example('preferred'),
         'birthdate' => new Example('birthdate'),
         'hsgrad' => new Example('hsgrad'),
+        'status' => new Example('status'),
+        'source' => new Example('source'),
         'primary_email_id' => new Example('primary_email_id'),
         'primary_phone_id' => new Example('primary_phone_id'),
         'primary_address_id' => new Example('primary_address_id'),
@@ -74,7 +76,7 @@ class ListProspectsController
                 AllowedFilter::exact('sms_opt_out'),
                 AllowedFilter::exact('email_bounce'),
                 AllowedFilter::operator('birthdate', FilterOperator::DYNAMIC),
-                AllowedFilter::exact('hsgrad'),
+                AllowedFilter::operator('hsgrad', FilterOperator::DYNAMIC),
                 AllowedFilter::callback('status', function (Builder $query, mixed $value): Builder {
                     return $query->whereHas('status', function (Builder $query) use ($value) {
                         $query->whereRaw('LOWER(name) = ?', [Str::lower($value)]);
