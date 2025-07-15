@@ -40,7 +40,7 @@ use Filament\Clusters\Cluster;
 
 class UsageAuditing extends Cluster
 {
-    protected static ?string $navigationGroup = 'Reporting';
+    protected static ?string $navigationGroup = 'Analytics';
 
     protected static ?int $navigationSort = 20;
 }
