@@ -55,7 +55,7 @@ class ProspectEnagagementReport extends ProspectReport
 
     protected $cacheTag = 'report-prospect-engagement';
 
-    protected static ?int $navigationSort = 30;
+    protected static ?int $navigationSort = 40;
 
     public function getColumns(): int | string | array
     {
