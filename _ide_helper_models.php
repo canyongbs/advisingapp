@@ -6493,6 +6493,8 @@ namespace AdvisingApp\Workflow\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Workflow\Models\WorkflowRunStep> $workflowRunSteps
+ * @property-read int|null $workflow_run_steps_count
  * @property-read \AdvisingApp\Workflow\Models\WorkflowTrigger $workflowTrigger
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun newQuery()
@@ -6525,12 +6527,13 @@ namespace AdvisingApp\Workflow\Models{
  * @property \Illuminate\Support\Carbon|null $last_failed_at
  * @property string $workflow_run_id
  * @property string $details_id
- * @property string $details_type
+ * @property \AdvisingApp\Workflow\Enums\WorkflowActionType $details_type
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
+ * @property-read covariant WorkflowDetails $workflowDetails
  * @property-read WorkflowRunStep|null $workflowRunStep
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep newQuery()

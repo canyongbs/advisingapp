@@ -65,6 +65,7 @@ class WorkflowRunStep extends BaseModel
         'dispatched_at' => 'datetime',
         'succeeded_at' => 'datetime',
         'last_failed_at' => 'datetime',
+        'details_type' => WorkflowActionType::class,
     ];
 
     /**
