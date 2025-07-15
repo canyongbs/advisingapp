@@ -42,14 +42,16 @@ use Illuminate\Database\Eloquent\Relations\MorphPivot;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
- * 
  *
- * @property-read \Illuminate\Database\Eloquent\Model $educatable
- * @property-read \AdvisingApp\Pipeline\Models\Pipeline|null $pipeline
- * @property-read \AdvisingApp\Pipeline\Models\PipelineStage|null $stage
+ *
+ * @property-read Model $educatable
+ * @property-read Pipeline|null $pipeline
+ * @property-read PipelineStage|null $stage
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EducatablePipelineStage newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EducatablePipelineStage newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EducatablePipelineStage query()
+ *
  * @mixin \Eloquent
  */
 class EducatablePipelineStage extends MorphPivot

@@ -37,6 +37,7 @@
 namespace AdvisingApp\Pipeline\Models;
 
 use AdvisingApp\Pipeline\Database\Factories\PipelineStageFactory;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -44,15 +45,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * 
  *
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Pipeline\Models\EducatablePipelineStage> $educatables
+ *
+ * @property-read Collection<int, EducatablePipelineStage> $educatables
  * @property-read int|null $educatables_count
- * @property-read \AdvisingApp\Pipeline\Models\Pipeline|null $pipeline
+ * @property-read Pipeline|null $pipeline
+ *
  * @method static \AdvisingApp\Pipeline\Database\Factories\PipelineStageFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PipelineStage newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PipelineStage newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PipelineStage query()
+ *
  * @mixin \Eloquent
  */
 class PipelineStage extends Model
