@@ -82,12 +82,6 @@ class ManageLicenseSettings extends SettingsPage
                             TextInput::make('data.subscription.partnerName')
                                 ->label('Partner Name')
                                 ->required(),
-                            TextInput::make('data.subscription.clientPo')
-                                ->label('Client PO')
-                                ->required(),
-                            TextInput::make('data.subscription.partnerPo')
-                                ->label('Partner PO')
-                                ->required(),
                             DatePicker::make('data.subscription.startDate')
                                 ->label('Start Date')
                                 ->required()
