@@ -47,6 +47,13 @@ class FetchFileParsingResults
 
     public function execute(string $fileId, string $mimetype): ?string
     {
+        // $response = Http::withToken(app(AiIntegrationsSettings::class)->llamaparse_api_key)
+        //     ->get("https://api.cloud.llamaindex.ai/api/v1/parsing/job/{$this->file->file_id}/details");
+
+        // logger()->debug('FetchQnaAdvisorFileParsingResults response', [
+        //     'response' => $response->json(),
+        // ]);
+
         $outputFormat = match (true) {
             str($mimetype)->startsWith(['audio/', 'video/']) => 'text',
             default => 'markdown',

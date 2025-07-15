@@ -36,14 +36,13 @@
 
 namespace AdvisingApp\Ai\Filament\Pages\Assistant\Concerns;
 
+use AdvisingApp\Ai\Actions\FetchFileParsingResults;
 use AdvisingApp\Ai\Actions\UploadFileForParsing;
 use AdvisingApp\Ai\Models\AiMessageFile;
-use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Http;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -88,14 +87,13 @@ trait CanUploadFiles
             return $this->cachedIsFileReady[$key] = $this->thread?->assistant?->model->getService()->isFileReady($file);
         }
 
-        $response = Http::withToken(app(AiIntegrationsSettings::class)->llamaparse_api_key)
-            ->get("https://api.cloud.llamaindex.ai/api/v1/parsing/job/{$file->file_id}/result/text");
+        $result = app(FetchFileParsingResults::class)->execute($file->file_id, $file->mime_type);
 
-        if ((! $response->successful()) || blank($response->json('text'))) {
+        if (blank($result)) {
             return $this->cachedIsFileReady[$key] = false;
         }
 
-        $file->parsing_results = $response->json('text');
+        $file->parsing_results = $result;
         $file->save();
 
         return $this->cachedIsFileReady[$key] = $this->thread?->assistant?->model->getService()->isFileReady($file);
