@@ -4,12 +4,16 @@ namespace AdvisingApp\Prospect\Http\Controllers\Api\V1\Prospects;
 
 use AdvisingApp\Prospect\Http\Resources\Api\V1\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Sorts\ProspectSourceSort;
+use AdvisingApp\Prospect\Sorts\ProspectStatusSort;
 use Dedoc\Scramble\Attributes\Example;
 use Dedoc\Scramble\Attributes\Group;
 use Dedoc\Scramble\Attributes\QueryParameter;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Str;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\AllowedInclude;
 use Spatie\QueryBuilder\AllowedSort;
@@ -62,7 +66,7 @@ class ListProspectsController
 
         return QueryBuilder::for(Prospect::class)
             ->allowedFilters([
-                AllowedFilter::partial('id'),
+                AllowedFilter::exact('id'),
                 AllowedFilter::partial('first_name'),
                 AllowedFilter::partial('last_name'),
                 AllowedFilter::partial('full_name'),
@@ -71,8 +75,16 @@ class ListProspectsController
                 AllowedFilter::exact('email_bounce'),
                 AllowedFilter::operator('birthdate', FilterOperator::DYNAMIC),
                 AllowedFilter::exact('hsgrad'),
-                AllowedFilter::exact('status'),
-                AllowedFilter::exact('source'),
+                AllowedFilter::callback('status', function (Builder $query, mixed $value): Builder {
+                    return $query->whereHas('status', function (Builder $query) use ($value) {
+                        $query->whereRaw('LOWER(name) = ?', [Str::lower($value)]);
+                    });
+                }),
+                AllowedFilter::callback('source', function (Builder $query, mixed $value): Builder {
+                    return $query->whereHas('source', function (Builder $query) use ($value) {
+                        $query->whereRaw('LOWER(name) = ?', [Str::lower($value)]);
+                    });
+                }),
                 AllowedFilter::exact('primary_email_id'),
                 AllowedFilter::exact('primary_phone_id'),
                 AllowedFilter::exact('primary_address_id'),
@@ -91,8 +103,8 @@ class ListProspectsController
                 AllowedSort::field('preferred'),
                 AllowedSort::field('birthdate'),
                 AllowedSort::field('hsgrad'),
-                AllowedSort::field('status'),
-                AllowedSort::field('source'),
+                AllowedSort::custom('status', new ProspectStatusSort(), 'name'),
+                AllowedSort::custom('source', new ProspectSourceSort(), 'name'),
                 AllowedSort::field('primary_email_id'),
                 AllowedSort::field('primary_phone_id'),
                 AllowedSort::field('primary_address_id'),

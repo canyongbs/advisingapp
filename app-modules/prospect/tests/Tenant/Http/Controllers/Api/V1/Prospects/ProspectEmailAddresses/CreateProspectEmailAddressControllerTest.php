@@ -35,15 +35,6 @@ it('is gated with proper access control', function () {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['prospect.view-any', 'prospect.*.update']);
     Sanctum::actingAs($user, ['api']);
-    postJson(route('api.v1.prospects.email-addresses.create', ['prospect' => $prospect], false), $createProspectEmailAddressRequestData);
-
-    // $prospectConfigurationSettings = app(ManageStudentConfigurationSettings::class);
-    // $prospectConfigurationSettings->is_enabled = true;
-    // $prospectConfigurationSettings->save();
-
-    $user = SystemUser::factory()->create();
-    $user->givePermissionTo(['prospect.view-any', 'prospect.*.update']);
-    Sanctum::actingAs($user, ['api']);
     postJson(route('api.v1.prospects.email-addresses.create', ['prospect' => $prospect], false), $createProspectEmailAddressRequestData)
         ->assertCreated();
 });
@@ -62,8 +53,8 @@ it('creates a prospect email address', function () {
         'data',
     ]);
 
-    // expect($response['data']['sisid'] ?? null)
-    //     ->toBe($prospect->sisid);
+    expect($response['data']['prospect_id'] ?? null)
+        ->toBe($prospect->id);
 
     expect($response['data']['address'] ?? null)
         ->toBe($createProspectEmailAddressRequestData['address']);
@@ -79,7 +70,7 @@ it('creates a prospect email address', function () {
     }
 
     assertDatabaseHas(ProspectEmailAddress::class, [
-        // 'sisid' => $prospect->sisid,
+        'prospect_id' => $prospect->id,
         'address' => $createProspectEmailAddressRequestData['address'],
     ]);
 });

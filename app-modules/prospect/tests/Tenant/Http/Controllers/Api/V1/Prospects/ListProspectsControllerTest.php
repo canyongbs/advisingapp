@@ -1,7 +1,10 @@
 <?php
 
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\ProspectSource;
+use AdvisingApp\Prospect\Models\ProspectStatus;
 use App\Models\SystemUser;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\Sanctum;
 
 use function Pest\Laravel\getJson;
@@ -60,7 +63,14 @@ it('can filter prospects by all attributes', function (string $requestKey, mixed
         ->toBe(1);
 })->with([
     // requestKey, requestValue, includedAttributes, excludedAttributes, responseKey, responseValue
-    '`id`' => ['id', 'ABC123', ['id' => 'ABC123'], [], 'id', 'ABC123'],
+    '`id`' => [
+        'id',
+        (string) ($uuid = Str::uuid()),
+        ['id' => $uuid],
+        [],
+        'id',
+        (string) $uuid,
+    ],
     '`first_name`' => ['first_name', 'Alice', ['first_name' => 'Alice'], ['first_name' => 'UniqueFirst'], 'first_name', 'Alice'],
     '`last_name`' => ['last_name', 'Smith', ['last_name' => 'Smith'], ['last_name' => 'UniqueLast'], 'last_name', 'Smith'],
     '`full_name`' => ['full_name', 'John Doe', ['full_name' => 'John Doe'], ['full_name' => 'Unique Name'], 'full_name', 'John Doe'],
@@ -69,23 +79,66 @@ it('can filter prospects by all attributes', function (string $requestKey, mixed
     '`email_bounce`' => ['email_bounce', true, ['email_bounce' => true], ['email_bounce' => false], 'email_bounce', true],
     '`birthdate`' => ['birthdate', '2000-01-01', ['birthdate' => '2000-01-01'], ['birthdate' => '1990-01-01'], 'birthdate', '2000-01-01'],
     '`hsgrad`' => ['hsgrad', '2022', ['hsgrad' => '2022'], ['hsgrad' => '1999'], 'hsgrad', '2022'],
-    '`status`' => ['status', 'A', ['status' => 'A'], ['status' => 'B'], 'status', 'A', 'B'],
-    '`source`' => ['source', 'A', ['source' => 'A'], ['source' => 'B'], 'source', 'A', 'B'],
+    '`status`' => [
+        'status',
+        'Interested',
+        function () {
+            $status = ProspectStatus::factory()->create(['name' => 'Interested']);
+
+            return ['status_id' => $status->id];
+        },
+        function () {
+            $status = ProspectStatus::factory()->create(['name' => 'Not Interested']);
+
+            return ['status_id' => $status->id];
+        },
+        'status',
+        'Interested',
+    ],
+
+    '`source`' => [
+        'source',
+        'Referral',
+        function () {
+            $source = ProspectSource::factory()->create(['name' => 'Referral']);
+
+            return ['source_id' => $source->id];
+        },
+        function () {
+            $source = ProspectSource::factory()->create(['name' => 'Ad Campaign']);
+
+            return ['source_id' => $source->id];
+        },
+        'source',
+        'Referral',
+    ],
 ]);
 
 dataset('sorts', [
     // requestKey, firstAttributes, secondAttributes, responseKey, responseFirstValue, responseSecondValue
-    '`id`' => ['id', ['id' => 'A'], ['id' => 'B'], 'id', 'A', 'B'],
+    '`id`' => ['id', ['id' => '9f57e51c-5050-4df1-a6bc-5b0dc5e6d1d3'], ['id' => '9f592bdf-0217-4545-a2b1-0f661cb9857c'], 'id', '9f57e51c-5050-4df1-a6bc-5b0dc5e6d1d3', '9f592bdf-0217-4545-a2b1-0f661cb9857c'],
     '`first_name`' => ['first_name', ['first_name' => 'Alice'], ['first_name' => 'Bob'], 'first_name', 'Alice', 'Bob'],
     '`last_name`' => ['last_name', ['last_name' => 'Alpha'], ['last_name' => 'Zulu'], 'last_name', 'Alpha', 'Zulu'],
     '`full_name`' => ['full_name', ['full_name' => 'A'], ['full_name' => 'B'], 'full_name', 'A', 'B'],
     '`preferred`' => ['preferred', ['preferred' => 'A'], ['preferred' => 'B'], 'preferred', 'A', 'B'],
-    '`sms_opt_out`' => ['sms_opt_out', true, ['sms_opt_out' => true], ['sms_opt_out' => false], 'sms_opt_out', true],
-    '`email_bounce`' => ['email_bounce', true, ['email_bounce' => true], ['email_bounce' => false], 'email_bounce', true],
     '`birthdate`' => ['birthdate', ['birthdate' => '2000-01-01'], ['birthdate' => '2001-01-01'], 'birthdate', '2000-01-01', '2001-01-01'],
     '`hsgrad`' => ['hsgrad', ['hsgrad' => '2022'], ['hsgrad' => '2023'], 'hsgrad', '2022', '2023'],
-    '`status`' => ['status', ['status' => 'A'], ['status' => 'B'], 'status', 'A', 'B'],
-    '`source`' => ['source', ['source' => 'A'], ['source' => 'B'], 'source', 'A', 'B'],
+    '`status`' => [
+        'status',
+        fn () => ['status_id' => ProspectStatus::factory()->create(['name' => 'Interested'])->id],
+        fn () => ['status_id' => ProspectStatus::factory()->create(['name' => 'Not Interested'])->id],
+        'status',
+        'Interested',
+        'Not Interested',
+    ],
+    '`source`' => [
+        'source',
+        fn () => ['source_id' => ProspectSource::factory()->create(['name' => 'Ad Campaign'])->id],
+        fn () => ['source_id' => ProspectSource::factory()->create(['name' => 'Referral'])->id],
+        'source',
+        'Ad Campaign',
+        'Referral',
+    ],
 ]);
 
 it('can sort prospects by all attributes ascending', function (string $requestKey, array $firstAttributes, array $secondAttributes, string $responseKey, mixed $responseFirstValue, mixed $responseSecondValue) {

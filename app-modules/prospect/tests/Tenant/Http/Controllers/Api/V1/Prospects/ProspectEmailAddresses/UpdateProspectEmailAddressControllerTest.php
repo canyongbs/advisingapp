@@ -36,24 +36,11 @@ it('is gated with proper access control', function () {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['prospect.view-any', 'prospect.*.update']);
     Sanctum::actingAs($user, ['api']);
-    patchJson(route('api.v1.prospects.email-addresses.update', ['prospect' => $prospect, 'prospectEmailAddress' => $prospectEmailAddress], false), $updateProspectEmailAddressRequestData);
-
-    // $prospectConfigurationSettings = app(ManageStudentConfigurationSettings::class);
-    // $prospectConfigurationSettings->is_enabled = true;
-    // $prospectConfigurationSettings->save();
-
-    $user = SystemUser::factory()->create();
-    $user->givePermissionTo(['prospect.view-any', 'prospect.*.update']);
-    Sanctum::actingAs($user, ['api']);
     patchJson(route('api.v1.prospects.email-addresses.update', ['prospect' => $prospect, 'prospectEmailAddress' => $prospectEmailAddress], false), $updateProspectEmailAddressRequestData)
         ->assertOk();
 });
 
 it('updates a prospect', function () {
-    // $prospectConfigurationSettings = app(ManageStudentConfigurationSettings::class);
-    // $prospectConfigurationSettings->is_enabled = true;
-    // $prospectConfigurationSettings->save();
-
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['prospect.view-any', 'prospect.*.update']);
     Sanctum::actingAs($user, ['api']);
@@ -87,10 +74,6 @@ it('updates a prospect', function () {
 });
 
 it('validates', function (array $requestAttributes, string $invalidAttribute, string $validationMessage, ?Closure $before = null) {
-    // $prospectConfigurationSettings = app(ManageStudentConfigurationSettings::class);
-    // $prospectConfigurationSettings->is_enabled = true;
-    // $prospectConfigurationSettings->save();
-
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['prospect.view-any', 'prospect.*.update']);
     Sanctum::actingAs($user, ['api']);

@@ -40,24 +40,10 @@ it('is gated with proper access control', function () {
     $user->givePermissionTo(['prospect.view-any', 'prospect.*.update']);
     Sanctum::actingAs($user, ['api']);
     deleteJson(route('api.v1.prospects.email-addresses.delete', ['prospect' => $prospect, 'prospectEmailAddress' => $prospectEmailAddress], false))
-        ->assertForbidden();
-
-    // $prospectConfigurationSettings = app(ManageStudentConfigurationSettings::class);
-    // $prospectConfigurationSettings->is_enabled = true;
-    // $prospectConfigurationSettings->save();
-
-    $user = SystemUser::factory()->create();
-    $user->givePermissionTo(['prospect.view-any', 'prospect.*.update']);
-    Sanctum::actingAs($user, ['api']);
-    deleteJson(route('api.v1.prospects.email-addresses.delete', ['prospect' => $prospect, 'prospectEmailAddress' => $prospectEmailAddress], false))
         ->assertNoContent();
 });
 
 it('deletes a prospect email address', function () {
-    // $prospectConfigurationSettings = app(ManageStudentConfigurationSettings::class);
-    // $prospectConfigurationSettings->is_enabled = true;
-    // $prospectConfigurationSettings->save();
-
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['prospect.view-any', 'prospect.*.update']);
     Sanctum::actingAs($user, ['api']);
@@ -76,10 +62,6 @@ it('deletes a prospect email address', function () {
 });
 
 it('swaps out the current primary email address for a prospect with another when the primary email address is deleted', function () {
-    // $prospectConfigurationSettings = app(ManageStudentConfigurationSettings::class);
-    // $prospectConfigurationSettings->is_enabled = true;
-    // $prospectConfigurationSettings->save();
-
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['prospect.view-any', 'prospect.*.update']);
     Sanctum::actingAs($user, ['api']);

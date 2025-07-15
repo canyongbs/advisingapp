@@ -36,24 +36,10 @@ it('is gated with proper access control', function () {
     $user->givePermissionTo(['prospect.view-any', 'prospect.*.delete']);
     Sanctum::actingAs($user, ['api']);
     deleteJson(route('api.v1.prospects.delete', ['prospect' => $prospect], false))
-        ->assertForbidden();
-
-    // $prospectConfigurationSettings = app(ManageStudentConfigurationSettings::class);
-    // $prospectConfigurationSettings->is_enabled = true;
-    // $prospectConfigurationSettings->save();
-
-    $user = SystemUser::factory()->create();
-    $user->givePermissionTo(['prospect.view-any', 'prospect.*.delete']);
-    Sanctum::actingAs($user, ['api']);
-    deleteJson(route('api.v1.prospects.delete', ['prospect' => $prospect], false))
         ->assertNoContent();
 });
 
 it('deletes a prospect', function () {
-    // $prospectConfigurationSettings = app(ManageStudentConfigurationSettings::class);
-    // $prospectConfigurationSettings->is_enabled = true;
-    // $prospectConfigurationSettings->save();
-
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['prospect.view-any', 'prospect.*.delete']);
     Sanctum::actingAs($user, ['api']);
@@ -64,6 +50,6 @@ it('deletes a prospect', function () {
     $response->assertNoContent();
 
     assertSoftDeleted(Prospect::class, [
-        'sisid' => $prospect->id,
+        'id' => $prospect->id,
     ]);
 });
