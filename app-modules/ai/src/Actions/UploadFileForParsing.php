@@ -64,22 +64,25 @@ class UploadFileForParsing
             ],
         ]));
 
-        $institutionalAdvisor = AiAssistant::query()
-            ->where('is_default', true)
-            ->firstOrFail();
-
-        $service = $institutionalAdvisor->model->getService();
-
         $data = [
             'invalidate_cache' => true,
             'parse_mode' => 'parse_page_with_lvm',
             'user_prompt' => 'If the upload has images retrieve text from it and also describe the image in detail. If the upload seems to be just an image with no text in it, just return the image description.',
         ];
 
-        if ($service instanceof BaseOpenAiService || $service instanceof BaseOpenAiResponsesService) {
+        $service = AiAssistant::query()
+            ->where('is_default', true)
+            ->first()
+            ?->model
+            ->getService();
+
+        if (! is_null($service) && ($service instanceof BaseOpenAiService || $service instanceof BaseOpenAiResponsesService)) {
             $deploymentName = $service->getModel();
             $baseUri = rtrim($service->getDeployment(), '/v1');
-            $apiVersion = $service->getApiVersion();
+            $apiVersion = match (true) {
+                $service instanceof BaseOpenAiResponsesService => '2024-05-01-preview',
+                default => $service->getApiVersion(),
+            };
 
             $data['vendor_multimodal_model_name'] = 'custom-azure-model';
             $data['azure_openai_deployment_name'] = $deploymentName;
