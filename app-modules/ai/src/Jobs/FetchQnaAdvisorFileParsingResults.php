@@ -66,21 +66,28 @@ class FetchQnaAdvisorFileParsingResults implements ShouldQueue, TenantAware, Sho
             return;
         }
 
+        // $response = Http::withToken(app(AiIntegrationsSettings::class)->llamaparse_api_key)
+        //     ->get("https://api.cloud.llamaindex.ai/api/v1/parsing/job/{$this->file->file_id}/details");
+
+        // logger()->debug('FetchQnaAdvisorFileParsingResults response', [
+        //     'response' => $response->json(),
+        // ]);
+
+        $mimetype = $this->file->mime_type;
+
+        $outputFormat = match (true) {
+            str($mimetype)->startsWith(['audio/', 'video/']) => 'text',
+            default => 'markdown',
+        };
+
         $response = Http::withToken(app(AiIntegrationsSettings::class)->llamaparse_api_key)
-            ->get("https://api.cloud.llamaindex.ai/api/v1/parsing/job/{$this->file->file_id}/details");
+            ->get("https://api.cloud.llamaindex.ai/api/v1/parsing/job/{$this->file->file_id}/result/{$outputFormat}");
 
-        logger()->debug('FetchQnaAdvisorFileParsingResults response', [
-            'response' => $response->json(),
-        ]);
-
-        $response = Http::withToken(app(AiIntegrationsSettings::class)->llamaparse_api_key)
-            ->get("https://api.cloud.llamaindex.ai/api/v1/parsing/job/{$this->file->file_id}/result/markdown");
-
-        if ((! $response->successful()) || blank($response->json('markdown'))) {
+        if ((! $response->successful()) || blank($response->json($outputFormat))) {
             return;
         }
 
-        $this->file->parsing_results = $response->json('markdown');
+        $this->file->parsing_results = $response->json($outputFormat);
         $this->file->save();
     }
 
