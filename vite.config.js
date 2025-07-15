@@ -31,8 +31,8 @@
 
 </COPYRIGHT>
 */
-import { defineConfig } from 'vite';
 import laravel, { refreshPaths } from 'laravel-vite-plugin';
+import { defineConfig } from 'vite';
 
 export default defineConfig({
     plugins: [
@@ -48,7 +48,7 @@ export default defineConfig({
                 'app-modules/research/resources/js/requests.js',
                 'app-modules/in-app-communication/resources/js/userToUserChat.js',
                 'app-modules/task/resources/js/kanban.js',
-                'app-modules/prospect/resources/js/kanban.js'
+                'app-modules/pipeline/resources/js/kanban.js',
             ],
             refresh: [
                 ...refreshPaths,
