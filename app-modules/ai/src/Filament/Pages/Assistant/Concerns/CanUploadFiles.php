@@ -36,15 +36,14 @@
 
 namespace AdvisingApp\Ai\Filament\Pages\Assistant\Concerns;
 
+use AdvisingApp\Ai\Actions\UploadFileForParsing;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Filesystem\AwsS3V3Adapter;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -172,29 +171,13 @@ trait CanUploadFiles
                 $file->mime_type = $attachment->getMimeType();
                 $file->temporary_url = $attachment->temporaryUrl();
 
-                /** @var AwsS3V3Adapter $s3Adapter */
-                $s3Adapter = Storage::disk('s3')->getAdapter();
+                $fileId = app(UploadFileForParsing::class)->execute(
+                    path: $attachment->getRealPath(),
+                    name: $file->name,
+                    mimeType: $file->mime_type,
+                );
 
-                invade($s3Adapter)->client->registerStreamWrapper(); /** @phpstan-ignore-line */
-                $fileS3Path = (string) str('s3://' . config('filesystems.disks.s3.bucket') . '/' . $attachment->getRealPath())->replace('\\', '/');
-
-                $resource = fopen($fileS3Path, mode: 'r', context: stream_context_create([
-                    's3' => [
-                        'seekable' => true,
-                    ],
-                ]));
-
-                $response = Http::attach(
-                    'file',
-                    $resource,
-                    $file->name,
-                    ['Content-Type' => $file->mime_type]
-                )
-                    ->withToken(app(AiIntegrationsSettings::class)->llamaparse_api_key)
-                    ->acceptJson()
-                    ->post('https://api.cloud.llamaindex.ai/api/v1/parsing/upload');
-
-                if ((! $response->successful()) || blank($response->json('id'))) {
+                if (blank($fileId)) {
                     Notification::make()
                         ->title('File Upload Failed')
                         ->body('There was an error uploading the file. Please try again later.')
@@ -206,7 +189,7 @@ trait CanUploadFiles
                     return;
                 }
 
-                $file->file_id = $response->json('id');
+                $file->file_id = $fileId;
                 $file->save();
 
                 $file->addMediaFromUrl($file->temporary_url)->toMediaCollection('files');
