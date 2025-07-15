@@ -49,6 +49,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use OwenIt\Auditing\Contracts\Auditable;
 
+/**
+ * @mixin IdeHelperPipeline
+ */
 class Pipeline extends Model implements Auditable
 {
     /** @use HasFactory<PipelineFactory> */

@@ -45,8 +45,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- *
- *
  * @property-read Collection<int, EducatablePipelineStage> $educatables
  * @property-read int|null $educatables_count
  * @property-read Pipeline|null $pipeline
@@ -57,6 +55,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PipelineStage query()
  *
  * @mixin \Eloquent
+ * @mixin IdeHelperPipelineStage
  */
 class PipelineStage extends Model
 {

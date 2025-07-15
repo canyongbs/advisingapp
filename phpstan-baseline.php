@@ -194,6 +194,30 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/PromptTypeResource/Pages/ListPromptTypes.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\QnaAdvisorFile\\:\\:\\$file_id\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/QnaAdvisorResource/Pages/ManageQnaAdditionalKnowledge.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\QnaAdvisorFile\\:\\:\\$mime_type\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/QnaAdvisorResource/Pages/ManageQnaAdditionalKnowledge.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\QnaAdvisorFile\\:\\:\\$name\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/QnaAdvisorResource/Pages/ManageQnaAdditionalKnowledge.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\QnaAdvisorFile\\:\\:\\$temporary_url\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/QnaAdvisorResource/Pages/ManageQnaAdditionalKnowledge.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$query of anonymous function has no typehint\\.$#',
     'identifier' => 'closure.parameterMissingTypehint',
     'count' => 2,
@@ -210,6 +234,24 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/ai/src/Jobs/EmailAiThread.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\QnaAdvisorFile\\:\\:\\$file_id\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/ai/src/Jobs/FetchQnaAdvisorFileParsingResults.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\QnaAdvisorFile\\:\\:\\$parsing_results\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 2,
+    'path' => __DIR__ . '/app-modules/ai/src/Jobs/FetchQnaAdvisorFileParsingResults.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\Ai\\\\Jobs\\\\FetchQnaAdvisorFileParsingResults\\:\\:uniqueId\\(\\) should return string but returns int\\.$#',
+    'identifier' => 'return.type',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/ai/src/Jobs/FetchQnaAdvisorFileParsingResults.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Filament\\\\Notifications\\\\Notification\\:\\:error\\(\\)\\.$#',
@@ -348,6 +390,36 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/ai/src/Models/AiThreadFolder.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\QnaAdvisorFile\\:\\:\\$file_id\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/ai/src/Models/QnaAdvisorFile.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\QnaAdvisorFile\\:\\:\\$mime_type\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/ai/src/Models/QnaAdvisorFile.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\QnaAdvisorFile\\:\\:\\$name\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/ai/src/Models/QnaAdvisorFile.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\QnaAdvisorFile\\:\\:\\$parsing_results\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/ai/src/Models/QnaAdvisorFile.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\QnaAdvisorFile\\:\\:\\$temporary_url\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/ai/src/Models/QnaAdvisorFile.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Ai\\\\Models\\\\Scopes\\\\AuditableAiMessages\\:\\:__invoke\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
@@ -6386,18 +6458,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/prospect/database/migrations/2024_10_08_174318_seed_permissions_for_prospect_conversion.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Property Illuminate\\\\Database\\\\Migrations\\\\Migration@anonymous/app\\-modules/prospect/database/migrations/2024_11_07_120143_seed_permissions_for_pipeline\\.php\\:42\\:\\:\\$guards type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/database/migrations/2024_11_07_120143_seed_permissions_for_pipeline.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property Illuminate\\\\Database\\\\Migrations\\\\Migration@anonymous/app\\-modules/prospect/database/migrations/2024_11_07_120143_seed_permissions_for_pipeline\\.php\\:42\\:\\:\\$permissions type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/database/migrations/2024_11_07_120143_seed_permissions_for_pipeline.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Prospect\\\\Enums\\\\SystemProspectClassification\\:\\:getLabel\\(\\) never returns null so it can be removed from the return type\\.$#',
     'identifier' => 'return.unusedType',
     'count' => 1,
@@ -6444,48 +6504,6 @@ $ignoreErrors[] = [
     'identifier' => 'class.notFound',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/prospect/src/Filament/Pages/ManageProspectConversionSettings.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Pages\\\\ManageProspectPipelineSettings\\:\\:getFormActions\\(\\) has invalid return type AdvisingApp\\\\Prospect\\\\Filament\\\\Pages\\\\Action\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Pages/ManageProspectPipelineSettings.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Pages\\\\ManageProspectPipelineSettings\\:\\:getFormActions\\(\\) has invalid return type AdvisingApp\\\\Prospect\\\\Filament\\\\Pages\\\\ActionGroup\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Pages/ManageProspectPipelineSettings.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Pages\\\\ManageProspectPipelineSettings\\:\\:getFormActions\\(\\) should return array\\<AdvisingApp\\\\Prospect\\\\Filament\\\\Pages\\\\Action\\|AdvisingApp\\\\Prospect\\\\Filament\\\\Pages\\\\ActionGroup\\> but returns array\\<Filament\\\\Actions\\\\Action\\|Filament\\\\Actions\\\\ActionGroup\\>\\.$#',
-    'identifier' => 'return.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Pages/ManageProspectPipelineSettings.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$segment\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 3,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/PipelineResource/Pages/ManageEductables.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to property \\$name on an unknown class AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\PipelineResource\\\\Pages\\\\Pipeline\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/PipelineResource/Pages/ManageEductables.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^PHPDoc tag @var for variable \\$record contains unknown class AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\PipelineResource\\\\Pages\\\\Pipeline\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/PipelineResource/Pages/ManageEductables.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^PHPDoc tag @var with type AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\PipelineResource\\\\Pages\\\\Pipeline is not subtype of native type Illuminate\\\\Database\\\\Eloquent\\\\Model\\.$#',
-    'identifier' => 'varTag.nativeType',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/PipelineResource/Pages/ManageEductables.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$otherid\\.$#',
@@ -6806,12 +6824,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectTagResource.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Models\\\\EducatablePipelineStage\\:\\:educatable\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Models/EducatablePipelineStage.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\:\\:additionalAddresses\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\HasMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
@@ -6844,12 +6856,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\:\\:displayName\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Casts\\\\Attribute does not specify its types\\: TGet, TSet$#',
     'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Models/Prospect.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\:\\:educatablePipelineStages\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Prospect\\\\Models\\\\Pipeline, Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphPivot, \'pivot\'\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Prospect\\\\Models\\\\Pipeline, \\$this\\(AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\), AdvisingApp\\\\Prospect\\\\Models\\\\EducatablePipelineStage, \'pivot\'\\>\\.$#',
-    'identifier' => 'return.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/prospect/src/Models/Prospect.php',
 ];
@@ -6898,12 +6904,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^PHPDoc tag @return with type array\\<string, string\\>\\|string\\|null is not subtype of native type string\\|null\\.$#',
     'identifier' => 'return.phpDocType',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Models/Prospect.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Type string in generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\<AdvisingApp\\\\Prospect\\\\Models\\\\Pipeline, Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphPivot, string\\> in PHPDoc tag @return is not subtype of template type TPivotModel of Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\Pivot \\= Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphPivot of class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany\\.$#',
-    'identifier' => 'generics.notSubtype',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/prospect/src/Models/Prospect.php',
 ];
@@ -7076,18 +7076,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/report/src/Abstract/EngagementReport.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$set of anonymous function has no typehint\\.$#',
-    'identifier' => 'closure.parameterMissingTypehint',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/report/src/Abstract/EngagementReport.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$state of anonymous function has no typehint\\.$#',
-    'identifier' => 'closure.parameterMissingTypehint',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/report/src/Abstract/EngagementReport.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to method can\\(\\) on an unknown class AdvisingApp\\\\Report\\\\Abstract\\\\User\\.$#',
     'identifier' => 'class.notFound',
     'count' => 1,
@@ -7106,18 +7094,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/report/src/Abstract/ProspectReport.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$set of anonymous function has no typehint\\.$#',
-    'identifier' => 'closure.parameterMissingTypehint',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/report/src/Abstract/ProspectReport.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$state of anonymous function has no typehint\\.$#',
-    'identifier' => 'closure.parameterMissingTypehint',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/report/src/Abstract/ProspectReport.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to method can\\(\\) on an unknown class AdvisingApp\\\\Report\\\\Abstract\\\\User\\.$#',
     'identifier' => 'class.notFound',
     'count' => 1,
@@ -7133,18 +7109,6 @@ $ignoreErrors[] = [
     'message' => '#^PHPDoc tag @var for variable \\$user contains unknown class AdvisingApp\\\\Report\\\\Abstract\\\\User\\.$#',
     'identifier' => 'class.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Abstract/StudentReport.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$set of anonymous function has no typehint\\.$#',
-    'identifier' => 'closure.parameterMissingTypehint',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/report/src/Abstract/StudentReport.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$state of anonymous function has no typehint\\.$#',
-    'identifier' => 'closure.parameterMissingTypehint',
-    'count' => 2,
     'path' => __DIR__ . '/app-modules/report/src/Abstract/StudentReport.php',
 ];
 $ignoreErrors[] = [
@@ -10517,12 +10481,6 @@ $ignoreErrors[] = [
     'message' => '#^Unable to resolve the template type TGroupKey in call to method Illuminate\\\\Support\\\\Collection\\<int,Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:groupBy\\(\\)$#',
     'identifier' => 'argument.templateType',
     'count' => 1,
-    'path' => __DIR__ . '/app/Livewire/ProspectPipelineKanban.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Using nullsafe method call on non\\-nullable type AdvisingApp\\\\Prospect\\\\Models\\\\Pipeline\\. Use \\-\\> instead\\.$#',
-    'identifier' => 'nullsafe.neverNull',
-    'count' => 2,
     'path' => __DIR__ . '/app/Livewire/ProspectPipelineKanban.php',
 ];
 $ignoreErrors[] = [

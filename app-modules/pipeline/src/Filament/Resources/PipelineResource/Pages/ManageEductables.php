@@ -105,7 +105,12 @@ class ManageEductables extends ManageRelatedRecords implements HasTable
     public function mount(int | string $record): void
     {
         parent::mount($record);
-        $this->segmentCount = app(TranslateSegmentFilters::class)->execute($this->getRecord()->segment)->count();
+
+        $ownerRecord = $this->getRecord();
+
+        assert($ownerRecord instanceof Pipeline);
+
+        $this->segmentCount = app(TranslateSegmentFilters::class)->execute($ownerRecord->segment)->count();
 
         if ($this->segmentCount >= 100) {
             session(['pipeline-view-type' => 'table']);
@@ -119,8 +124,10 @@ class ManageEductables extends ManageRelatedRecords implements HasTable
     public function getBreadcrumbs(): array
     {
         $resource = static::getResource();
-        /** @var Pipeline $record */
+
         $record = $this->getRecord();
+
+        assert($record instanceof Pipeline);
 
         /** @var array<string, string> $breadcrumbs */
         $breadcrumbs = [
@@ -155,6 +162,8 @@ class ManageEductables extends ManageRelatedRecords implements HasTable
     public function table(Table $table): Table
     {
         $pipeline = $this->getOwnerRecord();
+
+        assert($pipeline instanceof Pipeline);
 
         $table = $pipeline->segment->model
             ->table($table);
