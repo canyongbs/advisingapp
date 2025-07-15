@@ -179,4 +179,16 @@ class TestAiService implements AiService
     {
         return true;
     }
+
+    /**
+     * @param array<string, mixed> $options
+     *
+     * @return array{response: array<mixed>, nextRequestOptions: array<string, mixed>}
+     */
+    public function structuredResearchRequestRequest(ResearchRequest $researchRequest, string $prompt, string $content, Schema $schema, array $options = []): array
+    {
+        return ['response' => [], 'nextRequestOptions' => []];
+    }
+
+    public function afterResearchRequestSearchQueriesParsed(ResearchRequest $researchRequest): void {}
 }

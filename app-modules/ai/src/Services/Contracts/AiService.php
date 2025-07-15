@@ -127,6 +127,15 @@ interface AiService
 
     public function isResearchRequestReady(ResearchRequest $researchRequest): bool;
 
+    public function afterResearchRequestSearchQueriesParsed(ResearchRequest $researchRequest): void;
+
+    /**
+     * @param array<string, mixed> $options
+     *
+     * @return array{response: array<mixed>, nextRequestOptions: array<string, mixed>}
+     */
+    public function structuredResearchRequestRequest(ResearchRequest $researchRequest, string $prompt, string $content, Schema $schema, array $options = []): array;
+
     public function getDeployment(): ?string;
 
     public function hasTemperature(): bool;

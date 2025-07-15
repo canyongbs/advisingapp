@@ -62,6 +62,7 @@ use Generator;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Prism\Prism\Contracts\Message;
@@ -138,9 +139,57 @@ abstract class BaseOpenAiResponsesService implements AiService
     }
 
     /**
+     * @param array<string, mixed> $options
+     *
+     * @return array{response: array<mixed>, nextRequestOptions: array<string, mixed>}
+     */
+    public function structuredResearchRequestRequest(ResearchRequest $researchRequest, string $prompt, string $content, Schema $schema, array $options = []): array
+    {
+        $responseId = null;
+
+        $response = $this->structured(
+            prompt: $prompt,
+            content: $content,
+            schema: $schema,
+            providerOptions: [
+                'tool_choice' => [
+                    'type' => 'file_search',
+                ],
+                'tools' => [[
+                    'type' => 'file_search',
+                    'vector_store_ids' => $this->getReadyResearchRequestVectorStoreIds($researchRequest),
+                ]],
+                ...$options,
+            ],
+            responseId: $responseId,
+        );
+
+        return [
+            'response' => $response,
+            'nextRequestOptions' => filled($responseId) ? [
+                'previous_response_id' => $responseId,
+            ] : [],
+        ];
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getReadyResearchRequestVectorStoreIds(ResearchRequest $researchRequest): array
+    {
+        return OpenAiResearchRequestVectorStore::query()
+            ->where('deployment_hash', $this->getDeploymentHash())
+            ->whereBelongsTo($researchRequest)
+            ->whereNotNull('ready_until')
+            ->where('ready_until', '>=', now())
+            ->pluck('vector_store_id')
+            ->all();
+    }
+
+    /**
      * @return array<mixed>
      */
-    public function structured(string $prompt, string $content, Schema $schema): array
+    public function structured(string $prompt, string $content, Schema $schema, array $providerOptions = [], ?string &$responseId = null): array
     {
         $aiSettings = app(AiSettings::class);
 
@@ -157,6 +206,7 @@ abstract class BaseOpenAiResponsesService implements AiService
                         'strict' => true,
                     ],
                     'truncation' => 'auto',
+                    ...$providerOptions,
                 ])
                 ->withSystemPrompt($prompt)
                 ->withPrompt($content)
@@ -182,6 +232,8 @@ abstract class BaseOpenAiResponsesService implements AiService
             type: TrackedEventType::AiExchange,
             occurredAt: now(),
         ));
+
+        $responseId = $response->meta->id;
 
         return $response->structured;
     }
@@ -495,6 +547,23 @@ abstract class BaseOpenAiResponsesService implements AiService
         return false;
     }
 
+    public function afterResearchRequestSearchQueriesParsed(ResearchRequest $researchRequest): void
+    {
+        DB::transaction(function () use ($researchRequest) {
+            $vectorStore = $this->findOrCreateVectorStoreRecordForResearchRequest($researchRequest);
+            $vectorStore->ready_until = null;
+            $vectorStore->save();
+
+            $fileIds = $this->uploadResearchRequestParsedSearchResultFilesForVectorStore($researchRequest, $vectorStore);
+
+            if (blank($fileIds)) {
+                return;
+            }
+
+            $this->attachResearchRequestFilesToVectorStore($fileIds, $vectorStore);
+        });
+    }
+
     protected function findOrCreateVectorStoreRecordForResearchRequest(ResearchRequest $researchRequest): OpenAiResearchRequestVectorStore
     {
         $deploymentHash = $this->getDeploymentHash();
@@ -643,6 +712,19 @@ abstract class BaseOpenAiResponsesService implements AiService
 
             $fileIds[] = $createFileResponse->json('id');
         }
+
+        return [
+            ...$fileIds,
+            ...$this->uploadResearchRequestParsedSearchResultFilesForVectorStore($researchRequest, $vectorStore),
+        ];
+    }
+
+    /**
+     * @return ?array<string>
+     */
+    protected function uploadResearchRequestParsedSearchResultFilesForVectorStore(ResearchRequest $researchRequest, OpenAiResearchRequestVectorStore $vectorStore): ?array
+    {
+        $fileIds = [];
 
         foreach ($researchRequest->parsedSearchResults as $searchResult) {
             $createFileResponse = $this->filesHttpClient()
@@ -903,5 +985,22 @@ abstract class BaseOpenAiResponsesService implements AiService
         }
 
         return "{$assistantInstructions}.\n\n{$formattingInstructions}";
+    }
+
+    /**
+     * @param array<string> $fileIds
+     */
+    protected function attachResearchRequestFilesToVectorStore(array $fileIds, OpenAiResearchRequestVectorStore $vectorStore): void
+    {
+        foreach ($fileIds as $fileId) {
+            $attachFileResponse = $this->vectorStoresHttpClient()
+                ->post("vector_stores/{$vectorStore->vector_store_id}/files", [
+                    'file_id' => $fileId,
+                ]);
+
+            if ((! $attachFileResponse->successful()) || ! $attachFileResponse->json('id')) {
+                report(new Exception('Failed to attach file [' . $fileId . '] to vector store [' . $vectorStore->vector_store_id . '], as a [' . $attachFileResponse->status() . '] response was returned: [' . $attachFileResponse->body() . '].'));
+            }
+        }
     }
 }
