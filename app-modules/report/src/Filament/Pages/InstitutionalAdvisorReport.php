@@ -34,13 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+namespace AdvisingApp\Report\Filament\Pages;
 
-use Filament\Clusters\Cluster;
+use AdvisingApp\Report\Abstract\AiReport;
+use App\Filament\Clusters\ReportLibrary;
 
-class ReportLibrary extends Cluster
+class InstitutionalAdvisorReport extends AiReport
 {
-    protected static ?string $navigationGroup = 'Analytics';
+    protected static ?string $cluster = ReportLibrary::class;
 
-    protected static ?int $navigationSort = 10;
+    protected static ?string $navigationGroup = 'Artificial Intelligence';
+
+    protected static ?string $title = 'Institutional Advisor';
+
+    protected static string $routePath = 'institutional-advisor-report';
+
+    protected static ?int $navigationSort = 20;
+
+    protected string $cacheTag = 'institutional-advisor-report';
+
+    protected static string $view = 'filament.pages.coming-soon';
 }

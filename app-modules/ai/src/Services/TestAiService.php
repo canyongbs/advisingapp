@@ -50,12 +50,14 @@ class TestAiService implements AiService
 {
     use HasAiServiceHelpers;
 
-    public function complete(string $prompt, string $content): string
+    public function complete(string $prompt, string $content, bool $shouldTrack = true): string
     {
-        dispatch(new RecordTrackedEvent(
-            type: TrackedEventType::AiExchange,
-            occurredAt: now(),
-        ));
+        if ($shouldTrack) {
+            dispatch(new RecordTrackedEvent(
+                type: TrackedEventType::AiExchange,
+                occurredAt: now(),
+            ));
+        }
 
         return fake()->paragraph();
     }
@@ -149,6 +151,11 @@ class TestAiService implements AiService
     }
 
     public function isFileReady(AiFile $file): bool
+    {
+        return true;
+    }
+
+    public function hasTemperature(): bool
     {
         return true;
     }

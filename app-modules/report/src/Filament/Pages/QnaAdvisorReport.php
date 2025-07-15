@@ -34,13 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+namespace AdvisingApp\Report\Filament\Pages;
 
-use Filament\Clusters\Cluster;
+use AdvisingApp\Report\Abstract\AiReport;
+use App\Filament\Clusters\ReportLibrary;
 
-class ReportLibrary extends Cluster
+class QnaAdvisorReport extends AiReport
 {
-    protected static ?string $navigationGroup = 'Analytics';
+    protected static ?string $cluster = ReportLibrary::class;
 
-    protected static ?int $navigationSort = 10;
+    protected static ?string $navigationGroup = 'Artificial Intelligence';
+
+    protected static ?string $title = 'QnA Advisor';
+
+    protected static string $routePath = 'qna-advisor-report';
+
+    protected static ?int $navigationSort = 50;
+
+    protected string $cacheTag = 'qna-advisor-report';
+
+    protected static string $view = 'filament.pages.coming-soon';
 }

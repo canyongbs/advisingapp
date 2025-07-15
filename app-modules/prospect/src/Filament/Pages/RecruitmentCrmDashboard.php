@@ -39,16 +39,19 @@ namespace AdvisingApp\Prospect\Filament\Pages;
 use AdvisingApp\Prospect\Filament\Widgets\ProspectsActionCenterWidget;
 use AdvisingApp\Prospect\Filament\Widgets\ProspectStats;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Report\Abstract\RecruitmentCrmDashboardReport;
 use AdvisingApp\StudentDataModel\Enums\ActionCenterTab;
+use App\Filament\Clusters\ReportLibrary;
 use App\Filament\Widgets\ProspectGrowthChart;
 use App\Models\User;
-use Filament\Pages\Dashboard as BaseDashboard;
 use Livewire\Attributes\Url;
 use Symfony\Component\HttpFoundation\Response;
 
-class RecruitmentCrmDashboard extends BaseDashboard
+class RecruitmentCrmDashboard extends RecruitmentCrmDashboardReport
 {
-    protected static ?string $navigationGroup = 'Recruitment CRM';
+    protected static ?string $cluster = ReportLibrary::class;
+
+    protected static ?string $navigationGroup = 'Prospects';
 
     protected static ?int $navigationSort = 10;
 

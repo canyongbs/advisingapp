@@ -34,13 +34,51 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+namespace AdvisingApp\Ai\Jobs;
 
-use Filament\Clusters\Cluster;
+use AdvisingApp\Ai\Models\QnaAdvisorFile;
+use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use Illuminate\Bus\Batchable;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Http;
+use Spatie\Multitenancy\Jobs\TenantAware;
 
-class ReportLibrary extends Cluster
+class FetchQnaAdvisorFileParsingResults implements ShouldQueue, TenantAware, ShouldBeUnique
 {
-    protected static ?string $navigationGroup = 'Analytics';
+    use Batchable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
-    protected static ?int $navigationSort = 10;
+    public function __construct(
+        protected QnaAdvisorFile $file,
+    ) {}
+
+    public function handle(): void
+    {
+        if (filled($this->file->parsing_results)) {
+            return;
+        }
+
+        $response = Http::withToken(app(AiIntegrationsSettings::class)->llamaparse_api_key)
+            ->get("https://api.cloud.llamaindex.ai/api/v1/parsing/job/{$this->file->file_id}/result/text");
+
+        if ((! $response->successful()) || blank($response->json('text'))) {
+            return;
+        }
+
+        $this->file->parsing_results = $response->json('text');
+        $this->file->save();
+    }
+
+    public function uniqueId(): string
+    {
+        return $this->file->id;
+    }
 }

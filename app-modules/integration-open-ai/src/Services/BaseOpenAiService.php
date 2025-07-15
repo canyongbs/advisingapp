@@ -88,7 +88,7 @@ abstract class BaseOpenAiService implements AiService
         return $this->client;
     }
 
-    public function complete(string $prompt, string $content): string
+    public function complete(string $prompt, string $content, bool $shouldTrack = true): string
     {
         try {
             $response = Http::asJson()
@@ -110,10 +110,12 @@ abstract class BaseOpenAiService implements AiService
             throw new MessageResponseException('Failed to complete the prompt: [' . $response->body() . '].');
         }
 
-        dispatch(new RecordTrackedEvent(
-            type: TrackedEventType::AiExchange,
-            occurredAt: now(),
-        ));
+        if ($shouldTrack) {
+            dispatch(new RecordTrackedEvent(
+                type: TrackedEventType::AiExchange,
+                occurredAt: now(),
+            ));
+        }
 
         return $response->json(
             key: 'choices.0.message.content',
@@ -298,7 +300,11 @@ abstract class BaseOpenAiService implements AiService
             if (is_null($message->thread->name)) {
                 $prompt = $message->context . "\nThe following is the start of a chat between you and a user:\n" . $message->content;
 
-                $message->thread->name = $this->complete($prompt, 'Generate a title for this chat, in 5 words or less. Do not respond with any greetings or salutations, and do not include any additional information or context. Just respond with the title:');
+                $message->thread->name = $this->complete(
+                    $prompt,
+                    'Generate a title for this chat, in 5 words or less. Do not respond with any greetings or salutations, and do not include any additional information or context. Just respond with the title:',
+                    false
+                );
 
                 $message->thread->saved_at = now();
 
@@ -436,6 +442,11 @@ abstract class BaseOpenAiService implements AiService
         $this->client = new ClientFake();
     }
 
+    public function hasTemperature(): bool
+    {
+        return true;
+    }
+
     /**
      * @param array<AiMessageFile> $files
      */
@@ -443,7 +454,7 @@ abstract class BaseOpenAiService implements AiService
     {
         if (filled($files)) {
             $content .= <<<'EOT'
-                                
+
                 ---
 
                 Consider the content from the following files. These have already been converted by Canyon GBS' technology to Markdown for improved processing. When you reference these files, reference the file names as user uploaded files as noted below:
@@ -569,7 +580,7 @@ abstract class BaseOpenAiService implements AiService
 
         if (filled($files = $assistant->files()->whereNotNull('parsing_results')->get()->all())) {
             $instructions .= <<<'EOT'
-                                
+
                 ---
 
                 Consider the following additional knowledge, which has already been handled by Canyon GBS' technology to Markdown for improved processing. When you reference the information, describe that it is part of the assistant's knowledge:
@@ -599,7 +610,7 @@ abstract class BaseOpenAiService implements AiService
             'assistant_id' => $message->thread->assistant->assistant_id,
             'instructions' => $instructions,
             'max_completion_tokens' => $aiSettings->max_tokens->getTokens(),
-            'temperature' => $aiSettings->temperature,
+            ...($this->hasTemperature() ? ['temperature' => $aiSettings->temperature] : []),
         ];
 
         if ($message->thread->messages()->whereHas('files')->exists()) {
