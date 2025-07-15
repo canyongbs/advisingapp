@@ -85,12 +85,12 @@ it('can filter prospects by all attributes', function (string $requestKey, mixed
         function () {
             $status = ProspectStatus::factory()->create(['name' => 'Interested']);
 
-            return ['status_id' => $status->id];
+            return ['status_id' => $status->getKey()];
         },
         function () {
             $status = ProspectStatus::factory()->create(['name' => 'Not Interested']);
 
-            return ['status_id' => $status->id];
+            return ['status_id' => $status->getKey()];
         },
         'status',
         'Interested',
@@ -102,12 +102,12 @@ it('can filter prospects by all attributes', function (string $requestKey, mixed
         function () {
             $source = ProspectSource::factory()->create(['name' => 'Referral']);
 
-            return ['source_id' => $source->id];
+            return ['source_id' => $source->getKey()];
         },
         function () {
             $source = ProspectSource::factory()->create(['name' => 'Ad Campaign']);
 
-            return ['source_id' => $source->id];
+            return ['source_id' => $source->getKey()];
         },
         'source',
         'Referral',
@@ -125,16 +125,16 @@ dataset('sorts', [
     '`hsgrad`' => ['hsgrad', ['hsgrad' => '2022'], ['hsgrad' => '2023'], 'hsgrad', '2022', '2023'],
     '`status`' => [
         'status',
-        fn () => ['status_id' => ProspectStatus::factory()->create(['name' => 'Interested'])->id],
-        fn () => ['status_id' => ProspectStatus::factory()->create(['name' => 'Not Interested'])->id],
+        fn () => ['status_id' => ProspectStatus::factory()->create(['name' => 'Interested'])->getKey()],
+        fn () => ['status_id' => ProspectStatus::factory()->create(['name' => 'Not Interested'])->getKey()],
         'status',
         'Interested',
         'Not Interested',
     ],
     '`source`' => [
         'source',
-        fn () => ['source_id' => ProspectSource::factory()->create(['name' => 'Ad Campaign'])->id],
-        fn () => ['source_id' => ProspectSource::factory()->create(['name' => 'Referral'])->id],
+        fn () => ['source_id' => ProspectSource::factory()->create(['name' => 'Ad Campaign'])->getKey()],
+        fn () => ['source_id' => ProspectSource::factory()->create(['name' => 'Referral'])->getKey()],
         'source',
         'Ad Campaign',
         'Referral',

@@ -54,7 +54,7 @@ it('creates a prospect email address', function () {
     ]);
 
     expect($response['data']['prospect_id'] ?? null)
-        ->toBe($prospect->id);
+        ->toBe($prospect->getKey());
 
     expect($response['data']['address'] ?? null)
         ->toBe($createProspectEmailAddressRequestData['address']);
@@ -70,7 +70,7 @@ it('creates a prospect email address', function () {
     }
 
     assertDatabaseHas(ProspectEmailAddress::class, [
-        'prospect_id' => $prospect->id,
+        'prospect_id' => $prospect->getKey(),
         'address' => $createProspectEmailAddressRequestData['address'],
     ]);
 });

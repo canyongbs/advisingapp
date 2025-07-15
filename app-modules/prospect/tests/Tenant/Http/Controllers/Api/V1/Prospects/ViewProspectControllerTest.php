@@ -52,7 +52,7 @@ it('returns a prospect resource', function () {
     ]);
 
     expect($response['data']['id'])
-        ->toBe($prospect->id);
+        ->toBe($prospect->getKey());
 });
 
 it('can include related prospect relationships', function (string $relationship, string $responseKey) {

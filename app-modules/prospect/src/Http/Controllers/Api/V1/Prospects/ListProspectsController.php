@@ -34,8 +34,8 @@ class ListProspectsController
     #[QueryParameter('filter[sms_opt_out]', description: 'Filter the results where the prospect\'s sms_opt_out matches the provided boolean.', type: 'boolean')]
     #[QueryParameter('filter[email_bounce]', description: 'Filter the results where the prospect\'s email_bounce matches the provided boolean.', type: 'boolean')]
     #[QueryParameter('filter[birthdate]', description: 'Filter the results where the prospect\'s birthdate matches the provided date.', type: 'date')]
-    //filter of status msg
-    //filter of source msg
+    #[QueryParameter('filter[status]', description: 'Filter the results where the prospect\'s status matches the provided status name.', type: 'string')]
+    #[QueryParameter('filter[source]', description: 'Filter the results where the prospect\'s source matches the provided source name.', type: 'string')]
     #[QueryParameter('filter[hsgrad]', description: 'Filter the results where the prospect\'s high school graduation year matches the provided integer.', type: 'integer')]
     #[QueryParameter('filter[primary_email_id]', description: 'Filter the results where the prospect\'s primary_email_id matches the provided integer.', type: 'integer')]
     #[QueryParameter('filter[primary_phone_id]', description: 'Filter the results where the prospect\'s primary_phone_id matches the provided integer.', type: 'integer')]
@@ -48,7 +48,7 @@ class ListProspectsController
     ])]
     #[QueryParameter('page[number]', description: 'Control which page of prospects is returned in the response.', type: 'int', default: 1)]
     #[QueryParameter('page[size]', description: 'Control how many prospects are returned in the response.', type: 'int', default: 30)]
-    #[QueryParameter('sort', description: 'Control the order of prospects that are returned in the response. Ascending order is used by default, prepend the sort with `-` to sort descending.', type: 'string', default: 'sisid', examples: [
+    #[QueryParameter('sort', description: 'Control the order of prospects that are returned in the response. Ascending order is used by default, prepend the sort with `-` to sort descending.', type: 'string', default: 'id', examples: [
         'id' => new Example('id'),
         'first_name' => new Example('first_name'),
         'last_name' => new Example('last_name'),

@@ -50,6 +50,6 @@ it('deletes a prospect', function () {
     $response->assertNoContent();
 
     assertSoftDeleted(Prospect::class, [
-        'id' => $prospect->id,
+        'id' => $prospect->getKey(),
     ]);
 });
