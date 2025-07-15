@@ -37,6 +37,7 @@
 namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Workflow\Enums\WorkflowActionType;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -68,14 +69,15 @@ class WorkflowRunStep extends BaseModel implements Auditable
         'dispatched_at' => 'datetime',
         'succeeded_at' => 'datetime',
         'last_failed_at' => 'datetime',
+        'details_type' => WorkflowActionType::class,
     ];
 
     /**
-     * @return BelongsTo<WorkflowRunStep, $this>
+     * @return BelongsTo<WorkflowRun, $this>
      */
-    public function workflowRunStep(): BelongsTo
+    public function workflowRun(): BelongsTo
     {
-        return $this->belongsTo(WorkflowRunStep::class);
+        return $this->belongsTo(WorkflowRun::class);
     }
 
     /**
