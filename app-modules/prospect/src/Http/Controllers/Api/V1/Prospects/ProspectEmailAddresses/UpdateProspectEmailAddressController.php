@@ -12,6 +12,7 @@ use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 
 class UpdateProspectEmailAddressController
 {
@@ -27,7 +28,11 @@ class UpdateProspectEmailAddressController
         Gate::authorize('update', $prospect);
 
         $data = $request->validate([
-            'address' => ['sometimes', 'email'],
+            'address' => [
+                'sometimes',
+                'email',
+                Rule::unique('prospect_email_addresses', 'address')->ignore($prospectEmailAddress->getKey()),
+            ],
             'type' => ['sometimes', 'max:255'],
             'order' => ['sometimes', 'integer'],
         ]);

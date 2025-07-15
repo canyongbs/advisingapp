@@ -47,7 +47,11 @@ class UpdateProspectController
             'hsgrad' => ['sometimes', 'numeric'],
             'email_addresses' => ['sometimes', 'array'],
             'email_addresses.*' => ['array'],
-            'email_addresses.*.address' => ['required', 'email'],
+            'email_addresses.*.address' => [
+                'required',
+                'email',
+                Rule::unique('prospect_email_addresses', 'address')->whereNot('prospect_id', $prospect->getKey()),
+            ],
             'email_addresses.*.type' => ['sometimes', 'max:255'],
             'primary_email_id' => ['sometimes', 'uuid:4', Rule::exists(ProspectEmailAddress::class, 'id')->where('prospect_id', $prospect->getKey())],
         ]);

@@ -45,7 +45,7 @@ class CreateProspectController
             'hsgrad' => ['sometimes', 'numeric'],
             'email_addresses' => ['sometimes', 'array'],
             'email_addresses.*' => ['array'],
-            'email_addresses.*.address' => ['required', 'email'],
+            'email_addresses.*.address' => ['required', 'email', 'unique:prospect_email_addresses,address'],
             'email_addresses.*.type' => ['sometimes', 'max:255'],
         ]);
 
