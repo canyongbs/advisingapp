@@ -65,7 +65,7 @@ class ApplicationSubmissionStatePolicy implements PerformsChecksBeforeAuthorizat
     {
         if (SettingsPermissions::active()) {
             return $authenticatable->canOrElse(
-                abilities: 'settings.*.view',
+                abilities: 'settings.view-any',
                 denyResponse: 'You do not have permission to view states.'
             );
         }
@@ -159,7 +159,7 @@ class ApplicationSubmissionStatePolicy implements PerformsChecksBeforeAuthorizat
                 denyResponse: 'You do not have permission to permanently delete this state.'
             );
         }
-        
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$model->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this state.'

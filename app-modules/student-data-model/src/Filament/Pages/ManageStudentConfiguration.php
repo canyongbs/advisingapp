@@ -64,7 +64,7 @@ class ManageStudentConfiguration extends SettingsPage
             return false;
         }
 
-        return SettingsPermissions::active() ? $user->can(['settings.view-any']) : $user->can('product_admin.view-any');
+        return SettingsPermissions::active() ? $user->can(['settings.view-any']) : $user->can(['product_admin.view-any']);
     }
 
     public function form(Form $form): Form
