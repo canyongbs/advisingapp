@@ -47,12 +47,7 @@ class FetchFileParsingResults
 
     public function execute(string $fileId, string $mimetype): ?string
     {
-        // $response = Http::withToken(app(AiIntegrationsSettings::class)->llamaparse_api_key)
-        //     ->get("https://api.cloud.llamaindex.ai/api/v1/parsing/job/{$this->file->file_id}/details");
-
-        // logger()->debug('FetchQnaAdvisorFileParsingResults response', [
-        //     'response' => $response->json(),
-        // ]);
+        // TODO: Check the status of the file parsing job, if it is not completed, return null. If it is in an ERROR state then throw an exeception that upstream needs to handle.
 
         $outputFormat = match (true) {
             str($mimetype)->startsWith(['audio/', 'video/']) => 'text',
