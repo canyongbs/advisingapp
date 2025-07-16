@@ -18,7 +18,7 @@ use Spatie\QueryBuilder\AllowedSort;
 use Spatie\QueryBuilder\Enums\FilterOperator;
 use Spatie\QueryBuilder\QueryBuilder;
 
-class ListStudentProgramsController
+class ListStudentProgramController
 {
     /**
      * @response AnonymousResourceCollection<LengthAwarePaginator<StudentProgramResource>>
@@ -32,13 +32,11 @@ class ListStudentProgramsController
     #[QueryParameter('filter[semester]', description: 'Filter the results where the program\'s semester contains the provided string.', type: 'string')]
     #[QueryParameter('filter[descr]', description: 'Filter the results where the program\'s descr contains the provided string.', type: 'string')]
     #[QueryParameter('filter[foi]', description: 'Filter the results where the program\'s foi contains the provided string.', type: 'string')]
-    #[QueryParameter('filter[change_dt]', description: 'Filter the results where the student\'s change_dt matches the provided datetime.', type: 'datetime')]
-    #[QueryParameter('filter[declare_dt]', description: 'Filter the results where the student\'s declare_dt matches the provided datetime.', type: 'datetime')]
-    #[QueryParameter('filter[graduation_dt]', description: 'Filter the results where the student\'s graduation_dt matches the provided datetime.', type: 'datetime')]
-    #[QueryParameter('filter[conferred_dt]', description: 'Filter the results where the student\'s conferred_dt matches the provided datetime.', type: 'datetime')]
-    #[QueryParameter('page[number]', description: 'Control which page of students\'s programs is returned in the response.', type: 'int', default: 1)]
-    #[QueryParameter('page[size]', description: 'Control how many students\'s programs are returned in the response.', type: 'int', default: 30)]
-    #[QueryParameter('sort', description: 'Control the order of students\'s programs that are returned in the response. Ascending order is used by default, prepend the sort with `-` to sort descending.', type: 'string', default: 'sisid', examples: [
+    #[QueryParameter('filter[change_dt]', description: 'Filter the results where the program\'s change_dt matches the provided datetime.', type: 'datetime')]
+    #[QueryParameter('filter[declare_dt]', description: 'Filter the results where the program\'s declare_dt matches the provided datetime.', type: 'datetime')]
+    #[QueryParameter('page[number]', description: 'Control which page of programs is returned in the response.', type: 'int', default: 1)]
+    #[QueryParameter('page[size]', description: 'Control how many programs are returned in the response.', type: 'int', default: 30)]
+    #[QueryParameter('sort', description: 'Control the order of programs that are returned in the response. Ascending order is used by default, prepend the sort with `-` to sort descending.', type: 'string', default: 'sisid', examples: [
         'acad_career' => new Example('acad_career'),
         'division' => new Example('division'),
         'acad_plan' => new Example('acad_plan'),
