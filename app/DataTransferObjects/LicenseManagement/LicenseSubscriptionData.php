@@ -47,8 +47,6 @@ class LicenseSubscriptionData extends Data
     public function __construct(
         public ?string $clientName,
         public ?string $partnerName,
-        public ?string $clientPo,
-        public ?string $partnerPo,
         public ?Carbon $startDate,
         public ?Carbon $endDate,
     ) {}
