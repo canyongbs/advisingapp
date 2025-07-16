@@ -36,66 +36,70 @@
 
 namespace AdvisingApp\CaseManagement\Notifications;
 
-use AdvisingApp\CaseManagement\Enums\CaseTypeEmailTemplateRole;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Models\CaseTypeEmailTemplate;
+use AdvisingApp\CaseManagement\Models\CaseUpdate;
 use AdvisingApp\CaseManagement\Notifications\Concerns\HandlesCaseTemplateContent;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\Contracts\Message;
-use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
+use AdvisingApp\Notification\Notifications\Channels\DatabaseChannel;
+use AdvisingApp\Notification\Notifications\Channels\MailChannel;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
-use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\NotificationSetting;
+use Filament\Notifications\Notification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\AnonymousNotifiable;
-use Illuminate\Notifications\Notification;
+use Illuminate\Notifications\Notification as BaseNotification;
 
-class EducatableCaseClosedNotification extends Notification implements ShouldQueue, HasBeforeSendHook
+class CaseUpdated extends BaseNotification implements ShouldQueue
 {
     use Queueable;
     use HandlesCaseTemplateContent;
 
+    /** @var CaseModel */
+    public CaseModel $case;
+
+    /**
+     * @param class-string $channel
+     */
     public function __construct(
-        protected CaseModel $case,
-        protected ?CaseTypeEmailTemplate $emailTemplate,
-    ) {}
+        public CaseUpdate $caseUpdate,
+        public ?CaseTypeEmailTemplate $emailTemplate,
+        public string $channel,
+    ) {
+        $this->case = $caseUpdate->case;
+    }
 
     /**
      * @return array<int, string>
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return [match ($this->channel) {
+            DatabaseChannel::class => 'database',
+            MailChannel::class => 'mail',
+            default => '',
+        }];
     }
 
     public function toMail(object $notifiable): MailMessage
     {
-        $educatable = $notifiable;
-        assert($educatable instanceof Educatable);
-
-        $name = ($notifiable instanceof Student || $notifiable instanceof Prospect)
-          ? $educatable->displayNameKey()
-          : '';
-
-        $status = $this->case->status;
-
         $template = $this->emailTemplate;
 
         if (! $template) {
             return MailMessage::make()
                 ->settings($this->resolveNotificationSetting($notifiable))
-                ->subject("{$this->case->case_number} - is now {$status->name}")
-                ->greeting("Hi {$name},")
-                ->line("Your request {$this->case->case_number} for case is now {$status->name}.");
+                ->subject("New update on case {$this->caseUpdate->case->case_number}")
+                ->line("The case {$this->caseUpdate->case->case_number} has a new update.")
+                ->action('View case', CaseResource::getUrl('view', ['record' => $this->caseUpdate->case]));
         }
 
         $subject = $this->getSubject($template->subject);
 
-        $body = $this->getBody($template->body, CaseTypeEmailTemplateRole::Customer);
+        $body = $this->getBody($template->body);
 
         return MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable))
@@ -103,13 +107,22 @@ class EducatableCaseClosedNotification extends Notification implements ShouldQue
             ->content($body);
     }
 
+    /** @return array<string, mixed> */
+    public function toDatabase(object $notifiable): array
+    {
+        return Notification::make()
+            ->success()
+            ->title((string) str("New update on [case {$this->caseUpdate->case->case_number}](" . CaseResource::getUrl('view', ['record' => $this->caseUpdate->case]) . ')')->markdown())
+            ->getDatabaseMessage();
+    }
+
     public function beforeSend(AnonymousNotifiable|CanBeNotified $notifiable, Message $message, NotificationChannel $channel): void
     {
-        $message->related()->associate($this->case);
+        $message->related()->associate($this->caseUpdate);
     }
 
     private function resolveNotificationSetting(object $notifiable): ?NotificationSetting
     {
-        return $this->case->division->notificationSetting?->setting;
+        return $this->caseUpdate->case->division->notificationSetting?->setting;
     }
 }

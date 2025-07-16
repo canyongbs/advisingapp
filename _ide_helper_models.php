@@ -2683,6 +2683,8 @@ namespace AdvisingApp\CaseManagement\Models{
  * @property-read int|null $managers_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CasePriority> $priorities
  * @property-read int|null $priorities_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseTypeEmailTemplate> $templates
+ * @property-read int|null $templates_count
  * @method static \AdvisingApp\CaseManagement\Database\Factories\CaseTypeFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseType newQuery()
@@ -2762,6 +2764,37 @@ namespace AdvisingApp\CaseManagement\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperCaseTypeAuditor {}
+}
+
+namespace AdvisingApp\CaseManagement\Models{
+/**
+ * 
+ *
+ * @property string $id
+ * @property string $case_type_id
+ * @property \AdvisingApp\CaseManagement\Enums\CaseEmailTemplateType $type
+ * @property array<array-key, mixed> $subject
+ * @property array<array-key, mixed> $body
+ * @property \AdvisingApp\CaseManagement\Enums\CaseTypeEmailTemplateRole|null $role
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \AdvisingApp\CaseManagement\Models\CaseType $caseType
+ * @method static \AdvisingApp\CaseManagement\Database\Factories\CaseTypeEmailTemplateFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeEmailTemplate newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeEmailTemplate newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeEmailTemplate query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeEmailTemplate whereBody($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeEmailTemplate whereCaseTypeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeEmailTemplate whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeEmailTemplate whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeEmailTemplate whereRole($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeEmailTemplate whereSubject($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeEmailTemplate whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeEmailTemplate whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperCaseTypeEmailTemplate {}
 }
 
 namespace AdvisingApp\CaseManagement\Models{

@@ -101,7 +101,7 @@ test('A successful action on the CreateCase page', function () {
         ->toEqual($request->get('priority_id'));
 });
 
-test('CreateCase requires valid data', function ($data, $errors, $setup = null) {
+test('CreateCase requires valid data', function (CreateCaseRequestFactory $data, array $errors, ?Closure $setup = null) {
     if ($setup) {
         $setup();
     }
@@ -474,3 +474,9 @@ test('assignment type workload will auto-assign to new cases', function () {
     expect($getCaseType->last_assigned_id)->toBe($factoryUsers->take(3)->sortBy('id')->sortBy('name')->first()->getKey());
     expect($latestCase->assignedTo->user_id)->toBe($factoryUsers->take(3)->sortBy('id')->sortBy('name')->first()->getKey());
 });
+
+test('for a specific case type, which have notifications on for managers, the case is created and the managers are notified')->todo();
+
+test('for a specific case type, which have notifications on for auditors, the case is created and the auditors are notified')->todo();
+
+test('for a specific case type, which have notifications on for customers, the case is created and the customers are notified')->todo();
