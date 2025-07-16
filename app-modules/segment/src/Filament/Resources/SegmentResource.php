@@ -46,9 +46,9 @@ class SegmentResource extends Resource
 {
     protected static ?string $model = Segment::class;
 
-    protected static ?string $navigationGroup = 'Product Features';
+    protected static ?string $navigationGroup = 'CRM';
 
-    protected static ?int $navigationSort = 60;
+    protected static ?int $navigationSort = 90;
 
     protected static ?string $navigationLabel = 'Segments';
 

@@ -45,7 +45,7 @@ class ManageStudentSyncs extends Page
 
     protected static ?string $title = 'Records Sync';
 
-    protected static ?int $navigationSort = 30;
+    protected static ?int $navigationSort = 100;
 
     protected static ?string $navigationGroup = 'CRM';
 
