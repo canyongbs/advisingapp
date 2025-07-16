@@ -62,11 +62,6 @@ class WorkflowCareTeamDetails extends WorkflowDetails implements Auditable
         'remove_prior' => 'boolean',
     ];
 
-    public function getServiceClass(): CareTeam
-    {
-        return new CareTeam();
-    }
-
     public function getType(): string
     {
         return 'care_team';

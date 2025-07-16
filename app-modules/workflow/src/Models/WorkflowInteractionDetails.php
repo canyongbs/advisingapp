@@ -71,11 +71,6 @@ class WorkflowInteractionDetails extends WorkflowDetails implements Auditable
         'end_datetime' => 'datetime',
     ];
 
-    public function getServiceClass(): Interaction
-    {
-        return new Interaction();
-    }
-
     public function getType(): string
     {
         return 'interaction';
