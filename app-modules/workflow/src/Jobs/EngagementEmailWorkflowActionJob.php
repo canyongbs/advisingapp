@@ -92,7 +92,7 @@ class EngagementEmailWorkflowActionJob extends ExecuteWorkflowActionOnEducatable
                     ),
                     notifyNow: true,
                 );
-            
+
             $engagement->refresh();
 
             WorkflowRunStepRelated::create([
