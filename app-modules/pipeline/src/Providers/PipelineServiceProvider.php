@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,35 +33,30 @@
 
 </COPYRIGHT>
 */
-import laravel, { refreshPaths } from 'laravel-vite-plugin';
-import { defineConfig } from 'vite';
 
-export default defineConfig({
-    plugins: [
-        laravel({
-            input: [
-                'resources/css/app.css',
-                'resources/js/app.js',
-                'resources/js/admin.js',
-                'resources/css/filament/admin/theme.css',
-                'app-modules/ai/resources/js/chat.js',
-                'app-modules/ai/resources/js/chats.js',
-                'app-modules/research/resources/js/results.js',
-                'app-modules/research/resources/js/requests.js',
-                'app-modules/in-app-communication/resources/js/userToUserChat.js',
-                'app-modules/task/resources/js/kanban.js',
-                'app-modules/pipeline/resources/js/kanban.js',
-            ],
-            refresh: [
-                ...refreshPaths,
-                'app/Filament/**',
-                'app/Forms/Components/**',
-                'app/Livewire/**',
-                'app/Infolists/Components/**',
-                'app/Providers/Filament/**',
-                'app/Tables/Columns/**',
-                'portals/**',
-            ],
-        }),
-    ],
-});
+namespace AdvisingApp\Pipeline\Providers;
+
+use AdvisingApp\Pipeline\Models\EducatablePipelineStage;
+use AdvisingApp\Pipeline\Models\Pipeline;
+use AdvisingApp\Pipeline\Models\PipelineStage;
+use AdvisingApp\Pipeline\PipelinePlugin;
+use Filament\Panel;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\ServiceProvider;
+
+class PipelineServiceProvider extends ServiceProvider
+{
+    public function register()
+    {
+        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new PipelinePlugin()));
+    }
+
+    public function boot(): void
+    {
+        Relation::morphMap([
+            'pipeline' => Pipeline::class,
+            'pipeline_stage' => PipelineStage::class,
+            'educatable_pipeline_stage' => EducatablePipelineStage::class,
+        ]);
+    }
+}

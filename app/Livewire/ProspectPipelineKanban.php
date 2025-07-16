@@ -37,9 +37,9 @@
 namespace App\Livewire;
 
 use AdvisingApp\Audit\Overrides\MorphToMany;
-use AdvisingApp\Prospect\Models\EducatablePipelineStage;
-use AdvisingApp\Prospect\Models\Pipeline;
-use AdvisingApp\Prospect\Models\PipelineStage;
+use AdvisingApp\Pipeline\Models\EducatablePipelineStage;
+use AdvisingApp\Pipeline\Models\Pipeline;
+use AdvisingApp\Pipeline\Models\PipelineStage;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
 use Exception;
@@ -99,11 +99,11 @@ class ProspectPipelineKanban extends Component implements HasForms, HasActions
     {
         try {
             if (blank($fromStage)) {
-                $pipeline?->educatablePipelineStages()->attach($educatable, [
+                $pipeline->educatablePipelineStages()->attach($educatable, [
                     'pipeline_stage_id' => PipelineStage::find($toStage)->getKey(),
                 ]);
             } elseif (blank($toStage)) {
-                $pipeline?->educatablePipelineStages()->detach($educatable);
+                $pipeline->educatablePipelineStages()->detach($educatable);
             } else {
                 EducatablePipelineStage::where('pipeline_id', $pipeline->getKey())
                     ->where('pipeline_stage_id', $fromStage)

@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,35 +33,53 @@
 
 </COPYRIGHT>
 */
-import laravel, { refreshPaths } from 'laravel-vite-plugin';
-import { defineConfig } from 'vite';
 
-export default defineConfig({
-    plugins: [
-        laravel({
-            input: [
-                'resources/css/app.css',
-                'resources/js/app.js',
-                'resources/js/admin.js',
-                'resources/css/filament/admin/theme.css',
-                'app-modules/ai/resources/js/chat.js',
-                'app-modules/ai/resources/js/chats.js',
-                'app-modules/research/resources/js/results.js',
-                'app-modules/research/resources/js/requests.js',
-                'app-modules/in-app-communication/resources/js/userToUserChat.js',
-                'app-modules/task/resources/js/kanban.js',
-                'app-modules/pipeline/resources/js/kanban.js',
-            ],
-            refresh: [
-                ...refreshPaths,
-                'app/Filament/**',
-                'app/Forms/Components/**',
-                'app/Livewire/**',
-                'app/Infolists/Components/**',
-                'app/Providers/Filament/**',
-                'app/Tables/Columns/**',
-                'portals/**',
-            ],
-        }),
-    ],
-});
+use CanyonGBS\Common\Database\Migrations\Concerns\CanModifyPermissions;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
+
+return new class () extends Migration {
+    use CanModifyPermissions;
+
+    /**
+     * @var array<string, string> $permissions
+     */
+    private array $permissions = [
+        'pipeline.view-any' => 'Pipeline',
+        'pipeline.create' => 'Pipeline',
+        'pipeline.*.view' => 'Pipeline',
+        'pipeline.*.update' => 'Pipeline',
+        'pipeline.*.delete' => 'Pipeline',
+        'pipeline.*.restore' => 'Pipeline',
+        'pipeline.*.force-delete' => 'Pipeline',
+        'manage_prospect_pipeline_settings' => 'Pipeline',
+    ];
+
+    /**
+     * @var array<string> $guards
+     */
+    private array $guards = [
+        'web',
+        'api',
+    ];
+
+    public function up(): void
+    {
+        collect($this->guards)
+            ->each(function (string $guard) {
+                $permissions = Arr::except($this->permissions, keys: DB::table('permissions')
+                    ->where('guard_name', $guard)
+                    ->pluck('name')
+                    ->all());
+
+                $this->createPermissions($permissions, $guard);
+            });
+    }
+
+    public function down(): void
+    {
+        collect($this->guards)
+            ->each(fn (string $guard) => $this->deletePermissions(array_keys($this->permissions), $guard));
+    }
+};

@@ -4562,6 +4562,102 @@ namespace AdvisingApp\Notification\Models{
 	class IdeHelperSubscription {}
 }
 
+namespace AdvisingApp\Pipeline\Models{
+/**
+ * 
+ *
+ * @property string $pipeline_id
+ * @property string $pipeline_stage_id
+ * @property string $educatable_type
+ * @property string $educatable_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Model $educatable
+ * @property-read \AdvisingApp\Pipeline\Models\Pipeline $pipeline
+ * @property-read \AdvisingApp\Pipeline\Models\PipelineStage $stage
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EducatablePipelineStage newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EducatablePipelineStage newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EducatablePipelineStage query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EducatablePipelineStage whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EducatablePipelineStage whereEducatableId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EducatablePipelineStage whereEducatableType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EducatablePipelineStage wherePipelineId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EducatablePipelineStage wherePipelineStageId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EducatablePipelineStage whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperEducatablePipelineStage {}
+}
+
+namespace AdvisingApp\Pipeline\Models{
+/**
+ * 
+ *
+ * @property string $id
+ * @property string $name
+ * @property string $description
+ * @property string $user_id
+ * @property string $segment_id
+ * @property string|null $default_stage
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \App\Models\User $createdBy
+ * @property-read \AdvisingApp\Pipeline\Models\EducatablePipelineStage|null $pivot
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Prospect\Models\Prospect> $educatablePipelineStages
+ * @property-read int|null $educatable_pipeline_stages_count
+ * @property-read \AdvisingApp\Segment\Models\Segment $segment
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Pipeline\Models\PipelineStage> $stages
+ * @property-read int|null $stages_count
+ * @method static \AdvisingApp\Pipeline\Database\Factories\PipelineFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pipeline newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pipeline newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pipeline query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pipeline whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pipeline whereDefaultStage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pipeline whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pipeline whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pipeline whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pipeline whereSegmentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pipeline whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pipeline whereUserId($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperPipeline {}
+}
+
+namespace AdvisingApp\Pipeline\Models{
+/**
+ * 
+ *
+ * @property string $id
+ * @property string $name
+ * @property string $pipeline_id
+ * @property int $order
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Pipeline\Models\EducatablePipelineStage> $educatables
+ * @property-read int|null $educatables_count
+ * @property-read \AdvisingApp\Pipeline\Models\Pipeline $pipeline
+ * @method static \AdvisingApp\Pipeline\Database\Factories\PipelineStageFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PipelineStage newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PipelineStage newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PipelineStage query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PipelineStage whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PipelineStage whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PipelineStage whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PipelineStage whereOrder($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PipelineStage wherePipelineId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PipelineStage whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperPipelineStage {}
+}
+
 namespace AdvisingApp\Portal\Models{
 /**
  * 
@@ -4589,102 +4685,6 @@ namespace AdvisingApp\Portal\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperPortalAuthentication {}
-}
-
-namespace AdvisingApp\Prospect\Models{
-/**
- * 
- *
- * @property string $pipeline_id
- * @property string $pipeline_stage_id
- * @property string $educatable_type
- * @property string $educatable_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $educatable
- * @property-read \AdvisingApp\Prospect\Models\Pipeline $pipeline
- * @property-read \AdvisingApp\Prospect\Models\PipelineStage $stage
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EducatablePipelineStage newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EducatablePipelineStage newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EducatablePipelineStage query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EducatablePipelineStage whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EducatablePipelineStage whereEducatableId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EducatablePipelineStage whereEducatableType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EducatablePipelineStage wherePipelineId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EducatablePipelineStage wherePipelineStageId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EducatablePipelineStage whereUpdatedAt($value)
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperEducatablePipelineStage {}
-}
-
-namespace AdvisingApp\Prospect\Models{
-/**
- * 
- *
- * @property string $id
- * @property string $name
- * @property string $description
- * @property string $user_id
- * @property string $segment_id
- * @property string|null $default_stage
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \App\Models\User $createdBy
- * @property-read \AdvisingApp\Prospect\Models\EducatablePipelineStage|null $pivot
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Prospect\Models\Prospect> $educatablePipelineStages
- * @property-read int|null $educatable_pipeline_stages_count
- * @property-read \AdvisingApp\Segment\Models\Segment $segment
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Prospect\Models\PipelineStage> $stages
- * @property-read int|null $stages_count
- * @method static \AdvisingApp\Prospect\Database\Factories\PipelineFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Pipeline newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Pipeline newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Pipeline query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Pipeline whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Pipeline whereDefaultStage($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Pipeline whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Pipeline whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Pipeline whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Pipeline whereSegmentId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Pipeline whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Pipeline whereUserId($value)
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperPipeline {}
-}
-
-namespace AdvisingApp\Prospect\Models{
-/**
- * 
- *
- * @property string $id
- * @property string $name
- * @property string $pipeline_id
- * @property int $order
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Prospect\Models\EducatablePipelineStage> $educatables
- * @property-read int|null $educatables_count
- * @property-read \AdvisingApp\Prospect\Models\Pipeline $pipeline
- * @method static \AdvisingApp\Prospect\Database\Factories\PipelineStageFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PipelineStage newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PipelineStage newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PipelineStage query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PipelineStage whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PipelineStage whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PipelineStage whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PipelineStage whereOrder($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PipelineStage wherePipelineId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PipelineStage whereUpdatedAt($value)
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperPipelineStage {}
 }
 
 namespace AdvisingApp\Prospect\Models{
@@ -4728,13 +4728,13 @@ namespace AdvisingApp\Prospect\Models{
  * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\BasicNeeds\Models\BasicNeedsProgram> $basicNeedsPrograms
  * @property-read int|null $basic_needs_programs_count
- * @property-read \App\Models\Taggable|\AdvisingApp\Notification\Models\Subscription|\AdvisingApp\Engagement\Models\EngagementFileEntities|\AdvisingApp\Prospect\Models\EducatablePipelineStage|\AdvisingApp\CareTeam\Models\CareTeam|null $pivot
+ * @property-read \App\Models\Taggable|\AdvisingApp\Notification\Models\Subscription|\AdvisingApp\Engagement\Models\EngagementFileEntities|\AdvisingApp\Pipeline\Models\EducatablePipelineStage|\AdvisingApp\CareTeam\Models\CareTeam|null $pivot
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $careTeam
  * @property-read int|null $care_team_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseModel> $cases
  * @property-read int|null $cases_count
  * @property-read \App\Models\User|null $createdBy
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Prospect\Models\Pipeline> $educatablePipelineStages
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Pipeline\Models\Pipeline> $educatablePipelineStages
  * @property-read int|null $educatable_pipeline_stages_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Prospect\Models\ProspectEmailAddress> $emailAddresses
  * @property-read int|null $email_addresses_count
@@ -5622,11 +5622,13 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\BasicNeeds\Models\BasicNeedsProgram> $basicNeedsPrograms
  * @property-read int|null $basic_needs_programs_count
- * @property-read \App\Models\Taggable|\AdvisingApp\Notification\Models\Subscription|\AdvisingApp\Engagement\Models\EngagementFileEntities|\AdvisingApp\CareTeam\Models\CareTeam|null $pivot
+ * @property-read \App\Models\Taggable|\AdvisingApp\Notification\Models\Subscription|\AdvisingApp\Engagement\Models\EngagementFileEntities|\AdvisingApp\Pipeline\Models\EducatablePipelineStage|\AdvisingApp\CareTeam\Models\CareTeam|null $pivot
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $careTeam
  * @property-read int|null $care_team_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseManagement\Models\CaseModel> $cases
  * @property-read int|null $cases_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Pipeline\Models\Pipeline> $educatablePipelineStages
+ * @property-read int|null $educatable_pipeline_stages_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\StudentDataModel\Models\StudentEmailAddress> $emailAddresses
  * @property-read int|null $email_addresses_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Engagement\Models\EngagementFile> $engagementFiles
