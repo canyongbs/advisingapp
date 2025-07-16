@@ -45,11 +45,12 @@ return new class () extends Migration {
             $table->uuid('id')->primary();
             $table->foreignUuid('case_type_id')->constrained('case_types');
             $table->string('type');
-            $table->unique(['case_type_id', 'type', 'role']);
             $table->jsonb('subject');
             $table->jsonb('body');
             $table->string('role')->nullable();
             $table->timestamps();
+
+            $table->unique(['case_type_id', 'type', 'role']);
         });
     }
 
