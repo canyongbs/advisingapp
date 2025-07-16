@@ -36,8 +36,17 @@
 
 namespace AdvisingApp\Workflow\Enums;
 
+use AdvisingApp\Workflow\Jobs\CareTeamWorkflowActionJob;
+use AdvisingApp\Workflow\Jobs\CaseWorkflowActionJob;
 use AdvisingApp\Workflow\Jobs\EngagementEmailWorkflowActionJob;
+use AdvisingApp\Workflow\Jobs\EngagementSmsWorkflowActionJob;
+use AdvisingApp\Workflow\Jobs\EventWorkflowActionJob;
 use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionOnEducatableJob;
+use AdvisingApp\Workflow\Jobs\InteractionWorkflowActionJob;
+use AdvisingApp\Workflow\Jobs\ProactiveAlertWorkflowActionJob;
+use AdvisingApp\Workflow\Jobs\SubscriptionWorkflowActionJob;
+use AdvisingApp\Workflow\Jobs\TagsWorkflowActionJob;
+use AdvisingApp\Workflow\Jobs\TaskWorkflowActionJob;
 use AdvisingApp\Workflow\Models\WorkflowRunStep;
 use Exception;
 use Filament\Support\Contracts\HasLabel;
@@ -79,16 +88,15 @@ enum WorkflowActionType: string implements HasLabel
     {
         return match ($this) {
             WorkflowActionType::EngagementEmail => new EngagementEmailWorkflowActionJob($step),
-            // WorkflowActionType::EngagementSms => new EngagementWorkflowActionJob($step),
-            // WorkflowActionType::Event => new EventCampaignActionJob($campaignActionEducatable),
-            // WorkflowActionType::Case => new CaseCampaignActionJob($campaignActionEducatable),
-            // WorkflowActionType::ProactiveAlert => new ProactiveAlertCampaignActionJob($campaignActionEducatable),
-            // WorkflowActionType::Interaction => new InteractionCampaignActionJob($campaignActionEducatable),
-            // WorkflowActionType::CareTeam => new CareTeamCampaignActionJob($campaignActionEducatable),
-            // WorkflowActionType::Task => new TaskCampaignActionJob($campaignActionEducatable),
-            // WorkflowActionType::Subscription => new SubscriptionCampaignActionJob($campaignActionEducatable),
-            // WorkflowActionType::Tags => new TagsCampaignActionJob($campaignActionEducatable),
-            default => throw new Exception('Invalid workflow action.'),
+            WorkflowActionType::EngagementSms => new EngagementSmsWorkflowActionJob($step),
+            WorkflowActionType::Event => new EventWorkflowActionJob($step),
+            WorkflowActionType::Case => new CaseWorkflowActionJob($step),
+            WorkflowActionType::ProactiveAlert => new ProactiveAlertWorkflowActionJob($step),
+            WorkflowActionType::Interaction => new InteractionWorkflowActionJob($step),
+            WorkflowActionType::CareTeam => new CareTeamWorkflowActionJob($step),
+            WorkflowActionType::Task => new TaskWorkflowActionJob($step),
+            WorkflowActionType::Subscription => new SubscriptionWorkflowActionJob($step),
+            WorkflowActionType::Tags => new TagsWorkflowActionJob($step),
         };
     }
 }

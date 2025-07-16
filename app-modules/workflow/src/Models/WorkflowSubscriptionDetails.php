@@ -62,11 +62,6 @@ class WorkflowSubscriptionDetails extends WorkflowDetails implements Auditable
         'remove_prior' => 'boolean',
     ];
 
-    public function getServiceClass(): Subscription
-    {
-        return new Subscription();
-    }
-
     public function getType(): string
     {
         return 'subscription';

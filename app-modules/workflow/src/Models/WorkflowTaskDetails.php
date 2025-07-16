@@ -62,11 +62,6 @@ class WorkflowTaskDetails extends WorkflowDetails implements Auditable
         'due' => 'datetime',
     ];
 
-    public function getServiceClass(): Task
-    {
-        return new Task();
-    }
-
     public function getType(): string
     {
         return 'task';

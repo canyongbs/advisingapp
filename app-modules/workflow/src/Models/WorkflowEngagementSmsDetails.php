@@ -63,11 +63,6 @@ class WorkflowEngagementSmsDetails extends WorkflowDetails implements Auditable
         'body' => 'array',
     ];
 
-    public function getServiceClass(): Engagement
-    {
-        return new Engagement();
-    }
-
     public function getType(): string
     {
         return 'engagement_sms';

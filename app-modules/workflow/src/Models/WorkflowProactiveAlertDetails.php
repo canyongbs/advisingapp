@@ -64,11 +64,6 @@ class WorkflowProactiveAlertDetails extends WorkflowDetails implements Auditable
         'severity' => AlertSeverity::class,
     ];
 
-    public function getServiceClass(): Alert
-    {
-        return new Alert();
-    }
-
     public function getType(): string
     {
         return 'proactive_alert';
