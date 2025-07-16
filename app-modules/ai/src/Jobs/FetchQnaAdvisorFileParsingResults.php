@@ -59,13 +59,13 @@ class FetchQnaAdvisorFileParsingResults implements ShouldQueue, TenantAware, Sho
         protected QnaAdvisorFile $file,
     ) {}
 
-    public function handle(): void
+    public function handle(FetchFileParsingResults $fetchFileParsingResults): void
     {
         if (filled($this->file->parsing_results)) {
             return;
         }
 
-        $result = app(FetchFileParsingResults::class)->execute($this->file->file_id, $this->file->mime_type);
+        $result = $fetchFileParsingResults->execute($this->file->file_id, $this->file->mime_type);
 
         if (blank($result)) {
             return;

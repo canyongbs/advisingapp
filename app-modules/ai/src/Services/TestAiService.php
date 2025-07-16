@@ -161,7 +161,7 @@ class TestAiService implements AiService
     {
         return true;
     }
-    
+
     public function isResearchRequestReady(ResearchRequest $researchRequest): bool
     {
         return true;
