@@ -62,11 +62,6 @@ class WorkflowTagsDetails extends WorkflowDetails implements Auditable
         'remove_prior' => 'boolean',
     ];
 
-    public function getServiceClass(): Tag
-    {
-        return new Tag();
-    }
-
     public function getType(): string
     {
         return 'tags';

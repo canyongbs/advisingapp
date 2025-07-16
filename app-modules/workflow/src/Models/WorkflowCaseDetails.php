@@ -61,11 +61,6 @@ class WorkflowCaseDetails extends WorkflowDetails implements Auditable
         'workflow_step_id',
     ];
 
-    public function getServiceClass(): CaseModel
-    {
-        return new CaseModel();
-    }
-
     public function getType(): string
     {
         return 'case';

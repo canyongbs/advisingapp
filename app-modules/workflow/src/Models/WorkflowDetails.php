@@ -37,11 +37,8 @@
 namespace AdvisingApp\Workflow\Models;
 
 use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Model;
 
 abstract class WorkflowDetails extends BaseModel
 {
-    abstract public function getServiceClass(): Model;
-
     abstract public function getType(): string;
 }
