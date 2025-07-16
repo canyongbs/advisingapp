@@ -47,6 +47,7 @@ use Filament\Actions\Imports\Models\Import as BaseImport;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
@@ -54,6 +55,7 @@ use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Facades\FilamentView;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\View;
@@ -193,6 +195,14 @@ class FilamentServiceProvider extends ServiceProvider
             'panels::footer',
             fn (): View => view('filament.footer'),
         );
+
+        Select::configureUsing(function (Select $component) {
+            $component->native(false);
+        });
+
+        SelectFilter::configureUsing(function (SelectFilter $component) {
+            $component->native(false);
+        });
 
         DateTimePicker::configureUsing(function (DateTimePicker $component) {
             if ($component instanceof DatePicker) {
