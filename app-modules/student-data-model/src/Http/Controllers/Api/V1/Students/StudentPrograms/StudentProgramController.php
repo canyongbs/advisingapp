@@ -21,17 +21,16 @@ class StudentProgramController
     public function __invoke(Request $request, UpdateStudentProgram $program, Student $student): JsonResource
     {
         Gate::authorize('viewAny', Student::class);
+        Gate::authorize('viewAny', Program::class);
         Gate::authorize('create', Program::class);
-        Gate::authorize('program.*.update', Program::class);
-        Gate::authorize('program.*.delete', Program::class);
 
         $data = $request->validate([
             'program' => ['required','array'],
             'program.*.acad_career' => ['sometimes', 'string', 'max:255'],
             'program.*.division' => ['sometimes', 'string', 'max:255'],
-            'program.*.acad_plan' => ['required', 'string'],
+            'program.*.acad_plan' => ['required', 'string','max:255'],
             'program.*.prog_status' => ['sometimes', 'string', 'max:255'],
-            'program.*.cum_gpa' => ['sometimes', 'decimal:0,2', 'regex:/^\d{1,3}(\.\d{1,2})?$/'],
+            'program.*.cum_gpa' => ['sometimes', 'decimal:0,2'],
             'program.*.semester' => ['sometimes', 'string', 'max:255'],
             'program.*.descr' => ['sometimes', 'string', 'max:255'],
             'program.*.foi' => ['sometimes', 'string', 'max:255'],
