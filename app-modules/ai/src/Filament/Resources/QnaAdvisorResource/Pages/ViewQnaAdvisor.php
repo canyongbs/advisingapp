@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource\Pages;
 
+use AdvisingApp\Ai\Actions\GetQnaAdvisorInstructions;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use Filament\Actions\Action;
@@ -45,6 +46,7 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
 class ViewQnaAdvisor extends ViewRecord
@@ -65,6 +67,13 @@ class ViewQnaAdvisor extends ViewRecord
                     ->circular(),
                 TextEntry::make('name'),
                 TextEntry::make('description'),
+                TextEntry::make('markdown')
+                    ->columnSpanFull()
+                    ->html()
+                    ->extraAttributes(['class' => 'overflow-auto'])
+                    ->getStateUsing(fn (QnaAdvisor $record): string => new HtmlString(
+                        '<pre>' . app(GetQnaAdvisorInstructions::class)->execute($record) . '</pre>'
+                    )),
             ]),
         ]);
     }
