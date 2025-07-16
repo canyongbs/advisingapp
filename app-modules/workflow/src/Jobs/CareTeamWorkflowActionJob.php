@@ -56,13 +56,13 @@ class CareTeamWorkflowActionJob extends ExecuteWorkflowActionOnEducatableJob
 
             $details = WorkflowCareTeamDetails::whereId($this->workflowRunStep->details_id)->first();
 
-            if($details->remove_prior) {
+            if ($details->remove_prior) {
                 $educatable->careTeam()->detach();
             }
 
             $addedOrUpdatedPivotModels = [];
 
-            foreach($details->care_team as $careTeam) {
+            foreach ($details->care_team as $careTeam) {
                 $sync = $educatable
                     ->careTeam()
                     ->syncWithPivotValues(
@@ -70,7 +70,7 @@ class CareTeamWorkflowActionJob extends ExecuteWorkflowActionOnEducatableJob
                         values: ['care_team_role_id' => $careTeam['care_team_role_id']],
                         detaching: false,
                     );
-                
+
                 $addedOrUpdatedPivotModels[] = $sync['attached'];
                 $addedOrUpdatedPivotModels[] = $sync['updated'];
             }
@@ -84,7 +84,7 @@ class CareTeamWorkflowActionJob extends ExecuteWorkflowActionOnEducatableJob
                         ->where('educatable_type', $educatable->getMorphClass())
                         ->where('educatable_id', $educatable->getKey())
                         ->first();
-                    
+
                     WorkflowRunStepRelated::create([
                         'workflow_run_step_id' => $this->workflowRunStep->id,
                         'related' => $careTeam,
