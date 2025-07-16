@@ -84,6 +84,6 @@ class WorkflowEngagementSmsDetails extends WorkflowDetails implements Auditable
 
     public function getType(): string
     {
-      return 'engagement_sms';
+        return 'engagement_sms';
     }
 }

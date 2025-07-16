@@ -81,6 +81,6 @@ class WorkflowCaseDetails extends WorkflowDetails implements Auditable
 
     public function getType(): string
     {
-      return 'case';
+        return 'case';
     }
 }

@@ -85,6 +85,6 @@ class WorkflowProactiveAlertDetails extends WorkflowDetails implements Auditable
 
     public function getType(): string
     {
-      return 'proactive_alert';
+        return 'proactive_alert';
     }
 }

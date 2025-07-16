@@ -82,6 +82,6 @@ class WorkflowCareTeamDetails extends WorkflowDetails implements Auditable
 
     public function getType(): string
     {
-      return 'care_team';
+        return 'care_team';
     }
 }
