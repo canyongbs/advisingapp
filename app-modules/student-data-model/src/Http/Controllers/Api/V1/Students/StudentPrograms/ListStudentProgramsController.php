@@ -18,7 +18,7 @@ use Spatie\QueryBuilder\AllowedSort;
 use Spatie\QueryBuilder\Enums\FilterOperator;
 use Spatie\QueryBuilder\QueryBuilder;
 
-class ListStudentProgramController
+class ListStudentProgramsController
 {
     /**
      * @response AnonymousResourceCollection<LengthAwarePaginator<StudentProgramResource>>

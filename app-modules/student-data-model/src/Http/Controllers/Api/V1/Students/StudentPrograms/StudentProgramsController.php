@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Gate;
 
-class StudentProgramController
+class StudentProgramsController
 {
     /**
      * @response StudentProgramResource
