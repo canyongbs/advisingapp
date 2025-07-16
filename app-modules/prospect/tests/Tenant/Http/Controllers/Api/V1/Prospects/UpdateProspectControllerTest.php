@@ -19,17 +19,17 @@ it('is gated with proper access control', function () {
 
     $user = SystemUser::factory()->create();
     Sanctum::actingAs($user, ['api']);
-    patchJson(route('api.v1.prospects.update', ['prospect' => $prospect], false), $updateProspectRequestData);
+    patchJson(route('api.v1.prospects.update', ['prospect' => $prospect], false), $updateProspectRequestData)->assertForbidden();
 
     $user = SystemUser::factory()->create();
     $user->givePermissionTo('prospect.view-any');
     Sanctum::actingAs($user, ['api']);
-    patchJson(route('api.v1.prospects.update', ['prospect' => $prospect], false), $updateProspectRequestData);
+    patchJson(route('api.v1.prospects.update', ['prospect' => $prospect], false), $updateProspectRequestData)->assertForbidden();
 
     $user = SystemUser::factory()->create();
     $user->givePermissionTo('prospect.*.update');
     Sanctum::actingAs($user, ['api']);
-    patchJson(route('api.v1.prospects.update', ['prospect' => $prospect], false), $updateProspectRequestData);
+    patchJson(route('api.v1.prospects.update', ['prospect' => $prospect], false), $updateProspectRequestData)->assertForbidden();
 
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['prospect.view-any', 'prospect.*.update']);

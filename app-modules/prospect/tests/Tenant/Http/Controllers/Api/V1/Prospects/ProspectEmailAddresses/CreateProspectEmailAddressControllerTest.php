@@ -20,17 +20,17 @@ it('is gated with proper access control', function () {
 
     $user = SystemUser::factory()->create();
     Sanctum::actingAs($user, ['api']);
-    postJson(route('api.v1.prospects.email-addresses.create', ['prospect' => $prospect], false), $createProspectEmailAddressRequestData);
+    postJson(route('api.v1.prospects.email-addresses.create', ['prospect' => $prospect], false), $createProspectEmailAddressRequestData)->assertForbidden();
 
     $user = SystemUser::factory()->create();
     $user->givePermissionTo('prospect.view-any');
     Sanctum::actingAs($user, ['api']);
-    postJson(route('api.v1.prospects.email-addresses.create', ['prospect' => $prospect], false), $createProspectEmailAddressRequestData);
+    postJson(route('api.v1.prospects.email-addresses.create', ['prospect' => $prospect], false), $createProspectEmailAddressRequestData)->assertForbidden();
 
     $user = SystemUser::factory()->create();
     $user->givePermissionTo('prospect.*.update');
     Sanctum::actingAs($user, ['api']);
-    postJson(route('api.v1.prospects.email-addresses.create', ['prospect' => $prospect], false), $createProspectEmailAddressRequestData);
+    postJson(route('api.v1.prospects.email-addresses.create', ['prospect' => $prospect], false), $createProspectEmailAddressRequestData)->assertForbidden();
 
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['prospect.view-any', 'prospect.*.update']);
