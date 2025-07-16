@@ -24,7 +24,7 @@ class StudentProgramResource extends JsonResource
             'division' => $this->resource->division,
             'acad_plan' => $this->resource->acad_plan,
             'prog_status' => $this->resource->prog_status,
-            'cum_gpa' => $this->resource->cum_gpa,
+            'cum_gpa' => (float) $this->resource->cum_gpa,
             'semester' => $this->resource->semester,
             'descr' => $this->resource->descr,
             'foi' => $this->resource->foi,

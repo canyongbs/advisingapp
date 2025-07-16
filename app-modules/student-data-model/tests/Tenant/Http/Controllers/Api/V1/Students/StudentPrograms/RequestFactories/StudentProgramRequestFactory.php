@@ -2,6 +2,7 @@
 
 namespace AdvisingApp\StudentDataModel\Tests\Tenant\Http\Controllers\Api\V1\Students\StudentPrograms\RequestFactories;
 
+use AdvisingApp\StudentDataModel\Models\Student;
 use Worksome\RequestFactories\RequestFactory;
 
 class StudentProgramRequestFactory extends RequestFactory
@@ -16,14 +17,12 @@ class StudentProgramRequestFactory extends RequestFactory
                 'minor' => $this->faker->words(3),
             ]),
             'prog_status' => 'AC',
-            'cum_gpa' => $this->faker->randomFloat(3, 0, 4),
+            'cum_gpa' => $this->faker->randomFloat(2, 0, 4),
             'semester' => $this->faker->numerify('####'),
             'descr' => $this->faker->words(2, true),
             'foi' => $this->faker->randomElement(['', 'FOI ' . $this->faker->words(2, true)]),
-            'change_dt' => $this->faker->dateTime(),
-            'declare_dt' => $this->faker->dateTime(),
-            'graduation_dt' => $this->faker->dateTime(),
-            'conferred_dt' => $this->faker->dateTime(),
+            'change_dt' => $this->faker->date('Y-m-d H:i:s'),
+            'declare_dt' => $this->faker->date('Y-m-d H:i:s'),
         ], filled(...));
     }
 }
