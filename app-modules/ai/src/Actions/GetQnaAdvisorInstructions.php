@@ -5,10 +5,37 @@ namespace AdvisingApp\Ai\Actions;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Ai\Models\QnaAdvisorCategory;
 use AdvisingApp\Ai\Models\QnaAdvisorQuestion;
+use AdvisingApp\Ai\Settings\AiQnaAdvisorSettings;
 
 class GetQnaAdvisorInstructions
 {
     public function execute(QnaAdvisor $qnaAdvisor): string
+    {
+        $settings = app(AiQnaAdvisorSettings::class);
+
+        $instructions = $settings->instructions ?? '';
+        $backgroundInformation = $settings->background_information ?? '';
+
+        $qnaSection = $this->generateQnaSection($qnaAdvisor);
+
+        $restrictions = $settings->restrictions ?? '';
+
+        return <<<END
+
+        # Instructions
+        {$instructions}
+
+        ## Institutional Background Information
+        {$backgroundInformation}
+
+        {$qnaSection}
+        ## Restrictions
+        {$restrictions}
+
+        END;
+    }
+
+    protected function generateQnaSection(QnaAdvisor $qnaAdvisor): string
     {
         $qnaAdvisor->loadMissing('categories.questions');
 
