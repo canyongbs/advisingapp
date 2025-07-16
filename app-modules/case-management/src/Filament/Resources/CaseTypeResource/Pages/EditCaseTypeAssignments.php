@@ -40,7 +40,6 @@ use AdvisingApp\CaseManagement\Enums\CaseTypeAssignmentTypes;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
 use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\CaseManagement\Rules\CaseTypeAssignmentsIndividualUserMustBeAManager;
-use App\Features\AssignmentsFeature;
 use App\Filament\Forms\Components\Heading;
 use App\Filament\Forms\Components\Paragraph;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
@@ -69,7 +68,7 @@ class EditCaseTypeAssignments extends EditRecord
 
     public static function canAccess(array $parameters = []): bool
     {
-        return AssignmentsFeature::active() && parent::canAccess($parameters);
+        return parent::canAccess($parameters);
     }
 
     public function form(Form $form): Form
