@@ -9,11 +9,11 @@ class QnaAdvisorCategoryObserver
 {
     public function saved(QnaAdvisorCategory $category): void
     {
-        Cache::forget($category->qnaAdvisor->getInstructionsCacheKey());
+        Cache::tags(['{qna_advisor_instructions}'])->forget($category->qnaAdvisor->getInstructionsCacheKey());
     }
 
     public function deleted(QnaAdvisorCategory $category): void
     {
-        Cache::forget($category->qnaAdvisor->getInstructionsCacheKey());
+        Cache::tags(['{qna_advisor_instructions}'])->forget($category->qnaAdvisor->getInstructionsCacheKey());
     }
 }

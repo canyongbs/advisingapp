@@ -12,30 +12,35 @@ class GetQnaAdvisorInstructions
 {
     public function execute(QnaAdvisor $qnaAdvisor): string
     {
-        return Cache::tags(['qna_advisor_instructions'])->remember($qnaAdvisor->getInstructionsCacheKey(), now()->addHour(), function () use ($qnaAdvisor) {
-            $settings = app(AiQnaAdvisorSettings::class);
+        return Cache::tags(['{qna_advisor_instructions}'])
+            ->remember(
+                $qnaAdvisor->getInstructionsCacheKey(),
+                now()->addHour(),
+                function () use ($qnaAdvisor) {
+                    $settings = app(AiQnaAdvisorSettings::class);
 
-            $instructions = $settings->instructions ?? '';
-            $backgroundInformation = $settings->background_information ?? '';
+                    $instructions = $settings->instructions ?? '';
+                    $backgroundInformation = $settings->background_information ?? '';
 
-            $qnaSection = $this->generateQnaSection($qnaAdvisor);
+                    $qnaSection = $this->generateQnaSection($qnaAdvisor);
 
-            $restrictions = $settings->restrictions ?? '';
+                    $restrictions = $settings->restrictions ?? '';
 
-            return <<<END
+                    return <<<END
 
-            # Instructions
-            {$instructions}
+                    # Instructions
+                    {$instructions}
 
-            ## Institutional Background Information
-            {$backgroundInformation}
+                    ## Institutional Background Information
+                    {$backgroundInformation}
 
-            {$qnaSection}
-            ## Restrictions
-            {$restrictions}
+                    {$qnaSection}
+                    ## Restrictions
+                    {$restrictions}
 
-            END;
-        });
+                    END;
+                }
+            );
     }
 
     protected function generateQnaSection(QnaAdvisor $qnaAdvisor): string
