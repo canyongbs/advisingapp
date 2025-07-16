@@ -65,7 +65,7 @@ class FetchAiAssistantFileParsingResults implements ShouldQueue, TenantAware, Sh
             return;
         }
 
-        $result = app(FetchFileParsingResults::class)->execute($this->file->file_id, $this->file->mime_type);
+        $result = $fetchFileParsingResults->execute($this->file->file_id, $this->file->mime_type);
 
         if (blank($result)) {
             return;

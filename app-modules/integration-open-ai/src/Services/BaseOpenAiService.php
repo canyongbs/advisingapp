@@ -447,7 +447,7 @@ abstract class BaseOpenAiService implements AiService
     {
         return true;
     }
-    
+
     public function isResearchRequestReady(ResearchRequest $researchRequest): bool
     {
         return true;
