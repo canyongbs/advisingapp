@@ -80,11 +80,4 @@ class WorkflowRunStep extends BaseModel implements Auditable
         return $this->belongsTo(WorkflowRun::class);
     }
 
-    /**
-     * @return MorphTo<covariant WorkflowDetails, $this>
-     */
-    public function workflowDetails(): MorphTo
-    {
-        return $this->morphTo();
-    }
 }

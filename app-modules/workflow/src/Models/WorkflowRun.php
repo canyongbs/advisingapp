@@ -80,10 +80,6 @@ class WorkflowRun extends BaseModel implements Auditable
      */
     public function related(): MorphTo
     {
-        return $this->morphTo(
-            name: 'related',
-            type: 'related_type',
-            id: 'related_id',
-        );
+        return $this->morphTo();
     }
 }
