@@ -43,6 +43,7 @@ use AdvisingApp\Ai\Events\AiMessageTrashed;
 use AdvisingApp\Ai\Events\AiThreadForceDeleting;
 use AdvisingApp\Ai\Events\AiThreadTrashed;
 use AdvisingApp\Ai\Events\AssistantFilesFinishedUploading;
+use AdvisingApp\Ai\Listeners\ClearQnaAdvisorInstructionsCacheOnGlobalSettingsUpdate;
 use AdvisingApp\Ai\Listeners\HandleAssistantFilesFinishedUploading;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiAssistantFile;
@@ -60,6 +61,7 @@ use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use Spatie\LaravelSettings\Events\SettingsSaved;
 
 class AiServiceProvider extends ServiceProvider
 {
@@ -72,6 +74,7 @@ class AiServiceProvider extends ServiceProvider
         AiMessageCreated::class => AiMessageCreated::LISTENERS,
         AiMessageTrashed::class => AiMessageTrashed::LISTENERS,
         AiMessageFileForceDeleting::class => AiMessageFileForceDeleting::LISTENERS,
+        SettingsSaved::class => [ClearQnaAdvisorInstructionsCacheOnGlobalSettingsUpdate::class],
     ];
 
     public function register(): void
