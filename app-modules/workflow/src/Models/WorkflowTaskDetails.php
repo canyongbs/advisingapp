@@ -79,4 +79,9 @@ class WorkflowTaskDetails extends WorkflowDetails implements Auditable
     {
         return new TaskWorkflowActionJob($workflowRunStep);
     }
+
+    public function getType(): string
+    {
+      return 'task';
+    }
 }

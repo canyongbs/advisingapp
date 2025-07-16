@@ -6493,6 +6493,7 @@ namespace AdvisingApp\Workflow\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
+ * @property-read covariant \Illuminate\Database\Eloquent\Model $related
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Workflow\Models\WorkflowRunStep> $workflowRunSteps
  * @property-read int|null $workflow_run_steps_count
  * @property-read \AdvisingApp\Workflow\Models\WorkflowTrigger $workflowTrigger
@@ -6521,7 +6522,7 @@ namespace AdvisingApp\Workflow\Models{
  * 
  *
  * @property string $id
- * @property \Illuminate\Support\Carbon|null $execute_at
+ * @property \Illuminate\Support\Carbon $execute_at
  * @property \Illuminate\Support\Carbon|null $dispatched_at
  * @property \Illuminate\Support\Carbon|null $succeeded_at
  * @property \Illuminate\Support\Carbon|null $last_failed_at
@@ -6534,7 +6535,7 @@ namespace AdvisingApp\Workflow\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read covariant WorkflowDetails $workflowDetails
- * @property-read WorkflowRunStep|null $workflowRunStep
+ * @property-read \AdvisingApp\Workflow\Models\WorkflowRun $workflowRun
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep onlyTrashed()

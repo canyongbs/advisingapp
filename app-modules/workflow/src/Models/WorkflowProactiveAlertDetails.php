@@ -82,4 +82,9 @@ class WorkflowProactiveAlertDetails extends WorkflowDetails implements Auditable
     {
         return new ProactiveAlertWorkflowActionJob($workflowRunStep);
     }
+
+    public function getType(): string
+    {
+      return 'proactive_alert';
+    }
 }

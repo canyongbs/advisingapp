@@ -79,4 +79,9 @@ class WorkflowTagsDetails extends WorkflowDetails implements Auditable
     {
         return new TagsWorkflowActionJob($workflowRunStep);
     }
+
+    public function getType(): string
+    {
+      return 'tags';
+    }
 }
