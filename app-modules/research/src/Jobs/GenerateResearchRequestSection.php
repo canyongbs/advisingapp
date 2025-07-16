@@ -45,7 +45,6 @@ use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\SerializesModels;
-use Prism\Prism\Schema\StringSchema;
 
 class GenerateResearchRequestSection implements ShouldQueue
 {
@@ -59,12 +58,12 @@ class GenerateResearchRequestSection implements ShouldQueue
 
     /**
      * @param array<string, mixed> $remainingSections
-     * @param array<string, mixed> $nextRequestOptions
+     * @param array<string, mixed> $requestOptions
      */
     public function __construct(
         protected ResearchRequest $researchRequest,
         protected array $remainingSections = [],
-        protected array $nextRequestOptions = [],
+        protected array $requestOptions = [],
     ) {}
 
     public function handle(): void
@@ -81,22 +80,30 @@ class GenerateResearchRequestSection implements ShouldQueue
             'remainingSections' => $remainingSections,
         ] = $this->getCurrentSection();
 
-        $structuredResponse = $settings->research_model
+        $nextRequestOptions = null;
+
+        $responseGenerator = $settings->research_model
             ->getService()
-            ->structuredResearchRequestRequest(
+            ->getResearchRequestRequestSection(
                 researchRequest: $this->researchRequest,
                 prompt: $this->getPrompt(),
                 content: $this->getContent($instructions),
-                schema: app(StringSchema::class, [
-                    'name' => 'title',
-                    'description' => 'The title of the abstract section.',
-                ]),
+                options: $this->requestOptions,
+                nextRequestOptions: function (array $options) use (&$nextRequestOptions) {
+                    $nextRequestOptions = $options;
+                },
             );
 
-        [
-            'nextRequestOptions' => $nextRequestOptions,
-            'response' => $content,
-        ] = $structuredResponse;
+        if (filled($this->researchRequest->results)) {
+            $this->researchRequest->results .= PHP_EOL;
+            $this->researchRequest->results .= PHP_EOL;
+        }
+
+        foreach ($responseGenerator as $responseContent) {
+            $this->researchRequest->results .= $responseContent;
+        }
+
+        $this->researchRequest->save();
 
         if (blank($remainingSections)) {
             return;
@@ -105,7 +112,7 @@ class GenerateResearchRequestSection implements ShouldQueue
         $this->batch()->add(app(static::class, [
             'researchRequest' => $this->researchRequest,
             'remainingSections' => $remainingSections,
-            'nextRequestOptions' => $nextRequestOptions,
+            'requestOptions' => $nextRequestOptions,
         ]));
     }
 
@@ -115,22 +122,77 @@ class GenerateResearchRequestSection implements ShouldQueue
     protected function getCurrentSection(): array
     {
         if (array_key_exists('abstract', $this->remainingSections)) {
-            $instructions = "Generate the abstract section of the research report, with the H2 title \"{$this->remainingSections['abstract']['title']}\". The abstract should be 3 complete paragraphs.";
+            $instructions = "Generate the abstract section of the research report, with the H2 heading \"{$this->remainingSections['abstract']['heading']}\". The abstract should be 3 complete paragraphs.";
 
             $remainingSections = $this->remainingSections;
             unset($remainingSections['abstract']);
 
             return [
                 'instructions' => $instructions,
-                'remainingSections' => $this->remainingSections,
+                'remainingSections' => $remainingSections,
             ];
         }
 
         if (array_key_exists('introduction', $this->remainingSections)) {
-            $instructions = "Generate the introduction section of the research report, with the H2 title \"{$this->remainingSections['introduction']['title']}\".";
+            $instructions = "Generate the introduction section of the research report, with the H2 heading \"{$this->remainingSections['introduction']['heading']}\".";
 
             $remainingSections = $this->remainingSections;
             unset($remainingSections['introduction']);
+
+            return [
+                'instructions' => $instructions,
+                'remainingSections' => $remainingSections,
+            ];
+        }
+
+        if (array_key_exists('sections', $this->remainingSections)) {
+            foreach ($this->remainingSections['sections'] as $sectionIndex => $section) {
+                if (array_key_exists('heading', $section)) {
+                    $instructions = "Generate the section of the research report, with the H2 heading \"{$section['heading']}\". Ensure that the content is cohesive and well-structured. The section should be 5 complete paragraphs.";
+
+                    $remainingSections = $this->remainingSections;
+                    unset($remainingSections['sections'][$sectionIndex]['heading']);
+
+                    return [
+                        'instructions' => $instructions,
+                        'remainingSections' => $remainingSections,
+                    ];
+                }
+
+                if (array_key_exists('subsections', $section)) {
+                    foreach ($section['subsections'] as $subsectionIndex => $subsection) {
+                        $instructions = "Generate the subsection of the research report, with the H3 heading \"{$subsection['heading']}\". Ensure that the content is cohesive and well-structured. The subsection should be 5 complete paragraphs.";
+
+                        $remainingSections = $this->remainingSections;
+                        unset($remainingSections['sections'][$sectionIndex]['subsections'][$subsectionIndex]);
+
+                        if (blank($remainingSections['sections'][$sectionIndex]['subsections'])) {
+                            unset($remainingSections['sections'][$sectionIndex]);
+                        }
+
+                        return [
+                            'instructions' => $instructions,
+                            'remainingSections' => $remainingSections,
+                        ];
+                    }
+
+                    $remainingSections = $this->remainingSections;
+                    unset($remainingSections['sections'][$sectionIndex]['subsections']);
+                }
+
+                $remainingSections = $this->remainingSections;
+                unset($remainingSections['sections'][$sectionIndex]);
+            }
+
+            $remainingSections = $this->remainingSections;
+            unset($remainingSections['sections']);
+        }
+
+        if (array_key_exists('conclusion', $this->remainingSections)) {
+            $instructions = "Generate the conclusion section of the research report, with the H2 heading \"{$this->remainingSections['conclusion']['heading']}\".";
+
+            $remainingSections = $this->remainingSections;
+            unset($remainingSections['conclusion']);
 
             return [
                 'instructions' => $instructions,
@@ -138,10 +200,7 @@ class GenerateResearchRequestSection implements ShouldQueue
             ];
         }
 
-        return [
-            'instructions' => '',
-            'remainingSections' => $this->remainingSections,
-        ];
+        throw new Exception('No remaining sections found for the research request.');
     }
 
     protected function getContent(string $instructions): string
@@ -178,7 +237,9 @@ class GenerateResearchRequestSection implements ShouldQueue
             - Despite asking for the content one section at a time, ensure that the content is cohesive, and that you plan for the entirety of the content up front.
             - Avoid uses of any em dashes and use bullet lists sparingly.
             
-            We are working through the outline for this research report. Currently, your task is to generate 
+            We are working through the outline for this research report. Currently, your task is to {$instructions}
+
+            The content should be written in Markdown, where the heading is the first line of the response, and the content is the rest of the paragraphs under the heading. Do not respond with any greetings or salutations, and do not include any additional information or context.
             EOD;
     }
 

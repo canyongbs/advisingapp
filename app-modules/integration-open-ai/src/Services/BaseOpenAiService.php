@@ -67,7 +67,6 @@ use OpenAI\Responses\Threads\Messages\ThreadMessageResponse;
 use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
 use OpenAI\Responses\Threads\ThreadResponse;
 use OpenAI\Testing\ClientFake;
-use Prism\Prism\Contracts\Schema;
 use Throwable;
 
 abstract class BaseOpenAiService implements AiService
@@ -123,14 +122,6 @@ abstract class BaseOpenAiService implements AiService
             key: 'choices.0.message.content',
             default: fn () => throw new MessageResponseException('Missing response content when completing a prompt: [' . $response->body() . '].'),
         );
-    }
-
-    /**
-     * @return array<mixed>
-     */
-    public function structured(string $prompt, string $content, Schema $schema): array
-    {
-        throw new Exception('Structured responses are not supported by this AI service.');
     }
 
     public function createAssistant(AiAssistant $assistant): void
@@ -463,13 +454,27 @@ abstract class BaseOpenAiService implements AiService
     }
 
     /**
-     * @param array<string, mixed> $options
-     *
+     * @return array<string>
+     */
+    public function getResearchRequestRequestSearchQueries(ResearchRequest $researchRequest, string $prompt, string $content): array
+    {
+        return [];
+    }
+
+    /**
      * @return array{response: array<mixed>, nextRequestOptions: array<string, mixed>}
      */
-    public function structuredResearchRequestRequest(ResearchRequest $researchRequest, string $prompt, string $content, Schema $schema, array $options = []): array
+    public function getResearchRequestRequestOutline(ResearchRequest $researchRequest, string $prompt, string $content): array
     {
         return ['response' => [], 'nextRequestOptions' => []];
+    }
+
+    /**
+     * @param array<string, mixed> $options
+     */
+    public function getResearchRequestRequestSection(ResearchRequest $researchRequest, string $prompt, string $content, array $options, Closure $nextRequestOptions): Generator
+    {
+        yield '';
     }
 
     public function afterResearchRequestSearchQueriesParsed(ResearchRequest $researchRequest): void {}

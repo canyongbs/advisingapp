@@ -46,7 +46,7 @@ use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use AdvisingApp\Research\Models\ResearchRequest;
 use Closure;
-use Prism\Prism\Contracts\Schema;
+use Generator;
 
 class TestAiService implements AiService
 {
@@ -62,19 +62,6 @@ class TestAiService implements AiService
         }
 
         return fake()->paragraph();
-    }
-
-    /**
-     * @return array<mixed>
-     */
-    public function structured(string $prompt, string $content, Schema $schema): array
-    {
-        dispatch(new RecordTrackedEvent(
-            type: TrackedEventType::AiExchange,
-            occurredAt: now(),
-        ));
-
-        return ['text' => fake()->paragraph()];
     }
 
     public function createAssistant(AiAssistant $assistant): void {}
@@ -181,13 +168,27 @@ class TestAiService implements AiService
     }
 
     /**
-     * @param array<string, mixed> $options
-     *
+     * @return array<string>
+     */
+    public function getResearchRequestRequestSearchQueries(ResearchRequest $researchRequest, string $prompt, string $content): array
+    {
+        return [];
+    }
+
+    /**
      * @return array{response: array<mixed>, nextRequestOptions: array<string, mixed>}
      */
-    public function structuredResearchRequestRequest(ResearchRequest $researchRequest, string $prompt, string $content, Schema $schema, array $options = []): array
+    public function getResearchRequestRequestOutline(ResearchRequest $researchRequest, string $prompt, string $content): array
     {
         return ['response' => [], 'nextRequestOptions' => []];
+    }
+
+    /**
+     * @param array<string, mixed> $options
+     */
+    public function getResearchRequestRequestSection(ResearchRequest $researchRequest, string $prompt, string $content, array $options, Closure $nextRequestOptions): Generator
+    {
+        yield fake()->paragraph();
     }
 
     public function afterResearchRequestSearchQueriesParsed(ResearchRequest $researchRequest): void {}
