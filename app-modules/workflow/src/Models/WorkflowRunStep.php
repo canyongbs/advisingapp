@@ -41,7 +41,6 @@ use AdvisingApp\Workflow\Enums\WorkflowActionType;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
@@ -79,5 +78,4 @@ class WorkflowRunStep extends BaseModel implements Auditable
     {
         return $this->belongsTo(WorkflowRun::class);
     }
-
 }
