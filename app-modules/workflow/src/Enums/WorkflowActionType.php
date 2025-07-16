@@ -86,16 +86,16 @@ enum WorkflowActionType: string implements HasLabel
     public function getActionExecutableJob(WorkflowRunStep $step): ExecuteWorkflowActionOnEducatableJob
     {
         return match ($this) {
+            WorkflowActionType::CareTeam => new CareTeamWorkflowActionJob($step),
+            WorkflowActionType::Case => new CaseWorkflowActionJob($step),
             WorkflowActionType::EngagementEmail => new EngagementEmailWorkflowActionJob($step),
             WorkflowActionType::EngagementSms => new EngagementSmsWorkflowActionJob($step),
             WorkflowActionType::Event => new EventWorkflowActionJob($step),
-            WorkflowActionType::Case => new CaseWorkflowActionJob($step),
-            WorkflowActionType::ProactiveAlert => new ProactiveAlertWorkflowActionJob($step),
             WorkflowActionType::Interaction => new InteractionWorkflowActionJob($step),
-            WorkflowActionType::CareTeam => new CareTeamWorkflowActionJob($step),
-            WorkflowActionType::Task => new TaskWorkflowActionJob($step),
+            WorkflowActionType::ProactiveAlert => new ProactiveAlertWorkflowActionJob($step),
             WorkflowActionType::Subscription => new SubscriptionWorkflowActionJob($step),
             WorkflowActionType::Tags => new TagsWorkflowActionJob($step),
+            WorkflowActionType::Task => new TaskWorkflowActionJob($step),
         };
     }
 }
