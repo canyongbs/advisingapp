@@ -34,53 +34,17 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Prospect\Models\ProspectSource;
-use App\Models\User;
+use App\Features\SettingsPermissions;
+use Illuminate\Database\Migrations\Migration;
 
-use function Pest\Laravel\actingAs;
-use function Tests\asSuperAdmin;
+return new class () extends Migration {
+    public function up(): void
+    {
+        SettingsPermissions::activate();
+    }
 
-test('The correct details are displayed on the ViewProspectSource page', function () {
-    $prospectSource = ProspectSource::factory()->create();
-
-    asSuperAdmin()
-        ->get(
-            ProspectSourceResource::getUrl('view', [
-                'record' => $prospectSource,
-            ])
-        )
-        ->assertSuccessful()
-        ->assertSeeTextInOrder(
-            [
-                'Name',
-                $prospectSource->name,
-            ]
-        );
-});
-
-// Permission Tests
-
-test('ViewProspectSource is gated with proper access control', function () {
-    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
-
-    $prospectSource = ProspectSource::factory()->create();
-
-    actingAs($user)
-        ->get(
-            ProspectSourceResource::getUrl('view', [
-                'record' => $prospectSource,
-            ])
-        )->assertForbidden();
-
-    $user->givePermissionTo('settings.view-any');
-    $user->givePermissionTo('settings.*.view');
-
-    actingAs($user)
-        ->get(
-            ProspectSourceResource::getUrl('view', [
-                'record' => $prospectSource,
-            ])
-        )->assertSuccessful();
-});
+    public function down(): void
+    {
+        SettingsPermissions::deactivate();
+    }
+};

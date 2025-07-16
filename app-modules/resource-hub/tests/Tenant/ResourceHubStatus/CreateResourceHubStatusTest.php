@@ -65,8 +65,8 @@ test('CreateResourceHubStatus is gated with proper access control', function () 
     livewire(CreateResourceHubStatus::class)
         ->assertForbidden();
 
-    $user->givePermissionTo('product_admin.view-any');
-    $user->givePermissionTo('product_admin.create');
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.create');
 
     actingAs($user)
         ->get(
@@ -94,8 +94,8 @@ test('CreateResourceHubStatus is gated with proper feature access control', func
 
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    $user->givePermissionTo('product_admin.view-any');
-    $user->givePermissionTo('product_admin.create');
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.create');
 
     actingAs($user)
         ->get(

@@ -39,6 +39,7 @@ namespace AdvisingApp\Prospect\Filament\Pages;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Settings\ProspectPipelineSettings;
+use App\Features\SettingsPermissions;
 use App\Filament\Clusters\ConstituentManagement;
 use App\Models\User;
 use Filament\Forms\Components\Toggle;
@@ -68,7 +69,7 @@ class ManageProspectPipelineSettings extends SettingsPage
             return false;
         }
 
-        return $user->can(['product_admin.view-any']);
+        return SettingsPermissions::active() ? $user->can(['settings.view-any']) : $user->can(['product_admin.view-any']);
     }
 
     public function form(Form $form): Form
@@ -79,12 +80,16 @@ class ManageProspectPipelineSettings extends SettingsPage
                 ->label('Is Enabled?')
                 ->columnSpanFull(),
         ])
-            ->disabled(! auth()->user()->can('product_admin.*.update'));
+            ->disabled(SettingsPermissions::active() ? ! auth()->user()->can('settings.*.update') : ! auth()->user()->can('product_admin.*.update'));
     }
 
     public function save(): void
     {
-        if (! auth()->user()->can('product_admin.*.update')) {
+        if (! SettingsPermissions::active() && ! auth()->user()->can('product_admin.*.update')) {
+            return;
+        }
+
+        if (SettingsPermissions::active() && ! auth()->user()->can('settings.*.update')) {
             return;
         }
 
@@ -96,7 +101,11 @@ class ManageProspectPipelineSettings extends SettingsPage
      */
     public function getFormActions(): array
     {
-        if (! auth()->user()->can('product_admin.*.update')) {
+        if (! SettingsPermissions::active() && ! auth()->user()->can('product_admin.*.update')) {
+            return [];
+        }
+
+        if (SettingsPermissions::active() && ! auth()->user()->can('settings.*.update')) {
             return [];
         }
 

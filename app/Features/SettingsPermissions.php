@@ -34,53 +34,14 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Prospect\Models\ProspectSource;
-use App\Models\User;
+namespace App\Features;
 
-use function Pest\Laravel\actingAs;
-use function Tests\asSuperAdmin;
+use App\Support\AbstractFeatureFlag;
 
-test('The correct details are displayed on the ViewProspectSource page', function () {
-    $prospectSource = ProspectSource::factory()->create();
-
-    asSuperAdmin()
-        ->get(
-            ProspectSourceResource::getUrl('view', [
-                'record' => $prospectSource,
-            ])
-        )
-        ->assertSuccessful()
-        ->assertSeeTextInOrder(
-            [
-                'Name',
-                $prospectSource->name,
-            ]
-        );
-});
-
-// Permission Tests
-
-test('ViewProspectSource is gated with proper access control', function () {
-    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
-
-    $prospectSource = ProspectSource::factory()->create();
-
-    actingAs($user)
-        ->get(
-            ProspectSourceResource::getUrl('view', [
-                'record' => $prospectSource,
-            ])
-        )->assertForbidden();
-
-    $user->givePermissionTo('settings.view-any');
-    $user->givePermissionTo('settings.*.view');
-
-    actingAs($user)
-        ->get(
-            ProspectSourceResource::getUrl('view', [
-                'record' => $prospectSource,
-            ])
-        )->assertSuccessful();
-});
+class SettingsPermissions extends AbstractFeatureFlag
+{
+    public function resolve(mixed $scope): mixed
+    {
+        return false;
+    }
+}
