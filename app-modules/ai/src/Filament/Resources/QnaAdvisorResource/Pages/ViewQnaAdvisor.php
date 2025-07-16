@@ -91,7 +91,6 @@ class ViewQnaAdvisor extends ViewRecord
                                     ->hiddenLabel()
                                     ->columnSpanFull()
                                     ->markdown()
-                                    // ->extraAttributes(['class' => 'overflow-auto'])
                                     ->getStateUsing(fn (QnaAdvisor $record): string => app(GetQnaAdvisorInstructions::class)->execute($record)),
                             ]),
                     ])->visible(fn () => auth()->guard('web')->user()?->isSuperAdmin()),
