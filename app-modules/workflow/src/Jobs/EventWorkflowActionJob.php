@@ -50,11 +50,10 @@ use Throwable;
 
 class EventWorkflowActionJob extends ExecuteWorkflowActionOnEducatableJob
 {
-    
     public function handle(): void
     {
         try {
-            if(! app(LicenseSettings::class)->data->addons->eventManagement) {
+            if (! app(LicenseSettings::class)->data->addons->eventManagement) {
                 // TODO: Change this to a custom execption and test it.
                 throw new Exception('The Event Management addon is not enabled.');
             }
@@ -76,7 +75,7 @@ class EventWorkflowActionJob extends ExecuteWorkflowActionOnEducatableJob
 
             $event = Event::query()->findOrFail($details->event_id);
 
-            if($event->attendees()->where('email', $email)->exists()) {
+            if ($event->attendees()->where('email', $email)->exists()) {
                 //The Educatable is already an attendee, so we can skip the action.
                 WorkflowRunStepRelated::create([
                     'workflow_run_step_id' => $this->workflowRunStep->id,
