@@ -65,4 +65,9 @@ class WorkflowCaseDetails extends WorkflowDetails implements Auditable
     {
         return new CaseModel();
     }
+
+    public function getType(): string
+    {
+      return 'case';
+    }
 }

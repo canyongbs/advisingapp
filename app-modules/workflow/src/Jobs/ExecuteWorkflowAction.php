@@ -2,7 +2,6 @@
 
 namespace AdvisingApp\Workflow\Jobs;
 
-use AdvisingApp\Workflow\Models\WorkflowDetails;
 use AdvisingApp\Workflow\Models\WorkflowRunStep;
 use Exception;
 use Illuminate\Bus\Batchable;

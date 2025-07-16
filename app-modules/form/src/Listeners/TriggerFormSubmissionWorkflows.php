@@ -39,6 +39,7 @@ namespace AdvisingApp\Form\Listeners;
 use AdvisingApp\Form\Events\FormSubmissionCreated;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Workflow\Models\Workflow;
+use AdvisingApp\Workflow\Models\WorkflowDetails;
 use AdvisingApp\Workflow\Models\WorkflowRun;
 use AdvisingApp\Workflow\Models\WorkflowRunStep;
 use AdvisingApp\Workflow\Models\WorkflowStep;
@@ -62,11 +63,13 @@ class TriggerFormSubmissionWorkflows implements ShouldQueue
             ->workflowSteps();
 
         $steps->each(function (WorkflowStep $step) use ($event, $workflowTriggerId) {
+            assert($step->details instanceof WorkflowDetails);
+
             WorkflowRunStep::create([
                 'execute_at' => $this->getStepScheduledAt($step, $event),
                 'workflow_run_id' => WorkflowRun::whereWorkflowTriggerId($workflowTriggerId),
-                'details_id' => $step->details_id,
-                'details_type' => $step->details_type,
+                'details_id' => $step->details->getKey(),
+                'details_type' => $step->details->getType(),
             ]);
         });
     }

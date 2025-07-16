@@ -60,4 +60,9 @@ class WorkflowEventDetails extends WorkflowDetails implements Auditable
     {
         return new Event();
     }
+
+    public function getType(): string
+    {
+      return 'event';
+    }
 }
