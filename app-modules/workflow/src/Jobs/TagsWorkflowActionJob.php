@@ -47,7 +47,7 @@ class TagsWorkflowActionJob extends ExecuteWorkflowActionOnEducatableJob
 {
     public function handle(): void
     {
-        try{
+        try {
             DB::beginTransaction();
 
             $educatable = $this->workflowRunStep->workflowRun->related;

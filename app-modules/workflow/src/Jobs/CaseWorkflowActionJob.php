@@ -49,11 +49,10 @@ use Throwable;
 
 class CaseWorkflowActionJob extends ExecuteWorkflowActionOnEducatableJob
 {
-    
     public function handle(): void
     {
         try {
-            if(! app(LicenseSettings::class)->data->addons->caseManagement) {
+            if (! app(LicenseSettings::class)->data->addons->caseManagement) {
                 throw new Exception('The Case Management addon is not enabled.');
             }
 
@@ -80,7 +79,7 @@ class CaseWorkflowActionJob extends ExecuteWorkflowActionOnEducatableJob
                 'created_by_id' => $user,
             ]);
 
-            if(isset($details->assigned_to_id)) {
+            if (isset($details->assigned_to_id)) {
                 $details->assigned_to_id === 'automatic' ?
                     $case->priority->type->assignment_type->getAssignerClass()->execute($case) :
                     $case->assignments()->create([
@@ -97,7 +96,6 @@ class CaseWorkflowActionJob extends ExecuteWorkflowActionOnEducatableJob
             ]);
 
             DB::commit();
-
         } catch (Throwable $throw) {
             DB::rollBack();
 

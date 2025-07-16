@@ -37,7 +37,6 @@
 namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Alert\Enums\AlertSeverity;
-use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\SoftDeletes;
