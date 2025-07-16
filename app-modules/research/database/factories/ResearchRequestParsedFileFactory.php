@@ -34,49 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Jobs;
+namespace AdvisingApp\Research\Database\Factories;
 
-use AdvisingApp\Ai\Actions\FetchFileParsingResults;
-use AdvisingApp\Ai\Models\QnaAdvisorFile;
-use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use Spatie\Multitenancy\Jobs\TenantAware;
+use AdvisingApp\Research\Models\ResearchRequest;
+use AdvisingApp\Research\Models\ResearchRequestParsedFile;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class FetchQnaAdvisorFileParsingResults implements ShouldQueue, TenantAware, ShouldBeUnique
+/**
+ * @extends Factory<ResearchRequestParsedFile>
+ */
+class ResearchRequestParsedFileFactory extends Factory
 {
-    use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
-    public function __construct(
-        protected QnaAdvisorFile $file,
-    ) {}
-
-    public function handle(FetchFileParsingResults $fetchFileParsingResults): void
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
-        if (filled($this->file->parsing_results)) {
-            return;
-        }
-
-        $result = $fetchFileParsingResults->execute($this->file->file_id, $this->file->mime_type);
-
-        if (blank($result)) {
-            return;
-        }
-
-        $this->file->parsing_results = $result;
-        $this->file->save();
-    }
-
-    public function uniqueId(): string
-    {
-        return $this->file->id;
+        return [
+            'research_request_id' => ResearchRequest::factory(),
+            'uploaded_at' => $this->faker->dateTimeBetween('-1 year', 'now'),
+            'results' => $this->faker->text(),
+        ];
     }
 }

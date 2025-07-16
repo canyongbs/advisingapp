@@ -34,49 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Jobs;
+namespace AdvisingApp\Research\Jobs;
 
-use AdvisingApp\Ai\Actions\FetchFileParsingResults;
-use AdvisingApp\Ai\Models\QnaAdvisorFile;
+use AdvisingApp\Research\Models\ResearchRequest;
 use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\SerializesModels;
-use Spatie\Multitenancy\Jobs\TenantAware;
 
-class FetchQnaAdvisorFileParsingResults implements ShouldQueue, TenantAware, ShouldBeUnique
+class AfterResearchRequestSearchQueriesParsed implements ShouldQueue
 {
     use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
 
+    public int $timeout = 600;
+
+    public int $tries = 3;
+
     public function __construct(
-        protected QnaAdvisorFile $file,
+        protected ResearchRequest $researchRequest,
     ) {}
 
-    public function handle(FetchFileParsingResults $fetchFileParsingResults): void
+    public function handle(): void
     {
-        if (filled($this->file->parsing_results)) {
-            return;
-        }
-
-        $result = $fetchFileParsingResults->execute($this->file->file_id, $this->file->mime_type);
-
-        if (blank($result)) {
-            return;
-        }
-
-        $this->file->parsing_results = $result;
-        $this->file->save();
-    }
-
-    public function uniqueId(): string
-    {
-        return $this->file->id;
+        $this->researchRequest->research_model
+            ->getService()
+            ->afterResearchRequestSearchQueriesParsed($this->researchRequest);
     }
 }

@@ -34,49 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Jobs;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Ai\Actions\FetchFileParsingResults;
-use AdvisingApp\Ai\Models\QnaAdvisorFile;
-use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use Spatie\Multitenancy\Jobs\TenantAware;
-
-class FetchQnaAdvisorFileParsingResults implements ShouldQueue, TenantAware, ShouldBeUnique
-{
-    use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
-    public function __construct(
-        protected QnaAdvisorFile $file,
-    ) {}
-
-    public function handle(FetchFileParsingResults $fetchFileParsingResults): void
+return new class () extends Migration {
+    public function up(): void
     {
-        if (filled($this->file->parsing_results)) {
-            return;
-        }
-
-        $result = $fetchFileParsingResults->execute($this->file->file_id, $this->file->mime_type);
-
-        if (blank($result)) {
-            return;
-        }
-
-        $this->file->parsing_results = $result;
-        $this->file->save();
+        Schema::create('open_ai_research_request_vector_stores', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->foreignUuid('research_request_id')->constrained();
+            $table->text('deployment_hash');
+            $table->dateTime('ready_until')->nullable();
+            $table->string('vector_store_id')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+        });
     }
 
-    public function uniqueId(): string
+    public function down(): void
     {
-        return $this->file->id;
+        Schema::dropIfExists('open_ai_research_request_vector_stores');
     }
-}
+};

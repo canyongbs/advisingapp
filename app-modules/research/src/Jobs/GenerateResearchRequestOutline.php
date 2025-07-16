@@ -34,36 +34,64 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Research\Actions;
+namespace AdvisingApp\Research\Jobs;
 
 use AdvisingApp\Ai\Settings\AiResearchAssistantSettings;
 use AdvisingApp\Research\Models\ResearchRequest;
 use AdvisingApp\Research\Models\ResearchRequestQuestion;
 use App\Models\User;
 use Exception;
+use Illuminate\Bus\Batchable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\SerializesModels;
 
-class GenerateResearchQuestion
+class GenerateResearchRequestOutline implements ShouldQueue
 {
-    public function execute(ResearchRequest $researchRequest): string
+    use Batchable;
+    use Queueable;
+    use SerializesModels;
+
+    public int $timeout = 600;
+
+    public int $tries = 3;
+
+    public function __construct(
+        protected ResearchRequest $researchRequest,
+    ) {}
+
+    public function handle(): void
     {
         $settings = app(AiResearchAssistantSettings::class);
 
         throw_if(
-            ! $settings->discovery_model,
-            new Exception('Discovery model is not set in the settings.')
+            ! $settings->research_model,
+            new Exception('Research model is not set in the settings.')
         );
 
-        return $settings->discovery_model
+        $structuredResponse = $settings->research_model
             ->getService()
-            ->complete(
-                prompt: $this->getPrompt($researchRequest),
-                content: $this->getContent($researchRequest),
+            ->getResearchRequestRequestOutline(
+                researchRequest: $this->researchRequest,
+                prompt: $this->getPrompt(),
+                content: $this->getContent(),
             );
+
+        [
+            'response' => $outline,
+            'nextRequestOptions' => $nextRequestOptions,
+        ] = $structuredResponse;
+
+        $this->batch()->add(app(GenerateResearchRequestSection::class, [
+            'researchRequest' => $this->researchRequest,
+            'remainingSections' => $outline,
+            'requestOptions' => $nextRequestOptions,
+        ]));
     }
 
-    protected function getContent(ResearchRequest $researchRequest): string
+    protected function getContent(): string
     {
-        $questions = $researchRequest->questions
+        $questions = $this->researchRequest->questions
             ->map(fn (ResearchRequestQuestion $question, int $index) => '**Question ' . ($index + 1) . ":** {$question->content}" . PHP_EOL . '**Answer ' . ($index + 1) . ":** {$question->response}")
             ->implode(PHP_EOL . PHP_EOL);
 
@@ -82,20 +110,29 @@ class GenerateResearchQuestion
         return <<<EOD
             **Research topic:**
 
-            {$researchRequest->topic}
+            {$this->researchRequest->topic}
 
             ---{$questions}
 
             **Instructions:**
+
+            Use the file content of the attached vector store as an input to your analysis.
             
-            Before the research is conducted, you need to help improve the chances that it will be relevant and useful to me. Using my research topic, respond with one relevant question that will help to clarify it. As you form your next question, to gain clarification on how to research this topic effectively, ensure that the question asked is materially different from any previously asked clarification questions. You will be able to ask two questions in total, and you will know the answer to the previous question/s before you ask the next one. Do not respond with any greetings or salutations, and do not include any additional information or context. Just respond with your question:
+            Before the research is conducted, you need to help improve the chances that it will be relevant and useful to me. Based on this research prompt, and all the context provided, create an outline for this "research report" that has an abstract, introduction, body, and conclusion. Ensure that each body paragraph has a H1 heading, and there are 3 H2 headings underneath it. Ensure there are 10 body H1 sections.
+
+            Ensure you follow the following additional rules:
+            - When the content is built out, the abstract should be 3 complete paragraphs. 
+            - Each main H1 heading should have one content paragraph below it. 
+            - Each H2 subheading should be made up of 5 full complete paragraphs.
+            - All the content should be written as a scholar would at the PhD level.
+            - I will ask you to produce the content for each title one at a time until all are requested.
             EOD;
     }
 
-    protected function getPrompt(ResearchRequest $researchRequest): string
+    protected function getPrompt(): string
     {
         /** @var User $user */
-        $user = auth()->user();
+        $user = $this->researchRequest->user;
 
         $userName = $user->name;
         $userJobTitle = filled($user->job_title) ? "with the job title **{$user->job_title}**" : '';

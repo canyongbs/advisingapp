@@ -34,49 +34,46 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Jobs;
+namespace AdvisingApp\Research\Models;
 
-use AdvisingApp\Ai\Actions\FetchFileParsingResults;
-use AdvisingApp\Ai\Models\QnaAdvisorFile;
-use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use Spatie\Multitenancy\Jobs\TenantAware;
+use AdvisingApp\Research\Database\Factories\ResearchRequestParsedFileFactory;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class FetchQnaAdvisorFileParsingResults implements ShouldQueue, TenantAware, ShouldBeUnique
+/**
+ * @mixin IdeHelperResearchRequestParsedFile
+ */
+class ResearchRequestParsedFile extends BaseModel
 {
-    use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
+    /** @use HasFactory<ResearchRequestParsedFileFactory> */
+    use HasFactory;
 
-    public function __construct(
-        protected QnaAdvisorFile $file,
-    ) {}
+    use SoftDeletes;
 
-    public function handle(FetchFileParsingResults $fetchFileParsingResults): void
+    public $fillable = [
+        'research_request_id',
+        'uploaded_at',
+        'results',
+        'media_id',
+        'file_id',
+    ];
+
+    /**
+     * @return BelongsTo<Media, $this>
+     */
+    public function media(): BelongsTo
     {
-        if (filled($this->file->parsing_results)) {
-            return;
-        }
-
-        $result = $fetchFileParsingResults->execute($this->file->file_id, $this->file->mime_type);
-
-        if (blank($result)) {
-            return;
-        }
-
-        $this->file->parsing_results = $result;
-        $this->file->save();
+        return $this->belongsTo(Media::class);
     }
 
-    public function uniqueId(): string
+    /**
+     * @return BelongsTo<ResearchRequest, $this>
+     */
+    public function researchRequest(): BelongsTo
     {
-        return $this->file->id;
+        return $this->belongsTo(ResearchRequest::class);
     }
 }
