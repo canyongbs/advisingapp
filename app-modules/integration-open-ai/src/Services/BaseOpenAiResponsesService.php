@@ -71,6 +71,9 @@ use Prism\Prism\Enums\ChunkType;
 use Prism\Prism\Enums\FinishReason;
 use Prism\Prism\Exceptions\PrismRateLimitedException;
 use Prism\Prism\Prism;
+use Prism\Prism\Schema\ArraySchema;
+use Prism\Prism\Schema\ObjectSchema;
+use Prism\Prism\Schema\StringSchema;
 use Prism\Prism\ValueObjects\Messages\AssistantMessage;
 use Prism\Prism\ValueObjects\Messages\UserMessage;
 use Throwable;
@@ -139,18 +142,21 @@ abstract class BaseOpenAiResponsesService implements AiService
     }
 
     /**
-     * @param array<string, mixed> $options
-     *
-     * @return array{response: array<mixed>, nextRequestOptions: array<string, mixed>}
+     * @return array<string>
      */
-    public function structuredResearchRequestRequest(ResearchRequest $researchRequest, string $prompt, string $content, Schema $schema, array $options = []): array
+    public function getResearchRequestRequestSearchQueries(ResearchRequest $researchRequest, string $prompt, string $content): array
     {
-        $responseId = null;
-
-        $response = $this->structured(
+        return $this->structured(
             prompt: $prompt,
             content: $content,
-            schema: $schema,
+            schema: app(ArraySchema::class, [
+                'name' => 'search_queries',
+                'description' => 'An array of search queries to be used for web searches.',
+                'items' => app(StringSchema::class, [
+                    'name' => 'query',
+                    'description' => 'A search query that can be used in Google to find relevant web pages.',
+                ]),
+            ]),
             providerOptions: [
                 'tool_choice' => [
                     'type' => 'file_search',
@@ -159,7 +165,98 @@ abstract class BaseOpenAiResponsesService implements AiService
                     'type' => 'file_search',
                     'vector_store_ids' => $this->getReadyResearchRequestVectorStoreIds($researchRequest),
                 ]],
-                ...$options,
+            ],
+        );
+    }
+
+    /**
+     * @return array{response: array<mixed>, nextRequestOptions: array<string, mixed>}
+     */
+    public function getResearchRequestRequestOutline(ResearchRequest $researchRequest, string $prompt, string $content): array
+    {
+        $responseId = null;
+
+        $response = $this->structured(
+            prompt: $prompt,
+            content: $content,
+            schema: app(ObjectSchema::class, [
+                'name' => 'outline',
+                'description' => 'An outline for the research report, including sections and subsections.',
+                'properties' => [
+                    app(ObjectSchema::class, [
+                        'name' => 'abstract',
+                        'description' => 'An abstract for the research report.',
+                        'properties' => [
+                            app(StringSchema::class, [
+                                'name' => 'heading',
+                                'description' => 'The heading of the abstract section.',
+                            ]),
+                        ],
+                        'requiredFields' => ['heading'],
+                    ]),
+                    app(ObjectSchema::class, [
+                        'name' => 'introduction',
+                        'description' => 'An introduction for the research report.',
+                        'properties' => [
+                            app(StringSchema::class, [
+                                'name' => 'heading',
+                                'description' => 'The heading of the introduction section.',
+                            ]),
+                        ],
+                        'requiredFields' => ['heading'],
+                    ]),
+                    app(ArraySchema::class, [
+                        'name' => 'sections',
+                        'description' => 'An array of sections for the research report, each with a heading and subsections.',
+                        'items' => app(ObjectSchema::class, [
+                            'name' => 'section',
+                            'description' => 'A section in the research report.',
+                            'properties' => [
+                                app(StringSchema::class, [
+                                    'name' => 'heading',
+                                    'description' => 'The heading of the section.',
+                                ]),
+                                app(ArraySchema::class, [
+                                    'name' => 'subsections',
+                                    'description' => 'An array of subsections within the section.',
+                                    'items' => app(ObjectSchema::class, [
+                                        'name' => 'subsection',
+                                        'description' => 'A subsection within a section of the research report.',
+                                        'properties' => [
+                                            app(StringSchema::class, [
+                                                'name' => 'heading',
+                                                'description' => 'The heading of the subsection.',
+                                            ]),
+                                        ],
+                                        'requiredFields' => ['heading'],
+                                    ]),
+                                ]),
+                            ],
+                            'requiredFields' => ['heading', 'subsections'],
+                        ]),
+                    ]),
+                    app(ObjectSchema::class, [
+                        'name' => 'conclusion',
+                        'description' => 'A conclusion for the research report.',
+                        'properties' => [
+                            app(StringSchema::class, [
+                                'name' => 'heading',
+                                'description' => 'The heading of the conclusion section.',
+                            ]),
+                        ],
+                        'requiredFields' => ['heading'],
+                    ]),
+                ],
+                'requiredFields' => ['abstract', 'introduction', 'sections', 'conclusion'],
+            ]),
+            providerOptions: [
+                'tool_choice' => [
+                    'type' => 'file_search',
+                ],
+                'tools' => [[
+                    'type' => 'file_search',
+                    'vector_store_ids' => $this->getReadyResearchRequestVectorStoreIds($researchRequest),
+                ]],
             ],
             responseId: $responseId,
         );
@@ -173,28 +270,14 @@ abstract class BaseOpenAiResponsesService implements AiService
     }
 
     /**
-     * @return array<string>
+     * @param array<string, mixed> $options
      */
-    public function getReadyResearchRequestVectorStoreIds(ResearchRequest $researchRequest): array
-    {
-        return OpenAiResearchRequestVectorStore::query()
-            ->where('deployment_hash', $this->getDeploymentHash())
-            ->whereBelongsTo($researchRequest)
-            ->whereNotNull('ready_until')
-            ->where('ready_until', '>=', now())
-            ->pluck('vector_store_id')
-            ->all();
-    }
-
-    /**
-     * @return array<mixed>
-     */
-    public function structured(string $prompt, string $content, Schema $schema, array $providerOptions = [], ?string &$responseId = null): array
+    public function getResearchRequestRequestSection(ResearchRequest $researchRequest, string $prompt, string $content, array $options, Closure $nextRequestOptions): Generator
     {
         $aiSettings = app(AiSettings::class);
 
         try {
-            $response = Prism::structured()
+            $stream = Prism::text()
                 ->using('azure_open_ai', $this->getModel())
                 ->withClientOptions([
                     'apiKey' => $this->getApiKey(),
@@ -202,18 +285,42 @@ abstract class BaseOpenAiResponsesService implements AiService
                     'deployment' => $this->getDeployment(),
                 ])
                 ->withProviderOptions([
-                    'schema' => [
-                        'strict' => true,
+                    'tool_choice' => [
+                        'type' => 'file_search',
                     ],
+                    'tools' => [[
+                        'type' => 'file_search',
+                        'vector_store_ids' => $this->getReadyResearchRequestVectorStoreIds($researchRequest),
+                    ]],
                     'truncation' => 'auto',
-                    ...$providerOptions,
+                    ...$options,
                 ])
                 ->withSystemPrompt($prompt)
                 ->withPrompt($content)
-                ->withSchema($schema)
                 ->withMaxTokens($aiSettings->max_tokens->getTokens())
                 ->usingTemperature($this->hasTemperature() ? $aiSettings->temperature : null)
-                ->asStructured();
+                ->asStream();
+
+            foreach ($stream as $chunk) {
+                if (
+                    ($chunk->chunkType === ChunkType::Meta) &&
+                    filled($chunk->meta?->id)
+                ) {
+                    $nextRequestOptions(['previous_response_id' => $chunk->meta->id]);
+
+                    continue;
+                }
+
+                if ($chunk->chunkType !== ChunkType::Text) {
+                    continue;
+                }
+
+                yield $chunk->text;
+
+                if ($chunk->finishReason === FinishReason::Error) {
+                    report(new MessageResponseException('Stream not successful.'));
+                }
+            }
         } catch (PrismRateLimitedException $exception) {
             foreach ($exception->rateLimits as $rateLimit) {
                 if ($rateLimit->resetsAt?->isFuture()) {
@@ -232,10 +339,20 @@ abstract class BaseOpenAiResponsesService implements AiService
             type: TrackedEventType::AiExchange,
             occurredAt: now(),
         ));
+    }
 
-        $responseId = $response->meta->id;
-
-        return $response->structured;
+    /**
+     * @return array<string>
+     */
+    public function getReadyResearchRequestVectorStoreIds(ResearchRequest $researchRequest): array
+    {
+        return OpenAiResearchRequestVectorStore::query()
+            ->where('deployment_hash', $this->getDeploymentHash())
+            ->whereBelongsTo($researchRequest)
+            ->whereNotNull('ready_until')
+            ->where('ready_until', '>=', now())
+            ->pluck('vector_store_id')
+            ->all();
     }
 
     /**
@@ -562,6 +679,62 @@ abstract class BaseOpenAiResponsesService implements AiService
 
             $this->attachResearchRequestFilesToVectorStore($fileIds, $vectorStore);
         });
+    }
+
+    /**
+     * @param array<string, mixed> $providerOptions
+     *
+     * @return array<mixed>
+     */
+    protected function structured(string $prompt, string $content, Schema $schema, array $providerOptions = [], ?string &$responseId = null): array
+    {
+        $aiSettings = app(AiSettings::class);
+
+        try {
+            $response = Prism::structured()
+                ->using('azure_open_ai', $this->getModel())
+                ->withClientOptions([
+                    'apiKey' => $this->getApiKey(),
+                    'apiVersion' => $this->getApiVersion(),
+                    'deployment' => $this->getDeployment(),
+                ])
+                ->withProviderOptions([
+                    'schema' => [
+                        'strict' => true,
+                    ],
+                    'truncation' => 'auto',
+                    ...$providerOptions,
+                ])
+                ->withSystemPrompt($prompt)
+                ->withPrompt($content)
+                ->withSchema($schema)
+                ->withMaxTokens($aiSettings->max_tokens->getTokens())
+                ->usingTemperature($this->hasTemperature() ? $aiSettings->temperature : null)
+                ->asStructured();
+        } catch (PrismRateLimitedException $exception) {
+            foreach ($exception->rateLimits as $rateLimit) {
+                if ($rateLimit->resetsAt?->isFuture()) {
+                    throw new MessageResponseException("Rate limit exceeded, retry at {$rateLimit->resetsAt}.");
+                }
+            }
+
+            throw new MessageResponseException('Rate limit exceeded, please try again later.');
+        } catch (Throwable $exception) {
+            report($exception);
+
+            throw new MessageResponseException('Failed to complete the prompt: [' . $exception->getMessage() . '].');
+        }
+
+        dispatch(new RecordTrackedEvent(
+            type: TrackedEventType::AiExchange,
+            occurredAt: now(),
+        ));
+
+        if (filled($response->meta->id)) {
+            $responseId = $response->meta->id;
+        }
+
+        return $response->structured;
     }
 
     protected function findOrCreateVectorStoreRecordForResearchRequest(ResearchRequest $researchRequest): OpenAiResearchRequestVectorStore

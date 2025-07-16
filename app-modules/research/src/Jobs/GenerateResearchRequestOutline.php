@@ -45,9 +45,6 @@ use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\SerializesModels;
-use Prism\Prism\Schema\ArraySchema;
-use Prism\Prism\Schema\ObjectSchema;
-use Prism\Prism\Schema\StringSchema;
 
 class GenerateResearchRequestOutline implements ShouldQueue
 {
@@ -74,80 +71,10 @@ class GenerateResearchRequestOutline implements ShouldQueue
 
         $structuredResponse = $settings->research_model
             ->getService()
-            ->structuredResearchRequestRequest(
+            ->getResearchRequestRequestOutline(
                 researchRequest: $this->researchRequest,
                 prompt: $this->getPrompt(),
                 content: $this->getContent(),
-                schema: app(ObjectSchema::class, [
-                    'name' => 'outline',
-                    'description' => 'An outline for the research report, including sections and subsections.',
-                    'properties' => [
-                        app(ObjectSchema::class, [
-                            'name' => 'abstract',
-                            'description' => 'An abstract for the research report.',
-                            'properties' => [
-                                app(StringSchema::class, [
-                                    'name' => 'title',
-                                    'description' => 'The title of the abstract section.',
-                                ]),
-                            ],
-                            'requiredFields' => ['title'],
-                        ]),
-                        app(ObjectSchema::class, [
-                            'name' => 'introduction',
-                            'description' => 'An introduction for the research report.',
-                            'properties' => [
-                                app(StringSchema::class, [
-                                    'name' => 'title',
-                                    'description' => 'The title of the introduction section.',
-                                ]),
-                            ],
-                            'requiredFields' => ['title'],
-                        ]),
-                        app(ArraySchema::class, [
-                            'name' => 'sections',
-                            'description' => 'An array of sections for the research report, each with a title and subsections.',
-                            'items' => app(ObjectSchema::class, [
-                                'name' => 'section',
-                                'description' => 'A section in the research report.',
-                                'properties' => [
-                                    app(StringSchema::class, [
-                                        'name' => 'title',
-                                        'description' => 'The title of the section.',
-                                    ]),
-                                    app(ArraySchema::class, [
-                                        'name' => 'subsections',
-                                        'description' => 'An array of subsections within the section.',
-                                        'items' => app(ObjectSchema::class, [
-                                            'name' => 'subsection',
-                                            'description' => 'A subsection within a section of the research report.',
-                                            'properties' => [
-                                                app(StringSchema::class, [
-                                                    'name' => 'title',
-                                                    'description' => 'The title of the subsection.',
-                                                ]),
-                                            ],
-                                            'requiredFields' => ['title'],
-                                        ]),
-                                    ]),
-                                ],
-                                'requiredFields' => ['title', 'subsections'],
-                            ]),
-                        ]),
-                        app(ObjectSchema::class, [
-                            'name' => 'conclusion',
-                            'description' => 'A conclusion for the research report.',
-                            'properties' => [
-                                app(StringSchema::class, [
-                                    'name' => 'title',
-                                    'description' => 'The title of the conclusion section.',
-                                ]),
-                            ],
-                            'requiredFields' => ['title'],
-                        ]),
-                    ],
-                    'requiredFields' => ['abstract', 'introduction', 'sections', 'conclusion'],
-                ]),
             );
 
         [
@@ -158,7 +85,7 @@ class GenerateResearchRequestOutline implements ShouldQueue
         $this->batch()->add(app(GenerateResearchRequestSection::class, [
             'researchRequest' => $this->researchRequest,
             'remainingSections' => $outline,
-            'nextRequestOptions' => $nextRequestOptions,
+            'requestOptions' => $nextRequestOptions,
         ]));
     }
 
