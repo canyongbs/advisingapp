@@ -34,13 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+namespace AdvisingApp\Report\Abstract;
 
-use Filament\Clusters\Cluster;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
+use App\Models\User;
+use Filament\Pages\Dashboard;
 
-class ReportLibrary extends Cluster
+abstract class RecruitmentCrmDashboardReport extends Dashboard
 {
-    protected static ?string $navigationGroup = 'Analytics';
+    use HasFiltersForm;
 
-    protected static ?int $navigationSort = 10;
+    protected static string $view = 'report::filament.pages.report';
+
+    public static function canAccess(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->hasLicense(LicenseType::RecruitmentCrm) && $user->can('report-library.view-any');
+    }
 }

@@ -34,13 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+namespace AdvisingApp\Ai\Actions;
 
-use Filament\Clusters\Cluster;
+use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use Illuminate\Support\Facades\Http;
 
-class ReportLibrary extends Cluster
+class FetchFileParsingResults
 {
-    protected static ?string $navigationGroup = 'Analytics';
+    public function __construct(
+        protected AiIntegrationsSettings $aiIntegrationsSettings,
+    ) {}
 
-    protected static ?int $navigationSort = 10;
+    public function execute(string $fileId, string $mimetype): ?string
+    {
+        // TODO: Check the status of the file parsing job, if it is not completed, return null. If it is in an ERROR state then throw an exeception that upstream needs to handle.
+
+        $outputFormat = match (true) {
+            str($mimetype)->startsWith(['audio/', 'video/']) => 'text',
+            default => 'markdown',
+        };
+
+        $response = Http::withToken(app(AiIntegrationsSettings::class)->llamaparse_api_key)
+            ->get("https://api.cloud.llamaindex.ai/api/v1/parsing/job/{$fileId}/result/{$outputFormat}");
+
+        if ((! $response->successful()) || blank($response->json($outputFormat))) {
+            return null;
+        }
+
+        return $response->json($outputFormat);
+    }
 }
