@@ -43,9 +43,10 @@ use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentEmailAd
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentPhoneNumbers\CreateStudentPhoneNumberController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentPhoneNumbers\DeleteStudentPhoneNumberController as StudentPhoneNumbersDeleteStudentPhoneNumberController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentPhoneNumbers\UpdateStudentPhoneNumberController;
+use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentPrograms\ListStudentProgramsController;
+use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentPrograms\StudentProgramsController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\UpdateStudentController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\ViewStudentController;
-use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentPrograms\ListStudentProgramsController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentPrograms\StudentProgramController;
 use AdvisingApp\StudentDataModel\Http\Controllers\UpdateStudentInformationSystemSettingsController;
 use App\Http\Middleware\CheckOlympusKey;
@@ -87,6 +88,6 @@ Route::api(majorVersion: 1, routes: function () {
                     Route::delete('/{studentPhoneNumber}', StudentPhoneNumbersDeleteStudentPhoneNumberController::class)->name('delete');
                 });
             Route::get('{student}/programs', ListStudentProgramsController::class)->name('programs.index');
-            Route::put('{student}/programs', StudentProgramController::class)->name('programs.put');
+            Route::put('{student}/programs', StudentProgramsController::class)->name('programs.put');
         });
 });
