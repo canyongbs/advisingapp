@@ -61,6 +61,10 @@ use Illuminate\View\View;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 use Ysfkaya\FilamentPhoneInput\Infolists\PhoneEntry;
 use Ysfkaya\FilamentPhoneInput\PhoneInputNumberType;
+use Filament\Actions\Exports\Models\Export as BaseExport;
+use Filament\Actions\Imports\Models\Import as BaseImport;
+use Filament\Actions\Imports\Models\FailedImportRow as BaseFailedImportRow;
+use Filament\Tables\Filters\SelectFilter;
 
 class FilamentServiceProvider extends ServiceProvider
 {
@@ -196,8 +200,11 @@ class FilamentServiceProvider extends ServiceProvider
         );
 
         Select::configureUsing(function (Select $component) {
-            $component
-                ->native(false);
+            $component->native(false);
+        });
+
+        SelectFilter::configureUsing(function (SelectFilter $component) {
+            $component->native(false);
         });
 
         DateTimePicker::configureUsing(function (DateTimePicker $component) {
