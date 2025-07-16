@@ -3,7 +3,6 @@
 namespace AdvisingApp\Workflow\Jobs;
 
 use AdvisingApp\Campaign\Jobs\Middleware\FailIfBatchCancelled;
-use AdvisingApp\Workflow\Models\WorkflowDetails;
 use AdvisingApp\Workflow\Models\WorkflowRunStep;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
