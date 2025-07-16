@@ -34,38 +34,42 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\DataTransferObjects;
+namespace AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentPhoneNumbers;
 
-use Spatie\LaravelData\Attributes\MapName;
-use Spatie\LaravelData\Data;
-use Spatie\LaravelData\Mappers\SnakeCaseMapper;
-use Spatie\LaravelData\Optional;
+use AdvisingApp\StudentDataModel\Actions\UpdateStudentPhoneNumber;
+use AdvisingApp\StudentDataModel\DataTransferObjects\UpdateStudentPhoneNumberData;
+use AdvisingApp\StudentDataModel\Http\Resources\Api\V1\StudentPhoneNumberResource;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
+use App\Http\Controllers\Api\Concerns\CanIncludeRelationships;
+use Dedoc\Scramble\Attributes\Group;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Gate;
 
-#[MapName(SnakeCaseMapper::class)]
-class UpdateStudentData extends Data
+class UpdateStudentPhoneNumberController
 {
-    public function __construct(
-        public string | Optional | null $otherid,
-        public string | Optional | null $first,
-        public string | Optional | null $last,
-        public string | Optional | null $fullName,
-        public string | Optional | null $preferred,
-        public string | Optional | null $birthdate,
-        public int | Optional | null $hsgrad,
-        public string | Optional | null $gender,
-        public bool | Optional | null $smsOptOut,
-        public bool | Optional | null $emailBounce,
-        public bool | Optional | null $dual,
-        public bool | Optional | null $ferpa,
-        public bool | Optional | null $firstgen,
-        public bool | Optional | null $sap,
-        public string | Optional | null $holds,
-        public string | Optional | null $dfw,
-        public string | Optional | null $ethnicity,
-        public string | Optional | null $lastlmslogin,
-        public string | Optional | null $fETerm,
-        public string | Optional | null $mrETerm,
-        public string | Optional | null $primaryEmailId = null,
-        public string | Optional | null $primaryPhoneId = null,
-    ) {}
+    use CanIncludeRelationships;
+
+    /**
+     * @response StudentPhoneNumberResource
+     */
+    #[Group('Students')]
+    public function __invoke(Request $request, UpdateStudentPhoneNumber $updateStudentPhoneNumber, Student $student, StudentPhoneNumber $studentPhoneNumber): JsonResource
+    {
+        Gate::authorize('viewAny', Student::class);
+        Gate::authorize('update', $student);
+
+        $data = $request->validate([
+            'number' => ['required'],
+            'type' => ['sometimes', 'max:255'],
+            'order' => ['sometimes', 'integer'],
+            'ext' => ['sometimes', 'integer'],
+            'can_receive_sms' => ['sometimes', 'boolean'],
+        ]);
+
+        $student = $updateStudentPhoneNumber->execute($studentPhoneNumber, UpdateStudentPhoneNumberData::from($data));
+
+        return $student->toResource(StudentPhoneNumberResource::class);
+    }
 }

@@ -41,6 +41,7 @@ use AdvisingApp\StudentDataModel\DataTransferObjects\UpdateStudentData;
 use AdvisingApp\StudentDataModel\Http\Resources\Api\V1\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
+use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use App\Http\Controllers\Api\Concerns\CanIncludeRelationships;
 use Dedoc\Scramble\Attributes\Example;
 use Dedoc\Scramble\Attributes\Group;
@@ -61,6 +62,8 @@ class UpdateStudentController
     #[QueryParameter('include', description: 'Include related resources in the response.', type: 'string', examples: [
         'email_addresses' => new Example('email_addresses'),
         'primary_email_address' => new Example('primary_email_address'),
+        'phone_numbers' => new Example('phone_numbers'),
+        'primary_phone_number' => new Example('primary_phone_number'),
     ])]
     public function __invoke(Request $request, UpdateStudent $updateStudent, Student $student): JsonResource
     {
@@ -89,6 +92,7 @@ class UpdateStudentController
             'f_e_term' => ['sometimes', 'max:255'],
             'mr_e_term' => ['sometimes', 'max:255'],
             'primary_email_id' => ['sometimes', 'uuid:4', Rule::exists(StudentEmailAddress::class, 'id')->where('sisid', $student->sisid)],
+            'primary_phone_id' => ['sometimes', 'uuid:4', Rule::exists(StudentPhoneNumber::class, 'id')->where('sisid', $student->sisid)],
         ]);
 
         $student = $updateStudent->execute($student, UpdateStudentData::from($data));
@@ -98,6 +102,8 @@ class UpdateStudentController
             ->load($this->getIncludedRelationshipsToLoad($request, [
                 'email_addresses' => 'emailAddresses',
                 'primary_email_address' => 'primaryEmailAddress',
+                'phone_numbers' => 'phoneNumbers',
+                'primary_phone_number' => 'primaryPhoneNumber',
             ]))
             ->toResource(StudentResource::class);
     }
