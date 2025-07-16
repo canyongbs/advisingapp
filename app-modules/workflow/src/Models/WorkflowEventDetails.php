@@ -63,6 +63,6 @@ class WorkflowEventDetails extends WorkflowDetails implements Auditable
 
     public function getType(): string
     {
-      return 'event';
+        return 'event';
     }
 }
