@@ -53,9 +53,9 @@ class WorkflowRunStepRelated extends BaseModel implements Auditable
     use HasUuids;
 
     protected $fillable = [
-      'workflow_run_step_id',
-      'related_id',
-      'related_type',
+        'workflow_run_step_id',
+        'related_id',
+        'related_type',
     ];
 
     /**

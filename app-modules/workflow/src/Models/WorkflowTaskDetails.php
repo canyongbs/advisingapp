@@ -69,6 +69,6 @@ class WorkflowTaskDetails extends WorkflowDetails implements Auditable
 
     public function getType(): string
     {
-      return 'task';
+        return 'task';
     }
 }
