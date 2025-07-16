@@ -38,6 +38,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use AdvisingApp\StudentDataModel\Tests\Tenant\Http\Controllers\Api\V1\Students\RequestFactories\CreateStudentRequestFactory;
 use AdvisingApp\StudentDataModel\Tests\Tenant\Http\Controllers\Api\V1\Students\StudentEmailAddresses\RequestFactories\CreateStudentEmailAddressRequestFactory;
+use AdvisingApp\StudentDataModel\Tests\Tenant\Http\Controllers\Api\V1\Students\StudentPhoneNumbers\RequestFactories\CreateStudentPhoneNumberRequestFactory;
 use App\Models\SystemUser;
 use Laravel\Sanctum\Sanctum;
 
@@ -262,6 +263,63 @@ it('creates student email addresses', function () {
     }
 });
 
+it('creates student phone numbers', function () {
+    $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
+    $studentConfigurationSettings->is_enabled = true;
+    $studentConfigurationSettings->save();
+
+    $user = SystemUser::factory()->create();
+    $user->givePermissionTo(['student.view-any', 'student.create']);
+    Sanctum::actingAs($user, ['api']);
+
+    $createStudentRequestData = CreateStudentRequestFactory::new()->create([
+        'phone_numbers' => [
+            CreateStudentPhoneNumberRequestFactory::new()->create(),
+            CreateStudentPhoneNumberRequestFactory::new()->create(),
+        ],
+    ]);
+
+    $response = postJson(route('api.v1.students.create', ['include' => 'phone_numbers,primary_phone_number'], false), $createStudentRequestData);
+    $response->assertCreated();
+    $response->assertJsonStructure([
+        'data',
+    ]);
+
+    expect($response['data']['phone_numbers'] ?? null)
+        ->toBeArray()
+        ->toHaveCount(2);
+
+    expect($response['data']['phone_numbers'][0]['number'] ?? null)
+        ->toBe($createStudentRequestData['phone_numbers'][0]['number']);
+
+    if (isset($createStudentRequestData['phone_numbers'][0]['type'])) {
+        expect($response['data']['phone_numbers'][0]['type'] ?? null)
+            ->toBe($createStudentRequestData['phone_numbers'][0]['type']);
+    }
+
+    expect($response['data']['phone_numbers'][1]['number'] ?? null)
+        ->toBe($createStudentRequestData['phone_numbers'][1]['number']);
+
+    if (isset($createStudentRequestData['phone_numbers'][1]['type'])) {
+        expect($response['data']['phone_numbers'][1]['type'] ?? null)
+            ->toBe($createStudentRequestData['phone_numbers'][1]['type']);
+    }
+
+    expect($response['data']['primary_phone_id'])
+        ->toBe($response['data']['phone_numbers'][0]['id']);
+
+    expect($response['data']['primary_phone_number'] ?? null)
+        ->toBeArray();
+
+    expect($response['data']['primary_phone_number']['number'] ?? null)
+        ->toBe($response['data']['phone_numbers'][0]['number']);
+
+    if (isset($createStudentRequestData['phone_numbers'][0]['type'])) {
+        expect($response['data']['primary_phone_number']['type'] ?? null)
+            ->toBe($createStudentRequestData['phone_numbers'][0]['type']);
+    }
+});
+
 it('validates', function (array $requestAttributes, string $invalidAttribute, string $validationMessage, ?Closure $before = null) {
     $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
     $studentConfigurationSettings->is_enabled = true;
@@ -324,6 +382,13 @@ it('validates', function (array $requestAttributes, string $invalidAttribute, st
     '`email_addresses.*.address` is required' => [['email_addresses' => [['address' => null]]], 'email_addresses.0.address', 'The email_addresses.0.address field is required.'],
     '`email_addresses.*.address` is a valid email' => [['email_addresses' => [['address' => 'not-an-email']]], 'email_addresses.0.address', 'The email_addresses.0.address must be a valid email address.'],
     '`email_addresses.*.type` is max 255 characters' => [['email_addresses' => [['address' => 'test@example.com', 'type' => str_repeat('a', 256)]]], 'email_addresses.0.type', 'The email_addresses.0.type may not be greater than 255 characters.'],
+    '`phone_numbers` is an array' => [['phone_numbers' => 'not-an-array'], 'phone_numbers', 'The phone numbers must be an array.'],
+    '`phone_numbers.*` is an array' => [['phone_numbers' => ['not-an-array']], 'phone_numbers.0', 'The phone_numbers.0 must be an array.'],
+    '`phone_numbers.*.number` is required' => [['phone_numbers' => [['number' => null]]], 'phone_numbers.0.number', 'The phone_numbers.0.number field is required.'],
+    '`phone_numbers.*.type` is max 255 characters' => [['phone_numbers' => [['number' => '123456789', 'type' => str_repeat('a', 256)]]], 'phone_numbers.0.type', 'The phone_numbers.0.type may not be greater than 255 characters.'],
+    '`phone_numbers.*.order` is a valid integer' => [['phone_numbers' => [['number' => '123456789', 'order' => 'not-integer']]], 'phone_numbers.0.order', 'The phone_numbers.0.order must be an integer.'],
+    '`phone_numbers.*.ext` is a valid integer' => [['phone_numbers' => [['number' => '123456789', 'ext' => 'not-integer']]], 'phone_numbers.0.ext', 'The phone_numbers.0.ext must be an integer.'],
+    '`phone_numbers.*.can_receive_sms` is boolean' => [['phone_numbers' => [['number' => '123456789', 'can_receive_sms' => 'not-boolean']]], 'phone_numbers.0.can_receive_sms', 'The phone_numbers.0.can_receive_sms field must be true or false.'],
 ]);
 
 it('can include related student relationships', function (string $relationship, string $responseKey) {
@@ -360,4 +425,6 @@ it('can include related student relationships', function (string $relationship, 
     // relationship, responseKey
     '`emailAddresses`' => ['email_addresses', 'email_addresses'],
     '`primaryEmailAddress`' => ['primary_email_address', 'primary_email_address'],
+    '`phoneNumbers`' => ['phone_numbers', 'phone_numbers'],
+    '`primaryPhoneNumber`' => ['primary_phone_number', 'primary_phone_number'],
 ]);

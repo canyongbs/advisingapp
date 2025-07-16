@@ -81,6 +81,8 @@ class StudentResource extends JsonResource
             'updated_at_source' => $this->resource->updated_at_source,
             'email_addresses' => StudentEmailAddressResource::collection($this->whenLoaded('emailAddresses')),
             'primary_email_address' => $this->whenLoaded('primaryEmailAddress', fn (): StudentEmailAddressResource => new StudentEmailAddressResource($this->resource->primaryEmailAddress)),
+            'phone_numbers' => StudentPhoneNumberResource::collection($this->whenLoaded('phoneNumbers')),
+            'primary_phone_number' => $this->whenLoaded('primaryPhoneNumber', fn (): StudentPhoneNumberResource => new StudentPhoneNumberResource($this->resource->primaryPhoneNumber)),
         ];
     }
 }

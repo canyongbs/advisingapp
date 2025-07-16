@@ -38,6 +38,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Pages;
 
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
+use App\Features\SettingsPermissions;
 use App\Filament\Clusters\ConstituentManagement;
 use App\Models\User;
 use Filament\Forms\Components\Toggle;
@@ -63,7 +64,7 @@ class ManageStudentConfiguration extends SettingsPage
             return false;
         }
 
-        return $user->can(['product_admin.view-any']);
+        return SettingsPermissions::active() ? $user->can(['settings.view-any']) : $user->can(['product_admin.view-any']);
     }
 
     public function form(Form $form): Form

@@ -51,9 +51,9 @@ $licenses = [
 ];
 
 $permissions = [
-    'product_admin.view-any',
-    'product_admin.create',
-    'product_admin.*.view',
+    'settings.view-any',
+    'settings.create',
+    'settings.*.view',
 ];
 
 it('cannot render without a license', function () use ($permissions) {

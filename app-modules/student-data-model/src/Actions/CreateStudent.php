@@ -44,6 +44,7 @@ class CreateStudent
 {
     public function __construct(
         protected CreateStudentEmailAddress $createStudentEmailAddress,
+        protected CreateStudentPhoneNumber $createStudentPhoneNumber
     ) {}
 
     public function execute(CreateStudentData $data): Student
@@ -56,6 +57,12 @@ class CreateStudent
             if (filled($data->emailAddresses)) {
                 foreach ($data->emailAddresses as $emailData) {
                     $this->createStudentEmailAddress->execute($student, $emailData);
+                }
+            }
+
+            if (filled($data->phoneNumbers)) {
+                foreach ($data->phoneNumbers as $phoneData) {
+                    $this->createStudentPhoneNumber->execute($student, $phoneData);
                 }
             }
 

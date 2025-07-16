@@ -57,7 +57,7 @@ it('can render list page', function () {
             BasicNeedsProgramResource::getUrl('index')
         )->assertForbidden();
 
-    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('settings.view-any');
 
     actingAs($user)->get(BasicNeedsProgramResource::getUrl('index'))
         ->assertSuccessful();
@@ -68,7 +68,7 @@ it('can render data in list page', function () {
 
     actingAs($user);
 
-    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('settings.view-any');
 
     $basicNeedsPrograms = BasicNeedsProgram::factory()->count(10)->create();
 
@@ -85,8 +85,8 @@ it('can render create page', function () {
             BasicNeedsProgramResource::getUrl('create')
         )->assertForbidden();
 
-    $user->givePermissionTo('product_admin.view-any');
-    $user->givePermissionTo('product_admin.create');
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.create');
 
     actingAs($user)->get(BasicNeedsProgramResource::getUrl('create'))
         ->assertSuccessful();
@@ -100,8 +100,8 @@ it('can validate input on create page', function () {
             BasicNeedsProgramResource::getUrl('create')
         )->assertForbidden();
 
-    $user->givePermissionTo('product_admin.view-any');
-    $user->givePermissionTo('product_admin.create');
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.create');
 
     livewire(CreateBasicNeedsProgram::class)
         ->fillForm([
@@ -117,8 +117,8 @@ it('can create basic needs program', function () {
 
     actingAs($user);
 
-    $user->givePermissionTo('product_admin.view-any');
-    $user->givePermissionTo('product_admin.create');
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.create');
 
     $newBasicNeedsProgram = BasicNeedsProgram::factory()->make();
 
@@ -162,8 +162,8 @@ it('can render edit page', function () {
         ])
     )->assertForbidden();
 
-    $user->givePermissionTo('product_admin.view-any');
-    $user->givePermissionTo('product_admin.*.update');
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.*.update');
 
     actingAs($user)->get(BasicNeedsProgramResource::getUrl('edit', [
         'record' => $basicNeedsProgram->getRouteKey(),
@@ -180,8 +180,8 @@ it('can retrieve data', function () {
         ])
     )->assertForbidden();
 
-    $user->givePermissionTo('product_admin.view-any');
-    $user->givePermissionTo('product_admin.*.update');
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.*.update');
 
     livewire(EditBasicNeedsProgram::class, [
         'record' => $basicNeedsProgram->getRouteKey(),
@@ -210,8 +210,8 @@ it('can validate input on edit page', function () {
         ])
     )->assertForbidden();
 
-    $user->givePermissionTo('product_admin.view-any');
-    $user->givePermissionTo('product_admin.*.update');
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.*.update');
 
     livewire(EditBasicNeedsProgram::class, [
         'record' => $basicNeedsProgram->getRouteKey(),
@@ -235,8 +235,8 @@ it('can save basic needs program', function () {
         ])
     )->assertForbidden();
 
-    $user->givePermissionTo('product_admin.view-any');
-    $user->givePermissionTo('product_admin.*.update');
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.*.update');
 
     livewire(EditBasicNeedsProgram::class, [
         'record' => $oldBasicNeedsProgram->getRouteKey(),
@@ -279,8 +279,8 @@ it('can render view page', function () {
         ])
     )->assertForbidden();
 
-    $user->givePermissionTo('product_admin.view-any');
-    $user->givePermissionTo('product_admin.*.view');
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.*.view');
 
     actingAs($user)->get(BasicNeedsProgramResource::getUrl('view', [
         'record' => $basicNeedsProgram->getRouteKey(),
@@ -297,9 +297,9 @@ it('can delete basic needs program', function () {
         ])
     )->assertForbidden();
 
-    $user->givePermissionTo('product_admin.view-any');
-    $user->givePermissionTo('product_admin.*.update');
-    $user->givePermissionTo('product_admin.*.delete');
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.*.update');
+    $user->givePermissionTo('settings.*.delete');
 
     livewire(EditBasicNeedsProgram::class, [
         'record' => $basicNeedsProgram->getRouteKey(),
@@ -320,9 +320,9 @@ it('can bulk delete basic needs programs', function () {
             BasicNeedsProgramResource::getUrl('index')
         )->assertForbidden();
 
-    $user->givePermissionTo('product_admin.view-any');
-    $user->givePermissionTo('product_admin.*.update');
-    $user->givePermissionTo('product_admin.*.delete');
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.*.update');
+    $user->givePermissionTo('settings.*.delete');
 
     livewire(ListBasicNeedsPrograms::class)
         ->set('tableRecordsPerPage', 10)
@@ -343,7 +343,7 @@ it('can filter basic needs program by `program category`', function () {
             BasicNeedsProgramResource::getUrl('index')
         )->assertForbidden();
 
-    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('settings.view-any');
 
     livewire(ListBasicNeedsPrograms::class)
         ->set('tableRecordsPerPage', 10)

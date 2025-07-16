@@ -66,5 +66,6 @@ class UpdateStudentData extends Data
         public string | Optional | null $fETerm,
         public string | Optional | null $mrETerm,
         public string | Optional | null $primaryEmailId = null,
+        public string | Optional | null $primaryPhoneId = null,
     ) {}
 }
