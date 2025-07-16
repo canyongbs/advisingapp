@@ -34,49 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Jobs;
+namespace AdvisingApp\Ai\Actions;
 
-use AdvisingApp\Ai\Actions\FetchFileParsingResults;
-use AdvisingApp\Ai\Models\QnaAdvisorFile;
-use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use Spatie\Multitenancy\Jobs\TenantAware;
+use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use Illuminate\Support\Facades\Http;
 
-class FetchQnaAdvisorFileParsingResults implements ShouldQueue, TenantAware, ShouldBeUnique
+class FetchFileParsingResults
 {
-    use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
     public function __construct(
-        protected QnaAdvisorFile $file,
+        protected AiIntegrationsSettings $aiIntegrationsSettings,
     ) {}
 
-    public function handle(): void
+    public function execute(string $fileId, string $mimetype): ?string
     {
-        if (filled($this->file->parsing_results)) {
-            return;
+        // TODO: Check the status of the file parsing job, if it is not completed, return null. If it is in an ERROR state then throw an exeception that upstream needs to handle.
+
+        $outputFormat = match (true) {
+            str($mimetype)->startsWith(['audio/', 'video/']) => 'text',
+            default => 'markdown',
+        };
+
+        $response = Http::withToken(app(AiIntegrationsSettings::class)->llamaparse_api_key)
+            ->get("https://api.cloud.llamaindex.ai/api/v1/parsing/job/{$fileId}/result/{$outputFormat}");
+
+        if ((! $response->successful()) || blank($response->json($outputFormat))) {
+            return null;
         }
 
-        $result = app(FetchFileParsingResults::class)->execute($this->file->file_id, $this->file->mime_type);
-
-        if (blank($result)) {
-            return;
-        }
-
-        $this->file->parsing_results = $result;
-        $this->file->save();
-    }
-
-    public function uniqueId(): string
-    {
-        return $this->file->id;
+        return $response->json($outputFormat);
     }
 }
