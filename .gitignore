@@ -37,3 +37,5 @@ app-modules/**/resources/js/dist/*
 **/psysh_history
 .pdepend/
 .phpmd.result-cache.php
+_ide_helper.macros.php
+_ide_helper_models.php
