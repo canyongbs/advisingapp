@@ -68,7 +68,7 @@ class PipelineSettings extends SettingsPage
         /** @var User $user */
         $user = auth()->user();
 
-        if (! $user->hasLicense(Student::getLicenseType()) || ! $user->hasLicense(Prospect::getLicenseType())) {
+        if (! $user->hasAnyLicense([Student::getLicenseType(), Prospect::getLicenseType()])) {
             return false;
         }
 
