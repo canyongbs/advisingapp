@@ -166,7 +166,7 @@ abstract class BaseOpenAiResponsesService implements AiService
                     'vector_store_ids' => $this->getReadyResearchRequestVectorStoreIds($researchRequest),
                 ]],
             ],
-        );
+        )['description'] ?? [];
     }
 
     /**
@@ -262,7 +262,7 @@ abstract class BaseOpenAiResponsesService implements AiService
         );
 
         return [
-            'response' => $response,
+            'response' => $response['properties'] ?? [],
             'nextRequestOptions' => filled($responseId) ? [
                 'previous_response_id' => $responseId,
             ] : [],
@@ -297,7 +297,6 @@ abstract class BaseOpenAiResponsesService implements AiService
                 ])
                 ->withSystemPrompt($prompt)
                 ->withPrompt($content)
-                ->withMaxTokens($aiSettings->max_tokens->getTokens())
                 ->usingTemperature($this->hasTemperature() ? $aiSettings->temperature : null)
                 ->asStream();
 
@@ -708,7 +707,6 @@ abstract class BaseOpenAiResponsesService implements AiService
                 ->withSystemPrompt($prompt)
                 ->withPrompt($content)
                 ->withSchema($schema)
-                ->withMaxTokens($aiSettings->max_tokens->getTokens())
                 ->usingTemperature($this->hasTemperature() ? $aiSettings->temperature : null)
                 ->asStructured();
         } catch (PrismRateLimitedException $exception) {
@@ -768,7 +766,6 @@ abstract class BaseOpenAiResponsesService implements AiService
 
         $hasVectorStoreCompletedAllFiles = $getVectorStoreResponse->successful()
             && ($getVectorStoreResponse->json('status') === 'completed')
-            && $getVectorStoreResponse->json('file_counts.completed')
             && ($getVectorStoreResponse->json('file_counts.completed') === $getVectorStoreResponse->json('file_counts.total'));
 
         $isVectorStoreProcessingFiles = $getVectorStoreResponse->successful()
@@ -818,10 +815,6 @@ abstract class BaseOpenAiResponsesService implements AiService
     protected function createVectorStoreForResearchRequest(ResearchRequest $researchRequest, OpenAiResearchRequestVectorStore $vectorStore): void
     {
         $fileIds = $this->uploadResearchRequestFilesForVectorStore($researchRequest, $vectorStore);
-
-        if (blank($fileIds)) {
-            return;
-        }
 
         $createVectorStoreResponse = $this->vectorStoresHttpClient()
             ->acceptJson()

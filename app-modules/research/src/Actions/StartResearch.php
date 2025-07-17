@@ -50,6 +50,36 @@ class StartResearch
 {
     public function execute(ResearchRequest $researchRequest): void
     {
+        if ($researchRequest->getMedia('files')->isEmpty() && empty($researchRequest->links)) {
+            Bus::chain([
+                app(AwaitResearchRequestReady::class, [
+                    'researchRequest' => $researchRequest,
+                ]),
+                Bus::batch([
+                    app(GenerateResearchRequestSearchQueries::class, [
+                        'researchRequest' => $researchRequest,
+                    ]),
+                ])
+                    ->then(function () use ($researchRequest) {
+                        Bus::chain([
+                            app(AfterResearchRequestSearchQueriesParsed::class, [
+                                'researchRequest' => $researchRequest,
+                            ]),
+                            app(AwaitResearchRequestReady::class, [
+                                'researchRequest' => $researchRequest,
+                            ]),
+                            Bus::batch([
+                                app(GenerateResearchRequestOutline::class, [
+                                    'researchRequest' => $researchRequest,
+                                ]),
+                            ]),
+                        ])->dispatch();
+                    }),
+            ])->dispatch();
+
+            return;
+        }
+
         Bus::batch([
             ...$researchRequest->getMedia('files')->map(function (Media $media): UploadResearchRequestFileForParsing {
                 return app(UploadResearchRequestFileForParsing::class, [

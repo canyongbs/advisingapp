@@ -65,7 +65,10 @@ class FetchQnaAdvisorFileParsingResults implements ShouldQueue, TenantAware, Sho
             return;
         }
 
-        $result = $fetchFileParsingResults->execute($this->file->file_id, $this->file->mime_type);
+        $result = $fetchFileParsingResults->execute(
+            fileId: $this->file->file_id,
+            mimeType: $this->file->mime_type,
+        );
 
         if (blank($result)) {
             return;

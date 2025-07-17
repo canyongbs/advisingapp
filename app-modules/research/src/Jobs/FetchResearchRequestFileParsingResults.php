@@ -63,7 +63,7 @@ class FetchResearchRequestFileParsingResults implements ShouldQueue
 
     public function handle(FetchFileParsingResults $fetchFileParsingResults): void
     {
-        $results = $fetchFileParsingResults($this->fileId);
+        $results = $fetchFileParsingResults->execute($this->fileId, $this->media->mime_type);
 
         if (blank($results)) {
             $this->release(delay: 5);

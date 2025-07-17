@@ -40,7 +40,7 @@ use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use AdvisingApp\Ai\Settings\AiResearchAssistantSettings;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Research\Actions\GenerateResearchQuestion;
-use AdvisingApp\Research\Jobs\Research;
+use AdvisingApp\Research\Actions\StartResearch;
 use AdvisingApp\Research\Models\ResearchRequest;
 use App\Enums\Feature;
 use App\Models\User;
@@ -247,7 +247,6 @@ class NewResearchRequest extends Page
                                 Repeater::make('links')
                                     ->label('During this research request, our agentic AI will research the internet and used advanced AI to answer your research question. If you would like us to review any specific links, you may add those here now. This step is optional and you may click next if you don\'t have any links to add.')
                                     ->simple(TextInput::make('url')
-                                        ->required()
                                         ->url())
                                     ->reorderable(false)
                                     ->addActionLabel('Add link')
@@ -259,12 +258,10 @@ class NewResearchRequest extends Page
                                 }
 
                                 $this->researchRequest->update([
-                                    'links' => $this->form->getState()['links'] ?? [],
+                                    'links' => array_filter($this->form->getState()['links'] ?? [], filled(...)),
                                 ]);
 
-                                dispatch(app(Research::class, [
-                                    'researchRequest' => $this->researchRequest,
-                                ]));
+                                app(StartResearch::class)->execute($this->researchRequest);
                             })
                             ->disabled(fn (): bool => $this->researchRequest?->hasStarted() ?? false),
                         Step::make('Results')

@@ -99,13 +99,24 @@ class GenerateResearchRequestSection implements ShouldQueue
             $this->researchRequest->results .= PHP_EOL;
         }
 
+        $thisSection = '';
+
         foreach ($responseGenerator as $responseContent) {
             $this->researchRequest->results .= $responseContent;
+            $thisSection .= $responseContent;
+        }
+
+        if (blank($thisSection)) {
+            $remainingSections = $this->remainingSections;
         }
 
         $this->researchRequest->save();
 
         if (blank($remainingSections)) {
+            $this->batch()->add(app(FinishResearchRequest::class, [
+                'researchRequest' => $this->researchRequest,
+            ]));
+
             return;
         }
 
@@ -121,10 +132,11 @@ class GenerateResearchRequestSection implements ShouldQueue
      */
     protected function getCurrentSection(): array
     {
-        if (array_key_exists('abstract', $this->remainingSections)) {
-            $instructions = "Generate the abstract section of the research report, with the H2 heading \"{$this->remainingSections['abstract']['heading']}\". The abstract should be 3 complete paragraphs.";
+        $remainingSections = $this->remainingSections;
 
-            $remainingSections = $this->remainingSections;
+        if (array_key_exists('abstract', $remainingSections)) {
+            $instructions = "Generate the abstract section of the research report, with the H2 heading \"{$remainingSections['abstract']['heading']}\". The abstract should be 3 complete paragraphs.";
+
             unset($remainingSections['abstract']);
 
             return [
@@ -133,10 +145,9 @@ class GenerateResearchRequestSection implements ShouldQueue
             ];
         }
 
-        if (array_key_exists('introduction', $this->remainingSections)) {
-            $instructions = "Generate the introduction section of the research report, with the H2 heading \"{$this->remainingSections['introduction']['heading']}\".";
+        if (array_key_exists('introduction', $remainingSections)) {
+            $instructions = "Generate the introduction section of the research report, with the H2 heading \"{$remainingSections['introduction']['heading']}\".";
 
-            $remainingSections = $this->remainingSections;
             unset($remainingSections['introduction']);
 
             return [
@@ -145,12 +156,11 @@ class GenerateResearchRequestSection implements ShouldQueue
             ];
         }
 
-        if (array_key_exists('sections', $this->remainingSections)) {
-            foreach ($this->remainingSections['sections'] as $sectionIndex => $section) {
+        if (array_key_exists('sections', $remainingSections)) {
+            foreach ($remainingSections['sections'] as $sectionIndex => $section) {
                 if (array_key_exists('heading', $section)) {
                     $instructions = "Generate the section of the research report, with the H2 heading \"{$section['heading']}\". Ensure that the content is cohesive and well-structured. The section should be 5 complete paragraphs.";
 
-                    $remainingSections = $this->remainingSections;
                     unset($remainingSections['sections'][$sectionIndex]['heading']);
 
                     return [
@@ -163,7 +173,6 @@ class GenerateResearchRequestSection implements ShouldQueue
                     foreach ($section['subsections'] as $subsectionIndex => $subsection) {
                         $instructions = "Generate the subsection of the research report, with the H3 heading \"{$subsection['heading']}\". Ensure that the content is cohesive and well-structured. The subsection should be 5 complete paragraphs.";
 
-                        $remainingSections = $this->remainingSections;
                         unset($remainingSections['sections'][$sectionIndex]['subsections'][$subsectionIndex]);
 
                         if (blank($remainingSections['sections'][$sectionIndex]['subsections'])) {
@@ -176,27 +185,23 @@ class GenerateResearchRequestSection implements ShouldQueue
                         ];
                     }
 
-                    $remainingSections = $this->remainingSections;
                     unset($remainingSections['sections'][$sectionIndex]['subsections']);
                 }
 
-                $remainingSections = $this->remainingSections;
                 unset($remainingSections['sections'][$sectionIndex]);
             }
 
-            $remainingSections = $this->remainingSections;
             unset($remainingSections['sections']);
         }
 
-        if (array_key_exists('conclusion', $this->remainingSections)) {
-            $instructions = "Generate the conclusion section of the research report, with the H2 heading \"{$this->remainingSections['conclusion']['heading']}\".";
+        if (array_key_exists('conclusion', $remainingSections)) {
+            $instructions = "Generate the conclusion section of the research report, with the H2 heading \"{$remainingSections['conclusion']['heading']}\".";
 
-            $remainingSections = $this->remainingSections;
             unset($remainingSections['conclusion']);
 
             return [
                 'instructions' => $instructions,
-                'remainingSections' => $this->remainingSections,
+                'remainingSections' => $remainingSections,
             ];
         }
 
@@ -239,7 +244,7 @@ class GenerateResearchRequestSection implements ShouldQueue
             
             We are working through the outline for this research report. Currently, your task is to {$instructions}
 
-            The content should be written in Markdown, where the heading is the first line of the response, and the content is the rest of the paragraphs under the heading. Do not respond with any greetings or salutations, and do not include any additional information or context.
+            The content should be written in Markdown, where the heading (with the correct level, H2 (##) or H3 (###)) is the first line of the response, and the content is the rest of the paragraphs under the heading. Do not respond with any greetings or salutations, and do not include any additional information or context.
             EOD;
     }
 
