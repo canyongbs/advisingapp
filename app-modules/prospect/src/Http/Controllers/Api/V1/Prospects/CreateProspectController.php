@@ -6,6 +6,8 @@ use AdvisingApp\Prospect\Actions\CreateProspect;
 use AdvisingApp\Prospect\DataTransferObjects\CreateProspectData;
 use AdvisingApp\Prospect\Http\Resources\Api\V1\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\ProspectSource;
+use AdvisingApp\Prospect\Models\ProspectStatus;
 use App\Http\Controllers\Api\Concerns\CanIncludeRelationships;
 use Dedoc\Scramble\Attributes\Example;
 use Dedoc\Scramble\Attributes\Group;
@@ -13,6 +15,8 @@ use Dedoc\Scramble\Attributes\QueryParameter;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class CreateProspectController
 {
@@ -49,7 +53,18 @@ class CreateProspectController
             'email_addresses.*.type' => ['sometimes', 'max:255'],
         ]);
 
-        $prospect = $createProspect->execute(CreateProspectData::from($data));
+        $status = ProspectStatus::whereRaw('LOWER(name) = ?', [Str::lower($data['status'])])->first();
+        throw_if(! $status, ValidationException::withMessages(['status' => 'Status does not exist.']));
+        $source = ProspectSource::whereRaw('LOWER(name) = ?', [Str::lower($data['source'])])->first();
+        throw_if(! $source, ValidationException::withMessages(['source' => 'Source does not exist.']));
+
+        $data = CreateProspectData::from([
+            ...$data,
+            'status' => $status->getKey(),
+            'source' => $source->getKey(),
+        ]);
+
+        $prospect = $createProspect->execute($data);
 
         return $prospect
             ->withoutRelations()

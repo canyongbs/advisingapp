@@ -7,6 +7,8 @@ use AdvisingApp\Prospect\DataTransferObjects\UpdateProspectData;
 use AdvisingApp\Prospect\Http\Resources\Api\V1\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectEmailAddress;
+use AdvisingApp\Prospect\Models\ProspectSource;
+use AdvisingApp\Prospect\Models\ProspectStatus;
 use App\Http\Controllers\Api\Concerns\CanIncludeRelationships;
 use Dedoc\Scramble\Attributes\Example;
 use Dedoc\Scramble\Attributes\Group;
@@ -14,7 +16,9 @@ use Dedoc\Scramble\Attributes\QueryParameter;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class UpdateProspectController
 {
@@ -56,7 +60,29 @@ class UpdateProspectController
             'primary_email_id' => ['sometimes', 'uuid:4', Rule::exists(ProspectEmailAddress::class, 'id')->where('prospect_id', $prospect->getKey())],
         ]);
 
-        $prospect = $updateProspect->execute($prospect, UpdateProspectData::from($data));
+        $status = isset($data['status'])
+            ? ProspectStatus::whereRaw('LOWER(name) = ?', [Str::lower($data['status'])])->first()
+            : null;
+
+        if (isset($data['status']) && ! $status) {
+            throw ValidationException::withMessages(['status' => 'Status does not exist.']);
+        }
+
+        $source = isset($data['source'])
+            ? ProspectSource::whereRaw('LOWER(name) = ?', [Str::lower($data['source'])])->first()
+            : null;
+
+        if (isset($data['source']) && ! $source) {
+            throw ValidationException::withMessages(['source' => 'Source does not exist.']);
+        }
+
+        $data = UpdateProspectData::from([
+            ...$data,
+            'status' => $status?->getKey(),
+            'source' => $source?->getKey(),
+        ]);
+
+        $prospect = $updateProspect->execute($prospect, $data);
 
         return $prospect
             ->withoutRelations()
