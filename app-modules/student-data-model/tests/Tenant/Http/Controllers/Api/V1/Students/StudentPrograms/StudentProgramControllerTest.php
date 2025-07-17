@@ -83,7 +83,7 @@ it('creates a student program', function () {
     expect($response['data'][0]['acad_career'])
         ->toBe($createStudentProgramRequestData['program'][0]['acad_career']);
 
-    expect($response['data'][0]['acad_plan'])
+    expect(json_decode($response['data'][0]['acad_plan'], true))
         ->toBe($createStudentProgramRequestData['program'][0]['acad_plan']);
 
     expect($response['data'][0]['division'])
