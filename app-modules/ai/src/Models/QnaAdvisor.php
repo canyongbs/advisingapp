@@ -64,8 +64,6 @@ class QnaAdvisor extends BaseModel implements HasMedia, Auditable
         'name',
         'model',
         'description',
-        'instructions',
-        'knowledge',
     ];
 
     protected $casts = [
