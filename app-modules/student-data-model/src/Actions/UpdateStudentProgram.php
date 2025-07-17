@@ -58,7 +58,9 @@ class UpdateStudentProgram
             return collect($programs)->map(function (StudentProgramData $data) use ($student) {
                 $program = new Program();
                 $program->student()->associate($student);
-                $program->fill($data->toArray());
+                $programData = $data->toArray();
+                $programData['acad_plan'] = json_encode($data->acadPlan);
+                $program->fill($programData);
                 $program->save();
 
                 return $program;

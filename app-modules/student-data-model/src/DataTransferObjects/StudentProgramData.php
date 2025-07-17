@@ -47,7 +47,7 @@ class StudentProgramData extends Data
     public function __construct(
         public string | Optional | null $acadCareer,
         public string | Optional | null $division,
-        public string $acadPlan,
+        public array $acadPlan,
         public string | Optional | null $progStatus,
         public string | Optional | null $cumGpa,
         public string | Optional | null $semester,
