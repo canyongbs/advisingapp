@@ -19,28 +19,31 @@ beforeEach(function () {
 it('is gated with proper access control', function () {
     $student = Student::factory()->create();
 
-    $createStudenProgramRequestData = [
+    $createStudentProgramRequestData = [
         'program' => [StudentProgramRequestFactory::new()->create()],
     ];
 
     $user = SystemUser::factory()->create();
     Sanctum::actingAs($user, ['api']);
-    putJson(route('api.v1.students.programs.put', ['student' => $student], false), $createStudenProgramRequestData);
+    putJson(route('api.v1.students.programs.put', ['student' => $student], false), $createStudentProgramRequestData);
 
     $user = SystemUser::factory()->create();
     $user->givePermissionTo('student.view-any');
     Sanctum::actingAs($user, ['api']);
-    putJson(route('api.v1.students.programs.put', ['student' => $student], false), $createStudenProgramRequestData);
+    putJson(route('api.v1.students.programs.put', ['student' => $student], false), $createStudentProgramRequestData)
+    ->assertForbidden();;
 
     $user = SystemUser::factory()->create();
     $user->givePermissionTo('program.view-any');
     Sanctum::actingAs($user, ['api']);
-    putJson(route('api.v1.students.programs.put', ['student' => $student], false), $createStudenProgramRequestData);
+    putJson(route('api.v1.students.programs.put', ['student' => $student], false), $createStudentProgramRequestData)
+    ->assertForbidden();
 
     $user = SystemUser::factory()->create();
     $user->givePermissionTo('program.create');
     Sanctum::actingAs($user, ['api']);
-    putJson(route('api.v1.students.programs.put', ['student' => $student], false), $createStudenProgramRequestData);
+    putJson(route('api.v1.students.programs.put', ['student' => $student], false), $createStudentProgramRequestData)
+    ->assertForbidden();
 
     $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
     $studentConfigurationSettings->is_enabled = true;
@@ -49,7 +52,7 @@ it('is gated with proper access control', function () {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['student.view-any','program.view-any','program.create']);
     Sanctum::actingAs($user, ['api']);
-    putJson(route('api.v1.students.programs.put', ['student' => $student], false), $createStudenProgramRequestData)
+    putJson(route('api.v1.students.programs.put', ['student' => $student], false), $createStudentProgramRequestData)
         ->assertOk();
 });
 
@@ -64,51 +67,51 @@ it('creates a student program', function () {
     $user->givePermissionTo(['student.view-any','program.view-any','program.create']);
     Sanctum::actingAs($user, ['api']);
 
-    $createStudenProgramRequestData = [
+    $createStudentProgramRequestData = [
         'program' => [StudentProgramRequestFactory::new()->create()],
     ];
 
-    $response = putJson(route('api.v1.students.programs.put', ['student' => $student], false), $createStudenProgramRequestData);
+    $response = putJson(route('api.v1.students.programs.put', ['student' => $student], false), $createStudentProgramRequestData);
     $response->assertOk();
     $response->assertJsonStructure([
         'data',
     ]);
 
     expect(Carbon::parse($response['data'][0]['declare_dt'])->toDateTimeString())
-        ->toBe(Carbon::parse($createStudenProgramRequestData['program'][0]['declare_dt'])->toDateTimeString());
+        ->toBe(Carbon::parse($createStudentProgramRequestData['program'][0]['declare_dt'])->toDateTimeString());
 
     expect($response['data'][0]['acad_career'])
-        ->toBe($createStudenProgramRequestData['program'][0]['acad_career']);
+        ->toBe($createStudentProgramRequestData['program'][0]['acad_career']);
 
     expect($response['data'][0]['acad_plan'])
-        ->toBe($createStudenProgramRequestData['program'][0]['acad_plan']);
+        ->toBe($createStudentProgramRequestData['program'][0]['acad_plan']);
 
     expect($response['data'][0]['division'])
-        ->toBe($createStudenProgramRequestData['program'][0]['division']);
+        ->toBe($createStudentProgramRequestData['program'][0]['division']);
 
     expect($response['data'][0]['prog_status'])
-        ->toBe($createStudenProgramRequestData['program'][0]['prog_status']);
+        ->toBe($createStudentProgramRequestData['program'][0]['prog_status']);
         
     expect($response['data'][0]['cum_gpa'])
-        ->toBe($createStudenProgramRequestData['program'][0]['cum_gpa']);
+        ->toBe($createStudentProgramRequestData['program'][0]['cum_gpa']);
 
     expect($response['data'][0]['semester'])
-        ->toBe($createStudenProgramRequestData['program'][0]['semester']);
+        ->toBe($createStudentProgramRequestData['program'][0]['semester']);
 
     expect($response['data'][0]['descr'])
-        ->toBe($createStudenProgramRequestData['program'][0]['descr']);
+        ->toBe($createStudentProgramRequestData['program'][0]['descr']);
 
-    if (isset($createStudenProgramRequestData['program'][0]['foi'])) {
+    if (isset($createStudentProgramRequestData['program'][0]['foi'])) {
         expect($response['data'][0]['foi'])
-            ->toBe($createStudenProgramRequestData['program'][0]['foi']);
+            ->toBe($createStudentProgramRequestData['program'][0]['foi']);
     }
 
     expect(Carbon::parse($response['data'][0]['change_dt'])->toDateTimeString())
-        ->toBe(Carbon::parse($createStudenProgramRequestData['program'][0]['change_dt'])->toDateTimeString());
+        ->toBe(Carbon::parse($createStudentProgramRequestData['program'][0]['change_dt'])->toDateTimeString());
 
     assertDatabaseHas('programs', [
         'sisid' => $student->sisid,
-        'declare_dt' => Carbon::parse($createStudenProgramRequestData['program'][0]['declare_dt'])->toDateTimeString(),
+        'declare_dt' => Carbon::parse($createStudentProgramRequestData['program'][0]['declare_dt'])->toDateTimeString(),
     ]);
 });
 
@@ -125,36 +128,41 @@ it('validates', function (array $requestAttributes, string $invalidAttribute, st
 
     $before?->call($this);
 
-    $createStudenProgramRequestData = [
+    $createStudentProgramRequestData = [
         'program' => [
             StudentProgramRequestFactory::new()->create(),
         ],
         ...$requestAttributes,
     ];
 
-    $response = putJson(route('api.v1.students.programs.put', ['student' => $student], false), $createStudenProgramRequestData);
+    $response = putJson(route('api.v1.students.programs.put', ['student' => $student], false), $createStudentProgramRequestData);
     $response->assertUnprocessable();
     $response->assertJsonValidationErrors([
         $invalidAttribute => [$validationMessage],
     ]);
 })
 ->with([
-    '`program.*.acad_career` is required' => [
+    '`program.*.acad_career` max' => [
         ['program' => [['acad_career' => str_repeat('a', 256)]]],
         'program.0.acad_career',
         'The program.0.acad_career may not be greater than 255 characters.'
     ],
-    '`program.*.division` is required' => [
+    '`program.*.division` max' => [
         ['program' => [['division' => str_repeat('a', 256)]]],
         'program.0.division',
         'The program.0.division may not be greater than 255 characters.'
     ],
-    '`program.*.prog_status` is required' => [
+    '`program.*.prog_status` max' => [
         ['program' => [['prog_status' => str_repeat('a', 256)]]],
         'program.0.prog_status',
         'The program.0.prog_status may not be greater than 255 characters.'
     ],
     '`program.*.cum_gpa` must have 0-2 decimal places' => [
+        ['program' => [['cum_gpa' => 4.337]]],
+        'program.0.cum_gpa',
+        'The program.0.cum_gpa field must have 0-2 decimal places.'
+    ],
+    '`program.*.cum_gpa` must be decimal' => [
         ['program' => [['cum_gpa' => 'test']]],
         'program.0.cum_gpa',
         'The program.0.cum_gpa field must have 0-2 decimal places.'
@@ -164,17 +172,17 @@ it('validates', function (array $requestAttributes, string $invalidAttribute, st
         'program.0.acad_plan',
         'The program.0.acad_plan field is required.'
     ],
-    '`program.*.semester` is required' => [
+    '`program.*.semester` max' => [
         ['program' => [['semester' => str_repeat('a', 256)]]],
         'program.0.semester',
         'The program.0.semester may not be greater than 255 characters.'
     ],
-    '`program.*.descr` is required' => [
+    '`program.*.descr` max' => [
         ['program' => [['descr' => str_repeat('a', 256)]]],
         'program.0.descr',
         'The program.0.descr may not be greater than 255 characters.'
     ],
-    '`program.*.foi` is required' => [
+    '`program.*.foi` max' => [
         ['program' => [['foi' => str_repeat('a', 256)]]],
         'program.0.foi',
         'The program.0.foi may not be greater than 255 characters.'

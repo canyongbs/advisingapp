@@ -25,10 +25,10 @@ class StudentProgramsController
         Gate::authorize('create', Program::class);
 
         $data = $request->validate([
-            'program' => ['required','array'],
+            'program' => ['required', 'array'],
             'program.*.acad_career' => ['sometimes', 'string', 'max:255'],
             'program.*.division' => ['sometimes', 'string', 'max:255'],
-            'program.*.acad_plan' => ['required', 'string','max:255'],
+            'program.*.acad_plan' => ['required', 'array'],
             'program.*.prog_status' => ['sometimes', 'string', 'max:255'],
             'program.*.cum_gpa' => ['sometimes', 'decimal:0,2'],
             'program.*.semester' => ['sometimes', 'string', 'max:255'],
