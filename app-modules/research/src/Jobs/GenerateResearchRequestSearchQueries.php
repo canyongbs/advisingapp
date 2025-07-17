@@ -95,9 +95,9 @@ class GenerateResearchRequestSearchQueries implements ShouldQueue
         $searchQueries = Arr::take($searchQueries, $numberOfSearchQueries);
 
         $this->batch()->add(array_map(
-            fn (array $searchQueryData): FetchResearchRequestSearchQueryParsingResults => app(FetchResearchRequestSearchQueryParsingResults::class, [
+            fn (string $searchQuery): FetchResearchRequestSearchQueryParsingResults => app(FetchResearchRequestSearchQueryParsingResults::class, [
                 'researchRequest' => $this->researchRequest,
-                'searchQuery' => $searchQueryData['query'],
+                'searchQuery' => $searchQuery,
             ]),
             $searchQueries,
         ));

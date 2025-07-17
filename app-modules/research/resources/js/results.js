@@ -36,58 +36,46 @@ import { marked } from 'marked';
 import markedFootnote from 'marked-footnote';
 
 document.addEventListener('alpine:init', () => {
-    Alpine.data('results', () => ({
-        reasoningHtml: null,
+    Alpine.data('results', ({ results, parsedFiles, parsedLinks, parsedSearchResults, title, isFinished }) => ({
+        reasoningPoints: [],
+
+        resultsMarkdown: results,
 
         resultsHtml: '',
 
-        resultsMarkdownLength: 0,
+        isFinished,
 
-        interval: null,
+        title,
 
         init: async function () {
-            this.resultsHtml = this.render(this.$refs.markdownInput.value);
-
-            while (this.$refs.isStreamingInput.value) {
-                if (this.$refs.markdownInput.value.length > this.resultsMarkdownLength) {
-                    const binary = atob(this.$refs.markdownInput.value);
-                    const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
-                    const markdown = new TextDecoder().decode(bytes);
-
-                    let unsafeHtml = marked.use(markedFootnote()).parse(markdown);
-
-                    let newContent = unsafeHtml.split('</think>');
-
-                    this.reasoningHtml = DOMPurify.sanitize(newContent[0].replace('<think>', ''));
-
-                    this.resultsHtml = DOMPurify.sanitize(newContent[1] ?? '').replace(
-                        '<h2 class="sr-only" id="footnote-label">Footnotes</h2>',
-                        '<h2 id="footnote-label">References</h2>',
-                    );
-                }
-
-                await new Promise((resolve) => setTimeout(resolve, 500));
-            }
+            this.renderReasoningPoints();
+            this.renderResults();
         },
 
-        render: function (base64EncodedMarkdown) {
-            const binary = atob(base64EncodedMarkdown);
-            const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
-            const markdown = new TextDecoder().decode(bytes);
+        renderReasoningPoints: function () {
+            const reasoningPoints = [];
 
-            let unsafeHtml = marked.use(markedFootnote()).parse(markdown);
+            parsedFiles.forEach((file) => {
+                reasoningPoints.push([`File: ${file.media.name}`, file.created_at]);
+            });
 
-            if (unsafeHtml.includes('<think>') && unsafeHtml.includes('</think>')) {
-                this.reasoningHtml ??= DOMPurify.sanitize(unsafeHtml.split('</think>').shift().replace('<think>', ''));
+            parsedLinks.forEach((link) => {
+                reasoningPoints.push([`Link: ${link.url}`, link.created_at]);
+            });
 
-                unsafeHtml = unsafeHtml.split('</think>')[1] ?? '';
-            } else {
-                unsafeHtml = unsafeHtml
-                    .replace('<think>', '<div class="research-request-reasoning"><p><strong>Reasoning</strong></p>')
-                    .replace('</think>', '</div>');
-            }
+            parsedSearchResults.forEach((searchResults) => {
+                reasoningPoints.push([`Search Results: ${searchResults.search_query}`, searchResults.created_at]);
+            });
 
-            return DOMPurify.sanitize(unsafeHtml).replace(
+            this.reasoningPoints = reasoningPoints
+                .sort((a, b) => new Date(a[1]) - new Date(b[1]))
+                .map((point) => point[0]);
+        },
+
+        renderResults: function () {
+            let unsafeHtml = marked.use(markedFootnote()).parse(this.resultsMarkdown);
+
+            this.resultsHtml = DOMPurify.sanitize(unsafeHtml).replace(
                 '<h2 class="sr-only" id="footnote-label">Footnotes</h2>',
                 '<h2 id="footnote-label">References</h2>',
             );

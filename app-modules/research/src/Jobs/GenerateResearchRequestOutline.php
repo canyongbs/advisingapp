@@ -118,9 +118,11 @@ class GenerateResearchRequestOutline implements ShouldQueue
 
             Use the file content of the attached vector store as an input to your analysis.
             
-            Before the research is conducted, you need to help improve the chances that it will be relevant and useful to me. Based on this research prompt, and all the context provided, create an outline for this "research report" that has an abstract, introduction, body, and conclusion. Ensure that each body paragraph has a H1 heading, and there are 3 H2 headings underneath it. Ensure there are 10 body H1 sections.
+            Before the research is conducted, you need to help improve the chances that it will be relevant and useful to me. Based on this research prompt, and all the context provided, create an outline for this "research report" that has an abstract, introduction, body, and conclusion.
 
             Ensure you follow the following additional rules:
+            - Ensure that each body paragraph has a H2 heading, and there are 3 H3 headings underneath it.
+            - Ensure there are 10 body H2 sections (not including the abstract, introduction and conclusion), with 3 H3 sections each.
             - When the content is built out, the abstract should be 3 complete paragraphs. 
             - Each main H1 heading should have one content paragraph below it. 
             - Each H2 subheading should be made up of 5 full complete paragraphs.
