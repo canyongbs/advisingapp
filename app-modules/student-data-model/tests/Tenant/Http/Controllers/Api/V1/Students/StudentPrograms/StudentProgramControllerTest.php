@@ -172,6 +172,11 @@ it('validates', function (array $requestAttributes, string $invalidAttribute, st
         'program.0.acad_plan',
         'The program.0.acad_plan field is required.'
     ],
+    '`program.*.acad_plan` must be an array' => [
+        ['program' => [['acad_plan' => 'This is simple string']]],
+        'program.0.acad_plan',
+        'The program.0.acad_plan must be an array.'
+    ],
     '`program.*.semester` max' => [
         ['program' => [['semester' => str_repeat('a', 256)]]],
         'program.0.semester',
