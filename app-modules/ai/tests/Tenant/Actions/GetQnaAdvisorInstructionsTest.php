@@ -57,30 +57,30 @@ it('returns the correct instructions for a QnaAdvisor', function () {
     // Create QnaAdvisor with two categories, each with two questions
     $qnaAdvisor = QnaAdvisor::factory()->create();
 
-    $categoryOne = QnaAdvisorCategory::factory()->create([
-        'qna_advisor_id' => $qnaAdvisor->getKey(),
-    ]);
+    $categoryOne = QnaAdvisorCategory::factory()
+        ->for($qnaAdvisor, 'qnaAdvisor')
+        ->create();
 
-    $categoryTwo = QnaAdvisorCategory::factory()->create([
-        'qna_advisor_id' => $qnaAdvisor->getKey(),
-    ]);
+    $categoryTwo = QnaAdvisorCategory::factory()
+        ->for($qnaAdvisor, 'qnaAdvisor')
+        ->create();
 
     // Create two questions for each category
-    $questionOne = QnaAdvisorQuestion::factory()->create([
-        'category_id' => $categoryOne->getKey(),
-    ]);
+    $questionOne = QnaAdvisorQuestion::factory()
+        ->for($categoryOne, 'category')
+        ->create();
 
-    $questionTwo = QnaAdvisorQuestion::factory()->create([
-        'category_id' => $categoryOne->getKey(),
-    ]);
+    $questionTwo = QnaAdvisorQuestion::factory()
+        ->for($categoryOne, 'category')
+        ->create();
 
-    $questionThree = QnaAdvisorQuestion::factory()->create([
-        'category_id' => $categoryTwo->getKey(),
-    ]);
+    $questionThree = QnaAdvisorQuestion::factory()
+        ->for($categoryTwo, 'category')
+        ->create();
 
-    $questionFour = QnaAdvisorQuestion::factory()->create([
-        'category_id' => $categoryTwo->getKey(),
-    ]);
+    $questionFour = QnaAdvisorQuestion::factory()
+        ->for($categoryTwo, 'category')
+        ->create();
 
     // Execute the action
     $action = new GetQnaAdvisorInstructions();
@@ -134,18 +134,18 @@ it('does not contain details on a category that has no questions', function () {
     // Create QnaAdvisor with one category that has no questions
     $qnaAdvisor = QnaAdvisor::factory()->create();
 
-    $categoryWithQuestions = QnaAdvisorCategory::factory()->create([
-        'qna_advisor_id' => $qnaAdvisor->getKey(),
-    ]);
+    $categoryWithQuestions = QnaAdvisorCategory::factory()
+        ->for($qnaAdvisor, 'qnaAdvisor')
+        ->create();
 
-    $categoryWithoutQuestions = QnaAdvisorCategory::factory()->create([
-        'qna_advisor_id' => $qnaAdvisor->getKey(),
-    ]);
+    $categoryWithoutQuestions = QnaAdvisorCategory::factory()
+        ->for($qnaAdvisor, 'qnaAdvisor')
+        ->create();
 
     // Create questions only for the first category
-    $question = QnaAdvisorQuestion::factory()->create([
-        'category_id' => $categoryWithQuestions->getKey(),
-    ]);
+    $question = QnaAdvisorQuestion::factory()
+        ->for($categoryWithQuestions, 'category')
+        ->create();
 
     // Execute the action
     $action = new GetQnaAdvisorInstructions();
@@ -178,13 +178,13 @@ it('handles empty settings gracefully', function () {
     // Create QnaAdvisor with some data
     $qnaAdvisor = QnaAdvisor::factory()->create();
 
-    $category = QnaAdvisorCategory::factory()->create([
-        'qna_advisor_id' => $qnaAdvisor->getKey(),
-    ]);
+    $category = QnaAdvisorCategory::factory()
+        ->for($qnaAdvisor, 'qnaAdvisor')
+        ->create();
 
-    $question = QnaAdvisorQuestion::factory()->create([
-        'category_id' => $category->getKey(),
-    ]);
+    $question = QnaAdvisorQuestion::factory()
+        ->for($category, 'category')
+        ->create();
 
     // Execute the action
     $action = new GetQnaAdvisorInstructions();
@@ -243,17 +243,17 @@ it('uses cache correctly', function () {
     // Create QnaAdvisor
     $qnaAdvisor = QnaAdvisor::factory()->create();
 
-    $category = QnaAdvisorCategory::factory()->create([
-        'qna_advisor_id' => $qnaAdvisor->getKey(),
-    ]);
+    $category = QnaAdvisorCategory::factory()
+        ->for($qnaAdvisor, 'qnaAdvisor')
+        ->create();
 
-    $question = QnaAdvisorQuestion::factory()->create([
-        'category_id' => $category->getKey(),
-    ]);
+    $question = QnaAdvisorQuestion::factory()
+        ->for($category, 'category')
+        ->create();
 
     // Execute the action first time
     $action = new GetQnaAdvisorInstructions();
-    $result1 = $action->execute($qnaAdvisor);
+    $resultOne = $action->execute($qnaAdvisor);
 
     // Verify the cache key is used
     $cacheKey = $qnaAdvisor->getInstructionsCacheKey();
@@ -263,8 +263,8 @@ it('uses cache correctly', function () {
     expect(Cache::tags(['{qna_advisor_instructions}'])->has($cacheKey))->toBeTrue();
 
     // Execute again and verify same result (from cache)
-    $result2 = $action->execute($qnaAdvisor);
-    expect($result1)->toBe($result2);
+    $resultTwo = $action->execute($qnaAdvisor);
+    expect($resultOne)->toBe($resultTwo);
 
     // Clear cache and modify settings
     Cache::tags(['{qna_advisor_instructions}'])->flush();
@@ -272,7 +272,7 @@ it('uses cache correctly', function () {
     $settings->save();
 
     // Execute again and verify new result
-    $result3 = $action->execute($qnaAdvisor);
-    expect($result3)->toContain('New instructions');
-    expect($result3)->not->toBe($result1);
+    $resultThree = $action->execute($qnaAdvisor);
+    expect($resultThree)->toContain('New instructions');
+    expect($resultThree)->not->toBe($resultOne);
 });
