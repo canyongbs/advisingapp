@@ -204,9 +204,24 @@
             "@prettier-format"
         ],
         "generate-helper-files": [
-            "@php artisan app:generate-helper-files",
+            "echo 'Refreshing testing database to be used for IDE helper generation...'",
+            "@putenv DB_CONNECTION=tenant",
+            "@putenv TENANT_DB_HOST=advisingapp-pgsql",
+            "@putenv TENANT_DB_PORT=5432",
+            "@putenv TENANT_DB_DATABASE=testing_tenant",
+            "@putenv TENANT_DB_USERNAME=advisingapp",
+            "@putenv TENANT_DB_PASSWORD=password",
+            "@php artisan migrate:fresh --force --database=tenant -q",
+            "echo 'Done!'",
+            "echo 'Generating IDE helper files...'",
+            "@php artisan ide-helper:generate",
+            "@php artisan ide-helper:models -M",
+            "@php artisan ide-helper:meta",
+            "echo 'Done!'",
+            "echo 'Running cleanup tasks...'",
             "./vendor/bin/rector",
-            "@php-cs-format"
+            "@php-cs-format",
+            "echo 'Helper files generated and cleanup tasks completed!'"
         ],
         "lint": [
             "./vendor/bin/phpstan analyse --memory-limit=2G",
