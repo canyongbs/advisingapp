@@ -69,10 +69,16 @@ class SendMessage
             $promptText = $content->prompt;
 
             if ($content->is_smart) {
-                $additionalContent = "Below I will provide you the input content for a prompt with the name {$content->title}, in the category {$content->type->title}, with the description {$content->description}.
+                $description = $content->description;
+
+                $descriptionLine = $description
+                    ? "with the description {$description}"
+                    : null;
+
+                $additionalContent = "Below I will provide you the input content for a prompt with the name {$content->title}, in the category {$content->type->title}" . ($descriptionLine ? ", {$descriptionLine}" : '') . '.
                 The prompt may have variables {{ VARIABLE }} that are needed in order to effectively serve your function. Begin by analyzing the prompt.
-                Begin by introducing yourself as an AI Advisor, and based on the prompt name, category, and description, explain what your purpose is. Then if the prompt has any variables in it, ask the user for that information, one variable a time, explaining why you need that input from the user. Once all the variables are collected, return a response for the prompt supplied below.
-                Note: If there are no variables, then just return a response for the prompt supplied below.";
+                Begin by introducing yourself as an AI Advisor, and based on the prompt name, category' . ($descriptionLine ? ', and description' : '') . ', explain what your purpose is. Then if the prompt has any variables in it, ask the user for that information, one variable at a time, explaining why you need that input from the user. Once all the variables are collected, return a response for the prompt supplied below.
+                Note: If there are no variables, then just return a response for the prompt supplied below.';
 
                 $smartPrompt = $additionalContent . "\n\n" . $promptText;
             } else {
@@ -80,6 +86,7 @@ class SendMessage
             }
         }
         $message->content = $smartPrompt;
+
         $message->request = [
             'headers' => Arr::only(
                 request()->headers->all(),
