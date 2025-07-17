@@ -50,6 +50,7 @@ use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Models\CasePriority;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\CaseManagement\Models\CaseType;
+use AdvisingApp\CaseManagement\Models\CaseTypeEmailTemplate;
 use AdvisingApp\CaseManagement\Models\CaseUpdate;
 use AdvisingApp\CaseManagement\Models\Sla;
 use Filament\Panel;
@@ -81,6 +82,7 @@ class CaseManagementServiceProvider extends ServiceProvider
             'case_update' => CaseUpdate::class,
             'case_model' => CaseModel::class,
             'sla' => Sla::class,
+            'case_type_email_template' => CaseTypeEmailTemplate::class,
         ]);
     }
 }
