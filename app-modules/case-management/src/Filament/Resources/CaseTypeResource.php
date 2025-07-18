@@ -48,7 +48,6 @@ use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\ManageC
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\ViewCaseType;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\RelationManagers\CasePrioritiesRelationManager;
 use AdvisingApp\CaseManagement\Models\CaseType;
-use App\Features\CaseTypeEmailTemplateFeature;
 use App\Filament\Clusters\CaseManagementAdministration;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
@@ -109,12 +108,12 @@ class CaseTypeResource extends Resource
                 EditCaseTypeAssignments::class,
                 EditCaseTypeNotifications::class,
             ]),
-            ...(CaseTypeEmailTemplateFeature::active() ? array_map(
+            ...array_map(
                 fn (CaseEmailTemplateType $type): NavigationItem => Arr::first(ManageCaseTypeEmailTemplate::getNavigationItems(['record' => $page->record, 'type' => $type]))
                     ->label($type->getLabel())
                     ->isActiveWhen(fn (): bool => Str::endsWith(request()->path(), $type->value)),
                 CaseEmailTemplateType::cases(),
-            ) : []),
+            ),
         ];
     }
 }
