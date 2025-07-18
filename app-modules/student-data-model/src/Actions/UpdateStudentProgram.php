@@ -36,35 +36,34 @@
 
 namespace AdvisingApp\StudentDataModel\Actions;
 
-use AdvisingApp\StudentDataModel\DataTransferObjects\StudentProgramData;
+use AdvisingApp\StudentDataModel\DataTransferObjects\StudentProgramRequestData;
 use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Spatie\LaravelData\DataCollection;
 
 class UpdateStudentProgram
 {
-    
     /**
-     * @param StudentProgramData[] $programs
      * @return Collection<int, Program>
      */
-    public function execute(Student $student, array $programs): Collection
+    public function execute(Student $student, StudentProgramRequestData $requestData): Collection
     {
         $student->programs()->delete();
 
-        return DB::transaction(function () use ($programs, $student) {
-            return collect($programs)->map(function (StudentProgramData $data) use ($student) {
-                $program = new Program();
-                $program->student()->associate($student);
-                $programData = $data->toArray();
-                $programData['acad_plan'] = json_encode($data->acadPlan);
-                $program->fill($programData);
-                $program->save();
+        $program = collect($requestData->program->toArray());
 
-                return $program;
-            });
-        });
+        return DB::transaction(function () use ($program, $student) {
+          return $program->map(function (array $data) use ($student) {
+              $program = new Program();
+              $program->student()->associate($student);
+              $programData = $data;
+              $programData['acad_plan'] = json_encode($data['acad_plan']);
+              $program->fill($programData);
+              $program->save();
+
+              return $program;
+          })->values();
+      });
     }
 }
