@@ -37,7 +37,6 @@
 namespace AdvisingApp\StudentDataModel\Http\Resources\Api\V1;
 
 use AdvisingApp\StudentDataModel\Models\Enrollment;
-use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
