@@ -78,8 +78,8 @@ class UpdateProspectController
 
         $data = UpdateProspectData::from([
             ...$data,
-            'status' => $status?->getKey(),
-            'source' => $source?->getKey(),
+            'status' => $status,
+            'source' => $source,
         ]);
 
         $prospect = $updateProspect->execute($prospect, $data);

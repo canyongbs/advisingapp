@@ -2,6 +2,8 @@
 
 namespace AdvisingApp\Prospect\DataTransferObjects;
 
+use AdvisingApp\Prospect\Models\ProspectSource;
+use AdvisingApp\Prospect\Models\ProspectStatus;
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
@@ -18,8 +20,8 @@ class UpdateProspectData extends Data
         public string | Optional | null $description,
         public bool | Optional | null $smsOptOut,
         public bool | Optional | null $emailBounce,
-        public string | null $status,
-        public string | null $source,
+        public ProspectStatus | Optional | null $status,
+        public ProspectSource | Optional | null $source,
         public string | Optional | null $birthdate,
         public int | Optional | null $hsgrad,
         public string | Optional | null $primaryEmailId = null,

@@ -60,8 +60,8 @@ class CreateProspectController
 
         $data = CreateProspectData::from([
             ...$data,
-            'status' => $status->getKey(),
-            'source' => $source->getKey(),
+            'status' => $status,
+            'source' => $source,
         ]);
 
         $prospect = $createProspect->execute($data);

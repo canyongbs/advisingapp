@@ -2,6 +2,8 @@
 
 namespace AdvisingApp\Prospect\DataTransferObjects;
 
+use AdvisingApp\Prospect\Models\ProspectSource;
+use AdvisingApp\Prospect\Models\ProspectStatus;
 use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Data;
@@ -22,8 +24,8 @@ class CreateProspectData extends Data
         public string | Optional | null $description,
         public bool | Optional | null $smsOptOut,
         public bool | Optional | null $emailBounce,
-        public string $status,
-        public string $source,
+        public ProspectStatus $status,
+        public ProspectSource $source,
         public string | Optional | null $birthdate,
         public int | Optional | null $hsgrad,
         #[DataCollectionOf(CreateProspectEmailAddressData::class)]
