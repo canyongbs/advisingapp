@@ -56,7 +56,7 @@ class QnaAdvisorResource extends Resource
 
     protected static ?string $modelLabel = 'QnA Advisor';
 
-    protected static ?int $navigationSort = 50;
+    protected static ?int $navigationSort = 40;
 
     public static function getPages(): array
     {
