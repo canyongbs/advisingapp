@@ -17,7 +17,7 @@ class UpdateStudentEnrollment
     {
         $student->enrollments()->delete();
 
-        $enrollments = collect($requestData->enrollment->toArray());
+        $enrollments = collect($requestData->enrollments->toArray());
 
         return DB::transaction(function () use ($enrollments, $student) {
             return $enrollments->map(function (array $data) use ($student) {

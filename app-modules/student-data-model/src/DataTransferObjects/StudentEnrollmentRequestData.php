@@ -12,10 +12,10 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 class StudentEnrollmentRequestData extends Data
 {
     /**
-     * @param DataCollection<int, StudentEnrollmentData> $enrollment
+     * @param DataCollection<int, StudentEnrollmentData> $enrollments
      */
     public function __construct(
         #[DataCollectionOf(StudentEnrollmentData::class)]
-        public DataCollection $enrollment,
+        public DataCollection $enrollments,
     ) {}
 }

@@ -33,26 +33,26 @@ class StudentEnrollmentsController
         }
 
         $data = $request->validate([
-            'enrollment' => ['required', 'array'],
-            'enrollment.*.division' => ['sometimes', 'string', 'max:255'],
-            'enrollment.*.class_nbr' => ['sometimes', 'string', 'max:255'],
-            'enrollment.*.crse_grade_off' => ['sometimes', 'string', 'max:255'],
-            'enrollment.*.unt_taken' => ['sometimes', 'numeric'],
-            'enrollment.*.unt_earned' => ['sometimes', 'numeric'],
-            'enrollment.*.last_upd_dt_stmp' => ['sometimes', 'date', 'date_format:Y-m-d H:i:s'],
-            'enrollment.*.section' => ['sometimes', 'string', 'max:255'],
-            'enrollment.*.name' => ['sometimes', 'string', 'max:255'],
-            'enrollment.*.department' => ['sometimes', 'string', 'max:255'],
-            'enrollment.*.faculty_name' => ['sometimes', 'string', 'max:255'],
-            'enrollment.*.faculty_email' => ['sometimes', 'string', 'max:255'],
-            'enrollment.*.semester_code' => ['sometimes', 'string', 'max:255'],
-            'enrollment.*.semester_name' => ['sometimes', 'string', 'max:255'],
-            'enrollment.*.start_date' => ['sometimes', 'date', 'date_format:Y-m-d H:i:s'],
-            'enrollment.*.end_date' => ['sometimes', 'date', 'date_format:Y-m-d H:i:s'],
+            'enrollments' => ['required', 'array'],
+            'enrollments.*.division' => ['sometimes', 'string', 'max:255'],
+            'enrollments.*.class_nbr' => ['sometimes', 'string', 'max:255'],
+            'enrollments.*.crse_grade_off' => ['sometimes', 'string', 'max:255'],
+            'enrollments.*.unt_taken' => ['sometimes', 'numeric'],
+            'enrollments.*.unt_earned' => ['sometimes', 'numeric'],
+            'enrollments.*.last_upd_dt_stmp' => ['sometimes', 'date', 'date_format:Y-m-d H:i:s'],
+            'enrollments.*.section' => ['sometimes', 'string', 'max:255'],
+            'enrollments.*.name' => ['sometimes', 'string', 'max:255'],
+            'enrollments.*.department' => ['sometimes', 'string', 'max:255'],
+            'enrollments.*.faculty_name' => ['sometimes', 'string', 'max:255'],
+            'enrollments.*.faculty_email' => ['sometimes', 'string', 'max:255'],
+            'enrollments.*.semester_code' => ['sometimes', 'string', 'max:255'],
+            'enrollments.*.semester_name' => ['sometimes', 'string', 'max:255'],
+            'enrollments.*.start_date' => ['sometimes', 'date', 'date_format:Y-m-d H:i:s'],
+            'enrollments.*.end_date' => ['sometimes', 'date', 'date_format:Y-m-d H:i:s'],
         ]);
 
         $studentEnrollmentRequestData = StudentEnrollmentRequestData::from([
-            'enrollment' => $data['enrollment'],
+            'enrollments' => $data['enrollments'],
         ]);
 
         $enrollments = $enrollment->execute($student, $studentEnrollmentRequestData);
