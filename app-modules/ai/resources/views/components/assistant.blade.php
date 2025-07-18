@@ -703,15 +703,9 @@
                                     placeholder="Type here..."
                                     required
                                     maxlength="25000"
-                                    @if (auth()->user()->is_submit_ai_chat_on_enter_enabled) x-on:keydown.enter.prevent="
-                                        if (event.shiftKey) {
-                                            const start = $refs.messageInput.selectionStart;
-                                            const end = $refs.messageInput.selectionEnd;
-                                            message = message.slice(0, start) + '\n' + message.slice(end);
-                                            $nextTick(() => {
-                                                $refs.messageInput.selectionStart = $refs.messageInput.selectionEnd = start + 1;
-                                            });
-                                        } else {
+                                    @if (auth()->user()->is_submit_ai_chat_on_enter_enabled) x-on:keydown.enter="
+                                         if (!event.shiftKey) {
+                                            event.preventDefault();
                                             sendMessage();
                                         }
                                         " @endif
