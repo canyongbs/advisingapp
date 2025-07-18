@@ -87,12 +87,21 @@ class ManageAiQnaAdvisorSettings extends ManageAiICustomAdvisorSettings
                 Textarea::make('instructions')
                     ->label('Instructions')
                     ->columnSpanFull()
+                    ->rows(10)
                     ->maxLength(65535)
                     ->required(),
                 Textarea::make('background_information')
                     ->label('Background Information')
                     ->columnSpanFull()
+                    ->rows(10)
                     ->maxLength(65535)
+                    ->required(),
+                Textarea::make('restrictions')
+                    ->label('Restrictions')
+                    ->columnSpanFull()
+                    ->rows(10)
+                    ->maxLength(65535)
+                    ->helperText('These restrictions will be applied to the QnA advisor. Use this field to specify any limitations or guidelines for the AI model.')
                     ->required(),
             ]);
     }

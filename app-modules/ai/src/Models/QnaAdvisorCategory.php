@@ -36,7 +36,9 @@
 
 namespace AdvisingApp\Ai\Models;
 
+use AdvisingApp\Ai\Observers\QnaAdvisorCategoryObserver;
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -46,6 +48,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 /**
  * @mixin IdeHelperQnaAdvisorCategory
  */
+#[ObservedBy(QnaAdvisorCategoryObserver::class)]
 class QnaAdvisorCategory extends BaseModel implements Auditable
 {
     use SoftDeletes;

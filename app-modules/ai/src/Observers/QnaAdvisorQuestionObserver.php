@@ -34,21 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Tests\RequestFactories;
+namespace AdvisingApp\Ai\Observers;
 
-use AdvisingApp\Ai\Enums\AiModel;
-use Illuminate\Http\UploadedFile;
-use Worksome\RequestFactories\RequestFactory;
+use AdvisingApp\Ai\Models\QnaAdvisorQuestion;
+use Illuminate\Support\Facades\Cache;
 
-class QnaAdvisorRequestFactory extends RequestFactory
+class QnaAdvisorQuestionObserver
 {
-    public function definition(): array
+    public function saved(QnaAdvisorQuestion $question): void
     {
-        return [
-            'avatar' => UploadedFile::fake()->image(fake()->word . '.png'),
-            'name' => $this->faker->word(),
-            'description' => $this->faker->paragraph(),
-            'model' => AiModel::Test,
-        ];
+        Cache::tags(['{qna_advisor_instructions}'])->forget($question->category->qnaAdvisor->getInstructionsCacheKey());
+    }
+
+    public function deleted(QnaAdvisorQuestion $question): void
+    {
+        Cache::tags(['{qna_advisor_instructions}'])->forget($question->category->qnaAdvisor->getInstructionsCacheKey());
     }
 }

@@ -40,13 +40,11 @@ use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource;
 use AdvisingApp\Ai\Settings\AiQnaAdvisorSettings;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Validation\Rule;
 
@@ -94,24 +92,6 @@ class CreateQnaAdvisor extends CreateRecord
                 Textarea::make('description')
                     ->maxLength(65535)
                     ->required(),
-                Section::make('Configure QnA Advisor')
-                    ->description('Design the capability of your advisor by including detailed instructions below.')
-                    ->visible(auth()->user()->isSuperAdmin())
-                    ->schema([
-                        Textarea::make('instructions')
-                            ->required()
-                            ->disabled(fn (): bool => ! app(AiQnaAdvisorSettings::class)->allow_selection_of_model)
-                            ->maxLength(fn (Get $get): int => (AiModel::parse($get('model')) ?? AiModel::OpenAiGpt4o)->getService()->getMaxAssistantInstructionsLength())
-                            ->default(function () {
-                                $settings = app(AiQnaAdvisorSettings::class);
-
-                                if ($settings->allow_selection_of_model) {
-                                    return null;
-                                }
-
-                                return $settings->instructions;
-                            }),
-                    ]),
             ]);
     }
 
