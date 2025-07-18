@@ -41,7 +41,12 @@
             class="prose max-w-none dark:prose-invert"
             x-data="results({
                 results: @js($researchRequest->results),
-                parsedFiles: @js($researchRequest->parsedFiles->loadMissing(['media'])->toArray()),
+                outline: @js($researchRequest->outline),
+                sources: @js($researchRequest->sources),
+                files: @js($researchRequest->getMedia('files')->map(fn ($media) => data_set($media, 'temporary_url', $media->getTemporaryUrl(now()->addDay())))->toArray()),
+                links: @js($researchRequest->links),
+                searchQueries: @js($researchRequest->search_queries),
+                parsedFiles: @js($researchRequest->parsedFiles->loadMissing(['media'])->map(fn ($file) => data_set($file, 'media.temporary_url', $file->media->getTemporaryUrl(now()->addDay())))->toArray()),
                 parsedLinks: @js($researchRequest->parsedLinks->toArray()),
                 parsedSearchResults: @js($researchRequest->parsedSearchResults->toArray()),
                 title: @js($researchRequest->title),
@@ -85,6 +90,19 @@
                 ></h1>
 
                 <div x-html="resultsHtml"></div>
+
+                <h2 x-show="isFinished && (sourcesHtml.length > 0)">
+                    Sources:
+                </h2>
+
+                <ul x-show="isFinished && (sourcesHtml.length > 0)">
+                    <template
+                        x-for="(source, index) in sourcesHtml"
+                        :key="index"
+                    >
+                        <li x-html="source"></li>
+                    </template>
+                </ul>
 
                 @if ($showEmailResults)
                     <section class="mt-3 px-3 text-right">

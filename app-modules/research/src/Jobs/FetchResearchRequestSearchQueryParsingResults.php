@@ -43,6 +43,7 @@ use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 
 class FetchResearchRequestSearchQueryParsingResults implements ShouldQueue
@@ -62,22 +63,56 @@ class FetchResearchRequestSearchQueryParsingResults implements ShouldQueue
 
     public function handle(): void
     {
-        $response = Http::withToken(app(AiIntegrationsSettings::class)->jina_deepsearch_v1_api_key)
-            ->withHeaders([
-                'X-Engine' => 'direct',
-            ])
-            ->get('https://s.jina.ai', ['q' => $this->searchQuery]);
+        DB::transaction(function () {
+            $response = Http::withToken(app(AiIntegrationsSettings::class)->jina_deepsearch_v1_api_key)
+                ->withHeaders([
+                    'X-Engine' => 'direct',
+                    'X-Retain-Images' => 'none',
+                ])
+                ->get('https://s.jina.ai', ['q' => $this->searchQuery]);
 
-        if (! $response->successful()) {
-            $this->fail('Failed to fetch search query results: ' . $response->body());
+            if (! $response->successful()) {
+                $this->fail('Failed to fetch search query results: ' . $response->body());
 
-            return;
-        }
+                return;
+            }
 
-        $researchRequestParsedSearchResults = new ResearchRequestParsedSearchResults();
-        $researchRequestParsedSearchResults->researchRequest()->associate($this->researchRequest);
-        $researchRequestParsedSearchResults->results = $response->body();
-        $researchRequestParsedSearchResults->search_query = $this->searchQuery;
-        $researchRequestParsedSearchResults->save();
+            $researchRequestParsedSearchResults = new ResearchRequestParsedSearchResults();
+            $researchRequestParsedSearchResults->researchRequest()->associate($this->researchRequest);
+            $researchRequestParsedSearchResults->results = $response->body();
+            $researchRequestParsedSearchResults->search_query = $this->searchQuery;
+            $researchRequestParsedSearchResults->save();
+
+            preg_match_all('/\[\d+\] Title: (.+?)\n\[.*?\] URL Source: (.+?)\n/s', $response->body(), $matches, PREG_SET_ORDER);
+
+            $sources = [];
+
+            foreach ($matches as $match) {
+                $title = trim($match[1]);
+                $url = trim($match[2]);
+                $domain = parse_url($url, PHP_URL_HOST);
+
+                str_replace(
+                    ['\\', '[', ']'],
+                    ['\\\\', '\\[', '\\]'],
+                    $title,
+                );
+
+                $sources[] = "[{$title} ({$domain})]({$url})";
+            }
+
+            DB::statement(<<<SQL
+                UPDATE research_requests
+                SET sources = COALESCE(
+                    CASE
+                        WHEN jsonb_typeof(sources) = 'array'
+                        THEN sources
+                        ELSE '[]'::jsonb
+                    END,
+                    '[]'::jsonb
+                ) || ?::jsonb
+                WHERE id = ?
+                SQL, [json_encode($sources), $this->researchRequest->id]);
+        });
     }
 }

@@ -57,12 +57,10 @@ class GenerateResearchRequestSection implements ShouldQueue
     public int $tries = 3;
 
     /**
-     * @param array<string, mixed> $remainingSections
      * @param array<string, mixed> $requestOptions
      */
     public function __construct(
         protected ResearchRequest $researchRequest,
-        protected array $remainingSections = [],
         protected array $requestOptions = [],
     ) {}
 
@@ -77,7 +75,7 @@ class GenerateResearchRequestSection implements ShouldQueue
 
         [
             'instructions' => $instructions,
-            'remainingSections' => $remainingSections,
+            'remainingOutline' => $remainingOutline,
         ] = $this->getCurrentSection();
 
         $nextRequestOptions = null;
@@ -106,13 +104,14 @@ class GenerateResearchRequestSection implements ShouldQueue
             $thisSection .= $responseContent;
         }
 
-        if (blank($thisSection)) {
-            $remainingSections = $this->remainingSections;
+        if (filled($thisSection)) {
+            $this->researchRequest->remaining_outline = $remainingOutline;
+            $this->researchRequest->save();
+        } else {
+            $remainingOutline = $this->researchRequest->remaining_outline;
         }
 
-        $this->researchRequest->save();
-
-        if (blank($remainingSections)) {
+        if (blank($remainingOutline)) {
             $this->batch()->add(app(FinishResearchRequest::class, [
                 'researchRequest' => $this->researchRequest,
             ]));
@@ -122,50 +121,49 @@ class GenerateResearchRequestSection implements ShouldQueue
 
         $this->batch()->add(app(static::class, [
             'researchRequest' => $this->researchRequest,
-            'remainingSections' => $remainingSections,
             'requestOptions' => $nextRequestOptions,
         ]));
     }
 
     /**
-     * @return array{instructions: string, remainingSections: array<string, mixed>}
+     * @return array{instructions: string, remainingOutline: array<string, mixed>}
      */
     protected function getCurrentSection(): array
     {
-        $remainingSections = $this->remainingSections;
+        $remainingOutline = $this->researchRequest->remaining_outline;
 
-        if (array_key_exists('abstract', $remainingSections)) {
-            $instructions = "Generate the abstract section of the research report, with the H2 heading \"{$remainingSections['abstract']['heading']}\". The abstract should be 3 complete paragraphs.";
+        if (array_key_exists('abstract', $remainingOutline)) {
+            $instructions = "Generate the abstract section of the research report, with the H2 heading \"{$remainingOutline['abstract']['heading']}\". The abstract should be 3 complete paragraphs.";
 
-            unset($remainingSections['abstract']);
-
-            return [
-                'instructions' => $instructions,
-                'remainingSections' => $remainingSections,
-            ];
-        }
-
-        if (array_key_exists('introduction', $remainingSections)) {
-            $instructions = "Generate the introduction section of the research report, with the H2 heading \"{$remainingSections['introduction']['heading']}\".";
-
-            unset($remainingSections['introduction']);
+            unset($remainingOutline['abstract']);
 
             return [
                 'instructions' => $instructions,
-                'remainingSections' => $remainingSections,
+                'remainingOutline' => $remainingOutline,
             ];
         }
 
-        if (array_key_exists('sections', $remainingSections)) {
-            foreach ($remainingSections['sections'] as $sectionIndex => $section) {
+        if (array_key_exists('introduction', $remainingOutline)) {
+            $instructions = "Generate the introduction section of the research report, with the H2 heading \"{$remainingOutline['introduction']['heading']}\".";
+
+            unset($remainingOutline['introduction']);
+
+            return [
+                'instructions' => $instructions,
+                'remainingOutline' => $remainingOutline,
+            ];
+        }
+
+        if (array_key_exists('sections', $remainingOutline)) {
+            foreach ($remainingOutline['sections'] as $sectionIndex => $section) {
                 if (array_key_exists('heading', $section)) {
                     $instructions = "Generate the section of the research report, with the H2 heading \"{$section['heading']}\". Ensure that the content is cohesive and well-structured. The section should be 5 complete paragraphs.";
 
-                    unset($remainingSections['sections'][$sectionIndex]['heading']);
+                    unset($remainingOutline['sections'][$sectionIndex]['heading']);
 
                     return [
                         'instructions' => $instructions,
-                        'remainingSections' => $remainingSections,
+                        'remainingOutline' => $remainingOutline,
                     ];
                 }
 
@@ -173,35 +171,35 @@ class GenerateResearchRequestSection implements ShouldQueue
                     foreach ($section['subsections'] as $subsectionIndex => $subsection) {
                         $instructions = "Generate the subsection of the research report, with the H3 heading \"{$subsection['heading']}\". Ensure that the content is cohesive and well-structured. The subsection should be 5 complete paragraphs.";
 
-                        unset($remainingSections['sections'][$sectionIndex]['subsections'][$subsectionIndex]);
+                        unset($remainingOutline['sections'][$sectionIndex]['subsections'][$subsectionIndex]);
 
-                        if (blank($remainingSections['sections'][$sectionIndex]['subsections'])) {
-                            unset($remainingSections['sections'][$sectionIndex]);
+                        if (blank($remainingOutline['sections'][$sectionIndex]['subsections'])) {
+                            unset($remainingOutline['sections'][$sectionIndex]);
                         }
 
                         return [
                             'instructions' => $instructions,
-                            'remainingSections' => $remainingSections,
+                            'remainingOutline' => $remainingOutline,
                         ];
                     }
 
-                    unset($remainingSections['sections'][$sectionIndex]['subsections']);
+                    unset($remainingOutline['sections'][$sectionIndex]['subsections']);
                 }
 
-                unset($remainingSections['sections'][$sectionIndex]);
+                unset($remainingOutline['sections'][$sectionIndex]);
             }
 
-            unset($remainingSections['sections']);
+            unset($remainingOutline['sections']);
         }
 
-        if (array_key_exists('conclusion', $remainingSections)) {
-            $instructions = "Generate the conclusion section of the research report, with the H2 heading \"{$remainingSections['conclusion']['heading']}\".";
+        if (array_key_exists('conclusion', $remainingOutline)) {
+            $instructions = "Generate the conclusion section of the research report, with the H2 heading \"{$remainingOutline['conclusion']['heading']}\".";
 
-            unset($remainingSections['conclusion']);
+            unset($remainingOutline['conclusion']);
 
             return [
                 'instructions' => $instructions,
-                'remainingSections' => $remainingSections,
+                'remainingOutline' => $remainingOutline,
             ];
         }
 
