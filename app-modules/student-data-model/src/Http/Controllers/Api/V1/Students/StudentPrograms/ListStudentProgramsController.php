@@ -32,16 +32,8 @@ class ListStudentProgramsController
     #[QueryParameter('filter[semester]', description: 'Filter the results where the program\'s Semester contains the provided string.', type: 'string')]
     #[QueryParameter('filter[descr]', description: 'Filter the results where the program\'s Description contains the provided string.', type: 'string')]
     #[QueryParameter('filter[foi]', description: 'Filter the results where the program\'s Field of Interest contains the provided string.', type: 'string')]
-    #[QueryParameter(
-        'filter[change_dt]',
-        description: 'Filter results based on the program\'s Change Date. Supports operators like =, <, <=, >, >=. Example: filter[change_dt]>=2025-03-29',
-        type: 'datetime'
-    )]
-    #[QueryParameter(
-        'filter[declare_dt]',
-        description: 'Filter results based on the program\'s Declare Date. Supports operators like =, <, <=, >, >=. Example: filter[declare_dt]>=2025-03-29',
-        type: 'datetime'
-    )]
+    #[QueryParameter('filter[change_dt]', description: 'Filter the results where the program\'s Change Date matches the provided date using comparison operators. Supported: =, <, <=, >, >=. Format: YYYY-MM-DD.', type: 'date')]
+    #[QueryParameter('filter[declare_dt]', description: 'Filter the results where the program\'s Declare Date matches the provided date using comparison operators. Supported: =, <, <=, >, >=. Format: YYYY-MM-DD.', type: 'date')]
     #[QueryParameter('page[number]', description: 'Control which page of programs is returned in the response.', type: 'int', default: 1)]
     #[QueryParameter('page[size]', description: 'Control how many programs are returned in the response.', type: 'int', default: 30)]
     #[QueryParameter('sort', description: 'Control the order of programs that are returned in the response. Ascending order is used by default, prepend the sort with `-` to sort descending.', type: 'string', default: 'sisid', examples: [
@@ -68,7 +60,7 @@ class ListStudentProgramsController
                 AllowedFilter::partial('acad_career'),
                 AllowedFilter::partial('division'),
                 AllowedFilter::callback('acad_plan', function (Builder $query, string $value) {
-                    $query->whereRaw("acad_plan::text ILIKE ?", ["%{$value}%"]);
+                    $query->whereRaw('acad_plan::text ILIKE ?', ["%{$value}%"]);
                 }),
                 AllowedFilter::partial('prog_status'),
                 AllowedFilter::operator('cum_gpa', FilterOperator::DYNAMIC),
