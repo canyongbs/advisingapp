@@ -806,7 +806,7 @@ abstract class BaseOpenAiResponsesService implements AiService
             $deleteFileResponse = $this->filesHttpClient()
                 ->delete("files/{$fileId}");
 
-            if (! $deleteFileResponse->successful()) {
+            if ((! $deleteFileResponse->successful()) && (! $deleteFileResponse->notFound())) {
                 report(new Exception('Failed to delete file [' . $fileId . '] associated with vector store [' . $vectorStore->vector_store_id . '] for research request [' . $researchRequest->getKey() . '], as a [' . $deleteFileResponse->status() . '] response was returned: [' . $deleteFileResponse->body() . '].'));
             }
         }
@@ -940,7 +940,7 @@ abstract class BaseOpenAiResponsesService implements AiService
         $deleteFileResponse = $this->filesHttpClient()
             ->delete("files/{$vectorStore->vector_store_file_id}");
 
-        if (! $deleteFileResponse->successful()) {
+        if ((! $deleteFileResponse->successful()) && (! $deleteFileResponse->notFound())) {
             report(new Exception('Failed to delete file [' . $vectorStore->vector_store_file_id . '] associated with vector store [' . $vectorStore->vector_store_id . '] for file [' . $file->getKey() . '], as a [' . $deleteFileResponse->status() . '] response was returned: [' . $deleteFileResponse->body() . '].'));
 
             return;

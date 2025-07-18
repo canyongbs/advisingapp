@@ -37,6 +37,7 @@
 namespace AdvisingApp\Research\Jobs;
 
 use AdvisingApp\Ai\Settings\AiResearchAssistantSettings;
+use AdvisingApp\Research\Events\ResearchRequestSearchQueriesGenerated;
 use AdvisingApp\Research\Models\ResearchRequest;
 use AdvisingApp\Research\Models\ResearchRequestQuestion;
 use App\Models\User;
@@ -104,6 +105,10 @@ class GenerateResearchRequestSearchQueries implements ShouldQueue
             ]),
             $searchQueries,
         ));
+
+        broadcast(app(ResearchRequestSearchQueriesGenerated::class, [
+            'researchRequest' => $this->researchRequest,
+        ]));
     }
 
     protected function getContent(): string

@@ -37,9 +37,12 @@
 namespace AdvisingApp\Research\Jobs;
 
 use AdvisingApp\Ai\Settings\AiResearchAssistantSettings;
+use AdvisingApp\Research\Events\ResearchRequestResultsGenerated;
 use AdvisingApp\Research\Models\ResearchRequest;
 use AdvisingApp\Research\Models\ResearchRequestQuestion;
 use App\Models\User;
+use App\Support\ChunkIterator;
+use Carbon\CarbonInterface;
 use Exception;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -53,8 +56,6 @@ class GenerateResearchRequestSection implements ShouldQueue
     use SerializesModels;
 
     public int $timeout = 600;
-
-    public int $tries = 3;
 
     /**
      * @param array<string, mixed> $requestOptions
@@ -97,19 +98,37 @@ class GenerateResearchRequestSection implements ShouldQueue
             $this->researchRequest->results .= PHP_EOL;
         }
 
-        $thisSection = '';
+        broadcast(app(ResearchRequestResultsGenerated::class, [
+            'researchRequest' => $this->researchRequest,
+            'resultsChunk' => PHP_EOL . PHP_EOL,
+        ]));
 
-        foreach ($responseGenerator as $responseContent) {
+        $hasContent = false;
+
+        foreach (app(ChunkIterator::class, ['iterator' => $responseGenerator, 'chunkSize' => 20])->get() as $responseContent) {
+            $responseContent = implode($responseContent);
+
             $this->researchRequest->results .= $responseContent;
-            $thisSection .= $responseContent;
+            $this->researchRequest->save();
+
+            if (filled($responseContent)) {
+                $hasContent = true;
+            }
+
+            broadcast(app(ResearchRequestResultsGenerated::class, [
+                'researchRequest' => $this->researchRequest,
+                'resultsChunk' => $responseContent,
+            ]));
         }
 
-        if (filled($thisSection)) {
-            $this->researchRequest->remaining_outline = $remainingOutline;
-            $this->researchRequest->save();
-        } else {
-            $remainingOutline = $this->researchRequest->remaining_outline;
+        if (! $hasContent) {
+            $this->release(delay: 10); // Allow time for the service to recover.
+
+            return;
         }
+
+        $this->researchRequest->remaining_outline = $remainingOutline;
+        $this->researchRequest->save();
 
         if (blank($remainingOutline)) {
             $this->batch()->add(app(FinishResearchRequest::class, [
@@ -123,6 +142,11 @@ class GenerateResearchRequestSection implements ShouldQueue
             'researchRequest' => $this->researchRequest,
             'requestOptions' => $nextRequestOptions,
         ]));
+    }
+
+    public function retryUntil(): CarbonInterface
+    {
+        return now()->addHour();
     }
 
     /**

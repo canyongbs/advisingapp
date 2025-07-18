@@ -37,6 +37,7 @@
 namespace AdvisingApp\Research\Jobs;
 
 use AdvisingApp\Ai\Settings\AiResearchAssistantSettings;
+use AdvisingApp\Research\Events\ResearchRequestOutlineGenerated;
 use AdvisingApp\Research\Models\ResearchRequest;
 use AdvisingApp\Research\Models\ResearchRequestQuestion;
 use App\Models\User;
@@ -54,7 +55,7 @@ class GenerateResearchRequestOutline implements ShouldQueue
 
     public int $timeout = 600;
 
-    public int $tries = 12;
+    public int $tries = 15;
 
     public function __construct(
         protected ResearchRequest $researchRequest,
@@ -82,12 +83,44 @@ class GenerateResearchRequestOutline implements ShouldQueue
             'nextRequestOptions' => $nextRequestOptions,
         ] = $structuredResponse;
 
-        foreach ($outline as $section) {
+        if ((! is_array($outline['abstract'] ?? null)) || blank($outline['abstract']['heading'] ?? null)) {
+            $this->release();
+
+            return;
+        }
+
+        if ((! is_array($outline['introduction'] ?? null)) || blank($outline['introduction']['heading'] ?? null)) {
+            $this->release();
+
+            return;
+        }
+
+        if ((! is_array($outline['sections'] ?? null))) {
+            $this->release();
+
+            return;
+        }
+
+        foreach ($outline['sections'] as $section) {
             if ((! is_array($section)) || blank($section['heading'] ?? null)) {
-                $this->fail('A research request outline was generated that was missing a heading: [' . json_encode($outline) . '].');
+                $this->release();
 
                 return;
             }
+
+            foreach ($section['subsections'] as $subsection) {
+                if ((! is_array($subsection)) || blank($subsection['heading'] ?? null)) {
+                    $this->release();
+
+                    return;
+                }
+            }
+        }
+
+        if ((! is_array($outline['conclusion'] ?? null)) || blank($outline['conclusion']['heading'] ?? null)) {
+            $this->release();
+
+            return;
         }
 
         $this->researchRequest->outline = $outline;
@@ -97,6 +130,10 @@ class GenerateResearchRequestOutline implements ShouldQueue
         $this->batch()->add(app(GenerateResearchRequestSection::class, [
             'researchRequest' => $this->researchRequest,
             'requestOptions' => $nextRequestOptions,
+        ]));
+
+        broadcast(app(ResearchRequestOutlineGenerated::class, [
+            'researchRequest' => $this->researchRequest,
         ]));
     }
 
