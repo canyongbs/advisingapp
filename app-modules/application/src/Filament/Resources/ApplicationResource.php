@@ -49,13 +49,13 @@ class ApplicationResource extends Resource
 {
     protected static ?string $model = Application::class;
 
-    protected static ?string $navigationGroup = 'Premium Features';
+    protected static ?string $navigationGroup = 'Online Admissions';
 
-    protected static ?int $navigationSort = 50;
+    protected static ?int $navigationSort = 10;
 
-    protected static ?string $navigationLabel = 'Online Admissions';
+    protected static ?string $navigationLabel = 'Admissions';
 
-    protected static ?string $breadcrumb = 'Online Admissions';
+    protected static ?string $breadcrumb = 'Admissions';
 
     protected static ?string $modelLabel = 'Application';
 

@@ -152,6 +152,30 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('heroicon-o-rocket-launch')
                     ->collapsed(),
                 NavigationGroup::make()
+                    ->label('Project Management')
+                    ->icon('heroicon-o-clipboard-document-check')
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label('Online Admissions')
+                    ->icon('heroicon-o-document-plus')
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label('Digital Forms')
+                    ->icon('heroicon-o-inbox-arrow-down')
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label('Event Management')
+                    ->icon('heroicon-o-calendar-days')
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label('Automation')
+                    ->icon('heroicon-o-bolt')
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label('Data')
+                    ->icon('heroicon-o-circle-stack')
+                    ->collapsed(),
+                NavigationGroup::make()
                     ->label('Analytics')
                     ->icon('heroicon-o-document-chart-bar')
                     ->collapsed(),
