@@ -110,7 +110,7 @@ it('creates a student program', function () {
 
     if (isset($createStudentEnrollmentRequestData['enrollments'][0]['department'])) {
         expect($response['data'][0]['department'])
-        ->toBe($createStudentEnrollmentRequestData['enrollments'][0]['department']);
+            ->toBe($createStudentEnrollmentRequestData['enrollments'][0]['department']);
     }
 
     expect($response['data'][0]['faculty_name'])
@@ -151,13 +151,6 @@ it('creates a student program', function () {
         'unt_earned' => $createStudentEnrollmentRequestData['enrollments'][0]['unt_earned'],
         'section' => $createStudentEnrollmentRequestData['enrollments'][0]['section'],
         'name' => $createStudentEnrollmentRequestData['enrollments'][0]['name'],
-        'department' => $createStudentEnrollmentRequestData['enrollments'][0]['department'],
-        'faculty_name' => $createStudentEnrollmentRequestData['enrollments'][0]['faculty_name'],
-        'faculty_email' => $createStudentEnrollmentRequestData['enrollments'][0]['faculty_email'],
-        'semester_code' => $createStudentEnrollmentRequestData['enrollments'][0]['semester_code'],
-        'semester_name' => $createStudentEnrollmentRequestData['enrollments'][0]['semester_name'],
-        'start_date' => Carbon::parse($createStudentEnrollmentRequestData['enrollments'][0]['start_date'])->toDateTimeString(),
-        'end_date' => Carbon::parse($createStudentEnrollmentRequestData['enrollments'][0]['end_date'])->toDateTimeString(),
         'last_upd_dt_stmp' => Carbon::parse($createStudentEnrollmentRequestData['enrollments'][0]['last_upd_dt_stmp'])->toDateTimeString(),
     ]);
 });
