@@ -41,7 +41,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\ManageRelatedRecords;
-use Filament\Tables;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -51,9 +52,7 @@ class ManageFormWorkflows extends ManageRelatedRecords
 {
     protected static string $resource = FormResource::class;
 
-    protected static string $relationship = 'workflows'; //TODO: make this relationship
-
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string $relationship = 'workflows';
 
     public static function getNavigationLabel(): string
     {
@@ -85,11 +84,10 @@ class ManageFormWorkflows extends ManageRelatedRecords
             ->filters([
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+              CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+              EditAction::make(),
             ])
             ->bulkActions([
             ])
