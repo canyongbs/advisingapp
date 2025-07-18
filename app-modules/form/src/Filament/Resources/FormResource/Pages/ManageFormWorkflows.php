@@ -84,10 +84,10 @@ class ManageFormWorkflows extends ManageRelatedRecords
             ->filters([
             ])
             ->headerActions([
-              CreateAction::make(),
+                CreateAction::make(),
             ])
             ->actions([
-              EditAction::make(),
+                EditAction::make(),
             ])
             ->bulkActions([
             ])

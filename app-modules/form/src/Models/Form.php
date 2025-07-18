@@ -38,7 +38,6 @@ namespace AdvisingApp\Form\Models;
 
 use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Observers\FormObserver;
-use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
@@ -118,8 +117,8 @@ class Form extends Submissible
      */
     public function workflowTriggers(): HasMany
     {
-      return $this->hasMany(WorkflowTrigger::class, 'related_id')
-        ->where('related_type', Form::class);
+        return $this->hasMany(WorkflowTrigger::class, 'related_id')
+            ->where('related_type', Form::class);
     }
 
     /**
@@ -127,6 +126,6 @@ class Form extends Submissible
      */
     public function workflows(): HasManyDeep
     {
-       return $this->hasManyDeepFromRelations($this->workflowTriggers(), (new WorkflowTrigger())->workflow());
+        return $this->hasManyDeepFromRelations($this->workflowTriggers(), (new WorkflowTrigger())->workflow());
     }
 }
