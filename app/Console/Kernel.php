@@ -48,6 +48,7 @@ use AdvisingApp\Engagement\Models\EngagementFile;
 use AdvisingApp\Form\Models\FormAuthentication;
 use AdvisingApp\MeetingCenter\Console\Commands\RefreshCalendarRefreshTokens;
 use AdvisingApp\MeetingCenter\Jobs\SyncCalendars;
+use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
 use App\Models\HealthCheckResultHistoryItem;
 use App\Models\MonitoredScheduledTaskLogItem;
 use App\Models\Scopes\SetupIsComplete;
@@ -118,6 +119,16 @@ class Kernel extends ConsoleKernel
                         ->everyMinute()
                         ->name("Dispatch ExecuteCampaignActions | Tenant {$tenant->domain}")
                         ->monitorName("Dispatch ExecuteCampaignActions | Tenant {$tenant->domain}")
+                        ->withoutOverlapping(15);
+
+                    $schedule->call(function () use ($tenant) {
+                        $tenant->execute(function () {
+                            dispatch(new ExecuteWorkflowActionJob());
+                        });
+                    })
+                        ->everyMinute()
+                        ->name("Dispatch ExecuteWorkflowActionJob | Tenant {$tenant->domain}")
+                        ->monitorName("Dispatch ExecuteWorkflowActionJob | Tenant {$tenant->domain}")
                         ->withoutOverlapping(15);
 
                     $schedule->command("tenants:artisan \"cache:prune-stale-tags\" --tenant={$tenant->id}")

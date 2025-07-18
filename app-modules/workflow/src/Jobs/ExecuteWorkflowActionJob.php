@@ -34,35 +34,45 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Models;
+namespace AdvisingApp\Workflow\Jobs;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Workflow\Models\WorkflowRunStep;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Facades\Bus;
+use Throwable;
 
-/**
- * @mixin IdeHelperWorkflowTaskDetails
- */
-class WorkflowTaskDetails extends WorkflowDetails implements Auditable
+class ExecuteWorkflowActionJob implements ShouldQueue
 {
-    use SoftDeletes;
-    use AuditableTrait;
-    use HasUuids;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
 
-    protected $fillable = [
-        'title',
-        'description',
-        'due',
-        'workflow_step_id',
-    ];
-
-    protected $casts = [
-        'due' => 'datetime',
-    ];
-
-    public function getType(): string
+    public function handle(): void
     {
-        return 'task';
+        $steps = WorkflowRunStep::where('execute_at', '<', now())->whereNull('dispatched_at');
+
+        $steps->each(function (WorkflowRunStep $step) {
+            $step->dispatched_at = now();
+            $step->save();
+
+            try {
+                Bus::batch([
+                    new ExecuteWorkflowAction($step),
+                ])
+                    ->allowFailures()
+                    ->finally(function () use ($step) {
+                        $step->succeeded_at = now();
+                        $step->save();
+                    });
+            } catch (Throwable $exception) {
+                $step->last_failed_at = now();
+                $step->save();
+
+                throw $exception;
+            }
+        });
     }
 }

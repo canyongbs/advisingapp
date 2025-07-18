@@ -37,32 +37,45 @@
 namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Workflow\Enums\WorkflowActionType;
+use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
- * @mixin IdeHelperWorkflowTaskDetails
+ * @mixin IdeHelperWorkflowRunStep
  */
-class WorkflowTaskDetails extends WorkflowDetails implements Auditable
+class WorkflowRunStep extends BaseModel implements Auditable
 {
     use SoftDeletes;
     use AuditableTrait;
     use HasUuids;
 
     protected $fillable = [
-        'title',
-        'description',
-        'due',
-        'workflow_step_id',
+        'execute_at',
+        'dispatched_at',
+        'succeeded_at',
+        'last_failed_at',
+        'workflow_run_id',
+        'details_id',
+        'details_type',
     ];
 
     protected $casts = [
-        'due' => 'datetime',
+        'execute_at' => 'datetime',
+        'dispatched_at' => 'datetime',
+        'succeeded_at' => 'datetime',
+        'last_failed_at' => 'datetime',
+        'details_type' => WorkflowActionType::class,
     ];
 
-    public function getType(): string
+    /**
+     * @return BelongsTo<WorkflowRun, $this>
+     */
+    public function workflowRun(): BelongsTo
     {
-        return 'task';
+        return $this->belongsTo(WorkflowRun::class);
     }
 }

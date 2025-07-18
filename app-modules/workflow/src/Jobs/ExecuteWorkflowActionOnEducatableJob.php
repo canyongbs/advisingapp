@@ -34,35 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Models;
+namespace AdvisingApp\Workflow\Jobs;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Campaign\Jobs\Middleware\FailIfBatchCancelled;
+use AdvisingApp\Workflow\Models\WorkflowRunStep;
+use Illuminate\Bus\Batchable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
 
-/**
- * @mixin IdeHelperWorkflowTaskDetails
- */
-class WorkflowTaskDetails extends WorkflowDetails implements Auditable
+abstract class ExecuteWorkflowActionOnEducatableJob implements ShouldQueue
 {
-    use SoftDeletes;
-    use AuditableTrait;
-    use HasUuids;
+    use Batchable;
+    use Queueable;
 
-    protected $fillable = [
-        'title',
-        'description',
-        'due',
-        'workflow_step_id',
-    ];
+    public function __construct(public WorkflowRunStep $workflowRunStep) {}
 
-    protected $casts = [
-        'due' => 'datetime',
-    ];
-
-    public function getType(): string
+    /**
+     * @return array<object>
+     */
+    public function middleware(): array
     {
-        return 'task';
+        return [new FailIfBatchCancelled()];
     }
+
+    abstract public function handle(): void;
 }
