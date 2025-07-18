@@ -45,9 +45,9 @@ class ManageStudentSyncs extends Page
 
     protected static ?string $title = 'Records Sync';
 
-    protected static ?int $navigationSort = 100;
+    protected static ?int $navigationSort = 10;
 
-    protected static ?string $navigationGroup = 'CRM';
+    protected static ?string $navigationGroup = 'Data';
 
     protected static string $view = 'student-data-model::filament.pages.manage-student-syncs';
 
