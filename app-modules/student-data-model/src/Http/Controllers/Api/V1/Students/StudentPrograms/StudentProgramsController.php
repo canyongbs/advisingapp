@@ -3,7 +3,7 @@
 namespace AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentPrograms;
 
 use AdvisingApp\StudentDataModel\Actions\UpdateStudentProgram;
-use AdvisingApp\StudentDataModel\DataTransferObjects\StudentProgramData;
+use AdvisingApp\StudentDataModel\DataTransferObjects\StudentProgramRequestData;
 use AdvisingApp\StudentDataModel\Http\Resources\Api\V1\StudentProgramResource;
 use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -24,6 +24,14 @@ class StudentProgramsController
         Gate::authorize('viewAny', Program::class);
         Gate::authorize('create', Program::class);
 
+        foreach ($student->programs as $programToUpdate ) {
+            Gate::authorize('update', $programToUpdate );
+        }
+
+        foreach ($student->programs as $programToDelete ) {
+            Gate::authorize('delete', $programToDelete );
+        }
+
         $data = $request->validate([
             'program' => ['required', 'array'],
             'program.*.acad_career' => ['sometimes', 'string', 'max:255'],
@@ -38,10 +46,12 @@ class StudentProgramsController
             'program.*.declare_dt' => ['required', 'date', 'date_format:Y-m-d H:i:s'],
         ]);
 
-        $data = $data['program'];
+        $studentProgramRequestData = StudentProgramRequestData::from([
+            'program' => $data['program'],
+        ]);
 
-        $programData = $program->execute($student, StudentProgramData::collect($data));
+        $programs = $program->execute($student, $studentProgramRequestData);
 
-        return $programData->toResourceCollection(StudentProgramResource::class);
+        return $programs->toResourceCollection(StudentProgramResource::class);
     }
 }
