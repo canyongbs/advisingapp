@@ -44,7 +44,7 @@ class StudentEnrollmentsController
             'enrollments.*.name' => ['sometimes', 'string', 'max:255'],
             'enrollments.*.department' => ['sometimes', 'string', 'max:255'],
             'enrollments.*.faculty_name' => ['sometimes', 'string', 'max:255'],
-            'enrollments.*.faculty_email' => ['sometimes', 'string', 'max:255'],
+            'enrollments.*.faculty_email' => ['sometimes', 'email'],
             'enrollments.*.semester_code' => ['sometimes', 'string', 'max:255'],
             'enrollments.*.semester_name' => ['sometimes', 'string', 'max:255'],
             'enrollments.*.start_date' => ['sometimes', 'date', 'date_format:Y-m-d H:i:s'],
