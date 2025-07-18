@@ -2,8 +2,6 @@
 
 namespace AdvisingApp\StudentDataModel\Tests\Tenant\Http\Controllers\Api\V1\Students\StudentEnrollments\RequestFactories;
 
-use Carbon\Carbon;
-use DateTime;
 use Worksome\RequestFactories\RequestFactory;
 
 class StudentEnrollmentRequestFactory extends RequestFactory
