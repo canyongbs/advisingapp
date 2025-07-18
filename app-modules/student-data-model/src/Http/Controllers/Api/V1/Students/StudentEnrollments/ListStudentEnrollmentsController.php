@@ -23,39 +23,39 @@ class ListStudentEnrollmentsController
      * @response AnonymousResourceCollection<LengthAwarePaginator<StudentEnrollmentResource>>
      */
     #[Group('Students')]
-    #[QueryParameter('filter[division]', description: 'Filter the results where the student\'s Division contains the provided string.', type: 'string')]
-    #[QueryParameter('filter[class_nbr]', description: 'Filter the results where the student\'s Class NBR contains the provided string.', type: 'string')]
-    #[QueryParameter('filter[crse_grade_off]', description: 'Filter the results where the student\'s CRSE grade off contains the provided string.', type: 'string')]
+    #[QueryParameter('filter[division]', description: 'Filter the results where the enrollment\'s Division contains the provided string.', type: 'string')]
+    #[QueryParameter('filter[class_nbr]', description: 'Filter the results where the enrollment\'s Class NBR contains the provided string.', type: 'string')]
+    #[QueryParameter('filter[crse_grade_off]', description: 'Filter the results where the enrollment\'s CRSE Grade Off contains the provided string.', type: 'string')]
     #[QueryParameter(
         'filter[unt_taken]',
-        description: 'Filter results based on the student\'s UNT taken. Supports operators like =, <, <=, >, >=. Example: filter[unt_taken]>=15',
+        description: 'Filter results based on the enrollment\'s UNT taken. Supports operators like =, <, <=, >, >=. Example: filter[unt_taken]>=15',
         type: 'integer'
     )]
     #[QueryParameter(
         'filter[unt_earned]',
-        description: 'Filter results based on the student\'s UNT earned. Supports operators like =, <, <=, >, >=. Example: filter[unt_earned]>=5',
+        description: 'Filter results based on the enrollment\'s UNT earned. Supports operators like =, <, <=, >, >=. Example: filter[unt_earned]>=5',
         type: 'integer'
     )]
     #[QueryParameter(
         'filter[last_upd_dt_stmp]',
-        description: 'Filter results based on the student\'s Last UPD date STMP. Supports operators like =, <, <=, >, >=. Example: filter[last_upd_dt_stmp]>=2025-03-29',
+        description: 'Filter results based on the enrollment\'s Last UPD date STMP. Supports operators like =, <, <=, >, >=. Example: filter[last_upd_dt_stmp]>=2025-03-29',
         type: 'datetime'
     )]
-    #[QueryParameter('filter[section]', description: 'Filter the results where the student\'s Section contains the provided string.', type: 'string')]
-    #[QueryParameter('filter[name]', description: 'Filter the results where the student\'s Name contains the provided string.', type: 'string')]
-    #[QueryParameter('filter[department]', description: 'Filter the results where the student\'s Department contains the provided string.', type: 'string')]
-    #[QueryParameter('filter[faculty_name]', description: 'Filter the results where the student\'s Faculty name contains the provided string.', type: 'string')]
-    #[QueryParameter('filter[faculty_email]', description: 'Filter the results where the student\'s Faculty email contains the provided string.', type: 'string')]
-    #[QueryParameter('filter[semester_code]', description: 'Filter the results where the student\'s Semester code contains the provided string.', type: 'string')]
-    #[QueryParameter('filter[semester_name]', description: 'Filter the results where the student\'s Semester name contains the provided string.', type: 'string')]
+    #[QueryParameter('filter[section]', description: 'Filter the results where the enrollment\'s Section contains the provided string.', type: 'string')]
+    #[QueryParameter('filter[name]', description: 'Filter the results where the enrollment\'s Name contains the provided string.', type: 'string')]
+    #[QueryParameter('filter[department]', description: 'Filter the results where the enrollment\'s Department contains the provided string.', type: 'string')]
+    #[QueryParameter('filter[faculty_name]', description: 'Filter the results where the enrollment\'s Faculty name contains the provided string.', type: 'string')]
+    #[QueryParameter('filter[faculty_email]', description: 'Filter the results where the enrollment\'s Faculty email contains the provided string.', type: 'string')]
+    #[QueryParameter('filter[semester_code]', description: 'Filter the results where the enrollment\'s Semester code contains the provided string.', type: 'string')]
+    #[QueryParameter('filter[semester_name]', description: 'Filter the results where the enrollment\'s Semester name contains the provided string.', type: 'string')]
     #[QueryParameter(
         'filter[start_date]',
-        description: 'Filter results based on the student\'s start date. Supports operators like =, <, <=, >, >=. Example: filter[start_date]>=2025-04-18',
+        description: 'Filter results based on the enrollment\'s Start date. Supports operators like =, <, <=, >, >=. Example: filter[start_date]>=2025-04-18',
         type: 'datetime'
     )]
     #[QueryParameter(
         'filter[end_date]',
-        description: 'Filter results based on the student\'s end date. Supports operators like =, <, <=, >, >=. Example: filter[end_date]<=2025-12-31',
+        description: 'Filter results based on the enrollment\'s End date. Supports operators like =, <, <=, >, >=. Example: filter[end_date]<=2025-12-31',
         type: 'datetime'
     )]
     #[QueryParameter('sort', description: 'Control the order of students\'s enrollments that are returned in the response. Ascending order is used by default, prepend the sort with `-` to sort descending.', type: 'string', default: 'sisid', examples: [
