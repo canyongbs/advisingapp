@@ -37,11 +37,14 @@
 namespace AdvisingApp\Workflow\Filament\Resources\WorkflowResource\Pages;
 
 use AdvisingApp\Workflow\Filament\Resources\WorkflowResource;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
 class EditWorkflow extends EditRecord
 {
+    use EditPageRedirection;
+    
     protected static string $resource = WorkflowResource::class;
 
     protected function getHeaderActions(): array
