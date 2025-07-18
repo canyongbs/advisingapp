@@ -38,6 +38,7 @@ namespace AdvisingApp\Research\Jobs;
 
 use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
 use AdvisingApp\Ai\Settings\AiResearchAssistantSettings;
+use AdvisingApp\Research\Events\ResearchRequestFinished;
 use AdvisingApp\Research\Models\ResearchRequest;
 use Exception;
 use Illuminate\Bus\Batchable;
@@ -74,6 +75,10 @@ class FinishResearchRequest implements ShouldQueue
             $this->researchRequest->title = 'Untitled Research';
             $this->researchRequest->touch('finished_at');
 
+            broadcast(app(ResearchRequestFinished::class, [
+                'researchRequest' => $this->researchRequest,
+            ]));
+
             return;
         }
 
@@ -92,5 +97,9 @@ class FinishResearchRequest implements ShouldQueue
         }
 
         $this->researchRequest->touch('finished_at');
+
+        broadcast(app(ResearchRequestFinished::class, [
+            'researchRequest' => $this->researchRequest,
+        ]));
     }
 }

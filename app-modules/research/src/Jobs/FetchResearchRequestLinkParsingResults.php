@@ -37,6 +37,7 @@
 namespace AdvisingApp\Research\Jobs;
 
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use AdvisingApp\Research\Events\ResearchRequestLinkParsed;
 use AdvisingApp\Research\Models\ResearchRequest;
 use AdvisingApp\Research\Models\ResearchRequestParsedLink;
 use Illuminate\Bus\Batchable;
@@ -79,5 +80,10 @@ class FetchResearchRequestLinkParsingResults implements ShouldQueue
         $researchRequestParsedLink->results = $response->body();
         $researchRequestParsedLink->url = $this->link;
         $researchRequestParsedLink->save();
+
+        broadcast(app(ResearchRequestLinkParsed::class, [
+            'researchRequest' => $this->researchRequest,
+            'parsedLink' => $researchRequestParsedLink,
+        ]));
     }
 }

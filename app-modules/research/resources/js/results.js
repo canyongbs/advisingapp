@@ -31,118 +31,183 @@
 
 </COPYRIGHT>
 */
-import { link } from '@formkit/icons/index.cjs';
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';
 import markedFootnote from 'marked-footnote';
 
 document.addEventListener('alpine:init', () => {
-    Alpine.data('results', ({ results, outline, sources, files, links, searchQueries, parsedFiles, parsedLinks, parsedSearchResults, title, isFinished }) => ({
-        reasoningPoints: [],
+    Alpine.data(
+        'results',
+        ({
+            researchRequestId,
+            results,
+            outline,
+            sources,
+            files,
+            links,
+            searchQueries,
+            parsedFiles,
+            parsedLinks,
+            parsedSearchResults,
+            title,
+            isFinished,
+        }) => ({
+            reasoningPoints: [],
 
-        results,
+            results,
 
-        resultsHtml: '',
+            resultsHtml: '',
 
-        sourcesHtml: [],
+            sourcesHtml: [],
 
-        isFinished,
+            isFinished,
 
-        title,
+            title,
 
-        outline,
+            outline,
 
-        sources,
+            sources,
 
-        files,
+            files,
 
-        links,
+            links,
 
-        searchQueries,
+            searchQueries,
 
-        parsedFiles,
+            parsedFiles,
 
-        parsedLinks,
+            parsedLinks,
 
-        parsedSearchResults,
+            parsedSearchResults,
 
-        init: async function () {
-            this.renderReasoningPoints();
-            this.renderResults();
-            this.renderSourcesHtml();
-        },
+            init: async function () {
+                Echo.private(`research-request-${researchRequestId}`)
+                    .listen('.research-request.file-parsed', (event) => {
+                        this.parsedFiles.push(event.parsed_file);
 
-        renderReasoningPoints: function () {
-            let reasoningPoints = [];
+                        this.renderReasoningPoints();
+                        this.renderSourcesHtml();
+                    })
+                    .listen('.research-request.finished', (event) => {
+                        this.title = event.title;
+                        this.isFinished = true;
+                    })
+                    .listen('.research-request.link-parsed', (event) => {
+                        this.parsedLinks.push(event.parsed_link);
 
-            this.files.forEach((file) => {
-                reasoningPoints.push(`Started reading file: [${file.name}](${file.temporary_url})`);
-            });
+                        this.renderReasoningPoints();
+                        this.renderSourcesHtml();
+                    })
+                    .listen('.research-request.outline-generated', (event) => {
+                        this.outline = event.outline;
 
-            this.links?.forEach((link) => {
-                reasoningPoints.push(`Started reading link: [${link}](${link})`);
-            });
+                        this.renderReasoningPoints();
+                    })
+                    .listen('.research-request.results-generated', (event) => {
+                        this.results = this.results + event.results_chunk;
 
-            const parsingReasoningPoints = [];
+                        this.renderResults();
+                    })
+                    .listen('.research-request.search-queries-generated', (event) => {
+                        this.searchQueries = event.search_queries;
 
-            this.parsedFiles.forEach((file) => {
-                parsingReasoningPoints.push([`Finished reading file: [${file.media.name}](${file.media.temporary_url})`, file.created_at]);
-            });
+                        this.renderReasoningPoints();
+                    })
+                    .listen('.research-request.search-results-parsed', (event) => {
+                        this.parsedSearchResults.push(event.parsed_search_results);
+                        this.sources = [...(this.sources ?? []), ...event.new_sources];
 
-            this.parsedLinks.forEach((link) => {
-                parsingReasoningPoints.push([`Finished reading link: [${link.url}](${link.url})`, link.created_at]);
-            });
+                        this.renderReasoningPoints();
+                        this.renderSourcesHtml();
+                    });
 
-            reasoningPoints = [
-                ...reasoningPoints,
-                ...parsingReasoningPoints
-                    .sort((a, b) => new Date(a[1]) - new Date(b[1]))
-                    .map((point) => point[0]),
-            ]
+                this.renderReasoningPoints();
+                this.renderResults();
+                this.renderSourcesHtml();
+            },
 
-            if (this.searchQueries) {
-                this.searchQueries.forEach((searchQuery) => {
-                    reasoningPoints.push(`Started searching the web: ["${searchQuery}"](https://google.com/search?q=${encodeURIComponent(searchQuery.search_query)})`);
+            renderReasoningPoints: function () {
+                let reasoningPoints = [];
+
+                this.files.forEach((file) => {
+                    reasoningPoints.push(`Started reading file: [${file.name}](${file.temporary_url})`);
                 });
-            }
 
-            this.parsedSearchResults.sort((a, b) => new Date(a.created_at) - new Date(b.created_at)).forEach((searchResults) => {
-                reasoningPoints.push(`Finished searching the web: ["${searchResults.search_query}"](https://google.com/search?q=${encodeURIComponent(searchResults.search_query)})`);
-            });
+                this.links?.forEach((link) => {
+                    reasoningPoints.push(`Started reading link: [${link}](${link})`);
+                });
 
-            if (this.outline) {
-                reasoningPoints.push('Generated a research outline, preparing to write the report...')
-            }
+                const parsingReasoningPoints = [];
 
-            this.reasoningPoints = reasoningPoints.map((point) => DOMPurify.sanitize(marked.parse(point)).replace('<a', '<a target="_blank" rel="noreferrer" '))
-        },
+                this.parsedFiles.forEach((file) => {
+                    parsingReasoningPoints.push([
+                        `Finished reading file: [${file.media.name}](${file.media.temporary_url})`,
+                        file.created_at,
+                    ]);
+                });
 
-        renderResults: function () {
-            const unsafeHtml = marked.use(markedFootnote()).parse(this.results ?? '');
+                this.parsedLinks.forEach((link) => {
+                    parsingReasoningPoints.push([`Finished reading link: [${link.url}](${link.url})`, link.created_at]);
+                });
 
-            this.resultsHtml = DOMPurify.sanitize(unsafeHtml).replace('<a', '<a target="_blank" rel="noreferrer" ').replace(
-                '<h2 class="sr-only" id="footnote-label">Footnotes</h2>',
-                '<h2 id="footnote-label">References</h2>',
-            );
-        },
+                reasoningPoints = [
+                    ...reasoningPoints,
+                    ...parsingReasoningPoints.sort((a, b) => new Date(a[1]) - new Date(b[1])).map((point) => point[0]),
+                ];
 
-        renderSourcesHtml: function () {
-            let sourcesHtml = []
+                if (this.searchQueries) {
+                    this.searchQueries.forEach((searchQuery) => {
+                        reasoningPoints.push(
+                            `Started searching the web: ["${searchQuery}"](https://google.com/search?q=${encodeURIComponent(searchQuery.search_query)})`,
+                        );
+                    });
+                }
 
-            this.parsedFiles.forEach((file) => {
-                this.sourcesHtml.push(`File: [${file.media.name}](${file.media.temporary_url})`);
-            });
+                this.parsedSearchResults
+                    .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+                    .forEach((searchResults) => {
+                        reasoningPoints.push(
+                            `Finished searching the web: ["${searchResults.search_query}"](https://google.com/search?q=${encodeURIComponent(searchResults.search_query)})`,
+                        );
+                    });
 
-            this.parsedLinks.forEach((link) => {
-                this.sourcesHtml.push(`Link: [${link.url}](${link.url})`);
-            });
-        
-            sourcesHtml = [
-                ...sourcesHtml,
-                ...this.sources ?? [],
-            ]
+                if (this.outline) {
+                    reasoningPoints.push('Generated a research outline, preparing to write the report...');
+                }
 
-            this.sourcesHtml = sourcesHtml.map((source) => DOMPurify.sanitize(marked.parse(source)).replace('<a', '<a target="_blank" rel="noreferrer" '))
-        },
-    }));
+                this.reasoningPoints = reasoningPoints.map((point) =>
+                    DOMPurify.sanitize(marked.parse(point)).replace('<a', '<a target="_blank" rel="noreferrer" '),
+                );
+            },
+
+            renderResults: function () {
+                const unsafeHtml = marked.use(markedFootnote()).parse(this.results ?? '');
+
+                this.resultsHtml = DOMPurify.sanitize(unsafeHtml)
+                    .replace('<a', '<a target="_blank" rel="noreferrer" ')
+                    .replace(
+                        '<h2 class="sr-only" id="footnote-label">Footnotes</h2>',
+                        '<h2 id="footnote-label">References</h2>',
+                    );
+            },
+
+            renderSourcesHtml: function () {
+                let sourcesHtml = [];
+
+                this.parsedFiles.forEach((file) => {
+                    this.sourcesHtml.push(`File: [${file.media.name}](${file.media.temporary_url})`);
+                });
+
+                this.parsedLinks.forEach((link) => {
+                    this.sourcesHtml.push(`Link: [${link.url}](${link.url})`);
+                });
+
+                sourcesHtml = [...sourcesHtml, ...(this.sources ?? [])];
+
+                this.sourcesHtml = sourcesHtml.map((source) =>
+                    DOMPurify.sanitize(marked.parse(source)).replace('<a', '<a target="_blank" rel="noreferrer" '),
+                );
+            },
+        }),
+    );
 });

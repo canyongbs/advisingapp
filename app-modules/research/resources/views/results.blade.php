@@ -40,22 +40,29 @@
         <section
             class="prose max-w-none dark:prose-invert"
             x-data="results({
+                researchRequestId: @js($researchRequest->getKey()),
                 results: @js($researchRequest->results),
                 outline: @js($researchRequest->outline),
                 sources: @js($researchRequest->sources),
-                files: @js($researchRequest->getMedia('files')->map(fn ($media) => data_set($media, 'temporary_url', $media->getTemporaryUrl(now()->addDay())))->toArray()),
+                files: @js(
+                    $researchRequest->getMedia('files')->map(fn($media) => data_set($media, 'temporary_url', $media->getTemporaryUrl(now()->addDay())))->toArray()
+                ),
                 links: @js($researchRequest->links),
                 searchQueries: @js($researchRequest->search_queries),
-                parsedFiles: @js($researchRequest->parsedFiles->loadMissing(['media'])->map(fn ($file) => data_set($file, 'media.temporary_url', $file->media->getTemporaryUrl(now()->addDay())))->toArray()),
-                parsedLinks: @js($researchRequest->parsedLinks->toArray()),
-                parsedSearchResults: @js($researchRequest->parsedSearchResults->toArray()),
+                parsedFiles: @js(
+                    $researchRequest->parsedFiles->loadMissing(['media'])->map(fn($file) => data_set($file, 'media.temporary_url', $file->media->getTemporaryUrl(now()->addDay())))->map(fn($file): array => Arr::except($file->toArray(), ['results']))->toArray()
+                ),
+                parsedLinks: @js($researchRequest->parsedLinks->map(fn($link): array => Arr::except($link->toArray(), ['results']))->toArray()),
+                parsedSearchResults: @js($researchRequest->parsedSearchResults->map(fn($searchResults): array => Arr::except($searchResults->toArray(), ['results']))->toArray()),
                 title: @js($researchRequest->title),
                 isFinished: @js((bool) $researchRequest->finished_at),
             })"
-            wire:poll.3s
             wire:key="{{ Str::random() }}"
-            {{-- Force the component to reinitialize after a Livewire rerender --}}
         >
+            <div x-show="! reasoningPoints.length">
+                Sending request to the research assistant...
+            </div>
+
             <details
                 class="research-request-reasoning"
                 open

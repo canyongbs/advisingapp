@@ -37,6 +37,7 @@
 namespace AdvisingApp\Research\Jobs;
 
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use AdvisingApp\Research\Events\ResearchRequestSearchResultsParsed;
 use AdvisingApp\Research\Models\ResearchRequest;
 use AdvisingApp\Research\Models\ResearchRequestParsedSearchResults;
 use Illuminate\Bus\Batchable;
@@ -113,6 +114,12 @@ class FetchResearchRequestSearchQueryParsingResults implements ShouldQueue
                 ) || ?::jsonb
                 WHERE id = ?
                 SQL, [json_encode($sources), $this->researchRequest->id]);
+
+            broadcast(app(ResearchRequestSearchResultsParsed::class, [
+                'researchRequest' => $this->researchRequest,
+                'parsedSearchResults' => $researchRequestParsedSearchResults,
+                'newSources' => $sources,
+            ]));
         });
     }
 }
