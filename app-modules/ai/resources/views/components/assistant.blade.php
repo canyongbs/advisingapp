@@ -704,7 +704,7 @@
                                     required
                                     maxlength="25000"
                                     @if (auth()->user()->is_submit_ai_chat_on_enter_enabled) x-on:keydown.enter.prevent="sendMessage()" @endif
-                                >                                
+                                >
                                 </textarea>
                             </div>
                             <div
@@ -728,6 +728,17 @@
                                     @endif
 
                                     {{ $this->insertFromPromptLibraryAction }}
+
+                                    <x-filament::icon-button
+                                        class="fi-topbar-close-sidebar-btn"
+                                        color="gray"
+                                        icon="heroicon-o-information-circle"
+                                        icon-alias="panels::topbar.close-sidebar-button"
+                                        icon-size="lg"
+                                        x-cloak
+                                        x-show="messages.length > 0"
+                                        tooltip="The prompt library can only be used as the initial prompt. To use the prompt library please begin a new conversation with your AI Advisor."
+                                    />
 
                                     <div
                                         class="flex w-full justify-center py-2 sm:w-auto"

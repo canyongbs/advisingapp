@@ -72,6 +72,7 @@ trait CanManagePromptLibrary
 
         return Action::make('insertFromPromptLibrary')
             ->label('Prompt library')
+            ->disabled(fn (): bool => $this->thread?->messages()->exists())
             ->color('gray')
             ->form([
                 ToggleButtons::make('isSmart')
