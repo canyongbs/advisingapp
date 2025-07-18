@@ -36,7 +36,7 @@ class ListStudentEnrollmentsController
         description: 'Filter results based on the enrollment\'s UNT earned. Supports operators like =, <, <=, >, >=. Example: filter[unt_earned]>=5',
         type: 'integer'
     )]
-    #[QueryParameter('filter[last_upd_dt_stmp]', description: 'Filter the results where the program\'s Last UPD Date STMP matches the provided date using comparison operators. Supported: =, <, <=, >, >=. Format: YYYY-MM-DD h:i:s.', type: 'datetime')]
+    #[QueryParameter('filter[last_upd_dt_stmp]', description: 'Filter the results where the program\'s Last UPD Date STMP matches the provided date using comparison operators. Supported: =, <, <=, >, >=. Format: YYYY-MM-DD H:i:s.', type: 'datetime')]
     #[QueryParameter('filter[section]', description: 'Filter the results where the enrollment\'s Section contains the provided string.', type: 'string')]
     #[QueryParameter('filter[name]', description: 'Filter the results where the enrollment\'s Name contains the provided string.', type: 'string')]
     #[QueryParameter('filter[department]', description: 'Filter the results where the enrollment\'s Department contains the provided string.', type: 'string')]
@@ -44,8 +44,8 @@ class ListStudentEnrollmentsController
     #[QueryParameter('filter[faculty_email]', description: 'Filter the results where the enrollment\'s Faculty email contains the provided string.', type: 'string')]
     #[QueryParameter('filter[semester_code]', description: 'Filter the results where the enrollment\'s Semester code contains the provided string.', type: 'string')]
     #[QueryParameter('filter[semester_name]', description: 'Filter the results where the enrollment\'s Semester name contains the provided string.', type: 'string')]
-    #[QueryParameter('filter[start_date]', description: 'Filter the results where the program\'s Start Date matches the provided date using comparison operators. Supported: =, <, <=, >, >=. Format: YYYY-MM-DD h:i:s.', type: 'datetime')]
-    #[QueryParameter('filter[end_date]', description: 'Filter the results where the program\'s End Date matches the provided date using comparison operators. Supported: =, <, <=, >, >=. Format: YYYY-MM-DD h:i:s.', type: 'datetime')]
+    #[QueryParameter('filter[start_date]', description: 'Filter the results where the program\'s Start Date matches the provided date using comparison operators. Supported: =, <, <=, >, >=. Format: YYYY-MM-DD H:i:s.', type: 'datetime')]
+    #[QueryParameter('filter[end_date]', description: 'Filter the results where the program\'s End Date matches the provided date using comparison operators. Supported: =, <, <=, >, >=. Format: YYYY-MM-DD H:i:s.', type: 'datetime')]
     #[QueryParameter('sort', description: 'Control the order of students\'s enrollments that are returned in the response. Ascending order is used by default, prepend the sort with `-` to sort descending.', type: 'string', default: 'sisid', examples: [
         'division' => new Example('division'),
         'class_nbr' => new Example('class_nbr'),
