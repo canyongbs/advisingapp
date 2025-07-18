@@ -50,13 +50,13 @@ class EventResource extends Resource
 {
     protected static ?string $model = Event::class;
 
-    protected static ?string $navigationGroup = 'Premium Features';
+    protected static ?string $navigationGroup = 'Event Management';
 
-    protected static ?int $navigationSort = 40;
+    protected static ?int $navigationSort = 10;
 
-    protected static ?string $navigationLabel = 'Event Management';
+    protected static ?string $navigationLabel = 'Events';
 
-    protected static ?string $breadcrumb = 'Event Management';
+    protected static ?string $breadcrumb = 'Events';
 
     protected static ?string $modelLabel = 'Event';
 
