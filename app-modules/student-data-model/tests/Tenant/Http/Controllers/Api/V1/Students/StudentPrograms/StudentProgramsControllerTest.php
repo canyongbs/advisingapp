@@ -23,7 +23,8 @@ it('is gated with proper access control', function () {
 
     $user = SystemUser::factory()->create();
     Sanctum::actingAs($user, ['api']);
-    putJson(route('api.v1.students.programs.put', ['student' => $student], false), $createStudentProgramRequestData);
+    putJson(route('api.v1.students.programs.put', ['student' => $student], false), $createStudentProgramRequestData)
+        ->assertForbidden();
 
     $user = SystemUser::factory()->create();
     $user->givePermissionTo('student.view-any');
@@ -43,12 +44,24 @@ it('is gated with proper access control', function () {
     putJson(route('api.v1.students.programs.put', ['student' => $student], false), $createStudentProgramRequestData)
         ->assertForbidden();
 
+    $user = SystemUser::factory()->create();
+    $user->givePermissionTo('program.*.update');
+    Sanctum::actingAs($user, ['api']);
+    putJson(route('api.v1.students.programs.put', ['student' => $student], false), $createStudentProgramRequestData)
+        ->assertForbidden();
+
+    $user = SystemUser::factory()->create();
+    $user->givePermissionTo('program.*.delete');
+    Sanctum::actingAs($user, ['api']);
+    putJson(route('api.v1.students.programs.put', ['student' => $student], false), $createStudentProgramRequestData)
+        ->assertForbidden();
+
     $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
     $studentConfigurationSettings->is_enabled = true;
     $studentConfigurationSettings->save();
 
     $user = SystemUser::factory()->create();
-    $user->givePermissionTo(['student.view-any', 'program.view-any', 'program.create']);
+    $user->givePermissionTo(['student.view-any', 'program.view-any', 'program.create', 'program.*.update', 'program.*.delete']);
     Sanctum::actingAs($user, ['api']);
     putJson(route('api.v1.students.programs.put', ['student' => $student], false), $createStudentProgramRequestData)
         ->assertOk();
