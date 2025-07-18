@@ -44,7 +44,7 @@ use Filament\Resources\Pages\EditRecord;
 class EditWorkflow extends EditRecord
 {
     use EditPageRedirection;
-    
+
     protected static string $resource = WorkflowResource::class;
 
     protected function getHeaderActions(): array
