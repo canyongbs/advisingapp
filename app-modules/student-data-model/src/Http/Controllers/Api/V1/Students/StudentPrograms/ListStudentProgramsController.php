@@ -24,16 +24,24 @@ class ListStudentProgramsController
      * @response AnonymousResourceCollection<LengthAwarePaginator<StudentProgramResource>>
      */
     #[Group('Students')]
-    #[QueryParameter('filter[acad_career]', description: 'Filter the results where the program\'s academic career contains the provided string.', type: 'string')]
-    #[QueryParameter('filter[division]', description: 'Filter the results where the program\'s division contains the provided string.', type: 'string')]
-    #[QueryParameter('filter[acad_plan]', description: 'Filter the results where the program\'s acad_plan contains the provided string.', type: 'string')]
-    #[QueryParameter('filter[prog_status]', description: 'Filter the results where the program\'s prog_status contains the provided string.', type: 'string')]
-    #[QueryParameter('filter[cum_gpa]', description: 'Filter the results where the program\'s cum_gpa contains the provided number.', type: 'float')]
-    #[QueryParameter('filter[semester]', description: 'Filter the results where the program\'s semester contains the provided string.', type: 'string')]
-    #[QueryParameter('filter[descr]', description: 'Filter the results where the program\'s descr contains the provided string.', type: 'string')]
-    #[QueryParameter('filter[foi]', description: 'Filter the results where the program\'s foi contains the provided string.', type: 'string')]
-    #[QueryParameter('filter[change_dt]', description: 'Filter the results where the program\'s change_dt matches the provided datetime.', type: 'datetime')]
-    #[QueryParameter('filter[declare_dt]', description: 'Filter the results where the program\'s declare_dt matches the provided datetime.', type: 'datetime')]
+    #[QueryParameter('filter[acad_career]', description: 'Filter the results where the program\'s Academic Career contains the provided string.', type: 'string')]
+    #[QueryParameter('filter[division]', description: 'Filter the results where the program\'s Division contains the provided string.', type: 'string')]
+    #[QueryParameter('filter[acad_plan]', description: 'Filter the results where the program\'s Academic Plan contains the provided string.', type: 'string')]
+    #[QueryParameter('filter[prog_status]', description: 'Filter the results where the program\'s Program Status contains the provided string.', type: 'string')]
+    #[QueryParameter('filter[cum_gpa]', description: 'Filter the results where the program\'s Cumulative GPA contains the provided number.', type: 'float')]
+    #[QueryParameter('filter[semester]', description: 'Filter the results where the program\'s Semester contains the provided string.', type: 'string')]
+    #[QueryParameter('filter[descr]', description: 'Filter the results where the program\'s Description contains the provided string.', type: 'string')]
+    #[QueryParameter('filter[foi]', description: 'Filter the results where the program\'s Field of Interest contains the provided string.', type: 'string')]
+    #[QueryParameter(
+        'filter[change_dt]',
+        description: 'Filter results based on the program\'s Change Date. Supports operators like =, <, <=, >, >=. Example: filter[change_dt]>=2025-03-29',
+        type: 'datetime'
+    )]
+    #[QueryParameter(
+        'filter[declare_dt]',
+        description: 'Filter results based on the program\'s Declare Date. Supports operators like =, <, <=, >, >=. Example: filter[declare_dt]>=2025-03-29',
+        type: 'datetime'
+    )]
     #[QueryParameter('page[number]', description: 'Control which page of programs is returned in the response.', type: 'int', default: 1)]
     #[QueryParameter('page[size]', description: 'Control how many programs are returned in the response.', type: 'int', default: 30)]
     #[QueryParameter('sort', description: 'Control the order of programs that are returned in the response. Ascending order is used by default, prepend the sort with `-` to sort descending.', type: 'string', default: 'sisid', examples: [

@@ -10,11 +10,11 @@ use Spatie\LaravelData\DataCollection;
 class StudentProgramRequestData extends Data
 {
     /**
-     * @param DataCollection<int, StudentProgramData> $program
+     * @param DataCollection<int, StudentProgramData> $programs
      */
     public function __construct(
         #[DataCollectionOf(StudentProgramData::class)]
-        public DataCollection $program,
+        public DataCollection $programs,
     ) {}
 
 }
