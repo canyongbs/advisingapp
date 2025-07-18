@@ -50,12 +50,12 @@ class ListStudentEnrollmentsController
     #[QueryParameter('filter[semester_name]', description: 'Filter the results where the student\'s Semester name contains the provided string.', type: 'string')]
     #[QueryParameter(
         'filter[start_date]',
-        description: 'Filter results based on the student\'s start date. Supports operators like =, <, <=, >, >=. Example: filter[start_date]>=2025-01-01',
+        description: 'Filter results based on the student\'s start date. Supports operators like =, <, <=, >, >=. Example: filter[start_date]>=2025-04-18',
         type: 'datetime'
     )]
     #[QueryParameter(
         'filter[end_date]',
-        description: 'Filter results based on the student\'s end date. Supports operators like =, <, <=, >, >=. Example: filter[end_date]<=2025-01-31',
+        description: 'Filter results based on the student\'s end date. Supports operators like =, <, <=, >, >=. Example: filter[end_date]<=2025-12-31',
         type: 'datetime'
     )]
     #[QueryParameter('sort', description: 'Control the order of students\'s enrollments that are returned in the response. Ascending order is used by default, prepend the sort with `-` to sort descending.', type: 'string', default: 'sisid', examples: [
