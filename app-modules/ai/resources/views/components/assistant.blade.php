@@ -733,7 +733,6 @@
                                         class="fi-topbar-close-sidebar-btn"
                                         color="gray"
                                         icon="heroicon-o-information-circle"
-                                        icon-alias="panels::topbar.close-sidebar-button"
                                         icon-size="lg"
                                         x-cloak
                                         x-show="messages.length > 0"
