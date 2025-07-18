@@ -20,7 +20,7 @@ it('is gated with proper access control', function () {
     $student = Student::factory()->create();
 
     $createStudentProgramRequestData = [
-        'program' => [StudentProgramRequestFactory::new()->create()],
+        'programs' => [StudentProgramRequestFactory::new()->create()],
     ];
 
     $user = SystemUser::factory()->create();
@@ -68,7 +68,7 @@ it('creates a student program', function () {
     Sanctum::actingAs($user, ['api']);
 
     $createStudentProgramRequestData = [
-        'program' => [StudentProgramRequestFactory::new()->create()],
+        'programs' => [StudentProgramRequestFactory::new()->create()],
     ];
 
     $response = putJson(route('api.v1.students.programs.put', ['student' => $student], false), $createStudentProgramRequestData);
@@ -129,7 +129,7 @@ it('validates', function (array $requestAttributes, string $invalidAttribute, st
     $before?->call($this);
 
     $createStudentProgramRequestData = [
-        'program' => [
+        'programs' => [
             StudentProgramRequestFactory::new()->create(),
         ],
         ...$requestAttributes,
@@ -142,79 +142,79 @@ it('validates', function (array $requestAttributes, string $invalidAttribute, st
     ]);
 })
 ->with([
-    '`program.*.acad_career` max' => [
-        ['program' => [['acad_career' => str_repeat('a', 256)]]],
-        'program.0.acad_career',
-        'The program.0.acad_career may not be greater than 255 characters.'
+    '`programs.*.acad_career` max' => [
+        ['programs' => [['acad_career' => str_repeat('a', 256)]]],
+        'programs.0.acad_career',
+        'The programs.0.acad_career may not be greater than 255 characters.'
     ],
-    '`program.*.division` max' => [
-        ['program' => [['division' => str_repeat('a', 256)]]],
-        'program.0.division',
-        'The program.0.division may not be greater than 255 characters.'
+    '`programs.*.division` max' => [
+        ['programs' => [['division' => str_repeat('a', 256)]]],
+        'programs.0.division',
+        'The programs.0.division may not be greater than 255 characters.'
     ],
-    '`program.*.prog_status` max' => [
-        ['program' => [['prog_status' => str_repeat('a', 256)]]],
-        'program.0.prog_status',
-        'The program.0.prog_status may not be greater than 255 characters.'
+    '`programs.*.prog_status` max' => [
+        ['programs' => [['prog_status' => str_repeat('a', 256)]]],
+        'programs.0.prog_status',
+        'The programs.0.prog_status may not be greater than 255 characters.'
     ],
-    '`program.*.cum_gpa` must have 0-2 decimal places' => [
-        ['program' => [['cum_gpa' => 4.337]]],
-        'program.0.cum_gpa',
-        'The program.0.cum_gpa field must have 0-2 decimal places.'
+    '`programs.*.cum_gpa` must have 0-2 decimal places' => [
+        ['programs' => [['cum_gpa' => 4.337]]],
+        'programs.0.cum_gpa',
+        'The programs.0.cum_gpa field must have 0-2 decimal places.'
     ],
-    '`program.*.cum_gpa` must be decimal' => [
-        ['program' => [['cum_gpa' => 'test']]],
-        'program.0.cum_gpa',
-        'The program.0.cum_gpa field must have 0-2 decimal places.'
+    '`programs.*.cum_gpa` must be decimal' => [
+        ['programs' => [['cum_gpa' => 'test']]],
+        'programs.0.cum_gpa',
+        'The programs.0.cum_gpa field must have 0-2 decimal places.'
     ],
-    '`program.*.acad_plan` is required' => [
-        ['program' => [['acad_plan' => null]]],
-        'program.0.acad_plan',
-        'The program.0.acad_plan field is required.'
+    '`programs.*.acad_plan` is required' => [
+        ['programs' => [['acad_plan' => null]]],
+        'programs.0.acad_plan',
+        'The programs.0.acad_plan field is required.'
     ],
-    '`program.*.acad_plan` must be an array' => [
-        ['program' => [['acad_plan' => 'This is simple string']]],
-        'program.0.acad_plan',
-        'The program.0.acad_plan must be an array.'
+    '`programs.*.acad_plan` must be an array' => [
+        ['programs' => [['acad_plan' => 'This is simple string']]],
+        'programs.0.acad_plan',
+        'The programs.0.acad_plan must be an array.'
     ],
-    '`program.*.semester` max' => [
-        ['program' => [['semester' => str_repeat('a', 256)]]],
-        'program.0.semester',
-        'The program.0.semester may not be greater than 255 characters.'
+    '`programs.*.semester` max' => [
+        ['programs' => [['semester' => str_repeat('a', 256)]]],
+        'programs.0.semester',
+        'The programs.0.semester may not be greater than 255 characters.'
     ],
-    '`program.*.descr` max' => [
-        ['program' => [['descr' => str_repeat('a', 256)]]],
-        'program.0.descr',
-        'The program.0.descr may not be greater than 255 characters.'
+    '`programs.*.descr` max' => [
+        ['programs' => [['descr' => str_repeat('a', 256)]]],
+        'programs.0.descr',
+        'The programs.0.descr may not be greater than 255 characters.'
     ],
-    '`program.*.foi` max' => [
-        ['program' => [['foi' => str_repeat('a', 256)]]],
-        'program.0.foi',
-        'The program.0.foi may not be greater than 255 characters.'
+    '`programs.*.foi` max' => [
+        ['programs' => [['foi' => str_repeat('a', 256)]]],
+        'programs.0.foi',
+        'The programs.0.foi may not be greater than 255 characters.'
     ],
-    '`program.*.declare_dt` is required' => [
-        ['program' => [['declare_dt' => null]]],
-        'program.0.declare_dt',
-        'The program.0.declare_dt field is required.'
+    '`programs.*.declare_dt` is required' => [
+        ['programs' => [['declare_dt' => null]]],
+        'programs.0.declare_dt',
+        'The programs.0.declare_dt field is required.'
     ],
     '`declare_dt` is a valid date' => [
-        ['program' => [['declare_dt' => 'not-a-date']]],
-        'program.0.declare_dt',
-        'The program.0.declare_dt is not a valid date.'
+        ['programs' => [['declare_dt' => 'not-a-date']]],
+        'programs.0.declare_dt',
+        'The programs.0.declare_dt is not a valid date.'
     ],
     '`declare_dt` is Y-m-d H:i:s format' => [
-        ['program' => [['declare_dt' => '2020-01-01']]],
-        'program.0.declare_dt',
-        'The program.0.declare_dt does not match the format Y-m-d H:i:s.'
+        ['programs' => [['declare_dt' => '2020-01-01']]],
+        'programs.0.declare_dt',
+        'The programs.0.declare_dt does not match the format Y-m-d H:i:s.'
     ],
     '`change_dt` is a valid date' => [
-        ['program' => [['change_dt' => 'not-a-date']]],
-        'program.0.change_dt',
-        'The program.0.change_dt is not a valid date.'
+        ['programs' => [['change_dt' => 'not-a-date']]],
+        'programs.0.change_dt',
+        'The programs.0.change_dt is not a valid date.'
     ],
     '`change_dt` is Y-m-d H:i:s format' => [
-        ['program' => [['change_dt' => '2020-01-01']]],
-        'program.0.change_dt',
-        'The program.0.change_dt does not match the format Y-m-d H:i:s.'
+        ['programs' => [['change_dt' => '2020-01-01']]],
+        'programs.0.change_dt',
+        'The programs.0.change_dt does not match the format Y-m-d H:i:s.'
     ],
 ]);

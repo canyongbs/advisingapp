@@ -24,30 +24,30 @@ class StudentProgramsController
         Gate::authorize('viewAny', Program::class);
         Gate::authorize('create', Program::class);
 
-        foreach ($student->programs as $programToUpdate ) {
-            Gate::authorize('update', $programToUpdate );
+        foreach ($student->programs as $programToUpdate) {
+            Gate::authorize('update', $programToUpdate);
         }
 
-        foreach ($student->programs as $programToDelete ) {
-            Gate::authorize('delete', $programToDelete );
+        foreach ($student->programs as $programToDelete) {
+            Gate::authorize('delete', $programToDelete);
         }
 
         $data = $request->validate([
-            'program' => ['required', 'array'],
-            'program.*.acad_career' => ['sometimes', 'string', 'max:255'],
-            'program.*.division' => ['sometimes', 'string', 'max:255'],
-            'program.*.acad_plan' => ['required', 'array'],
-            'program.*.prog_status' => ['sometimes', 'string', 'max:255'],
-            'program.*.cum_gpa' => ['sometimes', 'decimal:0,2'],
-            'program.*.semester' => ['sometimes', 'string', 'max:255'],
-            'program.*.descr' => ['sometimes', 'string', 'max:255'],
-            'program.*.foi' => ['sometimes', 'string', 'max:255'],
-            'program.*.change_dt' => ['sometimes', 'date', 'date_format:Y-m-d H:i:s'],
-            'program.*.declare_dt' => ['required', 'date', 'date_format:Y-m-d H:i:s'],
+            'programs' => ['required', 'array'],
+            'programs.*.acad_career' => ['sometimes', 'string', 'max:255'],
+            'programs.*.division' => ['sometimes', 'string', 'max:255'],
+            'programs.*.acad_plan' => ['required', 'array'],
+            'programs.*.prog_status' => ['sometimes', 'string', 'max:255'],
+            'programs.*.cum_gpa' => ['sometimes', 'decimal:0,2'],
+            'programs.*.semester' => ['sometimes', 'string', 'max:255'],
+            'programs.*.descr' => ['sometimes', 'string', 'max:255'],
+            'programs.*.foi' => ['sometimes', 'string', 'max:255'],
+            'programs.*.change_dt' => ['sometimes', 'date', 'date_format:Y-m-d H:i:s'],
+            'programs.*.declare_dt' => ['required', 'date', 'date_format:Y-m-d H:i:s'],
         ]);
 
         $studentProgramRequestData = StudentProgramRequestData::from([
-            'program' => $data['program'],
+            'programs' => $data['programs'],
         ]);
 
         $programs = $program->execute($student, $studentProgramRequestData);

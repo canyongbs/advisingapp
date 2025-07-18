@@ -51,7 +51,7 @@ class UpdateStudentProgram
     {
         $student->programs()->delete();
 
-        $program = collect($requestData->program->toArray());
+        $program = collect($requestData->programs->toArray());
 
         return DB::transaction(function () use ($program, $student) {
           return $program->map(function (array $data) use ($student) {
