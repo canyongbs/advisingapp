@@ -54,16 +54,16 @@ class UpdateStudentProgram
         $program = collect($requestData->programs->toArray());
 
         return DB::transaction(function () use ($program, $student) {
-          return $program->map(function (array $data) use ($student) {
-              $program = new Program();
-              $program->student()->associate($student);
-              $programData = $data;
-              $programData['acad_plan'] = json_encode($data['acad_plan']);
-              $program->fill($programData);
-              $program->save();
+            return $program->map(function (array $data) use ($student) {
+                $program = new Program();
+                $program->student()->associate($student);
+                $programData = $data;
+                $programData['acad_plan'] = json_encode($data['acad_plan']);
+                $program->fill($programData);
+                $program->save();
 
-              return $program;
-          })->values();
-      });
+                return $program;
+            })->values();
+        });
     }
 }
