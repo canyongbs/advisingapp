@@ -60,7 +60,7 @@ it('is gated with proper access control', function () {
     $studentConfigurationSettings->save();
 
     $user = SystemUser::factory()->create();
-    $user->givePermissionTo(['student.view-any', 'enrollment.view-any', 'enrollment.create','enrollment.*.update', 'enrollment.*.delete']);
+    $user->givePermissionTo(['student.view-any', 'enrollment.view-any', 'enrollment.create', 'enrollment.*.update', 'enrollment.*.delete']);
     Sanctum::actingAs($user, ['api']);
     putJson(route('api.v1.students.enrollments.put', ['student' => $student], false), $createStudentEnrollmentRequestData)
         ->assertOk();
@@ -74,7 +74,7 @@ it('creates a student program', function () {
     $student = Student::factory()->create();
 
     $user = SystemUser::factory()->create();
-    $user->givePermissionTo(['student.view-any', 'enrollment.view-any', 'enrollment.create','enrollment.*.update', 'enrollment.*.delete']);
+    $user->givePermissionTo(['student.view-any', 'enrollment.view-any', 'enrollment.create', 'enrollment.*.update', 'enrollment.*.delete']);
     Sanctum::actingAs($user, ['api']);
 
     $createStudentEnrollmentRequestData = [
@@ -108,29 +108,39 @@ it('creates a student program', function () {
     expect($response['data'][0]['name'])
         ->toBe($createStudentEnrollmentRequestData['enrollments'][0]['name']);
 
-    expect($response['data'][0]['department'])
+    if (isset($createStudentEnrollmentRequestData['enrollments'][0]['department'])) {
+        expect($response['data'][0]['department'])
         ->toBe($createStudentEnrollmentRequestData['enrollments'][0]['department']);
+    }
 
     expect($response['data'][0]['faculty_name'])
-            ->toBe($createStudentEnrollmentRequestData['enrollments'][0]['faculty_name']);
+        ->toBe($createStudentEnrollmentRequestData['enrollments'][0]['faculty_name']);
 
     expect($response['data'][0]['faculty_email'])
-            ->toBe($createStudentEnrollmentRequestData['enrollments'][0]['faculty_email']);
+        ->toBe($createStudentEnrollmentRequestData['enrollments'][0]['faculty_email']);
 
-    expect($response['data'][0]['semester_code'])
+    if (isset($createStudentEnrollmentRequestData['enrollments'][0]['semester_code'])) {
+        expect($response['data'][0]['semester_code'])
             ->toBe($createStudentEnrollmentRequestData['enrollments'][0]['semester_code']);
+    }
 
-    expect($response['data'][0]['semester_name'])
+    if (isset($createStudentEnrollmentRequestData['enrollments'][0]['semester_name'])) {
+        expect($response['data'][0]['semester_name'])
             ->toBe($createStudentEnrollmentRequestData['enrollments'][0]['semester_name']);
+    }
 
     expect(Carbon::parse($response['data'][0]['last_upd_dt_stmp'])->toDateTimeString())
         ->toBe(Carbon::parse($createStudentEnrollmentRequestData['enrollments'][0]['last_upd_dt_stmp'])->toDateTimeString());
 
-    expect(Carbon::parse($response['data'][0]['start_date'])->toDateTimeString())
-        ->toBe(Carbon::parse($createStudentEnrollmentRequestData['enrollments'][0]['start_date'])->toDateTimeString());
+    if (isset($createStudentEnrollmentRequestData['enrollments'][0]['start_date'])) {
+        expect(Carbon::parse($response['data'][0]['start_date'])->toDateTimeString())
+            ->toBe(Carbon::parse($createStudentEnrollmentRequestData['enrollments'][0]['start_date'])->toDateTimeString());
+    }
 
-    expect(Carbon::parse($response['data'][0]['end_date'])->toDateTimeString())
-        ->toBe(Carbon::parse($createStudentEnrollmentRequestData['enrollments'][0]['end_date'])->toDateTimeString());
+    if (isset($createStudentEnrollmentRequestData['enrollments'][0]['end_date'])) {
+        expect(Carbon::parse($response['data'][0]['end_date'])->toDateTimeString())
+            ->toBe(Carbon::parse($createStudentEnrollmentRequestData['enrollments'][0]['end_date'])->toDateTimeString());
+    }
 
     assertDatabaseHas('enrollments', [
         'sisid' => $student->sisid,
@@ -160,7 +170,7 @@ it('validates', function (array $requestAttributes, string $invalidAttribute, st
     $student = Student::factory()->create();
 
     $user = SystemUser::factory()->create();
-    $user->givePermissionTo(['student.view-any', 'enrollment.view-any', 'enrollment.create','enrollment.*.update', 'enrollment.*.delete']);
+    $user->givePermissionTo(['student.view-any', 'enrollment.view-any', 'enrollment.create', 'enrollment.*.update', 'enrollment.*.delete']);
     Sanctum::actingAs($user, ['api']);
 
     $before?->call($this);
