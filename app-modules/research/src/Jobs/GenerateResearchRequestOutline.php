@@ -54,7 +54,7 @@ class GenerateResearchRequestOutline implements ShouldQueue
 
     public int $timeout = 600;
 
-    public int $tries = 3;
+    public int $tries = 12;
 
     public function __construct(
         protected ResearchRequest $researchRequest,
@@ -82,9 +82,20 @@ class GenerateResearchRequestOutline implements ShouldQueue
             'nextRequestOptions' => $nextRequestOptions,
         ] = $structuredResponse;
 
+        foreach ($outline as $section) {
+            if ((! is_array($section)) || blank($section['heading'] ?? null)) {
+                $this->fail('A research request outline was generated that was missing a heading: [' . json_encode($outline) . '].');
+
+                return;
+            }
+        }
+
+        $this->researchRequest->outline = $outline;
+        $this->researchRequest->remaining_outline = $outline;
+        $this->researchRequest->save();
+
         $this->batch()->add(app(GenerateResearchRequestSection::class, [
             'researchRequest' => $this->researchRequest,
-            'remainingSections' => $outline,
             'requestOptions' => $nextRequestOptions,
         ]));
     }

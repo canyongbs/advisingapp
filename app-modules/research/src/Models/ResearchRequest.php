@@ -61,15 +61,25 @@ class ResearchRequest extends BaseModel implements HasMedia
         'topic',
         'results',
         'user_id',
+        'started_at',
         'finished_at',
         'links',
         'research_model',
+        'search_queries',
+        'outline',
+        'remaining_outline',
+        'sources',
     ];
 
     protected $casts = [
+        'started_at' => 'immutable_datetime',
         'finished_at' => 'immutable_datetime',
         'links' => 'array',
         'research_model' => AiModel::class,
+        'search_queries' => 'array',
+        'outline' => 'array',
+        'remaining_outline' => 'array',
+        'sources' => 'array',
     ];
 
     /**
@@ -98,15 +108,15 @@ class ResearchRequest extends BaseModel implements HasMedia
 
     public function hasStarted(): bool
     {
+        if ($this->started_at) {
+            return true;
+        }
+
         if ($this->finished_at) {
             return true;
         }
 
-        if (filled($this->results)) {
-            return true;
-        }
-
-        return filled($this->questions->get(3)?->response);
+        return filled($this->results);
     }
 
     public function registerMediaCollections(): void

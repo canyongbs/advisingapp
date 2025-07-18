@@ -43,6 +43,11 @@ return new class () extends Migration {
     {
         Schema::table('research_requests', function (Blueprint $table) {
             $table->string('research_model')->nullable();
+            $table->dateTime('started_at')->nullable();
+            $table->jsonb('search_queries')->nullable();
+            $table->jsonb('outline')->nullable();
+            $table->jsonb('remaining_outline')->nullable();
+            $table->jsonb('sources')->nullable();
         });
     }
 
@@ -50,6 +55,11 @@ return new class () extends Migration {
     {
         Schema::table('research_requests', function (Blueprint $table) {
             $table->dropColumn('research_model');
+            $table->dropColumn('started_at');
+            $table->dropColumn('search_queries');
+            $table->dropColumn('outline');
+            $table->dropColumn('remaining_outline');
+            $table->dropColumn('sources');
         });
     }
 };

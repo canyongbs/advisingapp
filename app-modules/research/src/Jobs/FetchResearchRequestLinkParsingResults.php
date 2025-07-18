@@ -63,6 +63,9 @@ class FetchResearchRequestLinkParsingResults implements ShouldQueue
     public function handle(): void
     {
         $response = Http::withToken(app(AiIntegrationsSettings::class)->jina_deepsearch_v1_api_key)
+            ->withHeaders([
+                'X-Retain-Images' => 'none',
+            ])
             ->get("https://r.jina.ai/{$this->link}");
 
         if (! $response->successful()) {

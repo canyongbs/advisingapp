@@ -100,12 +100,7 @@ class NewResearchRequest extends Page
     public function mount(): void
     {
         if ($this->researchRequest) {
-            $this->form->fill([
-                'topic' => $this->researchRequest->topic,
-                'question_1' => $this->researchRequest->questions->get(0)?->response,
-                'question_2' => $this->researchRequest->questions->get(1)?->response,
-                'links' => $this->researchRequest->links,
-            ]);
+            $this->fillFormFromResearchRequest();
         } else {
             $this->form->fill();
         }
@@ -240,6 +235,7 @@ class NewResearchRequest extends Page
                                 }
 
                                 $this->form->saveRelationships();
+                                $this->fillFormFromResearchRequest();
                             })
                             ->disabled(fn (): bool => $this->researchRequest?->hasStarted() ?? false),
                         Step::make('Links')
@@ -260,6 +256,8 @@ class NewResearchRequest extends Page
                                 $this->researchRequest->update([
                                     'links' => array_filter($this->form->getState()['links'] ?? [], filled(...)),
                                 ]);
+
+                                $this->form->saveRelationships();
 
                                 app(StartResearch::class)->execute($this->researchRequest);
                             })
@@ -306,5 +304,15 @@ class NewResearchRequest extends Page
                 ->color('gray')
                 ->action(fn () => redirect(static::getUrl())),
         ];
+    }
+
+    protected function fillFormFromResearchRequest(): void
+    {
+        $this->form->fill([
+            'topic' => $this->researchRequest->topic,
+            'question_1' => $this->researchRequest->questions->get(0)?->response,
+            'question_2' => $this->researchRequest->questions->get(1)?->response,
+            'links' => $this->researchRequest->links,
+        ]);
     }
 }
