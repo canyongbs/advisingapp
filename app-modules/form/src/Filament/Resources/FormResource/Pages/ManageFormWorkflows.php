@@ -47,8 +47,6 @@ use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ManageFormWorkflows extends ManageRelatedRecords
 {
@@ -104,7 +102,7 @@ class ManageFormWorkflows extends ManageRelatedRecords
                     'name' => 'Form Workflow',
                     'is_enabled' => false,
                 ]);
-                
+
                 redirect(WorkflowResource::getUrl('edit', [$workflow]));
             });
     }
