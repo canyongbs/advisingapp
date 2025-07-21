@@ -41,7 +41,7 @@
             class="prose max-w-none dark:prose-invert"
             x-data="results({
                 researchRequestId: @js($researchRequest->getKey()),
-                results: @js($researchRequest->results),
+                results: @js($researchRequest->results ?? ''),
                 outline: @js($researchRequest->outline),
                 sources: @js($researchRequest->sources),
                 files: @js(
@@ -97,6 +97,13 @@
                 ></h1>
 
                 <div x-html="resultsHtml"></div>
+
+                <p
+                    class="text-gray-600 dark:text-gray-400"
+                    x-show="outline && (! isFinished)"
+                >
+                    Writing report...
+                </p>
 
                 <h2 x-show="isFinished && (sourcesHtml.length > 0)">
                     Sources:

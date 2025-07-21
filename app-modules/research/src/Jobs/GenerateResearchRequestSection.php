@@ -98,21 +98,18 @@ class GenerateResearchRequestSection implements ShouldQueue
             $this->researchRequest->results .= PHP_EOL;
         }
 
-        broadcast(app(ResearchRequestResultsGenerated::class, [
-            'researchRequest' => $this->researchRequest,
-            'resultsChunk' => PHP_EOL . PHP_EOL,
-        ]));
-
         $hasContent = false;
 
-        foreach (app(ChunkIterator::class, ['iterator' => $responseGenerator, 'chunkSize' => 20])->get() as $responseContent) {
+        foreach (app(ChunkIterator::class, ['iterator' => $responseGenerator, 'chunkSize' => 50])->get() as $responseContent) {
             $responseContent = implode($responseContent);
 
             $this->researchRequest->results .= $responseContent;
             $this->researchRequest->save();
 
-            if (filled($responseContent)) {
+            if ((! $hasContent) && filled($responseContent)) {
                 $hasContent = true;
+
+                $responseContent = PHP_EOL . PHP_EOL . $responseContent;
             }
 
             broadcast(app(ResearchRequestResultsGenerated::class, [

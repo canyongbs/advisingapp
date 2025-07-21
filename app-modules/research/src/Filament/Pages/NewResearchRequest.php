@@ -122,7 +122,7 @@ class NewResearchRequest extends Page
         return $form
             ->schema([
                 Wizard::make()
-                    ->startOnStep($this->researchRequest?->hasStarted() ? 6 : ($this->researchRequest?->questions?->count() ?? 0) + 1)
+                    ->startOnStep($this->researchRequest?->hasStarted() ? 6 : ($this->researchRequest?->questions?->count() ?? 0))
                     ->steps([
                         Step::make('Topic')
                             ->schema([

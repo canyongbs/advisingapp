@@ -175,7 +175,6 @@ class GenerateResearchRequestOutline implements ShouldQueue
             - Each main H1 heading should have one content paragraph below it. 
             - Each H2 subheading should be made up of 5 full complete paragraphs.
             - All the content should be written as a scholar would at the PhD level.
-            - I will ask you to produce the content for each title one at a time until all are requested.
             EOD;
     }
 

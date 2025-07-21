@@ -73,7 +73,7 @@ class FetchResearchRequestSearchQueryParsingResults implements ShouldQueue
                 ->get('https://s.jina.ai', ['q' => $this->searchQuery]);
 
             if (! $response->successful()) {
-                $this->fail('Failed to fetch search query results: ' . $response->body());
+                $this->release();
 
                 return;
             }

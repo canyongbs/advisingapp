@@ -70,7 +70,7 @@ class FetchResearchRequestLinkParsingResults implements ShouldQueue
             ->get("https://r.jina.ai/{$this->link}");
 
         if (! $response->successful()) {
-            $this->fail('Failed to fetch link results: ' . $response->body());
+            $this->release();
 
             return;
         }

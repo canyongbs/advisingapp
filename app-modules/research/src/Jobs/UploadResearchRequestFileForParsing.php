@@ -66,7 +66,7 @@ class UploadResearchRequestFileForParsing implements ShouldQueue
         );
 
         if (blank($fileId)) {
-            $this->fail();
+            $this->release();
 
             return;
         }

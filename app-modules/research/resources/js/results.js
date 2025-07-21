@@ -33,7 +33,6 @@
 */
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';
-import markedFootnote from 'marked-footnote';
 
 document.addEventListener('alpine:init', () => {
     Alpine.data(
@@ -55,6 +54,8 @@ document.addEventListener('alpine:init', () => {
             reasoningPoints: [],
 
             results,
+
+            pendingResults: '',
 
             resultsHtml: '',
 
@@ -104,9 +105,15 @@ document.addEventListener('alpine:init', () => {
                         this.renderReasoningPoints();
                     })
                     .listen('.research-request.results-generated', (event) => {
-                        this.results = this.results + event.results_chunk;
+                        if (
+                            event.results_chunk === null ||
+                            event.results_chunk === undefined ||
+                            event.results_chunk === ''
+                        ) {
+                            return;
+                        }
 
-                        this.renderResults();
+                        this.pendingResults += event.results_chunk;
                     })
                     .listen('.research-request.search-queries-generated', (event) => {
                         this.searchQueries = event.search_queries;
@@ -121,13 +128,51 @@ document.addEventListener('alpine:init', () => {
                         this.renderSourcesHtml();
                     });
 
+                const interval = setInterval(() => {
+                    if (this.isFinished) {
+                        clearInterval(interval);
+
+                        this.results += this.pendingResults;
+                        this.pendingResults = '';
+                        this.renderResults();
+
+                        return;
+                    }
+
+                    if (/^\s*$/.test(this.pendingResults)) {
+                        return;
+                    }
+
+                    const maxChunks = 3;
+                    let chunks = [];
+                    let pendingResults = this.pendingResults;
+
+                    const regex = /^(\s*\S+)/;
+
+                    while (chunks.length < maxChunks) {
+                        const match = pendingResults.match(regex);
+                        if (!match) break;
+
+                        const chunk = match[0];
+                        chunks.push(chunk);
+                        pendingResults = pendingResults.slice(chunk.length);
+                    }
+
+                    if (chunks.length > 0) {
+                        const combined = chunks.join('');
+                        this.results += combined;
+                        this.pendingResults = this.pendingResults.slice(combined.length);
+                        this.renderResults();
+                    }
+                }, 100);
+
                 this.renderReasoningPoints();
                 this.renderResults();
                 this.renderSourcesHtml();
             },
 
             renderReasoningPoints: function () {
-                let reasoningPoints = [];
+                let reasoningPoints = ['Started researching the topic...'];
 
                 this.files.forEach((file) => {
                     reasoningPoints.push(`Started reading file: [${file.name}](${file.temporary_url})`);
@@ -155,6 +200,17 @@ document.addEventListener('alpine:init', () => {
                     ...parsingReasoningPoints.sort((a, b) => new Date(a[1]) - new Date(b[1])).map((point) => point[0]),
                 ];
 
+                if (
+                    (this.files.length && this.files.length === this.parsedFiles.length) ||
+                    (this.links?.length && this.links?.length === this.parsedLinks.length)
+                ) {
+                    reasoningPoints.push('Uploading knowledge and checking for missing information to search for...');
+                }
+
+                if (!this.files.length || !this.links?.length) {
+                    reasoningPoints.push('Checking for missing information to search for...');
+                }
+
                 if (this.searchQueries) {
                     this.searchQueries.forEach((searchQuery) => {
                         reasoningPoints.push(
@@ -171,8 +227,16 @@ document.addEventListener('alpine:init', () => {
                         );
                     });
 
+                if (this.searchQueries && this.searchQueries?.length === this.parsedSearchResults.length) {
+                    reasoningPoints.push('Generating a research outline based on all the information gathered...');
+                }
+
                 if (this.outline) {
-                    reasoningPoints.push('Generated a research outline, preparing to write the report...');
+                    reasoningPoints.push('Preparing to write the report...');
+                }
+
+                if (this.isFinished) {
+                    reasoningPoints.push('Finished writing the report.');
                 }
 
                 this.reasoningPoints = reasoningPoints.map((point) =>
@@ -181,7 +245,13 @@ document.addEventListener('alpine:init', () => {
             },
 
             renderResults: function () {
-                const unsafeHtml = marked.use(markedFootnote()).parse(this.results ?? '');
+                if (this.results === null || this.results === undefined || this.results?.trim() === '') {
+                    this.resultsHtml = '';
+
+                    return;
+                }
+
+                const unsafeHtml = marked.parse(this.results);
 
                 this.resultsHtml = DOMPurify.sanitize(unsafeHtml)
                     .replace('<a', '<a target="_blank" rel="noreferrer" ')
