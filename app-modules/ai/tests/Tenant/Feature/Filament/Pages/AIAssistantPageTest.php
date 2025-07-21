@@ -185,54 +185,6 @@ it('will allow a user to access the AI Assistant interface if they agree to the 
     expect($user->hasConsentedTo($consentAgreement))->toBeTrue();
 });
 
-it('will automatically set the current thread when it does not have a folder', function () use ($setUp) {
-    ['thread' => $thread] = $setUp();
-
-    Livewire::test(InstitutionalAdvisor::class)
-        ->call('loadFirstThread')
-        ->assertSet('thread.id', $thread->id);
-});
-
-it('will automatically set the current thread to the most recently updated one without a folder', function () use ($setUp) {
-    ['user' => $user, 'assistant' => $assistant] = $setUp();
-
-    $newerThread = AiThread::factory()
-        ->for($assistant, 'assistant')
-        ->for($user)
-        ->has(AiMessage::factory()->count(5), 'messages')
-        ->create([
-            'updated_at' => now()->addMinute(),
-        ]);
-
-    Livewire::test(InstitutionalAdvisor::class)
-        ->call('loadFirstThread')
-        ->assertSet('thread.id', $newerThread->id);
-});
-
-it('will not automatically set the current thread to one with a folder', function () use ($setUp) {
-    ['user' => $user, 'thread' => $thread] = $setUp();
-
-    $thread->folder()->associate(AiThreadFolder::factory()->for($user)->create([
-        'application' => AiAssistantApplication::PersonalAssistant,
-    ]));
-    $thread->save();
-
-    Livewire::test(InstitutionalAdvisor::class)
-        ->call('loadFirstThread')
-        ->assertNotSet('thread.id', $thread->id);
-});
-
-it('will not automatically set the current thread to one belonging to another user', function () use ($setUp) {
-    ['thread' => $thread] = $setUp();
-
-    $thread->user()->associate(User::factory()->create());
-    $thread->save();
-
-    Livewire::test(InstitutionalAdvisor::class)
-        ->call('loadFirstThread')
-        ->assertNotSet('thread.id', $thread->id);
-});
-
 it('can save threads automatically', function () use ($setUp) {
     ['user' => $user, 'assistant' => $assistant] = $setUp();
 
@@ -268,8 +220,8 @@ it('can select a thread', function () use ($setUp) {
         ->create();
 
     Livewire::test(InstitutionalAdvisor::class)
-        ->call('loadFirstThread')
-        ->assertSet('thread.id', $thread->id)
+        ->call('createThread')
+        ->assertNotSet('thread.id', $thread->id)
         ->call('selectThread', $newThread->toArray())
         ->assertSet('thread.id', $newThread->id);
 });
@@ -287,8 +239,8 @@ it('can not select a thread belonging to a different user', function () use ($se
         ->create();
 
     Livewire::test(InstitutionalAdvisor::class)
-        ->call('loadFirstThread')
-        ->assertSet('thread.id', $thread->id)
+        ->call('createThread')
+        ->assertNotSet('thread.id', $thread->id)
         ->call('selectThread', $newThread->toArray())
         ->assertNotFound();
 });
@@ -297,8 +249,6 @@ it('can start a new thread', function () use ($setUp) {
     ['thread' => $thread] = $setUp();
 
     Livewire::test(InstitutionalAdvisor::class)
-        ->call('loadFirstThread')
-        ->assertSet('thread.id', $thread->id)
         ->call('createThread')
         ->assertNotSet('thread.id', $thread->id);
 });

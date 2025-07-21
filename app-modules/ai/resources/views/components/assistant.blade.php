@@ -836,7 +836,7 @@
     @elseif (!$this->thread)
         <div
             class="flex h-full w-full items-center justify-center"
-            wire:init="loadFirstThread"
+            wire:init="createThread"
         >
             <x-filament::loading-indicator class="h-12 w-12" />
         </div>
