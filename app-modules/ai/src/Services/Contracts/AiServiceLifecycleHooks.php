@@ -43,7 +43,5 @@ interface AiServiceLifecycleHooks
 {
     public function afterThreadSelected(AiThread $thread): void;
 
-    public function afterLoadFirstThread(AiThread $thread): void;
-
     public function beforeMessageFileForceDeleted(AiMessageFile $file): void;
 }
