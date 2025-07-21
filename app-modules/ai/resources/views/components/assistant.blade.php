@@ -538,6 +538,13 @@
 
                 <div
                     class="flex flex-1 flex-col-reverse overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800">
+                    {{-- <div
+                    class="flex flex-col overflow-y-auto rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800"> --}}
+
+                    @if (count($this->thread->messages) == 0 && $this->thread->assistant->name === 'Institutional Advisor')
+                        @livewire('prompttabs', key('prompt-tabs-' . $this->thread->assistant->id))
+                    @endif
+
                     <div
                         class="bg-danger-100 px-4 py-2 dark:bg-danger-900"
                         x-cloak
