@@ -71,7 +71,13 @@ class EditWorkflow extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            DeleteAction::make(),
+            DeleteAction::make()
+              ->successRedirectUrl(function (Workflow $record) {
+                  return match($record->workflowTrigger->related_type) {
+                    Form::class => FormResource::getUrl('edit', [$record->workflowTrigger->related_id]),
+                    default => route('filament.admin.pages.dashboard'),
+                  };
+              }),
         ];
     }
 }
