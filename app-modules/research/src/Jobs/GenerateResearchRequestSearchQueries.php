@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Research\Jobs;
 
+use AdvisingApp\Ai\Exceptions\MessageResponseException;
 use AdvisingApp\Ai\Settings\AiResearchAssistantSettings;
 use AdvisingApp\Research\Events\ResearchRequestSearchQueriesGenerated;
 use AdvisingApp\Research\Models\ResearchRequest;
@@ -65,18 +66,29 @@ class GenerateResearchRequestSearchQueries implements ShouldQueue
     {
         $settings = app(AiResearchAssistantSettings::class);
 
-        throw_if(
-            ! $settings->research_model,
-            new Exception('Research model is not set in the settings.')
-        );
+        if (! $settings->research_model) {
+            $this->fail(new Exception('Research model is not set in the settings.'));
 
-        $searchQueries = $settings->research_model
-            ->getService()
-            ->getResearchRequestRequestSearchQueries(
-                researchRequest: $this->researchRequest,
-                prompt: $this->getPrompt(),
-                content: $this->getContent(),
-            );
+            return;
+        }
+
+        try {
+            $searchQueries = $settings->research_model
+                ->getService()
+                ->getResearchRequestRequestSearchQueries(
+                    researchRequest: $this->researchRequest,
+                    prompt: $this->getPrompt(),
+                    content: $this->getContent(),
+                );
+        } catch (MessageResponseException $exception) {
+            if ($this->attempts() === 1) {
+                report($exception); // Only report the exception on the first attempt to reduce noise in logs.
+            }
+
+            $this->release(delay: 10); // Allow time for the service to recover.
+
+            return;
+        }
 
         if (blank($searchQueries)) {
             $this->release(delay: 10); // Allow time for the service to recover.
