@@ -34,21 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Tests\RequestFactories;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Ai\Enums\AiModel;
-use Illuminate\Http\UploadedFile;
-use Worksome\RequestFactories\RequestFactory;
-
-class QnaAdvisorRequestFactory extends RequestFactory
-{
-    public function definition(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [
-            'avatar' => UploadedFile::fake()->image(fake()->word . '.png'),
-            'name' => $this->faker->word(),
-            'description' => $this->faker->paragraph(),
-            'model' => AiModel::Test,
-        ];
+        Schema::table('qna_advisors', function (Blueprint $table) {
+            $table->dropColumn(['instructions', 'knowledge']);
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('qna_advisors', function (Blueprint $table) {
+            $table->longText('instructions')->nullable();
+            $table->longText('knowledge')->nullable();
+        });
+    }
+};

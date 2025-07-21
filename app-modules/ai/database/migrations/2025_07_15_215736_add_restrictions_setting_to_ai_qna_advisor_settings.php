@@ -34,21 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Tests\RequestFactories;
+use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
+use Spatie\LaravelSettings\Migrations\SettingsBlueprint;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use AdvisingApp\Ai\Enums\AiModel;
-use Illuminate\Http\UploadedFile;
-use Worksome\RequestFactories\RequestFactory;
-
-class QnaAdvisorRequestFactory extends RequestFactory
-{
-    public function definition(): array
+return new class () extends SettingsMigration {
+    public function up(): void
     {
-        return [
-            'avatar' => UploadedFile::fake()->image(fake()->word . '.png'),
-            'name' => $this->faker->word(),
-            'description' => $this->faker->paragraph(),
-            'model' => AiModel::Test,
-        ];
+        $this->migrator->inGroup('ai-qna-advisor', function (SettingsBlueprint $blueprint) {
+            try {
+                $blueprint->add('restrictions', null);
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
+        });
     }
-}
+
+    public function down(): void
+    {
+        $this->migrator->inGroup('ai-qna-advisor', function (SettingsBlueprint $blueprint) {
+            $blueprint->delete('restrictions');
+        });
+    }
+};

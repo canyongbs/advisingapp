@@ -36,15 +36,19 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource\Pages;
 
+use AdvisingApp\Ai\Actions\GetQnaAdvisorInstructions;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use Filament\Actions\Action;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
+use Filament\Infolists\Components\Tabs;
+use Filament\Infolists\Components\Tabs\Tab;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
 class ViewQnaAdvisor extends ViewRecord
@@ -65,6 +69,31 @@ class ViewQnaAdvisor extends ViewRecord
                     ->circular(),
                 TextEntry::make('name'),
                 TextEntry::make('description'),
+                Tabs::make('Generated Instructions')
+                    ->tabs([
+                        Tab::make('Generated Instructions Markdown')
+                            ->icon('heroicon-o-document-text')
+                            ->schema([
+                                TextEntry::make('generated_instructions')
+                                    ->hiddenLabel()
+                                    ->columnSpanFull()
+                                    ->html()
+                                    ->extraAttributes(['class' => 'overflow-auto'])
+                                    ->getStateUsing(fn (QnaAdvisor $record): string => new HtmlString(
+                                        '<pre>' . app(GetQnaAdvisorInstructions::class)->execute($record) . '</pre>'
+                                    )),
+                            ]),
+                        Tab::make('Rendered')
+                            ->hiddenLabel()
+                            ->icon('heroicon-o-eye')
+                            ->schema([
+                                TextEntry::make('generated_instructions_preview')
+                                    ->hiddenLabel()
+                                    ->columnSpanFull()
+                                    ->markdown()
+                                    ->getStateUsing(fn (QnaAdvisor $record): string => app(GetQnaAdvisorInstructions::class)->execute($record)),
+                            ]),
+                    ])->visible(fn () => auth()->guard('web')->user()?->isSuperAdmin()),
             ]),
         ]);
     }

@@ -34,21 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Tests\RequestFactories;
+namespace AdvisingApp\Ai\Listeners;
 
-use AdvisingApp\Ai\Enums\AiModel;
-use Illuminate\Http\UploadedFile;
-use Worksome\RequestFactories\RequestFactory;
+use AdvisingApp\Ai\Settings\AiQnaAdvisorSettings;
+use Illuminate\Support\Facades\Cache;
+use Spatie\LaravelSettings\Events\SettingsSaved;
 
-class QnaAdvisorRequestFactory extends RequestFactory
+class ClearQnaAdvisorInstructionsCacheOnGlobalSettingsUpdate
 {
-    public function definition(): array
+    public function handle(SettingsSaved $event): void
     {
-        return [
-            'avatar' => UploadedFile::fake()->image(fake()->word . '.png'),
-            'name' => $this->faker->word(),
-            'description' => $this->faker->paragraph(),
-            'model' => AiModel::Test,
-        ];
+        if ($event->settings instanceof AiQnaAdvisorSettings) {
+            Cache::tags(['qna_advisor_instructions'])->flush();
+        }
     }
 }

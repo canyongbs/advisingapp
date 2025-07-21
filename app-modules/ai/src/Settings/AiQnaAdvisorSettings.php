@@ -49,6 +49,8 @@ class AiQnaAdvisorSettings extends Settings
 
     public ?string $background_information = null;
 
+    public ?string $restrictions = null;
+
     public static function group(): string
     {
         return 'ai-qna-advisor';
