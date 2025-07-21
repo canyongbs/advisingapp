@@ -37,6 +37,9 @@
 namespace AdvisingApp\Form\Filament\Resources\FormResource\Pages;
 
 use AdvisingApp\Form\Filament\Resources\FormResource;
+use AdvisingApp\Workflow\Models\Workflow;
+use AdvisingApp\Workflow\Models\WorkflowTrigger;
+use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
@@ -84,7 +87,7 @@ class ManageFormWorkflows extends ManageRelatedRecords
             ->filters([
             ])
             ->headerActions([
-                CreateAction::make(),
+                //$this->createWorkflowAction(),
             ])
             ->actions([
                 EditAction::make(),
@@ -94,5 +97,37 @@ class ManageFormWorkflows extends ManageRelatedRecords
             ->modifyQueryUsing(fn (Builder $query) => $query->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]));
+    }
+
+    /**
+     * @return array<Action>
+     */
+    public function getHeaderActions(): array
+    {
+      return [
+        $this->createWorkflowAction(),
+      ];
+    }
+
+    public function createWorkflowAction(): Action
+    {
+      return Action::make('create')
+        ->label('Create New Workflow')
+        ->action(function () {
+          $workflowTrigger = WorkflowTrigger::create([
+            'type' => 'Time Based',
+            'related_type' => Form::class,
+            'related_id' => $this->getOwnerRecord()->getKey(),
+            'created_by' => auth()->user()->getKey(),
+          ]);
+
+          $workflow = Workflow::create([
+            'workflow_trigger_id' => $workflowTrigger->getKey(),
+            'name' => 'Form Workflow',
+            'is_enabled' => false,
+          ]);
+          //redirect to edit page
+
+        });
     }
 }
