@@ -44,7 +44,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\ManageRelatedRecords;
-use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -104,30 +103,29 @@ class ManageFormWorkflows extends ManageRelatedRecords
      */
     public function getHeaderActions(): array
     {
-      return [
-        $this->createWorkflowAction(),
-      ];
+        return [
+            $this->createWorkflowAction(),
+        ];
     }
 
     public function createWorkflowAction(): Action
     {
-      return Action::make('create')
-        ->label('Create New Workflow')
-        ->action(function () {
-          $workflowTrigger = WorkflowTrigger::create([
-            'type' => 'Time Based',
-            'related_type' => Form::class,
-            'related_id' => $this->getOwnerRecord()->getKey(),
-            'created_by' => auth()->user()->getKey(),
-          ]);
+        return Action::make('create')
+            ->label('Create New Workflow')
+            ->action(function () {
+                $workflowTrigger = WorkflowTrigger::create([
+                    'type' => 'Time Based',
+                    'related_type' => Form::class,
+                    'related_id' => $this->getOwnerRecord()->getKey(),
+                    'created_by' => auth()->user()->getKey(),
+                ]);
 
-          $workflow = Workflow::create([
-            'workflow_trigger_id' => $workflowTrigger->getKey(),
-            'name' => 'Form Workflow',
-            'is_enabled' => false,
-          ]);
-          //redirect to edit page
-
-        });
+                $workflow = Workflow::create([
+                    'workflow_trigger_id' => $workflowTrigger->getKey(),
+                    'name' => 'Form Workflow',
+                    'is_enabled' => false,
+                ]);
+                //redirect to edit page
+            });
     }
 }
