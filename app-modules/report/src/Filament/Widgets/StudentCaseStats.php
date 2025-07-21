@@ -113,13 +113,13 @@ class StudentCaseStats extends StatsOverviewReportWidget
 
         $closedCases = $shouldBypassCache
             ? CaseModel::query()
-           ->whereHasMorph('respondent', Student::class)
-           ->when(
-               $startDate && $endDate,
-               fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
-           )
-           ->whereRelation('status', 'classification', '==', SystemCaseClassification::Closed)
-           ->count()
+                ->whereHasMorph('respondent', Student::class)
+                ->when(
+                    $startDate && $endDate,
+                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                )
+                ->whereRelation('status', 'classification', '==', SystemCaseClassification::Closed)
+                ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'total-student-closed-cases-count',
                 now()->addHours(24),
