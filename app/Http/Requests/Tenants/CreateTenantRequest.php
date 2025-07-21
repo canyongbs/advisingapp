@@ -48,7 +48,6 @@ class CreateTenantRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
             'domain' => ['required', 'string', 'max:255', Rule::unique(Tenant::class)],
             'database' => ['required', 'string', 'max:255'],
             'user.name' => ['required', 'string', 'max:255'],

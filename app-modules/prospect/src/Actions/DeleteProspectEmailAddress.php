@@ -34,14 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+namespace AdvisingApp\Prospect\Actions;
 
-use App\Support\AbstractFeatureFlag;
+use AdvisingApp\Prospect\Models\ProspectEmailAddress;
+use Illuminate\Support\Facades\DB;
 
-class CaseTypeEmailTemplateFeature extends AbstractFeatureFlag
+class DeleteProspectEmailAddress
 {
-    public function resolve(mixed $scope): mixed
+    public function execute(ProspectEmailAddress $prospectEmailAddress): void
     {
-        return false;
+        DB::transaction(function () use ($prospectEmailAddress) {
+            if ($prospectEmailAddress->prospect->primaryEmailAddress()->is($prospectEmailAddress)) {
+                $prospectEmailAddress->prospect->primaryEmailAddress()->associate(
+                    $prospectEmailAddress->prospect->emailAddresses()->whereKeyNot($prospectEmailAddress)->first(),
+                );
+                $prospectEmailAddress->prospect->save();
+            }
+
+            $prospectEmailAddress->delete();
+        });
     }
 }

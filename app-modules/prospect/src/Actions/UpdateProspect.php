@@ -34,17 +34,27 @@
 </COPYRIGHT>
 */
 
-use App\Features\CaseTypeEmailTemplateFeature;
-use Illuminate\Database\Migrations\Migration;
+namespace AdvisingApp\Prospect\Actions;
 
-return new class () extends Migration {
-    public function up(): void
-    {
-        CaseTypeEmailTemplateFeature::activate();
-    }
+use AdvisingApp\Prospect\DataTransferObjects\UpdateProspectData;
+use AdvisingApp\Prospect\Models\Prospect;
 
-    public function down(): void
+class UpdateProspect
+{
+    public function execute(Prospect $prospect, UpdateProspectData $data): Prospect
     {
-        CaseTypeEmailTemplateFeature::deactivate();
+        $prospect->fill($data->toArray());
+
+        if ($data->status) {
+            $prospect->status()->associate($data->status);
+        }
+
+        if ($data->source) {
+            $prospect->source()->associate($data->source);
+        }
+
+        $prospect->save();
+
+        return $prospect;
     }
-};
+}
