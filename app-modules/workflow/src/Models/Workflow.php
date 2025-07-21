@@ -54,9 +54,9 @@ class Workflow extends BaseModel implements Auditable
     use HasUuids;
 
     protected $fillable = [
-      'workflow_trigger_id',
-      'name',
-      'is_enabled',
+        'workflow_trigger_id',
+        'name',
+        'is_enabled',
     ];
 
     protected $casts = [
