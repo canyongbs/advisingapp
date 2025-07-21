@@ -52,20 +52,20 @@ class EditWorkflow extends EditRecord
 
     public function getBreadcrumbs(): array
     {
-      $resource = static::getResource();
+        $resource = static::getResource();
 
-      $record = $this->getRecord();
+        $record = $this->getRecord();
 
-      assert($record instanceof Workflow);
+        assert($record instanceof Workflow);
 
-      return match ($record->workflowTrigger->related_type) {
-        Form::class => [
-          FormResource::getUrl() => FormResource::getBreadcrumb(),
-          FormResource::getUrl('edit', [$record->workflowTrigger->related_id]) => FormResource::getRecordTitle(Form::find($record->workflowTrigger->related_id)),
-          $resource::getUrl() => $resource::getBreadcrumb(),
-        ],
-        default => [$resource::getUrl() => $resource::getBreadcrumb()]
-      };
+        return match ($record->workflowTrigger->related_type) {
+            Form::class => [
+                FormResource::getUrl() => FormResource::getBreadcrumb(),
+                FormResource::getUrl('edit', [$record->workflowTrigger->related_id]) => FormResource::getRecordTitle(Form::find($record->workflowTrigger->related_id)),
+                $resource::getUrl() => $resource::getBreadcrumb(),
+            ],
+            default => [$resource::getUrl() => $resource::getBreadcrumb()]
+        };
     }
 
     protected function getHeaderActions(): array
