@@ -59,28 +59,46 @@ it('returns the correct instructions for a QnaAdvisor', function () {
 
     $categoryOne = QnaAdvisorCategory::factory()
         ->for($qnaAdvisor, 'qnaAdvisor')
-        ->create();
+        ->create([
+            'name' => 'Academic Policies',
+            'description' => 'Information about academic policies and procedures',
+        ]);
 
     $categoryTwo = QnaAdvisorCategory::factory()
         ->for($qnaAdvisor, 'qnaAdvisor')
-        ->create();
+        ->create([
+            'name' => 'Financial Aid',
+            'description' => 'Questions related to financial aid and scholarships',
+        ]);
 
     // Create two questions for each category
     $questionOne = QnaAdvisorQuestion::factory()
         ->for($categoryOne, 'category')
-        ->create();
+        ->create([
+            'question' => 'What is the minimum GPA requirement?',
+            'answer' => 'The minimum GPA requirement is 2.0 for undergraduate students.',
+        ]);
 
     $questionTwo = QnaAdvisorQuestion::factory()
         ->for($categoryOne, 'category')
-        ->create();
+        ->create([
+            'question' => 'How do I appeal a grade?',
+            'answer' => 'You can appeal a grade by submitting a formal appeal form to the registrar.',
+        ]);
 
     $questionThree = QnaAdvisorQuestion::factory()
         ->for($categoryTwo, 'category')
-        ->create();
+        ->create([
+            'question' => 'When is the FAFSA deadline?',
+            'answer' => 'The FAFSA deadline is typically March 1st for the following academic year.',
+        ]);
 
     $questionFour = QnaAdvisorQuestion::factory()
         ->for($categoryTwo, 'category')
-        ->create();
+        ->create([
+            'question' => 'What scholarships are available?',
+            'answer' => 'There are merit-based, need-based, and departmental scholarships available.',
+        ]);
 
     // Execute the action
     $action = new GetQnaAdvisorInstructions();
@@ -101,20 +119,20 @@ it('returns the correct instructions for a QnaAdvisor', function () {
 
     // Verify categories are included
     expect($result)->toContain('### Category');
-    expect($result)->toContain($categoryOne->name);
-    expect($result)->toContain($categoryOne->description);
-    expect($result)->toContain($categoryTwo->name);
-    expect($result)->toContain($categoryTwo->description);
+    expect($result)->toContain('Academic Policies');
+    expect($result)->toContain('Information about academic policies and procedures');
+    expect($result)->toContain('Financial Aid');
+    expect($result)->toContain('Questions related to financial aid and scholarships');
 
     // Verify questions are included with proper formatting
-    expect($result)->toContain('#### ' . $questionOne->question);
-    expect($result)->toContain($questionOne->answer);
-    expect($result)->toContain('#### ' . $questionTwo->question);
-    expect($result)->toContain($questionTwo->answer);
-    expect($result)->toContain('#### ' . $questionThree->question);
-    expect($result)->toContain($questionThree->answer);
-    expect($result)->toContain('#### ' . $questionFour->question);
-    expect($result)->toContain($questionFour->answer);
+    expect($result)->toContain('#### What is the minimum GPA requirement?');
+    expect($result)->toContain('The minimum GPA requirement is 2.0 for undergraduate students.');
+    expect($result)->toContain('#### How do I appeal a grade?');
+    expect($result)->toContain('You can appeal a grade by submitting a formal appeal form to the registrar.');
+    expect($result)->toContain('#### When is the FAFSA deadline?');
+    expect($result)->toContain('The FAFSA deadline is typically March 1st for the following academic year.');
+    expect($result)->toContain('#### What scholarships are available?');
+    expect($result)->toContain('There are merit-based, need-based, and departmental scholarships available.');
 
     // Verify the markdown structure is correct
     expect($result)->toMatch('/# Instructions\s+Test instructions content/');
@@ -136,30 +154,39 @@ it('does not contain details on a category that has no questions', function () {
 
     $categoryWithQuestions = QnaAdvisorCategory::factory()
         ->for($qnaAdvisor, 'qnaAdvisor')
-        ->create();
+        ->create([
+            'name' => 'Student Services',
+            'description' => 'Information about student support services',
+        ]);
 
     $categoryWithoutQuestions = QnaAdvisorCategory::factory()
         ->for($qnaAdvisor, 'qnaAdvisor')
-        ->create();
+        ->create([
+            'name' => 'Campus Recreation',
+            'description' => 'Details about recreational activities on campus',
+        ]);
 
     // Create questions only for the first category
     $question = QnaAdvisorQuestion::factory()
         ->for($categoryWithQuestions, 'category')
-        ->create();
+        ->create([
+            'question' => 'Where is the student counseling center located?',
+            'answer' => 'The student counseling center is located in the Student Union Building.',
+        ]);
 
     // Execute the action
     $action = new GetQnaAdvisorInstructions();
     $result = $action->execute($qnaAdvisor);
 
     // Verify the category with questions is included
-    expect($result)->toContain($categoryWithQuestions->name);
-    expect($result)->toContain($categoryWithQuestions->description);
-    expect($result)->toContain('#### ' . $question->question);
-    expect($result)->toContain($question->answer);
+    expect($result)->toContain('Student Services');
+    expect($result)->toContain('Information about student support services');
+    expect($result)->toContain('#### Where is the student counseling center located?');
+    expect($result)->toContain('The student counseling center is located in the Student Union Building.');
 
     // Verify the category without questions is NOT included
-    expect($result)->not->toContain($categoryWithoutQuestions->name);
-    expect($result)->not->toContain($categoryWithoutQuestions->description);
+    expect($result)->not->toContain('Campus Recreation');
+    expect($result)->not->toContain('Details about recreational activities on campus');
 
     // Verify the basic structure is still intact
     expect($result)->toContain('# Instructions');
@@ -180,11 +207,17 @@ it('handles empty settings gracefully', function () {
 
     $category = QnaAdvisorCategory::factory()
         ->for($qnaAdvisor, 'qnaAdvisor')
-        ->create();
+        ->create([
+            'name' => 'Library Resources',
+            'description' => 'Information about library services and resources',
+        ]);
 
     $question = QnaAdvisorQuestion::factory()
         ->for($category, 'category')
-        ->create();
+        ->create([
+            'question' => 'What are the library hours?',
+            'answer' => 'The library is open Monday through Friday from 8am to 10pm.',
+        ]);
 
     // Execute the action
     $action = new GetQnaAdvisorInstructions();
@@ -197,9 +230,9 @@ it('handles empty settings gracefully', function () {
     expect($result)->toContain('## Restrictions');
 
     // Verify the QnA section is still populated
-    expect($result)->toContain($category->name);
-    expect($result)->toContain('#### ' . $question->question);
-    expect($result)->toContain($question->answer);
+    expect($result)->toContain('Library Resources');
+    expect($result)->toContain('#### What are the library hours?');
+    expect($result)->toContain('The library is open Monday through Friday from 8am to 10pm.');
 });
 
 it('handles QnaAdvisor with no categories', function () {
@@ -245,11 +278,17 @@ it('uses cache correctly', function () {
 
     $category = QnaAdvisorCategory::factory()
         ->for($qnaAdvisor, 'qnaAdvisor')
-        ->create();
+        ->create([
+            'name' => 'Technology Support',
+            'description' => 'Information about IT help and computer resources',
+        ]);
 
     $question = QnaAdvisorQuestion::factory()
         ->for($category, 'category')
-        ->create();
+        ->create([
+            'question' => 'How do I reset my password?',
+            'answer' => 'You can reset your password by visiting the IT help desk in the main building.',
+        ]);
 
     // Execute the action first time
     $action = new GetQnaAdvisorInstructions();
