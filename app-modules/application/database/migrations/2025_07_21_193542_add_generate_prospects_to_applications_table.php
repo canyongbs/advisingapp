@@ -34,59 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Models;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\Form\Enums\Rounding;
-use AdvisingApp\Form\Models\Submissible;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-
-/**
- * @mixin IdeHelperApplication
- */
-class Application extends Submissible
-{
-    protected $fillable = [
-        'name',
-        'description',
-        'embed_enabled',
-        'allowed_domains',
-        'is_wizard',
-        'primary_color',
-        'rounding',
-        'content',
-        'generate_prospects',
-    ];
-
-    protected $casts = [
-        'content' => 'array',
-        'embed_enabled' => 'boolean',
-        'allowed_domains' => 'array',
-        'is_wizard' => 'boolean',
-        'rounding' => Rounding::class,
-        'generate_prospects' => 'boolean',
-    ];
-
-    /**
-     * @return HasMany<ApplicationField, $this>
-     */
-    public function fields(): HasMany
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->hasMany(ApplicationField::class);
+        Schema::table('applications', function (Blueprint $table) {
+            $table->boolean('generate_prospects')->default(false);
+        });
     }
 
-    /**
-     * @return HasMany<ApplicationStep, $this>
-     */
-    public function steps(): HasMany
+    public function down(): void
     {
-        return $this->hasMany(ApplicationStep::class);
+        Schema::table('applications', function (Blueprint $table) {
+            $table->dropColumn('generate_prospects');
+        });
     }
-
-    /**
-     * @return HasMany<ApplicationSubmission, $this>
-     */
-    public function submissions(): HasMany
-    {
-        return $this->hasMany(ApplicationSubmission::class);
-    }
-}
+};
