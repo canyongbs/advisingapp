@@ -54,10 +54,10 @@ class WorkflowResource extends Resource
     {
         return $form
             ->schema([
-              TextInput::make('name')
+                TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-              Toggle::make('is_enabled')
+                Toggle::make('is_enabled')
                     ->label('Enabled?')
                     ->inline(false),
             ]);

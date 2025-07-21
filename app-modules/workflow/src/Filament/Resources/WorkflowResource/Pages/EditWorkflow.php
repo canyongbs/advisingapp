@@ -72,12 +72,12 @@ class EditWorkflow extends EditRecord
     {
         return [
             DeleteAction::make()
-              ->successRedirectUrl(function (Workflow $record) {
-                  return match($record->workflowTrigger->related_type) {
-                    Form::class => FormResource::getUrl('edit', [$record->workflowTrigger->related_id]),
-                    default => route('filament.admin.pages.dashboard'),
-                  };
-              }),
+                ->successRedirectUrl(function (Workflow $record) {
+                    return match ($record->workflowTrigger->related_type) {
+                        Form::class => FormResource::getUrl('edit', [$record->workflowTrigger->related_id]),
+                        default => route('filament.admin.pages.dashboard'),
+                    };
+                }),
         ];
     }
 }
