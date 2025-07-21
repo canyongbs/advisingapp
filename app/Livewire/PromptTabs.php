@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use AdvisingApp\Ai\Enums\AiPromptTabs;
 use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManagePromptLibrary;
+use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\Prompt;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
@@ -19,6 +20,8 @@ class PromptTabs extends Component implements HasForms, HasActions
     use CanManagePromptLibrary;
 
     public string $activeTab = AiPromptTabs::Newest->value;
+
+    public AiThread $thread;
 
     public function triggerPromptLibraryAction(): void
     {
