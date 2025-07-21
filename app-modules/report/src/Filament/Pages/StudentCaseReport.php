@@ -34,17 +34,50 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+namespace AdvisingApp\Report\Filament\Pages;
 
-use Filament\Clusters\Cluster;
+use AdvisingApp\Report\Abstract\StudentReport;
+use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
+use AdvisingApp\Report\Filament\Widgets\StudentCaseStats;
+use AdvisingApp\Report\Filament\Widgets\StudentCaseTable;
+use App\Filament\Clusters\ReportLibrary;
 
-class CaseManagement extends Cluster
+class StudentCaseReport extends StudentReport
 {
-    protected static ?string $navigationGroup = 'CRM';
-
-    protected static ?int $navigationSort = 50;
-
-    protected static ?string $navigationLabel = 'Cases';
-
     protected static ?string $title = 'Cases';
+
+    protected static ?string $cluster = ReportLibrary::class;
+
+    protected static string $routePath = 'student-case-report';
+
+    protected static ?string $navigationGroup = 'Students';
+
+    protected string $cacheTag = 'report-student-case';
+
+    protected static ?int $navigationSort = 6;
+
+    public function getColumns(): int | string | array
+    {
+        return [
+            'sm' => 12,
+            'md' => 12,
+            'lg' => 12,
+        ];
+    }
+
+    public function getWidgets(): array
+    {
+        return [
+            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
+            StudentCaseStats::make(['cacheTag' => $this->cacheTag]),
+            StudentCaseTable::make(['cacheTag' => $this->cacheTag]),
+        ];
+    }
+
+    public function getWidgetData(): array
+    {
+        return [
+            'filters' => $this->filters,
+        ];
+    }
 }

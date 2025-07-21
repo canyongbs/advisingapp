@@ -46,7 +46,6 @@ use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\ManageCaseI
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\ManageCaseUpdate;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\ViewCase;
 use AdvisingApp\CaseManagement\Models\CaseModel;
-use App\Filament\Clusters\CaseManagement;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 
@@ -57,8 +56,6 @@ class CaseResource extends Resource
     protected static ?int $navigationSort = 10;
 
     protected static ?string $modelLabel = 'Case';
-
-    protected static ?string $cluster = CaseManagement::class;
 
     public static function shouldShowFormSubmission(Page $page): bool
     {
