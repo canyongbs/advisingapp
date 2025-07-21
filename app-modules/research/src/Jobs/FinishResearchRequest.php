@@ -92,7 +92,9 @@ class FinishResearchRequest implements ShouldQueue
                 );
         } catch (Throwable $exception) {
             report($exception);
+        }
 
+        if (blank($this->researchRequest->title)) {
             $this->researchRequest->title = 'Untitled Research';
         }
 

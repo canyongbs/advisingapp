@@ -40,7 +40,7 @@ use AdvisingApp\IntegrationOpenAi\IntegrationOpenAiPlugin;
 use AdvisingApp\IntegrationOpenAi\Prism\AzureOpenAi;
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
-use Prism\Prism\Contracts\Provider;
+use Prism\Prism\Providers\Provider;
 
 class IntegrationOpenAiServiceProvider extends ServiceProvider
 {

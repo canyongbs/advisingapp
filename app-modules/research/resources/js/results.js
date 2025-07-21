@@ -143,7 +143,7 @@ document.addEventListener('alpine:init', () => {
                         return;
                     }
 
-                    const maxChunks = 3;
+                    const maxChunks = 2;
                     let chunks = [];
                     let pendingResults = this.pendingResults;
 
@@ -164,7 +164,7 @@ document.addEventListener('alpine:init', () => {
                         this.pendingResults = this.pendingResults.slice(combined.length);
                         this.renderResults();
                     }
-                }, 100);
+                }, 50);
 
                 this.renderReasoningPoints();
                 this.renderResults();

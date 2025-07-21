@@ -38,11 +38,9 @@ namespace AdvisingApp\IntegrationOpenAi\Prism\AzureOpenAi\Handlers;
 
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Arr;
-use Prism\Prism\Exceptions\PrismException;
 use Prism\Prism\Providers\OpenAI\Handlers\Structured as BaseStructured;
 use Prism\Prism\Providers\OpenAI\Maps\MessageMap;
 use Prism\Prism\Structured\Request;
-use Throwable;
 
 class Structured extends BaseStructured
 {
@@ -51,28 +49,24 @@ class Structured extends BaseStructured
      */
     protected function sendRequest(Request $request, array $responseFormat): Response
     {
-        try {
-            return $this->client->post(
-                'responses',
-                array_merge([
-                    'model' => $request->model(),
-                    'input' => (new MessageMap($request->messages(), $request->systemPrompts()))(),
-                    'max_output_tokens' => $request->maxTokens(),
-                ], Arr::whereNotNull([
-                    'temperature' => $request->temperature(),
-                    'top_p' => $request->topP(),
-                    'metadata' => $request->providerOptions('metadata'),
-                    'previous_response_id' => $request->providerOptions('previous_response_id'),
-                    'truncation' => $request->providerOptions('truncation'),
-                    'text' => [
-                        'format' => $responseFormat,
-                    ],
-                    'tools' => $request->providerOptions('tools'),
-                    'tool_choice' => $request->providerOptions('tool_choice'),
-                ]))
-            );
-        } catch (Throwable $e) {
-            throw PrismException::providerRequestError($request->model(), $e);
-        }
+        return $this->client->post(
+            'responses',
+            array_merge([
+                'model' => $request->model(),
+                'input' => (new MessageMap($request->messages(), $request->systemPrompts()))(),
+                'max_output_tokens' => $request->maxTokens(),
+            ], Arr::whereNotNull([
+                'temperature' => $request->temperature(),
+                'top_p' => $request->topP(),
+                'metadata' => $request->providerOptions('metadata'),
+                'previous_response_id' => $request->providerOptions('previous_response_id'),
+                'truncation' => $request->providerOptions('truncation'),
+                'text' => [
+                    'format' => $responseFormat,
+                ],
+                'tools' => $request->providerOptions('tools'),
+                'tool_choice' => $request->providerOptions('tool_choice'),
+            ]))
+        );
     }
 }

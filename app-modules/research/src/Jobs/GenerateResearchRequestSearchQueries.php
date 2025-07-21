@@ -41,6 +41,7 @@ use AdvisingApp\Research\Events\ResearchRequestSearchQueriesGenerated;
 use AdvisingApp\Research\Models\ResearchRequest;
 use AdvisingApp\Research\Models\ResearchRequestQuestion;
 use App\Models\User;
+use Carbon\CarbonInterface;
 use Exception;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -55,8 +56,6 @@ class GenerateResearchRequestSearchQueries implements ShouldQueue
     use SerializesModels;
 
     public int $timeout = 600;
-
-    public int $tries = 3;
 
     public function __construct(
         protected ResearchRequest $researchRequest,
@@ -80,7 +79,7 @@ class GenerateResearchRequestSearchQueries implements ShouldQueue
             );
 
         if (blank($searchQueries)) {
-            $this->release();
+            $this->release(delay: 10); // Allow time for the service to recover.
 
             return;
         }
@@ -109,6 +108,11 @@ class GenerateResearchRequestSearchQueries implements ShouldQueue
         broadcast(app(ResearchRequestSearchQueriesGenerated::class, [
             'researchRequest' => $this->researchRequest,
         ]));
+    }
+
+    public function retryUntil(): CarbonInterface
+    {
+        return now()->addHour();
     }
 
     protected function getContent(): string

@@ -2702,12 +2702,12 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/integration-open-ai",
-                "reference": "f7e3d038e9a6c09160454634d34ed97e5029762b"
+                "reference": "60b358361a63ddf987f3250f01a29807ca0e77f4"
             },
             "require": {
                 "filament/filament": "^3.0.0",
                 "openai-php/client": "^v0.10",
-                "prism-php/prism": "^0.74"
+                "prism-php/prism": "^0.81"
             },
             "type": "library",
             "extra": {
@@ -11460,16 +11460,16 @@
         },
         {
             "name": "prism-php/prism",
-            "version": "v0.74.1",
+            "version": "v0.81.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/prism-php/prism.git",
-                "reference": "e4be15355290e218c01b01668c9475112dcf7316"
+                "reference": "6e68c96b5a2cbee7614ebd316c308441ce7bb45f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/prism-php/prism/zipball/e4be15355290e218c01b01668c9475112dcf7316",
-                "reference": "e4be15355290e218c01b01668c9475112dcf7316",
+                "url": "https://api.github.com/repos/prism-php/prism/zipball/6e68c96b5a2cbee7614ebd316c308441ce7bb45f",
+                "reference": "6e68c96b5a2cbee7614ebd316c308441ce7bb45f",
                 "shasum": ""
             },
             "require": {
@@ -11480,7 +11480,7 @@
             "require-dev": {
                 "laravel/pint": "^1.14",
                 "mockery/mockery": "^1.6",
-                "orchestra/testbench": "^9.4",
+                "orchestra/testbench": "^10",
                 "pestphp/pest": "^3.0",
                 "pestphp/pest-plugin-arch": "^3.0",
                 "pestphp/pest-plugin-laravel": "^3.0",
@@ -11525,7 +11525,7 @@
             "description": "A powerful Laravel package for integrating Large Language Models (LLMs) into your applications.",
             "support": {
                 "issues": "https://github.com/prism-php/prism/issues",
-                "source": "https://github.com/prism-php/prism/tree/v0.74.1"
+                "source": "https://github.com/prism-php/prism/tree/v0.81.0"
             },
             "funding": [
                 {
@@ -11533,7 +11533,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-06-21T12:33:43+00:00"
+            "time": "2025-07-19T13:27:09+00:00"
         },
         {
             "name": "propaganistas/laravel-phone",
