@@ -36,9 +36,12 @@
 
 namespace AdvisingApp\Workflow\Filament\Resources\WorkflowResource\Pages;
 
+use AdvisingApp\Form\Filament\Resources\FormResource;
+use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Workflow\Filament\Resources\WorkflowResource;
+use AdvisingApp\Workflow\Models\Workflow;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
-use Filament\Actions;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditWorkflow extends EditRecord
@@ -47,10 +50,28 @@ class EditWorkflow extends EditRecord
 
     protected static string $resource = WorkflowResource::class;
 
+    public function getBreadcrumbs(): array
+    {
+      $resource = static::getResource();
+
+      $record = $this->getRecord();
+
+      assert($record instanceof Workflow);
+
+      return match ($record->workflowTrigger->related_type) {
+        Form::class => [
+          FormResource::getUrl() => FormResource::getBreadcrumb(),
+          FormResource::getUrl('edit', [$record->workflowTrigger->related_id]) => FormResource::getRecordTitle(Form::find($record->workflowTrigger->related_id)),
+          $resource::getUrl() => $resource::getBreadcrumb(),
+        ],
+        default => [$resource::getUrl() => $resource::getBreadcrumb()]
+      };
+    }
+
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            DeleteAction::make(),
         ];
     }
 }

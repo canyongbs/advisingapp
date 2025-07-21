@@ -58,7 +58,8 @@ class WorkflowTrigger extends BaseModel implements Auditable
         'type',
         'related_type',
         'related_id',
-        'created_by',
+        'created_by_type',
+        'created_by_id',
     ];
 
     /**
