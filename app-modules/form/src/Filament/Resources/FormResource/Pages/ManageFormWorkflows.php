@@ -37,12 +37,12 @@
 namespace AdvisingApp\Form\Filament\Resources\FormResource\Pages;
 
 use AdvisingApp\Form\Filament\Resources\FormResource;
+use AdvisingApp\Form\Models\Form;
+use AdvisingApp\Workflow\Filament\Resources\WorkflowResource;
 use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
+use App\Models\User;
 use Filament\Actions\Action;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
@@ -61,41 +61,19 @@ class ManageFormWorkflows extends ManageRelatedRecords
         return 'Workflows';
     }
 
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Toggle::make('is_enabled')
-                    ->label('Enabled?'),
-            ]);
-    }
-
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('name') //is this necessary?
             ->columns([
                 TextColumn::make('name'),
                 TextColumn::make('is_enabled')
                     ->label('Enabled')
                     ->icon(fn ($record): string => $record->is_enabled ? 'heroicon-m-check-circle' : 'heroicon-m-x-circle'),
             ])
-            ->filters([
-            ])
-            ->headerActions([
-                //$this->createWorkflowAction(),
-            ])
             ->actions([
                 EditAction::make(),
             ])
-            ->bulkActions([
-            ])
-            ->modifyQueryUsing(fn (Builder $query) => $query->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]));
+            ->recordUrl(fn (Workflow $record) => WorkflowResource::getUrl('edit', [$record]));
     }
 
     /**
@@ -117,7 +95,8 @@ class ManageFormWorkflows extends ManageRelatedRecords
                     'type' => 'Time Based',
                     'related_type' => Form::class,
                     'related_id' => $this->getOwnerRecord()->getKey(),
-                    'created_by' => auth()->user()->getKey(),
+                    'created_by_type' => User::class,
+                    'created_by_id' => auth()->user()->getKey(),
                 ]);
 
                 $workflow = Workflow::create([
@@ -125,7 +104,8 @@ class ManageFormWorkflows extends ManageRelatedRecords
                     'name' => 'Form Workflow',
                     'is_enabled' => false,
                 ]);
-                //redirect to edit page
+                
+                redirect(WorkflowResource::getUrl('edit', [$workflow]));
             });
     }
 }
