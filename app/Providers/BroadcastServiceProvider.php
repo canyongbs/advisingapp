@@ -46,6 +46,10 @@ class BroadcastServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (blank(config('broadcasting.connections.ably.key'))) {
+            return;
+        }
+
         Broadcast::routes();
 
         require base_path('routes/channels.php');
