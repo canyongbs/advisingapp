@@ -6534,7 +6534,6 @@ namespace AdvisingApp\Workflow\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read covariant WorkflowDetails $workflowDetails
  * @property-read \AdvisingApp\Workflow\Models\WorkflowRun $workflowRun
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep newQuery()
