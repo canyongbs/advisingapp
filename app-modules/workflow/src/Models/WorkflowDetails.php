@@ -37,13 +37,19 @@
 namespace AdvisingApp\Workflow\Models;
 
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 abstract class WorkflowDetails extends BaseModel
 {
     abstract public function getType(): string;
 
-    public function hasBeenExecuted(): bool
+    abstract public function hasBeenExecuted(): bool;
+
+    /**
+     * @return BelongsTo<WorkflowStep, $this>
+     */
+    public function workflowStep(): BelongsTo
     {
-      return //
+      return $this->belongsTo(WorkflowStep::class);
     }
 }

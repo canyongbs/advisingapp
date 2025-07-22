@@ -37,6 +37,7 @@
 namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Workflow\Enums\WorkflowActionType;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -64,5 +65,12 @@ class WorkflowSubscriptionDetails extends WorkflowDetails implements Auditable
     public function getType(): string
     {
         return 'subscription';
+    }
+
+    public function hasBeenExecuted(): bool
+    {
+      $workflowRunSteps = WorkflowRun::whereWorkflowTriggerId($this->workflowStep->workflow->workflowTrigger->getKey())->first()->workflowRunSteps;
+
+      return !is_null($workflowRunSteps->where('details_type', WorkflowActionType::Subscription)->where('details_id', $this->id)->first()->dispatched_at);
     }
 }
