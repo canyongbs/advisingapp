@@ -34,28 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Providers;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\IntegrationOpenAi\IntegrationOpenAiPlugin;
-use AdvisingApp\IntegrationOpenAi\Prism\AzureOpenAi;
-use Filament\Panel;
-use Illuminate\Support\ServiceProvider;
-use Prism\Prism\Providers\Provider;
-
-class IntegrationOpenAiServiceProvider extends ServiceProvider
-{
-    public function register()
+return new class () extends Migration {
+    public function up(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new IntegrationOpenAiPlugin()));
+        Schema::table('research_requests', function (Blueprint $table) {
+            $table->string('research_model')->nullable();
+            $table->dateTime('started_at')->nullable();
+            $table->jsonb('search_queries')->nullable();
+            $table->jsonb('outline')->nullable();
+            $table->jsonb('remaining_outline')->nullable();
+            $table->jsonb('sources')->nullable();
+        });
     }
 
-    public function boot()
+    public function down(): void
     {
-        $this->mergeConfigFrom(__DIR__ . '/../../config/integration-open-ai.php', 'integration-open-ai');
-
-        $this->app['prism-manager']->extend(
-            'azure_open_ai',
-            fn (): Provider => app(AzureOpenAi::class),
-        );
+        Schema::table('research_requests', function (Blueprint $table) {
+            $table->dropColumn('research_model');
+            $table->dropColumn('started_at');
+            $table->dropColumn('search_queries');
+            $table->dropColumn('outline');
+            $table->dropColumn('remaining_outline');
+            $table->dropColumn('sources');
+        });
     }
-}
+};

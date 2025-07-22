@@ -657,7 +657,7 @@ class UserChat extends Page implements HasForms, HasActions
 
         /** @var AccessToken $token */
         $token = Cache::remember('{twilio_access_token_' . auth()->id() . '}', 21500, function () {
-            $apiKey = app(GetTwilioApiKey::class)();
+            $apiKey = app(GetTwilioApiKey::class)->__invoke();
 
             $twilioClient = app(Client::class);
 

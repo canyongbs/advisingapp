@@ -88,7 +88,7 @@ class ReInitializeAiAssistantThreads implements ShouldQueue, TenantAware
             ->threads()
             ->latest()
             ->eachById(function (AiThread $thread) {
-                $this->batch()->add(app(ReInitializeAiThread::class, ['thread' => $thread]));
+                $this->batch()->add(new ReInitializeAiThread($thread));
             }, 250);
     }
 }

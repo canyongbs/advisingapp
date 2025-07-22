@@ -34,28 +34,57 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Providers;
+namespace AdvisingApp\Research\Events;
 
-use AdvisingApp\IntegrationOpenAi\IntegrationOpenAiPlugin;
-use AdvisingApp\IntegrationOpenAi\Prism\AzureOpenAi;
-use Filament\Panel;
-use Illuminate\Support\ServiceProvider;
-use Prism\Prism\Providers\Provider;
+use AdvisingApp\Research\Models\ResearchRequest;
+use AdvisingApp\Research\Models\ResearchRequestParsedFile;
+use Illuminate\Broadcasting\Channel;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Support\Arr;
 
-class IntegrationOpenAiServiceProvider extends ServiceProvider
+class ResearchRequestFileParsed implements ShouldBroadcastNow
 {
-    public function register()
+    use Dispatchable;
+    use InteractsWithSockets;
+
+    /**
+     * Create a new event instance.
+     */
+    public function __construct(
+        public ResearchRequest $researchRequest,
+        public ResearchRequestParsedFile $parsedFile,
+    ) {}
+
+    public function broadcastAs(): string
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new IntegrationOpenAiPlugin()));
+        return 'research-request.file-parsed';
     }
 
-    public function boot()
+    /**
+     * @return array<string, mixed>
+     */
+    public function broadcastWith(): array
     {
-        $this->mergeConfigFrom(__DIR__ . '/../../config/integration-open-ai.php', 'integration-open-ai');
+        $this->parsedFile->loadMissing(['media']);
+        $this->parsedFile->media->temporary_url = $this->parsedFile->media->getTemporaryUrl(now()->addDay()); /** @phpstan-ignore property.notFound */
 
-        $this->app['prism-manager']->extend(
-            'azure_open_ai',
-            fn (): Provider => app(AzureOpenAi::class),
-        );
+        return [
+            'parsed_file' => Arr::except($this->parsedFile->toArray(), ['results']),
+        ];
+    }
+
+    /**
+     * Get the channels the event should broadcast on.
+     *
+     * @return array<int, Channel>
+     */
+    public function broadcastOn(): array
+    {
+        return [
+            new PrivateChannel("research-request-{$this->researchRequest->getKey()}"),
+        ];
     }
 }

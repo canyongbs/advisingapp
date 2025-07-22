@@ -34,28 +34,39 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Providers;
+namespace AdvisingApp\IntegrationOpenAi\Prism\AzureOpenAi\Handlers;
 
-use AdvisingApp\IntegrationOpenAi\IntegrationOpenAiPlugin;
-use AdvisingApp\IntegrationOpenAi\Prism\AzureOpenAi;
-use Filament\Panel;
-use Illuminate\Support\ServiceProvider;
-use Prism\Prism\Providers\Provider;
+use Illuminate\Http\Client\Response;
+use Illuminate\Support\Arr;
+use Prism\Prism\Providers\OpenAI\Handlers\Structured as BaseStructured;
+use Prism\Prism\Providers\OpenAI\Maps\MessageMap;
+use Prism\Prism\Structured\Request;
 
-class IntegrationOpenAiServiceProvider extends ServiceProvider
+class Structured extends BaseStructured
 {
-    public function register()
+    /**
+     * @param  array{type: 'json_schema', name: string, schema: array<mixed>, strict?: bool}|array{type: 'json_object'}  $responseFormat
+     */
+    protected function sendRequest(Request $request, array $responseFormat): Response
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new IntegrationOpenAiPlugin()));
-    }
-
-    public function boot()
-    {
-        $this->mergeConfigFrom(__DIR__ . '/../../config/integration-open-ai.php', 'integration-open-ai');
-
-        $this->app['prism-manager']->extend(
-            'azure_open_ai',
-            fn (): Provider => app(AzureOpenAi::class),
+        return $this->client->post(
+            'responses',
+            array_merge([
+                'model' => $request->model(),
+                'input' => (new MessageMap($request->messages(), $request->systemPrompts()))(),
+                'max_output_tokens' => $request->maxTokens(),
+            ], Arr::whereNotNull([
+                'temperature' => $request->temperature(),
+                'top_p' => $request->topP(),
+                'metadata' => $request->providerOptions('metadata'),
+                'previous_response_id' => $request->providerOptions('previous_response_id'),
+                'truncation' => $request->providerOptions('truncation'),
+                'text' => [
+                    'format' => $responseFormat,
+                ],
+                'tools' => $request->providerOptions('tools'),
+                'tool_choice' => $request->providerOptions('tool_choice'),
+            ]))
         );
     }
 }

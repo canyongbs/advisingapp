@@ -34,28 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Providers;
+namespace AdvisingApp\Research\Models;
 
-use AdvisingApp\IntegrationOpenAi\IntegrationOpenAiPlugin;
-use AdvisingApp\IntegrationOpenAi\Prism\AzureOpenAi;
-use Filament\Panel;
-use Illuminate\Support\ServiceProvider;
-use Prism\Prism\Providers\Provider;
+use AdvisingApp\Research\Database\Factories\ResearchRequestParsedSearchResultsFactory;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class IntegrationOpenAiServiceProvider extends ServiceProvider
+/**
+ * @mixin IdeHelperResearchRequestParsedSearchResults
+ */
+class ResearchRequestParsedSearchResults extends BaseModel
 {
-    public function register()
-    {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new IntegrationOpenAiPlugin()));
-    }
+    /** @use HasFactory<ResearchRequestParsedSearchResultsFactory> */
+    use HasFactory;
 
-    public function boot()
-    {
-        $this->mergeConfigFrom(__DIR__ . '/../../config/integration-open-ai.php', 'integration-open-ai');
+    use SoftDeletes;
 
-        $this->app['prism-manager']->extend(
-            'azure_open_ai',
-            fn (): Provider => app(AzureOpenAi::class),
-        );
+    public $fillable = [
+        'research_request_id',
+        'results',
+        'search_query',
+    ];
+
+    /**
+     * @return BelongsTo<ResearchRequest, $this>
+     */
+    public function researchRequest(): BelongsTo
+    {
+        return $this->belongsTo(ResearchRequest::class);
     }
 }

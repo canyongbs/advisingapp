@@ -34,52 +34,66 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Jobs;
+namespace AdvisingApp\Research\Jobs;
 
-use AdvisingApp\Ai\Actions\FetchFileParsingResults;
-use AdvisingApp\Ai\Models\AiAssistantFile;
+use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
+use AdvisingApp\Research\Events\ResearchRequestFinished;
+use AdvisingApp\Research\Models\ResearchRequest;
 use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\SerializesModels;
-use Spatie\Multitenancy\Jobs\TenantAware;
+use Illuminate\Support\Str;
+use Throwable;
 
-class FetchAiAssistantFileParsingResults implements ShouldQueue, TenantAware, ShouldBeUnique
+class FinishResearchRequest implements ShouldQueue
 {
     use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
 
+    public int $timeout = 600;
+
+    public int $tries = 3;
+
     public function __construct(
-        protected AiAssistantFile $file,
+        protected ResearchRequest $researchRequest,
     ) {}
 
-    public function handle(FetchFileParsingResults $fetchFileParsingResults): void
+    public function handle(): void
     {
-        if (filled($this->file->parsing_results)) {
+        if (blank($this->researchRequest->results)) {
+            $this->researchRequest->results = 'The artificial intelligence service was unavailable. Please try again later.';
+            $this->researchRequest->title = 'Untitled Research';
+            $this->researchRequest->touch('finished_at');
+
+            broadcast(app(ResearchRequestFinished::class, [
+                'researchRequest' => $this->researchRequest,
+            ]));
+
             return;
         }
 
-        $result = $fetchFileParsingResults->execute(
-            fileId: $this->file->file_id,
-            mimeType: $this->file->mime_type,
-        );
-
-        if (blank($result)) {
-            return;
+        try {
+            $this->researchRequest->title = app(AiIntegratedAssistantSettings::class)
+                ->getDefaultModel()
+                ->getService()
+                ->complete(
+                    prompt: Str::limit($this->researchRequest->results, limit: 1000),
+                    content: 'Generate a title for this research, in 5 words or less. Do not respond with any greetings or salutations, and do not include any additional information or context. Just respond with the title:',
+                );
+        } catch (Throwable $exception) {
+            report($exception);
         }
 
-        $this->file->parsing_results = $result;
-        $this->file->save();
-    }
+        if (blank($this->researchRequest->title)) {
+            $this->researchRequest->title = 'Untitled Research';
+        }
 
-    public function uniqueId(): string
-    {
-        return $this->file->id;
+        $this->researchRequest->touch('finished_at');
+
+        broadcast(app(ResearchRequestFinished::class, [
+            'researchRequest' => $this->researchRequest,
+        ]));
     }
 }

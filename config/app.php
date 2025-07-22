@@ -253,6 +253,7 @@ return [
         AppServiceProvider::class,
         ApiServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
+        App\Providers\BroadcastServiceProvider::class,
         EventServiceProvider::class,
         RouteServiceProvider::class,
         LandlordPanelProvider::class,

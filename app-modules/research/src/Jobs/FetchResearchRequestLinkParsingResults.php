@@ -34,24 +34,56 @@
 </COPYRIGHT>
 */
 
-namespace App\Providers;
+namespace AdvisingApp\Research\Jobs;
 
-use Illuminate\Support\Facades\Broadcast;
-use Illuminate\Support\ServiceProvider;
+use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use AdvisingApp\Research\Events\ResearchRequestLinkParsed;
+use AdvisingApp\Research\Models\ResearchRequest;
+use AdvisingApp\Research\Models\ResearchRequestParsedLink;
+use Illuminate\Bus\Batchable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Http;
 
-class BroadcastServiceProvider extends ServiceProvider
+class FetchResearchRequestLinkParsingResults implements ShouldQueue
 {
-    /**
-     * Bootstrap any application services.
-     */
-    public function boot(): void
+    use Batchable;
+    use Queueable;
+    use SerializesModels;
+
+    public int $timeout = 600;
+
+    public int $tries = 60;
+
+    public function __construct(
+        protected ResearchRequest $researchRequest,
+        protected string $link,
+    ) {}
+
+    public function handle(): void
     {
-        if (blank(config('broadcasting.connections.ably.key'))) {
+        $response = Http::withToken(app(AiIntegrationsSettings::class)->jina_deepsearch_v1_api_key)
+            ->withHeaders([
+                'X-Retain-Images' => 'none',
+            ])
+            ->get("https://r.jina.ai/{$this->link}");
+
+        if (! $response->successful()) {
+            $this->release();
+
             return;
         }
 
-        Broadcast::routes();
+        $researchRequestParsedLink = new ResearchRequestParsedLink();
+        $researchRequestParsedLink->researchRequest()->associate($this->researchRequest);
+        $researchRequestParsedLink->results = $response->body();
+        $researchRequestParsedLink->url = $this->link;
+        $researchRequestParsedLink->save();
 
-        require base_path('routes/channels.php');
+        broadcast(app(ResearchRequestLinkParsed::class, [
+            'researchRequest' => $this->researchRequest,
+            'parsedLink' => $researchRequestParsedLink,
+        ]));
     }
 }

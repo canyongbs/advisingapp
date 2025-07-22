@@ -7,7 +7,7 @@
     "require": {
         "filament/filament": "^3.0.0",
         "openai-php/client": "^v0.10",
-        "prism-php/prism": "^0.74"
+        "prism-php/prism": "^0.81"
     },
     "autoload": {
         "psr-4": {

@@ -34,28 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Providers;
+namespace AdvisingApp\Research\Jobs;
 
-use AdvisingApp\IntegrationOpenAi\IntegrationOpenAiPlugin;
-use AdvisingApp\IntegrationOpenAi\Prism\AzureOpenAi;
-use Filament\Panel;
-use Illuminate\Support\ServiceProvider;
-use Prism\Prism\Providers\Provider;
+use AdvisingApp\Research\Models\ResearchRequest;
+use Illuminate\Bus\Batchable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\SerializesModels;
 
-class IntegrationOpenAiServiceProvider extends ServiceProvider
+class AfterResearchRequestSearchQueriesParsed implements ShouldQueue
 {
-    public function register()
-    {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new IntegrationOpenAiPlugin()));
-    }
+    use Batchable;
+    use Queueable;
+    use SerializesModels;
 
-    public function boot()
-    {
-        $this->mergeConfigFrom(__DIR__ . '/../../config/integration-open-ai.php', 'integration-open-ai');
+    public int $timeout = 600;
 
-        $this->app['prism-manager']->extend(
-            'azure_open_ai',
-            fn (): Provider => app(AzureOpenAi::class),
-        );
+    public int $tries = 3;
+
+    public function __construct(
+        protected ResearchRequest $researchRequest,
+    ) {}
+
+    public function handle(): void
+    {
+        $this->researchRequest->research_model
+            ->getService()
+            ->afterResearchRequestSearchQueriesParsed($this->researchRequest);
     }
 }

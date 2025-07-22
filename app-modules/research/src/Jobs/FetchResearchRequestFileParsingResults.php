@@ -34,52 +34,55 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Jobs;
+namespace AdvisingApp\Research\Jobs;
 
 use AdvisingApp\Ai\Actions\FetchFileParsingResults;
-use AdvisingApp\Ai\Models\AiAssistantFile;
+use AdvisingApp\Research\Events\ResearchRequestFileParsed;
+use AdvisingApp\Research\Models\ResearchRequestParsedFile;
+use Carbon\CarbonInterface;
 use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\SerializesModels;
-use Spatie\Multitenancy\Jobs\TenantAware;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class FetchAiAssistantFileParsingResults implements ShouldQueue, TenantAware, ShouldBeUnique
+class FetchResearchRequestFileParsingResults implements ShouldQueue
 {
     use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
 
+    public int $timeout = 600;
+
+    public int $tries = 60;
+
     public function __construct(
-        protected AiAssistantFile $file,
+        protected Media $media,
+        protected string $fileId,
+        protected CarbonInterface $uploadedAt,
     ) {}
 
     public function handle(FetchFileParsingResults $fetchFileParsingResults): void
     {
-        if (filled($this->file->parsing_results)) {
+        $results = $fetchFileParsingResults->execute($this->fileId, $this->media->mime_type);
+
+        if (blank($results)) {
+            $this->release(delay: 5);
+
             return;
         }
 
-        $result = $fetchFileParsingResults->execute(
-            fileId: $this->file->file_id,
-            mimeType: $this->file->mime_type,
-        );
+        $researchRequestParsedFile = new ResearchRequestParsedFile();
+        $researchRequestParsedFile->researchRequest()->associate($this->media->model);
+        $researchRequestParsedFile->uploaded_at = $this->uploadedAt;
+        $researchRequestParsedFile->results = $results;
+        $researchRequestParsedFile->media()->associate($this->media);
+        $researchRequestParsedFile->file_id = $this->fileId;
+        $researchRequestParsedFile->save();
 
-        if (blank($result)) {
-            return;
-        }
-
-        $this->file->parsing_results = $result;
-        $this->file->save();
-    }
-
-    public function uniqueId(): string
-    {
-        return $this->file->id;
+        broadcast(app(ResearchRequestFileParsed::class, [
+            'researchRequest' => $this->media->model,
+            'parsedFile' => $researchRequestParsedFile,
+        ]));
     }
 }

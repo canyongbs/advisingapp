@@ -34,28 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Providers;
+namespace AdvisingApp\Research\Database\Factories;
 
-use AdvisingApp\IntegrationOpenAi\IntegrationOpenAiPlugin;
-use AdvisingApp\IntegrationOpenAi\Prism\AzureOpenAi;
-use Filament\Panel;
-use Illuminate\Support\ServiceProvider;
-use Prism\Prism\Providers\Provider;
+use AdvisingApp\Research\Models\ResearchRequest;
+use AdvisingApp\Research\Models\ResearchRequestParsedSearchResults;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class IntegrationOpenAiServiceProvider extends ServiceProvider
+/**
+ * @extends Factory<ResearchRequestParsedSearchResults>
+ */
+class ResearchRequestParsedSearchResultsFactory extends Factory
 {
-    public function register()
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new IntegrationOpenAiPlugin()));
-    }
-
-    public function boot()
-    {
-        $this->mergeConfigFrom(__DIR__ . '/../../config/integration-open-ai.php', 'integration-open-ai');
-
-        $this->app['prism-manager']->extend(
-            'azure_open_ai',
-            fn (): Provider => app(AzureOpenAi::class),
-        );
+        return [
+            'research_request_id' => ResearchRequest::factory(),
+            'results' => $this->faker->text(),
+            'search_query' => $this->faker->sentence(),
+        ];
     }
 }

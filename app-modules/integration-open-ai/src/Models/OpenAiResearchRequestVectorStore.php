@@ -34,28 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Providers;
+namespace AdvisingApp\IntegrationOpenAi\Models;
 
-use AdvisingApp\IntegrationOpenAi\IntegrationOpenAiPlugin;
-use AdvisingApp\IntegrationOpenAi\Prism\AzureOpenAi;
-use Filament\Panel;
-use Illuminate\Support\ServiceProvider;
-use Prism\Prism\Providers\Provider;
+use AdvisingApp\Research\Models\ResearchRequest;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class IntegrationOpenAiServiceProvider extends ServiceProvider
+/**
+ * @mixin IdeHelperOpenAiResearchRequestVectorStore
+ */
+class OpenAiResearchRequestVectorStore extends BaseModel
 {
-    public function register()
-    {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new IntegrationOpenAiPlugin()));
-    }
+    use SoftDeletes;
 
-    public function boot()
-    {
-        $this->mergeConfigFrom(__DIR__ . '/../../config/integration-open-ai.php', 'integration-open-ai');
+    public $fillable = [
+        'research_request_id',
+        'deployment_hash',
+        'ready_until',
+        'vector_store_id',
+    ];
 
-        $this->app['prism-manager']->extend(
-            'azure_open_ai',
-            fn (): Provider => app(AzureOpenAi::class),
-        );
+    protected $casts = [
+        'ready_until' => 'immutable_datetime',
+    ];
+
+    /**
+     * @return BelongsTo<ResearchRequest, $this>
+     */
+    public function researchRequest(): BelongsTo
+    {
+        return $this->belongsTo(ResearchRequest::class);
     }
 }

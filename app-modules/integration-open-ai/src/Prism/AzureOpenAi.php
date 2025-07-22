@@ -37,16 +37,17 @@
 namespace AdvisingApp\IntegrationOpenAi\Prism;
 
 use AdvisingApp\IntegrationOpenAi\Prism\AzureOpenAi\Handlers\Stream;
-use Closure;
+use AdvisingApp\IntegrationOpenAi\Prism\AzureOpenAi\Handlers\Structured;
 use Generator;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Http;
 use Override;
 use Prism\Prism\Providers\OpenAI\OpenAI;
+use Prism\Prism\Structured\Request as StructuredRequest;
+use Prism\Prism\Structured\Response as StructuredResponse;
 use Prism\Prism\Text\Request as TextRequest;
 
-readonly class AzureOpenAi extends OpenAI
+class AzureOpenAi extends OpenAI
 {
     public function __construct() {}
 
@@ -61,18 +62,30 @@ readonly class AzureOpenAi extends OpenAI
         return $handler->handle($request);
     }
 
+    #[Override]
+    public function structured(StructuredRequest $request): StructuredResponse
+    {
+        $handler = new Structured($this->client(
+            $request->clientOptions(),
+            $request->clientRetry()
+        ));
+
+        return $handler->handle($request);
+    }
+
     /**
      * @param  array<string, mixed>  $options
-     * @param  array{0: array<int, int>|int, 1?: Closure|int, 2?: ?callable, 3?: bool}  $retry
+     * @param  array<mixed>  $retry
      */
-    protected function client(array $options, array $retry): PendingRequest
+    protected function client(array $options = [], array $retry = [], ?string $baseUrl = null): PendingRequest
     {
-        return Http::withHeaders([
-            'api-key' => $options['apiKey'],
-        ])
+        return $this->baseClient()
+            ->withHeaders([
+                'api-key' => $options['apiKey'],
+            ])
             ->withQueryParameters(['api-version' => $options['apiVersion']])
             ->withOptions(Arr::except($options, ['apiKey', 'apiVersion', 'deployment']))
-            ->retry(...$retry)
+            ->when($retry !== [], fn ($client) => $client->retry(...$retry))
             ->baseUrl($options['deployment']);
     }
 }

@@ -34,28 +34,54 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Providers;
+namespace AdvisingApp\Research\Events;
 
-use AdvisingApp\IntegrationOpenAi\IntegrationOpenAiPlugin;
-use AdvisingApp\IntegrationOpenAi\Prism\AzureOpenAi;
-use Filament\Panel;
-use Illuminate\Support\ServiceProvider;
-use Prism\Prism\Providers\Provider;
+use AdvisingApp\Research\Models\ResearchRequest;
+use AdvisingApp\Research\Models\ResearchRequestParsedLink;
+use Illuminate\Broadcasting\Channel;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Support\Arr;
 
-class IntegrationOpenAiServiceProvider extends ServiceProvider
+class ResearchRequestLinkParsed implements ShouldBroadcastNow
 {
-    public function register()
+    use Dispatchable;
+    use InteractsWithSockets;
+
+    /**
+     * Create a new event instance.
+     */
+    public function __construct(
+        public ResearchRequest $researchRequest,
+        public ResearchRequestParsedLink $parsedLink,
+    ) {}
+
+    public function broadcastAs(): string
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new IntegrationOpenAiPlugin()));
+        return 'research-request.link-parsed';
     }
 
-    public function boot()
+    /**
+     * @return array<string, mixed>
+     */
+    public function broadcastWith(): array
     {
-        $this->mergeConfigFrom(__DIR__ . '/../../config/integration-open-ai.php', 'integration-open-ai');
+        return [
+            'parsed_link' => Arr::except($this->parsedLink->toArray(), ['results']),
+        ];
+    }
 
-        $this->app['prism-manager']->extend(
-            'azure_open_ai',
-            fn (): Provider => app(AzureOpenAi::class),
-        );
+    /**
+     * Get the channels the event should broadcast on.
+     *
+     * @return array<int, Channel>
+     */
+    public function broadcastOn(): array
+    {
+        return [
+            new PrivateChannel("research-request-{$this->researchRequest->getKey()}"),
+        ];
     }
 }

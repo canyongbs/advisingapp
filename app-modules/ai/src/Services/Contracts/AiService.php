@@ -40,7 +40,9 @@ use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\Contracts\AiFile;
+use AdvisingApp\Research\Models\ResearchRequest;
 use Closure;
+use Generator;
 
 interface AiService
 {
@@ -114,6 +116,25 @@ interface AiService
     public function supportsAssistantFileUploads(): bool;
 
     public function isFileReady(AiFile $file): bool;
+
+    public function isResearchRequestReady(ResearchRequest $researchRequest): bool;
+
+    public function afterResearchRequestSearchQueriesParsed(ResearchRequest $researchRequest): void;
+
+    /**
+     * @return array<string>
+     */
+    public function getResearchRequestRequestSearchQueries(ResearchRequest $researchRequest, string $prompt, string $content): array;
+
+    /**
+     * @return array{response: array<mixed>, nextRequestOptions: array<string, mixed>}
+     */
+    public function getResearchRequestRequestOutline(ResearchRequest $researchRequest, string $prompt, string $content): array;
+
+    /**
+     * @param array<string, mixed> $options
+     */
+    public function getResearchRequestRequestSection(ResearchRequest $researchRequest, string $prompt, string $content, array $options, Closure $nextRequestOptions): Generator;
 
     public function getDeployment(): ?string;
 

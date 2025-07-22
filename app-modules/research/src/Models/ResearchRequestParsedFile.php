@@ -34,28 +34,46 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Providers;
+namespace AdvisingApp\Research\Models;
 
-use AdvisingApp\IntegrationOpenAi\IntegrationOpenAiPlugin;
-use AdvisingApp\IntegrationOpenAi\Prism\AzureOpenAi;
-use Filament\Panel;
-use Illuminate\Support\ServiceProvider;
-use Prism\Prism\Providers\Provider;
+use AdvisingApp\Research\Database\Factories\ResearchRequestParsedFileFactory;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class IntegrationOpenAiServiceProvider extends ServiceProvider
+/**
+ * @mixin IdeHelperResearchRequestParsedFile
+ */
+class ResearchRequestParsedFile extends BaseModel
 {
-    public function register()
+    /** @use HasFactory<ResearchRequestParsedFileFactory> */
+    use HasFactory;
+
+    use SoftDeletes;
+
+    public $fillable = [
+        'research_request_id',
+        'uploaded_at',
+        'results',
+        'media_id',
+        'file_id',
+    ];
+
+    /**
+     * @return BelongsTo<Media, $this>
+     */
+    public function media(): BelongsTo
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new IntegrationOpenAiPlugin()));
+        return $this->belongsTo(Media::class);
     }
 
-    public function boot()
+    /**
+     * @return BelongsTo<ResearchRequest, $this>
+     */
+    public function researchRequest(): BelongsTo
     {
-        $this->mergeConfigFrom(__DIR__ . '/../../config/integration-open-ai.php', 'integration-open-ai');
-
-        $this->app['prism-manager']->extend(
-            'azure_open_ai',
-            fn (): Provider => app(AzureOpenAi::class),
-        );
+        return $this->belongsTo(ResearchRequest::class);
     }
 }
