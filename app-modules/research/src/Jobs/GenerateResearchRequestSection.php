@@ -153,7 +153,7 @@ class GenerateResearchRequestSection implements ShouldQueue
         $remainingOutline = $this->researchRequest->remaining_outline;
 
         if (array_key_exists('abstract', $remainingOutline)) {
-            $instructions = "Generate the abstract section of the research report, with the H2 heading \"{$remainingOutline['abstract']['heading']}\". The abstract should be 3 complete paragraphs.";
+            $instructions = "Generate the abstract section of the research report, with the H2 (##) heading \"{$remainingOutline['abstract']['heading']}\". The abstract should be 3 complete paragraphs.";
 
             unset($remainingOutline['abstract']);
 
@@ -164,7 +164,7 @@ class GenerateResearchRequestSection implements ShouldQueue
         }
 
         if (array_key_exists('introduction', $remainingOutline)) {
-            $instructions = "Generate the introduction section of the research report, with the H2 heading \"{$remainingOutline['introduction']['heading']}\".";
+            $instructions = "Generate the introduction section of the research report, with the H2 (##) heading \"{$remainingOutline['introduction']['heading']}\".";
 
             unset($remainingOutline['introduction']);
 
@@ -177,7 +177,7 @@ class GenerateResearchRequestSection implements ShouldQueue
         if (array_key_exists('sections', $remainingOutline)) {
             foreach ($remainingOutline['sections'] as $sectionIndex => $section) {
                 if (array_key_exists('heading', $section)) {
-                    $instructions = "Generate the section of the research report, with the H2 heading \"{$section['heading']}\". Ensure that the content is cohesive and well-structured. The section should be 1 complete paragraph.";
+                    $instructions = "Generate the section of the research report, with the H2 (##) heading \"{$section['heading']}\". Ensure that the content is cohesive and well-structured. The section should be 1 complete paragraph.";
 
                     unset($remainingOutline['sections'][$sectionIndex]['heading']);
 
@@ -189,7 +189,7 @@ class GenerateResearchRequestSection implements ShouldQueue
 
                 if (array_key_exists('subsections', $section)) {
                     foreach ($section['subsections'] as $subsectionIndex => $subsection) {
-                        $instructions = "Generate the subsection of the research report, with the H3 heading \"{$subsection['heading']}\". Ensure that the content is cohesive and well-structured. The subsection should be 5 complete paragraphs.";
+                        $instructions = "Generate the subsection of the research report, with the H3 (###) heading \"{$subsection['heading']}\". Ensure that the content is cohesive and well-structured. The subsection should be 5 complete paragraphs.";
 
                         unset($remainingOutline['sections'][$sectionIndex]['subsections'][$subsectionIndex]);
 
@@ -213,7 +213,7 @@ class GenerateResearchRequestSection implements ShouldQueue
         }
 
         if (array_key_exists('conclusion', $remainingOutline)) {
-            $instructions = "Generate the conclusion section of the research report, with the H2 heading \"{$remainingOutline['conclusion']['heading']}\".";
+            $instructions = "Generate the conclusion section of the research report, with the H2 (##) heading \"{$remainingOutline['conclusion']['heading']}\".";
 
             unset($remainingOutline['conclusion']);
 
