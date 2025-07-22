@@ -68,14 +68,6 @@ class GenerateResearchRequestSection implements ShouldQueue
 
     public function handle(): void
     {
-        $settings = app(AiResearchAssistantSettings::class);
-
-        if (! $settings->research_model) {
-            $this->fail(new Exception('Research model is not set in the settings.'));
-
-            return;
-        }
-
         [
             'instructions' => $instructions,
             'remainingOutline' => $remainingOutline,
@@ -84,7 +76,7 @@ class GenerateResearchRequestSection implements ShouldQueue
         $nextRequestOptions = null;
 
         try {
-            $responseGenerator = $settings->research_model
+            $responseGenerator = $this->researchRequest->research_model
                 ->getService()
                 ->getResearchRequestRequestSection(
                     researchRequest: $this->researchRequest,

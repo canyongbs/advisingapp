@@ -37,10 +37,8 @@
 namespace AdvisingApp\Research\Jobs;
 
 use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
-use AdvisingApp\Ai\Settings\AiResearchAssistantSettings;
 use AdvisingApp\Research\Events\ResearchRequestFinished;
 use AdvisingApp\Research\Models\ResearchRequest;
-use Exception;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -63,13 +61,6 @@ class FinishResearchRequest implements ShouldQueue
 
     public function handle(): void
     {
-        $settings = app(AiResearchAssistantSettings::class);
-
-        throw_if(
-            ! $settings->research_model,
-            new Exception('Research model is not set in the settings.')
-        );
-
         if (blank($this->researchRequest->results)) {
             $this->researchRequest->results = 'The artificial intelligence service was unavailable. Please try again later.';
             $this->researchRequest->title = 'Untitled Research';

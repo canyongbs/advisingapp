@@ -63,16 +63,8 @@ class GenerateResearchRequestOutline implements ShouldQueue
 
     public function handle(): void
     {
-        $settings = app(AiResearchAssistantSettings::class);
-
-        if (! $settings->research_model) {
-            $this->fail(new Exception('Research model is not set in the settings.'));
-
-            return;
-        }
-
         try {
-            $structuredResponse = $settings->research_model
+            $structuredResponse = $this->researchRequest->research_model
                 ->getService()
                 ->getResearchRequestRequestOutline(
                     researchRequest: $this->researchRequest,

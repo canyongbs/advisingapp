@@ -64,16 +64,8 @@ class GenerateResearchRequestSearchQueries implements ShouldQueue
 
     public function handle(): void
     {
-        $settings = app(AiResearchAssistantSettings::class);
-
-        if (! $settings->research_model) {
-            $this->fail(new Exception('Research model is not set in the settings.'));
-
-            return;
-        }
-
         try {
-            $searchQueries = $settings->research_model
+            $searchQueries = $this->researchRequest->research_model
                 ->getService()
                 ->getResearchRequestRequestSearchQueries(
                     researchRequest: $this->researchRequest,
