@@ -41,4 +41,9 @@ use App\Models\BaseModel;
 abstract class WorkflowDetails extends BaseModel
 {
     abstract public function getType(): string;
+
+    public function hasBeenExecuted(): bool
+    {
+      return //
+    }
 }

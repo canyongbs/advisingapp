@@ -63,6 +63,11 @@ class Workflow extends BaseModel implements Auditable
         'is_enabled' => 'boolean',
     ];
 
+    public function hasBeenExecuted(): bool
+    {
+      return $this->workflowSteps->contains(fn (WorkflowDetails $details) => $details->hasBeenExecuted());
+    }
+
     /**
      * @return BelongsTo<WorkflowTrigger, $this>
      */

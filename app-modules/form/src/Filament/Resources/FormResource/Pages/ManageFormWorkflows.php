@@ -45,6 +45,7 @@ use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -62,11 +63,13 @@ class ManageFormWorkflows extends ManageRelatedRecords
     public function table(Table $table): Table
     {
         return $table
+            ->recordTitleAttribute('id')
             ->columns([
                 TextColumn::make('name'),
-                TextColumn::make('is_enabled')
+                IconColumn::make('is_enabled')
                     ->label('Enabled')
-                    ->icon(fn ($record): string => $record->is_enabled ? 'heroicon-m-check-circle' : 'heroicon-m-x-circle'),
+                    ->state(fn (Workflow $record) => $record->is_enabled)
+                    ->boolean(),
             ])
             ->actions([
                 EditAction::make(),
