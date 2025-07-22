@@ -3,7 +3,7 @@
 namespace AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentPrograms;
 
 use AdvisingApp\StudentDataModel\Actions\UpdateStudentProgram;
-use AdvisingApp\StudentDataModel\DataTransferObjects\StudentProgramRequestData;
+use AdvisingApp\StudentDataModel\DataTransferObjects\StudentProgramData;
 use AdvisingApp\StudentDataModel\Http\Resources\Api\V1\StudentProgramResource;
 use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -11,8 +11,9 @@ use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Gate;
+use Spatie\LaravelData\DataCollection;
 
-class StudentProgramsController
+class PutStudentProgramsController
 {
     /**
      * @response StudentProgramResource
@@ -46,12 +47,10 @@ class StudentProgramsController
             'programs.*.declare_dt' => ['required', 'date', 'date_format:Y-m-d H:i:s'],
         ]);
 
-        $studentProgramRequestData = StudentProgramRequestData::from([
-            'programs' => $data['programs'],
-        ]);
+        $programsData = StudentProgramData::collect($data['programs']);
+    
+        $program->execute($student, $programsData);
 
-        $programs = $program->execute($student, $studentProgramRequestData);
-
-        return $programs->toResourceCollection(StudentProgramResource::class);
+        return $student->refresh()->programs->toResourceCollection(StudentProgramResource::class);
     }
 }

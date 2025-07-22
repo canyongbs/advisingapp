@@ -28,7 +28,7 @@ class ListStudentProgramsController
     #[QueryParameter('filter[division]', description: 'Filter the results where the program\'s Division contains the provided string.', type: 'string')]
     #[QueryParameter('filter[acad_plan]', description: 'Filter the results where the program\'s Academic Plan contains the provided string.', type: 'string')]
     #[QueryParameter('filter[prog_status]', description: 'Filter the results where the program\'s Program Status contains the provided string.', type: 'string')]
-    #[QueryParameter('filter[cum_gpa]', description: 'Filter the results where the program\'s Cumulative GPA contains the provided number.', type: 'float')]
+    #[QueryParameter('filter[cum_gpa]', description: 'Filter the results where the program\'s Cumulative GPA matches the provided number using comparison operators. Supported: =, <, <=, >, >=.', type: 'float')]
     #[QueryParameter('filter[semester]', description: 'Filter the results where the program\'s Semester contains the provided string.', type: 'string')]
     #[QueryParameter('filter[descr]', description: 'Filter the results where the program\'s Description contains the provided string.', type: 'string')]
     #[QueryParameter('filter[foi]', description: 'Filter the results where the program\'s Field of Interest contains the provided string.', type: 'string')]
