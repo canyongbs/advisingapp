@@ -114,7 +114,7 @@ class ApplicationWidgetController extends Controller
         $authentication = new ApplicationAuthentication();
         $authentication->author()->associate($author);
         $authentication->submissible()->associate($application);
-        $authentication->code = Hash::make($code);
+        $authentication->code = Hash::make((string) $code);
         $authentication->save();
 
         Notification::route('mail', [
@@ -144,7 +144,7 @@ class ApplicationWidgetController extends Controller
 
         $request->validate([
             'code' => ['required', 'integer', 'digits:6', function (string $attribute, int $value, Closure $fail) use ($authentication) {
-                if (Hash::check($value, $authentication->code)) {
+                if (Hash::check((string) $value, $authentication->code)) {
                     return;
                 }
 
@@ -305,19 +305,19 @@ class ApplicationWidgetController extends Controller
 
             $prospect->save();
 
-            $emailAddress = $prospect->emailAddresses()->make([
+            $emailAddress = $prospect->emailAddresses()->create([
                 'address' => $data['email'],
             ]);
             $prospect->primaryEmailAddress()->associate($emailAddress);
 
-            $phoneNumber = $prospect->phoneNumbers()->make([
+            $phoneNumber = $prospect->phoneNumbers()->create([
                 'number' => $data['mobile'],
                 'type' => 'Mobile',
                 'can_receive_sms' => true,
             ]);
             $prospect->primaryPhoneNumber()->associate($phoneNumber);
 
-            $address = $prospect->addresses()->make([
+            $address = $prospect->addresses()->create([
                 'line_1' => $data['address'],
                 'line_2' => $data['address_2'],
                 'city' => $data['city'],
@@ -337,7 +337,7 @@ class ApplicationWidgetController extends Controller
         $authentication = new ApplicationAuthentication();
         $authentication->author()->associate($prospect);
         $authentication->submissible()->associate($application);
-        $authentication->code = Hash::make($code);
+        $authentication->code = Hash::make((string) $code);
         $authentication->save();
 
         Notification::route('mail', [
