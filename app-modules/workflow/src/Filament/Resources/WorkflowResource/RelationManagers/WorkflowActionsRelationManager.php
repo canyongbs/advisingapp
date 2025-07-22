@@ -43,6 +43,7 @@ use AdvisingApp\Workflow\Models\WorkflowCaseDetails;
 use AdvisingApp\Workflow\Models\WorkflowDetails;
 use AdvisingApp\Workflow\Models\WorkflowStep;
 use Carbon\CarbonInterval;
+use Exception;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\TextInput;
@@ -55,7 +56,9 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Throwable;
 
 class WorkflowActionsRelationManager extends RelationManager
 {
@@ -109,12 +112,24 @@ class WorkflowActionsRelationManager extends RelationManager
                                     assert($block instanceof WorkflowActionBlock);
 
                                     $data = $item->getState(false);
+                                    
+                                    $delayMinutes = ($data['days'] * 24 * 60) + ($data['hours'] * 60) + $data['minutes'];
 
-                                    $workflowStep = $record->workflowSteps()->create(['delay_minutes' => $data['delay_minutes']]);
+                                    try {
+                                      DB::beginTransaction();
 
-                                    $action = $this->createWorkflowDetails($block, $data);
+                                      $workflowStep = $record->workflowSteps()->create(['delay_minutes' => $delayMinutes]);
 
-                                    $workflowStep->details()->associate($action)->save();
+                                      $action = $this->createWorkflowDetails($block, $data);
+
+                                      $workflowStep->details()->associate($action)->save();
+                                      
+                                      DB::commit();
+                                    } catch (Throwable $throw) {
+                                      DB::rollBack();
+
+                                      throw $throw;
+                                    }
 
                                     $block->afterCreated($action, $item);
 

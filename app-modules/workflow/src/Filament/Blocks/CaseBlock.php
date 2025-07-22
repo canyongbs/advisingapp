@@ -45,8 +45,10 @@ use AdvisingApp\Division\Models\Division;
 use App\Models\User;
 use Closure;
 use Filament\Forms\Components\Field;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Illuminate\Database\Eloquent\Model;
@@ -144,7 +146,31 @@ class CaseBlock extends WorkflowActionBlock
                 ->label('Internal Case Details')
                 ->nullable()
                 ->string(),
-            //TODO: days/hours/minutes
+            Section::make('How long after the previous step should this occur?')
+                ->schema([
+                    TextInput::make('days')
+                        ->translateLabel()
+                        ->numeric()
+                        ->step(1)
+                        ->minValue(0)
+                        ->default(0)
+                        ->inlineLabel(),
+                    TextInput::make('hours')
+                        ->translateLabel()
+                        ->numeric()
+                        ->step(1)
+                        ->minValue(0)
+                        ->default(0)
+                        ->inlineLabel(),
+                    TextInput::make('minutes')
+                        ->translateLabel()
+                        ->numeric()
+                        ->step(1)
+                        ->minValue(0)
+                        ->default(0)
+                        ->inlineLabel(),
+                ])
+                ->columns(3)
         ];
     }
 
