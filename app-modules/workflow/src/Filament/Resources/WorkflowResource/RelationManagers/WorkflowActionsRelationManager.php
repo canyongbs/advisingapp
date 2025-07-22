@@ -43,7 +43,6 @@ use AdvisingApp\Workflow\Models\WorkflowCaseDetails;
 use AdvisingApp\Workflow\Models\WorkflowDetails;
 use AdvisingApp\Workflow\Models\WorkflowStep;
 use Carbon\CarbonInterval;
-use Exception;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\TextInput;
@@ -112,23 +111,23 @@ class WorkflowActionsRelationManager extends RelationManager
                                     assert($block instanceof WorkflowActionBlock);
 
                                     $data = $item->getState(false);
-                                    
+
                                     $delayMinutes = ($data['days'] * 24 * 60) + ($data['hours'] * 60) + $data['minutes'];
 
                                     try {
-                                      DB::beginTransaction();
+                                        DB::beginTransaction();
 
-                                      $workflowStep = $record->workflowSteps()->create(['delay_minutes' => $delayMinutes]);
+                                        $workflowStep = $record->workflowSteps()->create(['delay_minutes' => $delayMinutes]);
 
-                                      $action = $this->createWorkflowDetails($block, $data);
+                                        $action = $this->createWorkflowDetails($block, $data);
 
-                                      $workflowStep->details()->associate($action)->save();
-                                      
-                                      DB::commit();
+                                        $workflowStep->details()->associate($action)->save();
+
+                                        DB::commit();
                                     } catch (Throwable $throw) {
-                                      DB::rollBack();
+                                        DB::rollBack();
 
-                                      throw $throw;
+                                        throw $throw;
                                     }
 
                                     $block->afterCreated($action, $item);
