@@ -174,11 +174,8 @@ class GenerateResearchRequestOutline implements ShouldQueue
             Before the research is conducted, you need to help improve the chances that it will be relevant and useful to me. Based on this research prompt, and all the context provided, create an outline for this "research report" that has an abstract, introduction, body, and conclusion.
 
             Ensure you follow the following additional rules:
-            - Ensure that each body paragraph has a H2 heading, and there are 3 H3 headings underneath it.
-            - Ensure there are 10 body H2 sections (not including the abstract, introduction and conclusion), with 3 H3 sections each.
-            - When the content is built out, the abstract should be 3 complete paragraphs. 
-            - Each main H2 heading should have one content paragraph below it. 
-            - Each H2 subheading should be made up of 5 full complete paragraphs.
+            - The abstract, introduction, and conclusion should each have a unique heading that represents the content of that section.
+            - Aside from the abstract, introduction, and conclusion, there should be 10 content sections in the middle of the report, each with 3 subsections inside.
             - All the content should be written as a scholar would at the PhD level.
             EOD;
     }
