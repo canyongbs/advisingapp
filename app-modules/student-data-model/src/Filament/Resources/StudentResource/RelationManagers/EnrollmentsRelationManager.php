@@ -143,7 +143,6 @@ class EnrollmentsRelationManager extends RelationManager
                             ->all()
                     )
                     ->multiple()
-                    ->native(false)
                     ->searchable(),
             ])
             ->actions([
