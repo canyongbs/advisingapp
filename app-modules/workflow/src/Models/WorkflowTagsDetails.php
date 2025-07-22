@@ -84,4 +84,11 @@ class WorkflowTagsDetails extends WorkflowDetails implements Auditable
     {
         return 'tags';
     }
+
+    public function hasBeenExecuted(): bool
+    {
+      $workflowRunSteps = WorkflowRun::whereWorkflowTriggerId($this->workflowStep->workflow->workflowTrigger->getKey())->first()->workflowRunSteps;
+
+      return !is_null($workflowRunSteps->where('details_type', WorkflowActionType::Tags)->where('details_id', $this->id)->first()->dispatched_at);
+    }
 }
