@@ -54,6 +54,7 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ImportAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Gate;
@@ -116,6 +117,8 @@ class EnrollmentsRelationManager extends RelationManager
     {
         return $table
             ->recordTitleAttribute('division')
+            ->defaultGroup('semester_name')
+            ->defaultSort('start_date', 'desc')
             ->columns([
                 TextColumn::make('name')
                     ->label('Name')
@@ -129,9 +132,19 @@ class EnrollmentsRelationManager extends RelationManager
                 TextColumn::make('crse_grade_off')
                     ->label('Grade')
                     ->placeholder('N/A'),
-                TextColumn::make('semester_name')
-                    ->label('Semester')
-                    ->placeholder('N/A'),
+            ])
+            ->filters([
+                SelectFilter::make('semester_name')
+                    ->options(
+                        fn (): array => $this->getRelationship()->getQuery()
+                            ->whereNotNull('semester_name')
+                            ->distinct()
+                            ->pluck('semester_name', 'semester_name')
+                            ->all()
+                    )
+                    ->multiple()
+                    ->native(false)
+                    ->searchable(),
             ])
             ->actions([
                 ViewAction::make(),
