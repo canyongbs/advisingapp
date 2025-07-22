@@ -28,7 +28,7 @@
             <x-filament::card
                 class="overflow-hidden rounded-xl border bg-white p-4 shadow-sm dark:border-white/10 dark:bg-gray-800"
             >
-                <div class="flex h-20 flex-col justify-start">
+                <div class="h-18 flex flex-col justify-start">
                     <h3 class="text-base font-semibold text-gray-900 dark:text-white">
                         {{ $prompt->type->title }}
                     </h3>
