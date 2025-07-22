@@ -38,6 +38,7 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
 use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Support\Enums\MaxWidth;
@@ -49,14 +50,14 @@ use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 
-class StudentCaseTable extends BaseWidget
+class ProspectCaseTable extends BaseWidget
 {
     use InteractsWithPageFilters;
 
     #[Locked]
     public string $cacheTag;
 
-    protected static ?string $heading = 'Student Cases';
+    protected static ?string $heading = 'Prospect Cases';
 
     protected static bool $isLazy = false;
 
@@ -85,7 +86,7 @@ class StudentCaseTable extends BaseWidget
             ->query(
                 function () use ($startDate, $endDate): Builder {
                     return CaseModel::query()
-                        ->whereHasMorph('respondent', Student::class)
+                        ->whereHasMorph('respondent', Prospect::class)
                         ->when(
                             $startDate && $endDate,
                             fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
@@ -105,12 +106,8 @@ class StudentCaseTable extends BaseWidget
                             return 'N/A';
                         }
 
-                        return $respondent->{Student::displayNameKey()};
+                        return $respondent->{Prospect::displayNameKey()};
                     }),
-                TextColumn::make('respondent.sisid')
-                    ->label('SISID'),
-                TextColumn::make('respondent.otherid')
-                    ->label('Other ID'),
                 TextColumn::make('assignedTo.user.name')
                     ->label('Assigned To'),
                 TextColumn::make('sla_response_seconds')

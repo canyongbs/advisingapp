@@ -38,14 +38,14 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
 use AdvisingApp\CaseManagement\Models\CaseModel;
-use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Prospect\Models\Prospect;
 use Carbon\Carbon;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Number;
 
-class StudentCaseStats extends StatsOverviewReportWidget
+class ProspectCaseStats extends StatsOverviewReportWidget
 {
     public function getStats(): array
     {
@@ -56,23 +56,23 @@ class StudentCaseStats extends StatsOverviewReportWidget
 
         $casesCount = $shouldBypassCache
             ? CaseModel::query()
-                ->whereHasMorph('respondent', Student::class)
+                ->whereHasMorph('respondent', Prospect::class)
                 ->when(
                     $startDate && $endDate,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
-                'total-student-cases-count',
+                'total-prospect-cases-count',
                 now()->addHours(24),
                 fn (): int => CaseModel::query()
-                    ->whereHasMorph('respondent', Student::class)
+                    ->whereHasMorph('respondent', Prospect::class)
                     ->count()
             );
 
         $openCases = $shouldBypassCache
             ? CaseModel::query()
-                ->whereHasMorph('respondent', Student::class)
+                ->whereHasMorph('respondent', Prospect::class)
                 ->when(
                     $startDate && $endDate,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
@@ -80,17 +80,17 @@ class StudentCaseStats extends StatsOverviewReportWidget
                 ->open()
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
-                'total-student-open-cases-count',
+                'total-prospect-open-cases-count',
                 now()->addHours(24),
                 fn (): int => CaseModel::query()
-                    ->whereHasMorph('respondent', Student::class)
+                    ->whereHasMorph('respondent', Prospect::class)
                     ->open()
                     ->count()
             );
 
         $closedCases = $shouldBypassCache
             ? CaseModel::query()
-                ->whereHasMorph('respondent', Student::class)
+                ->whereHasMorph('respondent', Prospect::class)
                 ->when(
                     $startDate && $endDate,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
@@ -98,10 +98,10 @@ class StudentCaseStats extends StatsOverviewReportWidget
                 ->whereRelation('status', 'classification', SystemCaseClassification::Closed)
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
-                'total-student-closed-cases-count',
+                'total-prospect-closed-cases-count',
                 now()->addHours(24),
                 fn (): int => CaseModel::query()
-                    ->whereHasMorph('respondent', Student::class)
+                    ->whereHasMorph('respondent', Prospect::class)
                     ->whereRelation('status', 'classification', SystemCaseClassification::Closed)
                     ->count()
             );
@@ -115,15 +115,15 @@ class StudentCaseStats extends StatsOverviewReportWidget
                 }
             }
             $recentCasesCount = CaseModel::query()
-                ->whereHasMorph('respondent', Student::class)
+                ->whereHasMorph('respondent', Prospect::class)
                 ->whereBetween('created_at', [$startDate, $endDate])
                 ->count();
         } else {
             $recentCasesCount = Cache::tags(["{{$this->cacheTag}}"])->remember(
-                'total-student-recent-cases-count',
+                'total-prospect-recent-cases-count',
                 now()->addHours(24),
                 fn (): int => CaseModel::query()
-                    ->whereHasMorph('respondent', Student::class)
+                    ->whereHasMorph('respondent', Prospect::class)
                     ->where('created_at', '>=', now()->subDays(30))
                     ->count()
             );
