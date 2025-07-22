@@ -66,11 +66,11 @@ class Workflow extends BaseModel implements Auditable
     public function hasBeenExecuted(): bool
     {
         return $this->workflowSteps->contains(function (WorkflowStep $step) {
-          $details = $step->details;
+            $details = $step->details;
 
-          assert($details instanceof WorkflowDetails);
+            assert($details instanceof WorkflowDetails);
 
-          return $details->hasBeenExecuted();
+            return $details->hasBeenExecuted();
         });
     }
 

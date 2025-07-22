@@ -162,5 +162,4 @@ enum WorkflowActionType: string implements HasLabel
             WorkflowActionType::Task => new TaskWorkflowActionJob($step),
         };
     }
-
 }
