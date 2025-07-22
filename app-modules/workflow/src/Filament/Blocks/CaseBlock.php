@@ -170,7 +170,7 @@ class CaseBlock extends WorkflowActionBlock
                         ->default(0)
                         ->inlineLabel(),
                 ])
-                ->columns(3)
+                ->columns(3),
         ];
     }
 
