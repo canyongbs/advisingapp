@@ -333,11 +333,6 @@ abstract class BaseOpenAiResponsesService implements AiService
 
             throw new MessageResponseException('Failed to complete the prompt: [' . $exception->getMessage() . '].');
         }
-
-        dispatch(new RecordTrackedEvent(
-            type: TrackedEventType::AiExchange,
-            occurredAt: now(),
-        ));
     }
 
     /**
@@ -722,11 +717,6 @@ abstract class BaseOpenAiResponsesService implements AiService
 
             throw new MessageResponseException('Failed to complete the prompt: [' . $exception->getMessage() . '].');
         }
-
-        dispatch(new RecordTrackedEvent(
-            type: TrackedEventType::AiExchange,
-            occurredAt: now(),
-        ));
 
         if (filled($response->meta->id)) {
             $responseId = $response->meta->id;
