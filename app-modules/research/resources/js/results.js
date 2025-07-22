@@ -214,7 +214,7 @@ document.addEventListener('alpine:init', () => {
                 if (this.searchQueries) {
                     this.searchQueries.forEach((searchQuery) => {
                         reasoningPoints.push(
-                            `Started searching the web: ["${searchQuery}"](https://google.com/search?q=${encodeURIComponent(searchQuery.search_query)})`,
+                            `Started searching the web: ["${searchQuery}"](https://google.com/search?q=${encodeURIComponent(searchQuery)})`,
                         );
                     });
                 }
