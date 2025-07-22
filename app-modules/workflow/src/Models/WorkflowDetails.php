@@ -50,6 +50,6 @@ abstract class WorkflowDetails extends BaseModel
      */
     public function workflowStep(): BelongsTo
     {
-      return $this->belongsTo(WorkflowStep::class);
+        return $this->belongsTo(WorkflowStep::class);
     }
 }
