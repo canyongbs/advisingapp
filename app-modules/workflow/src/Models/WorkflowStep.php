@@ -57,11 +57,11 @@ class WorkflowStep extends BaseModel implements Auditable
     use HasUuids;
 
     protected $fillable = [
-      'current_details_type',
-      'current_details_id',
-      'delay_minutes',
-      'workflow_id',
-      'previous_step_id',
+        'current_details_type',
+        'current_details_id',
+        'delay_minutes',
+        'workflow_id',
+        'previous_step_id',
     ];
 
     protected $casts = [
