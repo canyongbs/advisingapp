@@ -5,7 +5,7 @@
 
 <div class="mx-auto w-full max-w-7xl px-4 py-6">
     <div class="mb-6">
-        <h2 class="text-center text-xl font-semibold text-gray-800 dark:text-white">
+        <h2 class="text-center text-base font-semibold text-gray-800 dark:text-white">
             Consider getting started with one of our Smart Prompts!
         </h2>
     </div>
