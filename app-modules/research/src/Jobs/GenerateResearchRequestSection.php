@@ -185,7 +185,7 @@ class GenerateResearchRequestSection implements ShouldQueue
         if (array_key_exists('sections', $remainingOutline)) {
             foreach ($remainingOutline['sections'] as $sectionIndex => $section) {
                 if (array_key_exists('heading', $section)) {
-                    $instructions = "Generate the section of the research report, with the H2 heading \"{$section['heading']}\". Ensure that the content is cohesive and well-structured. The section should be 5 complete paragraphs.";
+                    $instructions = "Generate the section of the research report, with the H2 heading \"{$section['heading']}\". Ensure that the content is cohesive and well-structured. The section should be 1 complete paragraph.";
 
                     unset($remainingOutline['sections'][$sectionIndex]['heading']);
 

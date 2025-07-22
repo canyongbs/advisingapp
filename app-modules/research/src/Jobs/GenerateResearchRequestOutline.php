@@ -185,7 +185,7 @@ class GenerateResearchRequestOutline implements ShouldQueue
             - Ensure that each body paragraph has a H2 heading, and there are 3 H3 headings underneath it.
             - Ensure there are 10 body H2 sections (not including the abstract, introduction and conclusion), with 3 H3 sections each.
             - When the content is built out, the abstract should be 3 complete paragraphs. 
-            - Each main H1 heading should have one content paragraph below it. 
+            - Each main H2 heading should have one content paragraph below it. 
             - Each H2 subheading should be made up of 5 full complete paragraphs.
             - All the content should be written as a scholar would at the PhD level.
             EOD;
