@@ -839,7 +839,7 @@ abstract class BaseOpenAiResponsesService implements AiService
 
         foreach ($researchRequest->parsedFiles as $file) {
             $createFileResponse = $this->filesHttpClient()
-                ->attach('file', $file->results, "{$file->media->name}.md", ['Content-Type' => 'text/markdown'])
+                ->attach('file', $file->results, (string) str($file->media->name)->limit(100)->slug()->append('.md'), ['Content-Type' => 'text/markdown'])
                 ->post('files', [
                     'purpose' => 'assistants',
                 ]);
@@ -855,7 +855,7 @@ abstract class BaseOpenAiResponsesService implements AiService
 
         foreach ($researchRequest->parsedLinks as $link) {
             $createFileResponse = $this->filesHttpClient()
-                ->attach('file', $link->results, Str::limit($link->url, 100) . '.md', ['Content-Type' => 'text/markdown'])
+                ->attach('file', $link->results, (string) str($link->url)->limit(100)->slug()->append('.md'), ['Content-Type' => 'text/markdown'])
                 ->post('files', [
                     'purpose' => 'assistants',
                 ]);
@@ -884,7 +884,7 @@ abstract class BaseOpenAiResponsesService implements AiService
 
         foreach ($researchRequest->parsedSearchResults as $searchResult) {
             $createFileResponse = $this->filesHttpClient()
-                ->attach('file', $searchResult->results, Str::limit($searchResult->search_query, 100) . '.md', ['Content-Type' => 'text/markdown'])
+                ->attach('file', $searchResult->results, (string) str($searchResult->search_query)->limit(100)->slug()->append('.md'), ['Content-Type' => 'text/markdown'])
                 ->post('files', [
                     'purpose' => 'assistants',
                 ]);
@@ -983,7 +983,7 @@ abstract class BaseOpenAiResponsesService implements AiService
         }
 
         $createFileResponse = $this->filesHttpClient()
-            ->attach('file', $file->getParsingResults(), "{$file->getName()}.md", ['Content-Type' => 'text/markdown'])
+            ->attach('file', $file->getParsingResults(), (string) str($file->getName())->limit(100)->slug()->append('.md'), ['Content-Type' => 'text/markdown'])
             ->post('files', [
                 'purpose' => 'assistants',
             ]);
