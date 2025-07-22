@@ -51,6 +51,8 @@ class QnaAdvisorEmbed extends ViewRecord
 
     protected static ?string $title = 'Embed';
 
+    protected static ?string $breadcrumb = 'Embed';
+
     public static function canAccess(array $parameters = []): bool
     {
         /** @var User $user */
