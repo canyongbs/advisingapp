@@ -56,26 +56,16 @@ class StartResearch
 
             if ($researchRequest->getMedia('files')->isEmpty() && empty($researchRequest->links)) {
                 Bus::chain([
-                    app(AwaitResearchRequestReady::class, [
-                        'researchRequest' => $researchRequest,
-                    ]),
+                    new AwaitResearchRequestReady($researchRequest),
                     Bus::batch([
-                        app(GenerateResearchRequestSearchQueries::class, [
-                            'researchRequest' => $researchRequest,
-                        ]),
+                        new GenerateResearchRequestSearchQueries($researchRequest),
                     ])
                         ->then(function () use ($researchRequest) {
                             Bus::chain([
-                                app(AfterResearchRequestSearchQueriesParsed::class, [
-                                    'researchRequest' => $researchRequest,
-                                ]),
-                                app(AwaitResearchRequestReady::class, [
-                                    'researchRequest' => $researchRequest,
-                                ]),
+                                new AfterResearchRequestSearchQueriesParsed($researchRequest),
+                                new AwaitResearchRequestReady($researchRequest),
                                 Bus::batch([
-                                    app(GenerateResearchRequestOutline::class, [
-                                        'researchRequest' => $researchRequest,
-                                    ]),
+                                    new GenerateResearchRequestOutline($researchRequest),
                                 ]),
                             ])->dispatch();
                         }),
@@ -86,42 +76,27 @@ class StartResearch
 
             Bus::batch([
                 ...$researchRequest->getMedia('files')->map(function (Media $media): UploadResearchRequestFileForParsing {
-                    return app(UploadResearchRequestFileForParsing::class, [
-                        'media' => $media,
-                    ]);
+                    return new UploadResearchRequestFileForParsing($media);
                 })->all(),
                 ...array_map(
                     function (string $link) use ($researchRequest): FetchResearchRequestLinkParsingResults {
-                        return app(FetchResearchRequestLinkParsingResults::class, [
-                            'researchRequest' => $researchRequest,
-                            'link' => $link,
-                        ]);
+                        return new FetchResearchRequestLinkParsingResults($researchRequest, $link);
                     },
                     $researchRequest->links,
                 ),
             ])
                 ->then(function () use ($researchRequest) {
                     Bus::chain([
-                        app(AwaitResearchRequestReady::class, [
-                            'researchRequest' => $researchRequest,
-                        ]),
+                        new AwaitResearchRequestReady($researchRequest),
                         Bus::batch([
-                            app(GenerateResearchRequestSearchQueries::class, [
-                                'researchRequest' => $researchRequest,
-                            ]),
+                            new GenerateResearchRequestSearchQueries($researchRequest),
                         ])
                             ->then(function () use ($researchRequest) {
                                 Bus::chain([
-                                    app(AfterResearchRequestSearchQueriesParsed::class, [
-                                        'researchRequest' => $researchRequest,
-                                    ]),
-                                    app(AwaitResearchRequestReady::class, [
-                                        'researchRequest' => $researchRequest,
-                                    ]),
+                                    new AfterResearchRequestSearchQueriesParsed($researchRequest),
+                                    new AwaitResearchRequestReady($researchRequest),
                                     Bus::batch([
-                                        app(GenerateResearchRequestOutline::class, [
-                                            'researchRequest' => $researchRequest,
-                                        ]),
+                                        new GenerateResearchRequestOutline($researchRequest),
                                     ]),
                                 ])->dispatch();
                             }),

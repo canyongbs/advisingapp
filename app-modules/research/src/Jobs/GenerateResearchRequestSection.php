@@ -140,17 +140,12 @@ class GenerateResearchRequestSection implements ShouldQueue
         $this->researchRequest->save();
 
         if (blank($remainingOutline)) {
-            $this->batch()->add(app(FinishResearchRequest::class, [
-                'researchRequest' => $this->researchRequest,
-            ]));
+            $this->batch()->add(new FinishResearchRequest($this->researchRequest));
 
             return;
         }
 
-        $this->batch()->add(app(static::class, [
-            'researchRequest' => $this->researchRequest,
-            'requestOptions' => $nextRequestOptions,
-        ]));
+        $this->batch()->add(new self($this->researchRequest, $nextRequestOptions));
     }
 
     public function retryUntil(): CarbonInterface

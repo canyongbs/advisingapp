@@ -138,10 +138,7 @@ class GenerateResearchRequestOutline implements ShouldQueue
         $this->researchRequest->remaining_outline = $outline;
         $this->researchRequest->save();
 
-        $this->batch()->add(app(GenerateResearchRequestSection::class, [
-            'researchRequest' => $this->researchRequest,
-            'requestOptions' => $nextRequestOptions,
-        ]));
+        $this->batch()->add(new GenerateResearchRequestSection($this->researchRequest, $nextRequestOptions));
 
         broadcast(app(ResearchRequestOutlineGenerated::class, [
             'researchRequest' => $this->researchRequest,

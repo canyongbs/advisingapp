@@ -71,10 +71,6 @@ class UploadResearchRequestFileForParsing implements ShouldQueue
             return;
         }
 
-        $this->batch()->add(app(FetchResearchRequestFileParsingResults::class, [
-            'media' => $this->media,
-            'fileId' => $fileId,
-            'uploadedAt' => now(),
-        ]));
+        $this->batch()->add(new FetchResearchRequestFileParsingResults($this->media, $fileId, uploadedAt: now()));
     }
 }
