@@ -536,11 +536,17 @@
                     @endif
                 </div>
 
-                <div
-                    class="flex flex-1 flex-col-reverse overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800">
+                @php
+                    $isInstitutionalAdvisor = $this->thread->assistant->name === 'Institutional Advisor';
+                    $hasMessages = count($this->thread->messages) > 0;
+                    $shouldReverse = $isInstitutionalAdvisor && $hasMessages;
+                @endphp
 
-                    @if (count($this->thread->messages) == 0 && $this->thread->assistant->name === 'Institutional Advisor')
-                        @livewire('prompttabs', ['thread' => $this->thread], key('prompt-tabs-' . $this->thread->assistant->id))
+                <div
+                    class="{{ $shouldReverse ? 'flex-col-reverse' : 'flex-col' }} flex flex-1 overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800">
+
+                    @if (!$hasMessages && $isInstitutionalAdvisor)
+                        @livewire('promptlibrarytabs', ['thread' => $this->thread, 'promptLibraryMode' => true], key('prompt-library-tabs-' . $this->thread->assistant->id))
                     @endif
 
                     <div

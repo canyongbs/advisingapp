@@ -56,6 +56,8 @@ class InstitutionalAdvisor extends Page
 
     public const APPLICATION = AiAssistantApplication::PersonalAssistant;
 
+    public mixed $promptLibraryMode = null;
+
     protected static string $view = 'assistant::filament.pages.personal-assistant';
 
     protected static ?string $navigationGroup = 'Artificial Intelligence';

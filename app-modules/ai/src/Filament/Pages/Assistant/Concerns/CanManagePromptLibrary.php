@@ -72,7 +72,7 @@ trait CanManagePromptLibrary
 
         return Action::make('insertFromPromptLibrary')
             ->label('Prompt library')
-            ->disabled(fn (): bool => $this->thread?->messages()->exists() ?? false)
+            ->disabled(fn (): bool => $this->thread->messages()->exists())
             ->color('gray')
             ->form([
                 ToggleButtons::make('isSmart')
@@ -81,6 +81,7 @@ trait CanManagePromptLibrary
                         1 => 'Smart prompt',
                         0 => 'Custom prompt',
                     ])
+                    ->default($this->promptLibraryMode)
                     ->live()
                     ->afterStateUpdated(fn (Set $set) => $set('promptId', null))
                     ->grouped()
