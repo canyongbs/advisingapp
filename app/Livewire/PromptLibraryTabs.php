@@ -22,7 +22,7 @@ class PromptLibraryTabs extends Component implements HasForms, HasActions
 
     public string $activeTab = AiPromptTabs::Newest->value;
 
-    public AiThread $thread;
+    public ?AiThread $thread;
 
     public mixed $promptLibraryMode = null;
 
