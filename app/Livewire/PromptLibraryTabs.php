@@ -7,12 +7,14 @@ use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManagePromptLibrary;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\Prompt;
 use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
-class PromptLibraryTabs extends Component
+class PromptLibraryTabs extends Component implements HasForms, HasActions
 {
     use InteractsWithActions;
     use InteractsWithForms;
