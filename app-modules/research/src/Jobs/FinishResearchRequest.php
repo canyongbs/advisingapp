@@ -43,6 +43,7 @@ use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Str;
 use Throwable;
 
 class FinishResearchRequest implements ShouldQueue
@@ -78,7 +79,7 @@ class FinishResearchRequest implements ShouldQueue
                 ->getDefaultModel()
                 ->getService()
                 ->complete(
-                    prompt: $this->researchRequest->results,
+                    prompt: Str::limit($this->researchRequest->results, limit: 1000),
                     content: 'Generate a title for this research, in 5 words or less. Do not respond with any greetings or salutations, and do not include any additional information or context. Just respond with the title:',
                 );
         } catch (Throwable $exception) {
