@@ -40,7 +40,6 @@ use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
-use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -99,12 +98,8 @@ class ProspectCaseTable extends BaseWidget
                 TextColumn::make('respondent')
                     ->label('Related To')
                     ->getStateUsing(function (CaseModel $record): string {
-                        /** @var Student|null $respondent */
                         $respondent = $record->respondent;
-
-                        if ($respondent === null) {
-                            return 'N/A';
-                        }
+                        assert($respondent instanceof Prospect);
 
                         return $respondent->{Prospect::displayNameKey()};
                     }),

@@ -98,12 +98,8 @@ class StudentCaseTable extends BaseWidget
                 TextColumn::make('respondent')
                     ->label('Related To')
                     ->getStateUsing(function (CaseModel $record): string {
-                        /** @var Student|null $respondent */
                         $respondent = $record->respondent;
-
-                        if ($respondent === null) {
-                            return 'N/A';
-                        }
+                        assert($respondent instanceof Student);
 
                         return $respondent->{Student::displayNameKey()};
                     }),
