@@ -37,15 +37,26 @@
 namespace AdvisingApp\Workflow\Filament\Resources\WorkflowResource\RelationManagers;
 
 use AdvisingApp\Workflow\Enums\WorkflowActionType;
+use AdvisingApp\Workflow\Filament\Blocks\CaseBlock;
+use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
 use AdvisingApp\Workflow\Models\Workflow;
+use AdvisingApp\Workflow\Models\WorkflowCaseDetails;
+use AdvisingApp\Workflow\Models\WorkflowDetails;
 use AdvisingApp\Workflow\Models\WorkflowStep;
-use Filament\Actions\Action;
+use Carbon\CarbonInterval;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 
 class WorkflowActionsRelationManager extends RelationManager
 {
@@ -76,7 +87,10 @@ class WorkflowActionsRelationManager extends RelationManager
             ->recordTitleAttribute('id')
             //->modifyQueryUsing(fn (Builder $query) => $query->orderBy(you know))
             ->columns([
-                //???? what Model even Is this
+                TextColumn::make('current_details_type')
+                  ->label('Step Type'),
+                TextColumn::make('delay_minutes')
+                  ->state(fn(WorkflowStep $record) => CarbonInterval::minutes($record->delay_minutes)->cascade()->forHumans())
             ])
             ->headerActions([
                 Action::make('create')
@@ -89,10 +103,57 @@ class WorkflowActionsRelationManager extends RelationManager
                             ->blocks(WorkflowActionType::blocks())
                             ->dehydrated(false)
                             ->model($this->getOwnerRecord())
-                            ->saveRelationshipsUsing(),
+                            ->saveRelationshipsUsing(function (Builder $component, Workflow $record) {
+                                foreach($component->getChildComponentContainers() as $item) {
+                                    $block = $item->getParentComponent();
+
+                                    assert($block instanceof WorkflowActionBlock);
+
+                                    $data = $item->getState(false);
+                                    
+                                    $workflowStep = $record->workflowSteps()->create(['delay_minutes' => $data['delay_minutes']]);
+
+                                    $action = $this->createWorkflowDetails($block, $data);
+
+                                    $workflowStep->details()->associate($action)->save();
+
+                                    $block->afterCreated($action, $item);
+
+                                    $item->model($action)->saveRelationships();
+                                }
+                            }),
                     ])
                     ->action(fn() => null)
-                    ->hidden(fn() => $workflow->)
+                    ->hidden(fn() => $workflow->hasBeenExecuted()),
             ])
+            ->actions([
+              EditAction::make()
+                ->modalHeading(fn (WorkflowDetails $workflowDetails) => 'Edit ' . Str::title($workflowDetails->getType()))
+                ->hidden(fn (WorkflowDetails $workflowDetails) => $workflowDetails->hasBeenExecuted())
+                ->databaseTransaction(),
+              DeleteAction::make()
+                ->modalHeading(fn (WorkflowDetails $workflowDetails) => 'Delete ' . Str::title($workflowDetails->getType()))
+                ->hidden(fn (WorkflowDetails $workflowDetails) => $workflowDetails->hasBeenExecuted())
+                ->databaseTransaction(),
+            ])
+            ->bulkActions([
+              BulkActionGroup::make([
+                DeleteBulkAction::make(),
+              ])
+              ->hidden(fn () => $workflow->hasBeenExecuted())
+            ]);
+    }
+
+    /**
+     * @param WorkflowActionBlock $block
+     * @param array<mixed> $data
+     * @return WorkflowDetails|null
+     */
+    private function createWorkflowDetails(WorkflowActionBlock $block, array $data): ?WorkflowDetails
+    {
+      return match($block->type()) {
+        'case' => WorkflowCaseDetails::create(...$data),
+        default => null
+      };
     }
 }

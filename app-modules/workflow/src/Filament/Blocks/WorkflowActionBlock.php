@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Workflow\Filament\Blocks;
 
+use AdvisingApp\Workflow\Models\WorkflowDetails;
+use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\Field;
 
@@ -73,4 +75,6 @@ abstract class WorkflowActionBlock extends Block
     abstract public function generateFields(): array;
 
     abstract public static function type(): string;
+
+    public function afterCreated(WorkflowDetails $action, ComponentContainer $componentContainer): void {}
 }
