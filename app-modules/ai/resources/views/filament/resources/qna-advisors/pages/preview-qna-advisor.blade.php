@@ -32,24 +32,25 @@
 </COPYRIGHT>
 --}}
 <x-filament-panels::page>
-    <div x-data="qnaAdvisorPreview({
+    <div
+        class="flex h-[calc(100dvh-16rem)] flex-col gap-y-3"
+        x-data="qnaAdvisorPreview({
             csrfToken: @js(csrf_token()),
             sendMessageUrl: @js(route('ai.qna-advisors.messages.send', ['advisor' => $this->getrecord()])),
             userId: @js(auth()->user()->id),
-        })" class="h-[calc(100dvh-16rem)] flex flex-col gap-y-3">
-        <div class="flex flex-1 flex-col-reverse overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800">
+        })"
+    >
+        <div
+            class="flex flex-1 flex-col-reverse overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800">
             <div
                 class="divide-y dark:divide-gray-800"
                 x-cloak
             >
                 <template x-for="(message, messageIndex) in messages">
                     <div class="group w-full bg-white dark:bg-gray-900">
-                        <div
-                            class="m-auto justify-center px-4 py-4 md:py-6 text-base md:gap-6"
-                        >
+                        <div class="m-auto justify-center px-4 py-4 text-base md:gap-6 md:py-6">
                             <div
-                                class="mx-auto flex flex-1 gap-4 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl"
-                            >
+                                class="mx-auto flex flex-1 gap-4 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl">
                                 <div class="relative flex flex-shrink-0 flex-col items-end">
                                     <img
                                         class="h-8 w-8 rounded-full object-cover object-center"

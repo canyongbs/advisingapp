@@ -35,11 +35,11 @@
 */
 
 use AdvisingApp\Ai\Http\Controllers\CompleteResponseController;
+use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\SendMessageController as SendQnaAdvisorMessageController;
 use AdvisingApp\Ai\Http\Controllers\RetryMessageController;
 use AdvisingApp\Ai\Http\Controllers\SendMessageController;
 use AdvisingApp\Ai\Http\Controllers\ShowThreadController;
 use Illuminate\Support\Facades\Route;
-use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\SendMessageController as SendQnaAdvisorMessageController;
 
 Route::middleware(['web', 'auth'])
     ->name('ai.')

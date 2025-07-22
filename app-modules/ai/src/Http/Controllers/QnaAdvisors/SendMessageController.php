@@ -36,10 +36,8 @@
 
 namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
-use AppHttp\Controllers\Controller;
 use AdvisingApp\Ai\Models\QnaAdvisor;
+use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SendMessageController

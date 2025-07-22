@@ -35,159 +35,156 @@ import DOMPurify from 'dompurify';
 import { marked } from 'marked';
 
 document.addEventListener('alpine:init', () => {
-    Alpine.data(
-        'qnaAdvisorPreview',
-        ({ csrfToken, sendMessageUrl, userId }) => ({
-            error: null,
-            isLoading: true,
-            isSendingMessage: false,
-            message: '',
-            rawIncomingResponse: '',
-            messages: [],
+    Alpine.data('qnaAdvisorPreview', ({ csrfToken, sendMessageUrl, userId }) => ({
+        error: null,
+        isLoading: true,
+        isSendingMessage: false,
+        message: '',
+        rawIncomingResponse: '',
+        messages: [],
 
-            init: async function () {
-                this.render();
+        init: async function () {
+            this.render();
 
-                setInterval(this.render.bind(this), 500);
+            setInterval(this.render.bind(this), 500);
 
-                this.isLoading = false;
-            },
+            this.isLoading = false;
+        },
 
-            handleMessageResponse: async function ({ response }) {
-                if (!response.ok) {
-                    const responseJson = await response.json();
+        handleMessageResponse: async function ({ response }) {
+            if (!response.ok) {
+                const responseJson = await response.json();
 
-                    this.error = responseJson.message;
-                    this.isSendingMessage = false;
+                this.error = responseJson.message;
+                this.isSendingMessage = false;
 
+                return;
+            }
+
+            let hasSetUpNewMessageForResponse = false;
+
+            const responseReader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+
+            const readResponse = async () => {
+                const { done, value } = await responseReader.read();
+
+                if (done) {
                     return;
                 }
 
-                let hasSetUpNewMessageForResponse = false;
+                this.parseEvents(value).forEach((event) => {
+                    if (event.type === 'content') {
+                        this.error = null;
 
-                const responseReader = response.body.pipeThrough(new TextDecoderStream()).getReader();
-
-                const readResponse = async () => {
-                    const { done, value } = await responseReader.read();
-
-                    if (done) {
-                        return;
-                    }
-
-                    this.parseEvents(value).forEach((event) => {
-                        if (event.type === 'content') {
-                            this.error = null;
-
-                            if (!hasSetUpNewMessageForResponse) {
-                                if (this.rawIncomingResponse.endsWith('...')) {
-                                    this.rawIncomingResponse = this.rawIncomingResponse.slice(0, -3);
-                                }
-
-                                this.rawIncomingResponse += ' ';
-
-                                hasSetUpNewMessageForResponse = true;
+                        if (!hasSetUpNewMessageForResponse) {
+                            if (this.rawIncomingResponse.endsWith('...')) {
+                                this.rawIncomingResponse = this.rawIncomingResponse.slice(0, -3);
                             }
 
-                            this.rawIncomingResponse += new TextDecoder().decode(
-                                Uint8Array.from(atob(event.content), (m) => m.codePointAt(0)),
-                            );
+                            this.rawIncomingResponse += ' ';
 
-                            this.messages[this.messages.length - 1].content = DOMPurify.sanitize(
-                                marked.parse(this.rawIncomingResponse),
-                            );
-
-                            if (event.incomplete) {
-                                this.isIncomplete = true;
-                            }
+                            hasSetUpNewMessageForResponse = true;
                         }
-                    });
 
-                    await readResponse();
-                };
+                        this.rawIncomingResponse += new TextDecoder().decode(
+                            Uint8Array.from(atob(event.content), (m) => m.codePointAt(0)),
+                        );
+
+                        this.messages[this.messages.length - 1].content = DOMPurify.sanitize(
+                            marked.parse(this.rawIncomingResponse),
+                        );
+
+                        if (event.incomplete) {
+                            this.isIncomplete = true;
+                        }
+                    }
+                });
 
                 await readResponse();
-            },
+            };
 
-            sendMessage: async function () {
-                if (!this.message.replace(/\s/g, '').length) {
-                    // The message is empty / whitespace only.
+            await readResponse();
+        },
 
-                    return;
-                }
+        sendMessage: async function () {
+            if (!this.message.replace(/\s/g, '').length) {
+                // The message is empty / whitespace only.
 
-                this.isSendingMessage = true;
-                this.isIncomplete = false;
-                this.error = null;
+                return;
+            }
 
-                const message = this.message;
+            this.isSendingMessage = true;
+            this.isIncomplete = false;
+            this.error = null;
 
-                this.messages.push({
-                    content: this.message.replace(/(?:\r\n|\r|\n)/g, '<br />'),
-                    user_id: userId,
-                });
+            const message = this.message;
 
-                this.message = '';
+            this.messages.push({
+                content: this.message.replace(/(?:\r\n|\r|\n)/g, '<br />'),
+                user_id: userId,
+            });
 
-                this.$nextTick(async () => {
-                    await this.handleMessageResponse({
-                        response: await fetch(sendMessageUrl, {
-                            method: 'POST',
-                            headers: {
-                                Accept: 'application/json',
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': csrfToken,
-                            },
-                            body: JSON.stringify({
-                                content: message,
-                            }),
+            this.message = '';
+
+            this.$nextTick(async () => {
+                await this.handleMessageResponse({
+                    response: await fetch(sendMessageUrl, {
+                        method: 'POST',
+                        headers: {
+                            Accept: 'application/json',
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                        },
+                        body: JSON.stringify({
+                            content: message,
                         }),
-                    });
+                    }),
                 });
-            },
+            });
+        },
 
-            render: function () {
-                if (!this.$refs.messageInput) {
-                    return;
-                }
+        render: function () {
+            if (!this.$refs.messageInput) {
+                return;
+            }
 
-                if (this.$refs.messageInput.scrollHeight > 0) {
-                    this.$refs.messageInput.style.height = '5rem';
-                    this.$refs.messageInput.style.height = `min(${this.$refs.messageInput.scrollHeight}px, 25dvh)`;
-                }
-            },
+            if (this.$refs.messageInput.scrollHeight > 0) {
+                this.$refs.messageInput.style.height = '5rem';
+                this.$refs.messageInput.style.height = `min(${this.$refs.messageInput.scrollHeight}px, 25dvh)`;
+            }
+        },
 
-            parseEvents: function (encodedEvents) {
-                encodedEvents = encodedEvents
-                    .split('\n')
-                    .map((l) => l.trim())
-                    .join('');
+        parseEvents: function (encodedEvents) {
+            encodedEvents = encodedEvents
+                .split('\n')
+                .map((l) => l.trim())
+                .join('');
 
-                let jsonObjectIndex = encodedEvents.indexOf('{');
+            let jsonObjectIndex = encodedEvents.indexOf('{');
 
-                let openJsonObjects = 0;
+            let openJsonObjects = 0;
 
-                const events = [];
+            const events = [];
 
-                for (let i = jsonObjectIndex; i < encodedEvents.length; i++) {
-                    if (encodedEvents[i] === '{' && (i < 2 || encodedEvents.slice(i - 2, i) !== '\\"')) {
-                        openJsonObjects++;
+            for (let i = jsonObjectIndex; i < encodedEvents.length; i++) {
+                if (encodedEvents[i] === '{' && (i < 2 || encodedEvents.slice(i - 2, i) !== '\\"')) {
+                    openJsonObjects++;
 
-                        if (openJsonObjects === 1) {
-                            jsonObjectIndex = i;
-                        }
-                    } else if (encodedEvents[i] === '}' && (i < 2 || encodedEvents.slice(i - 2, i) !== '\\"')) {
-                        openJsonObjects--;
+                    if (openJsonObjects === 1) {
+                        jsonObjectIndex = i;
+                    }
+                } else if (encodedEvents[i] === '}' && (i < 2 || encodedEvents.slice(i - 2, i) !== '\\"')) {
+                    openJsonObjects--;
 
-                        if (openJsonObjects === 0) {
-                            events.push(JSON.parse(encodedEvents.substring(jsonObjectIndex, i + 1)));
+                    if (openJsonObjects === 0) {
+                        events.push(JSON.parse(encodedEvents.substring(jsonObjectIndex, i + 1)));
 
-                            jsonObjectIndex = i + 1;
-                        }
+                        jsonObjectIndex = i + 1;
                     }
                 }
+            }
 
-                return events;
-            },
-        }),
-    );
+            return events;
+        },
+    }));
 });

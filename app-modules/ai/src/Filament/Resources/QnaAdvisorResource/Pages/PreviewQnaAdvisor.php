@@ -52,7 +52,7 @@ class PreviewQnaAdvisor extends ViewRecord
     protected static ?string $title = 'Preview';
 
     protected static ?string $breadcrumb = 'Preview';
-    
+
     protected static string $view = 'ai::filament.resources.qna-advisors.pages.preview-qna-advisor';
 
     public static function canAccess(array $parameters = []): bool
