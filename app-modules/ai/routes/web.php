@@ -39,6 +39,7 @@ use AdvisingApp\Ai\Http\Controllers\RetryMessageController;
 use AdvisingApp\Ai\Http\Controllers\SendMessageController;
 use AdvisingApp\Ai\Http\Controllers\ShowThreadController;
 use Illuminate\Support\Facades\Route;
+use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\SendMessageController as SendQnaAdvisorMessageController;
 
 Route::middleware(['web', 'auth'])
     ->name('ai.')
@@ -54,4 +55,7 @@ Route::middleware(['web', 'auth'])
 
         Route::post('ai/threads/{thread}/messages/complete-response', CompleteResponseController::class)
             ->name('threads.messages.complete-response');
+
+        Route::post('ai/qna-advisors/{advisor}/messages', SendQnaAdvisorMessageController::class)
+            ->name('qna-advisors.messages.send');
     });
