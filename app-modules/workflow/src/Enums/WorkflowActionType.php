@@ -36,6 +36,17 @@
 
 namespace AdvisingApp\Workflow\Enums;
 
+use AdvisingApp\Workflow\Filament\Blocks\CareTeamBlock;
+use AdvisingApp\Workflow\Filament\Blocks\CaseBlock;
+use AdvisingApp\Workflow\Filament\Blocks\EngagementEmailBlock;
+use AdvisingApp\Workflow\Filament\Blocks\EngagementSmsBlock;
+use AdvisingApp\Workflow\Filament\Blocks\EventBlock;
+use AdvisingApp\Workflow\Filament\Blocks\InteractionBlock;
+use AdvisingApp\Workflow\Filament\Blocks\ProactiveAlertBlock;
+use AdvisingApp\Workflow\Filament\Blocks\SubscriptionBlock;
+use AdvisingApp\Workflow\Filament\Blocks\TagsBlock;
+use AdvisingApp\Workflow\Filament\Blocks\TaskBlock;
+use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
 use AdvisingApp\Workflow\Jobs\CareTeamWorkflowActionJob;
 use AdvisingApp\Workflow\Jobs\CaseWorkflowActionJob;
 use AdvisingApp\Workflow\Jobs\EngagementEmailWorkflowActionJob;
@@ -48,6 +59,8 @@ use AdvisingApp\Workflow\Jobs\SubscriptionWorkflowActionJob;
 use AdvisingApp\Workflow\Jobs\TagsWorkflowActionJob;
 use AdvisingApp\Workflow\Jobs\TaskWorkflowActionJob;
 use AdvisingApp\Workflow\Models\WorkflowRunStep;
+use App\Settings\LicenseSettings;
+use Filament\Forms\Components\Field;
 use Filament\Support\Contracts\HasLabel;
 
 enum WorkflowActionType: string implements HasLabel
@@ -72,6 +85,33 @@ enum WorkflowActionType: string implements HasLabel
 
     case Tags = 'tags';
 
+    /**
+     * @return array<int, WorkflowActionBlock>
+     */
+    public static function blocks(): array
+    {
+        $blocks = [
+            CareTeamBlock::make(),
+            EngagementEmailBlock::make(),
+            EngagementSmsBlock::make(),
+            InteractionBlock::make(),
+            ProactiveAlertBlock::make(),
+            SubscriptionBlock::make(),
+            TagsBlock::make(),
+            TaskBlock::make(),
+        ];
+
+        if (app(LicenseSettings::class)->data->addons->caseManagement) {
+            $blocks[] = CaseBlock::make();
+        }
+
+        if (app(LicenseSettings::class)->data->addons->eventManagement) {
+            $blocks[] = EventBlock::make();
+        }
+
+        return $blocks;
+    }
+
     public function getLabel(): string
     {
         return match ($this) {
@@ -81,6 +121,30 @@ enum WorkflowActionType: string implements HasLabel
             WorkflowActionType::CareTeam => 'Care Team',
             default => $this->name,
         };
+    }
+
+    public function getBlock(): WorkflowActionBlock
+    {
+        return match ($this) {
+            WorkflowActionType::CareTeam => CareTeamBlock::make(),
+            WorkflowActionType::Case => CaseBlock::make(),
+            WorkflowActionType::EngagementEmail => EngagementEmailBlock::make(),
+            WorkflowActionType::EngagementSms => EngagementSmsBlock::make(),
+            WorkflowActionType::Event => EventBlock::make(),
+            WorkflowActionType::Interaction => InteractionBlock::make(),
+            WorkflowActionType::ProactiveAlert => ProactiveAlertBlock::make(),
+            WorkflowActionType::Subscription => SubscriptionBlock::make(),
+            WorkflowActionType::Tags => TagsBlock::make(),
+            WorkflowActionType::Task => TaskBlock::make(),
+        };
+    }
+
+    /**
+     * @return array<int, covariant Field>
+     */
+    public function getEditFields(): array
+    {
+        return $this->getBlock()->editFields();
     }
 
     public function getActionExecutableJob(WorkflowRunStep $step): ExecuteWorkflowActionOnEducatableJob

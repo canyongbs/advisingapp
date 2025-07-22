@@ -3240,6 +3240,10 @@ namespace AdvisingApp\Form\Models{
  * @property-read int|null $steps_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Form\Models\FormSubmission> $submissions
  * @property-read int|null $submissions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Workflow\Models\WorkflowTrigger> $workflowTriggers
+ * @property-read int|null $workflow_triggers_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\AdvisingApp\Workflow\Models\Workflow[] $workflows
+ * @property-read int|null $workflows_count
  * @method static \AdvisingApp\Form\Database\Factories\FormFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Form newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Form newQuery()
@@ -6525,7 +6529,6 @@ namespace AdvisingApp\Workflow\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read covariant WorkflowDetails $workflowDetails
  * @property-read \AdvisingApp\Workflow\Models\WorkflowRun $workflowRun
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep newQuery()
@@ -6643,7 +6646,7 @@ namespace AdvisingApp\Workflow\Models{
 namespace AdvisingApp\Workflow\Models{
 /**
  * @property string $id
- * @property string $current_details_type
+ * @property \AdvisingApp\Workflow\Enums\WorkflowActionType $current_details_type
  * @property string $current_details_id
  * @property int $delay_minutes
  * @property string $workflow_id
@@ -6653,6 +6656,7 @@ namespace AdvisingApp\Workflow\Models{
  * @property string|null $previous_step_id
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Model $details
  * @property-read WorkflowStep|null $previousWorkflowStep
  * @property-read \AdvisingApp\Workflow\Models\Workflow $workflow
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowStep newModelQuery()
@@ -6783,7 +6787,7 @@ namespace AdvisingApp\Workflow\Models{
  * @property string $created_by_id
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Model $createdBy
+ * @property-read \App\Models\User|null $createdBy
  * @property-read \AdvisingApp\Workflow\Models\Workflow|null $workflow
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTrigger newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTrigger newQuery()
