@@ -58,18 +58,23 @@
 
     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         @forelse ($prompts as $prompt)
-            <x-filament::card
-                class="overflow-hidden rounded-xl border bg-white p-4 shadow-sm dark:border-white/10 dark:bg-gray-800"
+            <div
+                class="cursor-pointer"
+                wire:click="$dispatch('send-prompt', @js((object) ['prompt' => ['id' => $prompt->getKey(), 'title' => $prompt->title]]))"
             >
-                <div class="h-18 flex flex-col justify-start">
-                    <h3 class="text-base font-semibold text-gray-900 dark:text-white">
-                        {{ $prompt->type->title }}
-                    </h3>
-                    <p class="mt-2 line-clamp-4 text-sm text-gray-600 dark:text-gray-300">
-                        {{ Str::limit($prompt->title, 50) }}
-                    </p>
-                </div>
-            </x-filament::card>
+                <x-filament::card
+                    class="overflow-hidden rounded-xl border bg-white p-4 shadow-sm dark:border-white/10 dark:bg-gray-800"
+                >
+                    <div class="h-18 flex flex-col justify-start">
+                        <h3 class="text-base font-semibold text-gray-900 dark:text-white">
+                            {{ $prompt->type->title }}
+                        </h3>
+                        <p class="mt-2 line-clamp-4 text-sm text-gray-600 dark:text-gray-300">
+                            {{ Str::limit($prompt->title, 50) }}
+                        </p>
+                    </div>
+                </x-filament::card>
+            </div>
         @empty
             <p class="col-span-full text-center text-sm text-gray-500 dark:text-gray-400">
                 @switch($activeTab)
