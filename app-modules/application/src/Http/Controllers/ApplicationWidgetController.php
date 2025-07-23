@@ -44,6 +44,7 @@ use AdvisingApp\Form\Actions\GenerateSubmissibleValidation;
 use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
 use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
 use AdvisingApp\Form\Http\Requests\RegisterProspectRequest;
+use AdvisingApp\Form\Http\Requests\RegisterProspectRequestForApplication;
 use AdvisingApp\Form\Notifications\AuthenticateFormNotification;
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -93,27 +94,26 @@ class ApplicationWidgetController extends Controller
         $author = $resolveSubmissionAuthorFromEmail($data['email']);
 
         if (! $author) {
-
             if (OnlineAdmissionGenerateProspect::active()) {
-                if(! $application->should_generate_prospects){
+                if (! $application->should_generate_prospects) {
                     throw ValidationException::withMessages([
                         'email' => 'A student with that email address could not be found. Please contact your system administrator.',
                     ]);
-                }else{
-                    return response()->json([
-                        'registrationAllowed' => true,
-                        'authentication_url' => URL::signedRoute(
-                            name: 'applications.register-prospect',
-                            parameters: ['application' => $application],
-                            absolute: false,
-                        ),
-                    ], 404);
                 }
-            }else{
-                throw ValidationException::withMessages([
-                    'email' => 'A student with that email address could not be found. Please contact your system administrator.',
-                ]);
+
+                return response()->json([
+                    'registrationAllowed' => true,
+                    'authentication_url' => URL::signedRoute(
+                        name: 'applications.register-prospect',
+                        parameters: ['application' => $application],
+                        absolute: false,
+                    ),
+                ], 404);
             }
+
+            throw ValidationException::withMessages([
+                'email' => 'A student with that email address could not be found. Please contact your system administrator.',
+            ]);
         }
 
         $code = random_int(100000, 999999);
@@ -280,7 +280,7 @@ class ApplicationWidgetController extends Controller
         );
     }
 
-    public function registerProspect(RegisterProspectRequest $request, Application $application): JsonResponse
+    public function registerProspect(RegisterProspectRequestForApplication $request, Application $application): JsonResponse
     {
         $data = $request->validated();
 
@@ -289,9 +289,9 @@ class ApplicationWidgetController extends Controller
                 ->make([
                     'first_name' => $data['first_name'],
                     'last_name' => $data['last_name'],
-                    'preferred' => $data['preferred'],
+                    'preferred' => $data['preferred'] ?? null,
                     'full_name' => "{$data['first_name']} {$data['last_name']}",
-                    'birthdate' => $data['birthdate'],
+                    'birthdate' => $data['birthdate'] ?? null,
                 ]);
 
             $status = ProspectStatus::query()
@@ -324,15 +324,23 @@ class ApplicationWidgetController extends Controller
             ]);
             $prospect->primaryPhoneNumber()->associate($phoneNumber);
 
-            $address = $prospect->addresses()->create([
-                'line_1' => $data['address'],
-                'line_2' => $data['address_2'],
-                'city' => $data['city'],
-                'state' => $data['state'],
-                'postal' => $data['postal'],
-                'type' => 'Home',
-            ]);
-            $prospect->primaryAddress()->associate($address);
+            if(
+                isset($data['address']) ||
+                isset($data['address_2']) ||
+                isset($data['city']) ||
+                isset($data['state']) ||
+                isset($data['postal'])
+            ){
+                $address = $prospect->addresses()->create([
+                    'line_1' => $data['address'] ?? null,
+                    'line_2' => $data['address_2'] ?? null,
+                    'city' => $data['city'] ?? null,
+                    'state' => $data['state'] ?? null,
+                    'postal' => $data['postal'] ?? null,
+                    'type' => 'Home',
+                ]);
+                $prospect->primaryAddress()->associate($address);
+            }
 
             $prospect->save();
 

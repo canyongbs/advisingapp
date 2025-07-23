@@ -375,7 +375,7 @@ async function authenticate(applicationData, node) {
                                     type="text"
                                     label="Preferred Name"
                                     name="preferred"
-                                    validation="required|alpha|length:0,255"
+                                    validation="alpha|length:0,255"
                                     validation-visibility="submit"
                                 />
                             </div>
@@ -384,8 +384,6 @@ async function authenticate(applicationData, node) {
                                     type="date"
                                     label="Birth Date"
                                     name="birthdate"
-                                    validation="required"
-                                    validation-visibility="submit"
                                 />
                             </div>
                         </div>
@@ -396,8 +394,12 @@ async function authenticate(applicationData, node) {
                                     label="Mobile"
                                     name="mobile"
                                     placeholder="e.g., +14155552671"
-                                    :validation="[['matches', /^\+[1-9]\d{9,14}$/]]"
+                                    :validation="[
+                                        ['required'],
+                                        ['matches', /^\+[1-9]\d{9,14}$/]
+                                    ]"
                                     :validation-messages="{
+                                        required: 'Mobile number is required',
                                         matches: 'Phone number must be in E.164 format (e.g., +14155552671)',
                                     }"
                                     validation-visibility="submit"
