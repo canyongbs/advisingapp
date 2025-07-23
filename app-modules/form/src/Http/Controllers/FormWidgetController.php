@@ -304,19 +304,19 @@ class FormWidgetController extends Controller
 
             $prospect->save();
 
-            $emailAddress = $prospect->emailAddresses()->make([
+            $emailAddress = $prospect->emailAddresses()->create([
                 'address' => $data['email'],
             ]);
             $prospect->primaryEmailAddress()->associate($emailAddress);
 
-            $phoneNumber = $prospect->phoneNumbers()->make([
+            $phoneNumber = $prospect->phoneNumbers()->create([
                 'number' => $data['mobile'],
                 'type' => 'Mobile',
                 'can_receive_sms' => true,
             ]);
             $prospect->primaryPhoneNumber()->associate($phoneNumber);
 
-            $address = $prospect->addresses()->make([
+            $address = $prospect->addresses()->create([
                 'line_1' => $data['address'],
                 'line_2' => $data['address_2'],
                 'city' => $data['city'],

@@ -34,59 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Models;
+namespace App\Features;
 
-use AdvisingApp\Form\Enums\Rounding;
-use AdvisingApp\Form\Models\Submissible;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Support\AbstractFeatureFlag;
 
-/**
- * @mixin IdeHelperApplication
- */
-class Application extends Submissible
+class OnlineAdmissionGenerateProspect extends AbstractFeatureFlag
 {
-    protected $fillable = [
-        'name',
-        'description',
-        'embed_enabled',
-        'allowed_domains',
-        'is_wizard',
-        'primary_color',
-        'rounding',
-        'content',
-        'should_generate_prospects',
-    ];
-
-    protected $casts = [
-        'content' => 'array',
-        'embed_enabled' => 'boolean',
-        'allowed_domains' => 'array',
-        'is_wizard' => 'boolean',
-        'rounding' => Rounding::class,
-        'should_generate_prospects' => 'boolean',
-    ];
-
-    /**
-     * @return HasMany<ApplicationField, $this>
-     */
-    public function fields(): HasMany
+    public function resolve(mixed $scope): mixed
     {
-        return $this->hasMany(ApplicationField::class);
-    }
-
-    /**
-     * @return HasMany<ApplicationStep, $this>
-     */
-    public function steps(): HasMany
-    {
-        return $this->hasMany(ApplicationStep::class);
-    }
-
-    /**
-     * @return HasMany<ApplicationSubmission, $this>
-     */
-    public function submissions(): HasMany
-    {
-        return $this->hasMany(ApplicationSubmission::class);
+        return false;
     }
 }

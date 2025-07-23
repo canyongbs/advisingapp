@@ -34,59 +34,41 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Models;
+namespace AdvisingApp\Form\Http\Requests;
 
-use AdvisingApp\Form\Enums\Rounding;
-use AdvisingApp\Form\Models\Submissible;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-/**
- * @mixin IdeHelperApplication
- */
-class Application extends Submissible
+class RegisterProspectRequestForApplication extends FormRequest
 {
-    protected $fillable = [
-        'name',
-        'description',
-        'embed_enabled',
-        'allowed_domains',
-        'is_wizard',
-        'primary_color',
-        'rounding',
-        'content',
-        'should_generate_prospects',
-    ];
-
-    protected $casts = [
-        'content' => 'array',
-        'embed_enabled' => 'boolean',
-        'allowed_domains' => 'array',
-        'is_wizard' => 'boolean',
-        'rounding' => Rounding::class,
-        'should_generate_prospects' => 'boolean',
-    ];
-
     /**
-     * @return HasMany<ApplicationField, $this>
+     * Determine if the user is authorized to make this request.
      */
-    public function fields(): HasMany
+    public function authorize(): bool
     {
-        return $this->hasMany(ApplicationField::class);
+        return true;
     }
 
     /**
-     * @return HasMany<ApplicationStep, $this>
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
-    public function steps(): HasMany
+    public function rules(): array
     {
-        return $this->hasMany(ApplicationStep::class);
-    }
-
-    /**
-     * @return HasMany<ApplicationSubmission, $this>
-     */
-    public function submissions(): HasMany
-    {
-        return $this->hasMany(ApplicationSubmission::class);
+        return [
+            'email' => ['email', 'string', 'required', Rule::unique('prospect_email_addresses', 'address')],
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
+            'preferred' => ['string', 'max:255'],
+            'mobile' => ['required', 'max:255', 'regex:/^\+[1-9]\d{9,14}$/'],
+            'birthdate' => ['date'],
+            'address' => ['string', 'max:255'],
+            'address_2' => ['string', 'max:255'],
+            'city' => ['string', 'max:255'],
+            'state' => ['string', 'max:255'],
+            'postal' => ['max:255'],
+        ];
     }
 }

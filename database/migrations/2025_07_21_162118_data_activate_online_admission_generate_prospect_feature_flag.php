@@ -34,59 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Models;
+use App\Features\OnlineAdmissionGenerateProspect;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\Form\Enums\Rounding;
-use AdvisingApp\Form\Models\Submissible;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-
-/**
- * @mixin IdeHelperApplication
- */
-class Application extends Submissible
-{
-    protected $fillable = [
-        'name',
-        'description',
-        'embed_enabled',
-        'allowed_domains',
-        'is_wizard',
-        'primary_color',
-        'rounding',
-        'content',
-        'should_generate_prospects',
-    ];
-
-    protected $casts = [
-        'content' => 'array',
-        'embed_enabled' => 'boolean',
-        'allowed_domains' => 'array',
-        'is_wizard' => 'boolean',
-        'rounding' => Rounding::class,
-        'should_generate_prospects' => 'boolean',
-    ];
-
-    /**
-     * @return HasMany<ApplicationField, $this>
-     */
-    public function fields(): HasMany
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->hasMany(ApplicationField::class);
+        OnlineAdmissionGenerateProspect::activate();
     }
 
-    /**
-     * @return HasMany<ApplicationStep, $this>
-     */
-    public function steps(): HasMany
+    public function down(): void
     {
-        return $this->hasMany(ApplicationStep::class);
+        OnlineAdmissionGenerateProspect::deactivate();
     }
-
-    /**
-     * @return HasMany<ApplicationSubmission, $this>
-     */
-    public function submissions(): HasMany
-    {
-        return $this->hasMany(ApplicationSubmission::class);
-    }
-}
+};
