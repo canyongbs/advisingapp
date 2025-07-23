@@ -2,7 +2,8 @@
 
 namespace AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentEnrollments;
 
-use AdvisingApp\StudentDataModel\Actions\UpdateStudentEnrollment;
+use AdvisingApp\StudentDataModel\Actions\PutStudentEnrollments;
+use AdvisingApp\StudentDataModel\DataTransferObjects\StudentEnrollmentData;
 use AdvisingApp\StudentDataModel\DataTransferObjects\StudentEnrollmentRequestData;
 use AdvisingApp\StudentDataModel\Http\Resources\Api\V1\StudentEnrollmentResource;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
@@ -12,13 +13,13 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Gate;
 
-class StudentEnrollmentsController
+class PutStudentEnrollmentsController
 {
     /**
      * @response StudentEnrollmentResource
      */
     #[Group('Students')]
-    public function __invoke(Request $request, UpdateStudentEnrollment $enrollment, Student $student): JsonResource
+    public function __invoke(Request $request, PutStudentEnrollments $enrollments, Student $student): JsonResource
     {
         Gate::authorize('viewAny', Student::class);
         Gate::authorize('viewAny', Enrollment::class);
@@ -51,12 +52,10 @@ class StudentEnrollmentsController
             'enrollments.*.end_date' => ['sometimes', 'date', 'date_format:Y-m-d H:i:s'],
         ]);
 
-        $studentEnrollmentRequestData = StudentEnrollmentRequestData::from([
-            'enrollments' => $data['enrollments'],
-        ]);
+        $enrollmentsData = StudentEnrollmentData::collect($data['enrollments']);
 
-        $enrollments = $enrollment->execute($student, $studentEnrollmentRequestData);
+        $enrollments->execute($student, $enrollmentsData);
 
-        return $enrollments->toResourceCollection(StudentEnrollmentResource::class);
+        return $student->refresh()->enrollments->toResourceCollection(StudentEnrollmentResource::class);
     }
 }
