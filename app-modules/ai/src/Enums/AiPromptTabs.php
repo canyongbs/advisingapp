@@ -8,7 +8,7 @@ enum AiPromptTabs: string implements HasLabel
 {
     case Newest = 'newest';
 
-    case MostLoved = 'most';
+    case MostLoved = 'most_loved';
 
     case MostViewed = 'most_viewed';
 

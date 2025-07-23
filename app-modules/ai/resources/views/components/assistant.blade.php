@@ -537,7 +537,7 @@
                 </div>
 
                 @php
-                    $isInstitutionalAdvisor = $this->thread->assistant->name === 'Institutional Advisor';
+                    $isInstitutionalAdvisor = $this->thread->assistant->isDefault();
                     $hasMessages = count($this->thread->messages) > 0;
                     $shouldReverse = $isInstitutionalAdvisor && $hasMessages;
                 @endphp
@@ -546,7 +546,7 @@
                     class="{{ $shouldReverse ? 'flex-col-reverse' : 'flex-col' }} flex flex-1 overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800">
 
                     @if (!$hasMessages && $isInstitutionalAdvisor)
-                        @livewire('promptlibrarytabs', ['thread' => $this->thread, 'promptLibraryMode' => true], key('prompt-library-tabs-' . $this->thread->assistant->id))
+                        @livewire('promptlibrarytabs', ['thread' => $this->thread, 'isSmartPromptsTypePreselected' => true], key('prompt-library-tabs-' . $this->thread->assistant->id))
                     @endif
 
                     <div

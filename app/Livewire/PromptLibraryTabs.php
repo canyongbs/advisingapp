@@ -24,15 +24,27 @@ class PromptLibraryTabs extends Component implements HasForms, HasActions
 
     public ?AiThread $thread;
 
-    public mixed $promptLibraryMode = null;
+    public bool $isSmartPromptsTypePreselected = false;
 
     public function render(): View
     {
         $prompts = Prompt::query()
+            ->where('is_smart', true)
             ->withCount('upvotes', 'uses')
-            ->when($this->activeTab === AiPromptTabs::Newest->value, fn (Builder $query) => $query->latest())
-            ->when($this->activeTab === AiPromptTabs::MostLoved->value, fn (Builder $query) => $query->orderByDesc('upvotes_count'))
-            ->when($this->activeTab === AiPromptTabs::MostViewed->value, fn (Builder $query) => $query->orderByDesc('uses_count'))
+            ->when(
+                $this->activeTab === AiPromptTabs::Newest->value,
+                fn (Builder $query) => $query->latest()
+            )
+            ->when(
+                $this->activeTab === AiPromptTabs::MostLoved->value,
+                fn (Builder $query) => $query->whereHas('upvotes')
+                    ->orderByDesc('upvotes_count')
+            )
+            ->when(
+                $this->activeTab === AiPromptTabs::MostViewed->value,
+                fn (Builder $query) => $query->whereHas('uses')
+                    ->orderByDesc('uses_count')
+            )
             ->limit(6)
             ->get();
 

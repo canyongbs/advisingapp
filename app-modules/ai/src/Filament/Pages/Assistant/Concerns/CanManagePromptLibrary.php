@@ -81,7 +81,7 @@ trait CanManagePromptLibrary
                         1 => 'Smart prompt',
                         0 => 'Custom prompt',
                     ])
-                    ->default($this->promptLibraryMode)
+                    ->default($this->isSmartPromptsTypePreselected)
                     ->live()
                     ->afterStateUpdated(fn (Set $set) => $set('promptId', null))
                     ->grouped()

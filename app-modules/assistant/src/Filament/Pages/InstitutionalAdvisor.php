@@ -56,7 +56,7 @@ class InstitutionalAdvisor extends Page
 
     public const APPLICATION = AiAssistantApplication::PersonalAssistant;
 
-    public mixed $promptLibraryMode = null;
+    public bool $isSmartPromptsTypePreselected = false;
 
     protected static string $view = 'assistant::filament.pages.personal-assistant';
 
