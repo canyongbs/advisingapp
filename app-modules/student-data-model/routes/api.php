@@ -45,7 +45,6 @@ use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentPhoneNu
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentPhoneNumbers\UpdateStudentPhoneNumberController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentPrograms\ListStudentProgramsController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentPrograms\PutStudentProgramsController;
-use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentPrograms\StudentProgramsController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\UpdateStudentController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\ViewStudentController;
 use AdvisingApp\StudentDataModel\Http\Controllers\UpdateStudentInformationSystemSettingsController;

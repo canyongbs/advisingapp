@@ -60,13 +60,13 @@ it('is gated with proper access control', function () {
         ->assertForbidden();
 
     $user = SystemUser::factory()->create();
-    $user->givePermissionTo(['student.view-any','student.*.view']);
+    $user->givePermissionTo(['student.view-any', 'student.*.view']);
     Sanctum::actingAs($user, ['api']);
     getJson(route('api.v1.students.programs.index', ['student' => $student], false))
         ->assertForbidden();
 
     $user = SystemUser::factory()->create();
-    $user->givePermissionTo(['student.view-any','student.*.view','program.view-any']);
+    $user->givePermissionTo(['student.view-any', 'student.*.view', 'program.view-any']);
     Sanctum::actingAs($user, ['api']);
     getJson(route('api.v1.students.programs.index', ['student' => $student], false))
         ->assertOk();
@@ -74,13 +74,13 @@ it('is gated with proper access control', function () {
 
 it('returns a paginated list of student programs', function () {
     $user = SystemUser::factory()->create();
-    $user->givePermissionTo(['student.view-any','student.*.view','program.view-any']);
+    $user->givePermissionTo(['student.view-any', 'student.*.view', 'program.view-any']);
     Sanctum::actingAs($user, ['api']);
 
     $student = Student::factory()->create();
 
     Program::factory()
-        ->for($student,'student')
+        ->for($student, 'student')
         ->count(3)
         ->create();
 
@@ -96,15 +96,15 @@ it('returns a paginated list of student programs', function () {
 
 it('can filter student programs by all attributes', function (string $requestKey, mixed $requestValue, array $includedAttributes, array $excludedAttributes, string $responseKey, mixed $responseValue) {
     $user = SystemUser::factory()->create();
-    $user->givePermissionTo(['student.view-any','student.*.view','program.view-any']);
+    $user->givePermissionTo(['student.view-any', 'student.*.view', 'program.view-any']);
     Sanctum::actingAs($user, ['api']);
 
     $student = Student::factory()->create();
 
-    Program::factory()->for($student,'student')->create($includedAttributes);
+    Program::factory()->for($student, 'student')->create($includedAttributes);
     // Seed two programs with the same non-matching attributes
-    Program::factory()->for($student,'student')->create($excludedAttributes);
-    Program::factory()->for($student,'student')->create($excludedAttributes);
+    Program::factory()->for($student, 'student')->create($excludedAttributes);
+    Program::factory()->for($student, 'student')->create($excludedAttributes);
 
     $response = getJson(route('api.v1.students.programs.index', ['student' => $student, 'filter' => [$requestKey => $requestValue]], false));
     $response->assertOk();
@@ -124,7 +124,7 @@ it('can filter student programs by all attributes', function (string $requestKey
     '`descr`' => ['descr', 'Computer Science Program', ['descr' => 'Computer Science Program'], ['descr' => 'Mech. Enginner'], 'descr', 'Computer Science Program'],
     '`foi`' => ['foi', 'API Developing', ['foi' => 'API Developing'], ['foi' => 'Web Developer'], 'foi', 'API Developing'],
     '`change_dt`' => ['change_dt', '2023-10-01T00:00:00.000000Z', ['change_dt' => '2023-10-01T00:00:00.000000Z'], ['change_dt' => '2024-10-11T19:05:00.000000Z'], 'change_dt', '2023-10-01T00:00:00.000000Z'],
-    '`declare_dt`' => ['declare_dt', '2023-10-01T00:00:00.000000Z', ['declare_dt' => '2023-10-01T00:00:00.000000Z'], ['declare_dt' => '2024-10-11T19:05:00.000000Z'], 'declare_dt', '2023-10-01T00:00:00.000000Z']
+    '`declare_dt`' => ['declare_dt', '2023-10-01T00:00:00.000000Z', ['declare_dt' => '2023-10-01T00:00:00.000000Z'], ['declare_dt' => '2024-10-11T19:05:00.000000Z'], 'declare_dt', '2023-10-01T00:00:00.000000Z'],
 ]);
 
 dataset('sorts', [
@@ -143,13 +143,13 @@ dataset('sorts', [
 
 it('can sort student programs by all attributes ascending', function (string $requestKey, array $firstAttributes, array $secondAttributes, string $responseKey, mixed $responseFirstValue, mixed $responseSecondValue) {
     $user = SystemUser::factory()->create();
-    $user->givePermissionTo(['student.view-any','student.*.view','program.view-any']);
+    $user->givePermissionTo(['student.view-any', 'student.*.view', 'program.view-any']);
     Sanctum::actingAs($user, ['api']);
 
     $student = Student::factory()->create();
 
-    Program::factory()->for($student,'student')->create($firstAttributes);
-    Program::factory()->for($student,'student')->create($secondAttributes);
+    Program::factory()->for($student, 'student')->create($firstAttributes);
+    Program::factory()->for($student, 'student')->create($secondAttributes);
 
     $response = getJson(route('api.v1.students.programs.index', ['student' => $student, 'sort' => $requestKey], false));
     $response->assertOk();
@@ -162,13 +162,13 @@ it('can sort student programs by all attributes ascending', function (string $re
 
 it('can sort student programs by all attributes descending', function (string $requestKey, array $firstAttributes, array $secondAttributes, string $responseKey, mixed $responseFirstValue, mixed $responseSecondValue) {
     $user = SystemUser::factory()->create();
-    $user->givePermissionTo(['student.view-any','student.*.view','program.view-any']);
+    $user->givePermissionTo(['student.view-any', 'student.*.view', 'program.view-any']);
     Sanctum::actingAs($user, ['api']);
 
     $student = Student::factory()->create();
 
-    Program::factory()->for($student,'student')->create($firstAttributes);
-    Program::factory()->for($student,'student')->create($secondAttributes);
+    Program::factory()->for($student, 'student')->create($firstAttributes);
+    Program::factory()->for($student, 'student')->create($secondAttributes);
 
     $response = getJson(route('api.v1.students.programs.index', ['student' => $student, 'sort' => '-' . $requestKey], false));
     $response->assertOk();
