@@ -135,6 +135,7 @@ class EnrollmentsRelationManager extends RelationManager
             ])
             ->filters([
                 SelectFilter::make('semester_name')
+                    ->label('Semester')
                     ->options(
                         fn (): array => $this->getRelationship()->getQuery()
                             ->whereNotNull('semester_name')
