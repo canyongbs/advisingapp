@@ -42,7 +42,6 @@ use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentEmailAd
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentEmailAddresses\UpdateStudentEmailAddressController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentEnrollments\ListStudentEnrollmentsController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentEnrollments\PutStudentEnrollmentsController;
-use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentEnrollments\StudentEnrollmentsController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentPhoneNumbers\CreateStudentPhoneNumberController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentPhoneNumbers\DeleteStudentPhoneNumberController as StudentPhoneNumbersDeleteStudentPhoneNumberController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentPhoneNumbers\UpdateStudentPhoneNumberController;

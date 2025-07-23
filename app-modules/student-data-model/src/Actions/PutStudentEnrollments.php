@@ -37,10 +37,8 @@
 namespace AdvisingApp\StudentDataModel\Actions;
 
 use AdvisingApp\StudentDataModel\DataTransferObjects\StudentEnrollmentData;
-use AdvisingApp\StudentDataModel\DataTransferObjects\StudentEnrollmentRequestData;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class PutStudentEnrollments

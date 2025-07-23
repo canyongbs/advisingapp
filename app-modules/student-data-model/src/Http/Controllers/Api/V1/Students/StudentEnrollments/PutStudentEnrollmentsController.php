@@ -38,7 +38,6 @@ namespace AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentE
 
 use AdvisingApp\StudentDataModel\Actions\PutStudentEnrollments;
 use AdvisingApp\StudentDataModel\DataTransferObjects\StudentEnrollmentData;
-use AdvisingApp\StudentDataModel\DataTransferObjects\StudentEnrollmentRequestData;
 use AdvisingApp\StudentDataModel\Http\Resources\Api\V1\StudentEnrollmentResource;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Student;
