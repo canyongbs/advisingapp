@@ -64,6 +64,25 @@ class TestAiService implements AiService
         return fake()->paragraph();
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
+    public function stream(string $prompt, string $content, bool $shouldTrack = true, array $options = []): Closure
+    {
+        if ($shouldTrack) {
+            dispatch(new RecordTrackedEvent(
+                type: TrackedEventType::AiExchange,
+                occurredAt: now(),
+            ));
+        }
+
+        $responseContent = fake()->paragraph();
+
+        return function () use ($responseContent): Generator {
+            yield $responseContent;
+        };
+    }
+
     public function createAssistant(AiAssistant $assistant): void {}
 
     public function updateAssistant(AiAssistant $assistant): void {}
@@ -103,7 +122,7 @@ class TestAiService implements AiService
 
         $responseContent = fake()->paragraph();
 
-        return function () use ($responseContent, $saveResponse) {
+        return function () use ($responseContent, $saveResponse): Generator {
             $response = new AiMessage();
 
             yield $responseContent;

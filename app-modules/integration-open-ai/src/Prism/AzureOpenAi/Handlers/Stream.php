@@ -63,6 +63,7 @@ class Stream extends BaseStream
                     'metadata' => $request->providerOptions('metadata'),
                     // 'tools' => $this->buildTools($request),
                     // 'tool_choice' => ToolChoiceMap::map($request->toolChoice()),
+                    'instructions' => $request->providerOptions('instructions'),
                     'previous_response_id' => $request->providerOptions('previous_response_id'),
                     'truncation' => $request->providerOptions('truncation'),
                     'reasoning' => $request->providerOptions('reasoning'),
