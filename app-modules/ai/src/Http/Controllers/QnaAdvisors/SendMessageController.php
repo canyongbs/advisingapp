@@ -49,13 +49,14 @@ class SendMessageController
     {
         $data = $request->validate([
             'content' => ['required', 'string', 'max:25000'],
+            'options' => ['nullable', 'array'],
         ]);
 
         $aiService = $advisor->model->getService();
 
         try {
             return new StreamedResponse(
-                $aiService->stream($getQnaAdvisorInstructions->execute($advisor), $data['content'], shouldTrack: false),
+                $aiService->stream($getQnaAdvisorInstructions->execute($advisor), $data['content'], shouldTrack: false, options: $data['options'] ?? []),
                 headers: [
                     'Content-Type' => 'text/html; charset=utf-8;',
                     'Cache-Control' => 'no-cache',

@@ -47,7 +47,6 @@ use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use AdvisingApp\Research\Models\ResearchRequest;
 use Closure;
 use Generator;
-use Illuminate\Support\Str;
 
 class TestAiService implements AiService
 {
@@ -68,7 +67,7 @@ class TestAiService implements AiService
     /**
      * @param array<string, mixed> $options
      */
-    public function stream(string $prompt, string $content, bool $shouldTrack = true, array $options = [], ?Closure $nextRequestOptions = null): Closure
+    public function stream(string $prompt, string $content, bool $shouldTrack = true, array $options = []): Closure
     {
         if ($shouldTrack) {
             dispatch(new RecordTrackedEvent(
@@ -79,10 +78,8 @@ class TestAiService implements AiService
 
         $responseContent = fake()->paragraph();
 
-        return function () use ($responseContent, $nextRequestOptions): Generator {
+        return function () use ($responseContent): Generator {
             yield $responseContent;
-
-            $nextRequestOptions(['previous_response_id' => (string) Str::uuid()]);
         };
     }
 

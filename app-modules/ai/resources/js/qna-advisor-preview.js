@@ -37,18 +37,16 @@ import { marked } from 'marked';
 document.addEventListener('alpine:init', () => {
     Alpine.data('qnaAdvisorPreview', ({ csrfToken, sendMessageUrl, userId }) => ({
         error: null,
-        isLoading: true,
         isSendingMessage: false,
         message: '',
         rawIncomingResponse: '',
         messages: [],
+        nextRequestOptions: null,
 
         init: async function () {
             this.render();
 
             setInterval(this.render.bind(this), 500);
-
-            this.isLoading = false;
         },
 
         handleMessageResponse: async function ({ response }) {
@@ -61,7 +59,7 @@ document.addEventListener('alpine:init', () => {
                 return;
             }
 
-            let hasSetUpNewMessageForResponse = false;
+            this.nextRequestOptions = null;
 
             const responseReader = response.body.pipeThrough(new TextDecoderStream()).getReader();
 
@@ -76,16 +74,6 @@ document.addEventListener('alpine:init', () => {
                     if (event.type === 'content') {
                         this.error = null;
 
-                        if (!hasSetUpNewMessageForResponse) {
-                            if (this.rawIncomingResponse.endsWith('...')) {
-                                this.rawIncomingResponse = this.rawIncomingResponse.slice(0, -3);
-                            }
-
-                            this.rawIncomingResponse += ' ';
-
-                            hasSetUpNewMessageForResponse = true;
-                        }
-
                         this.rawIncomingResponse += new TextDecoder().decode(
                             Uint8Array.from(atob(event.content), (m) => m.codePointAt(0)),
                         );
@@ -93,17 +81,27 @@ document.addEventListener('alpine:init', () => {
                         this.messages[this.messages.length - 1].content = DOMPurify.sanitize(
                             marked.parse(this.rawIncomingResponse),
                         );
+                    }
 
-                        if (event.incomplete) {
-                            this.isIncomplete = true;
-                        }
+                    if (event.type === 'next_request_options') {
+                        this.nextRequestOptions = JSON.parse(
+                            new TextDecoder().decode(Uint8Array.from(atob(event.options), (m) => m.codePointAt(0))),
+                        );
                     }
                 });
 
                 await readResponse();
             };
 
+            this.messages.push({
+                content: '',
+            });
+
+            this.rawIncomingResponse = '';
+
             await readResponse();
+
+            this.isSendingMessage = false;
         },
 
         sendMessage: async function () {
@@ -114,7 +112,6 @@ document.addEventListener('alpine:init', () => {
             }
 
             this.isSendingMessage = true;
-            this.isIncomplete = false;
             this.error = null;
 
             const message = this.message;
@@ -137,6 +134,7 @@ document.addEventListener('alpine:init', () => {
                         },
                         body: JSON.stringify({
                             content: message,
+                            options: this.nextRequestOptions,
                         }),
                     }),
                 });

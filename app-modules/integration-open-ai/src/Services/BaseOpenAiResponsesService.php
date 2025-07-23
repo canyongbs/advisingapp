@@ -144,7 +144,7 @@ abstract class BaseOpenAiResponsesService implements AiService
     /**
      * @param array<string, mixed> $options
      */
-    public function stream(string $prompt, string $content, bool $shouldTrack = true, array $options = [], ?Closure $nextRequestOptions = null): Closure
+    public function stream(string $prompt, string $content, bool $shouldTrack = true, array $options = []): Closure
     {
         $aiSettings = app(AiSettings::class);
 
@@ -166,14 +166,14 @@ abstract class BaseOpenAiResponsesService implements AiService
                 ->usingTemperature($this->hasTemperature() ? $aiSettings->temperature : null)
                 ->asStream();
 
-            return function () use ($nextRequestOptions, $stream): Generator {
+            return function () use ($shouldTrack, $stream): Generator {
                 try {
                     foreach ($stream as $chunk) {
                         if (
                             ($chunk->chunkType === ChunkType::Meta) &&
                             filled($chunk->meta?->id)
                         ) {
-                            $nextRequestOptions(['previous_response_id' => $chunk->meta->id]);
+                            yield json_encode(['type' => 'next_request_options', 'options' => base64_encode(json_encode(['previous_response_id' => $chunk->meta->id]))]);
 
                             continue;
                         }
@@ -210,6 +210,13 @@ abstract class BaseOpenAiResponsesService implements AiService
                     yield json_encode(['type' => 'failed', 'message' => 'An error happened when sending your message.']);
 
                     report($exception);
+                }
+
+                if ($shouldTrack) {
+                    dispatch(new RecordTrackedEvent(
+                        type: TrackedEventType::AiExchange,
+                        occurredAt: now(),
+                    ));
                 }
             };
         } catch (Throwable $exception) {
