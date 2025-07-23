@@ -18,7 +18,7 @@ class PutStudentProgramsController
      * @response StudentProgramResource
      */
     #[Group('Students')]
-    public function __invoke(Request $request, PutStudentPrograms $program, Student $student): JsonResource
+    public function __invoke(Request $request, PutStudentPrograms $programs, Student $student): JsonResource
     {
         Gate::authorize('viewAny', Student::class);
         Gate::authorize('viewAny', Program::class);
@@ -48,7 +48,7 @@ class PutStudentProgramsController
 
         $programsData = StudentProgramData::collect($data['programs']);
 
-        $program->execute($student, $programsData);
+        $programs->execute($student, $programsData);
 
         return $student->refresh()->programs->toResourceCollection(StudentProgramResource::class);
     }
