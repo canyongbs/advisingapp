@@ -36,15 +36,28 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource\Pages;
 
+use AdvisingApp\Ai\Actions\GenerateQnaAdvisorWidgetEmbedCode;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource;
+use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Form\Rules\IsDomain;
+use App\Features\QnaAdvisorEmbedFeature;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
-use Filament\Resources\Pages\ViewRecord;
+use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\HtmlString;
 
-class QnaAdvisorEmbed extends ViewRecord
+class QnaAdvisorEmbed extends EditRecord
 {
+    use EditPageRedirection;
+
     protected static string $resource = QnaAdvisorResource::class;
 
     protected static ?string $navigationGroup = 'Configuration';
@@ -58,30 +71,69 @@ class QnaAdvisorEmbed extends ViewRecord
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->can('qna_advisor_embed.view-any') && $user->can('qna_advisor_embed.*.view') && parent::canAccess($parameters);
+        return QnaAdvisorEmbedFeature::active() && $user->can('qna_advisor_embed.view-any') && $user->can('qna_advisor_embed.*.view') && parent::canAccess($parameters);
     }
 
-    public function infolist(Infolist $infolist): Infolist
+    public function form(Form $form): Form
     {
-        return $infolist
+        return $form
             ->schema([
-                TextEntry::make('snippet')
-                    ->label('Click to Copy')
-                    ->state(function (): HtmlString {
-                        $state = <<<EOD
-                        ```
-                        <qna-advisor url="https://advising.app/qna-advisors/{$this->getRecord()->getKey()}"></qna-advisor>
-                        <script src="https://advising.app/qna-advisor-embed.js"></script>
-                        ```
-                        EOD;
+                Section::make('Embed Advisor')
+                    ->schema([
+                        Toggle::make('is_embed_enabled')
+                            ->label('Enable Embed')
+                            ->live(),
+                        TagsInput::make('authorized_domains')
+                            ->label('Authorized Domains')
+                            ->helperText('Only these domains will be allowed to embed this QnA Advisor.')
+                            ->placeholder('example.com')
+                            ->hidden(fn (Get $get) => ! $get('is_embed_enabled'))
+                            ->disabled(fn (Get $get) => ! $get('is_embed_enabled'))
+                            ->nestedRecursiveRules(
+                                [
+                                    'string',
+                                    new IsDomain(),
+                                ]
+                            ),
+                        Actions::make([
+                            Action::make('embed_snippet')
+                                ->label('Embed Snippet')
+                                ->infolist(
+                                    [
+                                        TextEntry::make('snippet')
+                                            ->label('Click to Copy')
+                                            ->state(function (): HtmlString {
+                                                $code = resolve(GenerateQnaAdvisorWidgetEmbedCode::class)->handle($this->getRecord());
 
-                        return str($state)->markdown()->toHtmlString();
-                    })
-                    ->copyable()
-                    ->copyMessage('Copied!')
-                    ->copyMessageDuration(1500)
-                    ->extraAttributes(['class' => 'embed-code-snippet'])
-                    ->columnSpanFull(),
+                                                $state = <<<EOD
+                                                ```
+                                                {$code}
+                                                ```
+                                                EOD;
+
+                                                return str($state)->markdown()->toHtmlString();
+                                            })
+                                            ->copyable()
+                                            ->copyableState(fn () => resolve(GenerateQnaAdvisorWidgetEmbedCode::class)->handle($this->getRecord()))
+                                            ->copyMessage('Copied!')
+                                            ->copyMessageDuration(1500)
+                                            ->extraAttributes(['class' => 'embed-code-snippet'])
+                                            ->columnSpanFull(),
+                                    ]
+                                )
+                                ->modalSubmitAction(false)
+                                ->modalCancelActionLabel('Close')
+                                ->visible(fn (Get $get) => $get('is_embed_enabled')),
+                        ]),
+                    ]),
             ]);
+    }
+
+    public function getRecord(): QnaAdvisor
+    {
+        $record = parent::getRecord();
+        assert($record instanceof QnaAdvisor, 'Record must be an instance of QnaAdvisor');
+
+        return $record;
     }
 }

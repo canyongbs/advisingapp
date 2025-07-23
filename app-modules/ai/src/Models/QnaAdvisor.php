@@ -64,11 +64,15 @@ class QnaAdvisor extends BaseModel implements HasMedia, Auditable
         'name',
         'model',
         'description',
+        'is_embed_enabled',
+        'authorized_domains',
     ];
 
     protected $casts = [
         'archived_at' => 'datetime',
         'model' => AiModel::class,
+        'is_embed_enabled' => 'boolean',
+        'authorized_domains' => 'json',
     ];
 
     /**
