@@ -24,7 +24,7 @@ class PromptLibraryTabs extends Component implements HasForms, HasActions
 
     public ?AiThread $thread;
 
-    public bool $isSmartPromptsTypePreselected = false;
+    public mixed $isSmartPromptsTypePreselected = null;
 
     public function render(): View
     {
