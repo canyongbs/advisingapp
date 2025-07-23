@@ -129,7 +129,7 @@ class WorkflowActionsRelationManager extends RelationManager
                                         $action->workflow_step_id = null;
 
                                         $action->save();
-                                        
+
                                         //$action->save();
 
                                         $workflowStep->details()->associate($action);
