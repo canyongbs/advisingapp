@@ -55,6 +55,7 @@ use Filament\Tables\Actions\ImportAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Gate;
@@ -118,6 +119,11 @@ class EnrollmentsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('division')
             ->defaultGroup('semester_name')
+            ->groups([
+                Group::make('semester_name')
+                    ->label('Semester'),
+            ])
+            ->groupingSettingsHidden()
             ->defaultSort('start_date', 'desc')
             ->columns([
                 TextColumn::make('name')
