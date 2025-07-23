@@ -395,7 +395,7 @@ async function authenticate(applicationData, node) {
                                     type="tel"
                                     label="Mobile"
                                     name="mobile"
-                                    placeholder="xxx-xxx-xxxx"
+                                    placeholder="e.g., +14155552671"
                                     :validation="[['matches', /^\+[1-9]\d{9,14}$/]]"
                                     :validation-messages="{
                                         matches: 'Phone number must be in E.164 format (e.g., +14155552671)',
