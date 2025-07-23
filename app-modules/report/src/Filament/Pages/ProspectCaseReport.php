@@ -34,17 +34,50 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+namespace AdvisingApp\Report\Filament\Pages;
 
-use Filament\Clusters\Cluster;
+use AdvisingApp\Report\Abstract\ProspectReport;
+use AdvisingApp\Report\Filament\Widgets\ProspectCaseStats;
+use AdvisingApp\Report\Filament\Widgets\ProspectCaseTable;
+use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
+use App\Filament\Clusters\ReportLibrary;
 
-class CaseManagement extends Cluster
+class ProspectCaseReport extends ProspectReport
 {
-    protected static ?string $navigationGroup = 'CRM';
+    protected static ?string $title = 'Cases';
+
+    protected static ?string $cluster = ReportLibrary::class;
+
+    protected static string $routePath = 'prospect-case-report';
+
+    protected static ?string $navigationGroup = 'Prospects';
+
+    protected string $cacheTag = 'report-prospect-case';
 
     protected static ?int $navigationSort = 50;
 
-    protected static ?string $navigationLabel = 'Cases';
+    public function getColumns(): int | string | array
+    {
+        return [
+            'sm' => 12,
+            'md' => 12,
+            'lg' => 12,
+        ];
+    }
 
-    protected static ?string $title = 'Cases';
+    public function getWidgets(): array
+    {
+        return [
+            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
+            ProspectCaseStats::make(['cacheTag' => $this->cacheTag]),
+            ProspectCaseTable::make(['cacheTag' => $this->cacheTag]),
+        ];
+    }
+
+    public function getWidgetData(): array
+    {
+        return [
+            'filters' => $this->filters,
+        ];
+    }
 }
