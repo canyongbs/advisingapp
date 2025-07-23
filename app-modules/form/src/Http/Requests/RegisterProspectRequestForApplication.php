@@ -62,7 +62,7 @@ class RegisterProspectRequestForApplication extends FormRequest
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
             'preferred' => ['string', 'max:255'],
-            'mobile' => ['required', 'max:255','regex:/^\+[1-9]\d{9,14}$/'],
+            'mobile' => ['required', 'max:255', 'regex:/^\+[1-9]\d{9,14}$/'],
             'birthdate' => ['date'],
             'address' => ['string', 'max:255'],
             'address_2' => ['string', 'max:255'],

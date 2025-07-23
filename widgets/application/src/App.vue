@@ -380,11 +380,7 @@ async function authenticate(applicationData, node) {
                                 />
                             </div>
                             <div class="w-full md:w-1/2 px-3">
-                                <FormKit
-                                    type="date"
-                                    label="Birth Date"
-                                    name="birthdate"
-                                />
+                                <FormKit type="date" label="Birth Date" name="birthdate" />
                             </div>
                         </div>
                         <div class="flex flex-wrap -mx-3 mb-6">
@@ -394,10 +390,7 @@ async function authenticate(applicationData, node) {
                                     label="Mobile"
                                     name="mobile"
                                     placeholder="e.g., +14155552671"
-                                    :validation="[
-                                        ['required'],
-                                        ['matches', /^\+[1-9]\d{9,14}$/]
-                                    ]"
+                                    :validation="[['required'], ['matches', /^\+[1-9]\d{9,14}$/]]"
                                     :validation-messages="{
                                         required: 'Mobile number is required',
                                         matches: 'Phone number must be in E.164 format (e.g., +14155552671)',

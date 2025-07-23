@@ -43,7 +43,6 @@ use AdvisingApp\Form\Actions\GenerateFormKitSchema;
 use AdvisingApp\Form\Actions\GenerateSubmissibleValidation;
 use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
 use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
-use AdvisingApp\Form\Http\Requests\RegisterProspectRequest;
 use AdvisingApp\Form\Http\Requests\RegisterProspectRequestForApplication;
 use AdvisingApp\Form\Notifications\AuthenticateFormNotification;
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
@@ -324,13 +323,13 @@ class ApplicationWidgetController extends Controller
             ]);
             $prospect->primaryPhoneNumber()->associate($phoneNumber);
 
-            if(
+            if (
                 isset($data['address']) ||
                 isset($data['address_2']) ||
                 isset($data['city']) ||
                 isset($data['state']) ||
                 isset($data['postal'])
-            ){
+            ) {
                 $address = $prospect->addresses()->create([
                     'line_1' => $data['address'] ?? null,
                     'line_2' => $data['address_2'] ?? null,
