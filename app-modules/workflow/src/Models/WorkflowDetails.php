@@ -53,6 +53,9 @@ use App\Settings\LicenseSettings;
 use Filament\Forms\Components\Field;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property string $workflow_step_id
+ */
 abstract class WorkflowDetails extends BaseModel
 {
     abstract public function getLabel(): string;
