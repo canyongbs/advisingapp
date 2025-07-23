@@ -41,6 +41,7 @@ use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Form\Rules\IsDomain;
 use App\Features\QnaAdvisorEmbedFeature;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
@@ -55,6 +56,8 @@ use Illuminate\Support\HtmlString;
 
 class QnaAdvisorEmbed extends EditRecord
 {
+    use EditPageRedirection;
+
     protected static string $resource = QnaAdvisorResource::class;
 
     protected static ?string $navigationGroup = 'Configuration';
