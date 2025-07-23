@@ -95,7 +95,7 @@ trait HasSharedFormConfiguration
                 ->label('Multi-step form')
                 ->live()
                 ->disabled(fn (?Application $record) => $record?->submissions()->exists()),
-            Toggle::make('generate_prospects')
+            Toggle::make('should_generate_prospects')
                 ->label('Generate Prospects')
                 ->helperText('If enabled, a request to submit by an unknown prospect will result in a new prospect being created.')
                 ->disabled(fn () => ! auth()->user()?->hasLicense(LicenseType::RecruitmentCrm))

@@ -93,21 +93,26 @@ class ApplicationWidgetController extends Controller
         $author = $resolveSubmissionAuthorFromEmail($data['email']);
 
         if (! $author) {
-            if (! $application->generate_prospects) {
+
+            if (OnlineAdmissionGenerateProspect::active()) {
+                if(! $application->should_generate_prospects){
+                    throw ValidationException::withMessages([
+                        'email' => 'A student with that email address could not be found. Please contact your system administrator.',
+                    ]);
+                }else{
+                    return response()->json([
+                        'registrationAllowed' => true,
+                        'authentication_url' => URL::signedRoute(
+                            name: 'applications.register-prospect',
+                            parameters: ['application' => $application],
+                            absolute: false,
+                        ),
+                    ], 404);
+                }
+            }else{
                 throw ValidationException::withMessages([
                     'email' => 'A student with that email address could not be found. Please contact your system administrator.',
                 ]);
-            }
-
-            if(OnlineAdmissionGenerateProspect::active()){
-                return response()->json([
-                    'registrationAllowed' => true,
-                    'authentication_url' => URL::signedRoute(
-                        name: 'applications.register-prospect',
-                        parameters: ['application' => $application],
-                        absolute: false,
-                    ),
-                ], 404);
             }
         }
 

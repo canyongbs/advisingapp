@@ -396,7 +396,10 @@ async function authenticate(applicationData, node) {
                                     label="Mobile"
                                     name="mobile"
                                     placeholder="xxx-xxx-xxxx"
-                                    validation="required|length:0,255"
+                                    :validation="[['matches', /^\+[1-9]\d{9,14}$/]]"
+                                    :validation-messages="{
+                                        matches: 'Phone number must be in E.164 format (e.g., +14155552671)',
+                                    }"
                                     validation-visibility="submit"
                                 />
                             </div>
@@ -405,7 +408,7 @@ async function authenticate(applicationData, node) {
                                     type="text"
                                     label="Address"
                                     name="address"
-                                    validation="required|length:0,255"
+                                    validation="length:0,255"
                                     validation-visibility="submit"
                                 />
                             </div>
@@ -416,7 +419,7 @@ async function authenticate(applicationData, node) {
                                     type="text"
                                     label="Apartment/Unit Number"
                                     name="address_2"
-                                    validation="required|length:0,255"
+                                    validation="length:0,255"
                                     validation-visibility="submit"
                                 />
                             </div>
@@ -425,7 +428,7 @@ async function authenticate(applicationData, node) {
                                     type="text"
                                     label="City"
                                     name="city"
-                                    validation="required|length:0,255"
+                                    validation="length:0,255"
                                     validation-visibility="submit"
                                 />
                             </div>
@@ -436,7 +439,7 @@ async function authenticate(applicationData, node) {
                                     type="text"
                                     label="State"
                                     name="state"
-                                    validation="required|length:0,255"
+                                    validation="length:0,255"
                                     validation-visibility="submit"
                                 />
                             </div>
@@ -445,7 +448,7 @@ async function authenticate(applicationData, node) {
                                     type="text"
                                     label="Postal"
                                     name="postal"
-                                    validation="required|length:0,255"
+                                    validation="length:0,255"
                                     validation-visibility="submit"
                                 />
                             </div>

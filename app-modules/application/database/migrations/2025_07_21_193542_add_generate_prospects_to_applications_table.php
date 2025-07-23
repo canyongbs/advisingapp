@@ -42,14 +42,14 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::table('applications', function (Blueprint $table) {
-            $table->boolean('generate_prospects')->default(false);
+            $table->boolean('should_generate_prospects')->default(false);
         });
     }
 
     public function down(): void
     {
         Schema::table('applications', function (Blueprint $table) {
-            $table->dropColumn('generate_prospects');
+            $table->dropColumn('should_generate_prospects');
         });
     }
 };
