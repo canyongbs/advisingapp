@@ -36,16 +36,38 @@
 
 namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 
+use AdvisingApp\Ai\Actions\GetQnaAdvisorInstructions;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Throwable;
 
 class SendMessageController
 {
-    public function __invoke(QnaAdvisor $advisor): StreamedResponse | JsonResponse
+    public function __invoke(Request $request, GetQnaAdvisorInstructions $getQnaAdvisorInstructions, QnaAdvisor $advisor): StreamedResponse | JsonResponse
     {
-        return response()->json([
-            'message' => 'Message sent successfully to the Q&A advisor.',
+        $data = $request->validate([
+            'content' => ['required', 'string', 'max:25000'],
         ]);
+
+        $aiService = $advisor->model->getService();
+
+        try {
+            return new StreamedResponse(
+                $aiService->stream($getQnaAdvisorInstructions->execute($advisor), $data['content'], shouldTrack: false),
+                headers: [
+                    'Content-Type' => 'text/html; charset=utf-8;',
+                    'Cache-Control' => 'no-cache',
+                    'X-Accel-Buffering' => 'no',
+                ],
+            );
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return response()->json([
+                'message' => 'An error happened when sending your message.',
+            ], 503);
+        }
     }
 }

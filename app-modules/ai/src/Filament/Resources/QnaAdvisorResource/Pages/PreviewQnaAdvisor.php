@@ -37,11 +37,9 @@
 namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource;
+use AdvisingApp\Ai\Models\QnaAdvisor;
 use App\Models\User;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
-use Illuminate\Support\HtmlString;
 
 class PreviewQnaAdvisor extends ViewRecord
 {
@@ -60,30 +58,6 @@ class PreviewQnaAdvisor extends ViewRecord
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->can('qna_advisor_embed.view-any') && $user->can('qna_advisor.create') && parent::canAccess($parameters);
-    }
-
-    public function infolist(Infolist $infolist): Infolist
-    {
-        return $infolist
-            ->schema([
-                TextEntry::make('snippet')
-                    ->label('Click to Copy')
-                    ->state(function (): HtmlString {
-                        $state = <<<EOD
-                        ```
-                        <qna-advisor url="https://advising.app/qna-advisors/{$this->getRecord()->getKey()}"></qna-advisor>
-                        <script src="https://advising.app/qna-advisor-embed.js"></script>
-                        ```
-                        EOD;
-
-                        return str($state)->markdown()->toHtmlString();
-                    })
-                    ->copyable()
-                    ->copyMessage('Copied!')
-                    ->copyMessageDuration(1500)
-                    ->extraAttributes(['class' => 'embed-code-snippet'])
-                    ->columnSpanFull(),
-            ]);
+        return $user->can('viewAny', QnaAdvisor::class) && ($user->can('create', QnaAdvisor::class) || $user->can('update', $parameters['record'])) && parent::canAccess($parameters);
     }
 }

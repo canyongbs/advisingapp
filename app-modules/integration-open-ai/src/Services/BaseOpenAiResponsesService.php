@@ -142,6 +142,84 @@ abstract class BaseOpenAiResponsesService implements AiService
     }
 
     /**
+     * @param array<string, mixed> $options
+     */
+    public function stream(string $prompt, string $content, bool $shouldTrack = true, array $options = [], ?Closure $nextRequestOptions = null): Closure
+    {
+        $aiSettings = app(AiSettings::class);
+
+        try {
+            $stream = Prism::text()
+                ->using('azure_open_ai', $this->getModel())
+                ->withClientOptions([
+                    'apiKey' => $this->getApiKey(),
+                    'apiVersion' => $this->getApiVersion(),
+                    'deployment' => $this->getDeployment(),
+                ])
+                ->withProviderOptions([
+                    'truncation' => 'auto',
+                    ...$options,
+                ])
+                ->withSystemPrompt($prompt)
+                ->withPrompt($content)
+                ->withMaxTokens($aiSettings->max_tokens->getTokens())
+                ->usingTemperature($this->hasTemperature() ? $aiSettings->temperature : null)
+                ->asStream();
+
+            return function () use ($nextRequestOptions, $stream): Generator {
+                try {
+                    foreach ($stream as $chunk) {
+                        if (
+                            ($chunk->chunkType === ChunkType::Meta) &&
+                            filled($chunk->meta?->id)
+                        ) {
+                            $nextRequestOptions(['previous_response_id' => $chunk->meta->id]);
+
+                            continue;
+                        }
+
+                        if ($chunk->chunkType !== ChunkType::Text) {
+                            continue;
+                        }
+
+                        yield json_encode(['type' => 'content', 'content' => base64_encode($chunk->text)]);
+
+                        if ($chunk->finishReason === FinishReason::Length) {
+                            yield json_encode(['type' => 'content', 'content' => base64_encode('...'), 'incomplete' => true]);
+                        }
+
+                        if ($chunk->finishReason === FinishReason::Error) {
+                            yield json_encode(['type' => 'failed', 'message' => 'An error happened when sending your message.']);
+
+                            report(new MessageResponseException('Stream not successful.'));
+                        }
+                    }
+                } catch (PrismRateLimitedException $exception) {
+                    foreach ($exception->rateLimits as $rateLimit) {
+                        if ($rateLimit->resetsAt?->isFuture()) {
+                            yield json_encode(['type' => 'rate_limited', 'message' => 'Heavy traffic, just a few more moments...', 'retry_after_seconds' => now()->diffInSeconds($rateLimit->resetsAt) + 1]);
+
+                            return;
+                        }
+                    }
+
+                    yield json_encode(['type' => 'failed', 'message' => 'An error happened when sending your message.']);
+
+                    report(new MessageResponseException('Thread run was rate limited, but the system was unable to extract the number of retry seconds: [' . $exception->getMessage() . '].'));
+                } catch (Throwable $exception) {
+                    yield json_encode(['type' => 'failed', 'message' => 'An error happened when sending your message.']);
+
+                    report($exception);
+                }
+            };
+        } catch (Throwable $exception) {
+            report($exception);
+
+            throw new MessageResponseException('Failed to stream the response: [' . $exception->getMessage() . '].');
+        }
+    }
+
+    /**
      * @return array<string>
      */
     public function getResearchRequestRequestSearchQueries(ResearchRequest $researchRequest, string $prompt, string $content): array
@@ -424,7 +502,7 @@ abstract class BaseOpenAiResponsesService implements AiService
                 ->usingTemperature($this->hasTemperature() ? $aiSettings->temperature : null)
                 ->asStream();
 
-            return $this->streamResponse($stream, $message, $saveResponse);
+            return $this->streamMessageResponse($stream, $message, $saveResponse);
         } catch (Throwable $exception) {
             report($exception);
 
@@ -1061,7 +1139,7 @@ abstract class BaseOpenAiResponsesService implements AiService
             ->baseUrl((string) str($this->getDeployment())->beforeLast('/v1'));
     }
 
-    protected function streamResponse(Generator $stream, AiMessage $message, Closure $saveResponse): Closure
+    protected function streamMessageResponse(Generator $stream, AiMessage $message, Closure $saveResponse): Closure
     {
         return function () use ($message, $saveResponse, $stream): Generator {
             try {
