@@ -44,6 +44,7 @@ use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\Division\Models\Division;
 use App\Models\User;
 use Closure;
+use Exception;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -67,7 +68,7 @@ class CaseBlock extends WorkflowActionBlock
     }
 
     /**
-     * @return array<int, covariant Field>
+     * @return array<int, covariant Field | Section>
      */
     public function generateFields(): array
     {
@@ -76,11 +77,14 @@ class CaseBlock extends WorkflowActionBlock
                 ->relationship('division', 'name')
                 ->model(CaseModel::class)
                 ->default(fn () => auth()->user()->team?->division?->getKey()
-                    ?? Division::query()->where('is_default', true)->first()?->getKey())
+                    ?? Division::query()->where('is_default', true)->first()?->getKey()
+                    ?? Division::query()->first()?->getKey()
+                    ?? new Exception('No division found'))
                 ->label('Division')
-                ->visible(fn () => Division::count() > 1 && ! Division::where('is_default', true)->exists())
+                ->hidden(fn () => Division::count() === 1 || Division::where('is_default', true)->exists())
                 ->required()
-                ->exists((new Division())->getTable(), 'id'),
+                ->exists((new Division())->getTable(), 'id')
+                ->dehydratedWhenHidden(),
             Select::make('status_id')
                 ->relationship('status', 'name')
                 ->model(CaseModel::class)

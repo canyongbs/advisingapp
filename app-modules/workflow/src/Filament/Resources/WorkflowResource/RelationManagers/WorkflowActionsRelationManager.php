@@ -117,11 +117,31 @@ class WorkflowActionsRelationManager extends RelationManager
                                     try {
                                         DB::beginTransaction();
 
-                                        $workflowStep = $record->workflowSteps()->create(['delay_minutes' => $delayMinutes]);
+                                        // $workflowStep = $record->workflowSteps()->create(['delay_minutes' => $delayMinutes]);
+
+                                        // $action = $this->createWorkflowDetails($block, $data);
+
+                                        // $workflowStep->details()->associate($action)->save();
 
                                         $action = $this->createWorkflowDetails($block, $data);
+                                        $workflowStep = new WorkflowStep(['delay_minutes' => $delayMinutes, 'workflow_id' => $record->getKey()]);
 
-                                        $workflowStep->details()->associate($action)->save();
+                                        $action->workflow_step_id = null;
+
+                                        $action->save();
+                                        
+                                        //$action->save();
+
+                                        $workflowStep->details()->associate($action);
+                                        $workflowStep->current_details_id = $action->getKey();
+                                        $workflowStep->save();
+
+                                        $action->workflow_step_id = $workflowStep->getKey();
+                                        $action->save();
+
+                                        $block->afterCreated($action, $item);
+
+                                        $item->model($action)->saveRelationships();
 
                                         DB::commit();
                                     } catch (Throwable $throw) {
@@ -129,10 +149,6 @@ class WorkflowActionsRelationManager extends RelationManager
 
                                         throw $throw;
                                     }
-
-                                    $block->afterCreated($action, $item);
-
-                                    $item->model($action)->saveRelationships();
                                 }
                             }),
                     ])
@@ -159,14 +175,21 @@ class WorkflowActionsRelationManager extends RelationManager
 
     /**
      * @param WorkflowActionBlock $block
-     * @param array<mixed> $data
+     * @param array<string> $data
      *
      * @return WorkflowDetails|null
      */
     private function createWorkflowDetails(WorkflowActionBlock $block, array $data): ?WorkflowDetails
     {
         return match ($block->type()) {
-            'case' => WorkflowCaseDetails::create(...$data),
+            'case' => new WorkflowCaseDetails([
+                'division_id' => $data['division_id'],
+                'status_id' => $data['status_id'],
+                'priority_id' => $data['priority_id'],
+                'assigned_to_id' => $data['assigned_to_id'],
+                'close_details' => $data['close_details'],
+                'res_details' => $data['res_details'],
+            ]),
             default => null
         };
     }
