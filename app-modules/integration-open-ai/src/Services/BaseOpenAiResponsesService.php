@@ -157,10 +157,10 @@ abstract class BaseOpenAiResponsesService implements AiService
                     'deployment' => $this->getDeployment(),
                 ])
                 ->withProviderOptions([
+                    'instructions' => $prompt,
                     'truncation' => 'auto',
                     ...$options,
                 ])
-                ->withSystemPrompt($prompt)
                 ->withPrompt($content)
                 ->withMaxTokens($aiSettings->max_tokens->getTokens())
                 ->usingTemperature($this->hasTemperature() ? $aiSettings->temperature : null)
