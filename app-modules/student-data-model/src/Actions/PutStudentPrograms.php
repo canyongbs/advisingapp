@@ -41,7 +41,7 @@ use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Support\Facades\DB;
 
-class UpdateStudentProgram
+class PutStudentPrograms
 {
     /**
      * @param Student $student

@@ -2,7 +2,7 @@
 
 namespace AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentPrograms;
 
-use AdvisingApp\StudentDataModel\Actions\UpdateStudentProgram;
+use AdvisingApp\StudentDataModel\Actions\PutStudentPrograms;
 use AdvisingApp\StudentDataModel\DataTransferObjects\StudentProgramData;
 use AdvisingApp\StudentDataModel\Http\Resources\Api\V1\StudentProgramResource;
 use AdvisingApp\StudentDataModel\Models\Program;
@@ -11,7 +11,6 @@ use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Gate;
-use Spatie\LaravelData\DataCollection;
 
 class PutStudentProgramsController
 {
@@ -19,7 +18,7 @@ class PutStudentProgramsController
      * @response StudentProgramResource
      */
     #[Group('Students')]
-    public function __invoke(Request $request, UpdateStudentProgram $program, Student $student): JsonResource
+    public function __invoke(Request $request, PutStudentPrograms $program, Student $student): JsonResource
     {
         Gate::authorize('viewAny', Student::class);
         Gate::authorize('viewAny', Program::class);
@@ -48,7 +47,7 @@ class PutStudentProgramsController
         ]);
 
         $programsData = StudentProgramData::collect($data['programs']);
-    
+
         $program->execute($student, $programsData);
 
         return $student->refresh()->programs->toResourceCollection(StudentProgramResource::class);
