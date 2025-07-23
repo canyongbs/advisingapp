@@ -34,49 +34,54 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Filament\Pages;
+namespace App\Livewire;
 
-use AdvisingApp\Ai\Enums\AiAssistantApplication;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageConsent;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageFolders;
+use AdvisingApp\Ai\Enums\AiPromptTabs;
 use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManagePromptLibrary;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageThreads;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanUploadFiles;
-use AdvisingApp\Authorization\Enums\LicenseType;
-use App\Models\User;
-use Filament\Pages\Page;
+use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Models\Prompt;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
+use Livewire\Component;
 
-class InstitutionalAdvisor extends Page
+class PromptLibraryTabs extends Component implements HasForms, HasActions
 {
-    use CanManageConsent;
-    use CanManageFolders;
+    use InteractsWithActions;
+    use InteractsWithForms;
     use CanManagePromptLibrary;
-    use CanManageThreads;
-    use CanUploadFiles;
 
-    public const APPLICATION = AiAssistantApplication::PersonalAssistant;
+    public string $activeTab = AiPromptTabs::Newest->value;
+
+    public ?AiThread $thread;
 
     public mixed $isSmartPromptsTypePreselected = null;
 
-    protected static string $view = 'assistant::filament.pages.personal-assistant';
-
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
-
-    protected static ?string $navigationLabel = 'Institutional Advisor';
-
-    protected static ?string $modelLabel = 'Institutional Advisor';
-
-    protected static ?int $navigationSort = 10;
-
-    public static function canAccess(): bool
+    public function render(): View
     {
-        /** @var User $user */
-        $user = auth()->user();
+        $prompts = Prompt::query()
+            ->where('is_smart', true)
+            ->withCount('upvotes', 'uses')
+            ->when(
+                $this->activeTab === AiPromptTabs::Newest->value,
+                fn (Builder $query) => $query->latest()
+            )
+            ->when(
+                $this->activeTab === AiPromptTabs::MostLoved->value,
+                fn (Builder $query) => $query->whereHas('upvotes')
+                    ->orderByDesc('upvotes_count')
+            )
+            ->when(
+                $this->activeTab === AiPromptTabs::MostViewed->value,
+                fn (Builder $query) => $query->whereHas('uses')
+                    ->orderByDesc('uses_count')
+            )
+            ->limit(6)
+            ->get();
 
-        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
-            return false;
-        }
-
-        return $user->can(['assistant.view-any', 'assistant.*.view']);
+        return view('livewire.prompt-library-tabs', compact('prompts'));
     }
 }

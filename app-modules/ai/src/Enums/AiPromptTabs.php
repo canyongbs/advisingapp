@@ -34,49 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Filament\Pages;
+namespace AdvisingApp\Ai\Enums;
 
-use AdvisingApp\Ai\Enums\AiAssistantApplication;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageConsent;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageFolders;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManagePromptLibrary;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageThreads;
-use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanUploadFiles;
-use AdvisingApp\Authorization\Enums\LicenseType;
-use App\Models\User;
-use Filament\Pages\Page;
+use Filament\Support\Contracts\HasLabel;
 
-class InstitutionalAdvisor extends Page
+enum AiPromptTabs: string implements HasLabel
 {
-    use CanManageConsent;
-    use CanManageFolders;
-    use CanManagePromptLibrary;
-    use CanManageThreads;
-    use CanUploadFiles;
+    case Newest = 'newest';
 
-    public const APPLICATION = AiAssistantApplication::PersonalAssistant;
+    case MostLoved = 'most_loved';
 
-    public mixed $isSmartPromptsTypePreselected = null;
+    case MostViewed = 'most_viewed';
 
-    protected static string $view = 'assistant::filament.pages.personal-assistant';
-
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
-
-    protected static ?string $navigationLabel = 'Institutional Advisor';
-
-    protected static ?string $modelLabel = 'Institutional Advisor';
-
-    protected static ?int $navigationSort = 10;
-
-    public static function canAccess(): bool
+    public function getLabel(): string
     {
-        /** @var User $user */
-        $user = auth()->user();
-
-        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
-            return false;
-        }
-
-        return $user->can(['assistant.view-any', 'assistant.*.view']);
+        return match ($this) {
+            self::Newest => 'Newest',
+            self::MostLoved => 'Most 🥰',
+            self::MostViewed => 'Most Viewed',
+        };
     }
 }

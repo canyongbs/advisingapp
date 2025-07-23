@@ -536,8 +536,19 @@
                     @endif
                 </div>
 
+                @php
+                    $isInstitutionalAdvisor = $this->thread->assistant->isDefault();
+                    $hasMessages = count($this->thread->messages) > 0;
+                    $shouldReverse = $isInstitutionalAdvisor && $hasMessages;
+                @endphp
+
                 <div
-                    class="flex flex-1 flex-col-reverse overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800">
+                    class="{{ $shouldReverse ? 'flex-col-reverse' : 'flex-col' }} flex flex-1 overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800">
+
+                    @if (!$hasMessages && $isInstitutionalAdvisor)
+                        @livewire('promptlibrarytabs', ['thread' => $this->thread, 'isSmartPromptsTypePreselected' => true], key('prompt-library-tabs-' . $this->thread->assistant->id))
+                    @endif
+
                     <div
                         class="bg-danger-100 px-4 py-2 dark:bg-danger-900"
                         x-cloak
