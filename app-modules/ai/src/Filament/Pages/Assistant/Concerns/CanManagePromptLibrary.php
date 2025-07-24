@@ -223,10 +223,6 @@ trait CanManagePromptLibrary
                 } else {
                     $this->dispatch('set-chat-message', content: $prompt->prompt);
                 }
-
-                $use = $prompt->uses()->make();
-                $use->user()->associate(auth()->user());
-                $use->save();
             });
     }
 }
