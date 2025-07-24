@@ -72,26 +72,18 @@ class FormResource extends Resource
 
     public static function getRecordSubNavigation(Page $page): array
     {
-        return WorkflowFeature::active() ?
-          $page->generateNavigationItems([
+        return $page->generateNavigationItems([
               EditForm::class,
               SubmissionOnScreenResponse::class,
               ManageFormWorkflows::class,
               ManageFormSubmissions::class,
               ManageFormEmailAutoReply::class,
-          ]) :
-          $page->generateNavigationItems([
-              EditForm::class,
-              SubmissionOnScreenResponse::class,
-              ManageFormSubmissions::class,
-              ManageFormEmailAutoReply::class,
-          ]);
+        ]);
     }
 
     public static function getPages(): array
     {
-        return WorkflowFeature::active() ?
-          [
+        return [
               'index' => ListForms::route('/'),
               'create' => CreateForm::route('/create'),
               'edit' => EditForm::route('/{record}/edit'),
@@ -99,14 +91,6 @@ class FormResource extends Resource
               'manage-form-workflows' => ManageFormWorkflows::route('/{record}/workflows'),
               'manage-submissions' => ManageFormSubmissions::route('/{record}/submissions'),
               'manage-email-auto-reply' => ManageFormEmailAutoReply::route('/{record}/email-auto-reply'),
-          ] :
-          [
-              'index' => ListForms::route('/'),
-              'create' => CreateForm::route('/create'),
-              'edit' => EditForm::route('/{record}/edit'),
-              'manage-on-screen-response' => SubmissionOnScreenResponse::route('/{record}/on-screen-response'),
-              'manage-submissions' => ManageFormSubmissions::route('/{record}/submissions'),
-              'manage-email-auto-reply' => ManageFormEmailAutoReply::route('/{record}/email-auto-reply'),
-          ];
+        ];
     }
 }

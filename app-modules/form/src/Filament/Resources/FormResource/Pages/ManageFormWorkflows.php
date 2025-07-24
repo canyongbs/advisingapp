@@ -41,6 +41,7 @@ use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Workflow\Filament\Resources\WorkflowResource;
 use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
+use App\Features\WorkflowFeature;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Resources\Pages\ManageRelatedRecords;
@@ -54,6 +55,11 @@ class ManageFormWorkflows extends ManageRelatedRecords
     protected static string $resource = FormResource::class;
 
     protected static string $relationship = 'workflows';
+
+    public static function canAccess(array $arguments = []): bool
+    {
+        return WorkflowFeature::active();
+    }
 
     public static function getNavigationLabel(): string
     {
