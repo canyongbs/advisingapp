@@ -186,15 +186,15 @@ class WorkflowActionsRelationManager extends RelationManager
         // };
 
         $action = WorkflowCaseDetails::create([
-                'division_id' => $data['division_id'],
-                'status_id' => $data['status_id'],
-                'priority_id' => $data['priority_id'],
-                'assigned_to_id' => $data['assigned_to_id'],
-                'close_details' => $data['close_details'],
-                'res_details' => $data['res_details'],
+            'division_id' => $data['division_id'],
+            'status_id' => $data['status_id'],
+            'priority_id' => $data['priority_id'],
+            'assigned_to_id' => $data['assigned_to_id'],
+            'close_details' => $data['close_details'],
+            'res_details' => $data['res_details'],
         ]);
 
-        $delayMinutes = ((int)$data['days'] * 24 * 60) + ((int)$data['hours'] * 60) + (int)$data['minutes'];
+        $delayMinutes = ((int) $data['days'] * 24 * 60) + ((int) $data['hours'] * 60) + (int) $data['minutes'];
 
         $workflowStep = new WorkflowStep([
             'delay_minutes' => $delayMinutes,
