@@ -90,6 +90,7 @@ class WorkflowActionsRelationManager extends RelationManager
                 TextColumn::make('current_details_type')
                     ->label('Step Type'),
                 TextColumn::make('delay_minutes')
+                    ->label('Delay from Previous Step')
                     ->state(fn (WorkflowStep $record) => CarbonInterval::minutes($record->delay_minutes)->cascade()->forHumans()),
             ])
             ->headerActions([
@@ -104,6 +105,8 @@ class WorkflowActionsRelationManager extends RelationManager
                             ->dehydrated(false)
                             ->model($workflow)
                             ->saveRelationshipsUsing(function (Builder $component, Workflow $record) {
+                                $previousStepId = null;
+                                
                                 foreach ($component->getChildComponentContainers() as $item) {
                                     $block = $item->getParentComponent();
 
@@ -114,7 +117,21 @@ class WorkflowActionsRelationManager extends RelationManager
                                     try {
                                         DB::beginTransaction();
 
-                                        $action = $this->createWorkflowDetails($block, $data, $record);
+                                        $action = $this->createWorkflowDetails($block, $data);
+
+                                        $delayMinutes = ($data['days'] * 24 * 60) + ($data['hours'] * 60) + $data['minutes'];
+
+                                        $workflowStep = new WorkflowStep([
+                                            'delay_minutes' => $delayMinutes,
+                                            'workflow_id' => $record->getKey(),
+                                            'current_details_type' => $action->getType(),
+                                            'current_details_id' => $action->getKey(),
+                                            'previous_step_id' => $previousStepId,
+                                        ]);
+
+                                        $workflowStep->save();
+
+                                        $record->load('workflowSteps');
 
                                         $block->afterCreated($action, $item);
 
@@ -126,6 +143,8 @@ class WorkflowActionsRelationManager extends RelationManager
 
                                         throw $throw;
                                     }
+
+                                    $previousStepId = $workflowStep->getKey();
                                 }
                             }),
                     ])
@@ -167,45 +186,31 @@ class WorkflowActionsRelationManager extends RelationManager
     /**
      * @param WorkflowActionBlock $block
      * @param array<string> $data
-     * @param Workflow $workflow
      *
-     * @return WorkflowDetails
+     * @return WorkflowDetails|null
      */
-    private function createWorkflowDetails(WorkflowActionBlock $block, array $data, Workflow $workflow): WorkflowDetails
+    private function createWorkflowDetails(WorkflowActionBlock $block, array $data): ?WorkflowDetails
     {
-        // $action = match ($block->type()) {
-        //     'workflow_case_details' => WorkflowCaseDetails::create([
-        //         'division_id' => $data['division_id'],
-        //         'status_id' => $data['status_id'],
-        //         'priority_id' => $data['priority_id'],
-        //         'assigned_to_id' => $data['assigned_to_id'],
-        //         'close_details' => $data['close_details'],
-        //         'res_details' => $data['res_details'],
-        //     ]),
-        //     default => null
-        // };
+        $action = match ($block->type()) {
+            'workflow_case_details' => WorkflowCaseDetails::create([
+                'division_id' => $data['division_id'],
+                'status_id' => $data['status_id'],
+                'priority_id' => $data['priority_id'],
+                'assigned_to_id' => $data['assigned_to_id'],
+                'close_details' => $data['close_details'],
+                'res_details' => $data['res_details'],
+            ]),
+            default => null
+        };
 
-        $action = WorkflowCaseDetails::create([
-            'division_id' => $data['division_id'],
-            'status_id' => $data['status_id'],
-            'priority_id' => $data['priority_id'],
-            'assigned_to_id' => $data['assigned_to_id'],
-            'close_details' => $data['close_details'],
-            'res_details' => $data['res_details'],
-        ]);
-
-        $delayMinutes = ((int) $data['days'] * 24 * 60) + ((int) $data['hours'] * 60) + (int) $data['minutes'];
-
-        $workflowStep = new WorkflowStep([
-            'delay_minutes' => $delayMinutes,
-            'workflow_id' => $workflow->getKey(),
-            'current_details_type' => $action->getType(),
-            'current_details_id' => $action->getKey(),
-        ]);
-
-        $workflowStep->save();
-
-        $workflow->load('workflowSteps');
+        // $action = WorkflowCaseDetails::create([
+        //     'division_id' => $data['division_id'],
+        //     'status_id' => $data['status_id'],
+        //     'priority_id' => $data['priority_id'],
+        //     'assigned_to_id' => $data['assigned_to_id'],
+        //     'close_details' => $data['close_details'],
+        //     'res_details' => $data['res_details'],
+        // ]);
 
         return $action;
     }
