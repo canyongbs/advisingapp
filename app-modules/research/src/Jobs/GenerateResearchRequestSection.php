@@ -87,6 +87,31 @@ class GenerateResearchRequestSection implements ShouldQueue
                         $nextRequestOptions = $options;
                     },
                 );
+
+            if (filled($this->researchRequest->results)) {
+                $this->researchRequest->results .= PHP_EOL;
+                $this->researchRequest->results .= PHP_EOL;
+            }
+
+            $hasContent = false;
+
+            foreach (app(ChunkIterator::class, ['iterator' => $responseGenerator, 'chunkSize' => 50])->get() as $responseContent) {
+                $responseContent = implode($responseContent);
+
+                $this->researchRequest->results .= $responseContent;
+                $this->researchRequest->save();
+
+                if ((! $hasContent) && filled($responseContent)) {
+                    $hasContent = true;
+
+                    $responseContent = PHP_EOL . PHP_EOL . $responseContent;
+                }
+
+                broadcast(app(ResearchRequestResultsGenerated::class, [
+                    'researchRequest' => $this->researchRequest,
+                    'resultsChunk' => $responseContent,
+                ]));
+            }
         } catch (MessageResponseException $exception) {
             if ($this->attempts() === 1) {
                 report($exception); // Only report the exception on the first attempt to reduce noise in logs.
@@ -95,31 +120,6 @@ class GenerateResearchRequestSection implements ShouldQueue
             $this->release(delay: 10); // Allow time for the service to recover.
 
             return;
-        }
-
-        if (filled($this->researchRequest->results)) {
-            $this->researchRequest->results .= PHP_EOL;
-            $this->researchRequest->results .= PHP_EOL;
-        }
-
-        $hasContent = false;
-
-        foreach (app(ChunkIterator::class, ['iterator' => $responseGenerator, 'chunkSize' => 50])->get() as $responseContent) {
-            $responseContent = implode($responseContent);
-
-            $this->researchRequest->results .= $responseContent;
-            $this->researchRequest->save();
-
-            if ((! $hasContent) && filled($responseContent)) {
-                $hasContent = true;
-
-                $responseContent = PHP_EOL . PHP_EOL . $responseContent;
-            }
-
-            broadcast(app(ResearchRequestResultsGenerated::class, [
-                'researchRequest' => $this->researchRequest,
-                'resultsChunk' => $responseContent,
-            ]));
         }
 
         if (! $hasContent) {
