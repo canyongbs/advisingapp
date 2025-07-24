@@ -89,9 +89,13 @@ class ManageAiICustomAdvisorSettings extends SettingsPage
                     ->live(),
                 Select::make('preselected_model')
                     ->label('Select Model')
-                    ->options(fn (?AiModel $state) => array_unique([
+                    ->options(fn (AiModel|string|null $state) => array_unique([
                         ...AiModelApplicabilityFeature::CustomAdvisors->getModelsAsSelectOptions(),
-                        ...$state ? [$state->value => $state->getLabel()] : [],
+                        ...match (true) {
+                            $state instanceof AiModel => [$state->value => $state->getLabel()],
+                            is_string($state) => [$state => AiModel::parse($state)->getLabel()],
+                            default => [],
+                        },
                     ]))
                     ->searchable()
                     ->helperText('This model will be the model used for custom advisors.')

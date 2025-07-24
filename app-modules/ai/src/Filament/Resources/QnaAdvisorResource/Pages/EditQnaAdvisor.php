@@ -112,9 +112,13 @@ class EditQnaAdvisor extends EditRecord
                             ->maxLength(255),
                         Select::make('model')
                             ->live()
-                            ->options(fn (?AiModel $state) => array_unique([
+                            ->options(fn (AiModel|string|null $state) => array_unique([
                                 ...AiModelApplicabilityFeature::QuestionAndAnswerAdvisor->getModelsAsSelectOptions(),
-                                ...$state ? [$state->value => $state->getLabel()] : [],
+                                ...match (true) {
+                                    $state instanceof AiModel => [$state->value => $state->getLabel()],
+                                    is_string($state) => [$state => AiModel::parse($state)->getLabel()],
+                                    default => [],
+                                },
                             ]))
                             ->searchable()
                             ->required()

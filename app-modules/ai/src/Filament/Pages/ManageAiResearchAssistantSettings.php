@@ -73,18 +73,26 @@ class ManageAiResearchAssistantSettings extends SettingsPage
         return $form
             ->schema([
                 Select::make('discovery_model')
-                    ->options(fn (?AiModel $state) => array_unique([
+                    ->options(fn (AiModel|string|null $state) => array_unique([
                         ...AiModelApplicabilityFeature::IntegratedAdvisor->getModelsAsSelectOptions(),
-                        ...$state ? [$state->value => $state->getLabel()] : [],
+                        ...match (true) {
+                            $state instanceof AiModel => [$state->value => $state->getLabel()],
+                            is_string($state) => [$state => AiModel::parse($state)->getLabel()],
+                            default => [],
+                        },
                     ]))
                     ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::IntegratedAdvisor->getModels()))
                     ->searchable()
                     ->helperText('Used for the generation of the pre-research questions.')
                     ->required(),
                 Select::make('research_model')
-                    ->options(fn (?AiModel $state) => array_unique([
+                    ->options(fn (AiModel|string|null $state) => array_unique([
                         ...AiModelApplicabilityFeature::ResearchAdvisor->getModelsAsSelectOptions(),
-                        ...$state ? [$state->value => $state->getLabel()] : [],
+                        ...match (true) {
+                            $state instanceof AiModel => [$state->value => $state->getLabel()],
+                            is_string($state) => [$state => AiModel::parse($state)->getLabel()],
+                            default => [],
+                        },
                     ]))
                     ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::ResearchAdvisor->getModels()))
                     ->searchable()

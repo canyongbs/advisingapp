@@ -108,9 +108,13 @@ class ManageAiSettings extends SettingsPage
                     ->model($this->defaultAssistant)
                     ->schema([
                         Select::make('model')
-                            ->options(fn (?AiModel $state) => array_unique([
+                            ->options(fn (AiModel|string|null $state) => array_unique([
                                 ...AiModelApplicabilityFeature::InstitutionalAdvisor->getModelsAsSelectOptions(),
-                                ...$state ? [$state->value => $state->getLabel()] : [],
+                                ...match (true) {
+                                    $state instanceof AiModel => [$state->value => $state->getLabel()],
+                                    is_string($state) => [$state => AiModel::parse($state)->getLabel()],
+                                    default => [],
+                                },
                             ]))
                             ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::InstitutionalAdvisor->getModels()))
                             ->searchable()
@@ -147,9 +151,13 @@ class ManageAiSettings extends SettingsPage
                     ->minValue(0)
                     ->maxValue(1),
                 Select::make('default_model')
-                    ->options(fn (?AiModel $state) => array_unique([
+                    ->options(fn (AiModel|string|null $state) => array_unique([
                         ...AiModelApplicabilityFeature::InstitutionalAdvisor->getModelsAsSelectOptions(),
-                        ...$state ? [$state->value => $state->getLabel()] : [],
+                        ...match (true) {
+                            $state instanceof AiModel => [$state->value => $state->getLabel()],
+                            is_string($state) => [$state => AiModel::parse($state)->getLabel()],
+                            default => [],
+                        },
                     ]))
                     ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::InstitutionalAdvisor->getModels()))
                     ->searchable()
