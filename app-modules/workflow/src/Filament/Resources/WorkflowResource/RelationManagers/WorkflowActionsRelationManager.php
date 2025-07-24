@@ -106,7 +106,7 @@ class WorkflowActionsRelationManager extends RelationManager
                             ->model($workflow)
                             ->saveRelationshipsUsing(function (Builder $component, Workflow $record) {
                                 $previousStepId = null;
-                                
+
                                 foreach ($component->getChildComponentContainers() as $item) {
                                     $block = $item->getParentComponent();
 
