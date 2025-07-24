@@ -77,7 +77,10 @@ class ManageAiQnaAdvisorSettings extends ManageAiICustomAdvisorSettings
                     ->live(),
                 Select::make('preselected_model')
                     ->label('Select Model')
-                    ->options(AiModelApplicabilityFeature::QuestionAndAnswerAdvisor->getModelsAsSelectOptions())
+                    ->options(fn (?AiModel $state) => array_unique([
+                        ...AiModelApplicabilityFeature::QuestionAndAnswerAdvisor->getModelsAsSelectOptions(),
+                        ...$state ? [$state->value => $state->getLabel()] : [],
+                    ]))
                     ->searchable()
                     ->helperText('This model will be the model used for QnA advisors.')
                     ->columnSpanFull()

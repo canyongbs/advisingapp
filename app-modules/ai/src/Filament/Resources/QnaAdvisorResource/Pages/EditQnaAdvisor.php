@@ -112,7 +112,10 @@ class EditQnaAdvisor extends EditRecord
                             ->maxLength(255),
                         Select::make('model')
                             ->live()
-                            ->options(AiModelApplicabilityFeature::QuestionAndAnswerAdvisor->getModelsAsSelectOptions())
+                            ->options(fn (?AiModel $state) => array_unique([
+                                ...AiModelApplicabilityFeature::QuestionAndAnswerAdvisor->getModelsAsSelectOptions(),
+                                ...$state ? [$state->value => $state->getLabel()] : [],
+                            ]))
                             ->searchable()
                             ->required()
                             ->visible(auth()->user()->isSuperAdmin())

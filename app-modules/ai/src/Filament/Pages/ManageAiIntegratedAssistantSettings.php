@@ -46,6 +46,7 @@ use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
+use Illuminate\Validation\Rule;
 
 /**
  * @property-read ?AiAssistant $defaultAssistant
@@ -77,7 +78,11 @@ class ManageAiIntegratedAssistantSettings extends SettingsPage
         return $form
             ->schema([
                 Select::make('default_model')
-                    ->options(AiModelApplicabilityFeature::IntegratedAdvisor->getModelsAsSelectOptions())
+                    ->options(fn (?AiModel $state) => array_unique([
+                        ...AiModelApplicabilityFeature::IntegratedAdvisor->getModelsAsSelectOptions(),
+                        ...$state ? [$state->value => $state->getLabel()] : [],
+                    ]))
+                    ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::IntegratedAdvisor->getModels()))
                     ->searchable()
                     ->helperText('Used for general purposes like generating content when an assistant is not being used.')
                     ->required(),

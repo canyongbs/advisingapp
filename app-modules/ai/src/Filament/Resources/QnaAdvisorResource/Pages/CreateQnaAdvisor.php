@@ -74,7 +74,10 @@ class CreateQnaAdvisor extends CreateRecord
                     ->maxLength(255),
                 Select::make('model')
                     ->live()
-                    ->options(AiModelApplicabilityFeature::QuestionAndAnswerAdvisor->getModelsAsSelectOptions())
+                    ->options(fn (?AiModel $state) => array_unique([
+                        ...AiModelApplicabilityFeature::QuestionAndAnswerAdvisor->getModelsAsSelectOptions(),
+                        ...$state ? [$state->value => $state->getLabel()] : [],
+                    ]))
                     ->searchable()
                     ->required()
                     ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::QuestionAndAnswerAdvisor->getModels()))
