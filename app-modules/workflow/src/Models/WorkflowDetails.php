@@ -39,9 +39,6 @@ namespace AdvisingApp\Workflow\Models;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-/**
- * @property string $workflow_step_id
- */
 abstract class WorkflowDetails extends BaseModel
 {
     abstract public function getType(): string;
@@ -53,6 +50,6 @@ abstract class WorkflowDetails extends BaseModel
      */
     public function workflowStep(): BelongsTo
     {
-        return $this->belongsTo(WorkflowStep::class);
+        return $this->belongsTo(WorkflowStep::class, 'current_details_id');
     }
 }
