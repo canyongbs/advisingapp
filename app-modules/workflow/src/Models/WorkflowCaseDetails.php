@@ -87,13 +87,13 @@ class WorkflowCaseDetails extends WorkflowDetails implements Auditable
     public function hasBeenExecuted(): bool
     {
         $workflowStep = WorkflowStep::whereCurrentDetailsType(WorkflowActionType::Case)
-          ->whereCurrentDetailsId($this->id)
-          ->first();
+            ->whereCurrentDetailsId($this->id)
+            ->first();
 
         $workflowRun = WorkflowRun::whereWorkflowTriggerId($workflowStep->workflow->workflowTrigger->getKey())->first();
 
-        if(is_null($workflowRun)) {
-          return false;
+        if (is_null($workflowRun)) {
+            return false;
         }
 
         $workflowRunSteps = $workflowRun->workflowRunSteps;
