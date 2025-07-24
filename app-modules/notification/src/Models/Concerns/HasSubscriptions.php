@@ -46,6 +46,6 @@ trait HasSubscriptions
      */
     public function subscriptions(): MorphMany
     {
-        return $this->morphMany(Subscription::class, 'subscribable');
+        return $this->morphMany(Subscription::class, 'subscribable')->whereHas('user');
     }
 }
