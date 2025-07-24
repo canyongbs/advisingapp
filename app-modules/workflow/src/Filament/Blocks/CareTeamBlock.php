@@ -50,6 +50,6 @@ class CareTeamBlock extends WorkflowActionBlock
 
     public static function type(): string
     {
-        return 'care_team';
+        return 'workflow_care_team_details';
     }
 }

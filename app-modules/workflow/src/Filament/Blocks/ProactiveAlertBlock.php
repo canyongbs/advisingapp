@@ -50,6 +50,6 @@ class ProactiveAlertBlock extends WorkflowActionBlock
 
     public static function type(): string
     {
-        return 'proactive_alert';
+        return 'workflow_proactive_alert_block';
     }
 }

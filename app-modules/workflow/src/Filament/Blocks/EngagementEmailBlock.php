@@ -50,6 +50,6 @@ class EngagementEmailBlock extends WorkflowActionBlock
 
     public static function type(): string
     {
-        return 'engagement_email';
+        return 'workflow_engagement_email_details';
     }
 }
