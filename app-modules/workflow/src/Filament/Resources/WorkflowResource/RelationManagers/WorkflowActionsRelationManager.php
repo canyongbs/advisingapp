@@ -86,7 +86,6 @@ class WorkflowActionsRelationManager extends RelationManager
 
         return $table
             ->recordTitleAttribute('id')
-            //->modifyQueryUsing(fn (Builder $query) => $query->orderBy(you know))
             ->columns([
                 TextColumn::make('current_details_type')
                     ->label('Step Type'),
@@ -103,7 +102,7 @@ class WorkflowActionsRelationManager extends RelationManager
                             ->addActionLabel('Add a New Workflow Step')
                             ->blocks(WorkflowActionType::blocks())
                             ->dehydrated(false)
-                            ->model($this->getOwnerRecord())
+                            ->model($workflow)
                             ->saveRelationshipsUsing(function (Builder $component, Workflow $record) {
                                 foreach ($component->getChildComponentContainers() as $item) {
                                     $block = $item->getParentComponent();
@@ -112,32 +111,10 @@ class WorkflowActionsRelationManager extends RelationManager
 
                                     $data = $item->getState(false);
 
-                                    $delayMinutes = ($data['days'] * 24 * 60) + ($data['hours'] * 60) + $data['minutes'];
-
                                     try {
                                         DB::beginTransaction();
 
-                                        // $workflowStep = $record->workflowSteps()->create(['delay_minutes' => $delayMinutes]);
-
-                                        // $action = $this->createWorkflowDetails($block, $data);
-
-                                        // $workflowStep->details()->associate($action)->save();
-
-                                        $action = $this->createWorkflowDetails($block, $data);
-                                        $workflowStep = new WorkflowStep(['delay_minutes' => $delayMinutes, 'workflow_id' => $record->getKey()]);
-
-                                        $action->workflow_step_id = null;
-
-                                        $action->save();
-
-                                        //$action->save();
-
-                                        $workflowStep->details()->associate($action);
-                                        $workflowStep->current_details_id = $action->getKey();
-                                        $workflowStep->save();
-
-                                        $action->workflow_step_id = $workflowStep->getKey();
-                                        $action->save();
+                                        $action = $this->createWorkflowDetails($block, $data, $record);
 
                                         $block->afterCreated($action, $item);
 
@@ -153,16 +130,30 @@ class WorkflowActionsRelationManager extends RelationManager
                             }),
                     ])
                     ->action(fn () => null)
-                    ->hidden(fn () => $workflow->hasBeenExecuted()),
+                    ->hidden(function () use ($workflow) {
+                        return $workflow->hasBeenExecuted();
+                    }),
             ])
             ->actions([
                 EditAction::make()
-                    ->modalHeading(fn (WorkflowDetails $workflowDetails) => 'Edit ' . Str::title($workflowDetails->getType()))
-                    ->hidden(fn (WorkflowDetails $workflowDetails) => $workflowDetails->hasBeenExecuted())
+                    ->modalHeading(fn (WorkflowStep $workflowStep) => 'Edit ' . Str::title($workflowStep->current_details_type->getLabel()))
+                    ->hidden(function (WorkflowStep $workflowStep) {
+                        $details = $workflowStep->currentDetails;
+
+                        assert($details instanceof WorkflowDetails);
+
+                        return $details->hasBeenExecuted();
+                    })
                     ->databaseTransaction(),
                 DeleteAction::make()
-                    ->modalHeading(fn (WorkflowDetails $workflowDetails) => 'Delete ' . Str::title($workflowDetails->getType()))
-                    ->hidden(fn (WorkflowDetails $workflowDetails) => $workflowDetails->hasBeenExecuted())
+                    ->modalHeading(fn (WorkflowStep $workflowStep) => 'Delete ' . Str::title($workflowStep->current_details_type->getLabel()))
+                    ->hidden(function (WorkflowStep $workflowStep) {
+                        $details = $workflowStep->currentDetails;
+
+                        assert($details instanceof WorkflowDetails);
+
+                        return $details->hasBeenExecuted();
+                    })
                     ->databaseTransaction(),
             ])
             ->bulkActions([
@@ -176,21 +167,46 @@ class WorkflowActionsRelationManager extends RelationManager
     /**
      * @param WorkflowActionBlock $block
      * @param array<string> $data
+     * @param Workflow $workflow
      *
-     * @return WorkflowDetails|null
+     * @return WorkflowDetails
      */
-    private function createWorkflowDetails(WorkflowActionBlock $block, array $data): ?WorkflowDetails
+    private function createWorkflowDetails(WorkflowActionBlock $block, array $data, Workflow $workflow): WorkflowDetails
     {
-        return match ($block->type()) {
-            'case' => new WorkflowCaseDetails([
+        // $action = match ($block->type()) {
+        //     'workflow_case_details' => WorkflowCaseDetails::create([
+        //         'division_id' => $data['division_id'],
+        //         'status_id' => $data['status_id'],
+        //         'priority_id' => $data['priority_id'],
+        //         'assigned_to_id' => $data['assigned_to_id'],
+        //         'close_details' => $data['close_details'],
+        //         'res_details' => $data['res_details'],
+        //     ]),
+        //     default => null
+        // };
+
+        $action = WorkflowCaseDetails::create([
                 'division_id' => $data['division_id'],
                 'status_id' => $data['status_id'],
                 'priority_id' => $data['priority_id'],
                 'assigned_to_id' => $data['assigned_to_id'],
                 'close_details' => $data['close_details'],
                 'res_details' => $data['res_details'],
-            ]),
-            default => null
-        };
+        ]);
+
+        $delayMinutes = ((int)$data['days'] * 24 * 60) + ((int)$data['hours'] * 60) + (int)$data['minutes'];
+
+        $workflowStep = new WorkflowStep([
+            'delay_minutes' => $delayMinutes,
+            'workflow_id' => $workflow->getKey(),
+            'current_details_type' => $action->getType(),
+            'current_details_id' => $action->getKey(),
+        ]);
+
+        $workflowStep->save();
+
+        $workflow->load('workflowSteps');
+
+        return $action;
     }
 }

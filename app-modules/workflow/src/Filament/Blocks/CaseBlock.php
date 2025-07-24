@@ -180,6 +180,6 @@ class CaseBlock extends WorkflowActionBlock
 
     public static function type(): string
     {
-        return 'case';
+        return 'workflow_case_details';
     }
 }

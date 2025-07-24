@@ -69,7 +69,7 @@ enum WorkflowActionType: string implements HasLabel
 
     case EngagementSms = 'engagement_sms';
 
-    case Case = 'case';
+    case Case = 'workflow_case_details';
 
     case ProactiveAlert = 'proactive_alert';
 
@@ -117,9 +117,14 @@ enum WorkflowActionType: string implements HasLabel
         return match ($this) {
             WorkflowActionType::EngagementEmail => 'Email',
             WorkflowActionType::EngagementSms => 'Text Message',
+            WorkflowActionType::Case => 'Case',
             WorkflowActionType::ProactiveAlert => 'Proactive Alert',
+            WorkflowActionType::Interaction => 'Interaction',
             WorkflowActionType::CareTeam => 'Care Team',
-            default => $this->name,
+            WorkflowActionType::Tags => 'Tags',
+            WorkflowActionType::Subscription => 'Subscription',
+            WorkflowActionType::Event => 'Event',
+            WorkflowActionType::Task => 'Task',
         };
     }
 
