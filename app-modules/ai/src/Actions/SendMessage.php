@@ -79,6 +79,10 @@ class SendMessage
             } else {
                 $message->content = $content->prompt;
             }
+
+            $use = $content->uses()->make();
+            $use->user()->associate(auth()->user());
+            $use->save();
         } else {
             $message->content = $content;
         }
