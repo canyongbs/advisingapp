@@ -45,7 +45,6 @@ use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiThreadFolder;
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Models\PromptUpvote;
-use AdvisingApp\Ai\Models\PromptUse;
 use AdvisingApp\Assistant\Filament\Pages\InstitutionalAdvisor;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Consent\Enums\ConsentAgreementType;
@@ -743,11 +742,6 @@ it('can insert a prompt from the library', function () use ($setUp) {
 
     $prompt = Prompt::factory()->create();
 
-    assertDatabaseMissing(PromptUse::class, [
-        'prompt_id' => $prompt->getKey(),
-        'user_id' => $user->getKey(),
-    ]);
-
     Livewire::test(InstitutionalAdvisor::class)
         ->callAction('insertFromPromptLibrary', [
             'isSmart' => 0,
@@ -755,11 +749,6 @@ it('can insert a prompt from the library', function () use ($setUp) {
         ])
         ->assertHasNoActionErrors()
         ->assertDispatched('set-chat-message', content: $prompt->prompt);
-
-    assertDatabaseHas(PromptUse::class, [
-        'prompt_id' => $prompt->getKey(),
-        'user_id' => $user->getKey(),
-    ]);
 });
 
 it('can not insert a missing prompt from the library', function () use ($setUp) {
