@@ -41,7 +41,9 @@ use AdvisingApp\Research\Models\ResearchRequestFolder;
 use AdvisingApp\Research\Models\ResearchRequestQuestion;
 use AdvisingApp\Research\ResearchPlugin;
 use Filament\Panel;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 
 class ResearchServiceProvider extends ServiceProvider
@@ -58,5 +60,9 @@ class ResearchServiceProvider extends ServiceProvider
             'research_request_folder' => ResearchRequestFolder::class,
             'research_request_question' => ResearchRequestQuestion::class,
         ]);
+
+        RateLimiter::for('researchRequestGeneration', function (object $job) {
+            return Limit::perMinute(1)->by($job->researchRequest?->getKey());
+        });
     }
 }

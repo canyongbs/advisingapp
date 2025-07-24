@@ -48,6 +48,7 @@ use Exception;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\Middleware\RateLimited;
 use Illuminate\Queue\SerializesModels;
 
 class GenerateResearchRequestSection implements ShouldQueue
@@ -62,7 +63,7 @@ class GenerateResearchRequestSection implements ShouldQueue
      * @param array<string, mixed> $requestOptions
      */
     public function __construct(
-        protected ResearchRequest $researchRequest,
+        public ResearchRequest $researchRequest,
         protected array $requestOptions = [],
     ) {}
 
@@ -143,6 +144,14 @@ class GenerateResearchRequestSection implements ShouldQueue
     public function retryUntil(): CarbonInterface
     {
         return now()->addHour();
+    }
+
+    /**
+     * @return array<int, object>
+     */
+    public function middleware(): array
+    {
+        return [(new RateLimited('researchRequestGeneration'))];
     }
 
     /**
@@ -264,7 +273,7 @@ class GenerateResearchRequestSection implements ShouldQueue
             
             We are working through the outline for this research report. Currently, your task is to {$instructions}
 
-            The content should be written in Markdown, where the heading (with the correct level, H2 (##) or H3 (###)) is the first line of the response, and the content is the rest of the paragraphs under the heading. Do not respond with any greetings or salutations, and do not include any additional information or context.
+            The content should be written in Markdown, where the heading (with the correct level, H2 (##) or H3 (###)) is the first line of the response, and the content is the rest of the paragraphs under the heading. Do not respond with any greetings or salutations, and do not include any additional information or context. Never return JSON.
             EOD;
     }
 

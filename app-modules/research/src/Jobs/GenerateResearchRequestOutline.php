@@ -47,6 +47,7 @@ use Exception;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\Middleware\RateLimited;
 use Illuminate\Queue\SerializesModels;
 
 class GenerateResearchRequestOutline implements ShouldQueue
@@ -58,7 +59,7 @@ class GenerateResearchRequestOutline implements ShouldQueue
     public int $timeout = 600;
 
     public function __construct(
-        protected ResearchRequest $researchRequest,
+        public ResearchRequest $researchRequest,
     ) {}
 
     public function handle(): void
@@ -140,6 +141,14 @@ class GenerateResearchRequestOutline implements ShouldQueue
     public function retryUntil(): CarbonInterface
     {
         return now()->addHour();
+    }
+
+    /**
+     * @return array<int, object>
+     */
+    public function middleware(): array
+    {
+        return [(new RateLimited('researchRequestGeneration'))];
     }
 
     protected function getContent(): string
