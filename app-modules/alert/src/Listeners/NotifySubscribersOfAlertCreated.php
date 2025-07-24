@@ -48,10 +48,10 @@ class NotifySubscribersOfAlertCreated implements ShouldQueue
     public function handle(AlertCreated $event): void
     {
         /** @var Student|Prospect $concern */
-        $concern = $event->alert->concern->where('deleted_at', null)->all();
+        $concern = $event->alert->concern;
 
         $concern->subscriptions?->each(function (Subscription $subscription) use ($event) {
-            $subscription->user->notify(new AlertCreatedNotification($event->alert));
+            $subscription->user?->notify(new AlertCreatedNotification($event->alert));
         });
     }
 }
