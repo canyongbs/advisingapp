@@ -90,7 +90,7 @@ class FormResource extends Resource
 
     public static function getPages(): array
     {
-        return WorkflowFeature::active() ? 
+        return WorkflowFeature::active() ?
           [
               'index' => ListForms::route('/'),
               'create' => CreateForm::route('/create'),
