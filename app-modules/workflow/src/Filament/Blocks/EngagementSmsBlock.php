@@ -50,6 +50,6 @@ class EngagementSmsBlock extends WorkflowActionBlock
 
     public static function type(): string
     {
-        return 'engagement_sms';
+        return 'workflow_engagement_sms_block';
     }
 }
