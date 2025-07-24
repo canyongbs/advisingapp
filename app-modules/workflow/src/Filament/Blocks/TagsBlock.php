@@ -41,7 +41,6 @@ use Filament\Forms\Components\Select;
 class TagsBlock extends WorkflowActionBlock
 {
     //TODO: implement
-    //TODO: implement
     public function generateFields(): array
     {
         return [
@@ -51,6 +50,6 @@ class TagsBlock extends WorkflowActionBlock
 
     public static function type(): string
     {
-        return 'tags';
+        return 'workflow_tags_block';
     }
 }

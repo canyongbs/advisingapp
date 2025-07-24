@@ -50,6 +50,6 @@ class EventBlock extends WorkflowActionBlock
 
     public static function type(): string
     {
-        return 'event';
+        return 'workflow_event_block';
     }
 }

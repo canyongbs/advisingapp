@@ -50,6 +50,6 @@ class TaskBlock extends WorkflowActionBlock
 
     public static function type(): string
     {
-        return 'task';
+        return 'workflow_task_details';
     }
 }

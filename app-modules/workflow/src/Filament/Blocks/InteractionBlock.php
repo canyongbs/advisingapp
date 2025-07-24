@@ -50,6 +50,6 @@ class InteractionBlock extends WorkflowActionBlock
 
     public static function type(): string
     {
-        return 'interaction';
+        return 'workflow_interaction_block';
     }
 }

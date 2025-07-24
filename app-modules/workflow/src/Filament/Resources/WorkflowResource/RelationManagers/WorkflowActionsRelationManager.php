@@ -203,15 +203,6 @@ class WorkflowActionsRelationManager extends RelationManager
             default => null
         };
 
-        // $action = WorkflowCaseDetails::create([
-        //     'division_id' => $data['division_id'],
-        //     'status_id' => $data['status_id'],
-        //     'priority_id' => $data['priority_id'],
-        //     'assigned_to_id' => $data['assigned_to_id'],
-        //     'close_details' => $data['close_details'],
-        //     'res_details' => $data['res_details'],
-        // ]);
-
         return $action;
     }
 }

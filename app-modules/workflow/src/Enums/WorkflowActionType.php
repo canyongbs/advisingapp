@@ -65,25 +65,25 @@ use Filament\Support\Contracts\HasLabel;
 
 enum WorkflowActionType: string implements HasLabel
 {
-    case EngagementEmail = 'engagement_email';
+    case EngagementEmail = 'workflow_engagement_email_details';
 
-    case EngagementSms = 'engagement_sms';
+    case EngagementSms = 'workflow_engagement_sms_details';
 
     case Case = 'workflow_case_details';
 
-    case ProactiveAlert = 'proactive_alert';
+    case ProactiveAlert = 'workflow_proactive_alert_details';
 
-    case Interaction = 'interaction';
+    case Interaction = 'workflow_interaction_details';
 
-    case CareTeam = 'care_team';
+    case CareTeam = 'workflow_care_team_details';
 
-    case Task = 'task';
+    case Task = 'workflow_task_details';
 
-    case Subscription = 'subscription';
+    case Subscription = 'workflow_subscription_details';
 
-    case Event = 'event';
+    case Event = 'workflow_event_details';
 
-    case Tags = 'tags';
+    case Tags = 'workflow_tags_details';
 
     /**
      * @return array<int, WorkflowActionBlock>

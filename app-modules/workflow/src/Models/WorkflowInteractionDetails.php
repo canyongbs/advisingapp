@@ -73,12 +73,22 @@ class WorkflowInteractionDetails extends WorkflowDetails implements Auditable
 
     public function getType(): string
     {
-        return 'interaction';
+        return 'workflow_interaction_details';
     }
 
     public function hasBeenExecuted(): bool
     {
-        $workflowRunSteps = WorkflowRun::whereWorkflowTriggerId($this->workflowStep->workflow->workflowTrigger->getKey())->first()->workflowRunSteps;
+        $workflowStep = WorkflowStep::whereCurrentDetailsType(WorkflowActionType::Interaction)
+            ->whereCurrentDetailsId($this->id)
+            ->first();
+
+        $workflowRun = WorkflowRun::whereWorkflowTriggerId($workflowStep->workflow->workflowTrigger->getKey())->first();
+
+        if (is_null($workflowRun)) {
+            return false;
+        }
+
+        $workflowRunSteps = $workflowRun->workflowRunSteps;
 
         return ! is_null($workflowRunSteps->where('details_type', WorkflowActionType::Interaction)->where('details_id', $this->id)->first()->dispatched_at);
     }

@@ -41,7 +41,6 @@ use Filament\Forms\Components\Select;
 class SubscriptionBlock extends WorkflowActionBlock
 {
     //TODO: implement
-    //TODO: implement
     public function generateFields(): array
     {
         return [
@@ -51,6 +50,6 @@ class SubscriptionBlock extends WorkflowActionBlock
 
     public static function type(): string
     {
-        return 'subscription';
+        return 'workflow_subscription_block';
     }
 }
