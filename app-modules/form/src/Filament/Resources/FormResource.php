@@ -81,16 +81,16 @@ class FormResource extends Resource
               ManageFormEmailAutoReply::class,
           ]) :
             $page->generateNavigationItems([
-              EditForm::class,
-              SubmissionOnScreenResponse::class,
-              ManageFormSubmissions::class,
-              ManageFormEmailAutoReply::class,
+                EditForm::class,
+                SubmissionOnScreenResponse::class,
+                ManageFormSubmissions::class,
+                ManageFormEmailAutoReply::class,
             ]);
     }
 
     public static function getPages(): array
     {
-        return WorkflowFeature::active() ? 
+        return WorkflowFeature::active() ?
           [
               'index' => ListForms::route('/'),
               'create' => CreateForm::route('/create'),
