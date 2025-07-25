@@ -95,7 +95,7 @@ class ManageApplicationWorkflows extends ManageRelatedRecords
 
                     assert($user instanceof User);
 
-                    try{
+                    try {
                         DB::beginTransaction();
 
                         $workflowTrigger = new WorkflowTrigger([
@@ -124,7 +124,7 @@ class ManageApplicationWorkflows extends ManageRelatedRecords
                     }
 
                     redirect(WorkflowResource::getUrl('edit', [$workflow]));
-                })
+                }),
         ];
     }
 }

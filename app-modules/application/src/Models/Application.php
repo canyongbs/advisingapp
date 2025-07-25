@@ -38,7 +38,6 @@ namespace AdvisingApp\Application\Models;
 
 use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Models\Submissible;
-use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -100,7 +99,7 @@ class Application extends Submissible
      */
     public function workflowTriggers(): HasMany
     {
-      return $this->hasMany(WorkflowTrigger::class, 'related_id')->where('related_type', Application::class);
+        return $this->hasMany(WorkflowTrigger::class, 'related_id')->where('related_type', Application::class);
     }
 
     /**
@@ -108,6 +107,6 @@ class Application extends Submissible
      */
     public function workflows(): HasManyDeep
     {
-      return $this->hasManyDeepFromRelations($this->workflowTriggers(), (new WorkflowTrigger())->workflow());
+        return $this->hasManyDeepFromRelations($this->workflowTriggers(), (new WorkflowTrigger())->workflow());
     }
 }

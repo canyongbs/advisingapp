@@ -54,7 +54,7 @@ class TriggerApplicationSubmissionWorkflows implements ShouldQueue
         $workflowTrigger = WorkflowTrigger::where('related_type', Application::class)
             ->where('related_id', $event->submission->getKey())
             ->first();
-        
+
         $steps = Workflow::where('workflow_trigger_id', $workflowTrigger->getKey())
             ->whereNotNull('deleted_at')
             ->where('is_enabled', true)
@@ -64,7 +64,7 @@ class TriggerApplicationSubmissionWorkflows implements ShouldQueue
         $steps->each(function (WorkflowStep $step) use ($event, $workflowTrigger) {
             assert($step->details instanceof WorkflowDetails);
 
-            if(is_null($step->previous_step_id)) {
+            if (is_null($step->previous_step_id)) {
                 $workflowRun = new WorkflowRun(['started_at' => now()]);
 
                 $workflowRun->related()->associate($event->submission->author);
@@ -77,7 +77,7 @@ class TriggerApplicationSubmissionWorkflows implements ShouldQueue
             $workflowRunStep = new WorkflowRunStep(['execute_at' => $this->getStepScheduledAt($step, $event)]);
 
             $workflowRun = WorkflowRun::where('workflow_trigger_id', $workflowTrigger->getKey())->get();
-            
+
             $workflowRunStep->workflowRun()->associate($workflowRun);
 
             $workflowRunStep->details()->associate($step->details);
