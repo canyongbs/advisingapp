@@ -74,10 +74,12 @@ class InteractionWorkflowActionJob extends ExecuteWorkflowActionOnEducatableJob
                 'division_id' => $details->division_id,
             ]);
 
-            WorkflowRunStepRelated::create([
-                'workflow_run_step_id' => $this->workflowRunStep->id,
-                'related' => $interaction,
-            ]);
+            $workflowRunStepRelated = new WorkflowRunStepRelated();
+
+            $workflowRunStepRelated->workflowRunStep()->associate($this->workflowRunStep);
+            $workflowRunStepRelated->related()->associate($interaction);
+
+            $workflowRunStepRelated->save();
 
             DB::commit();
         } catch (Throwable $throw) {

@@ -38,6 +38,7 @@ namespace AdvisingApp\Form\Filament\Resources\FormResource\Pages;
 
 use AdvisingApp\Form\Filament\Resources\FormResource;
 use AdvisingApp\Form\Models\Form;
+use AdvisingApp\Workflow\Enums\WorkflowTriggerType;
 use AdvisingApp\Workflow\Filament\Resources\WorkflowResource;
 use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
@@ -49,6 +50,8 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class ManageFormWorkflows extends ManageRelatedRecords
 {
@@ -56,10 +59,10 @@ class ManageFormWorkflows extends ManageRelatedRecords
 
     protected static string $relationship = 'workflows';
 
-    public static function canAccess(array $arguments = []): bool
-    {
-        return WorkflowFeature::active();
-    }
+    // public static function canAccess(array $arguments = []): bool
+    // {
+    //     return WorkflowFeature::active() && parent::canAccess($arguments);
+    // }
 
     public static function getNavigationLabel(): string
     {
@@ -89,30 +92,38 @@ class ManageFormWorkflows extends ManageRelatedRecords
     public function getHeaderActions(): array
     {
         return [
-            $this->createWorkflowAction(),
-        ];
-    }
-
-    public function createWorkflowAction(): Action
-    {
-        return Action::make('create')
+            Action::make('create')
             ->label('Create New Workflow')
             ->action(function () {
-                $workflowTrigger = WorkflowTrigger::create([
-                    'type' => 'Time Based',
-                    'related_type' => Form::class,
-                    'related_id' => $this->getOwnerRecord()->getKey(),
-                    'created_by_type' => User::class,
-                    'created_by_id' => auth()->user()->getKey(),
-                ]);
+              try{
+                DB::beginTransaction();
 
-                $workflow = Workflow::create([
-                    'workflow_trigger_id' => $workflowTrigger->getKey(),
-                    'name' => 'Form Workflow',
-                    'is_enabled' => false,
-                ]);
+                  $workflowTrigger = new WorkflowTrigger([
+                      'type' => WorkflowTriggerType::EventBased,
+                  ]);
+
+                  $workflowTrigger->related()->associate($this->getOwnerRecord());
+                  $workflowTrigger->createdBy()->associate(auth()->user());
+
+                  $workflowTrigger->save();
+
+                  $workflow = new Workflow([
+                      'name' => 'Form Workflow',
+                      'is_enabled' => false,
+                  ]);
+
+                  $workflow->workflowTrigger()->associate($workflowTrigger);
+
+                  $workflow->save();
+                  DB::commit();
+              } catch (Throwable $throw) {
+                  DB::rollBack();
+
+                  throw $throw;
+              }
 
                 redirect(WorkflowResource::getUrl('edit', [$workflow]));
-            });
+            }),
+        ];
     }
 }

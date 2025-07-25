@@ -94,10 +94,12 @@ class EngagementSmsWorkflowActionJob extends ExecuteWorkflowActionOnEducatableJo
 
             $engagement->refresh();
 
-            WorkflowRunStepRelated::create([
-                'workflow_run_step_id' => $this->workflowRunStep->id,
-                'related' => $engagement,
-            ]);
+            $workflowRunStepRelated = new WorkflowRunStepRelated();
+
+            $workflowRunStepRelated->workflowRunStep()->associate($this->workflowRunStep);
+            $workflowRunStepRelated->related()->associate($engagement);
+
+            $workflowRunStepRelated->save();
 
             DB::commit();
         } catch (Throwable $throw) {

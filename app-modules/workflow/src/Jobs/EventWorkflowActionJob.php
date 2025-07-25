@@ -76,10 +76,12 @@ class EventWorkflowActionJob extends ExecuteWorkflowActionOnEducatableJob
 
             if ($event->attendees()->where('email', $email)->exists()) {
                 //The Educatable is already an attendee, so we can skip the action.
-                WorkflowRunStepRelated::create([
-                    'workflow_run_step_id' => $this->workflowRunStep->id,
-                    'related' => $event,
-                ]);
+                $workflowRunStepRelated = new WorkflowRunStepRelated();
+
+                $workflowRunStepRelated->workflowRunStep()->associate($this->workflowRunStep);
+                $workflowRunStepRelated->related()->associate($event);
+
+                $workflowRunStepRelated->save();
 
                 DB::commit();
 
@@ -97,10 +99,12 @@ class EventWorkflowActionJob extends ExecuteWorkflowActionOnEducatableJob
 
             $attendee->notify(new RegistrationLinkToEventAttendeeNotification($event, $user));
 
-            WorkflowRunStepRelated::create([
-                'workflow_run_step_id' => $this->workflowRunStep->id,
-                'related' => $event,
-            ]);
+            $workflowRunStepRelated = new WorkflowRunStepRelated();
+
+            $workflowRunStepRelated->workflowRunStep()->associate($this->workflowRunStep);
+            $workflowRunStepRelated->related()->associate($event);
+
+            $workflowRunStepRelated->save();
 
             DB::commit();
         } catch (Throwable $throw) {

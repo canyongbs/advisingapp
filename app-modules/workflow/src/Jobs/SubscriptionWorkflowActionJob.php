@@ -71,10 +71,12 @@ class SubscriptionWorkflowActionJob extends ExecuteWorkflowActionOnEducatableJob
             }
 
             foreach ($subscriptions as $subscription) {
-                WorkflowRunStepRelated::create([
-                    'workflow_run_step_id' => $this->workflowRunStep->id,
-                    'related' => $subscription,
-                ]);
+                $workflowRunStepRelated = new WorkflowRunStepRelated();
+
+                $workflowRunStepRelated->workflowRunStep()->associate($this->workflowRunStep);
+                $workflowRunStepRelated->related()->associate($subscription);
+
+                $workflowRunStepRelated->save();
             }
 
             DB::commit();

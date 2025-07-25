@@ -66,20 +66,27 @@ class TriggerFormSubmissionWorkflows implements ShouldQueue
             assert($step->details instanceof WorkflowDetails);
 
             if (is_null($step->previous_step_id)) {
-                WorkflowRun::create([
+                $workflowRun = new WorkflowRun([
                     'started_at' => now(),
-                    'workflow_trigger_id' => $workflowTriggerId->getKey(),
                     'related_type' => $event->submission->author_type,
                     'related_id' => $event->submission->author_id,
                 ]);
+
+                $workflowRun->workflowTrigger()->associate($workflowTriggerId);
+                $workflowRun->related()->associate($event->submission->author);
+
+                $workflowRun->save();
             }
 
-            WorkflowRunStep::create([
+            $workflowRunStep = new WorkflowRunStep([
                 'execute_at' => $this->getStepScheduledAt($step, $event),
-                'workflow_run_id' => WorkflowRun::whereWorkflowTriggerId($workflowTriggerId),
-                'details_id' => $step->details->getKey(),
-                'details_type' => $step->details->getType(),
             ]);
+
+            $workflowRun=WorkflowRun::whereWorkflowTriggerId($workflowTriggerId)->get();
+            $workflowRunStep->workflowRun()->associate($workflowRun);
+            $workflowRunStep->details()->associate($step->details);
+
+            $workflowRunStep->save();
         });
     }
 
