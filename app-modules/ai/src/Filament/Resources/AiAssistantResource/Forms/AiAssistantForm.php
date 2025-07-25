@@ -106,7 +106,7 @@ class AiAssistantForm
                     ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::CustomAdvisors->getModels()))
                     ->searchable()
                     ->required()
-                    ->visible(fn (Get $get): bool => filled($get('application')))
+                    ->visible(fn (Get $get): bool => filled($get('application')) && auth()->user()->isSuperAdmin())
                     ->disabled(fn (): bool => ! app(AiCustomAdvisorSettings::class)->allow_selection_of_model)
                     ->default(function () {
                         $settings = app(AiCustomAdvisorSettings::class);
@@ -116,7 +116,8 @@ class AiAssistantForm
                         }
 
                         return $settings->preselected_model;
-                    }),
+                    })
+                    ->dehydrated(),
                 Textarea::make('description')
                     ->columnSpanFull()
                     ->required(),
