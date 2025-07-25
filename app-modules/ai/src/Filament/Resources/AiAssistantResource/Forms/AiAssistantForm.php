@@ -117,7 +117,7 @@ class AiAssistantForm
 
                         return $settings->preselected_model;
                     })
-                    ->dehydrated(),
+                    ->dehydratedWhenHidden(),
                 Textarea::make('description')
                     ->columnSpanFull()
                     ->required(),
