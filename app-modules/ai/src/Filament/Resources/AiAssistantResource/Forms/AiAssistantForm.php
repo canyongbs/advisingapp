@@ -86,12 +86,14 @@ class AiAssistantForm
                     ->options([
                         AiAssistantApplication::PersonalAssistant->value => 'Custom Advisor',
                     ])
+                    ->dehydratedWhenHidden()
                     ->default(AiAssistantApplication::getDefault())
                     ->live()
                     ->afterStateUpdated(fn (Set $set, $state) => filled(AiAssistantApplication::parse($state)) ? $set('model', AiAssistantApplication::parse($state)->getDefaultModel()->value) : null)
                     ->required()
                     ->enum(AiAssistantApplication::class)
                     ->columnStart(1)
+                    ->visible(auth()->user()->isSuperAdmin())
                     ->disabledOn('edit'),
                 Select::make('model')
                     ->reactive()
