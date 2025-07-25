@@ -43,7 +43,7 @@ use App\Models\Taggable;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
-class TagsWorkflowActionJob extends ExecuteWorkflowActionOnEducatableJob
+class TagsWorkflowActionJob extends ExecuteWorkflowActionJob
 {
     public function handle(): void
     {
@@ -54,7 +54,9 @@ class TagsWorkflowActionJob extends ExecuteWorkflowActionOnEducatableJob
 
             assert($educatable instanceof Educatable);
 
-            $details = WorkflowTagsDetails::whereId($this->workflowRunStep->details_id)->first();
+            $details = $this->workflowRunStep->details;
+
+            assert($details instanceof WorkflowTagsDetails);
 
             $addedOrUpdatedPivotModels = [];
 

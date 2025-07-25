@@ -48,7 +48,7 @@ use Illuminate\Queue\Middleware\RateLimitedWithRedis;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
-class EngagementEmailWorkflowActionJob extends ExecuteWorkflowActionOnEducatableJob
+class EngagementEmailWorkflowActionJob extends ExecuteWorkflowActionJob
 {
     /**
      * @return array<object>
@@ -70,7 +70,9 @@ class EngagementEmailWorkflowActionJob extends ExecuteWorkflowActionOnEducatable
 
             assert($educatable instanceof Educatable);
 
-            $details = WorkflowEngagementEmailDetails::whereId($this->workflowRunStep->details_id)->first();
+            $details = $this->workflowRunStep->details;
+
+            assert($details instanceof WorkflowEngagementEmailDetails);
 
             throw_if(
                 NotificationChannel::parse($details->channel) !== NotificationChannel::Email,

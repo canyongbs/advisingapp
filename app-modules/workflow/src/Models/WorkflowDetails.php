@@ -43,8 +43,6 @@ abstract class WorkflowDetails extends BaseModel
 {
     abstract public function getType(): string;
 
-    abstract public function hasBeenExecuted(): bool;
-
     /**
      * @return BelongsTo<WorkflowStep, $this>
      */

@@ -40,6 +40,7 @@ use AdvisingApp\Engagement\Actions\CreateEngagement;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\Workflow\Models\WorkflowEngagementEmailDetails;
 use AdvisingApp\Workflow\Models\WorkflowEngagementSmsDetails;
 use AdvisingApp\Workflow\Models\WorkflowRunStepRelated;
 use App\Models\User;
@@ -48,7 +49,7 @@ use Illuminate\Queue\Middleware\RateLimitedWithRedis;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
-class EngagementSmsWorkflowActionJob extends ExecuteWorkflowActionOnEducatableJob
+class EngagementSmsWorkflowActionJob extends ExecuteWorkflowActionJob
 {
     public function middleware(): array
     {
@@ -70,7 +71,9 @@ class EngagementSmsWorkflowActionJob extends ExecuteWorkflowActionOnEducatableJo
 
             assert($educatable instanceof Educatable);
 
-            $details = WorkflowEngagementSmsDetails::whereId($this->workflowRunStep->details_id)->first();
+            $details = $this->workflowRunStep->details;
+
+            assert($details instanceof WorkflowEngagementEmailDetails);
 
             throw_if(
                 NotificationChannel::parse($details->channel) !== NotificationChannel::Sms,

@@ -44,7 +44,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
-class InteractionWorkflowActionJob extends ExecuteWorkflowActionOnEducatableJob
+class InteractionWorkflowActionJob extends ExecuteWorkflowActionJob
 {
     public function handle(): void
     {
@@ -55,7 +55,9 @@ class InteractionWorkflowActionJob extends ExecuteWorkflowActionOnEducatableJob
 
             assert($educatable instanceof Educatable);
 
-            $details = WorkflowInteractionDetails::whereId($this->workflowRunStep->details_id)->first();
+            $details = $this->workflowRunStep->details;
+
+            assert($details instanceof WorkflowInteractionDetails);
 
             $user = $this->workflowRunStep->workflowRun->workflowTrigger->createdBy;
 

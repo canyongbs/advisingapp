@@ -75,7 +75,6 @@ class ManageFormWorkflows extends ManageRelatedRecords
                 TextColumn::make('name'),
                 IconColumn::make('is_enabled')
                     ->label('Enabled')
-                    ->state(fn (Workflow $record) => $record->is_enabled)
                     ->boolean(),
             ])
             ->actions([

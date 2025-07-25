@@ -45,7 +45,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
-class SubscriptionWorkflowActionJob extends ExecuteWorkflowActionOnEducatableJob
+class SubscriptionWorkflowActionJob extends ExecuteWorkflowActionJob
 {
     public function handle(): void
     {
@@ -56,7 +56,9 @@ class SubscriptionWorkflowActionJob extends ExecuteWorkflowActionOnEducatableJob
 
             assert($educatable instanceof Subscribable);
 
-            $details = WorkflowSubscriptionDetails::whereId($this->workflowRunStep->details_id)->first();
+            $details = $this->workflowRunStep->details;
+
+            assert($details instanceof WorkflowSubscriptionDetails);
 
             if ($details->remove_prior) {
                 $educatable->subscriptions()->delete();

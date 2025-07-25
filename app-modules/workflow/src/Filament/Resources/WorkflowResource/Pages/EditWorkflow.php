@@ -59,7 +59,7 @@ class EditWorkflow extends EditRecord
         assert($record instanceof Workflow);
 
         return match ($record->workflowTrigger->related_type) {
-            Form::class => [
+            'form' => [
                 FormResource::getUrl() => FormResource::getBreadcrumb(),
                 FormResource::getUrl('edit', [$record->workflowTrigger->related_id]) => FormResource::getRecordTitle(Form::find($record->workflowTrigger->related_id)),
                 $resource::getUrl() => $resource::getBreadcrumb(),
