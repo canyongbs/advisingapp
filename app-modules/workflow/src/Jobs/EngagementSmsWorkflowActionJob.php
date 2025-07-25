@@ -41,7 +41,6 @@ use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Workflow\Models\WorkflowEngagementEmailDetails;
-use AdvisingApp\Workflow\Models\WorkflowEngagementSmsDetails;
 use AdvisingApp\Workflow\Models\WorkflowRunStepRelated;
 use App\Models\User;
 use Exception;

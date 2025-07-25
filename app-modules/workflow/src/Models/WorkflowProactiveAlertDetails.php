@@ -38,7 +38,6 @@ namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Workflow\Enums\WorkflowActionType;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -68,5 +67,4 @@ class WorkflowProactiveAlertDetails extends WorkflowDetails implements Auditable
     {
         return 'workflow_proactive_alert_details';
     }
-
 }

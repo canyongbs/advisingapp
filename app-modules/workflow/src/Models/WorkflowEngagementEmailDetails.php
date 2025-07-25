@@ -38,7 +38,6 @@ namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Workflow\Enums\WorkflowActionType;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -69,5 +68,4 @@ class WorkflowEngagementEmailDetails extends WorkflowDetails implements Auditabl
     {
         return 'workflow_engagement_email_details';
     }
-
 }
