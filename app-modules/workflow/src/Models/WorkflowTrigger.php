@@ -66,7 +66,7 @@ class WorkflowTrigger extends BaseModel implements Auditable
     ];
 
     protected $casts = [
-      'type' => WorkflowTriggerType::class,
+        'type' => WorkflowTriggerType::class,
     ];
 
     /**
@@ -90,6 +90,6 @@ class WorkflowTrigger extends BaseModel implements Auditable
      */
     public function related(): MorphTo
     {
-      return $this->morphTo();
+        return $this->morphTo();
     }
 }
