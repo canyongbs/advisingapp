@@ -56,11 +56,10 @@ class CreateTenantController
 {
     public function __invoke(CreateTenantRequest $request): JsonResponse
     {
-        $name = $request->validated('name');
-        $rootName = Str::snake($name) . '_' . (new Sqids())->encode([time()]);
+        $rootName = Str::snake($request->validated('domain')) . '_' . (new Sqids())->encode([time()]);
 
         $tenant = app(CreateTenant::class)(
-            $name,
+            $request->validated('domain'),
             $request->validated('domain'),
             new TenantConfig(
                 database: new TenantDatabaseConfig(

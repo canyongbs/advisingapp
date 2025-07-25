@@ -70,11 +70,6 @@ trait UploadsFiles
         }
     }
 
-    public function afterLoadFirstThread(AiThread $thread): void
-    {
-        $this->afterThreadSelected($thread);
-    }
-
     /**
      * @param Collection<int, AiAssistantFile>  $files
      *

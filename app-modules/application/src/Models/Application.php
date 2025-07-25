@@ -54,6 +54,7 @@ class Application extends Submissible
         'primary_color',
         'rounding',
         'content',
+        'should_generate_prospects',
     ];
 
     protected $casts = [
@@ -62,6 +63,7 @@ class Application extends Submissible
         'allowed_domains' => 'array',
         'is_wizard' => 'boolean',
         'rounding' => Rounding::class,
+        'should_generate_prospects' => 'boolean',
     ];
 
     /**

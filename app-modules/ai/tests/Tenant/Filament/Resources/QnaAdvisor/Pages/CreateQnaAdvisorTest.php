@@ -112,7 +112,6 @@ test('can create QnA Advisor', function () {
         $qnaAdvisor->except([
             'avatar',
             'model',
-            'instructions',
         ])->toArray()
     );
 
@@ -171,10 +170,6 @@ test('Create QnA Advisor validates the inputs', function ($data, $errors) {
         'description max' => [
             QnaAdvisorRequestFactory::new()->state(['description' => str()->random(65537)]),
             ['description' => 'max'],
-        ],
-        'instructions required' => [
-            QnaAdvisorRequestFactory::new()->state(['instructions' => null]),
-            ['instructions' => 'required'],
         ],
         'model required' => [
             QnaAdvisorRequestFactory::new()->state(['model' => null]),

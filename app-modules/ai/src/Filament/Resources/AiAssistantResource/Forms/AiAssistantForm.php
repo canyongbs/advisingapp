@@ -95,10 +95,17 @@ class AiAssistantForm
                     ->disabledOn('edit'),
                 Select::make('model')
                     ->reactive()
-                    ->options(AiModelApplicabilityFeature::CustomAdvisors->getModelsAsSelectOptions())
+                    ->options(fn (AiModel|string|null $state) => array_unique([
+                        ...AiModelApplicabilityFeature::CustomAdvisors->getModelsAsSelectOptions(),
+                        ...match (true) {
+                            $state instanceof AiModel => [$state->value => $state->getLabel()],
+                            is_string($state) => [$state => AiModel::parse($state)->getLabel()],
+                            default => [],
+                        },
+                    ]))
+                    ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::CustomAdvisors->getModels()))
                     ->searchable()
                     ->required()
-                    ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::CustomAdvisors->getModels()))
                     ->visible(fn (Get $get): bool => filled($get('application')))
                     ->disabled(fn (): bool => ! app(AiCustomAdvisorSettings::class)->allow_selection_of_model)
                     ->default(function () {

@@ -55,7 +55,6 @@ class QnaAdvisorFactory extends Factory
         return [
             'name' => $this->faker->name(),
             'description' => $this->faker->paragraph(),
-            'instructions' => $this->faker->paragraph(),
             'model' => $this->faker->randomElement(
                 array_filter(
                     AiModel::cases(),

@@ -536,8 +536,19 @@
                     @endif
                 </div>
 
+                @php
+                    $isInstitutionalAdvisor = $this->thread->assistant->isDefault();
+                    $hasMessages = count($this->thread->messages) > 0;
+                    $shouldReverse = $isInstitutionalAdvisor && $hasMessages;
+                @endphp
+
                 <div
-                    class="flex flex-1 flex-col-reverse overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800">
+                    class="{{ $shouldReverse ? 'flex-col-reverse' : 'flex-col' }} flex flex-1 overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800">
+
+                    @if (!$hasMessages && $isInstitutionalAdvisor)
+                        @livewire('promptlibrarytabs', ['thread' => $this->thread, 'isSmartPromptsTypePreselected' => true], key('prompt-library-tabs-' . $this->thread->assistant->id))
+                    @endif
+
                     <div
                         class="bg-danger-100 px-4 py-2 dark:bg-danger-900"
                         x-cloak
@@ -703,8 +714,13 @@
                                     placeholder="Type here..."
                                     required
                                     maxlength="25000"
-                                    @if (auth()->user()->is_submit_ai_chat_on_enter_enabled) x-on:keydown.enter.prevent="sendMessage()" @endif
-                                >                                
+                                    @if (auth()->user()->is_submit_ai_chat_on_enter_enabled) x-on:keydown.enter="
+                                         if (!event.shiftKey) {
+                                            event.preventDefault();
+                                            sendMessage();
+                                        }
+                                        " @endif
+                                >
                                 </textarea>
                             </div>
                             <div
@@ -728,6 +744,16 @@
                                     @endif
 
                                     {{ $this->insertFromPromptLibraryAction }}
+
+                                    <x-filament::icon-button
+                                        class="fi-topbar-close-sidebar-btn"
+                                        color="gray"
+                                        icon="heroicon-o-information-circle"
+                                        icon-size="lg"
+                                        x-cloak
+                                        x-show="messages.length > 0"
+                                        tooltip="The prompt library can only be used as the initial prompt. To use the prompt library please begin a new conversation with your AI Advisor."
+                                    />
 
                                     <div
                                         class="flex w-full justify-center py-2 sm:w-auto"
@@ -821,7 +847,7 @@
     @elseif (!$this->thread)
         <div
             class="flex h-full w-full items-center justify-center"
-            wire:init="loadFirstThread"
+            wire:init="createThread"
         >
             <x-filament::loading-indicator class="h-12 w-12" />
         </div>

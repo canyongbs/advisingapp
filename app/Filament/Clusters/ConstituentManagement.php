@@ -40,7 +40,7 @@ use Filament\Clusters\Cluster;
 
 class ConstituentManagement extends Cluster
 {
-    protected static ?string $navigationGroup = 'Product Administration';
+    protected static ?string $navigationGroup = 'Settings';
 
     protected static ?int $navigationSort = 50;
 }

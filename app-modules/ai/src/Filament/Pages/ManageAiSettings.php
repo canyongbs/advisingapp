@@ -58,6 +58,7 @@ use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Pages\SettingsPage;
 use Filament\Support\Enums\MaxWidth;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Throwable;
 
@@ -107,7 +108,15 @@ class ManageAiSettings extends SettingsPage
                     ->model($this->defaultAssistant)
                     ->schema([
                         Select::make('model')
-                            ->options(AiModelApplicabilityFeature::InstitutionalAdvisor->getModelsAsSelectOptions())
+                            ->options(fn (AiModel|string|null $state) => array_unique([
+                                ...AiModelApplicabilityFeature::InstitutionalAdvisor->getModelsAsSelectOptions(),
+                                ...match (true) {
+                                    $state instanceof AiModel => [$state->value => $state->getLabel()],
+                                    is_string($state) => [$state => AiModel::parse($state)->getLabel()],
+                                    default => [],
+                                },
+                            ]))
+                            ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::InstitutionalAdvisor->getModels()))
                             ->searchable()
                             ->required()
                             ->columnSpanFull()
@@ -142,7 +151,15 @@ class ManageAiSettings extends SettingsPage
                     ->minValue(0)
                     ->maxValue(1),
                 Select::make('default_model')
-                    ->options(AiModelApplicabilityFeature::InstitutionalAdvisor->getModelsAsSelectOptions())
+                    ->options(fn (AiModel|string|null $state) => array_unique([
+                        ...AiModelApplicabilityFeature::InstitutionalAdvisor->getModelsAsSelectOptions(),
+                        ...match (true) {
+                            $state instanceof AiModel => [$state->value => $state->getLabel()],
+                            is_string($state) => [$state => AiModel::parse($state)->getLabel()],
+                            default => [],
+                        },
+                    ]))
+                    ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::InstitutionalAdvisor->getModels()))
                     ->searchable()
                     ->required(),
             ])

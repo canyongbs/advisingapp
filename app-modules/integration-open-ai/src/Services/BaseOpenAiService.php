@@ -56,6 +56,7 @@ use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeEnabled;
 use AdvisingApp\IntegrationOpenAi\Services\Concerns\UploadsFiles;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
+use AdvisingApp\Research\Models\ResearchRequest;
 use Closure;
 use Exception;
 use Generator;
@@ -121,6 +122,14 @@ abstract class BaseOpenAiService implements AiService
             key: 'choices.0.message.content',
             default: fn () => throw new MessageResponseException('Missing response content when completing a prompt: [' . $response->body() . '].'),
         );
+    }
+
+    /**
+     * @param array<string, mixed> $options
+     */
+    public function stream(string $prompt, string $content, bool $shouldTrack = true, array $options = []): Closure
+    {
+        throw new Exception('Streaming a single response is not supported by this service.');
     }
 
     public function createAssistant(AiAssistant $assistant): void
@@ -446,6 +455,37 @@ abstract class BaseOpenAiService implements AiService
     {
         return true;
     }
+
+    public function isResearchRequestReady(ResearchRequest $researchRequest): bool
+    {
+        return true;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getResearchRequestRequestSearchQueries(ResearchRequest $researchRequest, string $prompt, string $content): array
+    {
+        return [];
+    }
+
+    /**
+     * @return array{response: array<mixed>, nextRequestOptions: array<string, mixed>}
+     */
+    public function getResearchRequestRequestOutline(ResearchRequest $researchRequest, string $prompt, string $content): array
+    {
+        return ['response' => [], 'nextRequestOptions' => []];
+    }
+
+    /**
+     * @param array<string, mixed> $options
+     */
+    public function getResearchRequestRequestSection(ResearchRequest $researchRequest, string $prompt, string $content, array $options, Closure $nextRequestOptions): Generator
+    {
+        yield '';
+    }
+
+    public function afterResearchRequestSearchQueriesParsed(ResearchRequest $researchRequest): void {}
 
     /**
      * @param array<AiMessageFile> $files

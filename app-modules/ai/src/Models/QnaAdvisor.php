@@ -64,13 +64,15 @@ class QnaAdvisor extends BaseModel implements HasMedia, Auditable
         'name',
         'model',
         'description',
-        'instructions',
-        'knowledge',
+        'is_embed_enabled',
+        'authorized_domains',
     ];
 
     protected $casts = [
         'archived_at' => 'datetime',
         'model' => AiModel::class,
+        'is_embed_enabled' => 'boolean',
+        'authorized_domains' => 'json',
     ];
 
     /**
@@ -126,5 +128,10 @@ class QnaAdvisor extends BaseModel implements HasMedia, Auditable
     public function files(): HasMany
     {
         return $this->hasMany(QnaAdvisorFile::class, 'advisor_id');
+    }
+
+    public function getInstructionsCacheKey(): string
+    {
+        return 'qna-advisor-' . $this->getKey() . '-instructions';
     }
 }

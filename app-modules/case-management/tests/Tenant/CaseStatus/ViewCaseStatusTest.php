@@ -78,8 +78,8 @@ test('ViewCaseStatus is gated with proper access control', function () {
             ])
         )->assertForbidden();
 
-    $user->givePermissionTo('product_admin.view-any');
-    $user->givePermissionTo('product_admin.*.view');
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.*.view');
 
     actingAs($user)
         ->get(
@@ -98,8 +98,8 @@ test('ViewCaseStatus is gated with proper feature access control', function () {
 
     $user = User::factory()->licensed([Student::getLicenseType(), Prospect::getLicenseType()])->create();
 
-    $user->givePermissionTo('product_admin.view-any');
-    $user->givePermissionTo('product_admin.*.view');
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.*.view');
 
     $caseStatus = CaseStatus::factory()->create();
 

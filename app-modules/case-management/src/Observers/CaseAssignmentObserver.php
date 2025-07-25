@@ -36,15 +36,25 @@
 
 namespace AdvisingApp\CaseManagement\Observers;
 
+use AdvisingApp\CaseManagement\Actions\NotifyCaseUsers;
 use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
+use AdvisingApp\CaseManagement\Enums\CaseEmailTemplateType;
+use AdvisingApp\CaseManagement\Enums\CaseTypeEmailTemplateRole;
 use AdvisingApp\CaseManagement\Models\CaseAssignment;
+use AdvisingApp\CaseManagement\Notifications\CaseAssigned;
+use AdvisingApp\CaseManagement\Notifications\Concerns\FetchCaseTemplate;
+use AdvisingApp\CaseManagement\Notifications\EducatableCaseAssignedNotification;
 use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
+use AdvisingApp\Notification\Notifications\Channels\DatabaseChannel;
+use AdvisingApp\Notification\Notifications\Channels\MailChannel;
 use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
 use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
 use App\Models\User;
 
 class CaseAssignmentObserver
 {
+    use FetchCaseTemplate;
+
     public function created(CaseAssignment $caseAssignment): void
     {
         $user = auth()->user();
@@ -58,6 +68,58 @@ class CaseAssignmentObserver
         ]);
 
         TimelineableRecordCreated::dispatch($caseAssignment->case, $caseAssignment);
+
+        $customerEmailTemplate = $this->fetchTemplate(
+            $caseAssignment->case->priority->type,
+            CaseEmailTemplateType::Assigned,
+            CaseTypeEmailTemplateRole::Customer
+        );
+
+        if ($caseAssignment->case->priority?->type->is_customers_case_assigned_email_enabled) {
+            $caseAssignment->case->respondent->notify(
+                new EducatableCaseAssignedNotification($caseAssignment->case, $customerEmailTemplate)
+            );
+        }
+
+        $managerEmailTemplate = $this->fetchTemplate(
+            $caseAssignment->case->priority->type,
+            CaseEmailTemplateType::Assigned,
+            CaseTypeEmailTemplateRole::Manager
+        );
+
+        $auditorEmailTemplate = $this->fetchTemplate(
+            $caseAssignment->case->priority->type,
+            CaseEmailTemplateType::Assigned,
+            CaseTypeEmailTemplateRole::Auditor
+        );
+
+        app(NotifyCaseUsers::class)->execute(
+            $caseAssignment->case,
+            new CaseAssigned($caseAssignment->case, $managerEmailTemplate, MailChannel::class),
+            $caseAssignment->case->priority?->type->is_managers_case_assigned_email_enabled ?? false,
+            false,
+        );
+
+        app(NotifyCaseUsers::class)->execute(
+            $caseAssignment->case,
+            new CaseAssigned($caseAssignment->case, $managerEmailTemplate, DatabaseChannel::class),
+            $caseAssignment->case->priority?->type->is_managers_case_assigned_notification_enabled ?? false,
+            false,
+        );
+
+        app(NotifyCaseUsers::class)->execute(
+            $caseAssignment->case,
+            new CaseAssigned($caseAssignment->case, $auditorEmailTemplate, MailChannel::class),
+            false,
+            $caseAssignment->case->priority?->type->is_auditors_case_assigned_email_enabled ?? false,
+        );
+
+        app(NotifyCaseUsers::class)->execute(
+            $caseAssignment->case,
+            new CaseAssigned($caseAssignment->case, $auditorEmailTemplate, DatabaseChannel::class),
+            false,
+            $caseAssignment->case->priority?->type->is_auditors_case_assigned_notification_enabled ?? false,
+        );
     }
 
     public function deleted(CaseAssignment $caseAssignment): void

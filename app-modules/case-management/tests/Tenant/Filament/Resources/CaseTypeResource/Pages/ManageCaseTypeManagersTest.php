@@ -59,7 +59,7 @@ it('can attach team member to case type', function () {
             ])
         )->assertForbidden();
 
-    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('settings.view-any');
     $user->givePermissionTo('team.view-any');
 
     livewire(ManageCaseTypeManagers::class, [

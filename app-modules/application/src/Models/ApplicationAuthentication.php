@@ -40,10 +40,10 @@ use AdvisingApp\Form\Models\SubmissibleAuthentication;
 use App\Models\Attributes\NoPermissions;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[NoPermissions]
 /**
  * @mixin IdeHelperApplicationAuthentication
  */
+#[NoPermissions]
 class ApplicationAuthentication extends SubmissibleAuthentication
 {
     /**

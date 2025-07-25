@@ -196,4 +196,6 @@ it('can include related student relationships', function (string $relationship, 
     // relationship, responseKey
     '`emailAddresses`' => ['email_addresses', 'email_addresses'],
     '`primaryEmailAddress`' => ['primary_email_address', 'primary_email_address'],
+    '`phoneNumbers`' => ['phone_numbers', 'phone_numbers'],
+    '`primaryPhoneNumber`' => ['primary_phone_number', 'primary_phone_number'],
 ]);

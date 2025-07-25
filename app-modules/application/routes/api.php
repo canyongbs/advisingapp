@@ -63,5 +63,8 @@ Route::prefix('api')
                 Route::post('/{application}/submit', [ApplicationWidgetController::class, 'store'])
                     ->middleware(['signed:relative'])
                     ->name('submit');
+                Route::post('/{application}/register', [ApplicationWidgetController::class, 'registerProspect'])
+                    ->middleware(['signed:relative'])
+                    ->name('register-prospect');
             });
     });

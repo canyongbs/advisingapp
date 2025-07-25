@@ -149,8 +149,8 @@ test('EditCaseTypeAssignments is gated with proper access control', function () 
     ])
         ->assertForbidden();
 
-    $user->givePermissionTo('product_admin.view-any');
-    $user->givePermissionTo('product_admin.*.update');
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.*.update');
 
     actingAs($user)
         ->get(
@@ -180,8 +180,8 @@ test('EditCaseTypeAssignments is gated with proper feature access control', func
 
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    $user->givePermissionTo('product_admin.view-any');
-    $user->givePermissionTo('product_admin.*.update');
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.*.update');
 
     $caseType = CaseType::factory()->create();
 

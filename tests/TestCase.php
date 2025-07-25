@@ -114,8 +114,6 @@ abstract class TestCase extends BaseTestCase
                     subscription: new LicenseSubscriptionData(
                         clientName: 'Jane Smith',
                         partnerName: 'Fake Edu Tech',
-                        clientPo: 'abc123',
-                        partnerPo: 'def456',
                         startDate: now(),
                         endDate: now()->addYear(),
                     ),
@@ -215,8 +213,6 @@ abstract class TestCase extends BaseTestCase
                 subscription: new LicenseSubscriptionData(
                     clientName: 'Jane Smith',
                     partnerName: 'Fake Edu Tech',
-                    clientPo: 'abc123',
-                    partnerPo: 'def456',
                     startDate: now(),
                     endDate: now()->addYear(),
                 ),

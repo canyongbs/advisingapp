@@ -55,6 +55,8 @@ use AdvisingApp\Notification\Models\Concerns\NotifiableViaSms;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Notification\Models\Subscription;
+use AdvisingApp\Pipeline\Models\EducatablePipelineStage;
+use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Prospect\Database\Factories\ProspectFactory;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Observers\ProspectObserver;
@@ -129,7 +131,6 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
         'source_id',
         'birthdate',
         'hsgrad',
-        'assigned_to_id',
         'created_by_id',
         'primary_email_id',
         'primary_phone_id',
@@ -422,7 +423,7 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
     }
 
     /**
-     * @return MorphToMany<Pipeline>
+     * @return MorphToMany<Pipeline, $this, EducatablePipelineStage>
      */
     public function educatablePipelineStages(): MorphToMany
     {
@@ -511,5 +512,16 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
                 return $this->primaryAddress?->full;
             }
         );
+    }
+
+    /**
+     * @param  string  $childType
+     */
+    protected function childRouteBindingRelationshipName($childType): string
+    {
+        return match ($childType) {
+            'prospectEmailAddress' => 'emailAddresses',
+            default => parent::childRouteBindingRelationshipName($childType),
+        };
     }
 }

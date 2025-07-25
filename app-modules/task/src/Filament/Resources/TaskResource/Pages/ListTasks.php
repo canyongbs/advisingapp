@@ -163,7 +163,8 @@ class ListTasks extends ListRecords
                             ->afterStateUpdated(function (Set $set) {
                                 return $set('../my_tasks.isActive', false);
                             }),
-                    ]),
+                    ])
+                    ->visible(fn () => auth()->user()->team()->exists()),
                 SelectFilter::make('assignedTo')
                     ->label('Assigned To')
                     ->relationship('assignedTo', 'name')

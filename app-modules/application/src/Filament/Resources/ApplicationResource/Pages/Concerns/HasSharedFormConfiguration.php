@@ -39,6 +39,7 @@ namespace AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages\C
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationField;
 use AdvisingApp\Application\Models\ApplicationStep;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\Form\Rules\IsDomain;
@@ -94,6 +95,11 @@ trait HasSharedFormConfiguration
                 ->label('Multi-step form')
                 ->live()
                 ->disabled(fn (?Application $record) => $record?->submissions()->exists()),
+            Toggle::make('should_generate_prospects')
+                ->label('Generate Prospects')
+                ->helperText('If enabled, a request to submit by an unknown prospect will result in a new prospect being created.')
+                ->disabled(fn () => ! auth()->user()?->hasLicense(LicenseType::RecruitmentCrm))
+                ->hintIcon(fn () => ! auth()->user()?->hasLicense(LicenseType::RecruitmentCrm) ? 'heroicon-m-lock-closed' : null),
             Section::make('Fields')
                 ->schema([
                     $this->fieldBuilder(),

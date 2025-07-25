@@ -48,7 +48,6 @@ class CreateTenantRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
             'domain' => ['required', 'string', 'max:255', Rule::unique(Tenant::class)],
             'database' => ['required', 'string', 'max:255'],
             'user.name' => ['required', 'string', 'max:255'],
@@ -79,8 +78,6 @@ class CreateTenantRequest extends FormRequest
             'subscription' => ['required', 'array'],
             'subscription.clientName' => ['required', 'string'],
             'subscription.partnerName' => ['required', 'string'],
-            'subscription.clientPo' => ['required', 'string'],
-            'subscription.partnerPo' => ['required', 'string'],
             'subscription.startDate' => ['required', 'string'],
             'subscription.endDate' => ['required', 'string'],
             'theme.color_overrides' => ['nullable', 'array'],

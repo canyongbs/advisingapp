@@ -72,6 +72,7 @@ trait CanManagePromptLibrary
 
         return Action::make('insertFromPromptLibrary')
             ->label('Prompt library')
+            ->disabled(fn (): bool => $this->thread?->messages()->exists() ?? false)
             ->color('gray')
             ->form([
                 ToggleButtons::make('isSmart')
@@ -80,6 +81,7 @@ trait CanManagePromptLibrary
                         1 => 'Smart prompt',
                         0 => 'Custom prompt',
                     ])
+                    ->default($this->isSmartPromptsTypePreselected)
                     ->live()
                     ->afterStateUpdated(fn (Set $set) => $set('promptId', null))
                     ->grouped()
@@ -106,7 +108,7 @@ trait CanManagePromptLibrary
                     ->hidden(fn (Get $get): bool => blank($get('isSmart'))),
                 Checkbox::make('myPrompts')
                     ->label('My prompts only')
-                    ->afterStateUpdated(function (Get $get, Set $set, $state) {
+                    ->afterStateUpdated(function (Get $get, Set $set, bool $state) {
                         if ($state && ! Prompt::find($get('promptId'))?->user->is(auth()->user())) {
                             $set('promptId', null);
                         }
@@ -153,7 +155,7 @@ trait CanManagePromptLibrary
                                     function (Builder $query) {
                                         /** @var User $user */
                                         $user = auth()->user();
-                                        $teamUsers = $user?->team?->users;
+                                        $teamUsers = $user->team?->users;
 
                                         if ($teamUsers) {
                                             $query->whereHas('user', function (Builder $query) use ($teamUsers) {
@@ -191,16 +193,12 @@ trait CanManagePromptLibrary
                             ));
                     })
                     ->live()
-                    ->suffixAction(function ($state): ?FormComponentAction {
+                    ->suffixAction(function (?string $state): ?FormComponentAction {
                         if (blank($state)) {
                             return null;
                         }
 
                         $prompt = Prompt::find($state);
-
-                        if (! $prompt) {
-                            return null;
-                        }
 
                         return FormComponentAction::make('upvote')
                             ->label(fn (): string => ($prompt->isUpvoted() ? 'Upvoted ' : 'Upvote ') . "({$prompt->upvotes()->count()})")
@@ -225,10 +223,6 @@ trait CanManagePromptLibrary
                 } else {
                     $this->dispatch('set-chat-message', content: $prompt->prompt);
                 }
-
-                $use = $prompt->uses()->make();
-                $use->user()->associate(auth()->user());
-                $use->save();
             });
     }
 }

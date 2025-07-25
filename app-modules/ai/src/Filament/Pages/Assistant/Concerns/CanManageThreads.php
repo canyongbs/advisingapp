@@ -222,23 +222,6 @@ trait CanManageThreads
             ->toArray();
     }
 
-    public function loadFirstThread(): void
-    {
-        $this->selectThread(collect($this->threadsWithoutAFolder)->whereNull('assistant.archived_at')->first());
-
-        if ($this->thread) {
-            $service = $this->thread->assistant->model->getService();
-
-            if ($service instanceof AiServiceLifecycleHooks) {
-                $service->afterLoadFirstThread($this->thread);
-            }
-
-            return;
-        }
-
-        $this->createThread();
-    }
-
     public function selectThread(?array $thread): void
     {
         if (! $thread) {

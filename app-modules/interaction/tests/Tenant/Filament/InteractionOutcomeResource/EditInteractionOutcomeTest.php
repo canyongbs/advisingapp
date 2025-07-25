@@ -51,8 +51,8 @@ test('EditInteractionOutcome is gated with proper access control', function () {
             InteractionOutcomeResource::getUrl('edit', ['record' => $outcome])
         )->assertForbidden();
 
-    $user->givePermissionTo('product_admin.view-any');
-    $user->givePermissionTo('product_admin.*.update');
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.*.update');
 
     actingAs($user)
         ->get(

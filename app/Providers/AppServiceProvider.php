@@ -38,8 +38,8 @@ namespace App\Providers;
 
 use AdvisingApp\Engagement\Jobs\CreateBatchedEngagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Prospect\Models\Pipeline;
-use AdvisingApp\Prospect\Models\PipelineStage;
+use AdvisingApp\Pipeline\Models\Pipeline;
+use AdvisingApp\Pipeline\Models\PipelineStage;
 use App\Models\SystemUser;
 use App\Models\Tenant;
 use App\Notifications\ResetPasswordNotification;

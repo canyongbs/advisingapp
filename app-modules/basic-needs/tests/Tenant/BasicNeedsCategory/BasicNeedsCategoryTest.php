@@ -56,7 +56,7 @@ it('can render list page', function () {
             BasicNeedsCategoryResource::getUrl('index')
         )->assertForbidden();
 
-    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('settings.view-any');
 
     actingAs($user)->get(BasicNeedsCategoryResource::getUrl('index'))
         ->assertSuccessful();
@@ -67,7 +67,7 @@ it('can render data in list page', function () {
 
     actingAs($user);
 
-    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('settings.view-any');
 
     $basicNeedsCategories = BasicNeedsCategory::factory()->count(10)->create();
 
@@ -84,8 +84,8 @@ it('can render create page', function () {
             BasicNeedsCategoryResource::getUrl('create')
         )->assertForbidden();
 
-    $user->givePermissionTo('product_admin.view-any');
-    $user->givePermissionTo('product_admin.create');
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.create');
 
     actingAs($user)->get(BasicNeedsCategoryResource::getUrl('create'))
         ->assertSuccessful();
@@ -99,8 +99,8 @@ it('can validate input on create page', function () {
             BasicNeedsCategoryResource::getUrl('create')
         )->assertForbidden();
 
-    $user->givePermissionTo('product_admin.view-any');
-    $user->givePermissionTo('product_admin.create');
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.create');
 
     livewire(CreateBasicNeedsCategory::class)
         ->fillForm([
@@ -115,8 +115,8 @@ it('can create basic needs catgory', function () {
 
     actingAs($user);
 
-    $user->givePermissionTo('product_admin.view-any');
-    $user->givePermissionTo('product_admin.create');
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.create');
 
     $basicNeedsCategory = BasicNeedsCategory::factory()->make();
 
@@ -144,8 +144,8 @@ it('can render edit page', function () {
         ])
     )->assertForbidden();
 
-    $user->givePermissionTo('product_admin.view-any');
-    $user->givePermissionTo('product_admin.*.update');
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.*.update');
 
     actingAs($user)->get(BasicNeedsCategoryResource::getUrl('edit', [
         'record' => $basicNeedsCategory->getRouteKey(),
@@ -162,8 +162,8 @@ it('can retrieve data', function () {
         ])
     )->assertForbidden();
 
-    $user->givePermissionTo('product_admin.view-any');
-    $user->givePermissionTo('product_admin.*.update');
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.*.update');
 
     livewire(EditBasicNeedsCategory::class, [
         'record' => $basicNeedsCategory->getRouteKey(),
@@ -184,8 +184,8 @@ it('can validate input on edit page', function () {
         ])
     )->assertForbidden();
 
-    $user->givePermissionTo('product_admin.view-any');
-    $user->givePermissionTo('product_admin.*.update');
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.*.update');
 
     livewire(EditBasicNeedsCategory::class, [
         'record' => $basicNeedsCategory->getRouteKey(),
@@ -208,8 +208,8 @@ it('can save basic needs category', function () {
         ])
     )->assertForbidden();
 
-    $user->givePermissionTo('product_admin.view-any');
-    $user->givePermissionTo('product_admin.*.update');
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.*.update');
 
     livewire(EditBasicNeedsCategory::class, [
         'record' => $oldBasicNeedsCategory->getRouteKey(),
@@ -236,8 +236,8 @@ it('can render view page', function () {
         ])
     )->assertForbidden();
 
-    $user->givePermissionTo('product_admin.view-any');
-    $user->givePermissionTo('product_admin.*.view');
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.*.view');
 
     actingAs($user)->get(BasicNeedsCategoryResource::getUrl('view', [
         'record' => $basicNeedsCategory->getRouteKey(),
@@ -254,9 +254,9 @@ it('can delete basic needs category', function () {
         ])
     )->assertForbidden();
 
-    $user->givePermissionTo('product_admin.view-any');
-    $user->givePermissionTo('product_admin.*.update');
-    $user->givePermissionTo('product_admin.*.delete');
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.*.update');
+    $user->givePermissionTo('settings.*.delete');
 
     livewire(EditBasicNeedsCategory::class, [
         'record' => $basicNeedsCategory->getRouteKey(),
@@ -277,9 +277,9 @@ it('can bulk delete basic needs categories', function () {
             BasicNeedsCategoryResource::getUrl('index')
         )->assertForbidden();
 
-    $user->givePermissionTo('product_admin.view-any');
-    $user->givePermissionTo('product_admin.*.update');
-    $user->givePermissionTo('product_admin.*.delete');
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.*.update');
+    $user->givePermissionTo('settings.*.delete');
 
     livewire(ListBasicNeedsCategories::class)
         ->set('tableRecordsPerPage', 10)

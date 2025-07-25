@@ -148,12 +148,32 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('heroicon-o-academic-cap')
                     ->collapsed(),
                 NavigationGroup::make()
-                    ->label('Product Features')
-                    ->icon('heroicon-o-signal')
-                    ->collapsed(),
-                NavigationGroup::make()
                     ->label('Premium Features')
                     ->icon('heroicon-o-rocket-launch')
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label('Project Management')
+                    ->icon('heroicon-o-clipboard-document-check')
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label('Online Admissions')
+                    ->icon('heroicon-o-document-plus')
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label('Digital Forms')
+                    ->icon('heroicon-o-inbox-arrow-down')
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label('Event Management')
+                    ->icon('heroicon-o-calendar-days')
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label('Automation')
+                    ->icon('heroicon-o-bolt')
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label('Data')
+                    ->icon('heroicon-o-circle-stack')
                     ->collapsed(),
                 NavigationGroup::make()
                     ->label('Analytics')
@@ -164,7 +184,7 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('heroicon-o-users')
                     ->collapsed(),
                 NavigationGroup::make()
-                    ->label('Product Administration')
+                    ->label('Settings')
                     ->icon('heroicon-o-wrench-screwdriver')
                     ->collapsed(),
                 NavigationGroup::make()

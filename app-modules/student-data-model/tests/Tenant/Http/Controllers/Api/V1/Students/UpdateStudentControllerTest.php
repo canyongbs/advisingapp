@@ -36,6 +36,7 @@
 
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
+use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use AdvisingApp\StudentDataModel\Tests\Tenant\Http\Controllers\Api\V1\Students\RequestFactories\UpdateStudentRequestFactory;
 use App\Models\SystemUser;
@@ -231,6 +232,36 @@ it('updates a student\'s primary email address', function () {
         ->toBe($studentEmailAddress->getKey());
 });
 
+it('updates a student\'s primary phone number', function () {
+    $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
+    $studentConfigurationSettings->is_enabled = true;
+    $studentConfigurationSettings->save();
+
+    $user = SystemUser::factory()->create();
+    $user->givePermissionTo(['student.view-any', 'student.*.update']);
+    Sanctum::actingAs($user, ['api']);
+
+    $student = Student::factory()->create();
+
+    $studentPhoneNumber = StudentPhoneNumber::factory()
+        ->for($student)
+        ->create();
+
+    expect($student->refresh()->primary_phone_id)
+        ->not->toBe($studentPhoneNumber->getKey());
+
+    $response = patchJson(route('api.v1.students.update', ['student' => $student], false), [
+        'primary_phone_id' => $studentPhoneNumber->getKey(),
+    ]);
+    $response->assertOk();
+    $response->assertJsonStructure([
+        'data',
+    ]);
+
+    expect($response['data']['primary_phone_id'] ?? null)
+        ->toBe($studentPhoneNumber->getKey());
+});
+
 it('validates', function (array $requestAttributes, string $invalidAttribute, string $validationMessage, ?Closure $before = null) {
     $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
     $studentConfigurationSettings->is_enabled = true;
@@ -283,6 +314,15 @@ it('validates', function (array $requestAttributes, string $invalidAttribute, st
                 'id' => $primaryEmailId,
             ]);
     }],
+    '`primary_phone_id` is a valid UUID' => [['primary_phone_id' => 'not-a-uuid'], 'primary_phone_id', 'The primary phone id must be a valid UUID.'],
+    '`primary_phone_id` is an existing phone number ID' => [['primary_phone_id' => (string) Str::orderedUuid()], 'primary_phone_id', 'The selected primary phone id is invalid.'],
+    '`primary_phone_id` is an phone number ID for the current student' => [['primary_phone_id' => ($primaryPhoneId = (string) Str::orderedUuid())], 'primary_phone_id', 'The selected primary phone id is invalid.', function () use ($primaryPhoneId) {
+        StudentPhoneNumber::factory()
+            ->for(Student::factory())
+            ->create([
+                'id' => $primaryPhoneId,
+            ]);
+    }],
 ]);
 
 it('can include related student relationships', function (string $relationship, string $responseKey) {
@@ -308,4 +348,5 @@ it('can include related student relationships', function (string $relationship, 
 })->with([
     // relationship, responseKey
     '`primaryEmailAddress`' => ['primary_email_address', 'primary_email_address'],
+    '`primaryPhoneNumber`' => ['primary_phone_number', 'primary_phone_number'],
 ]);

@@ -95,8 +95,8 @@ test('CreateProspectSource is gated with proper access control', function () {
     livewire(ProspectSourceResource\Pages\CreateProspectSource::class)
         ->assertForbidden();
 
-    $user->givePermissionTo('product_admin.view-any');
-    $user->givePermissionTo('product_admin.create');
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.create');
 
     actingAs($user)
         ->get(

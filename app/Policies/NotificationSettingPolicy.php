@@ -36,6 +36,7 @@
 
 namespace App\Policies;
 
+use App\Features\SettingsPermissions;
 use App\Models\Authenticatable;
 use App\Models\NotificationSetting;
 use Illuminate\Auth\Access\Response;
@@ -44,6 +45,13 @@ class NotificationSettingPolicy
 {
     public function viewAny(Authenticatable $authenticatable): Response
     {
+        if (SettingsPermissions::active()) {
+            return $authenticatable->canOrElse(
+                abilities: 'settings.view-any',
+                denyResponse: 'You do not have permission to view notification settings.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: 'product_admin.view-any',
             denyResponse: 'You do not have permission to view notification settings.'
@@ -52,6 +60,13 @@ class NotificationSettingPolicy
 
     public function view(Authenticatable $authenticatable, NotificationSetting $notificationSetting): Response
     {
+        if (SettingsPermissions::active()) {
+            return $authenticatable->canOrElse(
+                abilities: 'settings.*.view',
+                denyResponse: 'You do not have permission to view this notification setting.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$notificationSetting->getKey()}.view"],
             denyResponse: 'You do not have permission to view this notification setting.'
@@ -60,6 +75,13 @@ class NotificationSettingPolicy
 
     public function create(Authenticatable $authenticatable): Response
     {
+        if (SettingsPermissions::active()) {
+            return $authenticatable->canOrElse(
+                abilities: 'settings.create',
+                denyResponse: 'You do not have permission to create notification settings.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: 'product_admin.create',
             denyResponse: 'You do not have permission to create notification settings.'
@@ -68,6 +90,13 @@ class NotificationSettingPolicy
 
     public function update(Authenticatable $authenticatable, NotificationSetting $notificationSetting): Response
     {
+        if (SettingsPermissions::active()) {
+            return $authenticatable->canOrElse(
+                abilities: 'settings.*.update',
+                denyResponse: 'You do not have permission to update this notification setting.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$notificationSetting->getKey()}.update"],
             denyResponse: 'You do not have permission to update this notification setting.'
@@ -76,6 +105,13 @@ class NotificationSettingPolicy
 
     public function delete(Authenticatable $authenticatable, NotificationSetting $notificationSetting): Response
     {
+        if (SettingsPermissions::active()) {
+            return $authenticatable->canOrElse(
+                abilities: 'settings.*.delete',
+                denyResponse: 'You do not have permission to delete this notification setting.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$notificationSetting->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this notification setting.'
@@ -84,6 +120,13 @@ class NotificationSettingPolicy
 
     public function restore(Authenticatable $authenticatable, NotificationSetting $notificationSetting): Response
     {
+        if (SettingsPermissions::active()) {
+            return $authenticatable->canOrElse(
+                abilities: 'settings.*.restore',
+                denyResponse: 'You do not have permission to restore this notification setting.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$notificationSetting->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore this notification setting.'
@@ -92,6 +135,13 @@ class NotificationSettingPolicy
 
     public function forceDelete(Authenticatable $authenticatable, NotificationSetting $notificationSetting): Response
     {
+        if (SettingsPermissions::active()) {
+            return $authenticatable->canOrElse(
+                abilities: 'settings.*.force-delete',
+                denyResponse: 'You do not have permission to permanently delete this notification setting.'
+            );
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$notificationSetting->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this notification setting.'

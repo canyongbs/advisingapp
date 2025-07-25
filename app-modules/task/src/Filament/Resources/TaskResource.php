@@ -46,9 +46,9 @@ class TaskResource extends Resource
 {
     protected static ?string $model = Task::class;
 
-    protected static ?string $navigationGroup = 'Product Features';
+    protected static ?string $navigationGroup = 'Project Management';
 
-    protected static ?int $navigationSort = 40;
+    protected static ?int $navigationSort = 10;
 
     public static function getPages(): array
     {

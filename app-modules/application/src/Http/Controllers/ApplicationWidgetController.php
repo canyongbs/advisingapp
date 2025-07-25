@@ -43,12 +43,19 @@ use AdvisingApp\Form\Actions\GenerateFormKitSchema;
 use AdvisingApp\Form\Actions\GenerateSubmissibleValidation;
 use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
 use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
+use AdvisingApp\Form\Http\Requests\RegisterProspectRequestForApplication;
 use AdvisingApp\Form\Notifications\AuthenticateFormNotification;
+use AdvisingApp\Prospect\Enums\SystemProspectClassification;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\ProspectSource;
+use AdvisingApp\Prospect\Models\ProspectStatus;
+use App\Features\OnlineAdmissionGenerateProspect;
 use App\Http\Controllers\Controller;
 use Closure;
 use Filament\Support\Colors\Color;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\URL;
@@ -86,6 +93,23 @@ class ApplicationWidgetController extends Controller
         $author = $resolveSubmissionAuthorFromEmail($data['email']);
 
         if (! $author) {
+            if (OnlineAdmissionGenerateProspect::active()) {
+                if (! $application->should_generate_prospects) {
+                    throw ValidationException::withMessages([
+                        'email' => 'A student with that email address could not be found. Please contact your system administrator.',
+                    ]);
+                }
+
+                return response()->json([
+                    'registrationAllowed' => true,
+                    'authentication_url' => URL::signedRoute(
+                        name: 'applications.register-prospect',
+                        parameters: ['application' => $application],
+                        absolute: false,
+                    ),
+                ], 404);
+            }
+
             throw ValidationException::withMessages([
                 'email' => 'A student with that email address could not be found. Please contact your system administrator.',
             ]);
@@ -96,7 +120,7 @@ class ApplicationWidgetController extends Controller
         $authentication = new ApplicationAuthentication();
         $authentication->author()->associate($author);
         $authentication->submissible()->associate($application);
-        $authentication->code = Hash::make($code);
+        $authentication->code = Hash::make((string) $code);
         $authentication->save();
 
         Notification::route('mail', [
@@ -126,7 +150,7 @@ class ApplicationWidgetController extends Controller
 
         $request->validate([
             'code' => ['required', 'integer', 'digits:6', function (string $attribute, int $value, Closure $fail) use ($authentication) {
-                if (Hash::check($value, $authentication->code)) {
+                if (Hash::check((string) $value, $authentication->code)) {
                     return;
                 }
 
@@ -253,5 +277,97 @@ class ApplicationWidgetController extends Controller
                 'message' => 'Application submitted successfully.',
             ]
         );
+    }
+
+    public function registerProspect(RegisterProspectRequestForApplication $request, Application $application): JsonResponse
+    {
+        $data = $request->validated();
+
+        $prospect = DB::transaction(function () use ($data): Prospect {
+            $prospect = Prospect::query()
+                ->make([
+                    'first_name' => $data['first_name'],
+                    'last_name' => $data['last_name'],
+                    'preferred' => $data['preferred'] ?? null,
+                    'full_name' => "{$data['first_name']} {$data['last_name']}",
+                    'birthdate' => $data['birthdate'] ?? null,
+                ]);
+
+            $status = ProspectStatus::query()
+                ->where('classification', SystemProspectClassification::New)
+                ->first();
+
+            if ($status) {
+                $prospect->status()->associate($status);
+            }
+
+            $source = ProspectSource::query()
+                ->where('name', 'Advising App')
+                ->first();
+
+            if ($source) {
+                $prospect->source()->associate($source);
+            }
+
+            $prospect->save();
+
+            $emailAddress = $prospect->emailAddresses()->create([
+                'address' => $data['email'],
+            ]);
+            $prospect->primaryEmailAddress()->associate($emailAddress);
+
+            $phoneNumber = $prospect->phoneNumbers()->create([
+                'number' => $data['mobile'],
+                'type' => 'Mobile',
+                'can_receive_sms' => true,
+            ]);
+            $prospect->primaryPhoneNumber()->associate($phoneNumber);
+
+            if (
+                isset($data['address']) ||
+                isset($data['address_2']) ||
+                isset($data['city']) ||
+                isset($data['state']) ||
+                isset($data['postal'])
+            ) {
+                $address = $prospect->addresses()->create([
+                    'line_1' => $data['address'] ?? null,
+                    'line_2' => $data['address_2'] ?? null,
+                    'city' => $data['city'] ?? null,
+                    'state' => $data['state'] ?? null,
+                    'postal' => $data['postal'] ?? null,
+                    'type' => 'Home',
+                ]);
+                $prospect->primaryAddress()->associate($address);
+            }
+
+            $prospect->save();
+
+            return $prospect;
+        });
+
+        $code = random_int(100000, 999999);
+
+        $authentication = new ApplicationAuthentication();
+        $authentication->author()->associate($prospect);
+        $authentication->submissible()->associate($application);
+        $authentication->code = Hash::make((string) $code);
+        $authentication->save();
+
+        Notification::route('mail', [
+            $request->get('email') => $prospect->getAttributeValue($prospect::displayNameKey()),
+        ])->notify(new AuthenticateFormNotification($authentication, $code));
+
+        return response()->json([
+            'message' => "We've sent an authentication code to {$data['email']}.",
+            'authentication_url' => URL::signedRoute(
+                name: 'applications.authenticate',
+                parameters: [
+                    'application' => $application,
+                    'authentication' => $authentication,
+                ],
+                absolute: false,
+            ),
+        ]);
     }
 }

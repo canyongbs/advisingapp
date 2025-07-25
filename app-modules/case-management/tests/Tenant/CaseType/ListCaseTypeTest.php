@@ -92,7 +92,7 @@ test('ListCaseTypes is gated with proper access control', function () {
             CaseTypeResource::getUrl('index')
         )->assertForbidden();
 
-    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('settings.view-any');
 
     actingAs($user)
         ->get(
@@ -109,7 +109,7 @@ test('ListCaseTypes is gated with proper feature access control', function () {
 
     $user = User::factory()->licensed([Student::getLicenseType(), Prospect::getLicenseType()])->create();
 
-    $user->givePermissionTo('product_admin.view-any');
+    $user->givePermissionTo('settings.view-any');
 
     actingAs($user)
         ->get(

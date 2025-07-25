@@ -86,6 +86,8 @@ class ListStudentsController
     #[QueryParameter('include', description: 'Include related resources in the response.', type: 'string', examples: [
         'email_addresses' => new Example('email_addresses'),
         'primary_email_address' => new Example('primary_email_address'),
+        'phone_numbers' => new Example('phone_numbers'),
+        'primary_phone_number' => new Example('primary_phone_number'),
     ])]
     #[QueryParameter('page[number]', description: 'Control which page of students is returned in the response.', type: 'int', default: 1)]
     #[QueryParameter('page[size]', description: 'Control how many students are returned in the response.', type: 'int', default: 30)]
@@ -149,6 +151,8 @@ class ListStudentsController
             ->allowedIncludes([
                 AllowedInclude::relationship('email_addresses', 'emailAddresses'),
                 AllowedInclude::relationship('primary_email_address', 'primaryEmailAddress'),
+                AllowedInclude::relationship('phone_numbers', 'phoneNumbers'),
+                AllowedInclude::relationship('primary_phone_number', 'primaryPhoneNumber'),
             ])
             ->allowedSorts([
                 AllowedSort::field('sisid'),

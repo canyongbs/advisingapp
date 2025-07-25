@@ -37,9 +37,11 @@
 namespace AdvisingApp\Prospect\Filament\Pages;
 
 use AdvisingApp\Prospect\Models\Prospect;
+use App\Features\SettingsPermissions;
 use App\Filament\Clusters\ConstituentManagement;
 use App\Filament\Forms\Components\Heading;
 use App\Filament\Forms\Components\Paragraph;
+use App\Models\User;
 use App\Settings\ProspectConversionSettings;
 use Cknow\Money\Money;
 use Filament\Forms\Components\Section;
@@ -70,7 +72,7 @@ class ManageProspectConversionSettings extends SettingsPage
             return false;
         }
 
-        return $user->can(['product_admin.view-any']);
+        return SettingsPermissions::active() ? $user->can(['settings.view-any']) : $user->can('product_admin.view-any');
     }
 
     public function form(Form $form): Form
@@ -101,7 +103,11 @@ class ManageProspectConversionSettings extends SettingsPage
 
     public function save(): void
     {
-        if (! auth()->user()->can('product_admin.*.update')) {
+        if (! SettingsPermissions::active() && ! auth()->user()->can('product_admin.*.update')) {
+            return;
+        }
+
+        if (SettingsPermissions::active() && ! auth()->user()->can('settings.*.update')) {
             return;
         }
 
@@ -113,7 +119,11 @@ class ManageProspectConversionSettings extends SettingsPage
      */
     public function getFormActions(): array
     {
-        if (! auth()->user()->can('product_admin.*.update')) {
+        if (! SettingsPermissions::active() && ! auth()->user()->can('product_admin.*.update')) {
+            return [];
+        }
+
+        if (SettingsPermissions::active() && ! auth()->user()->can('settings.*.update')) {
             return [];
         }
 

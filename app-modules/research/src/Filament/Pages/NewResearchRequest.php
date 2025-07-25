@@ -37,14 +37,19 @@
 namespace AdvisingApp\Research\Filament\Pages;
 
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use AdvisingApp\Ai\Settings\AiResearchAssistantSettings;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Research\Actions\GenerateResearchQuestion;
-use AdvisingApp\Research\Jobs\Research;
+use AdvisingApp\Research\Actions\StartResearch;
 use AdvisingApp\Research\Models\ResearchRequest;
 use App\Enums\Feature;
 use App\Models\User;
+use Exception;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\View;
 use Filament\Forms\Components\Wizard;
 use Filament\Forms\Components\Wizard\Step;
@@ -95,13 +100,7 @@ class NewResearchRequest extends Page
     public function mount(): void
     {
         if ($this->researchRequest) {
-            $this->form->fill([
-                'topic' => $this->researchRequest->topic,
-                'question_1' => $this->researchRequest->questions->get(0)?->response,
-                'question_2' => $this->researchRequest->questions->get(1)?->response,
-                'question_3' => $this->researchRequest->questions->get(2)?->response,
-                'question_4' => $this->researchRequest->questions->get(3)?->response,
-            ]);
+            $this->fillFormFromResearchRequest();
         } else {
             $this->form->fill();
         }
@@ -134,6 +133,10 @@ class NewResearchRequest extends Page
                                     ->maxLength(2000),
                             ])
                             ->afterValidation(function (array $state) {
+                                if ($this->researchRequest?->hasStarted()) {
+                                    return;
+                                }
+
                                 if ($this->researchRequest) {
                                     $this->researchRequest->update([
                                         'topic' => $state['topic'],
@@ -142,10 +145,18 @@ class NewResearchRequest extends Page
                                     return;
                                 }
 
+                                $settings = app(AiResearchAssistantSettings::class);
+
+                                throw_if(
+                                    ! $settings->research_model,
+                                    new Exception('Research model is not set in the settings.')
+                                );
+
                                 /** @var User $user */
                                 $user = auth()->user();
 
                                 $researchRequest = new ResearchRequest();
+                                $researchRequest->research_model = $settings->research_model;
                                 $researchRequest->topic = $state['topic'];
                                 $researchRequest->user()->associate($user);
                                 $researchRequest->save();
@@ -173,6 +184,10 @@ class NewResearchRequest extends Page
                                     ->maxLength(2000),
                             ])
                             ->afterValidation(function (array $state) {
+                                if ($this->researchRequest->hasStarted()) {
+                                    return;
+                                }
+
                                 $this->researchRequest->questions->get(0)?->update([
                                     'response' => $state['question_1'],
                                 ]);
@@ -194,59 +209,57 @@ class NewResearchRequest extends Page
                                     ->maxLength(2000),
                             ])
                             ->afterValidation(function (array $state) {
+                                if ($this->researchRequest->hasStarted()) {
+                                    return;
+                                }
+
                                 $this->researchRequest->questions->get(1)?->update([
                                     'response' => $state['question_2'],
                                 ]);
-
-                                if (! $this->researchRequest->questions->get(2)) {
-                                    $this->researchRequest->questions()->create([
-                                        'content' => app(GenerateResearchQuestion::class)->execute($this->researchRequest),
-                                    ]);
-                                    $this->researchRequest->load('questions');
-                                }
                             })
                             ->disabled(fn (): bool => $this->researchRequest?->hasStarted() ?? false),
-                        Step::make('Question 3')
+                        Step::make('Files')
                             ->schema([
-                                Textarea::make('question_3')
-                                    ->label(fn (): ?string => $this->researchRequest?->questions->get(2)?->content)
-                                    ->rows(5)
-                                    ->required()
-                                    ->maxLength(2000),
+                                SpatieMediaLibraryFileUpload::make('files')
+                                    ->label('Please upload any institutional data or files you would like the research report to consider. This step is optional and you may click next if you don\'t have any files to upload.')
+                                    ->collection('files')
+                                    ->multiple()
+                                    ->helperText('The maximum file size is 20MB.')
+                                    ->acceptedFileTypes(config('ai.supported_file_types'))
+                                    ->maxSize(20000)
+                                    ->maxFiles(5),
                             ])
-                            ->afterValidation(function (array $state) {
-                                $this->researchRequest->questions->get(2)?->update([
-                                    'response' => $state['question_3'],
-                                ]);
-
-                                if (! $this->researchRequest->questions->get(3)) {
-                                    $this->researchRequest->questions()->create([
-                                        'content' => app(GenerateResearchQuestion::class)->execute($this->researchRequest),
-                                    ]);
-                                    $this->researchRequest->load('questions');
+                            ->afterValidation(function () {
+                                if ($this->researchRequest->hasStarted()) {
+                                    return;
                                 }
+
+                                $this->form->saveRelationships();
+                                $this->fillFormFromResearchRequest();
                             })
                             ->disabled(fn (): bool => $this->researchRequest?->hasStarted() ?? false),
-                        Step::make('Question 4')
+                        Step::make('Links')
                             ->schema([
-                                Textarea::make('question_4')
-                                    ->label(fn (): ?string => $this->researchRequest?->questions->get(3)?->content)
-                                    ->rows(5)
-                                    ->required()
-                                    ->maxLength(2000),
+                                Repeater::make('links')
+                                    ->label('During this research request, our agentic AI will research the internet and used advanced AI to answer your research question. If you would like us to review any specific links, you may add those here now. This step is optional and you may click next if you don\'t have any links to add.')
+                                    ->simple(TextInput::make('url')
+                                        ->url())
+                                    ->reorderable(false)
+                                    ->addActionLabel('Add link')
+                                    ->maxItems(5),
                             ])
                             ->afterValidation(function (array $state) {
                                 if ($this->researchRequest->hasStarted()) {
                                     return;
                                 }
 
-                                $this->researchRequest->questions->get(3)?->update([
-                                    'response' => $state['question_4'],
+                                $this->researchRequest->update([
+                                    'links' => array_filter($this->form->getState()['links'] ?? [], filled(...)),
                                 ]);
 
-                                dispatch(app(Research::class, [
-                                    'researchRequest' => $this->researchRequest,
-                                ]));
+                                $this->form->saveRelationships();
+
+                                app(StartResearch::class)->execute($this->researchRequest);
                             })
                             ->disabled(fn (): bool => $this->researchRequest?->hasStarted() ?? false),
                         Step::make('Results')
@@ -261,6 +274,7 @@ class NewResearchRequest extends Page
                         ->iconPosition('after')
                         ->url(ManageResearchRequests::getUrl(['researchRequest' => $this->researchRequestId])) : null),
             ])
+            ->model($this->researchRequest)
             ->statePath('data');
     }
 
@@ -290,5 +304,15 @@ class NewResearchRequest extends Page
                 ->color('gray')
                 ->action(fn () => redirect(static::getUrl())),
         ];
+    }
+
+    protected function fillFormFromResearchRequest(): void
+    {
+        $this->form->fill([
+            'topic' => $this->researchRequest->topic,
+            'question_1' => $this->researchRequest->questions->get(0)?->response,
+            'question_2' => $this->researchRequest->questions->get(1)?->response,
+            'links' => $this->researchRequest->links,
+        ]);
     }
 }

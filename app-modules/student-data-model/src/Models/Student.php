@@ -55,6 +55,8 @@ use AdvisingApp\Notification\Models\Concerns\NotifiableViaSms;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Notification\Models\Subscription;
+use AdvisingApp\Pipeline\Models\EducatablePipelineStage;
+use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Segment\Models\SegmentSubject;
 use AdvisingApp\StudentDataModel\Database\Factories\StudentFactory;
@@ -483,6 +485,23 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         return $this->primaryEmailAddress?->address;
     }
 
+    /**
+    * @return MorphToMany<Pipeline, $this, EducatablePipelineStage>
+    */
+    public function educatablePipelineStages(): MorphToMany
+    {
+        return $this->morphToMany(
+            related: Pipeline::class,
+            name: 'educatable',
+            table: 'educatable_pipeline_stages',
+            foreignPivotKey: 'educatable_id',
+            relatedPivotKey: 'pipeline_id',
+        )
+            ->using(EducatablePipelineStage::class)
+            ->withPivot(['pipeline_stage_id'])
+            ->withTimestamps();
+    }
+
     protected static function booted(): void
     {
         static::addGlobalScope('licensed', function (Builder $builder) {
@@ -522,6 +541,7 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     {
         return match ($childType) {
             'studentEmailAddress' => 'emailAddresses',
+            'studentPhoneNumber' => 'phoneNumbers',
             default => parent::childRouteBindingRelationshipName($childType),
         };
     }

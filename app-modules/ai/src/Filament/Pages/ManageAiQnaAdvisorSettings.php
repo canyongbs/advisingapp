@@ -77,7 +77,14 @@ class ManageAiQnaAdvisorSettings extends ManageAiICustomAdvisorSettings
                     ->live(),
                 Select::make('preselected_model')
                     ->label('Select Model')
-                    ->options(AiModelApplicabilityFeature::QuestionAndAnswerAdvisor->getModelsAsSelectOptions())
+                    ->options(fn (AiModel|string|null $state) => array_unique([
+                        ...AiModelApplicabilityFeature::QuestionAndAnswerAdvisor->getModelsAsSelectOptions(),
+                        ...match (true) {
+                            $state instanceof AiModel => [$state->value => $state->getLabel()],
+                            is_string($state) => [$state => AiModel::parse($state)->getLabel()],
+                            default => [],
+                        },
+                    ]))
                     ->searchable()
                     ->helperText('This model will be the model used for QnA advisors.')
                     ->columnSpanFull()
@@ -87,12 +94,21 @@ class ManageAiQnaAdvisorSettings extends ManageAiICustomAdvisorSettings
                 Textarea::make('instructions')
                     ->label('Instructions')
                     ->columnSpanFull()
+                    ->rows(10)
                     ->maxLength(65535)
                     ->required(),
                 Textarea::make('background_information')
                     ->label('Background Information')
                     ->columnSpanFull()
+                    ->rows(10)
                     ->maxLength(65535)
+                    ->required(),
+                Textarea::make('restrictions')
+                    ->label('Restrictions')
+                    ->columnSpanFull()
+                    ->rows(10)
+                    ->maxLength(65535)
+                    ->helperText('These restrictions will be applied to the QnA advisor. Use this field to specify any limitations or guidelines for the AI model.')
                     ->required(),
             ]);
     }

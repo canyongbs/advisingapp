@@ -36,8 +36,11 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\Concerns;
 
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Report\Filament\Pages\ProspectCaseReport;
+use AdvisingApp\Report\Filament\Pages\StudentCaseReport;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Contracts\View\View;
@@ -50,13 +53,24 @@ trait HasCaseRecordHeader
 
     public function getHeader(): ?View
     {
+        $case = $this->record;
+        assert($case instanceof CaseModel);
+
         if ($this->referrer === 'respondentProfile') {
-            if ($this->record->respondent instanceof Student) {
+            if ($case->respondent instanceof Student) {
                 $backButtonLabel = 'Back to student';
-                $backButtonUrl = StudentResource::getUrl('view', ['record' => $this->record->respondent]);
-            } elseif ($this->record->respondent instanceof Prospect) {
+                $backButtonUrl = StudentResource::getUrl('view', ['record' => $case->respondent]);
+            } elseif ($case->respondent instanceof Prospect) {
                 $backButtonLabel = 'Back to prospect';
-                $backButtonUrl = ProspectResource::getUrl('view', ['record' => $this->record->respondent]);
+                $backButtonUrl = ProspectResource::getUrl('view', ['record' => $case->respondent]);
+            }
+        } elseif ($this->referrer === 'respondentReport') {
+            if ($case->respondent instanceof Student) {
+                $backButtonLabel = 'Back to student report';
+                $backButtonUrl = StudentCaseReport::getUrl();
+            } elseif ($case->respondent instanceof Prospect) {
+                $backButtonLabel = 'Back to prospect report';
+                $backButtonUrl = ProspectCaseReport::getUrl();
             }
         }
 

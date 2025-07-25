@@ -44,7 +44,6 @@ use AdvisingApp\CaseManagement\Models\CasePriority;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\Division\Models\Division;
-use App\Features\AssignmentsFeature;
 use App\Filament\Forms\Components\EducatableSelect;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
@@ -135,14 +134,12 @@ class CreateCase extends CreateRecord
 
     protected function handleRecordCreation(array $data): Model
     {
-        $data['division_id'] = $data['division_id'] ?? Division::where('is_default', true)->value('id') ?? Division::first()->getKey();
+        $data['division_id'] = $data['division_id']
+            ?? Division::where('is_default', true)->value('id')
+            ?? Division::first()->getKey();
 
-        if (AssignmentsFeature::active()) {
-            $caseDataObject = CaseDataObject::fromData($data);
+        $caseDataObject = CaseDataObject::fromData($data);
 
-            return app(CreateCaseAction::class)->execute($caseDataObject);
-        }
-
-        return parent::handleRecordCreation($data);
+        return app(CreateCaseAction::class)->execute($caseDataObject);
     }
 }

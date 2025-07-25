@@ -46,6 +46,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
+use Illuminate\Validation\Rule;
 
 class ManageAiResearchAssistantSettings extends SettingsPage
 {
@@ -72,12 +73,28 @@ class ManageAiResearchAssistantSettings extends SettingsPage
         return $form
             ->schema([
                 Select::make('discovery_model')
-                    ->options(AiModelApplicabilityFeature::IntegratedAdvisor->getModelsAsSelectOptions())
+                    ->options(fn (AiModel|string|null $state) => array_unique([
+                        ...AiModelApplicabilityFeature::IntegratedAdvisor->getModelsAsSelectOptions(),
+                        ...match (true) {
+                            $state instanceof AiModel => [$state->value => $state->getLabel()],
+                            is_string($state) => [$state => AiModel::parse($state)->getLabel()],
+                            default => [],
+                        },
+                    ]))
+                    ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::IntegratedAdvisor->getModels()))
                     ->searchable()
                     ->helperText('Used for the generation of the pre-research questions.')
                     ->required(),
                 Select::make('research_model')
-                    ->options(AiModelApplicabilityFeature::ResearchAdvisor->getModelsAsSelectOptions())
+                    ->options(fn (AiModel|string|null $state) => array_unique([
+                        ...AiModelApplicabilityFeature::ResearchAdvisor->getModelsAsSelectOptions(),
+                        ...match (true) {
+                            $state instanceof AiModel => [$state->value => $state->getLabel()],
+                            is_string($state) => [$state => AiModel::parse($state)->getLabel()],
+                            default => [],
+                        },
+                    ]))
+                    ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::ResearchAdvisor->getModels()))
                     ->searchable()
                     ->helperText('Used for the generation of the research report.')
                     ->required(),
