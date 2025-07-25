@@ -87,5 +87,4 @@ class WorkflowEngagementEmailDetails extends WorkflowDetails implements Auditabl
     {
         return 'workflow_engagement_email_details';
     }
-
 }

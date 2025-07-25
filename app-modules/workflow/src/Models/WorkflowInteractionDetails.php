@@ -93,5 +93,4 @@ class WorkflowInteractionDetails extends WorkflowDetails implements Auditable
     {
         return 'workflow_interaction_details';
     }
-
 }

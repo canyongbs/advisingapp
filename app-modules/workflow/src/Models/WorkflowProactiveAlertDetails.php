@@ -86,5 +86,4 @@ class WorkflowProactiveAlertDetails extends WorkflowDetails implements Auditable
     {
         return 'workflow_proactive_alert_details';
     }
-
 }

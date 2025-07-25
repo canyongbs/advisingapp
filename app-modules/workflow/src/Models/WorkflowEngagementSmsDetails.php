@@ -85,5 +85,4 @@ class WorkflowEngagementSmsDetails extends WorkflowDetails implements Auditable
     {
         return 'workflow_engagement_sms_details';
     }
-
 }

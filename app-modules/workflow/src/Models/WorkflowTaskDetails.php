@@ -84,5 +84,4 @@ class WorkflowTaskDetails extends WorkflowDetails implements Auditable
     {
         return 'workflow_task_details';
     }
-
 }
