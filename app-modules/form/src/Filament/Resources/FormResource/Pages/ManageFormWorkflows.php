@@ -57,10 +57,10 @@ class ManageFormWorkflows extends ManageRelatedRecords
 
     protected static string $relationship = 'workflows';
 
-    // public static function canAccess(array $arguments = []): bool
-    // {
-    //     return WorkflowFeature::active() && parent::canAccess($arguments);
-    // }
+    public static function canAccess(array $arguments = []): bool
+    {
+        return WorkflowFeature::active() && parent::canAccess($arguments);
+    }
 
     public static function getNavigationLabel(): string
     {
