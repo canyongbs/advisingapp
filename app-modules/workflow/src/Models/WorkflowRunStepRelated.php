@@ -36,46 +36,40 @@
 
 namespace AdvisingApp\Workflow\Models;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
 
 /**
- * @mixin IdeHelperWorkflow
+ * @mixin IdeHelperWorkflowRunStepRelated
  */
-class Workflow extends BaseModel implements Auditable
+class WorkflowRunStepRelated extends BaseModel
 {
     use SoftDeletes;
-    use AuditableTrait;
     use HasUuids;
 
     protected $fillable = [
-        'workflow_trigger_id',
-        'name',
-        'is_enabled',
-    ];
-
-    protected $casts = [
-        'is_enabled' => 'boolean',
+        'workflow_run_step_id',
+        'related_id',
+        'related_type',
     ];
 
     /**
-     * @return BelongsTo<WorkflowTrigger, $this>
+     * @return BelongsTo<WorkflowRunStep, $this>
      */
-    public function workflowTrigger(): BelongsTo
+    public function workflowRunStep(): BelongsTo
     {
-        return $this->belongsTo(WorkflowTrigger::class);
+        return $this->belongsTo(WorkflowRunStep::class);
     }
 
     /**
-     * @return HasMany<WorkflowStep, $this>
+     * @return MorphTo<Model, $this>
      */
-    public function workflowSteps(): HasMany
+    public function related(): MorphTo
     {
-        return $this->hasMany(WorkflowStep::class);
+        return $this->morphTo();
     }
 }

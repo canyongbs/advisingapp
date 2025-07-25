@@ -34,48 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Models;
+namespace AdvisingApp\Workflow\Jobs;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Campaign\Jobs\Middleware\FailIfBatchCancelled;
+use AdvisingApp\Workflow\Models\WorkflowRunStep;
+use Illuminate\Bus\Batchable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
 
-/**
- * @mixin IdeHelperWorkflow
- */
-class Workflow extends BaseModel implements Auditable
+abstract class ExecuteWorkflowActionJob implements ShouldQueue
 {
-    use SoftDeletes;
-    use AuditableTrait;
-    use HasUuids;
+    use Batchable;
+    use Queueable;
 
-    protected $fillable = [
-        'workflow_trigger_id',
-        'name',
-        'is_enabled',
-    ];
-
-    protected $casts = [
-        'is_enabled' => 'boolean',
-    ];
+    public function __construct(public WorkflowRunStep $workflowRunStep) {}
 
     /**
-     * @return BelongsTo<WorkflowTrigger, $this>
+     * @return array<object>
      */
-    public function workflowTrigger(): BelongsTo
+    public function middleware(): array
     {
-        return $this->belongsTo(WorkflowTrigger::class);
+        return [new FailIfBatchCancelled()];
     }
 
-    /**
-     * @return HasMany<WorkflowStep, $this>
-     */
-    public function workflowSteps(): HasMany
-    {
-        return $this->hasMany(WorkflowStep::class);
-    }
+    abstract public function handle(): void;
 }

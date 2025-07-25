@@ -34,48 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Models;
+namespace AdvisingApp\Workflow\Jobs;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Workflow\Models\WorkflowRunStep;
+use Exception;
+use Illuminate\Bus\Batchable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
 
-/**
- * @mixin IdeHelperWorkflow
- */
-class Workflow extends BaseModel implements Auditable
+class ExecuteWorkflowAction implements ShouldQueue
 {
-    use SoftDeletes;
-    use AuditableTrait;
-    use HasUuids;
+    use Batchable;
+    use Queueable;
 
-    protected $fillable = [
-        'workflow_trigger_id',
-        'name',
-        'is_enabled',
-    ];
+    public int $tries = 3;
 
-    protected $casts = [
-        'is_enabled' => 'boolean',
-    ];
+    public int $timeout = 600;
 
-    /**
-     * @return BelongsTo<WorkflowTrigger, $this>
-     */
-    public function workflowTrigger(): BelongsTo
+    public function __construct(public WorkflowRunStep $step) {}
+
+    public function handle(): void
     {
-        return $this->belongsTo(WorkflowTrigger::class);
-    }
-
-    /**
-     * @return HasMany<WorkflowStep, $this>
-     */
-    public function workflowSteps(): HasMany
-    {
-        return $this->hasMany(WorkflowStep::class);
+        try {
+            $this->batch()->add($this->step->details_type->getActionExecutableJob($this->step));
+        } catch (Exception $exception) {
+            report($exception);
+        }
     }
 }

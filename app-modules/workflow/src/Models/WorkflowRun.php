@@ -34,15 +34,49 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Models\Contracts;
+namespace AdvisingApp\Workflow\Models;
 
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-interface WorkflowAction
+/**
+ * @mixin IdeHelperWorkflowRun
+ */
+class WorkflowRun extends BaseModel
 {
+    use SoftDeletes;
+    use HasUuids;
+
+    protected $casts = [
+        'started_at' => 'datetime',
+    ];
+
     /**
-     * @return BelongsTo<covariant Model, covariant Model>
+     * @return BelongsTo<WorkflowTrigger, $this>
      */
-    public function workflowStep(): BelongsTo;
+    public function workflowTrigger(): BelongsTo
+    {
+        return $this->belongsTo(WorkflowTrigger::class);
+    }
+
+    /**
+     * @return HasMany<WorkflowRunStep, $this>
+     */
+    public function workflowRunSteps(): HasMany
+    {
+        return $this->hasMany(WorkflowRunStep::class);
+    }
+
+    /**
+     * @return MorphTo<covariant Model, $this>
+     */
+    public function related(): MorphTo
+    {
+        return $this->morphTo();
+    }
 }

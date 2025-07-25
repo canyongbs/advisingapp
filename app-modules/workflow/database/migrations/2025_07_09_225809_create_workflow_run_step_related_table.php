@@ -34,48 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Models;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
-
-/**
- * @mixin IdeHelperWorkflow
- */
-class Workflow extends BaseModel implements Auditable
-{
-    use SoftDeletes;
-    use AuditableTrait;
-    use HasUuids;
-
-    protected $fillable = [
-        'workflow_trigger_id',
-        'name',
-        'is_enabled',
-    ];
-
-    protected $casts = [
-        'is_enabled' => 'boolean',
-    ];
-
-    /**
-     * @return BelongsTo<WorkflowTrigger, $this>
-     */
-    public function workflowTrigger(): BelongsTo
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->belongsTo(WorkflowTrigger::class);
+        Schema::create('workflow_run_step_related', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+
+            $table->foreignUuid('workflow_run_step_id')->constrained('workflow_run_steps');
+            $table->uuidMorphs('related');
+
+            $table->timestamps();
+            $table->softDeletes();
+        });
     }
 
-    /**
-     * @return HasMany<WorkflowStep, $this>
-     */
-    public function workflowSteps(): HasMany
+    public function down(): void
     {
-        return $this->hasMany(WorkflowStep::class);
+        Schema::dropIfExists('workflow_run_step_related');
     }
-}
+};

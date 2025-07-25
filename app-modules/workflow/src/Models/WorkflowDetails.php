@@ -36,46 +36,18 @@
 
 namespace AdvisingApp\Workflow\Models;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
 
-/**
- * @mixin IdeHelperWorkflow
- */
-class Workflow extends BaseModel implements Auditable
+abstract class WorkflowDetails extends BaseModel
 {
-    use SoftDeletes;
-    use AuditableTrait;
-    use HasUuids;
-
-    protected $fillable = [
-        'workflow_trigger_id',
-        'name',
-        'is_enabled',
-    ];
-
-    protected $casts = [
-        'is_enabled' => 'boolean',
-    ];
+    abstract public function getType(): string;
 
     /**
-     * @return BelongsTo<WorkflowTrigger, $this>
+     * @return BelongsTo<WorkflowStep, $this>
      */
-    public function workflowTrigger(): BelongsTo
+    public function workflowStep(): BelongsTo
     {
-        return $this->belongsTo(WorkflowTrigger::class);
-    }
-
-    /**
-     * @return HasMany<WorkflowStep, $this>
-     */
-    public function workflowSteps(): HasMany
-    {
-        return $this->hasMany(WorkflowStep::class);
+        return $this->belongsTo(WorkflowStep::class, 'current_details_id');
     }
 }
