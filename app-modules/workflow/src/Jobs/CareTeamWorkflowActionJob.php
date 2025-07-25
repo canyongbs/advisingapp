@@ -85,10 +85,12 @@ class CareTeamWorkflowActionJob extends ExecuteWorkflowActionOnEducatableJob
                         ->where('educatable_id', $educatable->getKey())
                         ->first();
 
-                    WorkflowRunStepRelated::create([
-                        'workflow_run_step_id' => $this->workflowRunStep->id,
-                        'related' => $careTeam,
-                    ]);
+                    $workflowRunStepRelated = new WorkflowRunStepRelated();
+
+                    $workflowRunStepRelated->workflowRunStep()->associate($this->workflowRunStep);
+                    $workflowRunStepRelated->related()->associate($careTeam);
+
+                    $workflowRunStepRelated->save();
                 });
 
             DB::commit();
