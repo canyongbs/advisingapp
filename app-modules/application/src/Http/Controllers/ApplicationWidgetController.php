@@ -49,7 +49,6 @@ use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
-use App\Features\OnlineAdmissionGenerateProspect;
 use App\Http\Controllers\Controller;
 use Closure;
 use Filament\Support\Colors\Color;
@@ -93,26 +92,20 @@ class ApplicationWidgetController extends Controller
         $author = $resolveSubmissionAuthorFromEmail($data['email']);
 
         if (! $author) {
-            if (OnlineAdmissionGenerateProspect::active()) {
-                if (! $application->should_generate_prospects) {
-                    throw ValidationException::withMessages([
-                        'email' => 'A student with that email address could not be found. Please contact your system administrator.',
-                    ]);
-                }
-
-                return response()->json([
-                    'registrationAllowed' => true,
-                    'authentication_url' => URL::signedRoute(
-                        name: 'applications.register-prospect',
-                        parameters: ['application' => $application],
-                        absolute: false,
-                    ),
-                ], 404);
+            if (! $application->should_generate_prospects) {
+                throw ValidationException::withMessages([
+                    'email' => 'A student with that email address could not be found. Please contact your system administrator.',
+                ]);
             }
 
-            throw ValidationException::withMessages([
-                'email' => 'A student with that email address could not be found. Please contact your system administrator.',
-            ]);
+            return response()->json([
+                'registrationAllowed' => true,
+                'authentication_url' => URL::signedRoute(
+                    name: 'applications.register-prospect',
+                    parameters: ['application' => $application],
+                    absolute: false,
+                ),
+            ], 404);
         }
 
         $code = random_int(100000, 999999);
