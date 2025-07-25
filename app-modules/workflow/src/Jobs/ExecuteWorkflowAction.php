@@ -34,35 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Models;
+namespace AdvisingApp\Workflow\Jobs;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Workflow\Models\WorkflowRunStep;
+use Exception;
+use Illuminate\Bus\Batchable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
 
-/**
- * @mixin IdeHelperWorkflowTaskDetails
- */
-class WorkflowTaskDetails extends WorkflowDetails implements Auditable
+class ExecuteWorkflowAction implements ShouldQueue
 {
-    use SoftDeletes;
-    use AuditableTrait;
-    use HasUuids;
+    use Batchable;
+    use Queueable;
 
-    protected $fillable = [
-        'title',
-        'description',
-        'due',
-        'workflow_step_id',
-    ];
+    public int $tries = 3;
 
-    protected $casts = [
-        'due' => 'datetime',
-    ];
+    public int $timeout = 600;
 
-    public function getType(): string
+    public function __construct(public WorkflowRunStep $step) {}
+
+    public function handle(): void
     {
-        return 'task';
+        try {
+            $this->batch()->add($this->step->details_type->getActionExecutableJob($this->step));
+        } catch (Exception $exception) {
+            report($exception);
+        }
     }
 }

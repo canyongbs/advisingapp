@@ -34,35 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Models;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
-
-/**
- * @mixin IdeHelperWorkflowTaskDetails
- */
-class WorkflowTaskDetails extends WorkflowDetails implements Auditable
-{
-    use SoftDeletes;
-    use AuditableTrait;
-    use HasUuids;
-
-    protected $fillable = [
-        'title',
-        'description',
-        'due',
-        'workflow_step_id',
-    ];
-
-    protected $casts = [
-        'due' => 'datetime',
-    ];
-
-    public function getType(): string
+return new class () extends Migration {
+    public function up(): void
     {
-        return 'task';
+        DB::beginTransaction();
+
+        DB::statement('ALTER TABLE workflow_steps RENAME COLUMN details_id TO current_details_id');
+
+        DB::statement('ALTER TABLE workflow_steps RENAME COLUMN details_type TO current_details_type');
+
+        DB::commit();
     }
-}
+
+    public function down(): void
+    {
+        DB::beginTransaction();
+
+        DB::statement('ALTER TABLE workflow_steps RENAME COLUMN current_details_id TO details_id');
+
+        DB::statement('ALTER TABLE workflow_steps RENAME COLUMN current_details_type TO details_type');
+
+        DB::commit();
+    }
+};

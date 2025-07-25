@@ -36,33 +36,9 @@
 
 namespace AdvisingApp\Workflow\Models;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use App\Models\BaseModel;
 
-/**
- * @mixin IdeHelperWorkflowTaskDetails
- */
-class WorkflowTaskDetails extends WorkflowDetails implements Auditable
+abstract class WorkflowDetails extends BaseModel
 {
-    use SoftDeletes;
-    use AuditableTrait;
-    use HasUuids;
-
-    protected $fillable = [
-        'title',
-        'description',
-        'due',
-        'workflow_step_id',
-    ];
-
-    protected $casts = [
-        'due' => 'datetime',
-    ];
-
-    public function getType(): string
-    {
-        return 'task';
-    }
+    abstract public function getType(): string;
 }
