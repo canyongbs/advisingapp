@@ -75,10 +75,12 @@ class TaskWorkflowActionJob extends ExecuteWorkflowActionOnEducatableJob
 
             $task->save();
 
-            WorkflowRunStepRelated::create([
-                'workflow_run_step_id' => $this->workflowRunStep->id,
-                'related' => $task,
-            ]);
+            $workflowRunStepRelated = new WorkflowRunStepRelated();
+
+            $workflowRunStepRelated->workflowRunStep()->associate($this->workflowRunStep);
+            $workflowRunStepRelated->related()->associate($task);
+
+            $workflowRunStepRelated->save();
 
             DB::commit();
         } catch (Throwable $throw) {

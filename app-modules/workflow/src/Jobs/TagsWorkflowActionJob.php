@@ -78,10 +78,12 @@ class TagsWorkflowActionJob extends ExecuteWorkflowActionOnEducatableJob
                         ->where('taggable_id', $educatable->getKey())
                         ->first();
 
-                    WorkflowRunStepRelated::create([
-                        'workflow_run_step_id' => $this->workflowRunStep->id,
-                        'related' => $taggable,
-                    ]);
+                    $workflowRunStepRelated = new WorkflowRunStepRelated();
+
+                    $workflowRunStepRelated->workflowRunStep()->associate($this->workflowRunStep);
+                    $workflowRunStepRelated->related()->associate($taggable);
+
+                    $workflowRunStepRelated->save();
                 });
 
             DB::commit();
