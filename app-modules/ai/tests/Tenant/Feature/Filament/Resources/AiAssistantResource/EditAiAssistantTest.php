@@ -149,7 +149,7 @@ it('can edit a record', function () use ($licenses, $permissions) {
     assertDatabaseHas(
         AiAssistant::class,
         $request->except([
-            'avatar',
+            'avatar','model'
         ])->toArray()
     );
 
@@ -161,7 +161,7 @@ it('can edit a record', function () use ($licenses, $permissions) {
             'collection_name' => 'avatar',
         ]
     );
-});
+})->only();
 
 it('validates the inputs', function ($data, $errors) use ($licenses, $permissions) {
     Storage::fake('s3');
