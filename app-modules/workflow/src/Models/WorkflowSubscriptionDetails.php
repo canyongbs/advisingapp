@@ -70,7 +70,7 @@ class WorkflowSubscriptionDetails extends WorkflowDetails implements Auditable
     public function hasBeenExecuted(): bool
     {
         $workflowStep = WorkflowStep::whereCurrentDetailsType(WorkflowActionType::Subscription)
-            ->whereCurrentDetailsId($this->id)
+            ->where('current_details_id', $this->id)
             ->first();
 
         $workflowRun = WorkflowRun::whereWorkflowTriggerId($workflowStep->workflow->workflowTrigger->getKey())->first();

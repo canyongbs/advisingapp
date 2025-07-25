@@ -52,13 +52,13 @@ class TriggerFormSubmissionWorkflows implements ShouldQueue
     public function handle(FormSubmissionCreated $event): void
     {
         $workflowTriggerId = WorkflowTrigger::whereRelatedType(Form::class)
-            ->whereRelatedId($event->submission->getKey())
+            ->where('related_id', $event->submission->getKey())
             ->first()
             ->getKey();
 
         $steps = Workflow::whereWorkflowTriggerId($workflowTriggerId)
             ->whereNotNull('deleted_at')
-            ->whereIsEnabled()
+            ->where('is_enabled', true)
             ->first()
             ->workflowSteps();
 
