@@ -37,7 +37,6 @@
 namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Workflow\Enums\WorkflowActionType;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -60,5 +59,4 @@ class WorkflowEventDetails extends WorkflowDetails implements Auditable
     {
         return 'workflow_event_details';
     }
-
 }
