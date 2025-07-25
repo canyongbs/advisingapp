@@ -40,6 +40,7 @@ use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Workflow\Models\WorkflowCaseDetails;
+use AdvisingApp\Workflow\Models\WorkflowDetails;
 use AdvisingApp\Workflow\Models\WorkflowRunStepRelated;
 use App\Models\User;
 use App\Settings\LicenseSettings;

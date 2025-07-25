@@ -85,20 +85,4 @@ class WorkflowCareTeamDetails extends WorkflowDetails implements Auditable
         return 'workflow_care_team_details';
     }
 
-    public function hasBeenExecuted(): bool
-    {
-        $workflowStep = WorkflowStep::whereCurrentDetailsType(WorkflowActionType::CareTeam)
-            ->where('current_details_id', $this->id)
-            ->first();
-
-        $workflowRun = WorkflowRun::whereWorkflowTriggerId($workflowStep->workflow->workflowTrigger->getKey())->first();
-
-        if (is_null($workflowRun)) {
-            return false;
-        }
-
-        $workflowRunSteps = $workflowRun->workflowRunSteps;
-
-        return ! is_null($workflowRunSteps->where('details_type', WorkflowActionType::CareTeam)->where('details_id', $this->id)->first()->dispatched_at);
-    }
 }

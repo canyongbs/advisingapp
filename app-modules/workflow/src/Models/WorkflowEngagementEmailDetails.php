@@ -88,20 +88,4 @@ class WorkflowEngagementEmailDetails extends WorkflowDetails implements Auditabl
         return 'workflow_engagement_email_details';
     }
 
-    public function hasBeenExecuted(): bool
-    {
-        $workflowStep = WorkflowStep::whereCurrentDetailsType(WorkflowActionType::EngagementEmail)
-            ->where('current_details_id', $this->id)
-            ->first();
-
-        $workflowRun = WorkflowRun::whereWorkflowTriggerId($workflowStep->workflow->workflowTrigger->getKey())->first();
-
-        if (is_null($workflowRun)) {
-            return false;
-        }
-
-        $workflowRunSteps = $workflowRun->workflowRunSteps;
-
-        return ! is_null($workflowRunSteps->where('details_type', WorkflowActionType::EngagementEmail)->where('details_id', $this->id)->first()->dispatched_at);
-    }
 }

@@ -36,14 +36,11 @@
 
 namespace AdvisingApp\Workflow\Jobs;
 
+use AdvisingApp\Campaign\Jobs\Middleware\FailIfBatchCancelled;
 use AdvisingApp\Workflow\Models\WorkflowRunStep;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Support\Facades\Bus;
-use Throwable;
 
 abstract class ExecuteWorkflowActionJob implements ShouldQueue
 {

@@ -52,7 +52,7 @@ use AdvisingApp\Workflow\Jobs\CaseWorkflowActionJob;
 use AdvisingApp\Workflow\Jobs\EngagementEmailWorkflowActionJob;
 use AdvisingApp\Workflow\Jobs\EngagementSmsWorkflowActionJob;
 use AdvisingApp\Workflow\Jobs\EventWorkflowActionJob;
-use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionOnEducatableJob;
+use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
 use AdvisingApp\Workflow\Jobs\InteractionWorkflowActionJob;
 use AdvisingApp\Workflow\Jobs\ProactiveAlertWorkflowActionJob;
 use AdvisingApp\Workflow\Jobs\SubscriptionWorkflowActionJob;
@@ -152,7 +152,7 @@ enum WorkflowActionType: string implements HasLabel
         return $this->getBlock()->editFields();
     }
 
-    public function getActionExecutableJob(WorkflowRunStep $step): ExecuteWorkflowActionOnEducatableJob
+    public function getActionExecutableJob(WorkflowRunStep $step): ExecuteWorkflowActionJob
     {
         return match ($this) {
             WorkflowActionType::CareTeam => new CareTeamWorkflowActionJob($step),

@@ -49,8 +49,7 @@ return new class () extends Migration {
             $table->dateTime('succeeded_at')->nullable();
             $table->dateTime('last_failed_at')->nullable();
             $table->foreignUuid('workflow_run_id')->constrained('workflow_runs');
-            $table->string('details_id');
-            $table->string('details_type');
+            $table->uuidMorphs('details');
 
             $table->timestamps();
             $table->softDeletes();
