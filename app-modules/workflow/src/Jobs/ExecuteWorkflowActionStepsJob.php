@@ -36,26 +36,46 @@
 
 namespace AdvisingApp\Workflow\Jobs;
 
-use AdvisingApp\Campaign\Jobs\Middleware\FailIfBatchCancelled;
 use AdvisingApp\Workflow\Models\WorkflowRunStep;
-use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Facades\Bus;
+use Throwable;
 
-abstract class ExecuteWorkflowActionOnEducatableJob implements ShouldQueue
+class ExecuteWorkflowActionStepsJob implements ShouldQueue
 {
-    use Batchable;
+    use Dispatchable;
+    use InteractsWithQueue;
     use Queueable;
 
-    public function __construct(public WorkflowRunStep $workflowRunStep) {}
-
-    /**
-     * @return array<object>
-     */
-    public function middleware(): array
+    public function handle(): void
     {
-        return [new FailIfBatchCancelled()];
-    }
+        $steps = WorkflowRunStep::query()->where('execute_at', '<=', now())->whereNull('dispatched_at');
 
-    abstract public function handle(): void;
+        $steps->each(function (WorkflowRunStep $step) {
+            $step->dispatched_at = now();
+            $step->save();
+
+            //TODO: dont batch, let the specific jobs set failed at / succeeded at; set dispatched here
+            //also remove ExecuteActionJob
+
+            try {
+                Bus::batch([
+                    $step->details_type->getActionExecutableJob($step),
+                ])
+                    ->allowFailures()
+                    ->finally(function () use ($step) {
+                        $step->succeeded_at = now();
+                        $step->save();
+                    });
+            } catch (Throwable $exception) {
+                $step->last_failed_at = now();
+                $step->save();
+
+                throw $exception;
+            }
+        });
+    }
 }

@@ -38,7 +38,7 @@ namespace AdvisingApp\Workflow\Filament\Resources;
 
 use AdvisingApp\Workflow\Filament\Resources\WorkflowResource\Pages\EditWorkflow;
 use AdvisingApp\Workflow\Filament\Resources\WorkflowResource\Pages\ListWorkflows;
-use AdvisingApp\Workflow\Filament\Resources\WorkflowResource\RelationManagers\WorkflowActionsRelationManager;
+use AdvisingApp\Workflow\Filament\Resources\WorkflowResource\RelationManagers\WorkflowStepsRelationManager;
 use AdvisingApp\Workflow\Models\Workflow;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -67,7 +67,7 @@ class WorkflowResource extends Resource
     public static function getRelations(): array
     {
         return [
-            WorkflowActionsRelationManager::class,
+            WorkflowStepsRelationManager::class,
         ];
     }
 

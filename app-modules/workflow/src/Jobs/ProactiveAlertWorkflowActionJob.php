@@ -43,7 +43,7 @@ use AdvisingApp\Workflow\Models\WorkflowRunStepRelated;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
-class ProactiveAlertWorkflowActionJob extends ExecuteWorkflowActionOnEducatableJob
+class ProactiveAlertWorkflowActionJob extends ExecuteWorkflowActionJob
 {
     public function handle(): void
     {
@@ -54,7 +54,9 @@ class ProactiveAlertWorkflowActionJob extends ExecuteWorkflowActionOnEducatableJ
 
             assert($educatable instanceof Educatable);
 
-            $details = WorkflowProactiveAlertDetails::whereId($this->workflowRunStep->details_id)->first();
+            $details = $this->workflowRunStep->details;
+
+            assert($details instanceof WorkflowProactiveAlertDetails);
 
             $alert = Alert::query()->create([
                 'concern_type' => $educatable->getMorphClass(),

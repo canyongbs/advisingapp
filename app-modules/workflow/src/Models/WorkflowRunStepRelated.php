@@ -48,10 +48,9 @@ use OwenIt\Auditing\Contracts\Auditable;
 /**
  * @mixin IdeHelperWorkflowRunStepRelated
  */
-class WorkflowRunStepRelated extends BaseModel implements Auditable
+class WorkflowRunStepRelated extends BaseModel
 {
     use SoftDeletes;
-    use AuditableTrait;
     use HasUuids;
 
     protected $fillable = [

@@ -51,40 +51,35 @@ class TriggerFormSubmissionWorkflows implements ShouldQueue
 {
     public function handle(FormSubmissionCreated $event): void
     {
-        $workflowTriggerId = WorkflowTrigger::whereRelatedType(Form::class)
-            ->where('related_id', $event->submission->getKey())
-            ->first()
-            ->getKey();
+        $form = $event->submission->submissible;
 
-        $steps = Workflow::whereWorkflowTriggerId($workflowTriggerId)
-            ->whereNotNull('deleted_at')
-            ->where('is_enabled', true)
-            ->first()
-            ->workflowSteps();
+        assert($form instanceof Form);
 
-        $steps->each(function (WorkflowStep $step) use ($event, $workflowTriggerId) {
-            assert($step->details instanceof WorkflowDetails);
+        $form->workflows->each(function (Workflow $workflow) use ($event) {
+            $workflowRun = new WorkflowRun(['started_at' => now()]);
 
-            if (is_null($step->previous_step_id)) {
-                $workflowRun = new WorkflowRun([
-                    'started_at' => now(),
-                    'related_type' => $event->submission->author_type,
-                    'related_id' => $event->submission->author_id,
-                ]);
+            $workflowRun->related()->associate($event->submission->author);
+            $workflowRun->workflowTrigger()->associate($workflow->workflowTrigger);
 
-                $workflowRun->workflowTrigger()->associate($workflowTriggerId);
-                $workflowRun->related()->associate($event->submission->author);
+            $workflowRun->save();
+        });
 
-                $workflowRun->save();
-            }
+        $steps = collect();
+
+        $form->workflowTriggers->each(function (WorkflowTrigger $workflowTrigger) use ($steps) {
+            $steps->merge($workflowTrigger->workflow->workflowSteps);
+        });
+
+        $steps->each(function (WorkflowStep $step) use ($event) {
+            assert($step->currentDetails instanceof WorkflowDetails);
 
             $workflowRunStep = new WorkflowRunStep([
                 'execute_at' => $this->getStepScheduledAt($step, $event),
             ]);
 
-            $workflowRun = WorkflowRun::whereWorkflowTriggerId($workflowTriggerId)->get();
+            $workflowRun = $step->workflow->workflowTrigger->workflowRun;
             $workflowRunStep->workflowRun()->associate($workflowRun);
-            $workflowRunStep->details()->associate($step->details);
+            $workflowRunStep->details()->associate($step->currentDetails);
 
             $workflowRunStep->save();
         });

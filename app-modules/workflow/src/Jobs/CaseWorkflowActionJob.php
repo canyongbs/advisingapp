@@ -40,6 +40,7 @@ use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Workflow\Models\WorkflowCaseDetails;
+use AdvisingApp\Workflow\Models\WorkflowDetails;
 use AdvisingApp\Workflow\Models\WorkflowRunStepRelated;
 use App\Models\User;
 use App\Settings\LicenseSettings;
@@ -47,7 +48,7 @@ use Exception;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
-class CaseWorkflowActionJob extends ExecuteWorkflowActionOnEducatableJob
+class CaseWorkflowActionJob extends ExecuteWorkflowActionJob
 {
     public function handle(): void
     {
@@ -62,7 +63,9 @@ class CaseWorkflowActionJob extends ExecuteWorkflowActionOnEducatableJob
 
             assert($educatable instanceof Educatable);
 
-            $details = WorkflowCaseDetails::whereId($this->workflowRunStep->details_id)->first();
+            $details = $this->workflowRunStep->details;
+
+            assert($details instanceof WorkflowCaseDetails);
 
             $user = $this->workflowRunStep->workflowRun->workflowTrigger->createdBy;
 

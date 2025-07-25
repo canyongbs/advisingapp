@@ -48,7 +48,7 @@ use Exception;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
-class EventWorkflowActionJob extends ExecuteWorkflowActionOnEducatableJob
+class EventWorkflowActionJob extends ExecuteWorkflowActionJob
 {
     public function handle(): void
     {
@@ -70,7 +70,9 @@ class EventWorkflowActionJob extends ExecuteWorkflowActionOnEducatableJob
                 new Exception('The educatable model must have a primary email address.')
             );
 
-            $details = WorkflowEventDetails::whereId($this->workflowRunStep->details_id)->first();
+            $details = $this->workflowRunStep->details;
+
+            assert($details instanceof WorkflowEventDetails);
 
             $event = Event::query()->findOrFail($details->event_id);
 

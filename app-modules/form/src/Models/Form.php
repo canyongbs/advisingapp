@@ -43,6 +43,7 @@ use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
@@ -113,12 +114,11 @@ class Form extends Submissible
     }
 
     /**
-     * @return HasMany<WorkflowTrigger, $this>
+     * @return MorphMany<WorkflowTrigger, $this>
      */
-    public function workflowTriggers(): HasMany
+    public function workflowTriggers(): MorphMany
     {
-        return $this->hasMany(WorkflowTrigger::class, 'related_id')
-            ->where('related_type', Form::class);
+        return $this->morphMany(WorkflowTrigger::class, 'related');
     }
 
     /**

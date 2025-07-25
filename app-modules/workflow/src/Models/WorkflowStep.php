@@ -42,7 +42,6 @@ use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -77,11 +76,11 @@ class WorkflowStep extends BaseModel implements Auditable
     }
 
     /**
-     * @return HasOne<WorkflowStep, $this>|null
+     * @return BelongsTo<WorkflowStep, $this>|null
      */
-    public function previousWorkflowStep(): ?HasOne
+    public function previousWorkflowStep(): ?BelongsTo
     {
-        return $this->hasOne(WorkflowStep::class, 'previous_step_id');
+        return $this->belongsTo(WorkflowStep::class, 'previous_step_id');
     }
 
     /**
