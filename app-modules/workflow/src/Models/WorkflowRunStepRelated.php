@@ -73,6 +73,6 @@ class WorkflowRunStepRelated extends BaseModel implements Auditable
      */
     public function related(): MorphTo
     {
-      return $this->morphTo();
+        return $this->morphTo();
     }
 }

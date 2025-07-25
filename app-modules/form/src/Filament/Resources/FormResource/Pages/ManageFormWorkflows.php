@@ -37,13 +37,11 @@
 namespace AdvisingApp\Form\Filament\Resources\FormResource\Pages;
 
 use AdvisingApp\Form\Filament\Resources\FormResource;
-use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Workflow\Enums\WorkflowTriggerType;
 use AdvisingApp\Workflow\Filament\Resources\WorkflowResource;
 use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Features\WorkflowFeature;
-use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables\Actions\EditAction;
@@ -93,37 +91,37 @@ class ManageFormWorkflows extends ManageRelatedRecords
     {
         return [
             Action::make('create')
-            ->label('Create New Workflow')
-            ->action(function () {
-              try{
-                DB::beginTransaction();
+                ->label('Create New Workflow')
+                ->action(function () {
+                    try {
+                        DB::beginTransaction();
 
-                  $workflowTrigger = new WorkflowTrigger([
-                      'type' => WorkflowTriggerType::EventBased,
-                  ]);
+                        $workflowTrigger = new WorkflowTrigger([
+                            'type' => WorkflowTriggerType::EventBased,
+                        ]);
 
-                  $workflowTrigger->related()->associate($this->getOwnerRecord());
-                  $workflowTrigger->createdBy()->associate(auth()->user());
+                        $workflowTrigger->related()->associate($this->getOwnerRecord());
+                        $workflowTrigger->createdBy()->associate(auth()->user());
 
-                  $workflowTrigger->save();
+                        $workflowTrigger->save();
 
-                  $workflow = new Workflow([
-                      'name' => 'Form Workflow',
-                      'is_enabled' => false,
-                  ]);
+                        $workflow = new Workflow([
+                            'name' => 'Form Workflow',
+                            'is_enabled' => false,
+                        ]);
 
-                  $workflow->workflowTrigger()->associate($workflowTrigger);
+                        $workflow->workflowTrigger()->associate($workflowTrigger);
 
-                  $workflow->save();
-                  DB::commit();
-              } catch (Throwable $throw) {
-                  DB::rollBack();
+                        $workflow->save();
+                        DB::commit();
+                    } catch (Throwable $throw) {
+                        DB::rollBack();
 
-                  throw $throw;
-              }
+                        throw $throw;
+                    }
 
-                redirect(WorkflowResource::getUrl('edit', [$workflow]));
-            }),
+                    redirect(WorkflowResource::getUrl('edit', [$workflow]));
+                }),
         ];
     }
 }

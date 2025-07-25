@@ -82,7 +82,7 @@ class TriggerFormSubmissionWorkflows implements ShouldQueue
                 'execute_at' => $this->getStepScheduledAt($step, $event),
             ]);
 
-            $workflowRun=WorkflowRun::whereWorkflowTriggerId($workflowTriggerId)->get();
+            $workflowRun = WorkflowRun::whereWorkflowTriggerId($workflowTriggerId)->get();
             $workflowRunStep->workflowRun()->associate($workflowRun);
             $workflowRunStep->details()->associate($step->details);
 
