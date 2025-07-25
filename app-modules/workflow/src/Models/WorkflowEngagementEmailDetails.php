@@ -73,7 +73,7 @@ class WorkflowEngagementEmailDetails extends WorkflowDetails implements Auditabl
     public function hasBeenExecuted(): bool
     {
         $workflowStep = WorkflowStep::whereCurrentDetailsType(WorkflowActionType::EngagementEmail)
-            ->whereCurrentDetailsId($this->id)
+            ->where('current_details_id', $this->id)
             ->first();
 
         $workflowRun = WorkflowRun::whereWorkflowTriggerId($workflowStep->workflow->workflowTrigger->getKey())->first();
