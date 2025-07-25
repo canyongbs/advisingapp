@@ -6344,7 +6344,7 @@ namespace AdvisingApp\Workflow\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \AdvisingApp\Workflow\Models\WorkflowStep $workflowStep
+ * @property-read \AdvisingApp\Workflow\Models\WorkflowStep|null $workflowStep
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowCareTeamDetails newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowCareTeamDetails newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowCareTeamDetails onlyTrashed()
@@ -6373,15 +6373,14 @@ namespace AdvisingApp\Workflow\Models{
  * @property string $status_id
  * @property string $priority_id
  * @property string|null $assigned_to_id
- * @property string $close_details
- * @property string $res_details
- * @property string $workflow_step_id
+ * @property string|null $close_details
+ * @property string|null $res_details
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \AdvisingApp\Workflow\Models\WorkflowStep $workflowStep
+ * @property-read \AdvisingApp\Workflow\Models\WorkflowStep|null $workflowStep
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowCaseDetails newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowCaseDetails newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowCaseDetails onlyTrashed()
@@ -6396,7 +6395,6 @@ namespace AdvisingApp\Workflow\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowCaseDetails whereResDetails($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowCaseDetails whereStatusId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowCaseDetails whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowCaseDetails whereWorkflowStepId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowCaseDetails withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowCaseDetails withoutTrashed()
  * @mixin \Eloquent
@@ -6419,7 +6417,7 @@ namespace AdvisingApp\Workflow\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \AdvisingApp\Workflow\Models\WorkflowStep $workflowStep
+ * @property-read \AdvisingApp\Workflow\Models\WorkflowStep|null $workflowStep
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowEngagementEmailDetails newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowEngagementEmailDetails newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowEngagementEmailDetails onlyTrashed()
@@ -6453,7 +6451,7 @@ namespace AdvisingApp\Workflow\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \AdvisingApp\Workflow\Models\WorkflowStep $workflowStep
+ * @property-read \AdvisingApp\Workflow\Models\WorkflowStep|null $workflowStep
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowEngagementSmsDetails newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowEngagementSmsDetails newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowEngagementSmsDetails onlyTrashed()
@@ -6485,7 +6483,7 @@ namespace AdvisingApp\Workflow\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \AdvisingApp\Workflow\Models\WorkflowStep $workflowStep
+ * @property-read \AdvisingApp\Workflow\Models\WorkflowStep|null $workflowStep
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowEventDetails newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowEventDetails newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowEventDetails onlyTrashed()
@@ -6526,7 +6524,7 @@ namespace AdvisingApp\Workflow\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \AdvisingApp\Workflow\Models\WorkflowStep $workflowStep
+ * @property-read \AdvisingApp\Workflow\Models\WorkflowStep|null $workflowStep
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowInteractionDetails newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowInteractionDetails newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowInteractionDetails onlyTrashed()
@@ -6570,7 +6568,7 @@ namespace AdvisingApp\Workflow\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \AdvisingApp\Workflow\Models\WorkflowStep $workflowStep
+ * @property-read \AdvisingApp\Workflow\Models\WorkflowStep|null $workflowStep
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowProactiveAlertDetails newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowProactiveAlertDetails newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowProactiveAlertDetails onlyTrashed()
@@ -6647,6 +6645,7 @@ namespace AdvisingApp\Workflow\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Model $details
  * @property-read \AdvisingApp\Workflow\Models\WorkflowRun $workflowRun
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep newQuery()
@@ -6684,7 +6683,8 @@ namespace AdvisingApp\Workflow\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \AdvisingApp\Workflow\Models\WorkflowRun|null $workflowRun
+ * @property-read \Illuminate\Database\Eloquent\Model $related
+ * @property-read \AdvisingApp\Workflow\Models\WorkflowRunStep $workflowRunStep
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated onlyTrashed()
@@ -6719,7 +6719,7 @@ namespace AdvisingApp\Workflow\Models{
  * @property string|null $previous_step_id
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Model $details
+ * @property-read \Illuminate\Database\Eloquent\Model $currentDetails
  * @property-read WorkflowStep|null $previousWorkflowStep
  * @property-read \AdvisingApp\Workflow\Models\Workflow $workflow
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowStep newModelQuery()
@@ -6756,7 +6756,7 @@ namespace AdvisingApp\Workflow\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \AdvisingApp\Workflow\Models\WorkflowStep $workflowStep
+ * @property-read \AdvisingApp\Workflow\Models\WorkflowStep|null $workflowStep
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowSubscriptionDetails newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowSubscriptionDetails newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowSubscriptionDetails onlyTrashed()
@@ -6789,7 +6789,7 @@ namespace AdvisingApp\Workflow\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \AdvisingApp\Workflow\Models\WorkflowStep $workflowStep
+ * @property-read \AdvisingApp\Workflow\Models\WorkflowStep|null $workflowStep
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTagsDetails newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTagsDetails newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTagsDetails onlyTrashed()
@@ -6824,7 +6824,7 @@ namespace AdvisingApp\Workflow\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \AdvisingApp\Workflow\Models\WorkflowStep $workflowStep
+ * @property-read \AdvisingApp\Workflow\Models\WorkflowStep|null $workflowStep
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTaskDetails newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTaskDetails newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTaskDetails onlyTrashed()
@@ -6851,7 +6851,7 @@ namespace AdvisingApp\Workflow\Models{
  * 
  *
  * @property string $id
- * @property string $type
+ * @property \AdvisingApp\Workflow\Enums\WorkflowTriggerType $type
  * @property string $related_id
  * @property string $related_type
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -6861,8 +6861,10 @@ namespace AdvisingApp\Workflow\Models{
  * @property string $created_by_id
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \App\Models\User|null $createdBy
+ * @property-read \Illuminate\Database\Eloquent\Model $createdBy
+ * @property-read \Illuminate\Database\Eloquent\Model $related
  * @property-read \AdvisingApp\Workflow\Models\Workflow|null $workflow
+ * @property-read \AdvisingApp\Workflow\Models\WorkflowRun|null $workflowRun
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTrigger newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTrigger newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTrigger onlyTrashed()

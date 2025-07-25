@@ -43,7 +43,7 @@ use AdvisingApp\Workflow\Models\WorkflowRunStepRelated;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
-class CareTeamWorkflowActionJob extends ExecuteWorkflowActionOnEducatableJob
+class CareTeamWorkflowActionJob extends ExecuteWorkflowActionJob
 {
     public function handle(): void
     {
@@ -54,7 +54,9 @@ class CareTeamWorkflowActionJob extends ExecuteWorkflowActionOnEducatableJob
 
             assert($educatable instanceof Educatable);
 
-            $details = WorkflowCareTeamDetails::whereId($this->workflowRunStep->details_id)->first();
+            $details = $this->workflowRunStep->details;
+
+            assert($details instanceof WorkflowCareTeamDetails);
 
             if ($details->remove_prior) {
                 $educatable->careTeam()->detach();

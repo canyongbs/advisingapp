@@ -59,7 +59,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Throwable;
 
-class WorkflowActionsRelationManager extends RelationManager
+class WorkflowStepsRelationManager extends RelationManager
 {
     protected static string $relationship = 'workflowSteps';
 
@@ -123,11 +123,11 @@ class WorkflowActionsRelationManager extends RelationManager
 
                                         $workflowStep = new WorkflowStep([
                                             'delay_minutes' => $delayMinutes,
-                                            'workflow_id' => $record->getKey(),
-                                            'current_details_type' => $action->getType(),
-                                            'current_details_id' => $action->getKey(),
-                                            'previous_step_id' => $previousStepId,
                                         ]);
+
+                                        $workflowStep->workflow()->associate($record);
+                                        $workflowStep->currentDetails()->associate($action);
+                                        $workflowStep->previousWorkflowStep()->associate($previousStepId);
 
                                         $workflowStep->save();
 
@@ -148,38 +148,20 @@ class WorkflowActionsRelationManager extends RelationManager
                                 }
                             }),
                     ])
-                    ->action(fn () => null)
-                    ->hidden(function () use ($workflow) {
-                        return $workflow->hasBeenExecuted();
-                    }),
+                    ->action(fn () => null),
             ])
             ->actions([
                 EditAction::make()
                     ->modalHeading(fn (WorkflowStep $workflowStep) => 'Edit ' . Str::title($workflowStep->current_details_type->getLabel()))
-                    ->hidden(function (WorkflowStep $workflowStep) {
-                        $details = $workflowStep->currentDetails;
-
-                        assert($details instanceof WorkflowDetails);
-
-                        return $details->hasBeenExecuted();
-                    })
                     ->databaseTransaction(),
                 DeleteAction::make()
                     ->modalHeading(fn (WorkflowStep $workflowStep) => 'Delete ' . Str::title($workflowStep->current_details_type->getLabel()))
-                    ->hidden(function (WorkflowStep $workflowStep) {
-                        $details = $workflowStep->currentDetails;
-
-                        assert($details instanceof WorkflowDetails);
-
-                        return $details->hasBeenExecuted();
-                    })
                     ->databaseTransaction(),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
-                ])
-                    ->hidden(fn () => $workflow->hasBeenExecuted()),
+                ]),
             ]);
     }
 

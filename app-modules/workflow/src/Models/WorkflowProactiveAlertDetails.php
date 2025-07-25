@@ -69,20 +69,4 @@ class WorkflowProactiveAlertDetails extends WorkflowDetails implements Auditable
         return 'workflow_proactive_alert_details';
     }
 
-    public function hasBeenExecuted(): bool
-    {
-        $workflowStep = WorkflowStep::whereCurrentDetailsType(WorkflowActionType::ProactiveAlert)
-            ->where('current_details_id', $this->id)
-            ->first();
-
-        $workflowRun = WorkflowRun::whereWorkflowTriggerId($workflowStep->workflow->workflowTrigger->getKey())->first();
-
-        if (is_null($workflowRun)) {
-            return false;
-        }
-
-        $workflowRunSteps = $workflowRun->workflowRunSteps;
-
-        return ! is_null($workflowRunSteps->where('details_type', WorkflowActionType::ProactiveAlert)->where('details_id', $this->id)->first()->dispatched_at);
-    }
 }
