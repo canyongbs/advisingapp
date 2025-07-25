@@ -86,12 +86,14 @@ class AiAssistantForm
                     ->options([
                         AiAssistantApplication::PersonalAssistant->value => 'Custom Advisor',
                     ])
+                    ->dehydratedWhenHidden()
                     ->default(AiAssistantApplication::getDefault())
                     ->live()
                     ->afterStateUpdated(fn (Set $set, $state) => filled(AiAssistantApplication::parse($state)) ? $set('model', AiAssistantApplication::parse($state)->getDefaultModel()->value) : null)
                     ->required()
                     ->enum(AiAssistantApplication::class)
                     ->columnStart(1)
+                    ->visible(auth()->user()->isSuperAdmin())
                     ->disabledOn('edit'),
                 Select::make('model')
                     ->reactive()
@@ -106,7 +108,7 @@ class AiAssistantForm
                     ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::CustomAdvisors->getModels()))
                     ->searchable()
                     ->required()
-                    ->visible(fn (Get $get): bool => filled($get('application')))
+                    ->visible(fn (Get $get): bool => filled($get('application')) && auth()->user()->isSuperAdmin())
                     ->disabled(fn (): bool => ! app(AiCustomAdvisorSettings::class)->allow_selection_of_model)
                     ->default(function () {
                         $settings = app(AiCustomAdvisorSettings::class);
@@ -116,7 +118,8 @@ class AiAssistantForm
                         }
 
                         return $settings->preselected_model;
-                    }),
+                    })
+                    ->dehydratedWhenHidden(),
                 Textarea::make('description')
                     ->columnSpanFull()
                     ->required(),
