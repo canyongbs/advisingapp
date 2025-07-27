@@ -38,13 +38,21 @@ namespace AdvisingApp\Application\Models;
 
 use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Models\Submissible;
+use AdvisingApp\Workflow\Models\WorkflowTrigger;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
+use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 /**
  * @mixin IdeHelperApplication
  */
 class Application extends Submissible
 {
+
+  use HasRelationships;
+
     protected $fillable = [
         'name',
         'description',
@@ -88,5 +96,21 @@ class Application extends Submissible
     public function submissions(): HasMany
     {
         return $this->hasMany(ApplicationSubmission::class);
+    }
+
+    /**
+     * @return MorphMany<WorkflowTrigger, $this>
+     */
+    public function workflowTriggers(): MorphMany
+    {
+      return $this->morphMany(WorkflowTrigger::class, 'related');
+    }
+
+    /**
+     * @return HasManyDeep<Model, $this>
+     */
+    public function workflows(): HasManyDeep
+    {
+      return $this->hasManyDeepFromRelations($this->workflowTriggers(), (new WorkflowTrigger())->workflow());
     }
 }
