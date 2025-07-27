@@ -40,6 +40,7 @@ use AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages\CreateA
 use AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages\EditApplication;
 use AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages\ListApplications;
 use AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages\ManageApplicationSubmissions;
+use AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages\ManageApplicationWorkflows;
 use AdvisingApp\Application\Models\Application;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
@@ -70,6 +71,7 @@ class ApplicationResource extends Resource
     {
         return $page->generateNavigationItems([
             EditApplication::class,
+            ManageApplicationWorkflows::class,
             ManageApplicationSubmissions::class,
         ]);
     }
@@ -80,6 +82,7 @@ class ApplicationResource extends Resource
             'index' => ListApplications::route('/'),
             'create' => CreateApplication::route('/create'),
             'edit' => EditApplication::route('/{record}/edit'),
+            'manage-application-workflows' => ManageApplicationWorkflows::route('/{record}/workflows'),
             'manage-submissions' => ManageApplicationSubmissions::route('/{record}/submissions'),
         ];
     }
