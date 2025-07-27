@@ -50,8 +50,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  */
 class Application extends Submissible
 {
-
-  use HasRelationships;
+    use HasRelationships;
 
     protected $fillable = [
         'name',
@@ -103,7 +102,7 @@ class Application extends Submissible
      */
     public function workflowTriggers(): MorphMany
     {
-      return $this->morphMany(WorkflowTrigger::class, 'related');
+        return $this->morphMany(WorkflowTrigger::class, 'related');
     }
 
     /**
@@ -111,6 +110,6 @@ class Application extends Submissible
      */
     public function workflows(): HasManyDeep
     {
-      return $this->hasManyDeepFromRelations($this->workflowTriggers(), (new WorkflowTrigger())->workflow());
+        return $this->hasManyDeepFromRelations($this->workflowTriggers(), (new WorkflowTrigger())->workflow());
     }
 }
