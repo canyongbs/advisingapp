@@ -55,10 +55,7 @@ class EngagementEmailWorkflowActionJob extends ExecuteWorkflowActionJob
      */
     public function middleware(): array
     {
-        return [
-            ...parent::middleware(),
-            new RateLimitedWithRedis('notification'),
-        ];
+        return [new RateLimitedWithRedis('notification')];
     }
 
     public function handle(): void

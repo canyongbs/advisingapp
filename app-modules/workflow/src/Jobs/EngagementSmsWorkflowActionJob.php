@@ -55,10 +55,7 @@ class EngagementSmsWorkflowActionJob extends ExecuteWorkflowActionJob
         /**
          * @return array<object>
          */
-        return [
-            ...parent::middleware(),
-            new RateLimitedWithRedis('notification'),
-        ];
+        return [new RateLimitedWithRedis('notification')];
     }
 
     public function handle(): void
