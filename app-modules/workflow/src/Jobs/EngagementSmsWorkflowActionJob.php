@@ -50,11 +50,11 @@ use Throwable;
 
 class EngagementSmsWorkflowActionJob extends ExecuteWorkflowActionJob
 {
+    /**
+     * @return array<object>
+     */
     public function middleware(): array
     {
-        /**
-         * @return array<object>
-         */
         return [new RateLimitedWithRedis('notification')];
     }
 
