@@ -76,7 +76,7 @@ class TriggerApplicationSubmissionWorkflows implements ShouldQueue
             $workflowRunStep = new WorkflowRunStep(['execute_at' => $this->getStepScheduledAt($workflowStep, $event)]);
 
             $workflowRun = $workflowStep->workflow->workflowTrigger->workflowRun;
-            
+
             $workflowRunStep->workflowRun()->associate($workflowRun);
             $workflowRunStep->details()->associate($workflowStep->currentDetails);
 
@@ -92,7 +92,7 @@ class TriggerApplicationSubmissionWorkflows implements ShouldQueue
 
         $prevStep = $workflowStep->previousWorkflowStep;
 
-        while(! is_null($prevStep)) {
+        while (! is_null($prevStep)) {
             $delayFrom->addMinutes($prevStep->delay_minutes);
 
             $prevStep = $prevStep->previousWorkflowStep;

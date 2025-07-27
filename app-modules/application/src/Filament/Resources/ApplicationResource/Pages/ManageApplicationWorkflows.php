@@ -89,10 +89,10 @@ class ManageApplicationWorkflows extends ManageRelatedRecords
             Action::make('create')
                 ->label('Create New Workflow')
                 ->action(function () {
-                    try{
+                    try {
                         DB::beginTransaction();
 
-                        $workflowTrigger = new WorkflowTrigger(['type' => WorkflowTriggerType::EventBased,]);
+                        $workflowTrigger = new WorkflowTrigger(['type' => WorkflowTriggerType::EventBased]);
 
                         $workflowTrigger->related()->associate($this->getOwnerRecord());
                         $workflowTrigger->createdBy()->associate(auth()->user());
