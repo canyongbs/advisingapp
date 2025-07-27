@@ -83,6 +83,9 @@ class ManageApplicationWorkflows extends ManageRelatedRecords
             ->recordUrl(fn (Workflow $record) => WorkflowResource::getUrl('edit', [$record]));
     }
 
+    /**
+     * @return array<Action>
+     */
     public function getHeaderActions(): array
     {
         return [
