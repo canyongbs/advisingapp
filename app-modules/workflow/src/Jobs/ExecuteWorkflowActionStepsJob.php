@@ -58,24 +58,7 @@ class ExecuteWorkflowActionStepsJob implements ShouldQueue
             $step->dispatched_at = now();
             $step->save();
 
-            //TODO: dont batch, let the specific jobs set failed at / succeeded at; set dispatched here
-            //also remove ExecuteActionJob
-
-            try {
-                Bus::batch([
-                    $step->details_type->getActionExecutableJob($step),
-                ])
-                    ->allowFailures()
-                    ->finally(function () use ($step) {
-                        $step->succeeded_at = now();
-                        $step->save();
-                    });
-            } catch (Throwable $exception) {
-                $step->last_failed_at = now();
-                $step->save();
-
-                throw $exception;
-            }
+            dispatch($step->details_type->getActionExecutableJob($step));
         });
     }
 }

@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Workflow\Jobs;
 
-use AdvisingApp\Campaign\Jobs\Middleware\FailIfBatchCancelled;
 use AdvisingApp\Workflow\Models\WorkflowRunStep;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -47,15 +46,11 @@ abstract class ExecuteWorkflowActionJob implements ShouldQueue
     use Batchable;
     use Queueable;
 
-    public function __construct(public WorkflowRunStep $workflowRunStep) {}
+    public int $tries = 3;
 
-    /**
-     * @return array<object>
-     */
-    public function middleware(): array
-    {
-        return [new FailIfBatchCancelled()];
-    }
+    public int $timeout = 600;
+
+    public function __construct(public WorkflowRunStep $workflowRunStep) {}
 
     abstract public function handle(): void;
 }
