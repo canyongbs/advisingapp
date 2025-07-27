@@ -70,15 +70,16 @@ class TriggerApplicationSubmissionWorkflows implements ShouldQueue
             $steps->merge($workflowTrigger->workflow->workflowSteps);
         });
 
-        $steps->each(function (WorkflowStep $workflowStep) use ($event) {
-            assert($workflowStep->currentDetails instanceof WorkflowDetails);
+        $steps->each(function (WorkflowStep $step) use ($event) {
+            assert($step->currentDetails instanceof WorkflowDetails);
 
-            $workflowRunStep = new WorkflowRunStep(['execute_at' => $this->getStepScheduledAt($workflowStep, $event)]);
+            $workflowRunStep = new WorkflowRunStep([
+                'execute_at' => $this->getStepScheduledAt($step, $event),
+            ]);
 
-            $workflowRun = $workflowStep->workflow->workflowTrigger->workflowRun;
-
+            $workflowRun = $step->workflow->workflowTrigger->workflowRun;
             $workflowRunStep->workflowRun()->associate($workflowRun);
-            $workflowRunStep->details()->associate($workflowStep->currentDetails);
+            $workflowRunStep->details()->associate($step->currentDetails);
 
             $workflowRunStep->save();
         });
