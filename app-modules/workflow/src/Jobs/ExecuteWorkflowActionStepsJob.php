@@ -41,8 +41,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Support\Facades\Bus;
-use Throwable;
 
 class ExecuteWorkflowActionStepsJob implements ShouldQueue
 {
