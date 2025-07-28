@@ -40,7 +40,6 @@ use AdvisingApp\Ai\Actions\GenerateQnaAdvisorWidgetEmbedCode;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Form\Rules\IsDomain;
-use App\Features\QnaAdvisorEmbedFeature;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
 use Filament\Forms\Components\Actions;
@@ -71,7 +70,7 @@ class QnaAdvisorEmbed extends EditRecord
         /** @var User $user */
         $user = auth()->user();
 
-        return QnaAdvisorEmbedFeature::active() && $user->can('qna_advisor_embed.view-any') && $user->can('qna_advisor_embed.*.view') && parent::canAccess($parameters);
+        return $user->can('qna_advisor_embed.view-any') && $user->can('qna_advisor_embed.*.view') && parent::canAccess($parameters);
     }
 
     public function form(Form $form): Form

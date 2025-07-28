@@ -34,17 +34,27 @@
 </COPYRIGHT>
 */
 
-use App\Features\OnlineAdmissionGenerateProspect;
-use Illuminate\Database\Migrations\Migration;
+namespace AdvisingApp\StudentDataModel\DataTransferObjects;
 
-return new class () extends Migration {
-    public function up(): void
-    {
-        OnlineAdmissionGenerateProspect::activate();
-    }
+use Spatie\LaravelData\Attributes\MapName;
+use Spatie\LaravelData\Data;
+use Spatie\LaravelData\Mappers\SnakeCaseMapper;
+use Spatie\LaravelData\Optional;
 
-    public function down(): void
-    {
-        OnlineAdmissionGenerateProspect::deactivate();
-    }
-};
+#[MapName(SnakeCaseMapper::class)]
+class StudentProgramData extends Data
+{
+    public function __construct(
+        public string | Optional | null $acadCareer,
+        public string | Optional | null $division,
+        /** @var array<string> */
+        public array $acadPlan,
+        public string | Optional | null $progStatus,
+        public string | Optional | null $cumGpa,
+        public string | Optional | null $semester,
+        public string | Optional | null $descr,
+        public string | Optional | null $foi,
+        public string | Optional | null $changeDt,
+        public string $declareDt,
+    ) {}
+}

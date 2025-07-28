@@ -34,17 +34,30 @@
 </COPYRIGHT>
 */
 
-use App\Features\QnaAdvisorEmbedFeature;
-use Illuminate\Database\Migrations\Migration;
+namespace AdvisingApp\StudentDataModel\Actions;
 
-return new class () extends Migration {
-    public function up(): void
-    {
-        QnaAdvisorEmbedFeature::activate();
-    }
+use AdvisingApp\StudentDataModel\DataTransferObjects\StudentProgramData;
+use AdvisingApp\StudentDataModel\Models\Program;
+use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Support\Facades\DB;
 
-    public function down(): void
+class PutStudentPrograms
+{
+    /**
+     * @param Student $student
+     * @param array<StudentProgramData>  $requestData
+     */
+    public function execute(Student $student, array $requestData): void
     {
-        QnaAdvisorEmbedFeature::deactivate();
+        DB::transaction(function () use ($requestData, $student) {
+            $student->programs()->delete();
+
+            foreach ($requestData as $programData) {
+                $program = new Program();
+                $program->fill($programData->toArray());
+                $program->student()->associate($student);
+                $program->save();
+            }
+        });
     }
-};
+}
