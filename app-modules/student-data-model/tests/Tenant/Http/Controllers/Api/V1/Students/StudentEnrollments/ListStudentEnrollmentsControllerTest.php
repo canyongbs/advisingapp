@@ -35,7 +35,6 @@
 */
 
 use AdvisingApp\StudentDataModel\Models\Enrollment;
-use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\SystemUser;
 use Laravel\Sanctum\Sanctum;
@@ -128,7 +127,7 @@ it('can filter student enrollments by all attributes', function (string $request
     '`faculty_name`' => ['faculty_name', 'Dr. Smith', ['faculty_name' => 'Dr. Smith'], ['faculty_name' => 'Dr. Johnson'], 'faculty_name', 'Dr. Smith'],
     '`faculty_email`' => ['faculty_email', 'smith@edu.in', ['faculty_email' => 'smith@edu.in'], ['faculty_email' => 'johnson@edu.in'], 'faculty_email', 'smith@edu.in'],
     '`semester_code`' => ['semester_code', '4201', ['semester_code' => '4201'], ['semester_code' => '4202'], 'semester_code', '4201'],
-    '`semester_name`' => ['semester_name', "Fall 2006", ['semester_name' => "Fall 2006"], ['semester_name' => "Spring Cohort A 2006"], 'semester_name', "Fall 2006"],
+    '`semester_name`' => ['semester_name', 'Fall 2006', ['semester_name' => 'Fall 2006'], ['semester_name' => 'Spring Cohort A 2006'], 'semester_name', 'Fall 2006'],
     '`start_date`' => ['start_date', '2024-10-01T00:00:00.000000Z', ['start_date' => '2024-10-01T00:00:00.000000Z'], ['start_date' => '2024-10-12T19:05:00.000000Z'], 'start_date', '2024-10-01T00:00:00.000000Z'],
     '`end_date`' => ['end_date', '2024-10-10T00:00:00.000000Z', ['end_date' => '2024-10-10T00:00:00.000000Z'], ['end_date' => '2024-10-20T19:05:00.000000Z'], 'end_date', '2024-10-10T00:00:00.000000Z'],
 ]);
