@@ -50,6 +50,8 @@ abstract class Authenticatable extends BaseAuthenticatable
 
     public const SUPER_ADMIN_ROLE = 'SaaS Global Admin';
 
+    public const PARTNER_ADMIN_ROLE = 'Partner Admin';
+
     protected bool $isSuperAdmin;
 
     /**
