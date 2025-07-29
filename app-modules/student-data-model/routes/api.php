@@ -40,6 +40,8 @@ use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\ListStudentsCo
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentEmailAddresses\CreateStudentEmailAddressController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentEmailAddresses\DeleteStudentEmailAddressController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentEmailAddresses\UpdateStudentEmailAddressController;
+use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentEnrollments\ListStudentEnrollmentsController;
+use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentEnrollments\PutStudentEnrollmentsController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentPhoneNumbers\CreateStudentPhoneNumberController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentPhoneNumbers\DeleteStudentPhoneNumberController as StudentPhoneNumbersDeleteStudentPhoneNumberController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentPhoneNumbers\UpdateStudentPhoneNumberController;
@@ -92,6 +94,12 @@ Route::api(majorVersion: 1, routes: function () {
                 ->group(function () {
                     Route::get('/', ListStudentProgramsController::class)->name('index');
                     Route::put('/', PutStudentProgramsController::class)->name('put');
+                });
+            Route::name('enrollments.')
+                ->prefix('{student}/enrollments')
+                ->group(function () {
+                    Route::get('/', ListStudentEnrollmentsController::class)->name('index');
+                    Route::put('/', PutStudentEnrollmentsController::class)->name('put');
                 });
         });
 });
