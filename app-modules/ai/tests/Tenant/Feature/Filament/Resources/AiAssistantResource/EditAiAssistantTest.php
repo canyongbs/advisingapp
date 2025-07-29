@@ -149,7 +149,7 @@ it('can edit a record', function () use ($licenses, $permissions) {
     assertDatabaseHas(
         AiAssistant::class,
         $request->except([
-            'avatar','model'
+            'avatar',
         ])->toArray()
     );
 
