@@ -77,6 +77,10 @@ class ListRoles extends ListRecords
                 if (! $user?->isSuperAdmin()) {
                     $query->where('name', '!=', Authenticatable::SUPER_ADMIN_ROLE);
                 }
+
+                if (! $user?->isSuperAdmin() || ! $user?->isPartnerAdmin()) {
+                    $query->where('name', '!=', Authenticatable::PARTNER_ADMIN_ROLE);
+                }
             })
             ->columns([
                 IdColumn::make(),
@@ -106,7 +110,7 @@ class ListRoles extends ListRecords
                     ->modalDescription('This action will make a copy of the role and all associate permissions. This action will not, however, automatically attach any users to that role. To continue, please enter a name for the new role and then select the "Duplicate" option below.')
                     ->modalHeading('Duplicate Role')
                     ->modalSubmitActionLabel('Duplicate')
-                    ->visible(fn (Role $record): bool => $record->name !== Authenticatable::SUPER_ADMIN_ROLE)
+                    ->visible(fn (Role $record): bool => $record->name !== Authenticatable::SUPER_ADMIN_ROLE && $record->name !== Authenticatable::PARTNER_ADMIN_ROLE)
                     ->form([
                         TextInput::make('name')
                             ->label('New Role Name')
