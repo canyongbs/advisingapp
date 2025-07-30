@@ -71,14 +71,15 @@ class ListRoles extends ListRecords
     {
         return $table
             ->modifyQueryUsing(function (Builder $query) {
-                /** @var User $user */
                 $user = auth()->user();
 
-                if (! $user?->isSuperAdmin()) {
+                assert($user instanceof Authenticatable);
+
+                if (! $user->isSuperAdmin()) {
                     $query->where('name', '!=', Authenticatable::SUPER_ADMIN_ROLE);
                 }
 
-                if (! $user?->isSuperAdmin() || ! $user?->isPartnerAdmin()) {
+                if (! $user->isSuperAdmin() && ! $user->isPartnerAdmin()) {
                     $query->where('name', '!=', Authenticatable::PARTNER_ADMIN_ROLE);
                 }
             })
