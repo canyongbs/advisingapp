@@ -63,7 +63,7 @@ class AuthServiceProvider extends ServiceProvider
             function (Authenticatable $authenticatable, string $ability, bool|null|Response $result, mixed $arguments) {
                 return (
                     (! $result instanceof FeatureAccessResponse)
-                    && $authenticatable->isSuperAdmin()
+                    && ($authenticatable->isSuperAdmin() || $authenticatable->isPartnerAdmin())
                 )
                     ? true
                     : $result;
