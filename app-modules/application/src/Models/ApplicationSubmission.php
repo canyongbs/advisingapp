@@ -44,6 +44,7 @@ use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @mixin IdeHelperApplicationSubmission
@@ -91,6 +92,14 @@ class ApplicationSubmission extends Submission
         return [
             'state.classification',
         ];
+    }
+
+    /**
+     * @return HasMany<ApplicationSubmissionsChecklistItem, $this>
+     */
+    public function checklistItems(): HasMany
+    {
+        return $this->hasMany(ApplicationSubmissionsChecklistItem::class, 'application_submission_id');
     }
 
     protected static function booted(): void
