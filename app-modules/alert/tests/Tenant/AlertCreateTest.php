@@ -81,6 +81,7 @@ it('dispatches the proper notifications to subscribers on created', function () 
 });
 
 it('only notifies active users of alerts', function () {
+    // @Todo: This tests works but we should change it to use the Listener instead of the Notification
     Notification::fake();
 
     $deletedUser = User::factory()->licensed(LicenseType::cases())->create();
