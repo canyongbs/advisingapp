@@ -83,7 +83,10 @@ enum LicenseType: string implements HasLabel
     {
         return License::query()
             ->whereDoesntHave('user', function ($query) {
-                $query->role(Authenticatable::SUPER_ADMIN_ROLE);
+                $query->role([
+                    Authenticatable::SUPER_ADMIN_ROLE,
+                    Authenticatable::PARTNER_ADMIN_ROLE,
+                ]);
             })
             ->where('type', $this)
             ->count();

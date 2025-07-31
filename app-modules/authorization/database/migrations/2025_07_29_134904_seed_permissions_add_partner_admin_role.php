@@ -34,45 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace App\Models;
+use AdvisingApp\Authorization\Models\Role;
+use App\Models\Authenticatable;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Authorization\Models\Concerns\HasRolesWithPivot;
-use App\Models\Concerns\CanOrElse;
-use Illuminate\Foundation\Auth\User as BaseAuthenticatable;
-use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
-
-abstract class Authenticatable extends BaseAuthenticatable
-{
-    use HasRolesWithPivot;
-    use CanOrElse;
-    use UsesTenantConnection;
-
-    public const SUPER_ADMIN_ROLE = 'SaaS Global Admin';
-
-    public const PARTNER_ADMIN_ROLE = 'Partner Admin';
-
-    protected bool $isSuperAdmin;
-
-    protected bool $isPartnerAdmin;
-
-    /**
-     * @param LicenseType | string | array<LicenseType | string> | null $type
-     */
-    abstract public function hasLicense(LicenseType | string | array | null $type): bool;
-
-    /**
-     * @param LicenseType | string | array<LicenseType | string> | null $type
-     */
-    abstract public function hasAnyLicense(LicenseType | string | array | null $type): bool;
-
-    public function isSuperAdmin(): bool
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->isSuperAdmin ??= $this->hasRole(static::SUPER_ADMIN_ROLE);
+        Role::create([
+            'name' => Authenticatable::PARTNER_ADMIN_ROLE,
+            'guard_name' => 'web',
+        ]);
     }
 
-    public function isPartnerAdmin(): bool
+    public function down(): void
     {
-        return $this->isPartnerAdmin ??= $this->hasRole(static::PARTNER_ADMIN_ROLE);
+        Role::query()
+            ->where('name', Authenticatable::PARTNER_ADMIN_ROLE)
+            ->where('guard_name', 'web')
+            ->delete();
     }
-}
+};

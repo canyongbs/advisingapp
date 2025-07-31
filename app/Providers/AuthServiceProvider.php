@@ -59,11 +59,16 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        Gate::after(function (Authenticatable $authenticatable, string $ability, bool|null|Response $result, mixed $arguments) {
-            return ((! $result instanceof FeatureAccessResponse) && $authenticatable->isSuperAdmin())
+        Gate::after(
+            function (Authenticatable $authenticatable, string $ability, bool|null|Response $result, mixed $arguments) {
+                return (
+                    (! $result instanceof FeatureAccessResponse)
+                    && ($authenticatable->isSuperAdmin() || $authenticatable->isPartnerAdmin())
+                )
                     ? true
                     : $result;
-        });
+            }
+        );
 
         collect(Feature::cases())
             ->each(fn (Feature $feature) => $feature->generateGate());
