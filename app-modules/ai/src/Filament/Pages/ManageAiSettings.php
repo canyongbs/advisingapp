@@ -50,6 +50,7 @@ use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
 use CanyonGBS\Common\Filament\Forms\Components\Slider;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -131,7 +132,7 @@ class ManageAiSettings extends SettingsPage
                                     ->helperText('Instructions are used to provide context to the AI Assistant on how to respond to user queries.')
                                     ->required()
                                     ->rows(8)
-                                    ->maxLength(fn (?AiAssistant $record): int => ($record?->model ?? AiModel::OpenAiGpt4o)->getService()->getMaxAssistantInstructionsLength()),
+                                    ->maxLength(fn (?AiAssistant $record): int => ($record->model ?? AiModel::OpenAiGpt4o)->getService()->getMaxAssistantInstructionsLength()),
                             ]),
                     ]),
                 Select::make('max_tokens')

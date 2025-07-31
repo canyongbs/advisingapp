@@ -60,6 +60,7 @@ class PrepareAiThreadCloning implements ShouldQueue
     public function __construct(
         public AiThread $thread,
         public AiThreadShareTarget $targetType,
+        /** @var array<string> $targetIds */
         public array $targetIds,
         public User $sender,
     ) {}
@@ -115,6 +116,7 @@ class PrepareAiThreadCloning implements ShouldQueue
             ->dispatch();
     }
 
+    /** @return array<int, CloneAiThread> */
     protected function generateSingleUserShareJobs(): array
     {
         return User::query()
@@ -126,6 +128,7 @@ class PrepareAiThreadCloning implements ShouldQueue
             ->all();
     }
 
+    /** @return array<int, CloneAiThread> */
     protected function generateTeamShareJobs(): array
     {
         return Team::query()
