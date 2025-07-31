@@ -58,7 +58,7 @@ class CreateAiMessageLog
             'request' => $message->request,
             'sent_at' => now(),
             'user_id' => $message->user_id,
-            'ai_assistant_name' => $message->thread->assistant->name,
+            'ai_assistant_name' => $message->thread?->assistant?->name,
             'feature' => AiMessageLogFeature::Conversations,
         ]);
     }

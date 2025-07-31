@@ -128,6 +128,18 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/app-modules/ai/src/Jobs/PrepareAiThreadCloning.php',
 ];
 $ignoreErrors[] = [
+	'message' => '#^Using nullsafe property access on non\\-nullable type AdvisingApp\\\\Ai\\\\Models\\\\AiAssistant\\. Use \\-\\> instead\\.$#',
+	'identifier' => 'nullsafe.neverNull',
+	'count' => 1,
+	'path' => __DIR__ . '/app-modules/ai/src/Listeners/CreateAiMessageLog.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Using nullsafe property access on non\\-nullable type AdvisingApp\\\\Ai\\\\Models\\\\AiThread\\. Use \\-\\> instead\\.$#',
+	'identifier' => 'nullsafe.neverNull',
+	'count' => 1,
+	'path' => __DIR__ . '/app-modules/ai/src/Listeners/CreateAiMessageLog.php',
+];
+$ignoreErrors[] = [
 	'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:withTrashed\\(\\)\\.$#',
 	'identifier' => 'method.notFound',
 	'count' => 1,
@@ -1270,24 +1282,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
 	'message' => '#^Call to an undefined method Illuminate\\\\Contracts\\\\Database\\\\Eloquent\\\\Builder\\:\\:web\\(\\)\\.$#',
 	'identifier' => 'method.notFound',
-	'count' => 1,
-	'path' => __DIR__ . '/app-modules/authorization/src/Filament/Resources/RoleResource/Pages/ListRoles.php',
-];
-$ignoreErrors[] = [
-	'message' => '#^Call to method isSuperAdmin\\(\\) on an unknown class AdvisingApp\\\\Authorization\\\\Filament\\\\Resources\\\\RoleResource\\\\Pages\\\\User\\.$#',
-	'identifier' => 'class.notFound',
-	'count' => 1,
-	'path' => __DIR__ . '/app-modules/authorization/src/Filament/Resources/RoleResource/Pages/ListRoles.php',
-];
-$ignoreErrors[] = [
-	'message' => '#^PHPDoc tag @var for variable \\$user contains unknown class AdvisingApp\\\\Authorization\\\\Filament\\\\Resources\\\\RoleResource\\\\Pages\\\\User\\.$#',
-	'identifier' => 'class.notFound',
-	'count' => 1,
-	'path' => __DIR__ . '/app-modules/authorization/src/Filament/Resources/RoleResource/Pages/ListRoles.php',
-];
-$ignoreErrors[] = [
-	'message' => '#^Using nullsafe method call on non\\-nullable type AdvisingApp\\\\Authorization\\\\Filament\\\\Resources\\\\RoleResource\\\\Pages\\\\User\\. Use \\-\\> instead\\.$#',
-	'identifier' => 'nullsafe.neverNull',
 	'count' => 1,
 	'path' => __DIR__ . '/app-modules/authorization/src/Filament/Resources/RoleResource/Pages/ListRoles.php',
 ];
