@@ -38,9 +38,14 @@ namespace AdvisingApp\Form\Models;
 
 use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Observers\FormObserver;
+use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
+use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 /**
  * @mixin IdeHelperForm
@@ -48,6 +53,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 #[ObservedBy([FormObserver::class])]
 class Form extends Submissible
 {
+    use HasRelationships;
+
     protected $fillable = [
         'name',
         'description',
@@ -104,5 +111,21 @@ class Form extends Submissible
     public function emailAutoReply(): HasOne
     {
         return $this->hasOne(FormEmailAutoReply::class);
+    }
+
+    /**
+     * @return MorphMany<WorkflowTrigger, $this>
+     */
+    public function workflowTriggers(): MorphMany
+    {
+        return $this->morphMany(WorkflowTrigger::class, 'related');
+    }
+
+    /**
+     * @return HasManyDeep<Model, $this>
+     */
+    public function workflows(): HasManyDeep
+    {
+        return $this->hasManyDeepFromRelations($this->workflowTriggers(), (new WorkflowTrigger())->workflow());
     }
 }

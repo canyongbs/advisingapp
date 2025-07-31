@@ -37,17 +37,14 @@
 namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Workflow\Models\Contracts\WorkflowAction;
-use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @mixin IdeHelperWorkflowTaskDetails
  */
-class WorkflowTaskDetails extends BaseModel implements Auditable, WorkflowAction
+class WorkflowTaskDetails extends WorkflowDetails implements Auditable
 {
     use SoftDeletes;
     use AuditableTrait;
@@ -64,11 +61,8 @@ class WorkflowTaskDetails extends BaseModel implements Auditable, WorkflowAction
         'due' => 'datetime',
     ];
 
-    /**
-     * @return BelongsTo<WorkflowStep, $this>
-     */
-    public function workflowStep(): BelongsTo
+    public function getType(): string
     {
-        return $this->belongsTo(WorkflowStep::class);
+        return 'workflow_task_details';
     }
 }

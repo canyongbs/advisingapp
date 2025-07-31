@@ -34,48 +34,48 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Models;
+namespace AdvisingApp\Workflow\Filament\Resources;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Workflow\Filament\Resources\WorkflowResource\Pages\EditWorkflow;
+use AdvisingApp\Workflow\Filament\Resources\WorkflowResource\Pages\ListWorkflows;
+use AdvisingApp\Workflow\Filament\Resources\WorkflowResource\RelationManagers\WorkflowStepsRelationManager;
+use AdvisingApp\Workflow\Models\Workflow;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
 
-/**
- * @mixin IdeHelperWorkflow
- */
-class Workflow extends BaseModel implements Auditable
+class WorkflowResource extends Resource
 {
-    use SoftDeletes;
-    use AuditableTrait;
-    use HasUuids;
+    protected static ?string $model = Workflow::class;
 
-    protected $fillable = [
-        'workflow_trigger_id',
-        'name',
-        'is_enabled',
-    ];
+    protected static bool $shouldRegisterNavigation = false;
 
-    protected $casts = [
-        'is_enabled' => 'boolean',
-    ];
-
-    /**
-     * @return BelongsTo<WorkflowTrigger, $this>
-     */
-    public function workflowTrigger(): BelongsTo
+    public static function form(Form $form): Form
     {
-        return $this->belongsTo(WorkflowTrigger::class);
+        return $form
+            ->schema([
+                TextInput::make('name')
+                    ->required()
+                    ->maxLength(255),
+                Toggle::make('is_enabled')
+                    ->label('Enabled?')
+                    ->inline(false),
+            ]);
     }
 
-    /**
-     * @return HasMany<WorkflowStep, $this>
-     */
-    public function workflowSteps(): HasMany
+    public static function getRelations(): array
     {
-        return $this->hasMany(WorkflowStep::class);
+        return [
+            WorkflowStepsRelationManager::class,
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListWorkflows::route('/'),
+            'edit' => EditWorkflow::route('/{record}/edit'),
+        ];
     }
 }

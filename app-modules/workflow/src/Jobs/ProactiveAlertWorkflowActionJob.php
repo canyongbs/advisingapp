@@ -34,48 +34,51 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Models;
+namespace AdvisingApp\Workflow\Jobs;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Alert\Models\Alert;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\Workflow\Models\WorkflowProactiveAlertDetails;
+use AdvisingApp\Workflow\Models\WorkflowRunStepRelated;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
-/**
- * @mixin IdeHelperWorkflow
- */
-class Workflow extends BaseModel implements Auditable
+class ProactiveAlertWorkflowActionJob extends ExecuteWorkflowActionJob
 {
-    use SoftDeletes;
-    use AuditableTrait;
-    use HasUuids;
-
-    protected $fillable = [
-        'workflow_trigger_id',
-        'name',
-        'is_enabled',
-    ];
-
-    protected $casts = [
-        'is_enabled' => 'boolean',
-    ];
-
-    /**
-     * @return BelongsTo<WorkflowTrigger, $this>
-     */
-    public function workflowTrigger(): BelongsTo
+    public function handle(): void
     {
-        return $this->belongsTo(WorkflowTrigger::class);
-    }
+        try {
+            DB::beginTransaction();
 
-    /**
-     * @return HasMany<WorkflowStep, $this>
-     */
-    public function workflowSteps(): HasMany
-    {
-        return $this->hasMany(WorkflowStep::class);
+            $educatable = $this->workflowRunStep->workflowRun->related;
+
+            assert($educatable instanceof Educatable);
+
+            $details = $this->workflowRunStep->details;
+
+            assert($details instanceof WorkflowProactiveAlertDetails);
+
+            $alert = Alert::query()->create([
+                'concern_type' => $educatable->getMorphClass(),
+                'concern_id' => $educatable->getKey(),
+                'description' => $details->description,
+                'severity' => $details->severity,
+                'status_id' => $details->status_id,
+                'suggested_intervention' => $details->suggested_intervention,
+            ]);
+
+            $workflowRunStepRelated = new WorkflowRunStepRelated();
+
+            $workflowRunStepRelated->workflowRunStep()->associate($this->workflowRunStep);
+            $workflowRunStepRelated->related()->associate($alert);
+
+            $workflowRunStepRelated->save();
+
+            DB::commit();
+        } catch (Throwable $throw) {
+            DB::rollBack();
+
+            throw $throw;
+        }
     }
 }
