@@ -171,7 +171,7 @@ document.addEventListener('alpine:init', () => {
                             this.error = event.message;
                             this.isRetryable = true;
                             this.isRateLimited = false;
-                        } 
+                        }
                         // else if (event.type === 'image') {
                         //     this.error = null;
                         //     this.isRateLimited = false;
