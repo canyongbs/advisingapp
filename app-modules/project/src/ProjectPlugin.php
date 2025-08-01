@@ -58,4 +58,6 @@ class ProjectPlugin implements Plugin
             for: 'AdvisingApp\\Project\\Filament\\Pages'
         );
     }
+
+    public function boot(Panel $panel): void {}
 }
