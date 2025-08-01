@@ -34,15 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Models\Contracts;
+namespace AdvisingApp\Workflow\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-interface WorkflowAction
+/**
+ * @mixin IdeHelperWorkflowRunStepRelated
+ */
+class WorkflowRunStepRelated extends BaseModel implements Auditable
 {
+    use SoftDeletes;
+    use AuditableTrait;
+    use HasUuids;
+
+    protected $fillable = [
+        'workflow_run_step_id',
+        'related_id',
+        'related_type',
+    ];
+
     /**
-     * @return BelongsTo<covariant Model, covariant Model>
+     * @return BelongsTo<WorkflowRun, $this>
      */
-    public function workflowStep(): BelongsTo;
+    public function workflowRun(): BelongsTo
+    {
+        return $this->belongsTo(WorkflowRun::class);
+    }
 }

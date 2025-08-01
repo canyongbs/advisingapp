@@ -34,35 +34,47 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Models;
+namespace AdvisingApp\Workflow\Jobs;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Alert\Models\Alert;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\Workflow\Models\WorkflowProactiveAlertDetails;
+use AdvisingApp\Workflow\Models\WorkflowRunStepRelated;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
-/**
- * @mixin IdeHelperWorkflowTaskDetails
- */
-class WorkflowTaskDetails extends WorkflowDetails implements Auditable
+class ProactiveAlertWorkflowActionJob extends ExecuteWorkflowActionOnEducatableJob
 {
-    use SoftDeletes;
-    use AuditableTrait;
-    use HasUuids;
-
-    protected $fillable = [
-        'title',
-        'description',
-        'due',
-        'workflow_step_id',
-    ];
-
-    protected $casts = [
-        'due' => 'datetime',
-    ];
-
-    public function getType(): string
+    public function handle(): void
     {
-        return 'task';
+        try {
+            DB::beginTransaction();
+
+            $educatable = $this->workflowRunStep->workflowRun->related;
+
+            assert($educatable instanceof Educatable);
+
+            $details = WorkflowProactiveAlertDetails::whereId($this->workflowRunStep->details_id)->first();
+
+            $alert = Alert::query()->create([
+                'concern_type' => $educatable->getMorphClass(),
+                'concern_id' => $educatable->getKey(),
+                'description' => $details->description,
+                'severity' => $details->severity,
+                'status_id' => $details->status_id,
+                'suggested_intervention' => $details->suggested_intervention,
+            ]);
+
+            WorkflowRunStepRelated::create([
+                'workflow_run_step_id' => $this->workflowRunStep->id,
+                'related' => $alert,
+            ]);
+
+            DB::commit();
+        } catch (Throwable $throw) {
+            DB::rollBack();
+
+            throw $throw;
+        }
     }
 }
