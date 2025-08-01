@@ -53,6 +53,57 @@
                     {{ $this->newFolderAction }}
                 </div>
 
+                <template x-if="$wire.incompleteRequests.length">
+                    <div
+                        class="flex flex-col gap-y-1 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900">
+                        <div class="px-2 text-sm text-gray-500 dark:text-gray-400">
+                            In-progress requests
+                        </div>
+
+                        <ul class="flex flex-col gap-y-1">
+                            <template
+                                x-for="request in $wire.incompleteRequests"
+                                :key="request.id"
+                            >
+                                <li
+                                    :id="`request-${request.id}`"
+                                    :class="{
+                                        'px-2 group flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1': true,
+                                        'bg-gray-100 dark:bg-white/5': request.id === $wire.selectedRequestId
+                                    }"
+                                >
+                                    <div class="flex min-w-0 flex-1 items-center gap-3">
+                                        <button
+                                            class="relative flex min-w-0 flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-left text-sm"
+                                            type="button"
+                                            x-on:click="selectRequest(request)"
+                                        >
+                                            <span
+                                                x-text="request.topic"
+                                                :class="{
+                                                    'flex-1 truncate': true,
+                                                    'text-gray-700 dark:text-gray-200': request.id !== $wire
+                                                        .selectedRequestId,
+                                                    'text-primary-600 dark:text-primary-400': request.id === $wire
+                                                        .selectedRequestId
+                                                }"
+                                            >
+                                            </span>
+                                        </button>
+                                    </div>
+
+                                    <template x-if="loading.type === 'request' && loading.identifier === request.id">
+                                        <x-filament::loading-indicator class="h-5 w-5" />
+                                    </template>
+
+                                    <x-filament::badge>
+                                        <span x-text="Math.floor(request.progress_percentage)"></span>%
+                                    </x-filament::badge>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+                </template>
                 <template x-if="$wire.requestsWithoutAFolder.length">
                     <ul
                         class="flex flex-col gap-y-1 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900"
@@ -415,7 +466,9 @@
 
         <div
             class="grid h-full flex-1 grid-cols-1 grid-rows-[1fr_auto] gap-2 lg:grid-cols-3 lg:gap-x-6 lg:gap-y-4 2xl:grid-cols-4"
-            x-data="requests($wire)"
+            x-data="requests($wire, @js(
+                auth()->user()->getKey()
+            ))"
         >
             <div class="col-span-1 hidden overflow-y-auto px-px pt-3 lg:block lg:pt-6">
                 {{ $sidebarContent() }}
@@ -537,11 +590,12 @@
                                 </template>
                             </ul>
 
-                            @if ($showEmailResults)
-                                <section class="mt-3 px-3 text-right">
-                                    {{ ($this->emailResearchRequestAction)(['researchRequest' => $this->request->getKey()]) }}
-                                </section>
-                            @endif
+                            <section
+                                class="mt-3 px-3 text-right"
+                                x-show="isFinished"
+                            >
+                                {{ ($this->emailResearchRequestAction)(['researchRequest' => $this->request->getKey()]) }}
+                            </section>
                         </div>
                     </section>
                 </div>

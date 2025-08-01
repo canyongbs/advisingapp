@@ -67,8 +67,12 @@ trait CanManageRequests
     /**
      * @var array<mixed>
      */
-    #[Locked]
     public array $requestsWithoutAFolder = [];
+
+    /**
+     * @var array<mixed>
+     */
+    public array $incompleteRequests = [];
 
     public function mount(): void
     {
@@ -90,10 +94,29 @@ trait CanManageRequests
     public function mountCanManageRequests(): void
     {
         $this->requestsWithoutAFolder = $this->getRequestsWithoutAFolder();
+        $this->incompleteRequests = $this->getIncompleteRequests();
 
         if (! $this->request) {
             $this->loadFirstRequest();
         }
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    public function getIncompleteRequests(): array
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user
+            ->researchRequests()
+            ->whereNotNull('started_at')
+            ->whereNull('finished_at')
+            ->latest('updated_at')
+            ->get()
+            ->map(fn (ResearchRequest $request): ResearchRequest => data_set($request, 'progress_percentage', $request->getProgressPercentage()))
+            ->toArray();
     }
 
     /**
@@ -128,13 +151,6 @@ trait CanManageRequests
         }
 
         $request = ResearchRequest::find($request['id']);
-
-        if (
-            $this->request &&
-            blank($this->request->title)
-        ) {
-            $this->request->delete();
-        }
 
         if (! $request->user()->is(auth()->user())) {
             abort(404);

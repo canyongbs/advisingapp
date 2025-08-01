@@ -38,6 +38,7 @@ namespace AdvisingApp\Research\Jobs;
 
 use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
 use AdvisingApp\Research\Events\ResearchRequestFinished;
+use AdvisingApp\Research\Events\ResearchRequestProgress;
 use AdvisingApp\Research\Models\ResearchRequest;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -71,6 +72,10 @@ class FinishResearchRequest implements ShouldQueue
                 'researchRequest' => $this->researchRequest,
             ]));
 
+            broadcast(app(ResearchRequestProgress::class, [
+                'researchRequest' => $this->researchRequest,
+            ]));
+
             return;
         }
 
@@ -93,6 +98,10 @@ class FinishResearchRequest implements ShouldQueue
         $this->researchRequest->touch('finished_at');
 
         broadcast(app(ResearchRequestFinished::class, [
+            'researchRequest' => $this->researchRequest,
+        ]));
+
+        broadcast(app(ResearchRequestProgress::class, [
             'researchRequest' => $this->researchRequest,
         ]));
     }

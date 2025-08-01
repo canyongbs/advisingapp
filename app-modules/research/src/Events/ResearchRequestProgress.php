@@ -34,29 +34,53 @@
 </COPYRIGHT>
 */
 
+namespace AdvisingApp\Research\Events;
+
 use AdvisingApp\Research\Models\ResearchRequest;
-use App\Models\User;
-use Illuminate\Support\Facades\Broadcast;
+use Illuminate\Broadcasting\Channel;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
+use Illuminate\Foundation\Events\Dispatchable;
 
-/*
-|--------------------------------------------------------------------------
-| Broadcast Channels
-|--------------------------------------------------------------------------
-|
-| Here you may register all of the event broadcasting channels that your
-| application supports. The given channel authorization callbacks are
-| used to check if an authenticated user can listen to the channel.
-|
-*/
+class ResearchRequestProgress implements ShouldBroadcastNow
+{
+    use Dispatchable;
+    use InteractsWithSockets;
 
-Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
-    return (int) $user->id === (int) $id;
-});
+    /**
+     * Create a new event instance.
+     */
+    public function __construct(
+        public ResearchRequest $researchRequest,
+    ) {}
 
-Broadcast::channel('research-request-{researchRequestId}', function (User $user, string $researchRequestId) {
-    return ResearchRequest::find($researchRequestId)?->user()->is($user);
-});
+    public function broadcastAs(): string
+    {
+        return 'research-request.progress';
+    }
 
-Broadcast::channel('user-research-requests-{userId}', function (User $user, string $userId) {
-    return User::find($userId)?->is($user);
-});
+    /**
+     * @return array<string, mixed>
+     */
+    public function broadcastWith(): array
+    {
+        return [
+            'id' => $this->researchRequest->id,
+            'progress_percentage' => $this->researchRequest->refresh()->getProgressPercentage(),
+            'title' => $this->researchRequest->title,
+        ];
+    }
+
+    /**
+     * Get the channels the event should broadcast on.
+     *
+     * @return array<int, Channel>
+     */
+    public function broadcastOn(): array
+    {
+        return [
+            new PrivateChannel("user-research-requests-{$this->researchRequest->user?->getKey()}"),
+        ];
+    }
+}

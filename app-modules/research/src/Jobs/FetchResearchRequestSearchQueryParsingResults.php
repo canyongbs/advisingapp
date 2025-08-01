@@ -37,6 +37,7 @@
 namespace AdvisingApp\Research\Jobs;
 
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use AdvisingApp\Research\Events\ResearchRequestProgress;
 use AdvisingApp\Research\Events\ResearchRequestSearchResultsParsed;
 use AdvisingApp\Research\Models\ResearchRequest;
 use AdvisingApp\Research\Models\ResearchRequestParsedSearchResults;
@@ -119,6 +120,10 @@ class FetchResearchRequestSearchQueryParsingResults implements ShouldQueue
                 'researchRequest' => $this->researchRequest,
                 'parsedSearchResults' => $researchRequestParsedSearchResults,
                 'newSources' => $sources,
+            ]));
+
+            broadcast(app(ResearchRequestProgress::class, [
+                'researchRequest' => $this->researchRequest,
             ]));
         });
     }
