@@ -42,7 +42,7 @@ class Projects extends Page
 {
     protected static ?string $navigationGroup = 'Project Management';
 
-    protected static ?int $navigationSort = 20;
+    protected static ?int $navigationSort = 10;
 
     protected static ?string $title = 'Projects';
 
