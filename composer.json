@@ -54,6 +54,7 @@
         "canyon-gbs/integration-open-ai": "*",
         "canyon-gbs/multifactor-authentication": "*",
         "canyon-gbs/pipeline": "*",
+        "canyon-gbs/advising-app-project": "*",
         "canyon-gbs/research": "*",
         "canyon-gbs/segment": "*",
         "canyon-gbs/workflow": "*",

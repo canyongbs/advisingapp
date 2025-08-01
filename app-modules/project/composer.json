@@ -1,0 +1,26 @@
+{
+    "name": "canyon-gbs/advising-app-project",
+    "description": "",
+    "type": "library",
+    "version": "1.0",
+    "license": "proprietary",
+    "require": {
+        "filament/filament": "^3.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "AdvisingApp\\Project\\": "src/",
+            "AdvisingApp\\Project\\Tests\\": "tests/",
+            "AdvisingApp\\Project\\Database\\Factories\\": "database/factories/",
+            "AdvisingApp\\Project\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AdvisingApp\\Project\\Providers\\ProjectServiceProvider"
+            ]
+        }
+    }
+}
