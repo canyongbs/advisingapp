@@ -32,7 +32,7 @@
 </COPYRIGHT>
 */
 document.addEventListener('alpine:init', () => {
-    Alpine.data('requests', ($wire) => ({
+    Alpine.data('requests', ($wire, userId) => ({
         loading: {
             type: null,
             identifier: null,
@@ -41,6 +41,34 @@ document.addEventListener('alpine:init', () => {
         startFolder: null,
         dragging: false,
         expandedFolder: null,
+        init() {
+            Echo.private(`user-research-requests-${userId}`).listen('.research-request.progress', (event) => {
+                if (event.progress_percentage < 100) {
+                    this.$wire.incompleteRequests = this.$wire.incompleteRequests.map((request) => {
+                        if (request.id === event.id) {
+                            request.progress_percentage = event.progress_percentage;
+                        }
+
+                        return request;
+                    });
+
+                    return;
+                }
+
+                let incompleteRequest = this.$wire.incompleteRequests.find((request) => request.id === event.id);
+
+                if (!incompleteRequest) {
+                    return;
+                }
+
+                incompleteRequest.title = event.title;
+
+                this.$wire.requestsWithoutAFolder.unshift(incompleteRequest);
+                this.$wire.incompleteRequests = this.$wire.incompleteRequests.filter(
+                    (request) => request.id !== event.id,
+                );
+            });
+        },
         async drop(folderId) {
             try {
                 if (this.startFolder === folderId) {

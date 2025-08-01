@@ -50,14 +50,15 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\View;
 use Filament\Forms\Components\Wizard;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
+use Livewire\Features\SupportRedirects\Redirector;
 
 /**
  * @property-read Form $form
@@ -122,7 +123,6 @@ class NewResearchRequest extends Page
         return $form
             ->schema([
                 Wizard::make()
-                    ->startOnStep($this->researchRequest?->hasStarted() ? 6 : ($this->researchRequest?->questions?->count() ?? 0) + 1)
                     ->steps([
                         Step::make('Topic')
                             ->schema([
@@ -248,34 +248,29 @@ class NewResearchRequest extends Page
                                     ->addActionLabel('Add link')
                                     ->maxItems(5),
                             ])
-                            ->afterValidation(function (array $state) {
-                                if ($this->researchRequest->hasStarted()) {
-                                    return;
-                                }
-
-                                $this->researchRequest->update([
-                                    'links' => array_filter($this->form->getState()['links'] ?? [], filled(...)),
-                                ]);
-
-                                $this->form->saveRelationships();
-
-                                app(StartResearch::class)->execute($this->researchRequest);
-                            })
                             ->disabled(fn (): bool => $this->researchRequest?->hasStarted() ?? false),
-                        Step::make('Results')
-                            ->schema([
-                                View::make('research::results')
-                                    ->viewData(['researchRequest' => $this->researchRequest, 'showEmailResults' => false]),
-                            ]),
                     ])
-                    ->submitAction(filled($this->researchRequest?->title) ? Action::make('view')
-                        ->label('Continue')
+                    ->submitAction(Action::make('submit')
+                        ->label('Start researching')
                         ->icon('heroicon-m-arrow-right')
                         ->iconPosition('after')
-                        ->url(ManageResearchRequests::getUrl(['researchRequest' => $this->researchRequestId])) : null),
+                        ->action('start')),
             ])
             ->model($this->researchRequest)
             ->statePath('data');
+    }
+
+    public function start(): RedirectResponse | Redirector
+    {
+        $this->researchRequest->update([
+            'links' => array_filter($this->form->getState()['links'] ?? [], filled(...)),
+        ]);
+
+        $this->form->saveRelationships();
+
+        app(StartResearch::class)->execute($this->researchRequest);
+
+        return redirect(ManageResearchRequests::getUrl(['researchRequest' => $this->researchRequestId]));
     }
 
     #[Computed]

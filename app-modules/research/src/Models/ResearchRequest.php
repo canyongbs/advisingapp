@@ -37,6 +37,7 @@
 namespace AdvisingApp\Research\Models;
 
 use AdvisingApp\Ai\Enums\AiModel;
+use AdvisingApp\Ai\Settings\AiResearchAssistantSettings;
 use AdvisingApp\Research\Database\Factories\ResearchRequestFactory;
 use App\Models\BaseModel;
 use App\Models\User;
@@ -147,5 +148,152 @@ class ResearchRequest extends BaseModel implements HasMedia
     public function parsedSearchResults(): HasMany
     {
         return $this->hasMany(ResearchRequestParsedSearchResults::class);
+    }
+
+    public function getProgress(): int
+    {
+        if (! $this->hasStarted()) {
+            return 0;
+        }
+
+        if ($this->finished_at) {
+            return $this->getProgressTotal();
+        }
+
+        $total = 0;
+
+        $total += $this->parsedFiles()->count();
+
+        $total += $this->parsedLinks()->count();
+
+        if (filled($this->search_queries)) {
+            $total++;
+            $total += $this->parsedSearchResults()->count();
+        }
+
+        if (filled($this->outline['abstract']['heading'] ?? null)) {
+            $total++;
+        }
+
+        if (filled($this->outline['introduction']['heading'] ?? null)) {
+            $total++;
+        }
+
+        foreach ($this->outline['sections'] ?? [] as $section) {
+            if (filled($section['heading'] ?? null)) {
+                $total++;
+            }
+
+            foreach ($section['subsections'] ?? [] as $subsection) {
+                if (filled($subsection['heading'] ?? null)) {
+                    $total++;
+                }
+            }
+        }
+
+        if (filled($this->outline['conclusion']['heading'] ?? [])) {
+            $total++;
+        }
+
+        if (filled($this->remaining_outline['abstract']['heading'] ?? null)) {
+            $total--;
+        }
+
+        if (filled($this->remaining_outline['introduction']['heading'] ?? null)) {
+            $total--;
+        }
+
+        foreach ($this->remaining_outline['sections'] ?? [] as $section) {
+            if (filled($section['heading'] ?? null)) {
+                $total--;
+            }
+
+            foreach ($section['subsections'] ?? [] as $subsection) {
+                if (filled($subsection['heading'] ?? null)) {
+                    $total--;
+                }
+            }
+        }
+
+        if (filled($this->remaining_outline['conclusion']['heading'] ?? [])) {
+            $total--;
+        }
+
+        if (filled($this->title)) {
+            $total++;
+        }
+
+        return $total;
+    }
+
+    public function getProgressTotal(): int
+    {
+        $total = 0;
+
+        $total += $this->getMedia('files')->count();
+
+        $total += count($this->links ?? []);
+
+        // Search query generation
+        $total++;
+
+        if (filled($this->search_queries)) {
+            $total += count($this->search_queries);
+        } else {
+            $total += app(AiResearchAssistantSettings::class)->reasoning_effort->getNumberOfSearchQueries();
+        }
+
+        if (filled($this->outline['abstract']['heading'] ?? null)) {
+            $total++;
+        }
+
+        if (filled($this->outline['introduction']['heading'] ?? null)) {
+            $total++;
+        }
+
+        foreach ($this->outline['sections'] ?? [] as $section) {
+            if (filled($section['heading'] ?? null)) {
+                $total++;
+            }
+
+            foreach ($section['subsections'] ?? [] as $subsection) {
+                if (filled($subsection['heading'] ?? null)) {
+                    $total++;
+                }
+            }
+        }
+
+        if (filled($this->outline['conclusion']['heading'] ?? [])) {
+            $total++;
+        }
+
+        if (blank($this->outline)) {
+            $total += 50;
+        }
+
+        // Title
+        $total++;
+
+        return $total;
+    }
+
+    public function getProgressPercentage(): float
+    {
+        if (! $this->hasStarted()) {
+            return 0;
+        }
+
+        if ($this->finished_at) {
+            return 100;
+        }
+
+        $progress = $this->getProgress();
+        $progressTotal = $this->getProgressTotal();
+
+        if ($progress > $progressTotal) {
+            return 100;
+        }
+
+        return ($progress / $progressTotal) * 100;
     }
 }

@@ -38,6 +38,7 @@ namespace AdvisingApp\Research\Jobs;
 
 use AdvisingApp\Ai\Actions\FetchFileParsingResults;
 use AdvisingApp\Research\Events\ResearchRequestFileParsed;
+use AdvisingApp\Research\Events\ResearchRequestProgress;
 use AdvisingApp\Research\Models\ResearchRequestParsedFile;
 use Carbon\CarbonInterface;
 use Illuminate\Bus\Batchable;
@@ -83,6 +84,10 @@ class FetchResearchRequestFileParsingResults implements ShouldQueue
         broadcast(app(ResearchRequestFileParsed::class, [
             'researchRequest' => $this->media->model,
             'parsedFile' => $researchRequestParsedFile,
+        ]));
+
+        broadcast(app(ResearchRequestProgress::class, [
+            'researchRequest' => $this->media->model,
         ]));
     }
 }

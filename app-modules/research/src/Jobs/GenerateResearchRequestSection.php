@@ -38,6 +38,7 @@ namespace AdvisingApp\Research\Jobs;
 
 use AdvisingApp\Ai\Exceptions\MessageResponseException;
 use AdvisingApp\Ai\Settings\AiResearchAssistantSettings;
+use AdvisingApp\Research\Events\ResearchRequestProgress;
 use AdvisingApp\Research\Events\ResearchRequestResultsGenerated;
 use AdvisingApp\Research\Models\ResearchRequest;
 use AdvisingApp\Research\Models\ResearchRequestQuestion;
@@ -130,6 +131,10 @@ class GenerateResearchRequestSection implements ShouldQueue
 
         $this->researchRequest->remaining_outline = $remainingOutline;
         $this->researchRequest->save();
+
+        broadcast(app(ResearchRequestProgress::class, [
+            'researchRequest' => $this->researchRequest,
+        ]));
 
         if (blank($remainingOutline)) {
             $this->batch()->add(new FinishResearchRequest($this->researchRequest));
