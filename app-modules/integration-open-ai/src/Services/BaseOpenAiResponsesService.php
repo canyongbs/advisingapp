@@ -292,7 +292,7 @@ abstract class BaseOpenAiResponsesService implements AiService
                     ]),
                     app(ArraySchema::class, [
                         'name' => 'sections',
-                        'description' => 'An array of sections for the research report, each with a heading and subsections. There should be 10 sections in total.',
+                        'description' => 'An array of sections for the research report, each with a heading and subsections. There should be 6 sections in total.',
                         'items' => app(ObjectSchema::class, [
                             'name' => 'section',
                             'description' => 'A section in the research report.',
@@ -704,7 +704,8 @@ abstract class BaseOpenAiResponsesService implements AiService
 
         return OpenAiVectorStore::query()
             ->where('deployment_hash', $this->getDeploymentHash())
-            ->whereMorphedTo('file', $files) /** @phpstan-ignore argument.type */
+            ->whereMorphedTo('file', $files)
+            /** @phpstan-ignore argument.type */
             ->whereNotNull('ready_until')
             ->where('ready_until', '>=', now())
             ->pluck('vector_store_id')
@@ -992,7 +993,8 @@ abstract class BaseOpenAiResponsesService implements AiService
 
         $vectorStore = OpenAiVectorStore::query()
             ->where('deployment_hash', $deploymentHash)
-            ->whereMorphedTo('file', $file) /** @phpstan-ignore argument.type */
+            ->whereMorphedTo('file', $file)
+            /** @phpstan-ignore argument.type */
             ->first();
 
         if ($vectorStore) {
@@ -1000,7 +1002,8 @@ abstract class BaseOpenAiResponsesService implements AiService
         }
 
         $vectorStore = new OpenAiVectorStore();
-        $vectorStore->file()->associate($file); /** @phpstan-ignore argument.type */
+        $vectorStore->file()->associate($file);
+        /** @phpstan-ignore argument.type */
         $vectorStore->deployment_hash = $deploymentHash;
 
         return $vectorStore;
