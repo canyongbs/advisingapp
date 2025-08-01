@@ -38,11 +38,14 @@ namespace AdvisingApp\Report\Abstract\Concerns;
 
 use AdvisingApp\Report\Filament\Pages\ProspectCaseReport;
 use AdvisingApp\Report\Filament\Pages\StudentCaseReport;
+use AdvisingApp\Segment\Models\Segment;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Pages\Dashboard\Concerns\HasFiltersForm as ConcernsHasFiltersForm;
+use Illuminate\Database\Query\Expression;
 
 trait HasFiltersForm
 {
@@ -74,6 +77,20 @@ trait HasFiltersForm
                     ])
                     ->heading($heading)
                     ->columns(2),
+                Section::make()
+                    ->schema([
+                        Select::make('population_segments')
+                            ->label('Select Segments')
+                            ->options(fn (): array => Segment::query()
+                                ->orderBy('created_at', 'desc')
+                                ->take(15)
+                                ->pluck('name', 'id')
+                                ->all())
+                            ->getSearchResultsUsing(fn (string $search): array => Segment::query()->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')->take(50)->orderBy('name')->pluck('name', 'id')->all())
+                            ->searchable(),
+                    ])
+                    ->heading('Advanced Filtering')
+                    ->columns(1),
             ]);
     }
 }
