@@ -114,6 +114,7 @@ trait CanManageRequests
             ->whereNotNull('started_at')
             ->whereNull('finished_at')
             ->latest('updated_at')
+            ->where('started_at', '>=', now()->subDay())
             ->get()
             ->map(fn (ResearchRequest $request): ResearchRequest => data_set($request, 'progress_percentage', $request->getProgressPercentage()))
             ->toArray();
