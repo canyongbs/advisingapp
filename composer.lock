@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0670304ae3f02af57b54ca1c4969f292",
+    "content-hash": "29b1dead223c88d463808521c3e0d86c",
     "packages": [
         {
             "name": "ably/ably-php",
@@ -2263,6 +2263,41 @@
                     "AdvisingApp\\Portal\\Tests\\": "tests/",
                     "AdvisingApp\\Portal\\Database\\Factories\\": "database/factories/",
                     "AdvisingApp\\Portal\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/advising-app-project",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/project",
+                "reference": "bb96df8bc61a709a4b83d2a26f0bc64a4ae46d18"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AdvisingApp\\Project\\Providers\\ProjectServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AdvisingApp\\Project\\": "src/",
+                    "AdvisingApp\\Project\\Tests\\": "tests/",
+                    "AdvisingApp\\Project\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Project\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
