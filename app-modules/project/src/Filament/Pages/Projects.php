@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Project\Filament\Pages;
 
+use App\Features\ProjectComingSoonFeature;
+use App\Models\User;
 use Filament\Pages\Page;
 
 class Projects extends Page
@@ -47,4 +49,12 @@ class Projects extends Page
     protected static ?string $title = 'Projects';
 
     protected static string $view = 'filament.pages.coming-soon';
+
+    public static function canAccess(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return ProjectComingSoonFeature::active() && $user->can('project.view-any');
+    }
 }
