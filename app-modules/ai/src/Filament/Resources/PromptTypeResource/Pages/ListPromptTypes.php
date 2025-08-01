@@ -49,6 +49,7 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Collection;
 
 class ListPromptTypes extends ListRecords
 {
@@ -78,7 +79,7 @@ class ListPromptTypes extends ListRecords
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
-                        ->action(function ($records) {
+                        ->action(function (Collection $records) {
                             $deletedPromptTypesCount = PromptType::query()
                                 ->whereKey($records)
                                 ->whereDoesntHave('prompts')

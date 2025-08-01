@@ -32,9 +32,7 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
-
-declare(strict_types = 1);
+*/ declare(strict_types = 1);
 
 $ignoreErrors = [];
 $ignoreErrors[] = [
@@ -110,18 +108,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/ai/src/Filament/Pages/ManageAiIntegratedAssistantSettings.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Filament\\\\Pages\\\\ManageAiSettings\\:\\:getFormActions\\(\\) has invalid return type AdvisingApp\\\\Ai\\\\Filament\\\\Pages\\\\ActionGroup\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Filament/Pages/ManageAiSettings.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Using nullsafe property access "\\?\\-\\>model" on left side of \\?\\? is unnecessary\\. Use \\-\\> instead\\.$#',
-    'identifier' => 'nullsafe.neverNull',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Filament/Pages/ManageAiSettings.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Anonymous function should return int but returns bool\\.$#',
     'identifier' => 'return.type',
     'count' => 1,
@@ -170,94 +156,10 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/PromptResource/Pages/ListPrompts.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:isUpvoted\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 3,
-    'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/PromptResource/Pages/ViewPrompt.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:toggleUpvote\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/PromptResource/Pages/ViewPrompt.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:upvotes\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/PromptResource/Pages/ViewPrompt.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$records of anonymous function has no typehint\\.$#',
-    'identifier' => 'closure.parameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/PromptTypeResource/Pages/ListPromptTypes.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$query of anonymous function has no typehint\\.$#',
-    'identifier' => 'closure.parameterMissingTypehint',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/QnaAdvisorResource/Pages/ManageQnaQuestions.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Jobs\\\\CloneAiThread\\:\\:middleware\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Jobs/CloneAiThread.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Jobs\\\\EmailAiThread\\:\\:middleware\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Jobs/EmailAiThread.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to an undefined method Filament\\\\Notifications\\\\Notification\\:\\:error\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/ai/src/Jobs/PrepareAiThreadCloning.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Jobs\\\\PrepareAiThreadCloning\\:\\:__construct\\(\\) has parameter \\$targetIds with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Jobs/PrepareAiThreadCloning.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Jobs\\\\PrepareAiThreadCloning\\:\\:generateSingleUserShareJobs\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Jobs/PrepareAiThreadCloning.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Jobs\\\\PrepareAiThreadCloning\\:\\:generateTeamShareJobs\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Jobs/PrepareAiThreadCloning.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Jobs\\\\PrepareAiThreadEmailing\\:\\:__construct\\(\\) has parameter \\$targetIds with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Jobs/PrepareAiThreadEmailing.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\Ai\\\\Jobs\\\\ReInitializeAiAssistant\\:\\:\\$maxExceptions has no type specified\\.$#',
-    'identifier' => 'missingType.property',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Jobs/ReInitializeAiAssistant.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\Ai\\\\Jobs\\\\ReInitializeAiAssistantThreads\\:\\:\\$maxExceptions has no type specified\\.$#',
-    'identifier' => 'missingType.property',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Jobs/ReInitializeAiAssistantThreads.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\Ai\\\\Jobs\\\\ReInitializeAiThread\\:\\:\\$maxExceptions has no type specified\\.$#',
-    'identifier' => 'missingType.property',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Jobs/ReInitializeAiThread.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Using nullsafe property access on non\\-nullable type AdvisingApp\\\\Ai\\\\Models\\\\AiAssistant\\. Use \\-\\> instead\\.$#',
@@ -272,12 +174,10 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/ai/src/Listeners/CreateAiMessageLog.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Using nullsafe property access on non\\-nullable type AdvisingApp\\\\Ai\\\\Models\\\\AiMessageFile\\. Use \\-\\> instead\\.$#',
-    'identifier' => 'nullsafe.neverNull',
+    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:withTrashed\\(\\)\\.$#',
+    'identifier' => 'method.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Listeners/DeleteExternalAiMessageFile.php',
-];
-$ignoreErrors[] = [
+    'path' => __DIR__ . '/app-modules/ai/src/Models/AiMessage.php',
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:withTrashed\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 1,
@@ -1064,24 +964,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/application/tests/Tenant/ApplicationWidgetApiTest.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, AdvisingApp\\\\Ai\\\\Models\\\\Prompt\\>\\:\\:isUpvoted\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/InstitutionalAdvisor.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, AdvisingApp\\\\Ai\\\\Models\\\\Prompt\\>\\:\\:toggleUpvote\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/InstitutionalAdvisor.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, AdvisingApp\\\\Ai\\\\Models\\\\Prompt\\>\\:\\:upvotes\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/InstitutionalAdvisor.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Assistant\\\\Filament\\\\Pages\\\\InstitutionalAdvisor\\:\\:customAssistants\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -1112,12 +994,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/InstitutionalAdvisor.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Negated boolean expression is always false\\.$#',
-    'identifier' => 'booleanNot.alwaysFalse',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/InstitutionalAdvisor.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$component of anonymous function has no typehint\\.$#',
     'identifier' => 'closure.parameterMissingTypehint',
     'count' => 1,
@@ -1130,19 +1006,7 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/InstitutionalAdvisor.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$state of anonymous function has no typehint\\.$#',
-    'identifier' => 'closure.parameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/InstitutionalAdvisor.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Parameter \\#2 \\$state of anonymous function has no typehint\\.$#',
-    'identifier' => 'closure.parameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/InstitutionalAdvisor.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#3 \\$state of anonymous function has no typehint\\.$#',
     'identifier' => 'closure.parameterMissingTypehint',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/InstitutionalAdvisor.php',
@@ -1156,12 +1020,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Property AdvisingApp\\\\Assistant\\\\Filament\\\\Pages\\\\InstitutionalAdvisor\\:\\:\\$threadsWithoutAFolder type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/InstitutionalAdvisor.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Using nullsafe property access on non\\-nullable type App\\\\Models\\\\User\\. Use \\-\\> instead\\.$#',
-    'identifier' => 'nullsafe.neverNull',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/InstitutionalAdvisor.php',
 ];
@@ -1466,6 +1324,10 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/authorization/src/Filament/Resources/RoleResource/Pages/ListRoles.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Call to an undefined method Laravel\\\\Socialite\\\\Contracts\\\\Provider\\|Mockery\\\\MockInterface\\:\\:setConfig\\(\\)\\.$#',
+    'identifier' => 'method.notFound',
+    'count' => 2,
+    'path' => __DIR__ . '/app-modules/authorization/src/Http/Controllers/SocialiteController.php',
     'message' => '#^Call to method isSuperAdmin\\(\\) on an unknown class AdvisingApp\\\\Authorization\\\\Filament\\\\Resources\\\\RoleResource\\\\Pages\\\\User\\.$#',
     'identifier' => 'class.notFound',
     'count' => 1,
@@ -2120,12 +1982,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseResource.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Cannot access property \\$respondent on Illuminate\\\\Database\\\\Eloquent\\\\Model\\|int\\|string\\.$#',
-    'identifier' => 'property.nonObject',
-    'count' => 4,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseResource/Pages/CaseTimeline.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Property AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseResource\\\\Pages\\\\CaseTimeline\\:\\:\\$modelsToTimeline type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -2144,22 +2000,10 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseResource/Pages/EditCase.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Cannot access property \\$respondent on Illuminate\\\\Database\\\\Eloquent\\\\Model\\|int\\|string\\.$#',
-    'identifier' => 'property.nonObject',
-    'count' => 4,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseResource/Pages/EditCase.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Unable to resolve the template type TGroupKey in call to method Illuminate\\\\Support\\\\Collection\\<int,AdvisingApp\\\\CaseManagement\\\\Models\\\\CaseStatus\\>\\:\\:groupBy\\(\\)$#',
     'identifier' => 'argument.templateType',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseResource/Pages/EditCase.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Cannot access property \\$respondent on Illuminate\\\\Database\\\\Eloquent\\\\Model\\|int\\|string\\.$#',
-    'identifier' => 'property.nonObject',
-    'count' => 4,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseResource/Pages/ManageCaseAssignment.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseResource\\\\Pages\\\\ManageCaseAssignment\\:\\:managers\\(\\) return type has no value type specified in iterable type array\\.$#',
@@ -2174,12 +2018,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseResource/Pages/ManageCaseAssignment.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Cannot access property \\$respondent on Illuminate\\\\Database\\\\Eloquent\\\\Model\\|int\\|string\\.$#',
-    'identifier' => 'property.nonObject',
-    'count' => 4,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseResource/Pages/ManageCaseFormSubmission.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseResource\\\\Pages\\\\ManageCaseFormSubmission\\:\\:managers\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -2192,12 +2030,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseResource/Pages/ManageCaseFormSubmission.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Cannot access property \\$respondent on Illuminate\\\\Database\\\\Eloquent\\\\Model\\|int\\|string\\.$#',
-    'identifier' => 'property.nonObject',
-    'count' => 4,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseResource/Pages/ManageCaseInteraction.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseResource\\\\Pages\\\\ManageCaseInteraction\\:\\:managers\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -2208,12 +2040,6 @@ $ignoreErrors[] = [
     'identifier' => 'staticClassAccess.privateMethod',
     'count' => 2,
     'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseResource/Pages/ManageCaseInteraction.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Cannot access property \\$respondent on Illuminate\\\\Database\\\\Eloquent\\\\Model\\|int\\|string\\.$#',
-    'identifier' => 'property.nonObject',
-    'count' => 4,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseResource/Pages/ManageCaseUpdate.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseResource\\\\Pages\\\\ManageCaseUpdate\\:\\:managers\\(\\) return type has no value type specified in iterable type array\\.$#',
@@ -2231,12 +2057,6 @@ $ignoreErrors[] = [
     'message' => '#^Anonymous function never returns null so it can be removed from the return type\\.$#',
     'identifier' => 'return.unusedType',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseResource/Pages/ViewCase.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Cannot access property \\$respondent on Illuminate\\\\Database\\\\Eloquent\\\\Model\\|int\\|string\\.$#',
-    'identifier' => 'property.nonObject',
-    'count' => 4,
     'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseResource/Pages/ViewCase.php',
 ];
 $ignoreErrors[] = [
@@ -2594,54 +2414,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/case-management/src/Models/CaseUpdate.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\:\\:\\$first\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Notifications/EducatableCaseClosedNotification.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\:\\:\\$first_name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Notifications/EducatableCaseClosedNotification.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Match expression does not handle remaining value\\: class\\-string&literal\\-string$#',
-    'identifier' => 'match.unhandled',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Notifications/EducatableCaseClosedNotification.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Using nullsafe property access on non\\-nullable type AdvisingApp\\\\Division\\\\Models\\\\Division\\. Use \\-\\> instead\\.$#',
-    'identifier' => 'nullsafe.neverNull',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Notifications/EducatableCaseClosedNotification.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\:\\:\\$first\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Notifications/EducatableCaseOpenedNotification.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\:\\:\\$first_name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Notifications/EducatableCaseOpenedNotification.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Match expression does not handle remaining value\\: class\\-string&literal\\-string$#',
-    'identifier' => 'match.unhandled',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Notifications/EducatableCaseOpenedNotification.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Using nullsafe property access on non\\-nullable type AdvisingApp\\\\Division\\\\Models\\\\Division\\. Use \\-\\> instead\\.$#',
-    'identifier' => 'nullsafe.neverNull',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Notifications/EducatableCaseOpenedNotification.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Property AdvisingApp\\\\CaseManagement\\\\Models\\\\IdeHelperCaseModel\\:\\:\\$status_updated_at \\(Carbon\\\\CarbonImmutable\\|null\\) does not accept Illuminate\\\\Support\\\\Carbon\\.$#',
     'identifier' => 'assign.propertyType',
     'count' => 1,
@@ -2712,36 +2484,6 @@ $ignoreErrors[] = [
     'identifier' => 'method.notFound',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/case-management/tests/Tenant/Case/CaseNumberTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$data of anonymous function has no typehint\\.$#',
-    'identifier' => 'closure.parameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/tests/Tenant/Case/CreateCaseTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$errors of anonymous function has no typehint\\.$#',
-    'identifier' => 'closure.parameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/tests/Tenant/Case/CreateCaseTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#3 \\$setup of anonymous function has no typehint\\.$#',
-    'identifier' => 'closure.parameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/tests/Tenant/Case/CreateCaseTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$data of anonymous function has no typehint\\.$#',
-    'identifier' => 'closure.parameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/tests/Tenant/Case/EditCaseTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$errors of anonymous function has no typehint\\.$#',
-    'identifier' => 'closure.parameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/tests/Tenant/Case/EditCaseTest.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to function PHPUnit\\\\Framework\\\\assertEmpty\\(\\) with Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, AdvisingApp\\\\CaseManagement\\\\Models\\\\CaseStatus\\> will always evaluate to false\\.$#',
@@ -6380,18 +6122,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/prospect/src/Filament/Actions/ProspectTagsBulkAction.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Call to method can\\(\\) on an unknown class AdvisingApp\\\\Prospect\\\\Filament\\\\Pages\\\\User\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Pages/ManageProspectConversionSettings.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to method hasLicense\\(\\) on an unknown class AdvisingApp\\\\Prospect\\\\Filament\\\\Pages\\\\User\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Pages/ManageProspectConversionSettings.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Pages\\\\ManageProspectConversionSettings\\:\\:getFormActions\\(\\) has invalid return type AdvisingApp\\\\Prospect\\\\Filament\\\\Pages\\\\Action\\.$#',
     'identifier' => 'class.notFound',
     'count' => 1,
@@ -6406,12 +6136,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Pages\\\\ManageProspectConversionSettings\\:\\:getFormActions\\(\\) should return array\\<AdvisingApp\\\\Prospect\\\\Filament\\\\Pages\\\\Action\\|AdvisingApp\\\\Prospect\\\\Filament\\\\Pages\\\\ActionGroup\\> but returns array\\<Filament\\\\Actions\\\\Action\\|Filament\\\\Actions\\\\ActionGroup\\>\\.$#',
     'identifier' => 'return.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Pages/ManageProspectConversionSettings.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^PHPDoc tag @var for variable \\$user contains unknown class AdvisingApp\\\\Prospect\\\\Filament\\\\Pages\\\\User\\.$#',
-    'identifier' => 'class.notFound',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/prospect/src/Filament/Pages/ManageProspectConversionSettings.php',
 ];

@@ -51,6 +51,7 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
 class ManageQnaQuestions extends ManageRelatedRecords
@@ -69,7 +70,7 @@ class ManageQnaQuestions extends ManageRelatedRecords
             ->schema([
                 Select::make('category_id')
                     ->label('Category')
-                    ->relationship('category', 'name', modifyQueryUsing: function ($query) {
+                    ->relationship('category', 'name', modifyQueryUsing: function (Builder $query) {
                         /** @var QnaAdvisor $advisor */
                         $advisor = $this->getOwnerRecord();
                         $query->where('qna_advisor_id', $advisor->getKey());
@@ -132,7 +133,7 @@ class ManageQnaQuestions extends ManageRelatedRecords
             ->filters([
                 SelectFilter::make('category_id')
                     ->label('Category')
-                    ->relationship('category', 'name', modifyQueryUsing: function ($query) {
+                    ->relationship('category', 'name', modifyQueryUsing: function (Builder $query) {
                         /** @var QnaAdvisor $qnaAdvisor */
                         $qnaAdvisor = $this->getOwnerRecord();
                         $query->where('qna_advisor_id', $qnaAdvisor->getKey());
