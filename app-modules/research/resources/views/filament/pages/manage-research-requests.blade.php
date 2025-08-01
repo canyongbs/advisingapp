@@ -34,6 +34,7 @@
 @php
     use AdvisingApp\Research\Filament\Pages\NewResearchRequest;
     use Filament\Support\Enums\ActionSize;
+    use Illuminate\Support\Str;
 @endphp
 
 <div class="h-[calc(100dvh-4rem)]">
@@ -455,7 +456,94 @@
                         </div>
                     </div>
 
-                    @include('research::results', ['researchRequest' => $this->request])
+                    <section
+                        class="prose max-w-none dark:prose-invert"
+                        x-data="results({
+                            researchRequestId: @js($this->request->getKey()),
+                            results: @js($this->request->results ?? ''),
+                            outline: @js($this->request->outline),
+                            sources: @js($this->request->sources),
+                            files: @js(
+                                $this->request->getMedia('files')->map(fn($media) => data_set($media, 'temporary_url', $media->getTemporaryUrl(now()->addDay())))->toArray()
+                            ),
+                            links: @js($this->request->links),
+                            searchQueries: @js($this->request->search_queries),
+                            parsedFiles: @js(
+                                $this->request->parsedFiles->loadMissing(['media'])->map(fn($file) => data_set($file, 'media.temporary_url', $file->media->getTemporaryUrl(now()->addDay())))->map(fn($file): array => Arr::except($file->toArray(), ['results']))->toArray()
+                            ),
+                            parsedLinks: @js($this->request->parsedLinks->map(fn($link): array => Arr::except($link->toArray(), ['results']))->toArray()),
+                            parsedSearchResults: @js($this->request->parsedSearchResults->map(fn($searchResults): array => Arr::except($searchResults->toArray(), ['results']))->toArray()),
+                            title: @js($this->request->title),
+                            isFinished: @js((bool) $this->request->finished_at),
+                        })"
+                        wire:key="{{ Str::random() }}"
+                    >
+                        <div x-show="! reasoningPoints.length">
+                            Sending request to the research assistant...
+                        </div>
+
+                        <details
+                            class="research-request-reasoning"
+                            open
+                            x-show="reasoningPoints.length > 0"
+                        >
+                            <summary class="cursor-pointer">Reasoning</summary>
+
+                            <div
+                                class="flex h-20 items-start overflow-y-auto px-4 text-xs tracking-tight shadow-sm ring-1 ring-gray-950/5 dark:ring-white/10"
+                                x-bind:class="{
+                                    'flex-col-reverse': !isFinished,
+                                }"
+                            >
+                                <ul>
+                                    <template
+                                        x-for="(point, index) in reasoningPoints"
+                                        :key="index"
+                                    >
+                                        <li x-html="point"></li>
+                                    </template>
+                                </ul>
+                            </div>
+                        </details>
+
+                        <div
+                            class="mx-1 mb-12 rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10"
+                            x-show="resultsHtml.length > 0"
+                        >
+                            <h1
+                                x-text="title"
+                                x-show="title"
+                            ></h1>
+
+                            <div x-html="resultsHtml"></div>
+
+                            <p
+                                class="text-gray-600 dark:text-gray-400"
+                                x-show="outline && (! isFinished)"
+                            >
+                                Writing report...
+                            </p>
+
+                            <h2 x-show="isFinished && (sourcesHtml.length > 0)">
+                                Sources:
+                            </h2>
+
+                            <ul x-show="isFinished && (sourcesHtml.length > 0)">
+                                <template
+                                    x-for="(source, index) in sourcesHtml"
+                                    :key="index"
+                                >
+                                    <li x-html="source"></li>
+                                </template>
+                            </ul>
+
+                            @if ($showEmailResults)
+                                <section class="mt-3 px-3 text-right">
+                                    {{ ($this->emailResearchRequestAction)(['researchRequest' => $this->request->getKey()]) }}
+                                </section>
+                            @endif
+                        </div>
+                    </section>
                 </div>
             @endif
 
@@ -526,6 +614,7 @@
     @endif
 
     @vite('app-modules/research/resources/js/requests.js')
+    @vite('app-modules/research/resources/js/results.js')
 
     <style>
         .footer {
