@@ -614,6 +614,21 @@
                                                         x-html="message.content"
                                                     ></div>
 
+                                                    {{-- <template x-if="message.type === 'image'">
+                                                        <img
+                                                            x-bind:src="message.url"
+                                                            alt="Generated Image"
+                                                            class="rounded-lg border border-gray-300 dark:border-gray-600 max-w-full"
+                                                        />
+                                                    </template>
+
+                                                    <template x-if="!message.type || message.type === 'text'">
+                                                        <div
+                                                            class="prose dark:prose-invert"
+                                                            x-html="message.content"
+                                                        ></div>
+                                                    </template> --}}
+
                                                     <x-filament::link
                                                         tag="button"
                                                         x-on:click="completeResponse"

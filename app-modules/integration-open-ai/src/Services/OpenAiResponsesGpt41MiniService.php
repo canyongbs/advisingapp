@@ -52,4 +52,31 @@ class OpenAiResponsesGpt41MiniService extends BaseOpenAiResponsesService
     {
         return $this->settings->open_ai_gpt_41_mini_base_uri ?? config('integration-open-ai.gpt_41_mini_base_uri');
     }
+
+    public function getImageDeploymentHeader(): ?array
+    {
+        // return $this->settings->open_ai_gpt_4o_mini_image_generation_header ?? config('integration-open-ai.gpt_4o_mini_image_generation_header');
+        if (! $this->hasImageGeneration()) {
+            return null;
+        }
+
+        return [
+            // 'x-ms-oai-image-generation-deployment' => $this->getImageGenerationDeployment(),
+            'x-ms-azure-deployment-id' => $this->getImageGenerationDeployment(),
+        ];
+    }
+
+    public function hasImageGeneration(): bool
+    {
+        // return $this->settings->open_ai_gpt_4o_mini_image_generation ?? config('integration-open-ai.gpt_4o_mini_image_generation', false);
+        // return filled($this->getImageGenerationDeployment());
+        return true;
+    }
+
+    public function getImageGenerationDeployment(): ?string
+    {
+        // return $this->settings->open_ai_gpt_4o_mini_image_generation_deployment ?? config('integration-open-ai.gpt_4o_mini_image_generation_deployment');
+
+        return 'gen-images-canyon-dev-gpt-image-1-west-3';
+    }
 }
