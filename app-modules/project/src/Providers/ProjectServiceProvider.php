@@ -36,8 +36,10 @@
 
 namespace AdvisingApp\Project\Providers;
 
+use AdvisingApp\Project\Models\Project;
 use AdvisingApp\Project\ProjectPlugin;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 
 class ProjectServiceProvider extends ServiceProvider
@@ -45,5 +47,12 @@ class ProjectServiceProvider extends ServiceProvider
     public function register()
     {
         Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new ProjectPlugin()));
+    }
+
+    public function boot(): void
+    {
+        Relation::morphMap([
+            'project' => Project::class,
+        ]);
     }
 }
