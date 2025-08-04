@@ -3240,6 +3240,10 @@ namespace AdvisingApp\Form\Models{
  * @property-read int|null $steps_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Form\Models\FormSubmission> $submissions
  * @property-read int|null $submissions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Workflow\Models\WorkflowTrigger> $workflowTriggers
+ * @property-read int|null $workflow_triggers_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\AdvisingApp\Workflow\Models\Workflow[] $workflows
+ * @property-read int|null $workflows_count
  * @method static \AdvisingApp\Form\Database\Factories\FormFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Form newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Form newQuery()
@@ -6479,6 +6483,10 @@ namespace AdvisingApp\Workflow\Models{
 
 namespace AdvisingApp\Workflow\Models{
 /**
+ * @property-read covariant \Illuminate\Database\Eloquent\Model $related
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Workflow\Models\WorkflowRunStep> $workflowRunSteps
+ * @property-read int|null $workflow_run_steps_count
+ * @property-read \AdvisingApp\Workflow\Models\WorkflowTrigger|null $workflowTrigger
  * @property string $id
  * @property string $details_type
  * @property string $details_id
@@ -6488,9 +6496,61 @@ namespace AdvisingApp\Workflow\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property string|null $previous_step_id
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperWorkflowRun {}
+}
+
+namespace AdvisingApp\Workflow\Models{
+/**
+ * @property \AdvisingApp\Workflow\Models\WorkflowDetails $details_type
+ * @property-read \Illuminate\Database\Eloquent\Model $details
+ * @property \Illuminate\Support\Carbon|null $dispatched_at
+ * @property-read \AdvisingApp\Workflow\Models\WorkflowRun|null $workflowRun
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperWorkflowRunStep {}
+}
+
+namespace AdvisingApp\Workflow\Models{
+/**
+ * @property-read \Illuminate\Database\Eloquent\Model $related
+ * @property-read \AdvisingApp\Workflow\Models\WorkflowRunStep|null $workflowRunStep
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperWorkflowRunStepRelated {}
+}
+
+namespace AdvisingApp\Workflow\Models{
+/**
+ * @property int $delay_minutes
+ * @property \AdvisingApp\Workflow\Models\WorkflowDetails $current_details_type
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \AdvisingApp\Workflow\Models\Workflow $workflow
+ * @property-read \Illuminate\Database\Eloquent\Model $currentDetails
+ * @property-read WorkflowStep|null $previousWorkflowStep
+ * @property-read \AdvisingApp\Workflow\Models\Workflow|null $workflow
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowStep newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowStep newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowStep onlyTrashed()
@@ -6612,7 +6672,7 @@ namespace AdvisingApp\Workflow\Models{
 namespace AdvisingApp\Workflow\Models{
 /**
  * @property string $id
- * @property string $type
+ * @property \AdvisingApp\Workflow\Enums\WorkflowTriggerType $type
  * @property string $related_id
  * @property string $related_type
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -6620,7 +6680,10 @@ namespace AdvisingApp\Workflow\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Model $createdBy
+ * @property-read \Illuminate\Database\Eloquent\Model $related
  * @property-read \AdvisingApp\Workflow\Models\Workflow|null $workflow
+ * @property-read \AdvisingApp\Workflow\Models\WorkflowRun|null $workflowRun
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTrigger newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTrigger newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowTrigger onlyTrashed()
@@ -6639,3 +6702,4 @@ namespace AdvisingApp\Workflow\Models{
 	#[\AllowDynamicProperties]
 	class IdeHelperWorkflowTrigger {}
 }
+
