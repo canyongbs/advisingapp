@@ -76,7 +76,7 @@ class GenerateResearchRequestOutline implements ShouldQueue
                 report($exception); // Only report the exception on the first attempt to reduce noise in logs.
             }
 
-            $this->release(delay: 6); // Allow time for the service to recover.
+            $this->release(delay: 10); // Allow time for the service to recover.
 
             return;
         }
@@ -87,7 +87,7 @@ class GenerateResearchRequestOutline implements ShouldQueue
         ] = $structuredResponse;
 
         if ((! is_array($outline['abstract'] ?? null)) || blank($outline['abstract']['heading'] ?? null)) {
-            $this->release(delay: 6); // Allow time for the service to recover.
+            $this->release(delay: 10); // Allow time for the service to recover.
 
             return;
         }
