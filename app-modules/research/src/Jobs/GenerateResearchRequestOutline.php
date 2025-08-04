@@ -175,7 +175,7 @@ class GenerateResearchRequestOutline implements ShouldQueue
 
             Ensure you follow the following additional rules:
             - The abstract, introduction, and conclusion should each have a unique heading that represents the content of that section.
-            - Aside from the abstract, introduction, and conclusion, there should be 10 content sections in the middle of the report, each with 3 subsections inside.
+            - Aside from the abstract, introduction, and conclusion, there should be 6 content sections in the middle of the report, each with 3 subsections inside.
             - All the content should be written as a scholar would at the PhD level.
             EOD;
     }
