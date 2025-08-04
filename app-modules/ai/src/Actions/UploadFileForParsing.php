@@ -82,7 +82,7 @@ class UploadFileForParsing
             ?->model
             ->getService();
 
-        if (! is_null($service) && ($service instanceof BaseOpenAiService || $service instanceof BaseOpenAiResponsesService)) {
+        if ($service instanceof BaseOpenAiService || $service instanceof BaseOpenAiResponsesService) {
             $deploymentName = $service->getModel();
             $baseUri = rtrim($service->getDeployment(), '/v1');
             $apiVersion = match (true) {
