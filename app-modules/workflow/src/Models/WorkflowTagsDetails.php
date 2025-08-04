@@ -69,7 +69,7 @@ class WorkflowTagsDetails extends WorkflowDetails implements Auditable
     {
         return 'workflow_tags_details';
     }
-    
+
     public function getLabel(): string
     {
         return 'Tags';
@@ -77,11 +77,11 @@ class WorkflowTagsDetails extends WorkflowDetails implements Auditable
 
     public function getBlock(): WorkflowActionBlock
     {
-      return TagsBlock::make();
+        return TagsBlock::make();
     }
 
     public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
     {
-      return new TagsWorkflowActionJob($workflowRunStep);
+        return new TagsWorkflowActionJob($workflowRunStep);
     }
 }

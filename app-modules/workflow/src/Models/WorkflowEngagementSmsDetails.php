@@ -70,7 +70,7 @@ class WorkflowEngagementSmsDetails extends WorkflowDetails implements Auditable
     {
         return 'workflow_engagement_sms_details';
     }
-    
+
     public function getLabel(): string
     {
         return 'Text Message';
@@ -78,11 +78,11 @@ class WorkflowEngagementSmsDetails extends WorkflowDetails implements Auditable
 
     public function getBlock(): WorkflowActionBlock
     {
-      return EngagementSmsBlock::make();
+        return EngagementSmsBlock::make();
     }
 
     public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
     {
-      return new EngagementSmsWorkflowActionJob($workflowRunStep);
+        return new EngagementSmsWorkflowActionJob($workflowRunStep);
     }
 }

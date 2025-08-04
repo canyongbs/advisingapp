@@ -78,7 +78,7 @@ class WorkflowInteractionDetails extends WorkflowDetails implements Auditable
     {
         return 'workflow_interaction_details';
     }
-    
+
     public function getLabel(): string
     {
         return 'Interaction';
@@ -86,11 +86,11 @@ class WorkflowInteractionDetails extends WorkflowDetails implements Auditable
 
     public function getBlock(): WorkflowActionBlock
     {
-      return InteractionBlock::make();
+        return InteractionBlock::make();
     }
 
     public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
     {
-      return new InteractionWorkflowActionJob($workflowRunStep);
+        return new InteractionWorkflowActionJob($workflowRunStep);
     }
 }

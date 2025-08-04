@@ -72,7 +72,7 @@ class WorkflowEngagementEmailDetails extends WorkflowDetails implements Auditabl
     {
         return 'workflow_engagement_email_details';
     }
-    
+
     public function getLabel(): string
     {
         return 'Email';
@@ -80,11 +80,11 @@ class WorkflowEngagementEmailDetails extends WorkflowDetails implements Auditabl
 
     public function getBlock(): WorkflowActionBlock
     {
-      return EngagementEmailBlock::make();
+        return EngagementEmailBlock::make();
     }
 
     public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
     {
-      return new EngagementEmailWorkflowActionJob($workflowRunStep);
+        return new EngagementEmailWorkflowActionJob($workflowRunStep);
     }
 }

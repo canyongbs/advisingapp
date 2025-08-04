@@ -69,7 +69,7 @@ class WorkflowSubscriptionDetails extends WorkflowDetails implements Auditable
     {
         return 'workflow_subscription_details';
     }
-    
+
     public function getLabel(): string
     {
         return 'Subscription';
@@ -77,11 +77,11 @@ class WorkflowSubscriptionDetails extends WorkflowDetails implements Auditable
 
     public function getBlock(): WorkflowActionBlock
     {
-      return SubscriptionBlock::make();
+        return SubscriptionBlock::make();
     }
 
     public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
     {
-      return new SubscriptionWorkflowActionJob($workflowRunStep);
+        return new SubscriptionWorkflowActionJob($workflowRunStep);
     }
 }

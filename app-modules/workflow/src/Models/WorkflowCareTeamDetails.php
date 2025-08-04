@@ -69,7 +69,7 @@ class WorkflowCareTeamDetails extends WorkflowDetails implements Auditable
     {
         return 'workflow_care_team_details';
     }
-    
+
     public function getLabel(): string
     {
         return 'Care Team';
@@ -77,11 +77,11 @@ class WorkflowCareTeamDetails extends WorkflowDetails implements Auditable
 
     public function getBlock(): WorkflowActionBlock
     {
-      return CareTeamBlock::make();
+        return CareTeamBlock::make();
     }
 
     public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
     {
-      return new CareTeamWorkflowActionJob($workflowRunStep);
+        return new CareTeamWorkflowActionJob($workflowRunStep);
     }
 }

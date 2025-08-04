@@ -63,7 +63,7 @@ class WorkflowEventDetails extends WorkflowDetails implements Auditable
     {
         return 'workflow_event_details';
     }
-    
+
     public function getLabel(): string
     {
         return 'Event';
@@ -71,11 +71,11 @@ class WorkflowEventDetails extends WorkflowDetails implements Auditable
 
     public function getBlock(): WorkflowActionBlock
     {
-      return EventBlock::make();
+        return EventBlock::make();
     }
 
     public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
     {
-      return new EventWorkflowActionJob($workflowRunStep);
+        return new EventWorkflowActionJob($workflowRunStep);
     }
 }

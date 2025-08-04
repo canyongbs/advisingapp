@@ -68,7 +68,7 @@ class WorkflowCaseDetails extends WorkflowDetails implements Auditable
     {
         return 'workflow_case_details';
     }
-    
+
     public function getLabel(): string
     {
         return 'Case';
@@ -76,11 +76,11 @@ class WorkflowCaseDetails extends WorkflowDetails implements Auditable
 
     public function getBlock(): WorkflowActionBlock
     {
-      return CaseBlock::make();
+        return CaseBlock::make();
     }
 
     public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
     {
-      return new CaseWorkflowActionJob($workflowRunStep);
+        return new CaseWorkflowActionJob($workflowRunStep);
     }
 }

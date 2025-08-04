@@ -71,7 +71,7 @@ class WorkflowProactiveAlertDetails extends WorkflowDetails implements Auditable
     {
         return 'workflow_proactive_alert_details';
     }
-    
+
     public function getLabel(): string
     {
         return 'Proactive Alert';
@@ -79,11 +79,11 @@ class WorkflowProactiveAlertDetails extends WorkflowDetails implements Auditable
 
     public function getBlock(): WorkflowActionBlock
     {
-      return ProactiveAlertBlock::make();
+        return ProactiveAlertBlock::make();
     }
 
     public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
     {
-      return new ProactiveAlertWorkflowActionJob($workflowRunStep);
+        return new ProactiveAlertWorkflowActionJob($workflowRunStep);
     }
 }
