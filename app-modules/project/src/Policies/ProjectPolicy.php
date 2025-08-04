@@ -69,7 +69,7 @@ class ProjectPolicy
     public function update(Authenticatable $authenticatable, Project $project): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['project.*.update'],
+            abilities: 'project.*.update',
             denyResponse: 'You do not have permission to update this project.'
         );
     }
