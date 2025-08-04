@@ -142,13 +142,16 @@ abstract class BaseOpenAiResponsesService implements AiService
     }
 
     /**
+     * @param array<AiFile> $files
      * @param array<string, mixed> $options
      */
-    public function stream(string $prompt, string $content, bool $shouldTrack = true, array $options = []): Closure
+    public function stream(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = []): Closure
     {
         $aiSettings = app(AiSettings::class);
 
         try {
+            $vectorStoreIds = $this->getReadyVectorStoreIds($files);
+
             $stream = Prism::text()
                 ->using('azure_open_ai', $this->getModel())
                 ->withClientOptions([
@@ -159,6 +162,12 @@ abstract class BaseOpenAiResponsesService implements AiService
                 ->withProviderOptions([
                     'instructions' => $prompt,
                     'truncation' => 'auto',
+                    ...(filled($vectorStoreIds) ? [
+                        'tools' => [[
+                            'type' => 'file_search',
+                            'vector_store_ids' => $vectorStoreIds,
+                        ]],
+                    ] : []),
                     ...$options,
                 ])
                 ->withPrompt($content)

@@ -34,33 +34,56 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Console\Commands;
+namespace AdvisingApp\IntegrationOpenAi\Jobs;
 
-use AdvisingApp\Ai\Jobs\FetchAiAssistantFileParsingResults;
-use AdvisingApp\Ai\Jobs\FetchQnaAdvisorFileParsingResults;
-use AdvisingApp\Ai\Models\AiAssistantFile;
-use AdvisingApp\Ai\Models\QnaAdvisorFile;
-use Illuminate\Console\Command;
-use Spatie\Multitenancy\Commands\Concerns\TenantAware;
+use AdvisingApp\Ai\Models\QnaAdvisorLink;
+use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiResponsesService;
+use Illuminate\Bus\Batchable;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
+use Spatie\Multitenancy\Jobs\TenantAware;
 
-class FetchAiAssistantFilesParsingResults extends Command
+class UploadQnaAdvisorLinkToVectorStore implements ShouldQueue, TenantAware, ShouldBeUnique
 {
-    use TenantAware;
+    use Batchable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
-    protected $signature = 'ai:fetch-assistant-files-parsing-results {--tenant=*}';
+    /**
+     * @var int
+     */
+    public $tries = 3;
 
-    protected $description = 'Finds AI assistant files that were uploaded in the past hour and do not yet have parsed results.';
+    public function __construct(
+        protected QnaAdvisorLink $link,
+    ) {}
 
     public function handle(): void
     {
-        AiAssistantFile::query()
-            ->whereNull('parsing_results')
-            ->where('created_at', '>=', now()->subHour())
-            ->eachById(fn (AiAssistantFile $file) => dispatch(new FetchAiAssistantFileParsingResults($file)));
+        $service = $this->link->advisor->model->getService();
 
-        QnaAdvisorFile::query()
-            ->whereNull('parsing_results')
-            ->where('created_at', '>=', now()->subHour())
-            ->eachById(fn (QnaAdvisorFile $file) => dispatch(new FetchQnaAdvisorFileParsingResults($file)));
+        if (! ($service instanceof BaseOpenAiResponsesService)) {
+            return;
+        }
+
+        if ($service->isFileReady($this->link)) {
+            return;
+        }
+
+        Log::info("The Qna Advisor link [{$this->link->getKey()}] is not ready for use yet.");
+
+        $this->release(now()->addMinutes(5));
+    }
+
+    public function uniqueId(): string
+    {
+        return $this->link->id;
     }
 }

@@ -56,7 +56,16 @@ class SendMessageController
 
         try {
             return new StreamedResponse(
-                $aiService->stream($getQnaAdvisorInstructions->execute($advisor), $data['content'], shouldTrack: false, options: $data['options'] ?? []),
+                $aiService->stream(
+                    prompt: $getQnaAdvisorInstructions->execute($advisor),
+                    content: $data['content'],
+                    files: $advisor->links()
+                        ->whereNotNull('parsing_results')
+                        ->get()
+                        ->all(),
+                    shouldTrack: false,
+                    options: $data['options'] ?? [],
+                ),
                 headers: [
                     'Content-Type' => 'text/html; charset=utf-8;',
                     'Cache-Control' => 'no-cache',
