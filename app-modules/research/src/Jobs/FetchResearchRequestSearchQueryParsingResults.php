@@ -37,6 +37,7 @@
 namespace AdvisingApp\Research\Jobs;
 
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use AdvisingApp\Research\Events\ResearchRequestProgress;
 use AdvisingApp\Research\Events\ResearchRequestSearchResultsParsed;
 use AdvisingApp\Research\Models\ResearchRequest;
 use AdvisingApp\Research\Models\ResearchRequestParsedSearchResults;
@@ -115,11 +116,15 @@ class FetchResearchRequestSearchQueryParsingResults implements ShouldQueue
                 WHERE id = ?
                 SQL, [json_encode($sources), $this->researchRequest->id]);
 
-            broadcast(app(ResearchRequestSearchResultsParsed::class, [
-                'researchRequest' => $this->researchRequest,
-                'parsedSearchResults' => $researchRequestParsedSearchResults,
-                'newSources' => $sources,
-            ]));
+            broadcast(new ResearchRequestSearchResultsParsed(
+                researchRequest: $this->researchRequest,
+                parsedSearchResults: $researchRequestParsedSearchResults,
+                newSources: $sources,
+            ));
+
+            broadcast(new ResearchRequestProgress(
+                researchRequest: $this->researchRequest,
+            ));
         });
     }
 }

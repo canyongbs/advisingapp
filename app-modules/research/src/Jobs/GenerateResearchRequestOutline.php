@@ -39,6 +39,7 @@ namespace AdvisingApp\Research\Jobs;
 use AdvisingApp\Ai\Exceptions\MessageResponseException;
 use AdvisingApp\Ai\Settings\AiResearchAssistantSettings;
 use AdvisingApp\Research\Events\ResearchRequestOutlineGenerated;
+use AdvisingApp\Research\Events\ResearchRequestProgress;
 use AdvisingApp\Research\Models\ResearchRequest;
 use AdvisingApp\Research\Models\ResearchRequestQuestion;
 use App\Models\User;
@@ -132,9 +133,13 @@ class GenerateResearchRequestOutline implements ShouldQueue
 
         $this->batch()->add(new GenerateResearchRequestSection($this->researchRequest, $nextRequestOptions));
 
-        broadcast(app(ResearchRequestOutlineGenerated::class, [
-            'researchRequest' => $this->researchRequest,
-        ]));
+        broadcast(new ResearchRequestOutlineGenerated(
+            researchRequest: $this->researchRequest,
+        ));
+
+        broadcast(new ResearchRequestProgress(
+            researchRequest: $this->researchRequest,
+        ));
     }
 
     public function retryUntil(): CarbonInterface
