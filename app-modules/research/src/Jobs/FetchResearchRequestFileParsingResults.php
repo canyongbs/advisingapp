@@ -39,6 +39,7 @@ namespace AdvisingApp\Research\Jobs;
 use AdvisingApp\Ai\Actions\FetchFileParsingResults;
 use AdvisingApp\Research\Events\ResearchRequestFileParsed;
 use AdvisingApp\Research\Events\ResearchRequestProgress;
+use AdvisingApp\Research\Models\ResearchRequest;
 use AdvisingApp\Research\Models\ResearchRequestParsedFile;
 use Carbon\CarbonInterface;
 use Illuminate\Bus\Batchable;
@@ -81,13 +82,15 @@ class FetchResearchRequestFileParsingResults implements ShouldQueue
         $researchRequestParsedFile->file_id = $this->fileId;
         $researchRequestParsedFile->save();
 
-        broadcast(app(ResearchRequestFileParsed::class, [
-            'researchRequest' => $this->media->model,
-            'parsedFile' => $researchRequestParsedFile,
-        ]));
+        assert($this->media->model instanceof ResearchRequest);
 
-        broadcast(app(ResearchRequestProgress::class, [
-            'researchRequest' => $this->media->model,
-        ]));
+        broadcast(new ResearchRequestFileParsed(
+            researchRequest: $this->media->model,
+            parsedFile: $researchRequestParsedFile,
+        ));
+
+        broadcast(new ResearchRequestProgress(
+            researchRequest: $this->media->model,
+        ));
     }
 }

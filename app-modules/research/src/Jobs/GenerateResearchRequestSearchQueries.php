@@ -110,13 +110,13 @@ class GenerateResearchRequestSearchQueries implements ShouldQueue
             $searchQueries,
         ));
 
-        broadcast(app(ResearchRequestSearchQueriesGenerated::class, [
-            'researchRequest' => $this->researchRequest,
-        ]));
+        broadcast(new ResearchRequestSearchQueriesGenerated(
+            researchRequest: $this->researchRequest,
+        ));
 
-        broadcast(app(ResearchRequestProgress::class, [
-            'researchRequest' => $this->researchRequest,
-        ]));
+        broadcast(new ResearchRequestProgress(
+            researchRequest: $this->researchRequest,
+        ));
     }
 
     public function retryUntil(): CarbonInterface

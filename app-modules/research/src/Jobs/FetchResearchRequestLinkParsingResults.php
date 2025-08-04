@@ -82,13 +82,13 @@ class FetchResearchRequestLinkParsingResults implements ShouldQueue
         $researchRequestParsedLink->url = $this->link;
         $researchRequestParsedLink->save();
 
-        broadcast(app(ResearchRequestLinkParsed::class, [
-            'researchRequest' => $this->researchRequest,
-            'parsedLink' => $researchRequestParsedLink,
-        ]));
+        broadcast(new ResearchRequestLinkParsed(
+            researchRequest: $this->researchRequest,
+            parsedLink: $researchRequestParsedLink,
+        ));
 
-        broadcast(app(ResearchRequestProgress::class, [
-            'researchRequest' => $this->researchRequest,
-        ]));
+        broadcast(new ResearchRequestProgress(
+            researchRequest: $this->researchRequest,
+        ));
     }
 }

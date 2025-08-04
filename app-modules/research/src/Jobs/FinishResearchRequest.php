@@ -68,13 +68,13 @@ class FinishResearchRequest implements ShouldQueue
             $this->researchRequest->title = 'Untitled Research';
             $this->researchRequest->touch('finished_at');
 
-            broadcast(app(ResearchRequestFinished::class, [
-                'researchRequest' => $this->researchRequest,
-            ]));
+            broadcast(new ResearchRequestFinished(
+                researchRequest: $this->researchRequest,
+            ));
 
-            broadcast(app(ResearchRequestProgress::class, [
-                'researchRequest' => $this->researchRequest,
-            ]));
+            broadcast(new ResearchRequestProgress(
+                researchRequest: $this->researchRequest,
+            ));
 
             return;
         }
@@ -97,12 +97,12 @@ class FinishResearchRequest implements ShouldQueue
 
         $this->researchRequest->touch('finished_at');
 
-        broadcast(app(ResearchRequestFinished::class, [
-            'researchRequest' => $this->researchRequest,
-        ]));
+        broadcast(new ResearchRequestFinished(
+            researchRequest: $this->researchRequest,
+        ));
 
-        broadcast(app(ResearchRequestProgress::class, [
-            'researchRequest' => $this->researchRequest,
-        ]));
+        broadcast(new ResearchRequestProgress(
+            researchRequest: $this->researchRequest,
+        ));
     }
 }

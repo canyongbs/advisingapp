@@ -108,10 +108,10 @@ class GenerateResearchRequestSection implements ShouldQueue
                     $responseContent = PHP_EOL . PHP_EOL . $responseContent;
                 }
 
-                broadcast(app(ResearchRequestResultsGenerated::class, [
-                    'researchRequest' => $this->researchRequest,
-                    'resultsChunk' => $responseContent,
-                ]));
+                broadcast(new ResearchRequestResultsGenerated(
+                    researchRequest: $this->researchRequest,
+                    resultsChunk: $responseContent,
+                ));
             }
         } catch (MessageResponseException $exception) {
             if ($this->attempts() === 1) {
@@ -132,9 +132,9 @@ class GenerateResearchRequestSection implements ShouldQueue
         $this->researchRequest->remaining_outline = $remainingOutline;
         $this->researchRequest->save();
 
-        broadcast(app(ResearchRequestProgress::class, [
-            'researchRequest' => $this->researchRequest,
-        ]));
+        broadcast(new ResearchRequestProgress(
+            researchRequest: $this->researchRequest,
+        ));
 
         if (blank($remainingOutline)) {
             $this->batch()->add(new FinishResearchRequest($this->researchRequest));

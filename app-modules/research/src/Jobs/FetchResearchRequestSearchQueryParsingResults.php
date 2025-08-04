@@ -116,15 +116,15 @@ class FetchResearchRequestSearchQueryParsingResults implements ShouldQueue
                 WHERE id = ?
                 SQL, [json_encode($sources), $this->researchRequest->id]);
 
-            broadcast(app(ResearchRequestSearchResultsParsed::class, [
-                'researchRequest' => $this->researchRequest,
-                'parsedSearchResults' => $researchRequestParsedSearchResults,
-                'newSources' => $sources,
-            ]));
+            broadcast(new ResearchRequestSearchResultsParsed(
+                researchRequest: $this->researchRequest,
+                parsedSearchResults: $researchRequestParsedSearchResults,
+                newSources: $sources,
+            ));
 
-            broadcast(app(ResearchRequestProgress::class, [
-                'researchRequest' => $this->researchRequest,
-            ]));
+            broadcast(new ResearchRequestProgress(
+                researchRequest: $this->researchRequest,
+            ));
         });
     }
 }

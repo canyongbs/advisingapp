@@ -133,13 +133,13 @@ class GenerateResearchRequestOutline implements ShouldQueue
 
         $this->batch()->add(new GenerateResearchRequestSection($this->researchRequest, $nextRequestOptions));
 
-        broadcast(app(ResearchRequestOutlineGenerated::class, [
-            'researchRequest' => $this->researchRequest,
-        ]));
+        broadcast(new ResearchRequestOutlineGenerated(
+            researchRequest: $this->researchRequest,
+        ));
 
-        broadcast(app(ResearchRequestProgress::class, [
-            'researchRequest' => $this->researchRequest,
-        ]));
+        broadcast(new ResearchRequestProgress(
+            researchRequest: $this->researchRequest,
+        ));
     }
 
     public function retryUntil(): CarbonInterface
