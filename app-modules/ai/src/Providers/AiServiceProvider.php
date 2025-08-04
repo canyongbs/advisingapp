@@ -56,6 +56,7 @@ use AdvisingApp\Ai\Models\PromptType;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Ai\Models\QnaAdvisorCategory;
 use AdvisingApp\Ai\Models\QnaAdvisorFile;
+use AdvisingApp\Ai\Models\QnaAdvisorLink;
 use AdvisingApp\Ai\Models\QnaAdvisorQuestion;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -103,8 +104,9 @@ class AiServiceProvider extends ServiceProvider
             'prompt' => Prompt::class,
             'qna_advisor' => QnaAdvisor::class,
             'qna_advisor_category' => QnaAdvisorCategory::class,
-            'qna_advisor_question' => QnaAdvisorQuestion::class,
             'qna_advisor_file' => QnaAdvisorFile::class,
+            'qna_advisor_link' => QnaAdvisorLink::class,
+            'qna_advisor_question' => QnaAdvisorQuestion::class,
         ]);
 
         $this->mergeConfigFrom(__DIR__ . '/../../config/ai.php', 'ai');

@@ -34,22 +34,60 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models\Contracts;
+namespace AdvisingApp\Ai\Jobs;
 
-interface AiFile
+use AdvisingApp\Ai\Models\QnaAdvisorLink;
+use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use Illuminate\Bus\Batchable;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Http;
+use Spatie\Multitenancy\Jobs\TenantAware;
+
+class FetchQnaAdvisorLinkParsingResults implements ShouldQueue, TenantAware, ShouldBeUnique
 {
-    public function getKey(): string;
+    use Batchable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
-    public function getName(): ?string;
+    public int $timeout = 600;
 
-    public function getMimeType(): ?string;
+    public int $tries = 60;
 
-    public function getFileId(): ?string;
+    public function __construct(
+        protected QnaAdvisorLink $link,
+    ) {}
 
-    public function getParsingResults(): ?string;
+    public function handle(): void
+    {
+        if (filled($this->link->parsing_results)) {
+            return;
+        }
 
-    /**
-     * @deprecated Non-responses-API OpenAI services only.
-     */
-    public function getTemporaryUrl(): ?string;
+        $response = Http::withToken(app(AiIntegrationsSettings::class)->jina_deepsearch_v1_api_key)
+            ->withHeaders([
+                'X-Retain-Images' => 'none',
+            ])
+            ->get("https://r.jina.ai/{$this->link->url}");
+
+        if (! $response->successful()) {
+            $this->release();
+
+            return;
+        }
+
+        $this->link->parsing_results = $response->body();
+        $this->link->save();
+    }
+
+    public function uniqueId(): string
+    {
+        return $this->link->id;
+    }
 }

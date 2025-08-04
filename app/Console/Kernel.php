@@ -144,7 +144,7 @@ class Kernel extends ConsoleKernel
                         ->monitorName("Queue Check Heartbeat | Tenant {$tenant->domain}")
                         ->withoutOverlapping(15);
 
-                    $schedule->command("ai:fetch-assistant-files-parsing-results --tenant={$tenant->id}")
+                    $schedule->command("ai:fetch-files-parsing-results --tenant={$tenant->id}")
                         ->everyMinute()
                         ->name("Fetch AI Assistant Files Parsed Results | Tenant {$tenant->domain}")
                         ->monitorName("Fetch AI Assistant Files Parsed Results | Tenant {$tenant->domain}")
@@ -156,7 +156,7 @@ class Kernel extends ConsoleKernel
                         ->monitorName("Delete Unsaved AI Threads | Tenant {$tenant->domain}")
                         ->withoutOverlapping(720);
 
-                    $schedule->command("integration-open-ai:upload-assistant-files-to-vector-stores --tenant={$tenant->id}")
+                    $schedule->command("integration-open-ai:upload-files-to-vector-stores --tenant={$tenant->id}")
                         ->everyFifteenMinutes()
                         ->name("Upload AI Assistant Files To Open AI Vector Stores | Tenant {$tenant->domain}")
                         ->monitorName("Upload AI Assistant Files To Open AI Vector Stores | Tenant {$tenant->domain}")
