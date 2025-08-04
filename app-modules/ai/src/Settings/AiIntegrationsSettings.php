@@ -48,6 +48,8 @@ class AiIntegrationsSettings extends Settings
 
     public ?string $open_ai_gpt_4o_model = null;
 
+    public ?string $open_ai_gpt_4o_image_generation_model = null;
+
     /**
      * @var array<string>
      */
@@ -78,6 +80,8 @@ class AiIntegrationsSettings extends Settings
 
     public ?string $open_ai_gpt_o1_mini_model = null;
 
+    public ?string $open_ai_gpt_4o_mini_image_generation_model = null;
+
     /**
      * @var array<string>
      */
@@ -90,6 +94,8 @@ class AiIntegrationsSettings extends Settings
     public ?string $open_ai_gpt_o3_api_key = null;
 
     public ?string $open_ai_gpt_o3_model = null;
+
+    public ?string $open_ai_gpt_o3_image_generation_model = null;
 
     /**
      * @var array<string>
@@ -117,6 +123,8 @@ class AiIntegrationsSettings extends Settings
 
     public ?string $open_ai_gpt_41_mini_model = null;
 
+    public ?string $open_ai_gpt_41_mini_image_generation_model = null;
+
     /**
      * @var array<string>
      */
@@ -131,6 +139,8 @@ class AiIntegrationsSettings extends Settings
     public ?string $open_ai_gpt_41_nano_api_key = null;
 
     public ?string $open_ai_gpt_41_nano_model = null;
+
+    public ?string $open_ai_gpt_41_nano_image_generation_model = null;
 
     /**
      * @var array<string>
@@ -178,24 +188,29 @@ class AiIntegrationsSettings extends Settings
             'open_ai_gpt_4o_base_uri',
             'open_ai_gpt_4o_api_key',
             'open_ai_gpt_4o_model',
+            'open_ai_gpt_4o_image_generation_model',
             'open_ai_gpt_4o_mini_base_uri',
             'open_ai_gpt_4o_mini_api_key',
             'open_ai_gpt_4o_mini_model',
+            'open_ai_gpt_4o_mini_image_generation_model',
             'open_ai_gpt_o1_mini_base_uri',
             'open_ai_gpt_o1_mini_api_key',
             'open_ai_gpt_o1_mini_model',
             'open_ai_gpt_o3_base_uri',
             'open_ai_gpt_o3_api_key',
             'open_ai_gpt_o3_model',
+            'open_ai_gpt_o3_image_generation_model',
             'open_ai_gpt_o3_mini_base_uri',
             'open_ai_gpt_o3_mini_api_key',
             'open_ai_gpt_o3_mini_model',
             'open_ai_gpt_41_mini_base_uri',
             'open_ai_gpt_41_mini_api_key',
             'open_ai_gpt_41_mini_model',
+            'open_ai_gpt_41_mini_image_generation_model',
             'open_ai_gpt_41_nano_base_uri',
             'open_ai_gpt_41_nano_api_key',
             'open_ai_gpt_41_nano_model',
+            'open_ai_gpt_41_nano_image_generation_model',
             'open_ai_gpt_o4_mini_base_uri',
             'open_ai_gpt_o4_mini_api_key',
             'open_ai_gpt_o4_mini_model',

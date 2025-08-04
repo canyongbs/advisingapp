@@ -61,8 +61,8 @@ class OpenAiResponsesGpt41MiniService extends BaseOpenAiResponsesService
         }
 
         return [
-            // 'x-ms-oai-image-generation-deployment' => $this->getImageGenerationDeployment(),
-            'x-ms-azure-deployment-id' => $this->getImageGenerationDeployment(),
+            'x-ms-oai-image-generation-deployment' => $this->getImageGenerationDeployment(),
+            // 'x-ms-azure-deployment-id' => $this->getImageGenerationDeployment(),
         ];
     }
 

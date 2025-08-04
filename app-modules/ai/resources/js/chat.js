@@ -171,23 +171,7 @@ document.addEventListener('alpine:init', () => {
                             this.error = event.message;
                             this.isRetryable = true;
                             this.isRateLimited = false;
-                        } 
-                        // else if (event.type === 'image') {
-                        //     this.error = null;
-                        //     this.isRateLimited = false;
-
-                        //     if (!hasSetUpNewMessageForResponse) {
-                        //         this.messages.push({
-                        //             content: '',
-                        //         });
-
-                        //         hasSetUpNewMessageForResponse = true;
-                        //     }
-
-                        //     this.messages[this.messages.length - 1].content += `
-                        //         <img src="${event.url}" alt="Generated image" class="max-w-full rounded-xl mt-2" />
-                        //     `;
-                        // }
+                        }
                     });
 
                     await readResponse();

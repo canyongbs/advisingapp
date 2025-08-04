@@ -109,7 +109,7 @@ abstract class BaseOpenAiResponsesService implements AiService
         $aiSettings = app(AiSettings::class);
 
         try {
-            $response = Prism::image()
+            $response = Prism::text()
                 ->using('azure_open_ai', $this->getModel())
                 ->withClientOptions([
                     'apiKey' => $this->getApiKey(),
@@ -161,7 +161,7 @@ abstract class BaseOpenAiResponsesService implements AiService
         $aiSettings = app(AiSettings::class);
 
         try {
-            $stream = Prism::image()
+            $stream = Prism::text()
                 ->using('azure_open_ai', $this->getModel())
                 ->withClientOptions([
                     'apiKey' => $this->getApiKey(),
