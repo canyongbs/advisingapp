@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Actions;
 
+use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiResponsesService;
@@ -76,6 +77,7 @@ class UploadFileForParsing
          */
         $service = AiAssistant::query()
             ->where('is_default', true)
+            ->where('application', AiAssistantApplication::PersonalAssistant->value)
             ->first()
             ?->model
             ->getService();
