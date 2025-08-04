@@ -38,6 +38,10 @@ namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Workflow\Filament\Blocks\ProactiveAlertBlock;
+use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
+use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
+use AdvisingApp\Workflow\Jobs\ProactiveAlertWorkflowActionJob;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -66,5 +70,20 @@ class WorkflowProactiveAlertDetails extends WorkflowDetails implements Auditable
     public function getType(): string
     {
         return 'workflow_proactive_alert_details';
+    }
+    
+    public function getLabel(): string
+    {
+        return 'Proactive Alert';
+    }
+
+    public function getBlock(): WorkflowActionBlock
+    {
+      return ProactiveAlertBlock::make();
+    }
+
+    public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
+    {
+      return new ProactiveAlertWorkflowActionJob($workflowRunStep);
     }
 }

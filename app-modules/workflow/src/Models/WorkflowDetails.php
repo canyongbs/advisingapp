@@ -36,12 +36,67 @@
 
 namespace AdvisingApp\Workflow\Models;
 
+use AdvisingApp\Workflow\Filament\Blocks\CareTeamBlock;
+use AdvisingApp\Workflow\Filament\Blocks\CaseBlock;
+use AdvisingApp\Workflow\Filament\Blocks\EngagementEmailBlock;
+use AdvisingApp\Workflow\Filament\Blocks\EngagementSmsBlock;
+use AdvisingApp\Workflow\Filament\Blocks\EventBlock;
+use AdvisingApp\Workflow\Filament\Blocks\InteractionBlock;
+use AdvisingApp\Workflow\Filament\Blocks\ProactiveAlertBlock;
+use AdvisingApp\Workflow\Filament\Blocks\SubscriptionBlock;
+use AdvisingApp\Workflow\Filament\Blocks\TagsBlock;
+use AdvisingApp\Workflow\Filament\Blocks\TaskBlock;
+use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
+use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
 use App\Models\BaseModel;
+use App\Settings\LicenseSettings;
+use Filament\Forms\Components\Field;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 abstract class WorkflowDetails extends BaseModel
 {
     abstract public function getType(): string;
+
+    abstract public function getLabel(): string;
+
+    abstract public function getBlock(): WorkflowActionBlock;
+
+    abstract public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob;
+
+    /**
+     * @return array<int, WorkflowActionBlock>
+     */
+    public static function blocks(): array
+    {
+      $blocks = [
+        CareTeamBlock::make(),
+        EngagementEmailBlock::make(),
+        EngagementSmsBlock::make(),
+        InteractionBlock::make(),
+        ProactiveAlertBlock::make(),
+        SubscriptionBlock::make(),
+        TagsBlock::make(),
+        TaskBlock::make(),
+      ];
+
+      if(app(LicenseSettings::class)->data->addons->caseManagement) {
+        $blocks[] = CaseBlock::make();
+      }
+      
+      if(app(LicenseSettings::class)->data->addons->eventManagement) {
+        $blocks[] = EventBlock::make();
+      }
+
+      return $blocks;
+    }
+
+    /**
+     * @return array<int, covariant Field>
+     */
+    public function getEditFields(): array
+    {
+        return $this->getBlock()->editFields();
+    }
 
     /**
      * @return BelongsTo<WorkflowStep, $this>

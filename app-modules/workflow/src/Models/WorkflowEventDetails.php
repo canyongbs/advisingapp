@@ -37,6 +37,10 @@
 namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Workflow\Filament\Blocks\EventBlock;
+use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
+use AdvisingApp\Workflow\Jobs\EventWorkflowActionJob;
+use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -58,5 +62,20 @@ class WorkflowEventDetails extends WorkflowDetails implements Auditable
     public function getType(): string
     {
         return 'workflow_event_details';
+    }
+    
+    public function getLabel(): string
+    {
+        return 'Event';
+    }
+
+    public function getBlock(): WorkflowActionBlock
+    {
+      return EventBlock::make();
+    }
+
+    public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
+    {
+      return new EventWorkflowActionJob($workflowRunStep);
     }
 }

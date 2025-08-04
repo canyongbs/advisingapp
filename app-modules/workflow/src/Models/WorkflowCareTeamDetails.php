@@ -37,6 +37,10 @@
 namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Workflow\Filament\Blocks\CareTeamBlock;
+use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
+use AdvisingApp\Workflow\Jobs\CareTeamWorkflowActionJob;
+use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -64,5 +68,20 @@ class WorkflowCareTeamDetails extends WorkflowDetails implements Auditable
     public function getType(): string
     {
         return 'workflow_care_team_details';
+    }
+    
+    public function getLabel(): string
+    {
+        return 'Care Team';
+    }
+
+    public function getBlock(): WorkflowActionBlock
+    {
+      return CareTeamBlock::make();
+    }
+
+    public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
+    {
+      return new CareTeamWorkflowActionJob($workflowRunStep);
     }
 }

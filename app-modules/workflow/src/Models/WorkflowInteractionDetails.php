@@ -37,6 +37,10 @@
 namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Workflow\Filament\Blocks\InteractionBlock;
+use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
+use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
+use AdvisingApp\Workflow\Jobs\InteractionWorkflowActionJob;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -73,5 +77,20 @@ class WorkflowInteractionDetails extends WorkflowDetails implements Auditable
     public function getType(): string
     {
         return 'workflow_interaction_details';
+    }
+    
+    public function getLabel(): string
+    {
+        return 'Interaction';
+    }
+
+    public function getBlock(): WorkflowActionBlock
+    {
+      return InteractionBlock::make();
+    }
+
+    public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
+    {
+      return new InteractionWorkflowActionJob($workflowRunStep);
     }
 }

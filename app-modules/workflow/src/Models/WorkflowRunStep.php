@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Workflow\Models;
 
-use AdvisingApp\Workflow\Enums\WorkflowActionType;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Model;
@@ -67,7 +66,7 @@ class WorkflowRunStep extends BaseModel
         'dispatched_at' => 'datetime',
         'succeeded_at' => 'datetime',
         'last_failed_at' => 'datetime',
-        'details_type' => WorkflowActionType::class,
+        'details_type' => WorkflowDetails::class,
     ];
 
     /**

@@ -37,6 +37,10 @@
 namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Workflow\Filament\Blocks\TagsBlock;
+use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
+use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
+use AdvisingApp\Workflow\Jobs\TagsWorkflowActionJob;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -64,5 +68,20 @@ class WorkflowTagsDetails extends WorkflowDetails implements Auditable
     public function getType(): string
     {
         return 'workflow_tags_details';
+    }
+    
+    public function getLabel(): string
+    {
+        return 'Tags';
+    }
+
+    public function getBlock(): WorkflowActionBlock
+    {
+      return TagsBlock::make();
+    }
+
+    public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
+    {
+      return new TagsWorkflowActionJob($workflowRunStep);
     }
 }

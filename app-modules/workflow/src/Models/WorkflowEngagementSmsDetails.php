@@ -38,6 +38,10 @@ namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\Workflow\Filament\Blocks\EngagementSmsBlock;
+use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
+use AdvisingApp\Workflow\Jobs\EngagementSmsWorkflowActionJob;
+use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -65,5 +69,20 @@ class WorkflowEngagementSmsDetails extends WorkflowDetails implements Auditable
     public function getType(): string
     {
         return 'workflow_engagement_sms_details';
+    }
+    
+    public function getLabel(): string
+    {
+        return 'Text Message';
+    }
+
+    public function getBlock(): WorkflowActionBlock
+    {
+      return EngagementSmsBlock::make();
+    }
+
+    public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
+    {
+      return new EngagementSmsWorkflowActionJob($workflowRunStep);
     }
 }

@@ -38,6 +38,10 @@ namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\Workflow\Filament\Blocks\EngagementEmailBlock;
+use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
+use AdvisingApp\Workflow\Jobs\EngagementEmailWorkflowActionJob;
+use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -67,5 +71,20 @@ class WorkflowEngagementEmailDetails extends WorkflowDetails implements Auditabl
     public function getType(): string
     {
         return 'workflow_engagement_email_details';
+    }
+    
+    public function getLabel(): string
+    {
+        return 'Email';
+    }
+
+    public function getBlock(): WorkflowActionBlock
+    {
+      return EngagementEmailBlock::make();
+    }
+
+    public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
+    {
+      return new EngagementEmailWorkflowActionJob($workflowRunStep);
     }
 }

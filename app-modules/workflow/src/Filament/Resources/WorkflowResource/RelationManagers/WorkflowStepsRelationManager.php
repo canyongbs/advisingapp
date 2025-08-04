@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Workflow\Filament\Resources\WorkflowResource\RelationManagers;
 
-use AdvisingApp\Workflow\Enums\WorkflowActionType;
 use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
 use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowCaseDetails;
@@ -101,7 +100,7 @@ class WorkflowStepsRelationManager extends RelationManager
                         Builder::make('data')
                             ->hiddenLabel()
                             ->addActionLabel('Add a New Workflow Step')
-                            ->blocks(WorkflowActionType::blocks())
+                            ->blocks(WorkflowDetails::blocks())
                             ->dehydrated(false)
                             ->model($workflow)
                             ->saveRelationshipsUsing(function (Builder $component, Workflow $record) {
