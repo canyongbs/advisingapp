@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Notification\Observers;
 
-use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\Notification\Events\SubscriptionCreated;
 use AdvisingApp\Notification\Events\SubscriptionDeleted;
+use AdvisingApp\Notification\Models\Subscription;
 use Illuminate\Contracts\Events\ShouldHandleEventsAfterCommit;
 
 class SubscriptionObserver implements ShouldHandleEventsAfterCommit
