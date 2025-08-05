@@ -52,4 +52,32 @@ class OpenAiResponsesGpt41NanoService extends BaseOpenAiResponsesService
     {
         return $this->settings->open_ai_gpt_41_nano_base_uri ?? config('integration-open-ai.gpt_41_nano_base_uri');
     }
+
+    public function getImageDeploymentHeader(): ?array
+    {
+        if (! $this->hasImageGeneration()) {
+            return null;
+        }
+
+        return [
+            'x-ms-oai-image-generation-deployment' => $this->getImageGenerationDeployment(),
+        ];
+    }
+
+    public function hasImageGeneration(): bool
+    {
+        return filled($this->getImageGenerationModel());
+    }
+
+    public function getImageGenerationModel(): ?string
+    {
+        return $this->settings->open_ai_gpt_41_nano_image_generation_model
+            ?? config('integration-open-ai.gpt_41_nano_image_generation_model');
+    }
+
+    public function getImageGenerationDeployment(): ?string
+    {
+        return $this->settings->open_ai_gpt_41_nano_image_generation_model
+            ?? config('integration-open-ai.gpt_41_nano_image_generation_model');
+    }
 }

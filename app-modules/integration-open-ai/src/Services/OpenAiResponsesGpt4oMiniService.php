@@ -55,7 +55,6 @@ class OpenAiResponsesGpt4oMiniService extends BaseOpenAiResponsesService
 
     public function getImageDeploymentHeader(): ?array
     {
-        // return $this->settings->open_ai_gpt_4o_mini_image_generation_header ?? config('integration-open-ai.gpt_4o_mini_image_generation_header');
         if (! $this->hasImageGeneration()) {
             return null;
         }
@@ -67,15 +66,18 @@ class OpenAiResponsesGpt4oMiniService extends BaseOpenAiResponsesService
 
     public function hasImageGeneration(): bool
     {
-        // return $this->settings->open_ai_gpt_4o_mini_image_generation ?? config('integration-open-ai.gpt_4o_mini_image_generation', false);
-        // return filled($this->getImageGenerationDeployment());
-        return true;
+        return filled($this->getImageGenerationModel());
+    }
+
+    public function getImageGenerationModel(): ?string
+    {
+        return $this->settings->open_ai_gpt_4o_mini_image_generation_model
+            ?? config('integration-open-ai.gpt_4o_mini_image_generation_model');
     }
 
     public function getImageGenerationDeployment(): ?string
     {
-        // return $this->settings->open_ai_gpt_4o_mini_image_generation_deployment ?? config('integration-open-ai.gpt_4o_mini_image_generation_deployment');
-
-        return 'gen-images-canyon-dev-gpt-image-1-west-3';
+        return $this->settings->open_ai_gpt_4o_mini_image_generation_model
+            ?? config('integration-open-ai.gpt_4o_mini_image_generation_model');
     }
 }

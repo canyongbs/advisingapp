@@ -62,4 +62,32 @@ class OpenAiResponsesGptO3Service extends BaseOpenAiResponsesService
     {
         return false;
     }
+
+    public function getImageDeploymentHeader(): ?array
+    {
+        if (! $this->hasImageGeneration()) {
+            return null;
+        }
+
+        return [
+            'x-ms-oai-image-generation-deployment' => $this->getImageGenerationDeployment(),
+        ];
+    }
+
+    public function hasImageGeneration(): bool
+    {
+        return filled($this->getImageGenerationModel());
+    }
+
+    public function getImageGenerationModel(): ?string
+    {
+        return $this->settings->open_ai_gpt_o3_image_generation_model
+            ?? config('integration-open-ai.gpt_o3_image_generation_model');
+    }
+
+    public function getImageGenerationDeployment(): ?string
+    {
+        return $this->settings->open_ai_gpt_o3_image_generation_model
+            ?? config('integration-open-ai.gpt_o3_image_generation_model');
+    }
 }

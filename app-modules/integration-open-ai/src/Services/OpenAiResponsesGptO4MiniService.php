@@ -62,4 +62,19 @@ class OpenAiResponsesGptO4MiniService extends BaseOpenAiResponsesService
     {
         return false;
     }
+
+    public function hasImageGeneration(): bool
+    {
+        return false;
+    }
+
+    public function getImageGenerationDeployment(): ?string
+    {
+        return null;
+    }
+
+    public function getImageDeploymentHeader(): ?array
+    {
+        return null;
+    }
 }

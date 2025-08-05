@@ -52,4 +52,25 @@ class OpenAiResponsesGptTestService extends BaseOpenAiResponsesService
     {
         return 'https://api.openai.com/v1';
     }
+
+    public function hasImageGeneration(): bool
+    {
+        return true;
+    }
+
+    public function getImageGenerationDeployment(): ?string
+    {
+        return 'test-image-deployment';
+    }
+
+    public function getImageDeploymentHeader(): ?array
+    {
+        if (! $this->hasImageGeneration()) {
+            return null;
+        }
+
+        return [
+            'x-ms-oai-image-generation-deployment' => $this->getImageGenerationDeployment(),
+        ];
+    }
 }
