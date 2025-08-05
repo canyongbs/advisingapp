@@ -36,12 +36,13 @@
 
 namespace AdvisingApp\Notification\Events;
 
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Foundation\Events\Dispatchable;
 use AdvisingApp\Notification\Models\Subscription;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 
-class SubscriptionCreated
+class SubscriptionCreated implements ShouldQueueAfterCommit
 {
     use Dispatchable;
     use InteractsWithSockets;
