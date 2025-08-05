@@ -36,19 +36,20 @@
 
 namespace AdvisingApp\Notification\Observers;
 
+use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\Notification\Events\SubscriptionCreated;
 use AdvisingApp\Notification\Events\SubscriptionDeleted;
-use AdvisingApp\Notification\Models\Subscription;
+use Illuminate\Contracts\Events\ShouldHandleEventsAfterCommit;
 
-class SubscriptionObserver
+class SubscriptionObserver implements ShouldHandleEventsAfterCommit
 {
     public function created(Subscription $subscription): void
     {
-        SubscriptionCreated::dispatch($subscription)->afterCommit();
+        SubscriptionCreated::dispatch($subscription);
     }
 
     public function deleted(Subscription $subscription): void
     {
-        SubscriptionDeleted::dispatch($subscription)->afterCommit();
+        SubscriptionDeleted::dispatch($subscription);
     }
 }
