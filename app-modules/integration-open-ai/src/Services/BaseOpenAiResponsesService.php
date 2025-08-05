@@ -64,7 +64,6 @@ use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Prism\Prism\Contracts\Message;
 use Prism\Prism\Contracts\Schema;
@@ -118,15 +117,14 @@ abstract class BaseOpenAiResponsesService implements AiService
                     'headers' => $this->getImageDeploymentHeader(),
                 ])
                 ->withProviderOptions([
+                    'truncation' => 'auto',
                     'tool_choice' => $this->hasImageGeneration() ? 'auto' : 'none',
                     'tools' => $this->hasImageGeneration() ? [['type' => 'image_generation']] : [],
-                    // 'truncation' => 'auto',
                 ])
                 ->withSystemPrompt($prompt)
                 ->withPrompt($content)
                 ->withMaxTokens($aiSettings->max_tokens->getTokens())
                 ->usingTemperature($this->hasTemperature() ? $aiSettings->temperature : null)
-                // ->withPrompt($prompt . "\n" . $content)
                 ->asText();
         } catch (PrismRateLimitedException $exception) {
             foreach ($exception->rateLimits as $rateLimit) {
@@ -148,7 +146,6 @@ abstract class BaseOpenAiResponsesService implements AiService
                 occurredAt: now(),
             ));
         }
-        // logger()->info('AI response', ['response' => $response]);
 
         return $response->text;
     }
@@ -194,8 +191,6 @@ abstract class BaseOpenAiResponsesService implements AiService
                         }
 
                         if ($chunk->chunkType === ChunkType::ToolResult && filled($chunk->image?->url)) {
-                            // Log::debug('Chunk received', ['chunk' => $chunk]);
-
                             yield json_encode(['type' => 'image', 'url' => $chunk->image->url]);
 
                             continue;
@@ -248,29 +243,6 @@ abstract class BaseOpenAiResponsesService implements AiService
             throw new MessageResponseException('Failed to stream the response: [' . $exception->getMessage() . '].');
         }
     }
-
-    // public function generateImage(string $prompt): mixed
-    // {
-    //     if (! $this->hasImageGeneration()) {
-    //         throw new MessageResponseException('Image generation is not available.');
-    //     }
-
-    //     try {
-    //         return Prism::image()
-    //             ->using('azure_open_ai', $this->getModel())
-    //             ->withClientOptions([
-    //                 'apiKey' => $this->getApiKey(),
-    //                 'apiVersion' => $this->getApiVersion(),
-    //                 'headers' => $this->getImageDeploymentHeader(),
-    //             ])
-    //             ->withPrompt($prompt)
-    //             ->generate();
-    //     } catch (Throwable $exception) {
-    //         report($exception);
-
-    //         throw new MessageResponseException('Image generation failed: [' . $exception->getMessage() . ']');
-    //     }
-    // }
 
     /**
      * @return array<string>
@@ -822,7 +794,6 @@ abstract class BaseOpenAiResponsesService implements AiService
                     'apiKey' => $this->getApiKey(),
                     'apiVersion' => $this->getApiVersion(),
                     'deployment' => $this->getDeployment(),
-                    // 'headers' => $this->getImageDeploymentHeader(),
                 ])
                 ->withProviderOptions([
                     'schema' => [

@@ -103,7 +103,6 @@ document.addEventListener('alpine:init', () => {
                     }
 
                     this.parseEvents(value).forEach((event) => {
-                        // console.log(event);
                         if (event.type === 'content') {
                             this.error = null;
                             this.isRateLimited = false;
