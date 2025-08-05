@@ -797,6 +797,8 @@ abstract class BaseOpenAiResponsesService implements AiService
             ->whereMorphedTo('file', $files) /** @phpstan-ignore argument.type */
             ->whereNotNull('ready_until')
             ->where('ready_until', '>=', now())
+            ->distinct()
+            ->limit(2)
             ->pluck('vector_store_id')
             ->all();
     }
