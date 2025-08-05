@@ -51,10 +51,6 @@ class NotifyUserOfSubscriptionCreated implements ShouldQueue
     {
         $subscribable = $event->subscription->subscribable;
 
-        if ($subscribable == null) {
-            return;
-        }
-
         $name = $subscribable->{$subscribable->displayNameKey()};
 
         $target = match ($subscribable::class) {

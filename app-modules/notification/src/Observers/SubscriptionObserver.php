@@ -1,5 +1,6 @@
 <?php
 
+
 /*
 <COPYRIGHT>
 
@@ -44,11 +45,11 @@ class SubscriptionObserver
 {
     public function created(Subscription $subscription): void
     {
-        SubscriptionCreated::dispatch($subscription);
+        SubscriptionCreated::dispatch($subscription)->afterCommit();
     }
 
     public function deleted(Subscription $subscription): void
     {
-        SubscriptionDeleted::dispatch($subscription);
+        SubscriptionDeleted::dispatch($subscription)->afterCommit();
     }
 }
