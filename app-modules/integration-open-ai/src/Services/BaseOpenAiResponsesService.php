@@ -90,6 +90,9 @@ abstract class BaseOpenAiResponsesService implements AiService
 
     abstract public function getApiKey(): string;
 
+    /**
+     * @return array<string, string>|null
+     */
     abstract public function getImageDeploymentHeader(): ?array;
 
     abstract public function hasImageGeneration(): bool;
@@ -181,6 +184,7 @@ abstract class BaseOpenAiResponsesService implements AiService
             return function () use ($shouldTrack, $stream): Generator {
                 try {
                     foreach ($stream as $chunk) {
+                        /** @var object{image?: object{url?: string}, chunkType: ChunkType, text?: string, finishReason?: FinishReason, meta?: object{id?: string}} $chunk */
                         if (
                             ($chunk->chunkType === ChunkType::Meta) &&
                             filled($chunk->meta?->id)
