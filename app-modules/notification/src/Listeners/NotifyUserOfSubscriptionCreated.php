@@ -36,16 +36,17 @@
 
 namespace AdvisingApp\Notification\Listeners;
 
+use Illuminate\Support\HtmlString;
+use Filament\Notifications\Notification;
+use AdvisingApp\Prospect\Models\Prospect;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 use AdvisingApp\Notification\Events\SubscriptionCreated;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Filament\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\HtmlString;
 
-class NotifyUserOfSubscriptionCreated implements ShouldQueue
+class NotifyUserOfSubscriptionCreated implements ShouldQueue, ShouldQueueAfterCommit
 {
     public function handle(SubscriptionCreated $event): void
     {
