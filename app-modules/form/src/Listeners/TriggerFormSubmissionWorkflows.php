@@ -44,11 +44,11 @@ use AdvisingApp\Workflow\Models\WorkflowRunStep;
 use AdvisingApp\Workflow\Models\WorkflowStep;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use Carbon\Carbon;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
-class TriggerFormSubmissionWorkflows implements ShouldQueue
+class TriggerFormSubmissionWorkflows implements ShouldQueueAfterCommit
 {
     public function handle(FormSubmissionCreated $event): void
     {
