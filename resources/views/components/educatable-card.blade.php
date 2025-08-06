@@ -32,13 +32,11 @@
 </COPYRIGHT>
 --}}
 @php
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+    use AdvisingApp\Prospect\Models\Prospect;
+    use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+    use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 
-$educatabletype = $educatable::class === Prospect::class
-    ? 'prospect'
-    : 'student';
+    $educatabletype = $educatable::class === Prospect::class ? 'prospect' : 'student';
 @endphp
 
 <div

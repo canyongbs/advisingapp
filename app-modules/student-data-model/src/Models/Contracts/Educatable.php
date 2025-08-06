@@ -43,6 +43,7 @@ use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Pipeline\Models\EducatablePipelineStage;
+use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -71,6 +72,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
  * @property-read Collection<int, Tag> $tags
  * @property-read Collection<int, Interaction> $interactions
  * @property-read Collection<int, CaseModel> $cases
+ * @property-read Collection<int, EducatablePipelineStage> $educatablePipelineStages
  */
 interface Educatable extends Identifiable, CanBeNotified
 {

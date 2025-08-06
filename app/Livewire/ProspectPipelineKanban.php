@@ -72,12 +72,21 @@ class ProspectPipelineKanban extends Component implements HasForms, HasActions
     {
         $currentPipeline = $this->pipeline;
 
+        /**
+         * @var Collection<int, Educatable> $pipelineEducatables
+         */
         $pipelineEducatables = app(TranslateSegmentFilters::class)->execute($currentPipeline->segment)
             ->with(['educatablePipelineStages' => fn (MorphToMany $query) => $query->where('pipelines.id', $currentPipeline->getKey())])
-            ->get()
-            ->groupBy(fn (Educatable $educatable) => $educatable->educatablePipelineStages->first()?->pivot->pipeline_stage_id);
+            ->get();
 
-        return $pipelineEducatables;
+        return $pipelineEducatables->groupBy(
+            /**
+             * @param Educatable $educatable
+             */
+            function (Educatable $educatable): string {
+                return $educatable->educatablePipelineStages->first()?->pivot->pipeline_stage_id ?? '';
+            }
+        );
     }
 
     public function getStages()
@@ -98,7 +107,7 @@ class ProspectPipelineKanban extends Component implements HasForms, HasActions
         ]);
     }
 
-    public function moveProspect(Pipeline $pipeline,string $educatableId, $fromStage = '', $toStage = '', $educatableType = ''): JsonResponse
+    public function moveProspect(Pipeline $pipeline, string $educatableId, $fromStage = '', $toStage = '', string $educatableType = ''): JsonResponse
     {
         try {
             if ($educatableType === 'prospect') {
