@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Jobs;
 
-use AdvisingApp\Ai\Models\AiAssistantFile;
+use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiResponsesService;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
@@ -48,7 +48,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Spatie\Multitenancy\Jobs\TenantAware;
 
-class UploadAssistantFileToVectorStore implements ShouldQueue, TenantAware, ShouldBeUnique
+class UploadAssistantFilesToVectorStore implements ShouldQueue, TenantAware, ShouldBeUnique
 {
     use Batchable;
     use Dispatchable;
@@ -62,28 +62,28 @@ class UploadAssistantFileToVectorStore implements ShouldQueue, TenantAware, Shou
     public $tries = 3;
 
     public function __construct(
-        protected AiAssistantFile $file,
+        protected AiAssistant $assistant,
     ) {}
 
     public function handle(): void
     {
-        $service = $this->file->assistant->model->getService();
+        $service = $this->assistant->model->getService();
 
         if (! ($service instanceof BaseOpenAiResponsesService)) {
             return;
         }
 
-        if ($service->isFileReady($this->file)) {
+        if ($service->areFilesReady($this->assistant->files->all())) {
             return;
         }
 
-        Log::info("The AI assistant file [{$this->file->getKey()}] is not ready for use yet.");
+        Log::info("The AI assistant [{$this->assistant->getKey()}] files are not ready for use yet.");
 
         $this->release(now()->addMinutes(5));
     }
 
     public function uniqueId(): string
     {
-        return $this->file->id;
+        return $this->assistant->getKey();
     }
 }

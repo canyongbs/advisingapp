@@ -130,7 +130,10 @@ interface AiService
 
     public function supportsAssistantFileUploads(): bool;
 
-    public function isFileReady(AiFile $file): bool;
+    /**
+     * @param array<AiFile> $files
+     */
+    public function areFilesReady(array $files): bool;
 
     public function isResearchRequestReady(ResearchRequest $researchRequest): bool;
 

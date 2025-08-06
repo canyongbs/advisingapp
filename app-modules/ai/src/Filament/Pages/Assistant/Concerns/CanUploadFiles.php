@@ -84,7 +84,17 @@ trait CanUploadFiles
         }
 
         if (filled($file->parsing_results)) {
-            return $this->cachedIsFileReady[$key] = $this->thread?->assistant?->model->getService()->isFileReady($file);
+            return $this->cachedIsFileReady[$key] = $this->thread?->assistant?->model->getService()->areFilesReady([
+                ...AiMessageFile::query()
+                    ->whereNotNull('parsing_results')
+                    ->whereHas(
+                        'message',
+                        fn (Builder $query) => $query->whereBelongsTo($this->thread, 'thread'),
+                    )
+                    ->get()
+                    ->all(),
+                $file,
+            ]);
         }
 
         $result = app(FetchFileParsingResults::class)->execute($file->file_id, $file->mime_type);
@@ -96,7 +106,17 @@ trait CanUploadFiles
         $file->parsing_results = $result;
         $file->save();
 
-        return $this->cachedIsFileReady[$key] = $this->thread?->assistant?->model->getService()->isFileReady($file);
+        return $this->cachedIsFileReady[$key] = $this->thread?->assistant?->model->getService()->areFilesReady([
+            ...AiMessageFile::query()
+                ->whereNotNull('parsing_results')
+                ->whereHas(
+                    'message',
+                    fn (Builder $query) => $query->whereBelongsTo($this->thread, 'thread'),
+                )
+                ->get()
+                ->all(),
+            $file,
+        ]);
     }
 
     public function clearFiles(): void
