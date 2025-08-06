@@ -51,7 +51,6 @@ document.addEventListener('alpine:init', () => {
                                 evt.item.dataset.educatable,
                                 evt.from.dataset.stage,
                                 evt.to.dataset.stage,
-                                evt.item.dataset.educatabletype,
                             );
 
                             if (result.original.success) {

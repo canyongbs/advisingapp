@@ -42,6 +42,7 @@ use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Pipeline\Models\PipelineStage;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
+use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Exception;
@@ -107,20 +108,22 @@ class ProspectPipelineKanban extends Component implements HasForms, HasActions
         ]);
     }
 
-    public function moveProspect(Pipeline $pipeline, string $educatableId, $fromStage = '', $toStage = '', string $educatableType = ''): JsonResponse
+    public function moveProspect(Pipeline $pipeline, string $educatableId, $fromStage = '', $toStage = ''): JsonResponse
     {
         try {
+            $model = $pipeline->segment->model;
+
+            $educatableType = match ($model) {
+                SegmentModel::Prospect => 'prospect',
+                SegmentModel::Student => 'student',
+            };
+
             if ($educatableType === 'prospect') {
                 $educatable = Prospect::where('id', $educatableId)->first();
                 $educatablePipelineStages = $pipeline->prospectPipelineStages();
             } elseif ($educatableType === 'student') {
                 $educatable = Student::where('sisid', $educatableId)->first();
                 $educatablePipelineStages = $pipeline->studentPipelineStages();
-            } else {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Invalid educatable type provided.',
-                ], ResponseAlias::HTTP_BAD_REQUEST);
             }
 
             if (blank($educatable)) {

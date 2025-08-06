@@ -43,7 +43,6 @@
     class="z-10 flex max-w-md transform cursor-move flex-col rounded-lg bg-white p-5 shadow dark:bg-gray-800"
     data-pipeline="{{ $pipeline->getKey() }}"
     data-educatable="{{ $educatable->getKey() }}"
-    data-educatabletype="{{ $educatabletype }}"
     wire:key="pipeline-{{ $pipeline->getKey() }}-{{ time() }}"
 >
     <div class="flex items-center justify-between pb-4">
