@@ -65,11 +65,6 @@ class WorkflowSubscriptionDetails extends WorkflowDetails implements Auditable
         'remove_prior' => 'boolean',
     ];
 
-    public function getType(): string
-    {
-        return 'workflow_subscription_details';
-    }
-
     public function getLabel(): string
     {
         return 'Subscription';

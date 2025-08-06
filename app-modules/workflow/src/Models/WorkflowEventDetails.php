@@ -59,11 +59,6 @@ class WorkflowEventDetails extends WorkflowDetails implements Auditable
         'workflow_step_id',
     ];
 
-    public function getType(): string
-    {
-        return 'workflow_event_details';
-    }
-
     public function getLabel(): string
     {
         return 'Event';

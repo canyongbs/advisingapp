@@ -67,11 +67,6 @@ class WorkflowProactiveAlertDetails extends WorkflowDetails implements Auditable
         'severity' => AlertSeverity::class,
     ];
 
-    public function getType(): string
-    {
-        return 'workflow_proactive_alert_details';
-    }
-
     public function getLabel(): string
     {
         return 'Proactive Alert';

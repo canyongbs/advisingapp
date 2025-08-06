@@ -68,11 +68,6 @@ class WorkflowEngagementEmailDetails extends WorkflowDetails implements Auditabl
         'body' => 'array',
     ];
 
-    public function getType(): string
-    {
-        return 'workflow_engagement_email_details';
-    }
-
     public function getLabel(): string
     {
         return 'Email';
