@@ -46,7 +46,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 use Illuminate\Support\HtmlString;
 
-class NotifyUserOfSubscriptionCreated implements ShouldQueue, ShouldQueueAfterCommit
+class NotifyUserOfSubscriptionCreated implements ShouldQueueAfterCommit
 {
     public function handle(SubscriptionCreated $event): void
     {
