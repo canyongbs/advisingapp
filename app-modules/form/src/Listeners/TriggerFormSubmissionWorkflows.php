@@ -46,6 +46,8 @@ use AdvisingApp\Workflow\Models\WorkflowStep;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class TriggerFormSubmissionWorkflows implements ShouldQueue
 {
@@ -55,34 +57,44 @@ class TriggerFormSubmissionWorkflows implements ShouldQueue
 
         assert($form instanceof Form);
 
-        $form->workflows->each(function (Workflow $workflow) use ($event) {
-            $workflowRun = new WorkflowRun(['started_at' => now()]);
+        try {
+            DB::beginTransaction();
 
-            $workflowRun->related()->associate($event->submission->author);
-            $workflowRun->workflowTrigger()->associate($workflow->workflowTrigger);
+            $form->workflows->each(function (Workflow $workflow) use ($event) {
+                $workflowRun = new WorkflowRun(['started_at' => now()]);
 
-            $workflowRun->save();
-        });
+                $workflowRun->related()->associate($event->submission->author);
+                $workflowRun->workflowTrigger()->associate($workflow->workflowTrigger);
 
-        $steps = collect();
+                $workflowRun->saveOrFail();
+            });
 
-        $form->workflowTriggers->each(function (WorkflowTrigger $workflowTrigger) use ($steps) {
-            $steps->merge($workflowTrigger->workflow->workflowSteps);
-        });
+            $steps = collect();
 
-        $steps->each(function (WorkflowStep $step) use ($event) {
-            assert($step->currentDetails instanceof WorkflowDetails);
+            $form->workflowTriggers->each(function (WorkflowTrigger $workflowTrigger) use ($steps) {
+                $steps->merge($workflowTrigger->workflow->workflowSteps);
+            });
 
-            $workflowRunStep = new WorkflowRunStep([
-                'execute_at' => $this->getStepScheduledAt($step, $event),
-            ]);
+            $steps->each(function (WorkflowStep $step) use ($event) {
+                assert($step->currentDetails instanceof WorkflowDetails);
 
-            $workflowRun = $step->workflow->workflowTrigger->workflowRun;
-            $workflowRunStep->workflowRun()->associate($workflowRun);
-            $workflowRunStep->details()->associate($step->currentDetails);
+                $workflowRunStep = new WorkflowRunStep([
+                    'execute_at' => $this->getStepScheduledAt($step, $event),
+                ]);
 
-            $workflowRunStep->save();
-        });
+                $workflowRun = $step->workflow->workflowTrigger->workflowRun;
+                $workflowRunStep->workflowRun()->associate($workflowRun);
+                $workflowRunStep->details()->associate($step->currentDetails);
+
+                $workflowRunStep->saveOrFail();
+            });
+
+            DB::commit();
+        } catch (Throwable $error) {
+            DB::rollBack();
+
+            throw $error;
+        }
     }
 
     private function getStepScheduledAt(WorkflowStep $step, FormSubmissionCreated $event): Carbon
