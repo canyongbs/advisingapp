@@ -42,6 +42,9 @@ use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Pipeline\Models\PipelineStage;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
+use AdvisingApp\Segment\Enums\SegmentModel;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Exception;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
@@ -69,12 +72,21 @@ class ProspectPipelineKanban extends Component implements HasForms, HasActions
     {
         $currentPipeline = $this->pipeline;
 
+        /**
+         * @var Collection<int, Educatable> $pipelineEducatables
+         */
         $pipelineEducatables = app(TranslateSegmentFilters::class)->execute($currentPipeline->segment)
             ->with(['educatablePipelineStages' => fn (MorphToMany $query) => $query->where('pipelines.id', $currentPipeline->getKey())])
-            ->get()
-            ->groupBy(fn (Prospect $prospect) => $prospect->educatablePipelineStages->first()?->pivot->pipeline_stage_id);
+            ->get();
 
-        return $pipelineEducatables;
+        return $pipelineEducatables->groupBy(
+            /**
+             * @param Educatable $educatable
+             */
+            function (Educatable $educatable): string {
+                return $educatable->educatablePipelineStages->first()?->pivot->pipeline_stage_id ?? '';
+            }
+        );
     }
 
     public function getStages()
@@ -95,15 +107,32 @@ class ProspectPipelineKanban extends Component implements HasForms, HasActions
         ]);
     }
 
-    public function moveProspect(Pipeline $pipeline, Prospect $educatable, $fromStage = '', $toStage = ''): JsonResponse
+    public function moveProspect(Pipeline $pipeline, string $educatableId, $fromStage = '', $toStage = ''): JsonResponse
     {
         try {
+            $educatableType = $pipeline->segment->model;
+
+            if ($educatableType === SegmentModel::Prospect) {
+                $educatable = Prospect::where('id', $educatableId)->first();
+                $educatablePipelineStages = $pipeline->prospectPipelineStages();
+            } elseif ($educatableType === SegmentModel::Student) {
+                $educatable = Student::where('sisid', $educatableId)->first();
+                $educatablePipelineStages = $pipeline->studentPipelineStages();
+            }
+
+            if (blank($educatable)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => ($educatableType === SegmentModel::Prospect ? 'Prospect' : 'Student') . ' not found.',
+                ], ResponseAlias::HTTP_NOT_FOUND);
+            }
+
             if (blank($fromStage)) {
-                $pipeline->educatablePipelineStages()->attach($educatable, [
+                $educatablePipelineStages->attach($educatable, [
                     'pipeline_stage_id' => PipelineStage::find($toStage)->getKey(),
                 ]);
             } elseif (blank($toStage)) {
-                $pipeline->educatablePipelineStages()->detach($educatable);
+                $educatablePipelineStages->detach($educatable);
             } else {
                 EducatablePipelineStage::where('pipeline_id', $pipeline->getKey())
                     ->where('pipeline_stage_id', $fromStage)
@@ -123,7 +152,7 @@ class ProspectPipelineKanban extends Component implements HasForms, HasActions
 
         return response()->json([
             'success' => true,
-            'message' => 'Prospect stage updated successfully.',
+            'message' => ($educatableType === SegmentModel::Prospect ? 'Prospect' : 'Student') . ' stage updated successfully.',
         ], ResponseAlias::HTTP_OK);
     }
 }
