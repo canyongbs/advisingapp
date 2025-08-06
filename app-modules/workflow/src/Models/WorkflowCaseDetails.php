@@ -37,17 +37,18 @@
 namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Workflow\Models\Contracts\WorkflowAction;
-use App\Models\BaseModel;
+use AdvisingApp\Workflow\Filament\Blocks\CaseBlock;
+use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
+use AdvisingApp\Workflow\Jobs\CaseWorkflowActionJob;
+use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @mixin IdeHelperWorkflowCaseDetails
  */
-class WorkflowCaseDetails extends BaseModel implements Auditable, WorkflowAction
+class WorkflowCaseDetails extends WorkflowDetails implements Auditable
 {
     use SoftDeletes;
     use AuditableTrait;
@@ -63,11 +64,18 @@ class WorkflowCaseDetails extends BaseModel implements Auditable, WorkflowAction
         'workflow_step_id',
     ];
 
-    /**
-     * @return BelongsTo<WorkflowStep, $this>
-     */
-    public function workflowStep(): BelongsTo
+    public function getLabel(): string
     {
-        return $this->belongsTo(WorkflowStep::class);
+        return 'Case';
+    }
+
+    public function getBlock(): WorkflowActionBlock
+    {
+        return CaseBlock::make();
+    }
+
+    public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
+    {
+        return new CaseWorkflowActionJob($workflowRunStep);
     }
 }

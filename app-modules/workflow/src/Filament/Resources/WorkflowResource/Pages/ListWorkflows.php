@@ -34,48 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Models;
+namespace AdvisingApp\Workflow\Filament\Resources\WorkflowResource\Pages;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Workflow\Filament\Resources\WorkflowResource;
+use Filament\Actions\CreateAction;
+use Filament\Resources\Pages\ListRecords;
 
-/**
- * @mixin IdeHelperWorkflow
- */
-class Workflow extends BaseModel implements Auditable
+class ListWorkflows extends ListRecords
 {
-    use SoftDeletes;
-    use AuditableTrait;
-    use HasUuids;
+    protected static string $resource = WorkflowResource::class;
 
-    protected $fillable = [
-        'workflow_trigger_id',
-        'name',
-        'is_enabled',
-    ];
-
-    protected $casts = [
-        'is_enabled' => 'boolean',
-    ];
-
-    /**
-     * @return BelongsTo<WorkflowTrigger, $this>
-     */
-    public function workflowTrigger(): BelongsTo
+    protected function getHeaderActions(): array
     {
-        return $this->belongsTo(WorkflowTrigger::class);
-    }
-
-    /**
-     * @return HasMany<WorkflowStep, $this>
-     */
-    public function workflowSteps(): HasMany
-    {
-        return $this->hasMany(WorkflowStep::class);
+        return [
+            CreateAction::make(),
+        ];
     }
 }

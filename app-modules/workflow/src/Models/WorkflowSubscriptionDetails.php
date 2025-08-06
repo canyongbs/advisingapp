@@ -37,17 +37,18 @@
 namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Workflow\Models\Contracts\WorkflowAction;
-use App\Models\BaseModel;
+use AdvisingApp\Workflow\Filament\Blocks\SubscriptionBlock;
+use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
+use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
+use AdvisingApp\Workflow\Jobs\SubscriptionWorkflowActionJob;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @mixin IdeHelperWorkflowSubscriptionDetails
  */
-class WorkflowSubscriptionDetails extends BaseModel implements Auditable, WorkflowAction
+class WorkflowSubscriptionDetails extends WorkflowDetails implements Auditable
 {
     use SoftDeletes;
     use AuditableTrait;
@@ -64,11 +65,18 @@ class WorkflowSubscriptionDetails extends BaseModel implements Auditable, Workfl
         'remove_prior' => 'boolean',
     ];
 
-    /**
-     * @return BelongsTo<WorkflowStep, $this>
-     */
-    public function workflowStep(): BelongsTo
+    public function getLabel(): string
     {
-        return $this->belongsTo(WorkflowStep::class);
+        return 'Subscription';
+    }
+
+    public function getBlock(): WorkflowActionBlock
+    {
+        return SubscriptionBlock::make();
+    }
+
+    public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
+    {
+        return new SubscriptionWorkflowActionJob($workflowRunStep);
     }
 }

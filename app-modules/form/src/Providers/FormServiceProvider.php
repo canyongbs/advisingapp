@@ -42,6 +42,7 @@ use AdvisingApp\Form\Listeners\ClearAuthorFormSubmissionCountCache;
 use AdvisingApp\Form\Listeners\ClearFormFormSubmissionCountCache;
 use AdvisingApp\Form\Listeners\NotifySubscribersOfFormSubmission;
 use AdvisingApp\Form\Listeners\SendFormSubmissionAutoReplyEmailToSubmitter;
+use AdvisingApp\Form\Listeners\TriggerFormSubmissionWorkflows;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormEmailAutoReply;
 use AdvisingApp\Form\Models\FormField;
@@ -89,6 +90,11 @@ class FormServiceProvider extends ServiceProvider
         Event::listen(
             events: FormSubmissionCreated::class,
             listener: ClearFormFormSubmissionCountCache::class,
+        );
+
+        Event::listen(
+            events: FormSubmissionCreated::class,
+            listener: TriggerFormSubmissionWorkflows::class,
         );
     }
 }

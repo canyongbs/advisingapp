@@ -37,9 +37,12 @@
 namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Workflow\Enums\WorkflowTriggerType;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
@@ -52,11 +55,47 @@ class WorkflowTrigger extends BaseModel implements Auditable
     use AuditableTrait;
     use HasUuids;
 
+    protected $fillable = [
+        'type',
+        'related_type',
+        'related_id',
+        'created_by_type',
+        'created_by_id',
+    ];
+
+    protected $casts = [
+        'type' => WorkflowTriggerType::class,
+    ];
+
     /**
      * @return HasOne<Workflow, $this>
      */
     public function workflow(): HasOne
     {
         return $this->hasOne(Workflow::class);
+    }
+
+    /**
+     * @return HasOne<WorkflowRun, $this>
+     */
+    public function workflowRun(): HasOne
+    {
+        return $this->hasOne(WorkflowRun::class);
+    }
+
+    /**
+     * @return MorphTo<Model, $this>
+     */
+    public function createdBy(): MorphTo
+    {
+        return $this->morphTo();
+    }
+
+    /**
+     * @return MorphTo<Model, $this>
+     */
+    public function related(): MorphTo
+    {
+        return $this->morphTo();
     }
 }

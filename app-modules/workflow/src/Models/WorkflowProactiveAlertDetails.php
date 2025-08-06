@@ -38,17 +38,18 @@ namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Workflow\Models\Contracts\WorkflowAction;
-use App\Models\BaseModel;
+use AdvisingApp\Workflow\Filament\Blocks\ProactiveAlertBlock;
+use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
+use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
+use AdvisingApp\Workflow\Jobs\ProactiveAlertWorkflowActionJob;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @mixin IdeHelperWorkflowProactiveAlertDetails
  */
-class WorkflowProactiveAlertDetails extends BaseModel implements Auditable, WorkflowAction
+class WorkflowProactiveAlertDetails extends WorkflowDetails implements Auditable
 {
     use SoftDeletes;
     use AuditableTrait;
@@ -66,11 +67,18 @@ class WorkflowProactiveAlertDetails extends BaseModel implements Auditable, Work
         'severity' => AlertSeverity::class,
     ];
 
-    /**
-     * @return BelongsTo<WorkflowStep, $this>
-     */
-    public function workflowStep(): BelongsTo
+    public function getLabel(): string
     {
-        return $this->belongsTo(WorkflowStep::class);
+        return 'Proactive Alert';
+    }
+
+    public function getBlock(): WorkflowActionBlock
+    {
+        return ProactiveAlertBlock::make();
+    }
+
+    public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
+    {
+        return new ProactiveAlertWorkflowActionJob($workflowRunStep);
     }
 }
