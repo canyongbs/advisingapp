@@ -42,6 +42,7 @@ use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
+use AdvisingApp\Pipeline\Models\EducatablePipelineStage;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -134,4 +135,9 @@ interface Educatable extends Identifiable, CanBeNotified
      * @return MorphMany<CaseModel, covariant Model>
      */
     public function cases(): MorphMany;
+
+    /**
+     * @return MorphToMany<Pipeline, covariant Student|Prospect, covariant EducatablePipelineStage>
+     */
+    public function educatablePipelineStages(): MorphToMany;
 }

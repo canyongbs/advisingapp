@@ -40,6 +40,7 @@ use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Pipeline\Database\Factories\PipelineFactory;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Segment\Models\Segment;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -92,13 +93,35 @@ class Pipeline extends Model implements Auditable
         return $this->belongsTo(Segment::class, 'segment_id');
     }
 
+    public function educatablePipelineStages(): HasMany
+    {
+        return $this->hasMany(EducatablePipelineStage::class, 'pipeline_id');
+    }
+
     /**
      * @return MorphToMany<Prospect, $this, covariant EducatablePipelineStage>
      */
-    public function educatablePipelineStages(): MorphToMany
+    public function prospectPipelineStages(): MorphToMany
     {
         return $this->morphedByMany(
             related: Prospect::class,
+            name: 'educatable',
+            table: 'educatable_pipeline_stages',
+            foreignPivotKey: 'pipeline_id',
+            relatedPivotKey: 'educatable_id',
+        )
+            ->using(EducatablePipelineStage::class)
+            ->withPivot(['pipeline_stage_id'])
+            ->withTimestamps();
+    }
+
+    /**
+     * @return MorphToMany<Student, $this, covariant EducatablePipelineStage>
+     */
+    public function studentPipelineStages(): MorphToMany
+    {
+        return $this->morphedByMany(
+            related: Student::class,
             name: 'educatable',
             table: 'educatable_pipeline_stages',
             foreignPivotKey: 'pipeline_id',

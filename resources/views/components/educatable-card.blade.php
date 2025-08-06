@@ -31,11 +31,21 @@
 
 </COPYRIGHT>
 --}}
-@use('AdvisingApp\Prospect\Filament\Resources\ProspectResource')
+@php
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+
+$educatabletype = $educatable::class === Prospect::class
+    ? 'prospect'
+    : 'student';
+@endphp
+
 <div
     class="z-10 flex max-w-md transform cursor-move flex-col rounded-lg bg-white p-5 shadow dark:bg-gray-800"
     data-pipeline="{{ $pipeline->getKey() }}"
     data-educatable="{{ $educatable->getKey() }}"
+    data-educatabletype="{{ $educatabletype }}"
     wire:key="pipeline-{{ $pipeline->getKey() }}-{{ time() }}"
 >
     <div class="flex items-center justify-between pb-4">
@@ -50,16 +60,28 @@
                 {{ str($pipeline?->segment?->name)->limit(50) }}
             </small>
         </div>
-
-        <x-filament::icon-button
-            href="{{ ProspectResource::getUrl('view', [
-                'record' => $educatable?->getKey(),
-            ]) }}"
-            icon="heroicon-m-arrow-top-right-on-square"
-            tag="a"
-            target="_blank"
-            label="View Prospect"
-        />
+        @if ($educatabletype === 'prospect')
+            <x-filament::icon-button
+                href="{{ ProspectResource::getUrl('view', [
+                    'record' => $educatable?->getKey(),
+                ]) }}"
+                icon="heroicon-m-arrow-top-right-on-square"
+                tag="a"
+                target="_blank"
+                label="View Prospect"
+            />
+        @endif
+        @if ($educatabletype === 'student')
+            <x-filament::icon-button
+                href="{{ StudentResource::getUrl('view', [
+                    'record' => $educatable?->getKey(),
+                ]) }}"
+                icon="heroicon-m-arrow-top-right-on-square"
+                tag="a"
+                target="_blank"
+                label="View Student"
+            />
+        @endif
 
     </div>
 </div>
