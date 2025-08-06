@@ -80,7 +80,7 @@ class WorkflowRun extends BaseModel
     }
 
     /**
-     * @return MorphTo<covariant Model, $this>
+     * @return MorphTo<Model, $this>
      */
     public function related(): MorphTo
     {
