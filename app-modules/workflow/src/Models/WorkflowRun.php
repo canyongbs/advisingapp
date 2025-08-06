@@ -52,6 +52,13 @@ class WorkflowRun extends BaseModel
     use SoftDeletes;
     use HasUuids;
 
+    protected $fillable = [
+        'workflow_trigger_id',
+        'related_type',
+        'related_id',
+        'started_at',
+    ];
+
     protected $casts = [
         'started_at' => 'datetime',
     ];
