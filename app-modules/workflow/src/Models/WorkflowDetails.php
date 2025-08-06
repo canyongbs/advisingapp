@@ -69,23 +69,23 @@ abstract class WorkflowDetails extends BaseModel
     public static function blocks(): array
     {
         $blocks = [
-            CareTeamBlock::make(),
-            EngagementEmailBlock::make(),
-            EngagementSmsBlock::make(),
-            InteractionBlock::make(),
-            ProactiveAlertBlock::make(),
-            SubscriptionBlock::make(),
-            TagsBlock::make(),
-            TaskBlock::make(),
+            //            CareTeamBlock::make(),
+            //            EngagementEmailBlock::make(),
+            //            EngagementSmsBlock::make(),
+            //            InteractionBlock::make(),
+            //            ProactiveAlertBlock::make(),
+            //            SubscriptionBlock::make(),
+            //            TagsBlock::make(),
+            //            TaskBlock::make(),
         ];
 
         if (app(LicenseSettings::class)->data->addons->caseManagement) {
             $blocks[] = CaseBlock::make();
         }
 
-        if (app(LicenseSettings::class)->data->addons->eventManagement) {
-            $blocks[] = EventBlock::make();
-        }
+        //        if (app(LicenseSettings::class)->data->addons->eventManagement) {
+        //            $blocks[] = EventBlock::make();
+        //        }
 
         return $blocks;
     }

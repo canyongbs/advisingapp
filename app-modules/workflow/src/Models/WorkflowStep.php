@@ -62,10 +62,6 @@ class WorkflowStep extends BaseModel implements Auditable
         'previous_step_id',
     ];
 
-    protected $casts = [
-        'current_details_type' => WorkflowDetails::class,
-    ];
-
     /**
      * @return BelongsTo<Workflow, $this>
      */
