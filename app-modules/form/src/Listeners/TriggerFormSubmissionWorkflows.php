@@ -60,33 +60,26 @@ class TriggerFormSubmissionWorkflows implements ShouldQueue
         try {
             DB::beginTransaction();
 
-            $form->workflows->each(function (Workflow $workflow) use ($event) {
+            $form->loadMissing('workflowTriggers.workflow.workflowSteps.currentDetails');
+
+            $form->workflowTriggers->each(function (WorkflowTrigger $workflowTrigger) use ($event) {
                 $workflowRun = new WorkflowRun(['started_at' => now()]);
-
                 $workflowRun->related()->associate($event->submission->author);
-                $workflowRun->workflowTrigger()->associate($workflow->workflowTrigger);
-
+                $workflowRun->workflowTrigger()->associate($workflowTrigger);
                 $workflowRun->saveOrFail();
-            });
 
-            $steps = collect();
+                $workflowTrigger->workflow->workflowSteps->each(function (WorkflowStep $step) use ($event, $workflowRun) {
+                    assert($step->currentDetails instanceof WorkflowDetails);
 
-            $form->workflowTriggers->each(function (WorkflowTrigger $workflowTrigger) use ($steps) {
-                $steps->merge($workflowTrigger->workflow->workflowSteps);
-            });
+                    $workflowRunStep = new WorkflowRunStep([
+                        'execute_at' => $this->getStepScheduledAt($step, $event),
+                    ]);
 
-            $steps->each(function (WorkflowStep $step) use ($event) {
-                assert($step->currentDetails instanceof WorkflowDetails);
+                    $workflowRunStep->workflowRun()->associate($workflowRun);
+                    $workflowRunStep->details()->associate($step->currentDetails);
 
-                $workflowRunStep = new WorkflowRunStep([
-                    'execute_at' => $this->getStepScheduledAt($step, $event),
-                ]);
-
-                $workflowRun = $step->workflow->workflowTrigger->workflowRun;
-                $workflowRunStep->workflowRun()->associate($workflowRun);
-                $workflowRunStep->details()->associate($step->currentDetails);
-
-                $workflowRunStep->saveOrFail();
+                    $workflowRunStep->saveOrFail();
+                });
             });
 
             DB::commit();

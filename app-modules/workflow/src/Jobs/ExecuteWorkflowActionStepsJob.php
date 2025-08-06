@@ -41,6 +41,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class ExecuteWorkflowActionStepsJob implements ShouldQueue
 {
@@ -53,10 +55,20 @@ class ExecuteWorkflowActionStepsJob implements ShouldQueue
         $steps = WorkflowRunStep::query()->where('execute_at', '<=', now())->whereNull('dispatched_at');
 
         $steps->each(function (WorkflowRunStep $step) {
-            $step->dispatched_at = now();
-            $step->save();
+            try {
+                DB::beginTransaction();
 
-            dispatch($step->details_type->getActionExecutableJob($step));
+                $step->dispatched_at = now();
+                $step->save();
+
+                dispatch($step->details->getActionExecutableJob($step));
+
+                DB::commit();
+            } catch (Throwable $error) {
+                DB::rollBack();
+
+                report($error);
+            }
         });
     }
 }
