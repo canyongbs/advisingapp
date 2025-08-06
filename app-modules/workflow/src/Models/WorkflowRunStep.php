@@ -76,7 +76,7 @@ class WorkflowRunStep extends BaseModel
     }
 
     /**
-     * @return MorphTo<covariant WorkflowDetails, $this>
+     * @return MorphTo<Model, $this>
      */
     public function details(): MorphTo
     {

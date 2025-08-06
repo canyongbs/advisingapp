@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Workflow\Jobs;
 
+use AdvisingApp\Workflow\Models\WorkflowDetails;
 use AdvisingApp\Workflow\Models\WorkflowRunStep;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -60,6 +61,8 @@ class ExecuteWorkflowActionStepsJob implements ShouldQueue
 
                 $step->dispatched_at = now();
                 $step->save();
+
+                assert($step->details instanceof WorkflowDetails);
 
                 dispatch($step->details->getActionExecutableJob($step));
 
