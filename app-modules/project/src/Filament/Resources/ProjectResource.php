@@ -39,6 +39,7 @@ namespace AdvisingApp\Project\Filament\Resources;
 use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\CreateProject;
 use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\EditProject;
 use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ListProjects;
+use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ManageFiles;
 use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ViewProject;
 use AdvisingApp\Project\Models\Project;
 use App\Features\ProjectPageFeature;
@@ -69,6 +70,7 @@ class ProjectResource extends Resource
     return $page->generateNavigationItems([
       ViewProject::class,
       EditProject::class,
+      ManageFiles::class,
     ]);
   }
 
@@ -79,6 +81,7 @@ class ProjectResource extends Resource
       'create' => CreateProject::route('/create'),
       'view' => ViewProject::route('/{record}'),
       'edit' => EditProject::route('/{record}/edit'),
+      'files' => ManageFiles::route('/{record}/files'),
     ];
   }
 }

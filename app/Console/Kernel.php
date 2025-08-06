@@ -49,6 +49,7 @@ use AdvisingApp\Form\Models\FormAuthentication;
 use AdvisingApp\MeetingCenter\Console\Commands\RefreshCalendarRefreshTokens;
 use AdvisingApp\MeetingCenter\Jobs\SyncCalendars;
 use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionStepsJob;
+use AdvisingApp\Project\Models\ProjectFile;
 use App\Models\HealthCheckResultHistoryItem;
 use App\Models\MonitoredScheduledTaskLogItem;
 use App\Models\Scopes\SetupIsComplete;
@@ -170,6 +171,7 @@ class Kernel extends ConsoleKernel
                         FailedImportRow::class,
                         FormAuthentication::class,
                         HealthCheckResultHistoryItem::class,
+                        ProjectFile::class,
                     ])
                         ->join(',');
 

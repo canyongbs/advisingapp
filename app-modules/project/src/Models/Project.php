@@ -51,30 +51,30 @@ use OwenIt\Auditing\Contracts\Auditable;
 #[ObservedBy([ProjectObserver::class])]
 class Project extends BaseModel implements Auditable
 {
-  /** @use HasFactory<ProjectFactory> */
-  use HasFactory;
+    /** @use HasFactory<ProjectFactory> */
+    use HasFactory;
 
-  use SoftDeletes;
-  use AuditableTrait;
+    use SoftDeletes;
+    use AuditableTrait;
 
-  protected $fillable = [
-    'name',
-    'description',
-  ];
+    protected $fillable = [
+        'name',
+        'description',
+    ];
 
-  /**
-   * @return MorphTo<Model, $this>
-   */
-  public function createdBy(): MorphTo
-  {
-    return $this->morphTo();
-  }
+    /**
+     * @return MorphTo<Model, $this>
+     */
+    public function createdBy(): MorphTo
+    {
+        return $this->morphTo();
+    }
 
-  /**
-   * @return HasMany<ProjectFile, $this>
-   */
-  public function files(): HasMany
-  {
-    return $this->hasMany(ProjectFile::class, 'project_id');
-  }
+    /**
+     * @return HasMany<ProjectFile, $this>
+     */
+    public function files(): HasMany
+    {
+        return $this->hasMany(ProjectFile::class, 'project_id');
+    }
 }
