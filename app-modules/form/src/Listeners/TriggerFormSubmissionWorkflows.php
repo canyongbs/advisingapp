@@ -56,6 +56,11 @@ class TriggerFormSubmissionWorkflows implements ShouldQueue
 
         assert($form instanceof Form);
 
+        if (is_null($event->submission->author)) {
+            // If the submission has no author, we cannot trigger workflows.
+            return;
+        }
+
         try {
             DB::beginTransaction();
 
