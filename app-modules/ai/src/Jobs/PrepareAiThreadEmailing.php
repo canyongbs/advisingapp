@@ -59,6 +59,7 @@ class PrepareAiThreadEmailing implements ShouldQueue
     public function __construct(
         public AiThread $thread,
         public string $targetType,
+        /** @var array<string> $targetIds */
         public array $targetIds,
         public User $sender,
     ) {}

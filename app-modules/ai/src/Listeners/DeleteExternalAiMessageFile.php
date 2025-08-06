@@ -48,7 +48,7 @@ class DeleteExternalAiMessageFile
             return;
         }
 
-        $service = $event->aiMessageFile?->message?->thread?->assistant?->model?->getService();
+        $service = $event->aiMessageFile->message?->thread?->assistant?->model?->getService();
 
         if ($service === null) {
             report(new Exception('No AI service found for the message file: ' . $event->aiMessageFile->getKey()));

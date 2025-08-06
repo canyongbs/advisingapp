@@ -77,6 +77,7 @@ class ViewPrompt extends ViewRecord
     protected function getHeaderActions(): array
     {
         $prompt = $this->getRecord();
+        assert($prompt instanceof Prompt, 'Expected record to be an instance of Prompt');
 
         return [
             Action::make('upvote')
