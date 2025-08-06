@@ -34,25 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Providers;
+namespace AdvisingApp\Project\Filament\Resources\ProjectResource\Pages;
 
-use AdvisingApp\Project\Models\Project;
-use AdvisingApp\Project\ProjectPlugin;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use AdvisingApp\Project\Filament\Resources\ProjectResource;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Resources\Pages\CreateRecord;
 
-class ProjectServiceProvider extends ServiceProvider
+class CreateProject extends CreateRecord
 {
-    public function register()
-    {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new ProjectPlugin()));
-    }
+    protected static string $resource = ProjectResource::class;
 
-    public function boot(): void
+    public function form(Form $form): Form
     {
-        Relation::morphMap([
-            'project' => Project::class,
-        ]);
+        return $form
+            ->schema([
+                TextInput::make('name')
+                    ->required()
+                    ->unique()
+                    ->string()
+                    ->maxLength(255),
+                Textarea::make('description')
+                    ->string()
+                    ->maxLength(65535)
+                    ->columnSpanFull(),
+            ]);
     }
 }

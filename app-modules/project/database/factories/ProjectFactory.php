@@ -34,25 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Providers;
+namespace AdvisingApp\Project\Database\Factories;
 
 use AdvisingApp\Project\Models\Project;
-use AdvisingApp\Project\ProjectPlugin;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class ProjectServiceProvider extends ServiceProvider
+/**
+ * @extends Factory<Project>
+ */
+class ProjectFactory extends Factory
 {
-    public function register()
+    /**
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new ProjectPlugin()));
-    }
-
-    public function boot(): void
-    {
-        Relation::morphMap([
-            'project' => Project::class,
-        ]);
+        return [
+            'name' => str($this->faker->unique()->words(3, true))->title()->toString(),
+            'description' => $this->faker->sentence(),
+        ];
     }
 }

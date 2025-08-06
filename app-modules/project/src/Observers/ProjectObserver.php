@@ -34,25 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Providers;
+namespace AdvisingApp\Project\Observers;
 
 use AdvisingApp\Project\Models\Project;
-use AdvisingApp\Project\ProjectPlugin;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
 
-class ProjectServiceProvider extends ServiceProvider
+class ProjectObserver
 {
-    public function register()
+    public function creating(Project $project): void
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new ProjectPlugin()));
-    }
-
-    public function boot(): void
-    {
-        Relation::morphMap([
-            'project' => Project::class,
-        ]);
+        if (is_null($project->createdBy)) {
+            $user = auth()->user();
+            $project->createdBy()->associate($user);
+        }
     }
 }

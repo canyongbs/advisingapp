@@ -34,25 +34,57 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Providers;
-
+use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ViewProject;
 use AdvisingApp\Project\Models\Project;
-use AdvisingApp\Project\ProjectPlugin;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use App\Models\User;
 
-class ProjectServiceProvider extends ServiceProvider
-{
-    public function register()
-    {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new ProjectPlugin()));
-    }
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
+use function Pest\Livewire\livewire;
 
-    public function boot(): void
-    {
-        Relation::morphMap([
-            'project' => Project::class,
-        ]);
-    }
-}
+it('cannot render without proper permission.', function () {
+    $user = User::factory()->create();
+
+    actingAs($user);
+
+    $project = Project::factory()->create();
+
+    get(ViewProject::getUrl([
+        'record' => $project->getRouteKey(),
+    ]))
+        ->assertForbidden();
+});
+
+it('can render with proper permission.', function () {
+    $user = User::factory()->create();
+
+    $user->givePermissionTo('project.view-any');
+    $user->givePermissionTo('project.*.view');
+
+    $user->refresh();
+
+    actingAs($user);
+
+    $project = Project::factory()->create();
+
+    get(ViewProject::getUrl([
+        'record' => $project->getRouteKey(),
+    ]))
+        ->assertSuccessful();
+});
+
+it('can view a record', function () {
+    $user = User::factory()->create();
+
+    $user->givePermissionTo('project.view-any');
+    $user->givePermissionTo('project.*.view');
+
+    actingAs($user);
+
+    $project = Project::factory()->create();
+
+    livewire(ViewProject::class, [
+        'record' => $project->getRouteKey(),
+    ])
+        ->assertHasNoErrors();
+});

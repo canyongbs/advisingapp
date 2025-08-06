@@ -34,25 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Providers;
+namespace AdvisingApp\Project\Models;
 
-use AdvisingApp\Project\Models\Project;
-use AdvisingApp\Project\ProjectPlugin;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Project\Database\Factories\ProjectFactory;
+use AdvisingApp\Project\Observers\ProjectObserver;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class ProjectServiceProvider extends ServiceProvider
+#[ObservedBy([ProjectObserver::class])]
+class Project extends BaseModel implements Auditable
 {
-    public function register()
-    {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new ProjectPlugin()));
-    }
+    /** @use HasFactory<ProjectFactory> */
+    use HasFactory;
 
-    public function boot(): void
+    use SoftDeletes;
+    use AuditableTrait;
+
+    protected $fillable = [
+        'name',
+        'description',
+    ];
+
+    /**
+     * @return MorphTo<Model, $this>
+     */
+    public function createdBy(): MorphTo
     {
-        Relation::morphMap([
-            'project' => Project::class,
-        ]);
+        return $this->morphTo();
     }
 }

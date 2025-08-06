@@ -34,25 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Providers;
+namespace AdvisingApp\Project\Tests\Tenant\Filament\Resources\ProjectResource\RequestFactory;
 
-use AdvisingApp\Project\Models\Project;
-use AdvisingApp\Project\ProjectPlugin;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use Worksome\RequestFactories\RequestFactory;
 
-class ProjectServiceProvider extends ServiceProvider
+class CreateProjectRequestFactory extends RequestFactory
 {
-    public function register()
+    public function definition(): array
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new ProjectPlugin()));
-    }
-
-    public function boot(): void
-    {
-        Relation::morphMap([
-            'project' => Project::class,
-        ]);
+        return [
+            'name' => str($this->faker->unique()->words(3, true))->title()->toString(),
+            'description' => $this->faker->paragraph(),
+        ];
     }
 }

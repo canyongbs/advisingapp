@@ -34,25 +34,51 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Providers;
+namespace AdvisingApp\Project\Filament\Resources;
 
+use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\CreateProject;
+use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\EditProject;
+use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ListProjects;
+use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ViewProject;
 use AdvisingApp\Project\Models\Project;
-use AdvisingApp\Project\ProjectPlugin;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use App\Features\ProjectPageFeature;
+use App\Models\User;
+use Filament\Resources\Pages\Page;
+use Filament\Resources\Resource;
 
-class ProjectServiceProvider extends ServiceProvider
+class ProjectResource extends Resource
 {
-    public function register()
+    protected static ?string $model = Project::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationGroup = 'Project Management';
+
+    protected static ?int $navigationSort = 10;
+
+    public static function canAccess(): bool
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new ProjectPlugin()));
+        /** @var User $user */
+        $user = auth()->user();
+
+        return ProjectPageFeature::active() && $user->can('project.view-any');
     }
 
-    public function boot(): void
+    public static function getRecordSubNavigation(Page $page): array
     {
-        Relation::morphMap([
-            'project' => Project::class,
+        return $page->generateNavigationItems([
+            ViewProject::class,
+            EditProject::class,
         ]);
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListProjects::route('/'),
+            'create' => CreateProject::route('/create'),
+            'view' => ViewProject::route('/{record}'),
+            'edit' => EditProject::route('/{record}/edit'),
+        ];
     }
 }

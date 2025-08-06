@@ -34,25 +34,46 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Providers;
+namespace AdvisingApp\Project\Filament\Resources\ProjectResource\Pages;
 
-use AdvisingApp\Project\Models\Project;
-use AdvisingApp\Project\ProjectPlugin;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use AdvisingApp\Project\Filament\Resources\ProjectResource;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\ViewAction;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Resources\Pages\EditRecord;
 
-class ProjectServiceProvider extends ServiceProvider
+class EditProject extends EditRecord
 {
-    public function register()
+    use EditPageRedirection;
+
+    protected static string $resource = ProjectResource::class;
+
+    protected static ?string $navigationLabel = 'Edit';
+
+    public function form(Form $form): Form
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new ProjectPlugin()));
+        return $form
+            ->schema([
+                TextInput::make('name')
+                    ->required()
+                    ->string()
+                    ->unique(ignoreRecord: true)
+                    ->maxLength(255),
+                Textarea::make('description')
+                    ->string()
+                    ->maxLength(65535)
+                    ->columnSpanFull(),
+            ]);
     }
 
-    public function boot(): void
+    protected function getHeaderActions(): array
     {
-        Relation::morphMap([
-            'project' => Project::class,
-        ]);
+        return [
+            ViewAction::make(),
+            DeleteAction::make(),
+        ];
     }
 }

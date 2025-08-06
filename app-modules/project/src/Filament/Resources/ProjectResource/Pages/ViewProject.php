@@ -34,25 +34,39 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Providers;
+namespace AdvisingApp\Project\Filament\Resources\ProjectResource\Pages;
 
-use AdvisingApp\Project\Models\Project;
-use AdvisingApp\Project\ProjectPlugin;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use AdvisingApp\Project\Filament\Resources\ProjectResource;
+use Filament\Actions\EditAction;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Pages\ViewRecord;
 
-class ProjectServiceProvider extends ServiceProvider
+class ViewProject extends ViewRecord
 {
-    public function register()
+    protected static string $resource = ProjectResource::class;
+
+    protected static ?string $navigationLabel = 'View';
+
+    public function infolist(Infolist $infolist): Infolist
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new ProjectPlugin()));
+        return $infolist
+            ->schema([
+                Section::make()
+                    ->schema([
+                        TextEntry::make('name'),
+                        TextEntry::make('description')
+                            ->label('Description')
+                            ->columnSpanFull(),
+                    ]),
+            ]);
     }
 
-    public function boot(): void
+    protected function getHeaderActions(): array
     {
-        Relation::morphMap([
-            'project' => Project::class,
-        ]);
+        return [
+            EditAction::make(),
+        ];
     }
 }

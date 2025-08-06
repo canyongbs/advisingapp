@@ -34,25 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Providers;
+namespace App\Features;
 
-use AdvisingApp\Project\Models\Project;
-use AdvisingApp\Project\ProjectPlugin;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use App\Support\AbstractFeatureFlag;
 
-class ProjectServiceProvider extends ServiceProvider
+class ProjectPageFeature extends AbstractFeatureFlag
 {
-    public function register()
+    public function resolve(mixed $scope): mixed
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new ProjectPlugin()));
-    }
-
-    public function boot(): void
-    {
-        Relation::morphMap([
-            'project' => Project::class,
-        ]);
+        return false;
     }
 }

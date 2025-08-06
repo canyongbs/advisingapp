@@ -34,25 +34,49 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Providers;
-
+use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ListProjects;
 use AdvisingApp\Project\Models\Project;
-use AdvisingApp\Project\ProjectPlugin;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use App\Models\User;
 
-class ProjectServiceProvider extends ServiceProvider
-{
-    public function register()
-    {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new ProjectPlugin()));
-    }
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
+use function Pest\Livewire\livewire;
 
-    public function boot(): void
-    {
-        Relation::morphMap([
-            'project' => Project::class,
-        ]);
-    }
-}
+it('cannot render without proper permission.', function () {
+    $user = User::factory()->create();
+
+    actingAs($user);
+
+    get(ListProjects::getUrl())
+        ->assertForbidden();
+});
+
+it('can render with proper permission.', function () {
+    $user = User::factory()->create();
+
+    $user->givePermissionTo('project.view-any');
+    $user->givePermissionTo('project.*.view');
+
+    $user->refresh();
+
+    actingAs($user);
+
+    get(ListProjects::getUrl())
+        ->assertSuccessful();
+});
+
+it('can list records', function () {
+    $user = User::factory()->create();
+
+    $user->givePermissionTo('project.view-any');
+    $user->givePermissionTo('project.*.view');
+
+    actingAs($user);
+
+    $records = Project::factory()->count(5)->create();
+
+    livewire(ListProjects::class)
+        ->assertCountTableRecords(5)
+        ->assertCanSeeTableRecords($records)
+        ->assertSuccessful();
+});
