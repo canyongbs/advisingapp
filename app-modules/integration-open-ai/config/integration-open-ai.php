@@ -41,11 +41,15 @@ return [
 
     'gpt_4o_model' => env('OPEN_AI_GPT_4O_MODEL'),
 
+    'gpt_4o_image_generation_model' => env('OPEN_AI_GPT_4O_IMAGE_GENERATION_MODEL'),
+
     'gpt_4o_mini_base_uri' => env('OPEN_AI_GPT_4O_MINI_BASE_URI'),
 
     'gpt_4o_mini_api_key' => env('OPEN_AI_GPT_4O_MINI_API_KEY'),
 
     'gpt_4o_mini_model' => env('OPEN_AI_GPT_4O_MINI_MODEL'),
+
+    'gpt_4o_mini_image_generation_model' => env('OPEN_AI_GPT_4O_MINI_IMAGE_GENERATION_MODEL'),
 
     'gpt_o1_mini_base_uri' => env('OPEN_AI_GPT_O1_MINI_BASE_URI'),
 
@@ -59,6 +63,8 @@ return [
 
     'gpt_o3_model' => env('OPEN_AI_GPT_O3_MODEL'),
 
+    'gpt_o3_image_generation_model' => env('OPEN_AI_GPT_O3_IMAGE_GENERATION_MODEL'),
+
     'gpt_o3_mini_base_uri' => env('OPEN_AI_GPT_O3_MINI_BASE_URI'),
 
     'gpt_o3_mini_api_key' => env('OPEN_AI_GPT_O3_MINI_API_KEY'),
@@ -71,11 +77,15 @@ return [
 
     'gpt_41_mini_model' => env('OPEN_AI_GPT_41_MINI_MODEL'),
 
+    'gpt_41_mini_image_generation_model' => env('OPEN_AI_GPT_41_MINI_IMAGE_GENERATION_MODEL'),
+
     'gpt_41_nano_base_uri' => env('OPEN_AI_GPT_41_NANO_BASE_URI'),
 
     'gpt_41_nano_api_key' => env('OPEN_AI_GPT_41_NANO_API_KEY'),
 
     'gpt_41_nano_model' => env('OPEN_AI_GPT_41_NANO_MODEL'),
+
+    'gpt_41_nano_image_generation_model' => env('OPEN_AI_GPT_41_NANO_IMAGE_GENERATION_MODEL'),
 
     'gpt_o4_mini_base_uri' => env('OPEN_AI_GPT_O4_MINI_BASE_URI'),
 
