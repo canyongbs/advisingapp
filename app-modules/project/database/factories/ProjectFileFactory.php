@@ -34,27 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Providers;
+namespace AdvisingApp\Project\Database\Factories;
 
 use AdvisingApp\Project\Models\Project;
 use AdvisingApp\Project\Models\ProjectFile;
-use AdvisingApp\Project\ProjectPlugin;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class ProjectServiceProvider extends ServiceProvider
+/**
+ * @extends Factory<ProjectFile>
+ */
+class ProjectFileFactory extends Factory
 {
-    public function register()
+    /**
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new ProjectPlugin()));
-    }
-
-    public function boot(): void
-    {
-        Relation::morphMap([
-            'project' => Project::class,
-            'project_file' => ProjectFile::class,
-        ]);
+        return [
+            'project_id' => Project::factory(),
+            'description' => $this->faker->sentence(3),
+            'retention_date' => $this->faker->dateTimeBetween('-1 year', '+1 year')->format('Y-m-d'),
+        ];
     }
 }

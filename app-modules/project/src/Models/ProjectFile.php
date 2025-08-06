@@ -2,16 +2,17 @@
 
 namespace AdvisingApp\Project\Models;
 
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Project\Database\Factories\ProjectFileFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Prunable;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Prunable;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ProjectFile extends Model implements HasMedia, Auditable
 {

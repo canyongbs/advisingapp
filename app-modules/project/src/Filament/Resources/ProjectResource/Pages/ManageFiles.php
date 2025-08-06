@@ -124,7 +124,7 @@ class ManageFiles extends ManageRelatedRecords
                 IdColumn::make(),
                 TextColumn::make('description'),
                 IconColumn::make('media')
-                    ->tooltip(fn($record) => match ($record->getMedia('file')?->first()?->mime_type) {
+                    ->tooltip(fn ($record) => match ($record->getMedia('file')?->first()?->mime_type) {
                         default => 'File',
                         'image/png' => 'Image (.png)',
                         'image/jpeg' => 'Image (.jpeg)',
@@ -143,7 +143,7 @@ class ManageFiles extends ManageRelatedRecords
                         'video/mp4' => 'MP4',
                         'application/zip' => 'Zip File'
                     })
-                    ->icon(fn($state) => match ($state->mime_type) {
+                    ->icon(fn ($state) => match ($state->mime_type) {
                         default => 'heroicon-o-paper-clip',
                         'image/png' => 'heroicon-o-photo',
                         'image/jpeg' => 'heroicon-o-camera',
@@ -165,10 +165,10 @@ class ManageFiles extends ManageRelatedRecords
                 TextColumn::make('created_at')
                     ->label('Date Created')
                     ->dateTime()
-                    ->sortable(query: fn($query, $direction) => $query->orderBy('project_files.created_at', $direction)),
+                    ->sortable(query: fn ($query, $direction) => $query->orderBy('project_files.created_at', $direction)),
                 TextColumn::make('createdBy.name')
                     ->label('Created By')
-                    ->sortable(query: fn($query, $direction) => $query->orderBy('project_files.created_by_id', $direction)),
+                    ->sortable(query: fn ($query, $direction) => $query->orderBy('project_files.created_by_id', $direction)),
             ])
             ->headerActions([
                 CreateAction::make()
@@ -178,7 +178,7 @@ class ManageFiles extends ManageRelatedRecords
                 Action::make('download')
                     ->icon('heroicon-o-arrow-down-on-square')
                     ->action(
-                        fn(ProjectFile $record) => Storage::disk('s3')
+                        fn (ProjectFile $record) => Storage::disk('s3')
                             ->download(
                                 $record
                                     ->getMedia('file')
