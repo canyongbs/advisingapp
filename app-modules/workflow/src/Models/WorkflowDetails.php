@@ -55,8 +55,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 abstract class WorkflowDetails extends BaseModel
 {
-    abstract public function getType(): string;
-
     abstract public function getLabel(): string;
 
     abstract public function getBlock(): WorkflowActionBlock;

@@ -74,11 +74,6 @@ class WorkflowInteractionDetails extends WorkflowDetails implements Auditable
         'end_datetime' => 'datetime',
     ];
 
-    public function getType(): string
-    {
-        return 'workflow_interaction_details';
-    }
-
     public function getLabel(): string
     {
         return 'Interaction';
