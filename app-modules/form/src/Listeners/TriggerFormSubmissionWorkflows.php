@@ -38,7 +38,6 @@ namespace AdvisingApp\Form\Listeners;
 
 use AdvisingApp\Form\Events\FormSubmissionCreated;
 use AdvisingApp\Form\Models\Form;
-use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowDetails;
 use AdvisingApp\Workflow\Models\WorkflowRun;
 use AdvisingApp\Workflow\Models\WorkflowRunStep;

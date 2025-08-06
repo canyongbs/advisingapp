@@ -39,7 +39,6 @@ namespace AdvisingApp\Workflow\Models;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -79,7 +78,7 @@ class WorkflowStep extends BaseModel implements Auditable
     }
 
     /**
-     * @return MorphTo<Model, $this>
+     * @return MorphTo<covariant WorkflowDetails, $this>
      */
     public function currentDetails(): MorphTo
     {

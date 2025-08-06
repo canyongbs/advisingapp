@@ -72,7 +72,7 @@ class WorkflowStepsRelationManager extends RelationManager
                     ->required()
                     ->maxLength(255)
                     ->disabled(),
-                Group::make(fn (WorkflowStep $record) => $record->currentDetails?->getEditFields()),
+                Group::make(fn (WorkflowStep $record) => $record->currentDetails->getEditFields()),
             ])
             ->columns(1);
     }
@@ -88,7 +88,7 @@ class WorkflowStepsRelationManager extends RelationManager
             ->columns([
                 TextColumn::make('type')
                     ->label('Step Type')
-                    ->getStateUsing(fn (WorkflowStep $record) => $record->currentDetails?->getLabel() ?? ''),
+                    ->getStateUsing(fn (WorkflowStep $record) => $record->currentDetails->getLabel() ?? ''),
                 TextColumn::make('delay_minutes')
                     ->label('Delay from Previous Step')
                     ->state(fn (WorkflowStep $record) => CarbonInterval::minutes($record->delay_minutes)->cascade()->forHumans()),
@@ -152,10 +152,10 @@ class WorkflowStepsRelationManager extends RelationManager
             ])
             ->actions([
                 EditAction::make()
-                    ->modalHeading(fn (WorkflowStep $workflowStep) => 'Edit ' . Str::title($workflowStep->currentDetails?->getLabel()))
+                    ->modalHeading(fn (WorkflowStep $workflowStep) => 'Edit ' . Str::title($workflowStep->currentDetails->getLabel()))
                     ->databaseTransaction(),
                 DeleteAction::make()
-                    ->modalHeading(fn (WorkflowStep $workflowStep) => 'Delete ' . Str::title($workflowStep->currentDetails?->getLabel()))
+                    ->modalHeading(fn (WorkflowStep $workflowStep) => 'Delete ' . Str::title($workflowStep->currentDetails->getLabel()))
                     ->databaseTransaction(),
             ])
             ->bulkActions([
