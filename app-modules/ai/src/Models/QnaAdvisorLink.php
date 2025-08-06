@@ -44,6 +44,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @mixin IdeHelperQnaAdvisorLink
+ */
 class QnaAdvisorLink extends BaseModel implements AiFile
 {
     use SoftDeletes;
