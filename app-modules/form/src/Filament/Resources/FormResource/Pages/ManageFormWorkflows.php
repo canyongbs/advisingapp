@@ -78,7 +78,8 @@ class ManageFormWorkflows extends ManageRelatedRecords
                     ->boolean(),
             ])
             ->actions([
-                EditAction::make(),
+                EditAction::make()
+                    ->url(fn (Workflow $record) => WorkflowResource::getUrl('edit', [$record])),
             ])
             ->recordUrl(fn (Workflow $record) => WorkflowResource::getUrl('edit', [$record]));
     }
