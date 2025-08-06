@@ -53,7 +53,6 @@ use Filament\Forms\Contracts\HasForms;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 use Livewire\Component;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
@@ -111,17 +110,12 @@ class ProspectPipelineKanban extends Component implements HasForms, HasActions
     public function moveProspect(Pipeline $pipeline, string $educatableId, $fromStage = '', $toStage = ''): JsonResponse
     {
         try {
-            $model = $pipeline->segment->model;
+            $educatableType = $pipeline->segment->model;
 
-            $educatableType = match ($model) {
-                SegmentModel::Prospect => 'prospect',
-                SegmentModel::Student => 'student',
-            };
-
-            if ($educatableType === 'prospect') {
+            if ($educatableType === SegmentModel::Prospect) {
                 $educatable = Prospect::where('id', $educatableId)->first();
                 $educatablePipelineStages = $pipeline->prospectPipelineStages();
-            } elseif ($educatableType === 'student') {
+            } elseif ($educatableType === SegmentModel::Student) {
                 $educatable = Student::where('sisid', $educatableId)->first();
                 $educatablePipelineStages = $pipeline->studentPipelineStages();
             }
@@ -129,7 +123,7 @@ class ProspectPipelineKanban extends Component implements HasForms, HasActions
             if (blank($educatable)) {
                 return response()->json([
                     'success' => false,
-                    'message' => Str::ucfirst($educatableType) . ' not found.',
+                    'message' => ($educatableType === SegmentModel::Prospect ? 'Prospect' : 'Student') . ' not found.',
                 ], ResponseAlias::HTTP_NOT_FOUND);
             }
 
@@ -158,7 +152,7 @@ class ProspectPipelineKanban extends Component implements HasForms, HasActions
 
         return response()->json([
             'success' => true,
-            'message' => Str::ucfirst($educatableType) . ' stage updated successfully.',
+            'message' => ($educatableType === SegmentModel::Prospect ? 'Prospect' : 'Student') . ' stage updated successfully.',
         ], ResponseAlias::HTTP_OK);
     }
 }
