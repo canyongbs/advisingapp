@@ -78,7 +78,7 @@ class CaseWorkflowActionJob extends ExecuteWorkflowActionJob
                 'division_id' => $details->division_id,
                 'status_id' => $details->status_id,
                 'priority_id' => $details->priority_id,
-                'created_by_id' => $user,
+                'created_by_id' => $user->getKey(),
             ]);
 
             if (isset($details->assigned_to_id)) {
@@ -86,7 +86,7 @@ class CaseWorkflowActionJob extends ExecuteWorkflowActionJob
                     $case->priority->type->assignment_type->getAssignerClass()->execute($case) :
                     $case->assignments()->create([
                         'user_id' => $details->assigned_to_id,
-                        'assigned_by_id' => $user,
+                        'assigned_by_id' => $user->getKey(),
                         'assigned_at' => now(),
                         'status' => CaseAssignmentStatus::Active,
                     ]);
@@ -98,6 +98,9 @@ class CaseWorkflowActionJob extends ExecuteWorkflowActionJob
             $workflowRunStepRelated->related()->associate($case);
 
             $workflowRunStepRelated->save();
+
+            $this->workflowRunStep->succeeded_at = now();
+            $this->workflowRunStep->saveOrFail();
 
             DB::commit();
         } catch (Throwable $throw) {

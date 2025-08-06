@@ -40,6 +40,7 @@ use AdvisingApp\Workflow\Models\WorkflowRunStep;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Throwable;
 
 abstract class ExecuteWorkflowActionJob implements ShouldQueue
 {
@@ -53,4 +54,12 @@ abstract class ExecuteWorkflowActionJob implements ShouldQueue
     public function __construct(public WorkflowRunStep $workflowRunStep) {}
 
     abstract public function handle(): void;
+
+    public function failed(?Throwable $exception): void
+    {
+        $this->workflowRunStep->last_failed_at = now();
+        $this->workflowRunStep->save();
+
+        report($exception);
+    }
 }
