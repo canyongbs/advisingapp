@@ -79,12 +79,19 @@ class AzureOpenAi extends OpenAI
      */
     protected function client(array $options = [], array $retry = [], ?string $baseUrl = null): PendingRequest
     {
+        $headers = [
+            ...($options['headers'] ?? []),
+            'api-key' => $options['apiKey'],
+        ];
+
         return $this->baseClient()
-            ->withHeaders([
-                'api-key' => $options['apiKey'],
-            ])
+            // ->withHeaders([
+            //     'api-key' => $options['apiKey'],
+            // ])
+            ->withHeaders($headers)
             ->withQueryParameters(['api-version' => $options['apiVersion']])
-            ->withOptions(Arr::except($options, ['apiKey', 'apiVersion', 'deployment']))
+            // ->withOptions(Arr::except($options, ['apiKey', 'apiVersion', 'deployment']))
+            ->withOptions(Arr::except($options, ['apiKey', 'apiVersion', 'deployment', 'headers']))
             ->when($retry !== [], fn ($client) => $client->retry(...$retry))
             ->baseUrl($options['deployment']);
     }

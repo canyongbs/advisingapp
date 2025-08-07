@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Services;
 
+use Illuminate\Support\Facades\Log;
+
 class OpenAiResponsesGpt41MiniService extends BaseOpenAiResponsesService
 {
     public function getApiKey(): string
@@ -59,6 +61,8 @@ class OpenAiResponsesGpt41MiniService extends BaseOpenAiResponsesService
             return null;
         }
 
+        // Log::debug($this->getImageGenerationDeployment());
+
         return [
             'x-ms-oai-image-generation-deployment' => $this->getImageGenerationDeployment(),
         ];
@@ -66,17 +70,23 @@ class OpenAiResponsesGpt41MiniService extends BaseOpenAiResponsesService
 
     public function hasImageGeneration(): bool
     {
+        // Log::info(filled($this->getImageGenerationModel()));
+
         return filled($this->getImageGenerationModel());
     }
 
     public function getImageGenerationModel(): ?string
     {
+        // Log::debug($this->settings->open_ai_gpt_41_mini_image_generation_model);
+
         return $this->settings->open_ai_gpt_41_mini_image_generation_model
             ?? config('integration-open-ai.gpt_41_mini_image_generation_model');
     }
 
     public function getImageGenerationDeployment(): ?string
     {
+        // Log::debug($this->settings->open_ai_gpt_41_mini_image_generation_model);
+
         return $this->settings->open_ai_gpt_41_mini_image_generation_model
             ?? config('integration-open-ai.gpt_41_mini_image_generation_model');
     }

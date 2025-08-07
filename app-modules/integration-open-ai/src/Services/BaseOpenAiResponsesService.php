@@ -117,12 +117,12 @@ abstract class BaseOpenAiResponsesService implements AiService
                     'apiKey' => $this->getApiKey(),
                     'apiVersion' => $this->getApiVersion(),
                     'deployment' => $this->getDeployment(),
-                    'headers' => $this->getImageDeploymentHeader(),
+                    // 'headers' => $this->getImageDeploymentHeader(),
                 ])
                 ->withProviderOptions([
                     'truncation' => 'auto',
-                    'tool_choice' => $this->hasImageGeneration() ? 'auto' : 'none',
-                    'tools' => $this->hasImageGeneration() ? [['type' => 'image_generation']] : [],
+                    // 'tool_choice' => $this->hasImageGeneration() ? 'auto' : 'none',
+                    // 'tools' => $this->hasImageGeneration() ? [['type' => 'image_generation']] : [],
                 ])
                 ->withSystemPrompt($prompt)
                 ->withPrompt($content)
@@ -167,13 +167,13 @@ abstract class BaseOpenAiResponsesService implements AiService
                     'apiKey' => $this->getApiKey(),
                     'apiVersion' => $this->getApiVersion(),
                     'deployment' => $this->getDeployment(),
-                    'headers' => $this->getImageDeploymentHeader(),
+                    // 'headers' => $this->getImageDeploymentHeader(),
                 ])
                 ->withProviderOptions([
                     'instructions' => $prompt,
                     'truncation' => 'auto',
-                    'tool_choice' => $this->hasImageGeneration() ? 'auto' : 'none',
-                    'tools' => $this->hasImageGeneration() ? [['type' => 'image_generation']] : [],
+                    // 'tool_choice' => $this->hasImageGeneration() ? 'auto' : 'none',
+                    // 'tools' => $this->hasImageGeneration() ? [['type' => 'image_generation']] : [],
                     ...$options,
                 ])
                 ->withPrompt($content)
@@ -194,11 +194,11 @@ abstract class BaseOpenAiResponsesService implements AiService
                             continue;
                         }
 
-                        if ($chunk->chunkType === ChunkType::ToolResult && filled($chunk->image?->url)) {
-                            yield json_encode(['type' => 'image', 'url' => $chunk->image->url]);
+                        // if ($chunk->chunkType === ChunkType::ToolResult && filled($chunk->image?->url)) {
+                        //     yield json_encode(['type' => 'image', 'url' => $chunk->image->url]);
 
-                            continue;
-                        }
+                        //     continue;
+                        // }
 
                         if ($chunk->chunkType !== ChunkType::Text) {
                             continue;
@@ -478,6 +478,9 @@ abstract class BaseOpenAiResponsesService implements AiService
         $aiSettings = app(AiSettings::class);
         $instructions = $this->generateAssistantInstructions($message->thread->assistant, withDynamicContext: true);
 
+        $toolChoice = 'none';
+        $tools = [];
+
         try {
             $vectorStoreIds = $this->getReadyVectorStoreIds([
                 ...$files,
@@ -497,12 +500,29 @@ abstract class BaseOpenAiResponsesService implements AiService
                     ->all(),
             ]);
 
+            if ($this->hasImageGeneration()) {
+                $toolChoice = 'auto';
+                $tools[] = [
+                    'type' => 'image_generation',
+                    'partial_images' => 1,
+                ];
+            }
+
+            if (filled($vectorStoreIds)) {
+                $toolChoice = filled($files) ? ['type' => 'file_search'] : 'auto';
+                $tools[] = [
+                    'type' => 'file_search',
+                    'vector_store_ids' => $vectorStoreIds,
+                ];
+            }
+
             $stream = Prism::text()
                 ->using('azure_open_ai', $this->getModel())
                 ->withClientOptions([
                     'apiKey' => $this->getApiKey(),
                     'apiVersion' => $this->getApiVersion(),
                     'deployment' => $this->getDeployment(),
+                    'headers' => $this->getImageDeploymentHeader(),
                 ])
                 ->withProviderOptions([
                     'previous_response_id' => $previousResponseId,
@@ -512,15 +532,17 @@ abstract class BaseOpenAiResponsesService implements AiService
                         ],
                     ] : []),
                     'truncation' => 'auto',
-                    ...(filled($vectorStoreIds) ? [
-                        'tool_choice' => filled($files) ? [
-                            'type' => 'file_search',
-                        ] : 'auto',
-                        'tools' => [[
-                            'type' => 'file_search',
-                            'vector_store_ids' => $vectorStoreIds,
-                        ]],
-                    ] : []),
+                    // ...(filled($vectorStoreIds) ? [
+                    //     'tool_choice' => filled($files) ? [
+                    //         'type' => 'file_search',
+                    //     ] : 'auto',
+                    //     'tools' => [[
+                    //         'type' => 'file_search',
+                    //         'vector_store_ids' => $vectorStoreIds,
+                    //     ]],
+                    // ] : []),
+                    'tool_choice' => $toolChoice,
+                    'tools' => $tools,
                 ])
                 ->withSystemPrompt($instructions)
                 ->withMessages([
