@@ -80,9 +80,4 @@ class WorkflowEngagementSmsDetails extends WorkflowDetails implements Auditable
     {
         return new EngagementSmsWorkflowActionJob($workflowRunStep);
     }
-
-    public function getType(): string
-    {
-        return 'workflow_engagement_sms_details';
-    }
 }

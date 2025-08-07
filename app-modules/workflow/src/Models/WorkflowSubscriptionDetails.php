@@ -79,9 +79,4 @@ class WorkflowSubscriptionDetails extends WorkflowDetails implements Auditable
     {
         return new SubscriptionWorkflowActionJob($workflowRunStep);
     }
-
-    public function getType(): string
-    {
-        return 'workflow_subscription_details';
-    }
 }

@@ -88,9 +88,4 @@ class WorkflowInteractionDetails extends WorkflowDetails implements Auditable
     {
         return new InteractionWorkflowActionJob($workflowRunStep);
     }
-
-    public function getType(): string
-    {
-        return 'workflow_interaction_details';
-    }
 }

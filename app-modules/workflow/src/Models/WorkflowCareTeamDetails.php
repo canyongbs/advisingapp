@@ -79,9 +79,4 @@ class WorkflowCareTeamDetails extends WorkflowDetails implements Auditable
     {
         return new CareTeamWorkflowActionJob($workflowRunStep);
     }
-
-    public function getType(): string
-    {
-        return 'workflow_care_team_details';
-    }
 }

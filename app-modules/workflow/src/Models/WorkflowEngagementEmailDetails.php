@@ -82,9 +82,4 @@ class WorkflowEngagementEmailDetails extends WorkflowDetails implements Auditabl
     {
         return new EngagementEmailWorkflowActionJob($workflowRunStep);
     }
-
-    public function getType(): string
-    {
-        return 'workflow_engagement_email_details';
-    }
 }
