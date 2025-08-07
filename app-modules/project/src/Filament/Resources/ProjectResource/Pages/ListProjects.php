@@ -49,32 +49,32 @@ use Filament\Tables\Table;
 
 class ListProjects extends ListRecords
 {
-  protected static string $resource = ProjectResource::class;
+    protected static string $resource = ProjectResource::class;
 
-  public function table(Table $table): Table
-  {
-    return $table
-      ->columns([
-        IdColumn::make(),
-        TextColumn::make('name')
-          ->searchable()
-          ->sortable(),
-      ])
-      ->actions([
-        ViewAction::make(),
-        EditAction::make(),
-      ])
-      ->bulkActions([
-        BulkActionGroup::make([
-          DeleteBulkAction::make(),
-        ]),
-      ]);
-  }
+    public function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                IdColumn::make(),
+                TextColumn::make('name')
+                    ->searchable()
+                    ->sortable(),
+            ])
+            ->actions([
+                ViewAction::make(),
+                EditAction::make(),
+            ])
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
 
-  protected function getHeaderActions(): array
-  {
-    return [
-      CreateAction::make(),
-    ];
-  }
+    protected function getHeaderActions(): array
+    {
+        return [
+            CreateAction::make(),
+        ];
+    }
 }

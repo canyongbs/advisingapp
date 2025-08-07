@@ -45,28 +45,28 @@ use Filament\Resources\Pages\ViewRecord;
 
 class ViewProject extends ViewRecord
 {
-  protected static string $resource = ProjectResource::class;
+    protected static string $resource = ProjectResource::class;
 
-  protected static ?string $navigationLabel = 'View';
+    protected static ?string $navigationLabel = 'View';
 
-  public function infolist(Infolist $infolist): Infolist
-  {
-    return $infolist
-      ->schema([
-        Section::make()
-          ->schema([
-            TextEntry::make('name'),
-            TextEntry::make('description')
-              ->label('Description')
-              ->columnSpanFull(),
-          ]),
-      ]);
-  }
+    public function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Section::make()
+                    ->schema([
+                        TextEntry::make('name'),
+                        TextEntry::make('description')
+                            ->label('Description')
+                            ->columnSpanFull(),
+                    ]),
+            ]);
+    }
 
-  protected function getHeaderActions(): array
-  {
-    return [
-      EditAction::make(),
-    ];
-  }
+    protected function getHeaderActions(): array
+    {
+        return [
+            EditAction::make(),
+        ];
+    }
 }

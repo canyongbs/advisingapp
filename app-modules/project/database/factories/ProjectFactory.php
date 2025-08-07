@@ -44,15 +44,15 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class ProjectFactory extends Factory
 {
-  /**
-   *
-   * @return array<string, mixed>
-   */
-  public function definition(): array
-  {
-    return [
-      'name' => str($this->faker->unique()->words(3, true))->title()->toString(),
-      'description' => $this->faker->sentence(),
-    ];
-  }
+    /**
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'name' => str($this->faker->unique()->words(3, true))->title()->toString(),
+            'description' => $this->faker->sentence(),
+        ];
+    }
 }
