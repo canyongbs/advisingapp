@@ -40,11 +40,11 @@ use Worksome\RequestFactories\RequestFactory;
 
 class CreateProjectRequestFactory extends RequestFactory
 {
-  public function definition(): array
-  {
-    return [
-      'name' => str($this->faker->unique()->words(3, true))->title()->toString(),
-      'description' => $this->faker->paragraph(),
-    ];
-  }
+    public function definition(): array
+    {
+        return [
+            'name' => str($this->faker->unique()->words(3, true))->title()->toString(),
+            'description' => $this->faker->paragraph(),
+        ];
+    }
 }

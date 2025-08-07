@@ -49,39 +49,39 @@ use Filament\Resources\Resource;
 
 class ProjectResource extends Resource
 {
-  protected static ?string $model = Project::class;
+    protected static ?string $model = Project::class;
 
-  protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-  protected static ?string $navigationGroup = 'Project Management';
+    protected static ?string $navigationGroup = 'Project Management';
 
-  protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 10;
 
-  public static function canAccess(): bool
-  {
-    /** @var User $user */
-    $user = auth()->user();
+    public static function canAccess(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
 
-    return ProjectPageFeature::active() && $user->can('project.view-any');
-  }
+        return ProjectPageFeature::active() && $user->can('project.view-any');
+    }
 
-  public static function getRecordSubNavigation(Page $page): array
-  {
-    return $page->generateNavigationItems([
-      ViewProject::class,
-      EditProject::class,
-      ManageFiles::class,
-    ]);
-  }
+    public static function getRecordSubNavigation(Page $page): array
+    {
+        return $page->generateNavigationItems([
+            ViewProject::class,
+            EditProject::class,
+            ManageFiles::class,
+        ]);
+    }
 
-  public static function getPages(): array
-  {
-    return [
-      'index' => ListProjects::route('/'),
-      'create' => CreateProject::route('/create'),
-      'view' => ViewProject::route('/{record}'),
-      'edit' => EditProject::route('/{record}/edit'),
-      'files' => ManageFiles::route('/{record}/files'),
-    ];
-  }
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListProjects::route('/'),
+            'create' => CreateProject::route('/create'),
+            'view' => ViewProject::route('/{record}'),
+            'edit' => EditProject::route('/{record}/edit'),
+            'files' => ManageFiles::route('/{record}/files'),
+        ];
+    }
 }

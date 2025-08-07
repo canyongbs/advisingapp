@@ -44,21 +44,21 @@ use Filament\Resources\Pages\CreateRecord;
 
 class CreateProject extends CreateRecord
 {
-  protected static string $resource = ProjectResource::class;
+    protected static string $resource = ProjectResource::class;
 
-  public function form(Form $form): Form
-  {
-    return $form
-      ->schema([
-        TextInput::make('name')
-          ->required()
-          ->unique()
-          ->string()
-          ->maxLength(255),
-        Textarea::make('description')
-          ->string()
-          ->maxLength(65535)
-          ->columnSpanFull(),
-      ]);
-  }
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                TextInput::make('name')
+                    ->required()
+                    ->unique()
+                    ->string()
+                    ->maxLength(255),
+                Textarea::make('description')
+                    ->string()
+                    ->maxLength(65535)
+                    ->columnSpanFull(),
+            ]);
+    }
 }

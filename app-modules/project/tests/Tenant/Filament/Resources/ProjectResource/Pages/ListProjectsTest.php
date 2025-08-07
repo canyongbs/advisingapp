@@ -43,40 +43,40 @@ use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
 
 it('cannot render without proper permission.', function () {
-  $user = User::factory()->create();
+    $user = User::factory()->create();
 
-  actingAs($user);
+    actingAs($user);
 
-  get(ListProjects::getUrl())
-    ->assertForbidden();
+    get(ListProjects::getUrl())
+        ->assertForbidden();
 });
 
 it('can render with proper permission.', function () {
-  $user = User::factory()->create();
+    $user = User::factory()->create();
 
-  $user->givePermissionTo('project.view-any');
-  $user->givePermissionTo('project.*.view');
+    $user->givePermissionTo('project.view-any');
+    $user->givePermissionTo('project.*.view');
 
-  $user->refresh();
+    $user->refresh();
 
-  actingAs($user);
+    actingAs($user);
 
-  get(ListProjects::getUrl())
-    ->assertSuccessful();
+    get(ListProjects::getUrl())
+        ->assertSuccessful();
 });
 
 it('can list records', function () {
-  $user = User::factory()->create();
+    $user = User::factory()->create();
 
-  $user->givePermissionTo('project.view-any');
-  $user->givePermissionTo('project.*.view');
+    $user->givePermissionTo('project.view-any');
+    $user->givePermissionTo('project.*.view');
 
-  actingAs($user);
+    actingAs($user);
 
-  $records = Project::factory()->count(5)->create();
+    $records = Project::factory()->count(5)->create();
 
-  livewire(ListProjects::class)
-    ->assertCountTableRecords(5)
-    ->assertCanSeeTableRecords($records)
-    ->assertSuccessful();
+    livewire(ListProjects::class)
+        ->assertCountTableRecords(5)
+        ->assertCanSeeTableRecords($records)
+        ->assertSuccessful();
 });
