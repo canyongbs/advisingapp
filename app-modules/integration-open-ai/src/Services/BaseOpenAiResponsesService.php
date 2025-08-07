@@ -1341,7 +1341,7 @@ abstract class BaseOpenAiResponsesService implements AiService
         $oldFilesInVectorStore = OpenAiVectorStore::query()
             ->where('deployment_hash', $this->getDeploymentHash())
             ->where('vector_store_id', $vectorStore->vector_store_id)
-            ->whereNotMorphedTo('file', $newFiles) /** @phpstan-ignore argument.type */
+            ->whereNot(fn (Builder $query) => $query->whereMorphedTo('file', $newFiles)) /** @phpstan-ignore argument.type */
             ->whereNotNull('vector_store_file_id')
             ->get();
 
