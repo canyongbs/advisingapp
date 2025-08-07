@@ -67,9 +67,9 @@ class EditWorkflow extends EditRecord
                 $resource::getUrl() => $resource::getBreadcrumb(),
             ],
             'application' => [
-              ApplicationResource::getUrl() => ApplicationResource::getBreadcrumb(),
-              ApplicationResource::getUrl('edit', [$record->workflowTrigger->related_id]) => ApplicationResource::getRecordTitle(Application::find($record->workflowTrigger->related_id)),
-              $resource::getUrl() => $resource::getBreadcrumb(),
+                ApplicationResource::getUrl() => ApplicationResource::getBreadcrumb(),
+                ApplicationResource::getUrl('edit', [$record->workflowTrigger->related_id]) => ApplicationResource::getRecordTitle(Application::find($record->workflowTrigger->related_id)),
+                $resource::getUrl() => $resource::getBreadcrumb(),
             ],
             default => [$resource::getUrl() => $resource::getBreadcrumb()]
         };
