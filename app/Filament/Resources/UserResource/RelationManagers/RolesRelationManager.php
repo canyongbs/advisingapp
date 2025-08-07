@@ -91,10 +91,15 @@ class RolesRelationManager extends RelationManager
                             ->rule(new ExcludeSuperAdmin())
                             ->preload()
                             ->getSearchResultsUsing(
-                                fn (string $search): array => Role::query()->when(
-                                    ! auth()->user()->isSuperAdmin(),
-                                    fn (Builder $query) => $query->where('name', '!=', Authenticatable::SUPER_ADMIN_ROLE)
-                                )
+                                fn (string $search): array => Role::query()
+                                    ->when(
+                                        ! auth()->user()->isSuperAdmin(),
+                                        fn (Builder $query) => $query->where('name', '!=', Authenticatable::SUPER_ADMIN_ROLE)
+                                    )
+                                    ->when(
+                                        ! auth()->user()->isSuperAdmin() && ! auth()->user()->isPartnerAdmin(),
+                                        fn (Builder $query) => $query->where('name', '!=', Authenticatable::PARTNER_ADMIN_ROLE)
+                                    )
                                     ->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')
                                     ->limit(50)->pluck('name', 'id')
                                     ->toArray()
@@ -107,6 +112,10 @@ class RolesRelationManager extends RelationManager
                                     ->when(
                                         ! auth()->user()->isSuperAdmin(),
                                         fn (Builder $query) => $query->where('name', '!=', Authenticatable::SUPER_ADMIN_ROLE)
+                                    )
+                                    ->when(
+                                        ! auth()->user()->isSuperAdmin() && ! auth()->user()->isPartnerAdmin(),
+                                        fn (Builder $query) => $query->where('name', '!=', Authenticatable::PARTNER_ADMIN_ROLE)
                                     )
                                     ->when(
                                         $user->has('roles'),

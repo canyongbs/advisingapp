@@ -79,3 +79,26 @@ it('dispatches the proper notifications to subscribers on created', function () 
     Notification::assertSentTo($users, AlertCreatedNotification::class);
     Notification::assertSentTimes(AlertCreatedNotification::class, $student->subscriptions()->count());
 });
+
+it('only notifies active users of alerts', function () {
+    // @Todo: This tests works but we should change it to use the Listener instead of the Notification
+    Notification::fake();
+
+    $deletedUser = User::factory()->licensed(LicenseType::cases())->create();
+
+    /** @var Student $student */
+    $student = Student::factory()->create();
+
+    $student->subscriptions()->create([
+        'user_id' => $deletedUser->id,
+    ]);
+
+    $deletedUser->delete();
+
+    Alert::factory()->create([
+        'concern_id' => $student->sisid,
+        'concern_type' => Student::class,
+    ]);
+
+    Notification::assertNotSentTo($deletedUser, AlertCreatedNotification::class);
+});

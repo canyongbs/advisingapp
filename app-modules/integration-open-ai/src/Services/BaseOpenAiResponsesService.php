@@ -292,7 +292,7 @@ abstract class BaseOpenAiResponsesService implements AiService
                     ]),
                     app(ArraySchema::class, [
                         'name' => 'sections',
-                        'description' => 'An array of sections for the research report, each with a heading and subsections. There should be 10 sections in total.',
+                        'description' => 'An array of sections for the research report, each with a heading and subsections. There should be 6 sections in total.',
                         'items' => app(ObjectSchema::class, [
                             'name' => 'section',
                             'description' => 'A section in the research report.',

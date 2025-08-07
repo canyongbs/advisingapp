@@ -38,6 +38,7 @@ namespace AdvisingApp\Research\Jobs;
 
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use AdvisingApp\Research\Events\ResearchRequestLinkParsed;
+use AdvisingApp\Research\Events\ResearchRequestProgress;
 use AdvisingApp\Research\Models\ResearchRequest;
 use AdvisingApp\Research\Models\ResearchRequestParsedLink;
 use Illuminate\Bus\Batchable;
@@ -81,9 +82,13 @@ class FetchResearchRequestLinkParsingResults implements ShouldQueue
         $researchRequestParsedLink->url = $this->link;
         $researchRequestParsedLink->save();
 
-        broadcast(app(ResearchRequestLinkParsed::class, [
-            'researchRequest' => $this->researchRequest,
-            'parsedLink' => $researchRequestParsedLink,
-        ]));
+        broadcast(new ResearchRequestLinkParsed(
+            researchRequest: $this->researchRequest,
+            parsedLink: $researchRequestParsedLink,
+        ));
+
+        broadcast(new ResearchRequestProgress(
+            researchRequest: $this->researchRequest,
+        ));
     }
 }

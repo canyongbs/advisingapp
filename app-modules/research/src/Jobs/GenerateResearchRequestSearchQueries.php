@@ -38,6 +38,7 @@ namespace AdvisingApp\Research\Jobs;
 
 use AdvisingApp\Ai\Exceptions\MessageResponseException;
 use AdvisingApp\Ai\Settings\AiResearchAssistantSettings;
+use AdvisingApp\Research\Events\ResearchRequestProgress;
 use AdvisingApp\Research\Events\ResearchRequestSearchQueriesGenerated;
 use AdvisingApp\Research\Models\ResearchRequest;
 use AdvisingApp\Research\Models\ResearchRequestQuestion;
@@ -109,9 +110,13 @@ class GenerateResearchRequestSearchQueries implements ShouldQueue
             $searchQueries,
         ));
 
-        broadcast(app(ResearchRequestSearchQueriesGenerated::class, [
-            'researchRequest' => $this->researchRequest,
-        ]));
+        broadcast(new ResearchRequestSearchQueriesGenerated(
+            researchRequest: $this->researchRequest,
+        ));
+
+        broadcast(new ResearchRequestProgress(
+            researchRequest: $this->researchRequest,
+        ));
     }
 
     public function retryUntil(): CarbonInterface

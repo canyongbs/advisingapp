@@ -34,6 +34,7 @@
 @php
     use AdvisingApp\Research\Filament\Pages\NewResearchRequest;
     use Filament\Support\Enums\ActionSize;
+    use Illuminate\Support\Str;
 @endphp
 
 <div class="h-[calc(100dvh-4rem)]">
@@ -52,6 +53,57 @@
                     {{ $this->newFolderAction }}
                 </div>
 
+                <template x-if="$wire.incompleteRequests.length">
+                    <div
+                        class="flex flex-col gap-y-1 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900">
+                        <div class="px-2 text-sm text-gray-500 dark:text-gray-400">
+                            In-progress requests
+                        </div>
+
+                        <ul class="flex flex-col gap-y-1">
+                            <template
+                                x-for="request in $wire.incompleteRequests"
+                                :key="request.id"
+                            >
+                                <li
+                                    :id="`request-${request.id}`"
+                                    :class="{
+                                        'px-2 group flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1': true,
+                                        'bg-gray-100 dark:bg-white/5': request.id === $wire.selectedRequestId
+                                    }"
+                                >
+                                    <div class="flex min-w-0 flex-1 items-center gap-3">
+                                        <button
+                                            class="relative flex min-w-0 flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-left text-sm"
+                                            type="button"
+                                            x-on:click="selectRequest(request)"
+                                        >
+                                            <span
+                                                x-text="request.topic"
+                                                :class="{
+                                                    'flex-1 truncate': true,
+                                                    'text-gray-700 dark:text-gray-200': request.id !== $wire
+                                                        .selectedRequestId,
+                                                    'text-primary-600 dark:text-primary-400': request.id === $wire
+                                                        .selectedRequestId
+                                                }"
+                                            >
+                                            </span>
+                                        </button>
+                                    </div>
+
+                                    <template x-if="loading.type === 'request' && loading.identifier === request.id">
+                                        <x-filament::loading-indicator class="h-5 w-5" />
+                                    </template>
+
+                                    <x-filament::badge>
+                                        <span x-text="Math.floor(request.progress_percentage)"></span>%
+                                    </x-filament::badge>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+                </template>
                 <template x-if="$wire.requestsWithoutAFolder.length">
                     <ul
                         class="flex flex-col gap-y-1 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900"
@@ -414,7 +466,9 @@
 
         <div
             class="grid h-full flex-1 grid-cols-1 grid-rows-[1fr_auto] gap-2 lg:grid-cols-3 lg:gap-x-6 lg:gap-y-4 2xl:grid-cols-4"
-            x-data="requests($wire)"
+            x-data="requests($wire, @js(
+                auth()->user()->getKey()
+            ))"
         >
             <div class="col-span-1 hidden overflow-y-auto px-px pt-3 lg:block lg:pt-6">
                 {{ $sidebarContent() }}
@@ -455,7 +509,95 @@
                         </div>
                     </div>
 
-                    @include('research::results', ['researchRequest' => $this->request])
+                    <section
+                        class="prose max-w-none dark:prose-invert"
+                        x-data="results({
+                            researchRequestId: @js($this->request->getKey()),
+                            results: @js($this->request->results ?? ''),
+                            outline: @js($this->request->outline),
+                            sources: @js($this->request->sources),
+                            files: @js(
+                                $this->request->getMedia('files')->map(fn($media) => data_set($media, 'temporary_url', $media->getTemporaryUrl(now()->addDay())))->toArray()
+                            ),
+                            links: @js($this->request->links),
+                            searchQueries: @js($this->request->search_queries),
+                            parsedFiles: @js(
+                                $this->request->parsedFiles->loadMissing(['media'])->map(fn($file) => data_set($file, 'media.temporary_url', $file->media->getTemporaryUrl(now()->addDay())))->map(fn($file): array => Arr::except($file->toArray(), ['results']))->toArray()
+                            ),
+                            parsedLinks: @js($this->request->parsedLinks->map(fn($link): array => Arr::except($link->toArray(), ['results']))->toArray()),
+                            parsedSearchResults: @js($this->request->parsedSearchResults->map(fn($searchResults): array => Arr::except($searchResults->toArray(), ['results']))->toArray()),
+                            title: @js($this->request->title),
+                            isFinished: @js((bool) $this->request->finished_at),
+                        })"
+                        wire:key="{{ Str::random() }}"
+                    >
+                        <div x-show="! reasoningPoints.length">
+                            Sending request to the research assistant...
+                        </div>
+
+                        <details
+                            class="research-request-reasoning"
+                            open
+                            x-show="reasoningPoints.length > 0"
+                        >
+                            <summary class="cursor-pointer">Reasoning</summary>
+
+                            <div
+                                class="flex h-20 items-start overflow-y-auto px-4 text-xs tracking-tight shadow-sm ring-1 ring-gray-950/5 dark:ring-white/10"
+                                x-bind:class="{
+                                    'flex-col-reverse': !isFinished,
+                                }"
+                            >
+                                <ul>
+                                    <template
+                                        x-for="(point, index) in reasoningPoints"
+                                        :key="index"
+                                    >
+                                        <li x-html="point"></li>
+                                    </template>
+                                </ul>
+                            </div>
+                        </details>
+
+                        <div
+                            class="mx-1 mb-12 rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10"
+                            x-show="resultsHtml.length > 0"
+                        >
+                            <h1
+                                x-text="title"
+                                x-show="title"
+                            ></h1>
+
+                            <div x-html="resultsHtml"></div>
+
+                            <p
+                                class="text-gray-600 dark:text-gray-400"
+                                x-show="outline && (! isFinished)"
+                            >
+                                Writing report...
+                            </p>
+
+                            <h2 x-show="isFinished && (sourcesHtml.length > 0)">
+                                Sources:
+                            </h2>
+
+                            <ul x-show="isFinished && (sourcesHtml.length > 0)">
+                                <template
+                                    x-for="(source, index) in sourcesHtml"
+                                    :key="index"
+                                >
+                                    <li x-html="source"></li>
+                                </template>
+                            </ul>
+
+                            <section
+                                class="mt-3 px-3 text-right"
+                                x-show="isFinished"
+                            >
+                                {{ ($this->emailResearchRequestAction)(['researchRequest' => $this->request->getKey()]) }}
+                            </section>
+                        </div>
+                    </section>
                 </div>
             @endif
 
@@ -526,6 +668,7 @@
     @endif
 
     @vite('app-modules/research/resources/js/requests.js')
+    @vite('app-modules/research/resources/js/results.js')
 
     <style>
         .footer {

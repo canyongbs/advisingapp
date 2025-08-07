@@ -42,10 +42,10 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 use Illuminate\Support\HtmlString;
 
-class NotifyUserOfSubscriptionCreated implements ShouldQueue
+class NotifyUserOfSubscriptionCreated implements ShouldQueueAfterCommit
 {
     public function handle(SubscriptionCreated $event): void
     {

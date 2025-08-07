@@ -54,5 +54,9 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 });
 
 Broadcast::channel('research-request-{researchRequestId}', function (User $user, string $researchRequestId) {
-    return ResearchRequest::find($researchRequestId)->user()->is($user);
+    return ResearchRequest::find($researchRequestId)?->user()->is($user);
+});
+
+Broadcast::channel('user-research-requests-{userId}', function (User $user, string $userId) {
+    return User::find($userId)?->is($user);
 });

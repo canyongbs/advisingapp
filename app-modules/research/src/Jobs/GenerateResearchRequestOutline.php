@@ -39,6 +39,7 @@ namespace AdvisingApp\Research\Jobs;
 use AdvisingApp\Ai\Exceptions\MessageResponseException;
 use AdvisingApp\Ai\Settings\AiResearchAssistantSettings;
 use AdvisingApp\Research\Events\ResearchRequestOutlineGenerated;
+use AdvisingApp\Research\Events\ResearchRequestProgress;
 use AdvisingApp\Research\Models\ResearchRequest;
 use AdvisingApp\Research\Models\ResearchRequestQuestion;
 use App\Models\User;
@@ -132,9 +133,13 @@ class GenerateResearchRequestOutline implements ShouldQueue
 
         $this->batch()->add(new GenerateResearchRequestSection($this->researchRequest, $nextRequestOptions));
 
-        broadcast(app(ResearchRequestOutlineGenerated::class, [
-            'researchRequest' => $this->researchRequest,
-        ]));
+        broadcast(new ResearchRequestOutlineGenerated(
+            researchRequest: $this->researchRequest,
+        ));
+
+        broadcast(new ResearchRequestProgress(
+            researchRequest: $this->researchRequest,
+        ));
     }
 
     public function retryUntil(): CarbonInterface
@@ -175,7 +180,7 @@ class GenerateResearchRequestOutline implements ShouldQueue
 
             Ensure you follow the following additional rules:
             - The abstract, introduction, and conclusion should each have a unique heading that represents the content of that section.
-            - Aside from the abstract, introduction, and conclusion, there should be 10 content sections in the middle of the report, each with 3 subsections inside.
+            - Aside from the abstract, introduction, and conclusion, there should be 6 content sections in the middle of the report, each with 3 subsections inside.
             - All the content should be written as a scholar would at the PhD level.
             EOD;
     }

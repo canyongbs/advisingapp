@@ -50,7 +50,11 @@ abstract class Authenticatable extends BaseAuthenticatable
 
     public const SUPER_ADMIN_ROLE = 'SaaS Global Admin';
 
+    public const PARTNER_ADMIN_ROLE = 'Partner Admin';
+
     protected bool $isSuperAdmin;
+
+    protected bool $isPartnerAdmin;
 
     /**
      * @param LicenseType | string | array<LicenseType | string> | null $type
@@ -65,5 +69,10 @@ abstract class Authenticatable extends BaseAuthenticatable
     public function isSuperAdmin(): bool
     {
         return $this->isSuperAdmin ??= $this->hasRole(static::SUPER_ADMIN_ROLE);
+    }
+
+    public function isPartnerAdmin(): bool
+    {
+        return $this->isPartnerAdmin ??= $this->hasRole(static::PARTNER_ADMIN_ROLE);
     }
 }
