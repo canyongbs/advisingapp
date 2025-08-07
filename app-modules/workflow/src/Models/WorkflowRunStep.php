@@ -38,7 +38,6 @@ namespace AdvisingApp\Workflow\Models;
 
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -66,7 +65,6 @@ class WorkflowRunStep extends BaseModel
         'dispatched_at' => 'datetime',
         'succeeded_at' => 'datetime',
         'last_failed_at' => 'datetime',
-        'details_type' => WorkflowActionType::class,
     ];
 
     /**
