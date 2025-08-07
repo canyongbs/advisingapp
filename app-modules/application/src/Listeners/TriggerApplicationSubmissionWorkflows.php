@@ -38,7 +38,6 @@ namespace AdvisingApp\Application\Listeners;
 
 use AdvisingApp\Application\Events\ApplicationSubmissionCreated;
 use AdvisingApp\Application\Models\Application;
-use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowDetails;
 use AdvisingApp\Workflow\Models\WorkflowRun;
 use AdvisingApp\Workflow\Models\WorkflowRunStep;
@@ -46,6 +45,8 @@ use AdvisingApp\Workflow\Models\WorkflowStep;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class TriggerApplicationSubmissionWorkflows implements ShouldQueue
 {
@@ -55,34 +56,42 @@ class TriggerApplicationSubmissionWorkflows implements ShouldQueue
 
         assert($application instanceof Application);
 
-        $application->workflows->each(function (Workflow $workflow) use ($event) {
-            $workflowRun = new WorkflowRun(['started_at' => now()]);
+        if (is_null($event->submission->author)) {
+            // If the submission has no author, we cannot trigger workflows.
+            return;
+        }
 
-            $workflowRun->related()->associate($event->submission->author);
-            $workflowRun->workflowTrigger()->associate($workflow->workflowTrigger);
+        try {
+            DB::beginTransaction();
 
-            $workflowRun->save();
-        });
+            $application->loadMissing('workflowTriggers.workflow.workflowSteps.currentDetails');
 
-        $steps = collect();
+            $application->workflowTriggers->each(function (WorkflowTrigger $workflowTrigger) use ($event) {
+                $workflowRun = new WorkflowRun(['started_at' => now()]);
+                $workflowRun->related()->associate($event->submission->author);
+                $workflowRun->workflowTrigger()->associate($workflowTrigger);
+                $workflowRun->saveOrFail();
 
-        $application->workflowTriggers->each(function (WorkflowTrigger $workflowTrigger) use ($steps) {
-            $steps->merge($workflowTrigger->workflow->workflowSteps);
-        });
+                $workflowTrigger->workflow->workflowSteps->each(function (WorkflowStep $step) use ($event, $workflowRun) {
+                    assert($step->currentDetails instanceof WorkflowDetails);
 
-        $steps->each(function (WorkflowStep $step) use ($event) {
-            assert($step->currentDetails instanceof WorkflowDetails);
+                    $workflowRunStep = new WorkflowRunStep([
+                        'execute_at' => $this->getStepScheduledAt($step, $event),
+                    ]);
 
-            $workflowRunStep = new WorkflowRunStep([
-                'execute_at' => $this->getStepScheduledAt($step, $event),
-            ]);
+                    $workflowRunStep->workflowRun()->associate($workflowRun);
+                    $workflowRunStep->details()->associate($step->currentDetails);
 
-            $workflowRun = $step->workflow->workflowTrigger->workflowRun;
-            $workflowRunStep->workflowRun()->associate($workflowRun);
-            $workflowRunStep->details()->associate($step->currentDetails);
+                    $workflowRunStep->saveOrFail();
+                });
+            });
 
-            $workflowRunStep->save();
-        });
+            DB::commit();
+        } catch (Throwable $error) {
+            DB::rollBack();
+
+            throw $error;
+        }
     }
 
     private function getStepScheduledAt(WorkflowStep $workflowStep, ApplicationSubmissionCreated $event): Carbon
