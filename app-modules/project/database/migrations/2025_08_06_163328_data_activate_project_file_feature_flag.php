@@ -34,27 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Providers;
+use App\Features\ProjectFileFeature;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\Project\Models\Project;
-use AdvisingApp\Project\Models\ProjectFile;
-use AdvisingApp\Project\ProjectPlugin;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
-
-class ProjectServiceProvider extends ServiceProvider
-{
-    public function register()
+return new class () extends Migration {
+    public function up(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new ProjectPlugin()));
+        ProjectFileFeature::activate();
     }
 
-    public function boot(): void
+    public function down(): void
     {
-        Relation::morphMap([
-            'project' => Project::class,
-            'project_file' => ProjectFile::class,
-        ]);
+        ProjectFileFeature::deactivate();
     }
-}
+};
