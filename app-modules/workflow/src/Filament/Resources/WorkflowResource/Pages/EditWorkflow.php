@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Workflow\Filament\Resources\WorkflowResource\Pages;
 
+use AdvisingApp\Application\Filament\Resources\ApplicationResource;
+use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Form\Filament\Resources\FormResource;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Workflow\Filament\Resources\WorkflowResource;
@@ -62,6 +64,11 @@ class EditWorkflow extends EditRecord
             'form' => [
                 FormResource::getUrl() => FormResource::getBreadcrumb(),
                 FormResource::getUrl('edit', [$record->workflowTrigger->related_id]) => FormResource::getRecordTitle(Form::find($record->workflowTrigger->related_id)),
+                $resource::getUrl() => $resource::getBreadcrumb(),
+            ],
+            'application' => [
+                ApplicationResource::getUrl() => ApplicationResource::getBreadcrumb(),
+                ApplicationResource::getUrl('edit', [$record->workflowTrigger->related_id]) => ApplicationResource::getRecordTitle(Application::find($record->workflowTrigger->related_id)),
                 $resource::getUrl() => $resource::getBreadcrumb(),
             ],
             default => [$resource::getUrl() => $resource::getBreadcrumb()]
