@@ -48,9 +48,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
 #[ObservedBy([ProjectObserver::class])]
-/**
- * @mixin IdeHelperProject
- */
 class Project extends BaseModel implements Auditable
 {
     /** @use HasFactory<ProjectFactory> */
