@@ -37,6 +37,7 @@
 namespace AdvisingApp\Project\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Project\Database\Factories\ProjectFactory;
 use AdvisingApp\Project\Observers\ProjectObserver;
 use App\Models\BaseModel;
@@ -49,6 +50,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
 #[ObservedBy([ProjectObserver::class])]
+/**
+ * @mixin IdeHelperProject
+ */
 class Project extends BaseModel implements Auditable
 {
     /** @use HasFactory<ProjectFactory> */
@@ -76,5 +80,13 @@ class Project extends BaseModel implements Auditable
     public function files(): HasMany
     {
         return $this->hasMany(ProjectFile::class, 'project_id');
+    }
+
+    /**
+     * @return HasMany<Pipeline, $this>
+     */
+    public function pipelines(): HasMany
+    {
+        return $this->hasMany(Pipeline::class);
     }
 }
