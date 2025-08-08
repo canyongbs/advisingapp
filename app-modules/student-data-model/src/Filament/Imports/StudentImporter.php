@@ -330,6 +330,10 @@ class StudentImporter extends Importer
                 continue;
             }
 
+            if ($student->careTeam()->whereKey($user)->exists()) {
+                continue;
+            }
+
             if (filled($this->data[$careTeamRoleColumn])) {
                 $careTeamRole = CareTeamRole::query()
                     ->where(new Expression('lower(name)'), Str::lower($this->data[$careTeamRoleColumn]))

@@ -76,14 +76,13 @@ class CompleteStudentDataImport
                 DB::statement('drop table "students"');
                 DB::statement("alter table \"import_{$import->studentsImport->getKey()}_students\" rename to \"students\"");
 
-                DB::table('care_teams')
-                    ->where('educatable_type', 'student')
-                    ->delete();
-
                 DB::statement("insert into care_teams
                     (id, user_id, educatable_id, educatable_type, created_at, updated_at, care_team_role_id)
                     select id, user_id, educatable_id, educatable_type, created_at, updated_at, care_team_role_id
-                    from \"import_{$import->studentsImport->getKey()}_care_teams\"");
+                    from \"import_{$import->studentsImport->getKey()}_care_teams\"
+                    on conflict (user_id, educatable_id, educatable_type) do update
+                    set care_team_role_id = excluded.care_team_role_id, updated_at = excluded.updated_at
+                    where excluded.updated_at > care_teams.updated_at");
 
                 DB::statement("drop table \"import_{$import->studentsImport->getKey()}_care_teams\"");
 
