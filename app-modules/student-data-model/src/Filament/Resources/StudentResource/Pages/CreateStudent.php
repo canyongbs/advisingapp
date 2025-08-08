@@ -38,6 +38,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\AthleticFieldsFeature;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
@@ -264,7 +265,7 @@ class CreateStudent extends CreateRecord
                             ->addActionLabel('Add address')
                             ->addActionAlignment(Alignment::Start),
                     ]),
-                Section::make('Engagement Restrictions')
+                Section::make('Additional Information')
                     ->schema([
                         Select::make('sms_opt_out')
                             ->label('SMS Opt Out')
@@ -308,6 +309,14 @@ class CreateStudent extends CreateRecord
                         TextInput::make('mr_e_term')
                             ->label('Most Recent Enrollment Term')
                             ->maxLength(255),
+                        TextInput::make('athletics_status')
+                            ->label('Athletics Status')
+                            ->maxLength(255)
+                            ->visible(AthleticFieldsFeature::active()),
+                        TextInput::make('athletic_details')
+                            ->label('Athletic Details')
+                            ->maxLength(255)
+                            ->visible(AthleticFieldsFeature::active()),
                     ])
                     ->columns(3),
             ]);

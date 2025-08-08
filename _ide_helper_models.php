@@ -5543,6 +5543,8 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property string|null $primary_phone_id
  * @property string|null $primary_address_id
  * @property string|null $gender
+ * @property string|null $athletics_status
+ * @property string|null $athletic_details
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\StudentDataModel\Models\StudentAddress> $additionalAddresses
  * @property-read int|null $additional_addresses_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\StudentDataModel\Models\StudentEmailAddress> $additionalEmailAddresses
@@ -5622,6 +5624,8 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereAthleticDetails($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereAthleticsStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereBirthdate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereCreatedAtSource($value)
@@ -6752,4 +6756,3 @@ namespace AdvisingApp\Workflow\Models{
 	#[\AllowDynamicProperties]
 	class IdeHelperWorkflowTrigger {}
 }
-
