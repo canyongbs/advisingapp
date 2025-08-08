@@ -246,7 +246,7 @@ class EditStudent extends EditRecord
                             ->addActionLabel('Add address')
                             ->addActionAlignment(Alignment::Start),
                     ]),
-                Section::make('Engagement Restrictions')
+                Section::make('Additional Information')
                     ->schema([
                         Select::make('sms_opt_out')
                             ->label('SMS Opt Out')
