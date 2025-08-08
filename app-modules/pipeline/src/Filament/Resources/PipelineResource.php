@@ -38,7 +38,6 @@ namespace AdvisingApp\Pipeline\Filament\Resources;
 
 use AdvisingApp\Pipeline\Filament\Resources\PipelineResource\Pages\CreatePipeline;
 use AdvisingApp\Pipeline\Filament\Resources\PipelineResource\Pages\EditPipeline;
-use AdvisingApp\Pipeline\Filament\Resources\PipelineResource\Pages\ListPipelines;
 use AdvisingApp\Pipeline\Filament\Resources\PipelineResource\Pages\ManageEductables;
 use AdvisingApp\Pipeline\Filament\Resources\PipelineResource\Pages\ViewPipeline;
 use AdvisingApp\Pipeline\Models\Pipeline;
@@ -53,6 +52,8 @@ class PipelineResource extends Resource
     protected static ?string $navigationGroup = 'CRM';
 
     protected static ?int $navigationSort = 30;
+
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function canAccess(): bool
     {
@@ -71,7 +72,6 @@ class PipelineResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListPipelines::route('/'),
             'create' => CreatePipeline::route('/create'),
             'edit' => EditPipeline::route('/{record}/edit'),
             'view' => ViewPipeline::route('/{record}'),
