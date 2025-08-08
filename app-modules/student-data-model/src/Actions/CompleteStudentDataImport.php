@@ -76,6 +76,16 @@ class CompleteStudentDataImport
                 DB::statement('drop table "students"');
                 DB::statement("alter table \"import_{$import->studentsImport->getKey()}_students\" rename to \"students\"");
 
+                DB::statement("insert into care_teams
+                    (id, user_id, educatable_id, educatable_type, created_at, updated_at, care_team_role_id)
+                    select id, user_id, educatable_id, educatable_type, created_at, updated_at, care_team_role_id
+                    from \"import_{$import->studentsImport->getKey()}_care_teams\"
+                    on conflict (user_id, educatable_id, educatable_type) do update
+                    set care_team_role_id = excluded.care_team_role_id, updated_at = excluded.updated_at
+                    where excluded.updated_at > care_teams.updated_at");
+
+                DB::statement("drop table \"import_{$import->studentsImport->getKey()}_care_teams\"");
+
                 if ($import->emailAddressesImport) {
                     DB::statement('drop table "student_email_addresses"');
                     DB::statement("alter table \"import_{$import->emailAddressesImport->getKey()}_email_addresses\" rename to \"student_email_addresses\"");
@@ -103,6 +113,8 @@ class CompleteStudentDataImport
             });
         } else {
             DB::statement("drop table if exists \"import_{$import->studentsImport->getKey()}_students\"");
+
+            DB::statement("drop table if exists \"import_{$import->studentsImport->getKey()}_care_team\"");
 
             if ($import->emailAddressesImport) {
                 DB::statement("drop table if exists \"import_{$import->emailAddressesImport->getKey()}_email_addresses\"");

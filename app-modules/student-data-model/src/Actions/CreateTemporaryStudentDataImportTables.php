@@ -47,6 +47,8 @@ class CreateTemporaryStudentDataImportTables
         DB::transaction(function () use ($import) {
             DB::statement("create table \"import_{$import->studentsImport->getKey()}_students\" (like \"students\" including all)");
 
+            DB::statement("create table \"import_{$import->studentsImport->getKey()}_care_teams\" (like \"care_teams\" including all)");
+
             if ($import->emailAddressesImport) {
                 DB::statement("create table \"import_{$import->emailAddressesImport->getKey()}_email_addresses\" (like \"student_email_addresses\" including all)");
             }
