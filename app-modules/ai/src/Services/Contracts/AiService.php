@@ -54,9 +54,10 @@ interface AiService
     /**
      * This method is passed a prompt and message and should return a stream of the response.
      *
+     * @param array<AiFile> $files
      * @param array<string, mixed> $options
      */
-    public function stream(string $prompt, string $content, bool $shouldTrack = true, array $options = []): Closure;
+    public function stream(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = []): Closure;
 
     /**
      * This method is passed an unsaved `AiAssistant` model and should return
@@ -122,7 +123,10 @@ interface AiService
 
     public function supportsAssistantFileUploads(): bool;
 
-    public function isFileReady(AiFile $file): bool;
+    /**
+     * @param array<AiFile> $files
+     */
+    public function areFilesReady(array $files): bool;
 
     public function isResearchRequestReady(ResearchRequest $researchRequest): bool;
 

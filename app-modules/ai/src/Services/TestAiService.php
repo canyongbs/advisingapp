@@ -65,9 +65,10 @@ class TestAiService implements AiService
     }
 
     /**
+     * @param array<AiFile> $files
      * @param array<string, mixed> $options
      */
-    public function stream(string $prompt, string $content, bool $shouldTrack = true, array $options = []): Closure
+    public function stream(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = []): Closure
     {
         if ($shouldTrack) {
             dispatch(new RecordTrackedEvent(
@@ -171,7 +172,10 @@ class TestAiService implements AiService
         return true;
     }
 
-    public function isFileReady(AiFile $file): bool
+    /**
+     * @param array<AiFile> $files
+     */
+    public function areFilesReady(array $files): bool
     {
         return true;
     }
