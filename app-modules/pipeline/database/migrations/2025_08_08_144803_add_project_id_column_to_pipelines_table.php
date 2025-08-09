@@ -34,48 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Pipeline\Filament\Resources;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Pipeline\Filament\Resources\PipelineResource\Pages\CreatePipeline;
-use AdvisingApp\Pipeline\Filament\Resources\PipelineResource\Pages\EditPipeline;
-use AdvisingApp\Pipeline\Filament\Resources\PipelineResource\Pages\ManageEductables;
-use AdvisingApp\Pipeline\Filament\Resources\PipelineResource\Pages\ViewPipeline;
-use AdvisingApp\Pipeline\Models\Pipeline;
-use AdvisingApp\Pipeline\Settings\ProspectPipelineSettings;
-use Filament\Pages\Page;
-use Filament\Resources\Resource;
-
-class PipelineResource extends Resource
-{
-    protected static ?string $model = Pipeline::class;
-
-    protected static ?string $navigationGroup = 'CRM';
-
-    protected static ?int $navigationSort = 30;
-
-    protected static bool $shouldRegisterNavigation = false;
-
-    public static function canAccess(): bool
+return new class () extends Migration {
+    public function up(): void
     {
-        return parent::canAccess() && app(ProspectPipelineSettings::class)->is_enabled;
+        Schema::table('pipelines', function (Blueprint $table) {
+            $table->foreignUuid('project_id')->nullable()->constrained()->cascadeOnDelete();
+        });
     }
 
-    public static function getRecordSubNavigation(Page $page): array
+    public function down(): void
     {
-        return $page->generateNavigationItems([
-            ViewPipeline::class,
-            EditPipeline::class,
-            ManageEductables::class,
-        ]);
+        Schema::table('pipelines', function (Blueprint $table) {
+            $table->dropConstrainedForeignId('project_id');
+        });
     }
-
-    public static function getPages(): array
-    {
-        return [
-            'create' => CreatePipeline::route('/create'),
-            'edit' => EditPipeline::route('/{record}/edit'),
-            'view' => ViewPipeline::route('/{record}'),
-            'manage' => ManageEductables::route('/manage/{record}'),
-        ];
-    }
-}
+};

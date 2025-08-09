@@ -36,13 +36,16 @@
 
 namespace AdvisingApp\Project\Filament\Resources;
 
+use AdvisingApp\Pipeline\Filament\Resources\PipelineResource;
 use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\CreateProject;
 use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\EditProject;
 use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ListProjects;
+use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ManageProjectPipelines;
 use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ViewProject;
 use AdvisingApp\Project\Models\Project;
 use App\Features\ProjectPageFeature;
 use App\Models\User;
+use Filament\Navigation\NavigationItem;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 
@@ -55,6 +58,8 @@ class ProjectResource extends Resource
     protected static ?string $navigationGroup = 'Project Management';
 
     protected static ?int $navigationSort = 10;
+
+    protected static ?string $recordTitleAttribute = 'name';
 
     public static function canAccess(): bool
     {
@@ -69,7 +74,24 @@ class ProjectResource extends Resource
         return $page->generateNavigationItems([
             ViewProject::class,
             EditProject::class,
+            ManageProjectPipelines::class,
         ]);
+    }
+
+    public static function getNavigationItems(): array
+    {
+        return [
+            NavigationItem::make(static::getNavigationLabel())
+                ->group(static::getNavigationGroup())
+                ->parentItem(static::getNavigationParentItem())
+                ->icon(static::getNavigationIcon())
+                ->activeIcon(static::getActiveNavigationIcon())
+                ->isActiveWhen(fn () => request()->routeIs(static::getRouteBaseName() . '.*', PipelineResource::getRouteBaseName() . '.*'))
+                ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
+                ->badgeTooltip(static::getNavigationBadgeTooltip())
+                ->sort(static::getNavigationSort())
+                ->url(static::getNavigationUrl()),
+        ];
     }
 
     public static function getPages(): array
@@ -79,6 +101,7 @@ class ProjectResource extends Resource
             'create' => CreateProject::route('/create'),
             'view' => ViewProject::route('/{record}'),
             'edit' => EditProject::route('/{record}/edit'),
+            'manage-pipelines' => ManageProjectPipelines::route('/{record}/pipelines'),
         ];
     }
 }

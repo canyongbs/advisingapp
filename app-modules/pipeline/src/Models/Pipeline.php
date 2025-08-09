@@ -38,6 +38,7 @@ namespace AdvisingApp\Pipeline\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Pipeline\Database\Factories\PipelineFactory;
+use AdvisingApp\Project\Models\Project;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -67,6 +68,7 @@ class Pipeline extends Model implements Auditable
         'segment_id',
         'user_id',
         'default_stage',
+        'project_id',
     ];
 
     /**
@@ -91,6 +93,14 @@ class Pipeline extends Model implements Auditable
     public function segment(): BelongsTo
     {
         return $this->belongsTo(Segment::class, 'segment_id');
+    }
+
+    /**
+     * @return BelongsTo<Project, $this>
+     */
+    public function project(): BelongsTo
+    {
+        return $this->belongsTo(Project::class);
     }
 
     /**

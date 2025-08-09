@@ -34,55 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Pipeline\Filament\Resources\PipelineResource\Pages;
+use App\Features\ProjectPipelinesFeature;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\Pipeline\Filament\Resources\PipelineResource;
-use Filament\Actions\CreateAction;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\Filter;
-use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-
-class ListPipelines extends ListRecords
-{
-    protected static string $resource = PipelineResource::class;
-
-    public function table(Table $table): Table
+return new class () extends Migration {
+    public function up(): void
     {
-        return $table
-            ->columns([
-                TextColumn::make('name'),
-                TextColumn::make('segment.name'),
-                TextColumn::make('createdBy.name')->label('Created By'),
-            ])
-            ->filters([
-                Filter::make('createdBy')
-                    ->label('My Pipelines')
-                    ->default()
-                    ->query(fn (Builder $query) => $query->where('user_id', auth()->id())),
-            ])
-            ->actions([
-                ViewAction::make(),
-                EditAction::make(),
-                DeleteAction::make(),
-            ])
-            ->bulkActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ]);
+        ProjectPipelinesFeature::activate();
     }
 
-    protected function getHeaderActions(): array
+    public function down(): void
     {
-        return [
-            CreateAction::make(),
-        ];
+        ProjectPipelinesFeature::deactivate();
     }
-}
+};

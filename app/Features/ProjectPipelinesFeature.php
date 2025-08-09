@@ -34,48 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Pipeline\Filament\Resources;
+namespace App\Features;
 
-use AdvisingApp\Pipeline\Filament\Resources\PipelineResource\Pages\CreatePipeline;
-use AdvisingApp\Pipeline\Filament\Resources\PipelineResource\Pages\EditPipeline;
-use AdvisingApp\Pipeline\Filament\Resources\PipelineResource\Pages\ManageEductables;
-use AdvisingApp\Pipeline\Filament\Resources\PipelineResource\Pages\ViewPipeline;
-use AdvisingApp\Pipeline\Models\Pipeline;
-use AdvisingApp\Pipeline\Settings\ProspectPipelineSettings;
-use Filament\Pages\Page;
-use Filament\Resources\Resource;
+use App\Support\AbstractFeatureFlag;
 
-class PipelineResource extends Resource
+class ProjectPipelinesFeature extends AbstractFeatureFlag
 {
-    protected static ?string $model = Pipeline::class;
-
-    protected static ?string $navigationGroup = 'CRM';
-
-    protected static ?int $navigationSort = 30;
-
-    protected static bool $shouldRegisterNavigation = false;
-
-    public static function canAccess(): bool
+    public function resolve(mixed $scope): mixed
     {
-        return parent::canAccess() && app(ProspectPipelineSettings::class)->is_enabled;
-    }
-
-    public static function getRecordSubNavigation(Page $page): array
-    {
-        return $page->generateNavigationItems([
-            ViewPipeline::class,
-            EditPipeline::class,
-            ManageEductables::class,
-        ]);
-    }
-
-    public static function getPages(): array
-    {
-        return [
-            'create' => CreatePipeline::route('/create'),
-            'edit' => EditPipeline::route('/{record}/edit'),
-            'view' => ViewPipeline::route('/{record}'),
-            'manage' => ManageEductables::route('/manage/{record}'),
-        ];
+        return false;
     }
 }
