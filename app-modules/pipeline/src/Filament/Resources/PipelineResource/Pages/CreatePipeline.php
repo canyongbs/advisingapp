@@ -104,7 +104,7 @@ class CreatePipeline extends CreateRecord
         $breadcrumbs = [
             ProjectResource::getUrl() => ProjectResource::getBreadcrumb(),
             ...($project ? [
-                ProjectResource::getUrl('view', ['record' => $project]) => $project->name,
+                ProjectResource::getUrl('view', ['record' => $project]) => $project->name ?? '',
                 ProjectResource::getUrl('manage-pipelines', ['record' => $project]) => 'Pipelines',
             ] : []),
             ...(filled($breadcrumb = $this->getBreadcrumb()) ? [$breadcrumb] : []),
