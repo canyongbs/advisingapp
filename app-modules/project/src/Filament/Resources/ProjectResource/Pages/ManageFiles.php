@@ -164,6 +164,7 @@ class ManageFiles extends ManageRelatedRecords
                     }),
                 TextColumn::make('retention_date')
                     ->label('Retention Date')
+                    ->placeholder('N/A')
                     ->dateTime()
                     ->sortable(query: fn ($query, $direction) => $query->orderBy('project_files.retention_date', $direction)),
                 TextColumn::make('created_at')
@@ -172,6 +173,7 @@ class ManageFiles extends ManageRelatedRecords
                     ->sortable(query: fn ($query, $direction) => $query->orderBy('project_files.created_at', $direction)),
                 TextColumn::make('createdBy.name')
                     ->label('Created By')
+                    ->placeholder('N/A')
                     ->sortable(query: fn ($query, $direction) => $query->orderBy('project_files.created_by_id', $direction)),
             ])
             ->headerActions([
