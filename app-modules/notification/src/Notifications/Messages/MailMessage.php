@@ -70,13 +70,15 @@ class MailMessage extends BaseMailMessage
         return $this;
     }
 
+    public function from($address = null, $name = null): static
+    {
+        return parent::from($address ?? config('mail.from.address'), $name);
+    }
+
     public function settings(?NotificationSetting $setting): static
     {
         if (! empty($setting->from_name)) {
-            $this->from(
-                address: config('mail.from.address'),
-                name: $setting->from_name,
-            );
+            $this->from(name: $setting->from_name);
         }
 
         $this->viewData = [
