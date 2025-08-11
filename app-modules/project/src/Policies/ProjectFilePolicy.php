@@ -34,27 +34,57 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Providers;
+namespace AdvisingApp\Project\Policies;
 
 use AdvisingApp\Project\Models\Project;
 use AdvisingApp\Project\Models\ProjectFile;
-use AdvisingApp\Project\ProjectPlugin;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use App\Models\Authenticatable;
+use Illuminate\Auth\Access\Response;
 
-class ProjectServiceProvider extends ServiceProvider
+class ProjectFilePolicy
 {
-    public function register()
+    public function viewAny(Authenticatable $authenticatable, Project $project): Response
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new ProjectPlugin()));
+        if ($authenticatable->cannot('view', $project)) {
+            return Response::deny('You do not have permission to view files.');
+        }
+
+        return Response::allow();
     }
 
-    public function boot(): void
+    public function view(Authenticatable $authenticatable, ProjectFile $projectFile): Response
     {
-        Relation::morphMap([
-            'project' => Project::class,
-            'project_file' => ProjectFile::class,
-        ]);
+        if ($authenticatable->cannot('view', $projectFile->project)) {
+            return Response::deny('You do not have permission to view this file.');
+        }
+
+        return Response::allow();
+    }
+
+    public function create(Authenticatable $authenticatable, Project $project): Response
+    {
+        if ($authenticatable->cannot('update', $project)) {
+            return Response::deny('You do not have permission to create files.');
+        }
+
+        return Response::allow();
+    }
+
+    public function update(Authenticatable $authenticatable, ProjectFile $projectFile): Response
+    {
+        if ($authenticatable->cannot('update', $projectFile->project)) {
+            return Response::deny('You do not have permission to update this file.');
+        }
+
+        return Response::allow();
+    }
+
+    public function delete(Authenticatable $authenticatable, ProjectFile $projectFile): Response
+    {
+        if ($authenticatable->cannot('update', $projectFile->project)) {
+            return Response::deny('You do not have permission to delete this file.');
+        }
+
+        return Response::allow();
     }
 }
