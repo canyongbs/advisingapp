@@ -39,7 +39,6 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Relati
 use AdvisingApp\Application\Filament\Resources\ApplicationResource;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use App\Enums\Feature;
-use App\Features\ApplicationSubmissionChecklistFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
@@ -115,7 +114,6 @@ class ApplicationSubmissionsRelationManager extends RelationManager
                         ViewEntry::make('checklistItems')
                             ->label('Checklist')
                             ->view('application::filament.infolists.components.application-submissions-checklist', ['submission' => $record])
-                            ->visible(fn (): bool => ApplicationSubmissionChecklistFeature::active())
                             ->columnSpanFull(),
                     ])
                     ->modalContent(
