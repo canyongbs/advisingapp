@@ -37,6 +37,8 @@
 use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Report\Filament\Widgets\StudentsStats;
+use AdvisingApp\Segment\Enums\SegmentModel;
+use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
 
@@ -91,6 +93,98 @@ it('returns correct total student stats of students, alerts, segments and tasks 
     $stats = $widget->getStats();
 
     expect($stats[0]->getValue())->toEqual($count * 5)
+        ->and($stats[1]->getValue())->toEqual($count)
+        ->and($stats[2]->getValue())->toEqual($count)
+        ->and($stats[3]->getValue())->toEqual($count);
+});
+
+it('returns correct total student stats of students, alerts, cases and tasks based on segment filters JSON', function () {
+    $count = random_int(1, 5);
+
+    $segment = Segment::factory()->create([
+        'model' => SegmentModel::Student,
+        'filters' => [
+            'queryBuilder' => [
+                'rules' => [
+                    'C0Cy' => [
+                        'type' => 'last',
+                        'data' => [
+                            'operator' => 'contains',
+                            'settings' => [
+                                'text' => 'John',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    Student::factory()
+        ->count($count)
+        ->create(['last' => 'John']);
+
+    Student::factory()
+        ->count($count)
+        ->create(['last' => 'Doe']);
+
+    Alert::factory()
+        ->count($count)
+        ->for(
+            Student::factory()->create(['last' => 'John']),
+            'concern'
+        )
+        ->create();
+
+    Alert::factory()
+        ->count($count)
+        ->for(
+            Student::factory()->create(['last' => 'Smith']),
+            'concern'
+        )
+        ->create();
+
+    CaseModel::factory()
+        ->count($count)
+        ->for(
+            Student::factory()->create(['last' => 'John']),
+            'respondent'
+        )
+        ->create();
+
+    CaseModel::factory()
+        ->count($count)
+        ->for(
+            Student::factory()->create(['last' => 'Smith']),
+            'respondent'
+        )
+        ->create();
+
+    Task::factory()
+        ->count($count)
+        ->for(
+            Student::factory()->create(['last' => 'John']),
+            'concern'
+        )
+        ->create();
+
+    Task::factory()
+        ->count($count)
+        ->for(
+            Student::factory()->create(['last' => 'Doe']),
+            'concern'
+        )
+        ->create();
+
+    $widget = new StudentsStats();
+    $widget->cacheTag = 'report-student';
+    $widget->filters = [
+        'populationSegment' => $segment->getKey(),
+    ];
+
+    $stats = $widget->getStats();
+
+    expect($stats[0]->getValue())->toEqual($count + 3)
         ->and($stats[1]->getValue())->toEqual($count)
         ->and($stats[2]->getValue())->toEqual($count)
         ->and($stats[3]->getValue())->toEqual($count);
