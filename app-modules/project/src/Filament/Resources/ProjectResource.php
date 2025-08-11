@@ -41,7 +41,6 @@ use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\EditProject;
 use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ListProjects;
 use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ViewProject;
 use AdvisingApp\Project\Models\Project;
-use App\Features\ProjectPageFeature;
 use App\Models\User;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
@@ -61,7 +60,7 @@ class ProjectResource extends Resource
         /** @var User $user */
         $user = auth()->user();
 
-        return ProjectPageFeature::active() && $user->can('project.view-any');
+        return $user->can('project.view-any');
     }
 
     public static function getRecordSubNavigation(Page $page): array
