@@ -44,7 +44,6 @@ use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ManageFiles;
 use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ManageProjectPipelines;
 use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ViewProject;
 use AdvisingApp\Project\Models\Project;
-use App\Features\ProjectPageFeature;
 use App\Models\User;
 use Filament\Navigation\NavigationItem;
 use Filament\Resources\Pages\Page;
@@ -67,7 +66,7 @@ class ProjectResource extends Resource
         /** @var User $user */
         $user = auth()->user();
 
-        return ProjectPageFeature::active() && $user->can('project.view-any');
+        return $user->can('project.view-any');
     }
 
     public static function getRecordSubNavigation(Page $page): array
