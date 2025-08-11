@@ -137,7 +137,10 @@ class StudentCaseStats extends StatsOverviewReportWidget
                         fn (Builder $query) => $this->segmentFilter($query, $segmentId)
                     );
                 })
-                ->whereBetween('created_at', [$startDate, $endDate])
+                ->when(
+                    $startDate && $endDate,
+                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                )
                 ->count();
         } else {
             $recentCasesCount = Cache::tags(["{{$this->cacheTag}}"])->remember(
