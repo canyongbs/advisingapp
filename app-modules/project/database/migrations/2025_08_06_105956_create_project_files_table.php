@@ -34,27 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Providers;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Project\Models\Project;
-use AdvisingApp\Project\Models\ProjectFile;
-use AdvisingApp\Project\ProjectPlugin;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
-
-class ProjectServiceProvider extends ServiceProvider
-{
-    public function register()
+return new class () extends Migration {
+    public function up(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new ProjectPlugin()));
+        Schema::create('project_files', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->foreignUuid('project_id')->constrained('projects');
+            $table->string('description');
+            $table->date('retention_date')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+        });
     }
 
-    public function boot(): void
+    public function down(): void
     {
-        Relation::morphMap([
-            'project' => Project::class,
-            'project_file' => ProjectFile::class,
-        ]);
+        Schema::dropIfExists('project_files');
     }
-}
+};

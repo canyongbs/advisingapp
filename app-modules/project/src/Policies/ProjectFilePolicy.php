@@ -34,54 +34,57 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Filament\Resources;
+namespace AdvisingApp\Project\Policies;
 
-use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\CreateProject;
-use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\EditProject;
-use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ListProjects;
-use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ManageFiles;
-use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ViewProject;
 use AdvisingApp\Project\Models\Project;
-use App\Features\ProjectPageFeature;
-use App\Models\User;
-use Filament\Resources\Pages\Page;
-use Filament\Resources\Resource;
+use AdvisingApp\Project\Models\ProjectFile;
+use App\Models\Authenticatable;
+use Illuminate\Auth\Access\Response;
 
-class ProjectResource extends Resource
+class ProjectFilePolicy
 {
-    protected static ?string $model = Project::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
-    protected static ?string $navigationGroup = 'Project Management';
-
-    protected static ?int $navigationSort = 10;
-
-    public static function canAccess(): bool
+    public function viewAny(Authenticatable $authenticatable, Project $project): Response
     {
-        /** @var User $user */
-        $user = auth()->user();
+        if ($authenticatable->cannot('view', $project)) {
+            return Response::deny('You do not have permission to view files.');
+        }
 
-        return ProjectPageFeature::active() && $user->can('project.view-any');
+        return Response::allow();
     }
 
-    public static function getRecordSubNavigation(Page $page): array
+    public function view(Authenticatable $authenticatable, ProjectFile $projectFile): Response
     {
-        return $page->generateNavigationItems([
-            ViewProject::class,
-            EditProject::class,
-            ManageFiles::class,
-        ]);
+        if ($authenticatable->cannot('view', $projectFile->project)) {
+            return Response::deny('You do not have permission to view this file.');
+        }
+
+        return Response::allow();
     }
 
-    public static function getPages(): array
+    public function create(Authenticatable $authenticatable, Project $project): Response
     {
-        return [
-            'index' => ListProjects::route('/'),
-            'create' => CreateProject::route('/create'),
-            'view' => ViewProject::route('/{record}'),
-            'edit' => EditProject::route('/{record}/edit'),
-            'files' => ManageFiles::route('/{record}/files'),
-        ];
+        if ($authenticatable->cannot('update', $project)) {
+            return Response::deny('You do not have permission to create files.');
+        }
+
+        return Response::allow();
+    }
+
+    public function update(Authenticatable $authenticatable, ProjectFile $projectFile): Response
+    {
+        if ($authenticatable->cannot('update', $projectFile->project)) {
+            return Response::deny('You do not have permission to update this file.');
+        }
+
+        return Response::allow();
+    }
+
+    public function delete(Authenticatable $authenticatable, ProjectFile $projectFile): Response
+    {
+        if ($authenticatable->cannot('update', $projectFile->project)) {
+            return Response::deny('You do not have permission to delete this file.');
+        }
+
+        return Response::allow();
     }
 }
