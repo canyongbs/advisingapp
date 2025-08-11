@@ -35,9 +35,8 @@
 */
 
 use AdvisingApp\Alert\Models\Alert;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Report\Filament\Widgets\StudentsStats;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
 
@@ -64,8 +63,12 @@ it('returns correct total student stats of students, alerts, segments and tasks 
         'created_at' => $startDate,
     ])->create();
 
-    Segment::factory()->count($count)->state([
-        'model' => SegmentModel::Student,
+    CaseModel::factory()->count($count)->state([
+        'respondent_id' => Student::factory()
+            ->state([
+                'created_at_source' => $endDate,
+            ]),
+        'respondent_type' => (new Student())->getMorphClass(),
         'created_at' => $endDate,
     ])->create();
 
@@ -87,7 +90,7 @@ it('returns correct total student stats of students, alerts, segments and tasks 
 
     $stats = $widget->getStats();
 
-    expect($stats[0]->getValue())->toEqual($count * 4)
+    expect($stats[0]->getValue())->toEqual($count * 5)
         ->and($stats[1]->getValue())->toEqual($count)
         ->and($stats[2]->getValue())->toEqual($count)
         ->and($stats[3]->getValue())->toEqual($count);
