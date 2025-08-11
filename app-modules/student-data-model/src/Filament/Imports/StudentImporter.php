@@ -36,11 +36,17 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Imports;
 
+use AdvisingApp\CareTeam\Models\CareTeam;
+use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Enums\CareTeamRoleType;
+use App\Models\User;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class StudentImporter extends Importer
 {
@@ -202,6 +208,67 @@ class StudentImporter extends Importer
                     'string',
                     'max:255',
                 ]),
+            ImportColumn::make('care_team_1')
+                ->label('Care Team 1')
+                ->example('joesmith@gmail.com')
+                ->rules([
+                    'nullable',
+                    'email',
+                    'max:255',
+                    Rule::exists(User::class, 'email'),
+                    'different:care_team_2',
+                    'different:care_team_3',
+                ])
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('care_team_role_1')
+                ->label('Care Team Role 1')
+                ->example('Advising')
+                ->rules([
+                    'nullable',
+                    'string',
+                    'max:255',
+                ])
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('care_team_2')
+                ->label('Care Team 2')
+                ->example('janesmith@gmail.com')
+                ->rules([
+                    'nullable',
+                    'email',
+                    'max:255',
+                    Rule::exists(User::class, 'email'),
+                    'different:care_team_1',
+                    'different:care_team_3',
+                ])
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('care_team_role_2')
+                ->label('Care Team Role 2')
+                ->example('Aid')
+                ->rules([
+                    'nullable',
+                    'string',
+                    'max:255',
+                ])
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('care_team_3')
+                ->label('Care Team 3')
+                ->rules([
+                    'nullable',
+                    'email',
+                    'max:255',
+                    Rule::exists(User::class, 'email'),
+                    'different:care_team_1',
+                    'different:care_team_2',
+                ])
+                ->fillRecordUsing(fn () => null),
+            ImportColumn::make('care_team_role_3')
+                ->label('Care Team Role 3')
+                ->rules([
+                    'nullable',
+                    'string',
+                    'max:255',
+                ])
+                ->fillRecordUsing(fn () => null),
             ImportColumn::make('created_at_source')
                 ->label('Create date/time')
                 ->example('2024-10-21 12:00:00')
@@ -238,5 +305,54 @@ class StudentImporter extends Importer
     public function getJobBatchName(): ?string
     {
         return "student-import-{$this->getImport()->getKey()}";
+    }
+
+    protected function afterCreate(): void
+    {
+        $student = $this->record;
+
+        assert($student instanceof Student);
+
+        foreach ([
+            ['care_team_1', 'care_team_role_1'],
+            ['care_team_2', 'care_team_role_2'],
+            ['care_team_3', 'care_team_role_3'],
+        ] as [$careTeamColumn, $careTeamRoleColumn]) {
+            if (blank($this->data[$careTeamColumn] ?? null)) {
+                continue;
+            }
+
+            $user = User::query()
+                ->where('email', $this->data[$careTeamColumn])
+                ->first();
+
+            if (! $user) {
+                continue;
+            }
+
+            if ($student->careTeam()->whereKey($user)->exists()) {
+                continue;
+            }
+
+            if (filled($this->data[$careTeamRoleColumn])) {
+                $careTeamRole = CareTeamRole::query()
+                    ->where(new Expression('lower(name)'), Str::lower($this->data[$careTeamRoleColumn]))
+                    ->first();
+            }
+
+            if (! ($careTeamRole ?? null)) {
+                $defaultCareTeamRole ??= CareTeamRoleType::studentDefault();
+                $defaultCareTeamRole ??= CareTeamRole::query()->where('type', CareTeamRoleType::Student)->latest()->first();
+
+                $careTeamRole = $defaultCareTeamRole;
+            }
+
+            $careTeam = new CareTeam();
+            $careTeam->setTable("import_{$this->import->getKey()}_care_teams");
+            $careTeam->user()->associate($user);
+            $careTeam->educatable()->associate($student);
+            $careTeam->careTeamRole()->associate($careTeamRole);
+            $careTeam->save();
+        }
     }
 }
