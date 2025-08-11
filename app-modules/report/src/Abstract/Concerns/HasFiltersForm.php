@@ -36,10 +36,12 @@
 
 namespace AdvisingApp\Report\Abstract\Concerns;
 
+use AdvisingApp\Report\Abstract\StudentReport;
 use AdvisingApp\Report\Filament\Pages\ProspectCaseReport;
 use AdvisingApp\Report\Filament\Pages\StudentCaseReport;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Models\Segment;
+use AdvisingApp\StudentDataModel\Filament\Pages\RetentionCrmDashboard;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -92,6 +94,7 @@ trait HasFiltersForm
                             ->searchable(),
                     ])
                     ->heading('Advanced Filtering')
+                    ->visible($this instanceof RetentionCrmDashboard || $this instanceof StudentReport)
                     ->columns(1),
             ]);
     }
