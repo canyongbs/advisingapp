@@ -55,7 +55,7 @@ class ProjectFilePolicy
     public function view(Authenticatable $authenticatable, ProjectFile $projectFile): Response
     {
         if ($authenticatable->cannot('view', $projectFile->project)) {
-            return Response::deny('You do not have permission to view file.');
+            return Response::deny('You do not have permission to view this file.');
         }
 
         return Response::allow();
@@ -64,7 +64,7 @@ class ProjectFilePolicy
     public function create(Authenticatable $authenticatable, Project $project): Response
     {
         if ($authenticatable->cannot('update', $project)) {
-            return Response::deny('You do not have permission to create file.');
+            return Response::deny('You do not have permission to create files.');
         }
 
         return Response::allow();
