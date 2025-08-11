@@ -42,7 +42,6 @@ use AdvisingApp\Application\Filament\Resources\ApplicationResource;
 use AdvisingApp\Application\Filament\Resources\ApplicationResource\Actions\ApplicationAdmissionActions;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Models\Scopes\ClassifiedAs;
-use App\Features\ApplicationSubmissionChecklistFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
@@ -166,7 +165,6 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
                         ViewEntry::make('checklistItems')
                             ->label('Checklist')
                             ->view('application::filament.infolists.components.application-submissions-checklist', ['submission' => $record])
-                            ->visible(fn (): bool => ApplicationSubmissionChecklistFeature::active())
                             ->columnSpanFull(),
                     ])
                     ->modalContent(
