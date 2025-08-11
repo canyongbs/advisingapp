@@ -5545,6 +5545,7 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property string|null $gender
  * @property string|null $athletics_status
  * @property string|null $athletic_details
+ * @property string|null $standing
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\StudentDataModel\Models\StudentAddress> $additionalAddresses
  * @property-read int|null $additional_addresses_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\StudentDataModel\Models\StudentEmailAddress> $additionalEmailAddresses
@@ -5653,6 +5654,7 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereSap($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereSisid($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereSmsOptOut($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereStanding($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student whereUpdatedAtSource($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Student withTrashed(bool $withTrashed = true)

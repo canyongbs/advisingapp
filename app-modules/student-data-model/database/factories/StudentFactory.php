@@ -71,6 +71,7 @@ class StudentFactory extends Factory
             'dfw' => $this->faker->date(),
             'sap' => $this->faker->boolean(),
             'holds' => $this->faker->regexify('[A-Z]{5}'),
+            'standing' => $this->faker->randomElement(['Good', 'Probation', 'Suspended']),
             'firstgen' => $this->faker->boolean(),
             'ethnicity' => $this->faker->randomElement(['White', 'Black', 'Hispanic', 'Asian', 'Other']),
             'lastlmslogin' => $this->faker->dateTime(),
