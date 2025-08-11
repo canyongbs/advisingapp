@@ -9,6 +9,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
+/**
+ * @mixin IdeHelperLoginMagicLink
+ */
 class LoginMagicLink extends Model
 {
     //    use HasFactory;
