@@ -40,6 +40,7 @@ use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 
 class StudentEngagementLineChart extends LineChartReportWidget
@@ -52,13 +53,14 @@ class StudentEngagementLineChart extends LineChartReportWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
+        $segmentId = $this->getSelectedSegment();
 
-        $shouldBypassCache = filled($startDate) || filled($endDate);
+        $shouldBypassCache = filled($startDate) || filled($endDate) || filled($segmentId);
 
         $runningTotalPerMonth = $shouldBypassCache
-           ? $this->getStudentEngagementData($startDate, $endDate)
+           ? $this->getStudentEngagementData($startDate, $endDate, $segmentId)
            : Cache::tags(["{{$this->cacheTag}}"])->remember('student_engagements_line_chart', now()->addHours(24), function () {
-               return $this->getStudentEngagementData();
+               return $this->getStudentEngagementData(null, null);
            });
 
         return [
@@ -99,18 +101,21 @@ class StudentEngagementLineChart extends LineChartReportWidget
     /**
      * @return array<string, array<string, int>>
      */
-    protected function getStudentEngagementData(?Carbon $startDate = null, ?Carbon $endDate = null): array
+    protected function getStudentEngagementData(?Carbon $startDate = null, ?Carbon $endDate = null, ?string $segmentId = null): array
     {
         $startDate = $startDate ?? Carbon::now()->subMonths(11)->startOfMonth();
         $endDate = $endDate ?? Carbon::now()->endOfMonth();
 
         $months = $this->getMonthRange($startDate, $endDate);
 
-        $studentType = app(Student::class)->getMorphClass();
-
         $baseQuery = fn (string $channel) => Engagement::query()
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->where('recipient_type', $studentType)
+            ->whereHasMorph('recipient', Student::class, function (Builder $query) use ($segmentId) {
+                $query->when(
+                    $segmentId,
+                    fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                );
+            })
             ->where('channel', $channel)
             ->selectRaw("date_trunc('month', created_at) AS month, COUNT(*) AS monthly_total")
             ->groupByRaw("date_trunc('month', created_at)")

@@ -39,6 +39,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Widgets;
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
 use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
+use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Enums\ActionCenterTab;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -46,6 +47,7 @@ use AdvisingApp\Task\Enums\TaskStatus;
 use App\Models\User;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
@@ -55,6 +57,11 @@ use Livewire\Attributes\Reactive;
 
 class StudentsActionCenterWidget extends TableWidget
 {
+    use InteractsWithPageFilters;
+    use InteractsWithTable {
+        bootedInteractsWithTable as baseBootedInteractsWithTable;
+    }
+
     /**
      * @var int | string | array<string, int | null>
      */
@@ -176,6 +183,17 @@ class StudentsActionCenterWidget extends TableWidget
                     ->url(fn (Student $record): string => StudentResource::getUrl('view', ['record' => $record]), shouldOpenInNewTab: true)
                     ->icon('heroicon-m-arrow-top-right-on-square'),
             ]);
+    }
+
+    public function bootedInteractsWithTable(): void
+    {
+        $selectedSegment = $this->getSelectedSegment();
+
+        // if ($this->shouldMountInteractsWithTable && $selectedSegment) {
+        //     $this->tableFilters = $this->getRecord()->filters;
+        // }
+
+        $this->baseBootedInteractsWithTable();
     }
 
     /**

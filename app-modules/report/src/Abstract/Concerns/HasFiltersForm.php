@@ -38,6 +38,7 @@ namespace AdvisingApp\Report\Abstract\Concerns;
 
 use AdvisingApp\Report\Filament\Pages\ProspectCaseReport;
 use AdvisingApp\Report\Filament\Pages\StudentCaseReport;
+use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Models\Segment;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Section;
@@ -79,14 +80,15 @@ trait HasFiltersForm
                     ->columns(2),
                 Section::make()
                     ->schema([
-                        Select::make('population_segments')
-                            ->label('Select Segments')
+                        Select::make('populationSegment')
+                            ->label('Select Segment')
                             ->options(fn (): array => Segment::query()
                                 ->orderBy('created_at', 'desc')
+                                ->where('model', SegmentModel::Student)
                                 ->take(15)
                                 ->pluck('name', 'id')
                                 ->all())
-                            ->getSearchResultsUsing(fn (string $search): array => Segment::query()->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')->take(50)->orderBy('name')->pluck('name', 'id')->all())
+                            ->getSearchResultsUsing(fn (string $search): array => Segment::query()->where('model', SegmentModel::Student)->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')->take(50)->orderBy('name')->pluck('name', 'id')->all())
                             ->searchable(),
                     ])
                     ->heading('Advanced Filtering')

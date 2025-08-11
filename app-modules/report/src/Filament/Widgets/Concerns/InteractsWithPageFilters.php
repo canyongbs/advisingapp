@@ -36,8 +36,10 @@
 
 namespace AdvisingApp\Report\Filament\Widgets\Concerns;
 
+use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
 use Carbon\Carbon;
 use Filament\Widgets\Concerns\InteractsWithPageFilters as InteractsWithPageFiltersBase;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 trait InteractsWithPageFilters
@@ -75,5 +77,31 @@ trait InteractsWithPageFilters
         }
 
         return $months;
+    }
+
+    public function getSelectedSegment(): ?string
+    {
+        return $this->filters['populationSegment'] ?? null;
+    }
+
+    /**
+     * @template TModel of \Illuminate\Database\Eloquent\Model
+     *
+     * @param Builder<TModel> $query
+     * @param string $segmentId
+     *
+     * @return void
+     */
+    public function segmentFilter(Builder $query, string $segmentId): void
+    {
+        if (blank($segmentId)) {
+            return;
+        }
+
+        $query->whereKey(
+            app(TranslateSegmentFilters::class)
+                ->execute($segmentId)
+                ->pluck($query->getModel()->getQualifiedKeyName()),
+        );
     }
 }
