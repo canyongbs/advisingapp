@@ -41,6 +41,7 @@ use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Engagement\Models\EngagementResponse;
+use AdvisingApp\Engagement\Settings\EngagementSettings;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
 use AdvisingApp\Notification\Enums\NotificationChannel;
@@ -50,6 +51,7 @@ use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
+use App\Features\EngagementSettingsFeature;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Model;
@@ -81,6 +83,10 @@ class EngagementNotification extends Notification implements ShouldQueue, HasBef
     {
         return MailMessage::make()
             ->to($this->engagement->recipient_route)
+            ->when(
+                EngagementSettingsFeature::active() && app(EngagementSettings::class)->are_dynamic_engagements_enabled && $this->engagement->user,
+                fn (MailMessage $message) => $message->from(name: $this->engagement->user->name),
+            )
             ->subject(strip_tags($this->engagement->getSubject()))
             ->greeting("Hello {$this->engagement->recipient->display_name}!")
             ->content($this->engagement->getBody());
