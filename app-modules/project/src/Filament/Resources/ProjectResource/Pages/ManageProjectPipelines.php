@@ -40,7 +40,9 @@ use AdvisingApp\Pipeline\Filament\Resources\PipelineResource;
 use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Project\Filament\Resources\ProjectResource;
 use Filament\Resources\Pages\ManageRelatedRecords;
-use Filament\Tables;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
@@ -54,10 +56,7 @@ class ManageProjectPipelines extends ManageRelatedRecords
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    public static function getNavigationLabel(): string
-    {
-        return 'Pipelines';
-    }
+    protected static ?string $title = 'Pipelines';
 
     public function table(Table $table): Table
     {
@@ -75,14 +74,14 @@ class ManageProjectPipelines extends ManageRelatedRecords
                     ->query(fn (Builder $query) => $query->where('user_id', auth()->id())),
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()
+                CreateAction::make()
                     ->url(PipelineResource::getUrl('create', ['project' => $this->getRecord()->getKey()]))
                     ->authorize(fn (): bool => auth()->user()->can('create', Pipeline::class) && auth()->user()->can('update', $this->getRecord())),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()
+                ViewAction::make()
                     ->url(fn (Pipeline $record): string => PipelineResource::getUrl('view', ['record' => $record])),
-                Tables\Actions\EditAction::make()
+                EditAction::make()
                     ->url(fn (Pipeline $record): string => PipelineResource::getUrl('edit', ['record' => $record])),
             ]);
     }
