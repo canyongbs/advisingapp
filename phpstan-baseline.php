@@ -942,6 +942,12 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/ApplicationResource/Pages/ManageApplicationSubmissions.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Parameter \\#1 \\$model of method Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo\\<AdvisingApp\\\\Workflow\\\\Models\\\\Model,AdvisingApp\\\\Workflow\\\\Models\\\\WorkflowRunStep\\>\\:\\:associate\\(\\) expects AdvisingApp\\\\Workflow\\\\Models\\\\Model\\|null, AdvisingApp\\\\Workflow\\\\Models\\\\WorkflowDetails given\\.$#',
+    'identifier' => 'argument.type',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/application/src/Listeners/TriggerApplicationSubmissionWorkflows.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Property AdvisingApp\\\\Application\\\\Livewire\\\\RenderApplication\\:\\:\\$data type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
