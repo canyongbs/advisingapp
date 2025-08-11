@@ -149,6 +149,8 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         'primary_address_id',
         'created_at_source',
         'updated_at_source',
+        'athletics_status',
+        'athletic_details',
     ];
 
     protected $casts = [

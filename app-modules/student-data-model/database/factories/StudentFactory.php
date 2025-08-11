@@ -76,6 +76,8 @@ class StudentFactory extends Factory
             'lastlmslogin' => $this->faker->dateTime(),
             'f_e_term' => $this->faker->numerify('####'),
             'mr_e_term' => $this->faker->numerify('####'),
+            'athletics_status' => $this->faker->randomElement(['Active', 'Inactive']),
+            'athletic_details' => $this->faker->sentence(),
         ];
 
         $attributes['created_at'] = now();

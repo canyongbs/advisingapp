@@ -39,6 +39,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concerns\HasStudentHeader;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\AthleticFieldsFeature;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
@@ -245,7 +246,7 @@ class EditStudent extends EditRecord
                             ->addActionLabel('Add address')
                             ->addActionAlignment(Alignment::Start),
                     ]),
-                Section::make('Engagement Restrictions')
+                Section::make('Additional Information')
                     ->schema([
                         Select::make('sms_opt_out')
                             ->label('SMS Opt Out')
@@ -289,6 +290,14 @@ class EditStudent extends EditRecord
                         TextInput::make('mr_e_term')
                             ->label('Most Recent Enrollment Term')
                             ->maxLength(255),
+                        TextInput::make('athletics_status')
+                            ->label('Athletics Status')
+                            ->maxLength(255)
+                            ->visible(AthleticFieldsFeature::active()),
+                        TextInput::make('athletic_details')
+                            ->label('Athletic Details')
+                            ->maxLength(255)
+                            ->visible(AthleticFieldsFeature::active()),
                     ])
                     ->columns(3),
             ]);
