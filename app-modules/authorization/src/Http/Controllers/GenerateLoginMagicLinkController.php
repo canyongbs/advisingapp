@@ -69,7 +69,6 @@ class GenerateLoginMagicLinkController
             $magicLink = new LoginMagicLink();
             $magicLink->user()->associate($user);
             $magicLink->code = Hash::make($code);
-            $magicLink->ip_address = $request->ip();
             $magicLink->saveOrFail();
 
             DB::commit();
