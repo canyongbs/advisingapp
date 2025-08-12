@@ -98,7 +98,7 @@ it('returns correct total student stats of students, alerts, segments and tasks 
         ->and($stats[3]->getValue())->toEqual($count);
 });
 
-it('returns correct total student stats of students, alerts, cases and tasks based on segment filters JSON', function () {
+it('returns correct total student stats of students, alerts, cases and tasks based on segment filters', function () {
     $count = random_int(1, 5);
 
     $segment = Segment::factory()->create([
