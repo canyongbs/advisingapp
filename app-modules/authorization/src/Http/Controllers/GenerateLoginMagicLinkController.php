@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Throwable;
@@ -63,16 +64,11 @@ class GenerateLoginMagicLinkController
                 ->where('user_id', $user->getKey())
                 ->delete();
 
+            $code = Str::random();
+
             $magicLink = new LoginMagicLink();
             $magicLink->user()->associate($user);
-            $magicLink->code = urlencode(
-                Crypt::encrypt(
-                    [
-                        'key' => Str::random(),
-                        'user_id' => $user->getKey(),
-                    ]
-                )
-            );
+            $magicLink->code = Hash::make($code);
             $magicLink->saveOrFail();
 
             DB::commit();
@@ -83,7 +79,14 @@ class GenerateLoginMagicLinkController
                     expiration: now()->addMinutes(10)->toImmutable(),
                     parameters: [
                         'magicLink' => $magicLink->getKey(),
-                        'code' => $magicLink->code,
+                        'payload' => urlencode(
+                            Crypt::encrypt(
+                                [
+                                    'code' => $code,
+                                    'user_id' => $user->getKey(),
+                                ]
+                            )
+                        ),
                     ],
                 ),
             ]);

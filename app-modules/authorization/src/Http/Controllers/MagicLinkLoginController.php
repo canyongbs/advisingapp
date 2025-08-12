@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Hash;
 use Throwable;
 
 class MagicLinkLoginController
@@ -25,9 +26,16 @@ class MagicLinkLoginController
             message: 'Invalid link. Please request a new one.'
         );
 
-        $payload = Crypt::decrypt(urldecode($request->get('code')));
+        $payload = Crypt::decrypt(urldecode($request->get('payload')));
 
-        $payloadUserId = $payload['user_id'];
+        $code = $payload['code'] ?? null;
+        $payloadUserId = $payload['user_id'] ?? null;
+
+        abort_if(
+            boolean: ! Hash::check($code, $magicLink->code),
+            code: 403,
+            message: 'Invalid link. Please request a new one.'
+        );
 
         abort_if(
             boolean: $payloadUserId !== $magicLink->user_id,
