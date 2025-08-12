@@ -41,7 +41,6 @@ use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\EditProject;
 use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ListProjects;
 use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ViewProject;
 use AdvisingApp\Project\Models\Project;
-use App\Models\User;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 
