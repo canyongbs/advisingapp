@@ -129,8 +129,8 @@ it('returns correct interaction counts by status for students within the selecte
 });
 
 it('returns correct interaction counts by status for students based on segment filter', function () {
-    $interactionsCount = rand(1, 10);
-    $interactionsCountForDoe = rand(1, 10);
+    $interactionsCount = random_int(1, 10);
+    $interactionsCountForDoe = random_int(1, 10);
 
     $interactionStatusFirst = InteractionStatus::factory()->create();
     $interactionStatusSecond = InteractionStatus::factory()->create();
