@@ -8,6 +8,7 @@ use AdvisingApp\Authorization\Models\LoginMagicLink;
 use App\Models\Authenticatable;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
@@ -64,7 +65,14 @@ class GenerateLoginMagicLinkController
 
             $magicLink = new LoginMagicLink();
             $magicLink->user()->associate($user);
-            $magicLink->code = Str::uuid7();
+            $magicLink->code = urlencode(
+                Crypt::encrypt(
+                    [
+                        'key' => Str::random(),
+                        'user_id' => $user->getKey(),
+                    ]
+                )
+            );
             $magicLink->saveOrFail();
 
             DB::commit();
@@ -74,7 +82,8 @@ class GenerateLoginMagicLinkController
                     name: 'magic-link.login',
                     expiration: now()->addMinutes(10)->toImmutable(),
                     parameters: [
-                        'magicLink' => $magicLink->code,
+                        'magicLink' => $magicLink->getKey(),
+                        'code' => $magicLink->code,
                     ],
                 ),
             ]);

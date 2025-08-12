@@ -51,7 +51,7 @@ Route::middleware('web')->group(function () {
         ->name('login.one-time')
         ->middleware('signed:relative');
 
-    Route::get('/magic-link/{magicLink:code}', MagicLinkLoginController::class)
+    Route::get('/magic-link/{magicLink}', MagicLinkLoginController::class)
         ->name('magic-link.login')
         ->middleware('signed');
 });

@@ -3,10 +3,12 @@
 namespace AdvisingApp\Authorization\Http\Controllers;
 
 use AdvisingApp\Authorization\Models\LoginMagicLink;
+use App\Models\User;
 use Filament\Facades\Filament;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Throwable;
 
 class MagicLinkLoginController
@@ -23,7 +25,17 @@ class MagicLinkLoginController
             message: 'Invalid link. Please request a new one.'
         );
 
-        $user = $magicLink->user;
+        $payload = Crypt::decrypt(urldecode($request->get('code')));
+
+        $payloadUserId = $payload['user_id'];
+
+        abort_if(
+            boolean: $payloadUserId !== $magicLink->user_id,
+            code: 403,
+            message: 'Invalid link. Please request a new one.'
+        );
+
+        $user = User::findOrFail($payloadUserId);
 
         $panel = Filament::getPanel('admin');
 
