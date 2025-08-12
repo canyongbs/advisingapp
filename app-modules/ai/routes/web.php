@@ -35,7 +35,9 @@
 */
 
 use AdvisingApp\Ai\Http\Controllers\CompleteResponseController;
-use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\SendMessageController as SendQnaAdvisorMessageController;
+use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\PreviewAdvisorEmbedController;
+use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\SendAdvisorMessageController as SendQnaAdvisorMessageController;
+use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\ShowAdvisorController;
 use AdvisingApp\Ai\Http\Controllers\RetryMessageController;
 use AdvisingApp\Ai\Http\Controllers\SendMessageController;
 use AdvisingApp\Ai\Http\Controllers\ShowThreadController;
@@ -56,6 +58,17 @@ Route::middleware(['web', 'auth'])
         Route::post('ai/threads/{thread}/messages/complete-response', CompleteResponseController::class)
             ->name('threads.messages.complete-response');
 
-        Route::post('ai/qna-advisors/{advisor}/messages', SendQnaAdvisorMessageController::class)
-            ->name('qna-advisors.messages.send');
+        Route::get('ai/qna-advisors/{advisor}/preview-embed', PreviewAdvisorEmbedController::class)
+            ->name('qna-advisors.preview-embed');
+    });
+
+Route::middleware(['web', 'signed:relative'])
+    ->name('ai.qna-advisors.')
+    ->prefix('api/ai/qna-advisors/{advisor}')
+    ->group(function () {
+        Route::get('/', ShowAdvisorController::class)
+            ->name('show');
+
+        Route::post('messages', SendQnaAdvisorMessageController::class)
+            ->name('messages.send');
     });

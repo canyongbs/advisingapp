@@ -1,6 +1,4 @@
-<?php
-
-/*
+<!--
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -32,26 +30,44 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+-->
+<script setup>
+import { defineProps, ref, onMounted } from 'vue';
 
-namespace App\Http\Middleware;
+const props = defineProps(['url']);
+const sendMessageUrl = ref(null);
+const message = ref('');
 
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
+onMounted(async () => {
+    try {
+        const response = await fetch(props.url);
+        const json = await response.json();
+        if (json.error) throw new Error(json.error);
+        sendMessageUrl.value = json.send_message_url;
+    } catch (error) {
+        console.error(`Advising App Embed QnA Advisor ${error}`);
+    }
+});
 
-class VerifyCsrfToken extends Middleware
-{
-    /**
-     * The URIs that should be excluded from CSRF verification.
-     *
-     * @var array<int, string>
-     */
-    protected $except = [
-        '/api/forms/*',
-        '/api/applications/*',
-        '/api/surveys/*',
-        '/api/ai/qna-advisors/*',
-        '/api/event-registration/*',
-        '/api/cases/*',
-        '/api/v1/*',
-    ];
+async function sendMessage() {
+    if (!sendMessageUrl.value) return;
+    try {
+        const response = await fetch(sendMessageUrl.value, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content: message.value }),
+        });
+        const data = await response.text();
+        console.log(data);
+    } catch (error) {
+        console.error('Send message error:', error);
+    }
 }
+</script>
+
+<template>
+    <div v-show="sendMessageUrl !== null">
+        <textarea v-model="message"></textarea>
+        <button @click="sendMessage">Send</button>
+    </div>
+</template>

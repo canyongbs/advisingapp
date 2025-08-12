@@ -43,7 +43,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
-class SendMessageController
+class SendAdvisorMessageController
 {
     public function __invoke(Request $request, GetQnaAdvisorInstructions $getQnaAdvisorInstructions, QnaAdvisor $advisor): StreamedResponse | JsonResponse
     {

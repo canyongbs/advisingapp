@@ -1,5 +1,3 @@
-<?php
-
 /*
 <COPYRIGHT>
 
@@ -33,25 +31,29 @@
 
 </COPYRIGHT>
 */
+import vue from '@vitejs/plugin-vue';
+import { resolve } from 'path';
+import { defineConfig } from 'vite';
 
-namespace App\Http\Middleware;
-
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
-
-class VerifyCsrfToken extends Middleware
-{
-    /**
-     * The URIs that should be excluded from CSRF verification.
-     *
-     * @var array<int, string>
-     */
-    protected $except = [
-        '/api/forms/*',
-        '/api/applications/*',
-        '/api/surveys/*',
-        '/api/ai/qna-advisors/*',
-        '/api/event-registration/*',
-        '/api/cases/*',
-        '/api/v1/*',
-    ];
-}
+export default defineConfig({
+    plugins: [vue()],
+    build: {
+        manifest: true,
+        lib: {
+            entry: resolve(__dirname, 'src/widget.js'),
+            name: 'AdvisingAppQnAAdvisorWidget',
+            fileName: 'advising-app-qna-advisor-widget',
+            cssFileName: 'style',
+            formats: ['es'],
+        },
+        outDir: resolve(__dirname, '../../public/js/widgets/qna-advisor'),
+        emptyOutDir: true,
+        sourcemap: true,
+    },
+    resolve: {
+        alias: {
+            '@': resolve(__dirname, 'src'),
+        },
+    },
+    define: { 'process.env.NODE_ENV': '"production"' },
+});

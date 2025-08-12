@@ -31,12 +31,14 @@
 
 </COPYRIGHT>
 --}}
+@use(Illuminate\Support\Facades\URL)
+
 <x-filament-panels::page>
     <div
         class="flex h-[calc(100dvh-16rem)] flex-col gap-y-3"
         x-data="qnaAdvisorPreview({
             csrfToken: @js(csrf_token()),
-            sendMessageUrl: @js(route('ai.qna-advisors.messages.send', ['advisor' => $this->getrecord()])),
+            sendMessageUrl: @js(URL::to(URL::signedRoute('ai.qna-advisors.messages.send', ['advisor' => $this->getrecord()]))),
             userId: @js(auth()->user()->id),
         })"
     >
