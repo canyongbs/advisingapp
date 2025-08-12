@@ -2,8 +2,10 @@
 
 namespace AdvisingApp\Authorization\Http\Controllers;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Http\Requests\GenerateLoginMagicLinkRequest;
 use AdvisingApp\Authorization\Models\LoginMagicLink;
+use App\Models\Authenticatable;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -25,19 +27,34 @@ class GenerateLoginMagicLinkController
 
             $user = User::query()
                 ->withTrashed()
-                // Or Upsert? Should we even be getting the User yet?
-                ->upsertReturning(
-                    values: [
+                ->firstOrCreate(
+                    attributes: [
                         'email' => $data['email'],
                     ],
-                    uniqueBy: 'email',
-                    update: [
+                    values: [
                         'name' => $data['name'],
                         'email_verified_at' => now(),
                         'is_external' => true,
                     ]
-                )
-                ->first();
+                );
+
+            assert($user instanceof User);
+
+            $user->fill([
+                'name' => $data['name'],
+                'email_verified_at' => now(),
+                'is_external' => true,
+            ]);
+
+            if ($user->isDirty()) {
+                $user->saveOrFail();
+            }
+
+            foreach (LicenseType::cases() as $license) {
+                $user->grantLicense($license);
+            }
+
+            $user->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
 
             $magicLink = new LoginMagicLink();
 
@@ -53,9 +70,8 @@ class GenerateLoginMagicLinkController
                     name: 'magic-link.login',
                     expiration: now()->addMinutes(10)->toImmutable(),
                     parameters: [
-                        'code' => $magicLink->code,
+                        'magicLink' => $magicLink->code,
                     ],
-                    absolute: false,
                 ),
             ]);
         } catch (Throwable $exception) {

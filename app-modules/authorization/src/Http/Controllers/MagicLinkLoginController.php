@@ -29,10 +29,9 @@ class MagicLinkLoginController
 
         $panel = Filament::getPanel('admin');
 
-        Auth::guard($panel->getAuthGuard())
-            ->login($user);
+        Auth::login($user);
 
         return redirect()
-            ->intended($panel->getHomeUrl());
+            ->to($panel->getHomeUrl());
     }
 }
