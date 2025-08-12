@@ -38,8 +38,7 @@ namespace AdvisingApp\Pipeline\Filament\Resources\PipelineResource\Pages;
 
 use AdvisingApp\Pipeline\Filament\Resources\PipelineResource;
 use AdvisingApp\Pipeline\Models\Pipeline;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\EditAction;
+use AdvisingApp\Project\Filament\Resources\ProjectResource;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
@@ -72,18 +71,23 @@ class ViewPipeline extends ViewRecord
     }
 
     /**
-     * @return array<int|string, string|null>
+     * @return array<string>
      */
     public function getBreadcrumbs(): array
     {
-        $resource = static::getResource();
-        /** @var Pipeline $record */
-        $record = $this->getRecord();
+        $pipeline = $this->getRecord();
 
-        /** @var array<string, string> $breadcrumbs */
+        assert($pipeline instanceof Pipeline);
+
+        $project = $pipeline->project;
+
         $breadcrumbs = [
-            $resource::getUrl() => $resource::getBreadcrumb(),
-            $resource::getUrl('view', ['record' => $record]) => Str::limit($record->name, 16),
+            ProjectResource::getUrl() => ProjectResource::getBreadcrumb(),
+            ...($project ? [
+                ProjectResource::getUrl('view', ['record' => $project]) => $project->name ?? '',
+                ProjectResource::getUrl('manage-pipelines', ['record' => $project]) => 'Pipelines',
+            ] : []),
+            PipelineResource::getUrl('view', ['record' => $this->getRecord()]) => Str::limit($this->getRecordTitle(), 16),
             ...(filled($breadcrumb = $this->getBreadcrumb()) ? [$breadcrumb] : []),
         ];
 
@@ -92,13 +96,5 @@ class ViewPipeline extends ViewRecord
         }
 
         return $breadcrumbs;
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            EditAction::make(),
-            DeleteAction::make(),
-        ];
     }
 }

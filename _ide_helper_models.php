@@ -4472,15 +4472,21 @@ namespace AdvisingApp\Pipeline\Models{
  * @property string|null $default_stage
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $project_id
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \App\Models\User $createdBy
- * @property-read \AdvisingApp\Pipeline\Models\EducatablePipelineStage|null $pivot
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Prospect\Models\Prospect> $educatablePipelineStages
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Pipeline\Models\EducatablePipelineStage> $educatablePipelineStages
  * @property-read int|null $educatable_pipeline_stages_count
+ * @property-read \AdvisingApp\Project\Models\Project|null $project
+ * @property-read \AdvisingApp\Pipeline\Models\EducatablePipelineStage|null $pivot
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Prospect\Models\Prospect> $prospectPipelineStages
+ * @property-read int|null $prospect_pipeline_stages_count
  * @property-read \AdvisingApp\Segment\Models\Segment $segment
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Pipeline\Models\PipelineStage> $stages
  * @property-read int|null $stages_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\StudentDataModel\Models\Student> $studentPipelineStages
+ * @property-read int|null $student_pipeline_stages_count
  * @method static \AdvisingApp\Pipeline\Database\Factories\PipelineFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pipeline newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pipeline newQuery()
@@ -4490,6 +4496,7 @@ namespace AdvisingApp\Pipeline\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pipeline whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pipeline whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pipeline whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pipeline whereProjectId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pipeline whereSegmentId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pipeline whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pipeline whereUserId($value)
@@ -4551,6 +4558,42 @@ namespace AdvisingApp\Portal\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperPortalAuthentication {}
+}
+
+namespace AdvisingApp\Project\Models{
+/**
+ * @property string $id
+ * @property string $name
+ * @property string|null $description
+ * @property string $created_by_type
+ * @property string $created_by_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Model $createdBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Pipeline\Models\Pipeline> $pipelines
+ * @property-read int|null $pipelines_count
+ * @method static \AdvisingApp\Project\Database\Factories\ProjectFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Project newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Project newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Project onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Project query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Project whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Project whereCreatedById($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Project whereCreatedByType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Project whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Project whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Project whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Project whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Project whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Project withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Project withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperProject {}
 }
 
 namespace AdvisingApp\Prospect\Models{
@@ -4951,6 +4994,7 @@ namespace AdvisingApp\Research\Models{
  * @property string|null $deleted_at
  * @property string|null $folder_id
  * @property array<array-key, mixed>|null $links
+ * @property string|null $reference_urls
  * @property \AdvisingApp\Ai\Enums\AiModel|null $research_model
  * @property \Carbon\CarbonImmutable|null $started_at
  * @property array<array-key, mixed>|null $search_queries
@@ -4980,6 +5024,7 @@ namespace AdvisingApp\Research\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereLinks($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereOutline($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereReferenceUrls($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereRemainingOutline($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereResearchModel($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereResults($value)

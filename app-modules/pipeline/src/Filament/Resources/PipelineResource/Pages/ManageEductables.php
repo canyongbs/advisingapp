@@ -38,6 +38,7 @@ namespace AdvisingApp\Pipeline\Filament\Resources\PipelineResource\Pages;
 
 use AdvisingApp\Pipeline\Filament\Resources\PipelineResource;
 use AdvisingApp\Pipeline\Models\Pipeline;
+use AdvisingApp\Project\Filament\Resources\ProjectResource;
 use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use Filament\Forms\Components\TextInput;
@@ -119,20 +120,23 @@ class ManageEductables extends ManageRelatedRecords implements HasTable
     }
 
     /**
-     * @return array<int|string, string|null>
+     * @return array<string>
      */
     public function getBreadcrumbs(): array
     {
-        $resource = static::getResource();
+        $pipeline = $this->getRecord();
 
-        $record = $this->getRecord();
+        assert($pipeline instanceof Pipeline);
 
-        assert($record instanceof Pipeline);
+        $project = $pipeline->project;
 
-        /** @var array<string, string> $breadcrumbs */
         $breadcrumbs = [
-            $resource::getUrl() => $resource::getBreadcrumb(),
-            $resource::getUrl('view', ['record' => $record]) => Str::limit($record->name, 16),
+            ProjectResource::getUrl() => ProjectResource::getBreadcrumb(),
+            ...($project ? [
+                ProjectResource::getUrl('view', ['record' => $project]) => $project->name ?? '',
+                ProjectResource::getUrl('manage-pipelines', ['record' => $project]) => 'Pipelines',
+            ] : []),
+            PipelineResource::getUrl('view', ['record' => $this->getRecord()]) => Str::limit($this->getRecordTitle(), 16),
             ...(filled($breadcrumb = $this->getBreadcrumb()) ? [$breadcrumb] : []),
         ];
 
