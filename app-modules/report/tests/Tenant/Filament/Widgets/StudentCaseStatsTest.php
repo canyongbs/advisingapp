@@ -139,6 +139,33 @@ it('returns correct total cases, recent cases, open cases and closed cases of st
         'created_at' => $endDate,
     ])->create();
 
+    CaseModel::factory()->count($count)->state([
+        'status_id' => CaseStatus::factory()->create([
+            'classification' => SystemCaseClassification::Open,
+        ])->getKey(),
+        'respondent_id' => Student::factory()->create(['last' => 'Doe']),
+        'respondent_type' => (new Student())->getMorphClass(),
+        'created_at' => $startDate,
+    ])->create();
+
+    CaseModel::factory()->count($count)->state([
+        'status_id' => CaseStatus::factory()->create([
+            'classification' => SystemCaseClassification::Closed,
+        ])->getKey(),
+        'respondent_id' => Student::factory()->create(['last' => 'Doe']),
+        'respondent_type' => (new Student())->getMorphClass(),
+        'created_at' => $startDate,
+    ])->create();
+
+    CaseModel::factory()->count($count)->state([
+        'status_id' => CaseStatus::factory()->create([
+            'classification' => SystemCaseClassification::InProgress,
+        ])->getKey(),
+        'respondent_id' => Student::factory()->create(['last' => 'Doe']),
+        'respondent_type' => (new Student())->getMorphClass(),
+        'created_at' => $endDate,
+    ])->create();
+
     // case with filter
     $widget = new StudentCaseStats();
     $widget->cacheTag = 'report-student-case';
@@ -160,10 +187,11 @@ it('returns correct total cases, recent cases, open cases and closed cases of st
     $widget->filters = [];
 
     $stats = $widget->getStats();
+    dump($stats);
 
     expect($stats)->toHaveCount(4)
-        ->and($stats[0]->getValue())->toEqual($count * 3)
-        ->and($stats[1]->getValue())->toEqual($count * 3)
-        ->and($stats[2]->getValue())->toEqual($count)
-        ->and($stats[3]->getValue())->toEqual($count);
-})->only();
+        ->and($stats[0]->getValue())->toEqual($count * 6)
+        ->and($stats[1]->getValue())->toEqual($count * 6)
+        ->and($stats[2]->getValue())->toEqual($count * 2)
+        ->and($stats[3]->getValue())->toEqual($count * 2);
+});
