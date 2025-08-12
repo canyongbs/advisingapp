@@ -95,8 +95,8 @@ it('returns correct monthly email and sms engagement data for students based on 
         ],
     ]);
 
-    $studentOne = Student::factory()->state(['created_at_source' => $startDate, 'last' => 'Joe'])->create();
-    $studentTwo = Student::factory()->state(['created_at_source' => $endDate, 'last' => 'Joe'])->create();
+    $studentOne = Student::factory()->state(['created_at_source' => $startDate, 'last' => 'John'])->create();
+    $studentTwo = Student::factory()->state(['created_at_source' => $endDate, 'last' => 'John'])->create();
     $studentThree = Student::factory()->state(['created_at_source' => $startDate, 'last' => 'Doe'])->create();
     $studentFour = Student::factory()->state(['created_at_source' => $endDate, 'last' => 'Doe'])->create();
 
