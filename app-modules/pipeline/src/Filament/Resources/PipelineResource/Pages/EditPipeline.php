@@ -39,6 +39,7 @@ namespace AdvisingApp\Pipeline\Filament\Resources\PipelineResource\Pages;
 use AdvisingApp\Pipeline\Filament\Resources\PipelineResource;
 use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Pipeline\Models\PipelineStage;
+use AdvisingApp\Project\Filament\Resources\ProjectResource;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Actions\Action;
@@ -120,18 +121,23 @@ class EditPipeline extends EditRecord
     }
 
     /**
-     * @return array<int|string, string|null>
+     * @return array<string>
      */
     public function getBreadcrumbs(): array
     {
-        $resource = static::getResource();
-        /** @var Pipeline $record */
-        $record = $this->getRecord();
+        $pipeline = $this->getRecord();
 
-        /** @var array<string, string> $breadcrumbs */
+        assert($pipeline instanceof Pipeline);
+
+        $project = $pipeline->project;
+
         $breadcrumbs = [
-            $resource::getUrl() => $resource::getBreadcrumb(),
-            $resource::getUrl('edit', ['record' => $record]) => Str::limit($record->name, 16),
+            ProjectResource::getUrl() => ProjectResource::getBreadcrumb(),
+            ...($project ? [
+                ProjectResource::getUrl('view', ['record' => $project]) => $project->name ?? '',
+                ProjectResource::getUrl('manage-pipelines', ['record' => $project]) => 'Pipelines',
+            ] : []),
+            PipelineResource::getUrl('view', ['record' => $this->getRecord()]) => Str::limit($this->getRecordTitle(), 16),
             ...(filled($breadcrumb = $this->getBreadcrumb()) ? [$breadcrumb] : []),
         ];
 
@@ -147,5 +153,18 @@ class EditPipeline extends EditRecord
         return [
             DeleteAction::make(),
         ];
+    }
+
+    protected function configureDeleteAction(DeleteAction $action): void
+    {
+        $pipeline = $this->getRecord();
+
+        assert($pipeline instanceof Pipeline);
+
+        $resource = static::getResource();
+
+        $action
+            ->authorize($resource::canDelete($this->getRecord()))
+            ->successRedirectUrl(ProjectResource::getUrl('manage-pipelines', ['record' => $pipeline->project]));
     }
 }
