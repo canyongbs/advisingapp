@@ -61,14 +61,6 @@ class ProjectResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->can('project.view-any');
-    }
-
     public static function getRecordSubNavigation(Page $page): array
     {
         return $page->generateNavigationItems([
