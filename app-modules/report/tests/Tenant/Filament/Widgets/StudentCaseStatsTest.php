@@ -187,7 +187,6 @@ it('returns correct total cases, recent cases, open cases and closed cases of st
     $widget->filters = [];
 
     $stats = $widget->getStats();
-    dump($stats);
 
     expect($stats)->toHaveCount(4)
         ->and($stats[0]->getValue())->toEqual($count * 6)
