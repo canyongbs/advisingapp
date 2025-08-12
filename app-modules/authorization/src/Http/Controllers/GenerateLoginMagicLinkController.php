@@ -38,12 +38,13 @@ class GenerateLoginMagicLinkController
                     ]
                 );
 
-            assert($user instanceof User);
+            assert($user instanceof User); // @phpstan-ignore-line
 
             $user->fill([
                 'name' => $data['name'],
                 'email_verified_at' => now(),
                 'is_external' => true,
+                'deleted_at' => null,
             ]);
 
             if ($user->isDirty()) {
@@ -56,11 +57,14 @@ class GenerateLoginMagicLinkController
 
             $user->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
 
-            $magicLink = new LoginMagicLink();
+            // Remove any existing magic links for this user
+            LoginMagicLink::query()
+                ->where('user_id', $user->getKey())
+                ->delete();
 
+            $magicLink = new LoginMagicLink();
             $magicLink->user()->associate($user);
             $magicLink->code = Str::uuid7();
-
             $magicLink->saveOrFail();
 
             DB::commit();

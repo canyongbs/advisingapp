@@ -7,9 +7,13 @@ use Filament\Facades\Filament;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Throwable;
 
 class MagicLinkLoginController
 {
+    /**
+     * @throws Throwable
+     */
     public function __invoke(Request $request, LoginMagicLink $magicLink): RedirectResponse
     {
         abort_if(
@@ -21,15 +25,13 @@ class MagicLinkLoginController
 
         $user = $magicLink->user;
 
-        abort_if(
-            boolean: $user === null,
-            code: 404,
-            message: 'User not found.'
-        );
-
         $panel = Filament::getPanel('admin');
 
-        Auth::login($user);
+        $magicLink->used_at = now();
+
+        $magicLink->saveOrFail();
+
+        Auth::guard($panel->getAuthGuard())->login($user);
 
         return redirect()
             ->to($panel->getHomeUrl());
