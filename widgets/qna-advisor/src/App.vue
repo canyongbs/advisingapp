@@ -32,7 +32,7 @@
 </COPYRIGHT>
 -->
 <script setup>
-import { defineProps, ref, onMounted } from 'vue';
+import { defineProps, onMounted, ref } from 'vue';
 
 const props = defineProps(['url']);
 const sendMessageUrl = ref(null);
