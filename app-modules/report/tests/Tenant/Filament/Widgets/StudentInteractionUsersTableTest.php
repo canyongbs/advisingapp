@@ -370,4 +370,4 @@ it('displays only users with student interactions based on segment filter', func
             $userWithOldInteractions, $userWithRecentAndOtherInteractions,
         ]))
         ->assertCanNotSeeTableRecords(collect([$userWithoutInteractions]));
-})->only();
+});

@@ -90,7 +90,7 @@ trait HasFiltersForm
                                 ->take(15)
                                 ->pluck('name', 'id')
                                 ->all())
-                            ->getSearchResultsUsing(fn (string $search): array => Segment::query()->where('model', SegmentModel::Student)->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')->take(50)->orderBy('name')->pluck('name', 'id')->all())
+                            ->getSearchResultsUsing(fn (string $search): array => Segment::query()->where('model', SegmentModel::Student)->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')->take(15)->orderBy('created_at', 'desc')->pluck('name', 'id')->all())
                             ->searchable(),
                     ])
                     ->heading('Advanced Filtering')

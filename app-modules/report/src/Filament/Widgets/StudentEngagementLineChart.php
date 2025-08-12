@@ -60,7 +60,7 @@ class StudentEngagementLineChart extends LineChartReportWidget
         $runningTotalPerMonth = $shouldBypassCache
            ? $this->getStudentEngagementData($startDate, $endDate, $segmentId)
            : Cache::tags(["{{$this->cacheTag}}"])->remember('student_engagements_line_chart', now()->addHours(24), function () {
-               return $this->getStudentEngagementData(null, null);
+               return $this->getStudentEngagementData();
            });
 
         return [
