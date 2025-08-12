@@ -3,11 +3,14 @@
 namespace AdvisingApp\Authorization\Http\Controllers;
 
 use AdvisingApp\Authorization\Models\LoginMagicLink;
+use Filament\Facades\Filament;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MagicLinkLoginController
 {
-    public function __invoke(Request $request, LoginMagicLink $magicLink)
+    public function __invoke(Request $request, LoginMagicLink $magicLink): RedirectResponse
     {
         abort_if(
             boolean: now()->greaterThanOrEqualTo($magicLink->created_at->addMinutes(15))
@@ -23,5 +26,13 @@ class MagicLinkLoginController
             code: 404,
             message: 'User not found.'
         );
+
+        $panel = Filament::getPanel('admin');
+
+        Auth::guard($panel->getAuthGuard())
+            ->login($user);
+
+        return redirect()
+            ->intended($panel->getHomeUrl());
     }
 }
