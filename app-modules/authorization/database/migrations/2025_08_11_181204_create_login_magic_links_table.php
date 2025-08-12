@@ -10,6 +10,7 @@ return new class () extends Migration {
         Schema::create('login_magic_links', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->text('code');
+            $table->ipAddress();
             $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
             $table->timestamp('used_at')->nullable();
             $table->timestamps();
