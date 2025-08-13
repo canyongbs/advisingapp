@@ -79,8 +79,9 @@ class GenerateLoginMagicLinkController
                 'name' => $data['name'],
                 'email_verified_at' => now(),
                 'is_external' => true,
-                'deleted_at' => null,
             ]);
+
+            $user->deleted_at = null;
 
             if ($user->isDirty()) {
                 $user->saveOrFail();

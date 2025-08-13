@@ -89,8 +89,47 @@ it('can generate a login magic link for an existing user', function () {
     // TODO: Test that the link parameter decrypts to what we expect
 });
 
-//it('can generate a login magic link for an existing user that is deleted', function () {});
-//
+it('can generate a login magic link for an existing user that is deleted', function () {
+    $user = User::factory()->create();
+
+    $email = $user->email;
+    $name = $user->name;
+
+    $user->delete();
+
+    expect($user->trashed())->toBeTrue();
+
+    withoutMiddleware(CheckOlympusKey::class)
+        ->post(
+            route('magic-link.generate'),
+            [
+                'email' => $email,
+                'name' => $name,
+                'type' => Authenticatable::SUPER_ADMIN_ROLE,
+            ]
+        )
+        ->assertOk()
+        ->assertJsonStructure(['link']);
+
+    assertDatabaseCount(User::class, 1);
+
+    $user->refresh();
+
+    expect($user->trashed())->toBeFalse()
+        ->and($user->name)->toEqual($name)
+        ->and($user->email)->toEqual($email)
+        ->and($user->is_external)->toBeTrue()
+        ->and($user->hasExactRoles([Authenticatable::SUPER_ADMIN_ROLE]))->toBeTrue();
+
+    assertDatabaseCount(LoginMagicLink::class, 1);
+
+    $magicLink = LoginMagicLink::first();
+
+    expect($magicLink->user_id)->toEqual($user->id);
+
+    // TODO: Test that the link parameter decrypts to what we expect
+});
+
 //it('updates details of an existing user', function () {});
 //
 //it('deletes existing magic links for a user', function () {});
