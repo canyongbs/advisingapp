@@ -40,7 +40,8 @@ const props = defineProps(['url']);
 const sendMessageUrl = ref(null);
 const chatId = ref(null);
 const message = ref('');
-const response = ref('');
+const messages = ref([]);
+const currentResponse = ref('');
 const isLoading = ref(false);
 const previousResponseId = ref(null);
 let privateChannel = null;
@@ -80,16 +81,22 @@ function setupWebsockets(config) {
                 .listen('.advisor-message.chunk', (data) => {
                     if (data.error) {
                         console.error('Advisor message error:', data.error);
-                        response.value += `\n\nError: ${data.error}`;
+                        currentResponse.value += `\n\nError: ${data.error}`;
                         isLoading.value = false;
                         return;
                     }
 
                     if (data.content) {
-                        response.value += data.content;
+                        currentResponse.value += data.content;
                     }
 
                     if (data.is_complete) {
+                        // Add the completed agent response to messages
+                        messages.value.push({
+                            type: 'agent',
+                            content: currentResponse.value
+                        });
+                        currentResponse.value = '';
                         isLoading.value = false;
                     }
                 })
@@ -108,8 +115,14 @@ function setupWebsockets(config) {
 async function sendMessage() {
     if (!sendMessageUrl.value || !message.value.trim()) return;
 
+    // Add user message to conversation history
+    messages.value.push({
+        type: 'user',
+        content: message.value
+    });
+
     isLoading.value = true;
-    response.value = '';
+    currentResponse.value = '';
 
     try {
         const requestBody = {
@@ -142,9 +155,19 @@ async function sendMessage() {
 
 <template>
     <div v-show="sendMessageUrl !== null">
-        <div v-if="response">
-            <h3>Response:</h3>
-            <div>{{ response }}</div>
+        <div v-if="messages.length > 0">
+            <div v-for="(msg, index) in messages" :key="index">
+                <div v-if="msg.type === 'user'">
+                    <strong>User:</strong> {{ msg.content }}
+                </div>
+                <div v-else>
+                    <strong>Agent:</strong> {{ msg.content }}
+                </div>
+            </div>
+        </div>
+
+        <div v-if="isLoading && currentResponse">
+            <strong>Agent:</strong> {{ currentResponse }}
         </div>
 
         <div v-if="isLoading">
