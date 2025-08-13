@@ -77,10 +77,10 @@ class GenerateLoginMagicLinkController
 
             $user->fill([
                 'name' => $data['name'],
-                'email_verified_at' => now(),
                 'is_external' => true,
             ]);
 
+            $user->email_verified_at ??= now();
             $user->deleted_at = null;
 
             if ($user->isDirty()) {
