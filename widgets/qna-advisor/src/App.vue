@@ -93,7 +93,7 @@ function setupWebsockets(config) {
                     if (data.is_complete) {
                         // Add the completed agent response to messages
                         messages.value.push({
-                            type: 'agent',
+                            from: 'agent',
                             content: currentResponse.value
                         });
                         currentResponse.value = '';
@@ -117,7 +117,7 @@ async function sendMessage() {
 
     // Add user message to conversation history
     messages.value.push({
-        type: 'user',
+        from: 'user',
         content: message.value
     });
 
@@ -156,12 +156,12 @@ async function sendMessage() {
 <template>
     <div v-show="sendMessageUrl !== null">
         <div v-if="messages.length > 0">
-            <div v-for="(msg, index) in messages" :key="index">
-                <div v-if="msg.type === 'user'">
-                    <strong>User:</strong> {{ msg.content }}
+            <div v-for="(message, index) in messages" :key="index">
+                <div v-if="message.from === 'user'">
+                    <strong>User:</strong> {{ message.content }}
                 </div>
                 <div v-else>
-                    <strong>Agent:</strong> {{ msg.content }}
+                    <strong>Agent:</strong> {{ message.content }}
                 </div>
             </div>
         </div>
