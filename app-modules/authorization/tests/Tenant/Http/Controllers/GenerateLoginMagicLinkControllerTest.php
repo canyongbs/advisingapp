@@ -215,7 +215,7 @@ it('deletes existing magic links for a user', function () {
     // TODO: Test that the link parameter decrypts to what we expect
 });
 
-it('requires valid data', function ($data, $errors) {
+it('requires valid data', function (GenerateLoginMagicLinkRequestFactory $data, array $errors) {
     withoutMiddleware(CheckOlympusKey::class)
         ->post(
             route('magic-link.generate'),
