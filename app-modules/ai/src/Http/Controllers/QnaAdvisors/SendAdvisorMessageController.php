@@ -53,17 +53,15 @@ class SendAdvisorMessageController
             'options' => ['nullable', 'array'],
         ]);
 
-        // Check if chat_id is present in query string for websocket streaming
         $chatId = $request->query('chat_id');
 
         if ($chatId) {
-            // Dispatch job for websocket streaming
-            SendAdvisorMessage::dispatch(
+            dispatch(new SendAdvisorMessage(
                 $chatId,
                 $advisor,
                 $data['content'],
                 $data['options'] ?? []
-            );
+            ));
 
             return response()->json([
                 'message' => 'Message dispatched for processing via websockets.',
@@ -71,7 +69,6 @@ class SendAdvisorMessageController
             ]);
         }
 
-        // Fallback to original streaming response behavior
         $aiService = $advisor->model->getService();
 
         try {

@@ -61,7 +61,6 @@ Broadcast::channel('user-research-requests-{userId}', function (User $user, stri
     return User::find($userId)?->is($user);
 });
 
-Broadcast::channel('qna-advisor-chat-{chatId}', function ($user, string $chatId) {
-    // For public QNA advisor chats, anyone can listen
+Broadcast::channel('qna-advisor-chat-{chatId}', function () {
     return true;
 });

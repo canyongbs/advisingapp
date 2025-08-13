@@ -48,25 +48,36 @@ class AdvisorNextRequestOptions implements ShouldBroadcastNow
     use InteractsWithSockets;
     use SerializesModels;
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function __construct(
         public string $chatId,
         public array $options,
     ) {}
-
-    public function broadcastOn(): PrivateChannel
-    {
-        return new PrivateChannel("qna-advisor-chat-{$this->chatId}");
-    }
 
     public function broadcastAs(): string
     {
         return 'advisor-message.next-request-options';
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function broadcastWith(): array
     {
         return [
             'options' => $this->options,
+        ];
+    }
+
+    /**
+     * @return array<int, Channel>
+     */
+    public function broadcastOn(): array
+    {
+        return [
+            new PrivateChannel("qna-advisor-chat-{$this->chatId}"),
         ];
     }
 }

@@ -54,6 +54,9 @@ class SendAdvisorMessage implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function __construct(
         protected string $chatId,
         protected QnaAdvisor $advisor,
@@ -66,12 +69,11 @@ class SendAdvisorMessage implements ShouldQueue
         try {
             $aiService = $this->advisor->model->getService();
 
-            // Use the new streamPlainText method to get structured chunks
-            $stream = $aiService->streamPlainText(
+            $stream = $aiService->streamRaw(
                 $getQnaAdvisorInstructions->execute($this->advisor),
                 $this->content,
                 shouldTrack: false,
-                options: $this->options
+                options: $this->options,
             );
 
             $chunkBuffer = [];
@@ -79,11 +81,10 @@ class SendAdvisorMessage implements ShouldQueue
 
             foreach ($stream() as $chunk) {
                 if ($chunk['type'] === 'next_request_options') {
-                    // Send options as separate event
-                    AdvisorNextRequestOptions::dispatch(
+                    event(new AdvisorNextRequestOptions(
                         $this->chatId,
                         $chunk['options']
-                    );
+                    ));
 
                     continue;
                 }
@@ -92,12 +93,11 @@ class SendAdvisorMessage implements ShouldQueue
                     $chunkBuffer[] = $chunk['content'];
                     $chunkCount++;
 
-                    // Send websocket event every 30 chunks
                     if ($chunkCount >= 30) {
-                        AdvisorMessageChunk::dispatch(
+                        event(new AdvisorMessageChunk(
                             $this->chatId,
-                            implode('', $chunkBuffer)
-                        );
+                            content: implode('', $chunkBuffer)
+                        ));
 
                         $chunkBuffer = [];
                         $chunkCount = 0;
@@ -105,30 +105,27 @@ class SendAdvisorMessage implements ShouldQueue
                 }
             }
 
-            // Send any remaining chunks
             if (! empty($chunkBuffer)) {
-                AdvisorMessageChunk::dispatch(
+                event(new AdvisorMessageChunk(
                     $this->chatId,
-                    implode('', $chunkBuffer)
-                );
+                    content: implode('', $chunkBuffer)
+                ));
             }
 
-            // Send end-of-stream event
-            AdvisorMessageChunk::dispatch(
+            event(new AdvisorMessageChunk(
                 $this->chatId,
-                '',
-                true
-            );
+                content: '',
+                isComplete: true
+            ));
         } catch (Throwable $exception) {
             report($exception);
 
-            // Send error event
-            AdvisorMessageChunk::dispatch(
+            event(new AdvisorMessageChunk(
                 $this->chatId,
-                '',
-                false,
-                'An error happened when sending your message.'
-            );
+                content: '',
+                isComplete: false,
+                error: 'An error happened when sending your message.'
+            ));
         }
     }
 }

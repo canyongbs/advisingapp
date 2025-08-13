@@ -232,7 +232,7 @@ abstract class BaseOpenAiResponsesService implements AiService
      *
      * @param array<string, mixed> $options
      */
-    public function streamPlainText(string $prompt, string $content, bool $shouldTrack = true, array $options = []): Closure
+    public function streamRaw(string $prompt, string $content, bool $shouldTrack = true, array $options = []): Closure
     {
         $aiSettings = app(AiSettings::class);
 

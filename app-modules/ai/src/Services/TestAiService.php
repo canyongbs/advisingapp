@@ -83,7 +83,7 @@ class TestAiService implements AiService
         };
     }
 
-    public function streamPlainText(string $prompt, string $content, bool $shouldTrack = true, array $options = []): Closure
+    public function streamRaw(string $prompt, string $content, bool $shouldTrack = true, array $options = []): Closure
     {
         if ($shouldTrack) {
             dispatch(new RecordTrackedEvent(
