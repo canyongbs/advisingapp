@@ -83,8 +83,33 @@ it('rejects a magic link that has already been used', function () {
     assertGuest($panel->getAuthGuard());
 });
 
-//it('rejects a magic link with an invalid code', function () {});
-//
+it('rejects a magic link with an invalid code', function () {
+    $code = Str::random();
+
+    $magicLink = LoginMagicLink::factory()->withCode($code)->create();
+
+    $panel = Filament::getPanel('admin');
+
+    get(URL::temporarySignedRoute(
+        name: 'magic-link.login',
+        expiration: now()->addMinutes(10)->toImmutable(),
+        parameters: [
+            'magicLink' => $magicLink->getKey(),
+            'payload' => urlencode(
+                Crypt::encrypt(
+                    [
+                        'code' => 'abc123',
+                        'user_id' => $magicLink->user_id,
+                    ]
+                )
+            ),
+        ],
+    ))
+        ->assertForbidden();
+
+    assertGuest($panel->getAuthGuard());
+});
+
 //it('rejects a magic link with a non-matching user ID', function () {});
 
 it('logs in the user and redirects to the admin panel home', function () {
