@@ -174,6 +174,44 @@ it('updates details of an existing user', function () {
     // TODO: Test that the link parameter decrypts to what we expect
 });
 
-//it('deletes existing magic links for a user', function () {});
-//
+it('deletes existing magic links for a user', function () {
+    $user = User::factory()->create();
+
+    $email = $user->email;
+    $name = $user->name;
+
+    $existingMagicLink = LoginMagicLink::factory()->create(['user_id' => $user->id]);
+
+    withoutMiddleware(CheckOlympusKey::class)
+        ->post(
+            route('magic-link.generate'),
+            [
+                'email' => $email,
+                'name' => $name,
+                'type' => Authenticatable::SUPER_ADMIN_ROLE,
+            ]
+        )
+        ->assertOk()
+        ->assertJsonStructure(['link']);
+
+    assertDatabaseCount(User::class, 1);
+
+    $user->refresh();
+
+    expect($user->name)->toEqual($name)
+        ->and($user->email)->toEqual($email)
+        ->and($user->is_external)->toBeTrue()
+        ->and($user->hasExactRoles([Authenticatable::SUPER_ADMIN_ROLE]))->toBeTrue();
+
+    assertDatabaseCount(LoginMagicLink::class, 1);
+
+    expect($existingMagicLink->fresh())->toBeNull();
+
+    $magicLink = LoginMagicLink::first();
+
+    expect($magicLink->user_id)->toEqual($user->id);
+
+    // TODO: Test that the link parameter decrypts to what we expect
+});
+
 //it('requires valid data', function () {});
