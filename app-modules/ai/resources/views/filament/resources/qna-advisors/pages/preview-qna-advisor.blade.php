@@ -38,7 +38,7 @@
         class="flex h-[calc(100dvh-16rem)] flex-col gap-y-3"
         x-data="qnaAdvisorPreview({
             csrfToken: @js(csrf_token()),
-            sendMessageUrl: @js(URL::to(URL::signedRoute('ai.qna-advisors.messages.send', ['advisor' => $this->getRecord()]))),
+            sendMessageUrl: @js(URL::to(URL::signedRoute('ai.qna-advisors.messages.send', ['advisor' => $this->getRecord()], absolute: false))),
             userId: @js(auth()->user()->id),
         })"
     >
