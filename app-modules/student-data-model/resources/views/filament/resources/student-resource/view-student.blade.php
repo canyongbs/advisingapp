@@ -48,6 +48,7 @@
     use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\InteractionsRelationManager;
     use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ProgramsRelationManager;
     use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\CasesRelationManager;
+    use AdvisingApp\StudentDataModel\Filament\Widgets\StudentAcademicStats;
 @endphp
 
 <x-filament-panels::page>
@@ -67,6 +68,7 @@
         </div>
 
         <div class="flex flex-col gap-8 lg:col-span-1 xl:col-span-2">
+            @livewire(StudentAcademicStats::class, ['record' => $this->getRecord()])
             <x-student-data-model::filament.resources.educatable-resource.view-educatable.relation-managers
                 :managers="[
                     'programs' => ProgramsRelationManager::class,
