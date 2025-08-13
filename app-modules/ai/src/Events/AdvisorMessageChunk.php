@@ -17,10 +17,10 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
+      same in return. Canyon  and Advising App™ are registered trademarks of
       Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
       vigorously.
     - The software solution, including services, infrastructure, and code, is offered as a
@@ -34,34 +34,52 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Research\Models\ResearchRequest;
-use App\Models\User;
-use Illuminate\Support\Facades\Broadcast;
+namespace AdvisingApp\Ai\Events;
 
-/*
-|--------------------------------------------------------------------------
-| Broadcast Channels
-|--------------------------------------------------------------------------
-|
-| Here you may register all of the event broadcasting channels that your
-| application supports. The given channel authorization callbacks are
-| used to check if an authenticated user can listen to the channel.
-|
-*/
+use Illuminate\Broadcasting\Channel;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
+use Illuminate\Foundation\Events\Dispatchable;
 
-Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
-    return (int) $user->id === (int) $id;
-});
+class AdvisorMessageChunk implements ShouldBroadcastNow
+{
+    use Dispatchable;
+    use InteractsWithSockets;
 
-Broadcast::channel('research-request-{researchRequestId}', function (User $user, string $researchRequestId) {
-    return ResearchRequest::find($researchRequestId)?->user()->is($user);
-});
+    public function __construct(
+        public string $chatId,
+        public string $content,
+        public bool $isComplete = false,
+        public ?string $error = null,
+    ) {}
 
-Broadcast::channel('user-research-requests-{userId}', function (User $user, string $userId) {
-    return User::find($userId)?->is($user);
-});
+    public function broadcastAs(): string
+    {
+        return 'advisor-message.chunk';
+    }
 
-Broadcast::channel('qna-advisor-chat-{chatId}', function ($user, string $chatId) {
-    // For public QNA advisor chats, anyone can listen
-    return true;
-});
+    /**
+     * @return array<string, mixed>
+     */
+    public function broadcastWith(): array
+    {
+        return [
+            'content' => $this->content,
+            'is_complete' => $this->isComplete,
+            'error' => $this->error,
+        ];
+    }
+
+    /**
+     * Get the channels the event should broadcast on.
+     *
+     * @return array<int, Channel>
+     */
+    public function broadcastOn(): array
+    {
+        return [
+            new PrivateChannel("qna-advisor-chat-{$this->chatId}"),
+        ];
+    }
+}

@@ -37,6 +37,7 @@
 namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 
 use AdvisingApp\Ai\Actions\GetQnaAdvisorInstructions;
+use AdvisingApp\Ai\Jobs\SendAdvisorMessage;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -52,6 +53,25 @@ class SendAdvisorMessageController
             'options' => ['nullable', 'array'],
         ]);
 
+        // Check if chat_id is present in query string for websocket streaming
+        $chatId = $request->query('chat_id');
+
+        if ($chatId) {
+            // Dispatch job for websocket streaming
+            SendAdvisorMessage::dispatch(
+                $chatId,
+                $advisor,
+                $data['content'],
+                $data['options'] ?? []
+            );
+
+            return response()->json([
+                'message' => 'Message dispatched for processing via websockets.',
+                'chat_id' => $chatId,
+            ]);
+        }
+
+        // Fallback to original streaming response behavior
         $aiService = $advisor->model->getService();
 
         try {

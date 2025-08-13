@@ -32,11 +32,18 @@
 </COPYRIGHT>
 -->
 <script setup>
-import { defineProps, ref, onMounted } from 'vue';
+import { defineProps, ref, onMounted, onUnmounted } from 'vue';
+import Echo from 'laravel-echo'
+import Pusher from 'pusher-js/dist/web/pusher'
 
 const props = defineProps(['url']);
 const sendMessageUrl = ref(null);
+const chatId = ref(null);
 const message = ref('');
+const response = ref('');
+const isLoading = ref(false);
+const previousResponseId = ref(null);
+let privateChannel = null;
 
 onMounted(async () => {
     try {
@@ -44,30 +51,118 @@ onMounted(async () => {
         const json = await response.json();
         if (json.error) throw new Error(json.error);
         sendMessageUrl.value = json.send_message_url;
+        chatId.value = json.chat_id;
+        
+        // Initialize Laravel Echo for websockets
+        setupWebsockets(json.websockets_config);
     } catch (error) {
         console.error(`Advising App Embed QnA Advisor ${error}`);
     }
 });
 
-async function sendMessage() {
-    if (!sendMessageUrl.value) return;
+onUnmounted(() => {
+    if (privateChannel) {
+        privateChannel.stopListening('advisor-message.chunk');
+        privateChannel.stopListening('advisor-message.response-id');
+    }
+    if (window.Echo) {
+        window.Echo.disconnect();
+    }
+});
+
+function setupWebsockets(config) {
     try {
-        const response = await fetch(sendMessageUrl.value, {
+        window.Pusher = Pusher
+        window.Echo = new Echo(config)
+
+        if (chatId.value) {
+            privateChannel = window.Echo.private(`qna-advisor-chat-${chatId.value}`)
+                .listen('.advisor-message.chunk', (data) => {
+                    if (data.error) {
+                        console.error('Advisor message error:', data.error);
+                        response.value += `\n\nError: ${data.error}`;
+                        isLoading.value = false;
+                        return;
+                    }
+
+                    if (data.content) {
+                        response.value += data.content;
+                    }
+
+                    if (data.is_complete) {
+                        isLoading.value = false;
+                    }
+                })
+                .listen('.advisor-message.response-id', (data) => {
+                    // Store response_id for use in next request
+                    if (data.response_id) {
+                        previousResponseId.value = data.response_id;
+                    }
+                });
+        }
+    } catch (error) {
+        console.error('Failed to setup websockets:', error);
+    }
+}
+
+async function sendMessage() {
+    if (!sendMessageUrl.value || !message.value.trim()) return;
+    
+    isLoading.value = true;
+    response.value = '';
+    
+    try {
+        const requestBody = {
+            content: message.value
+        };
+
+        // Include previous_response_id in options if available
+        if (previousResponseId.value) {
+            requestBody.options = {
+                previous_response_id: previousResponseId.value
+            };
+        }
+
+        const fetchResponse = await fetch(sendMessageUrl.value, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ content: message.value }),
+            body: JSON.stringify(requestBody),
         });
-        const data = await response.text();
-        console.log(data);
+        
+        const data = await fetchResponse.json();
+        
+        // Clear the message input
+        message.value = '';
     } catch (error) {
         console.error('Send message error:', error);
+        isLoading.value = false;
     }
 }
 </script>
 
 <template>
     <div v-show="sendMessageUrl !== null">
-        <textarea v-model="message"></textarea>
-        <button @click="sendMessage">Send</button>
+        <div v-if="response">
+            <h3>Response:</h3>
+            <div>{{ response }}</div>
+        </div>
+        
+        <div v-if="isLoading">
+            <p>AI is typing...</p>
+        </div>
+        
+        <div>
+            <textarea 
+                v-model="message" 
+                placeholder="Ask your question..."
+                :disabled="isLoading"
+            ></textarea>
+            <button 
+                @click="sendMessage" 
+                :disabled="isLoading || !message.trim()"
+            >
+                Send
+            </button>
+        </div>
     </div>
 </template>

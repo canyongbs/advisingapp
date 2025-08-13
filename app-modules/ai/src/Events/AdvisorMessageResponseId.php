@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -34,34 +34,37 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Research\Models\ResearchRequest;
-use App\Models\User;
-use Illuminate\Support\Facades\Broadcast;
+namespace AdvisingApp\Ai\Events;
 
-/*
-|--------------------------------------------------------------------------
-| Broadcast Channels
-|--------------------------------------------------------------------------
-|
-| Here you may register all of the event broadcasting channels that your
-| application supports. The given channel authorization callbacks are
-| used to check if an authenticated user can listen to the channel.
-|
-*/
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
 
-Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
-    return (int) $user->id === (int) $id;
-});
+class AdvisorMessageResponseId implements ShouldBroadcastNow
+{
+    use Dispatchable, InteractsWithSockets, SerializesModels;
 
-Broadcast::channel('research-request-{researchRequestId}', function (User $user, string $researchRequestId) {
-    return ResearchRequest::find($researchRequestId)?->user()->is($user);
-});
+    public function __construct(
+        public string $chatId,
+        public string $responseId,
+    ) {}
 
-Broadcast::channel('user-research-requests-{userId}', function (User $user, string $userId) {
-    return User::find($userId)?->is($user);
-});
+    public function broadcastOn(): PrivateChannel
+    {
+        return new PrivateChannel("qna-advisor-chat-{$this->chatId}");
+    }
 
-Broadcast::channel('qna-advisor-chat-{chatId}', function ($user, string $chatId) {
-    // For public QNA advisor chats, anyone can listen
-    return true;
-});
+    public function broadcastAs(): string
+    {
+        return 'advisor-message.response-id';
+    }
+
+    public function broadcastWith(): array
+    {
+        return [
+            'response_id' => $this->responseId,
+        ];
+    }
+}

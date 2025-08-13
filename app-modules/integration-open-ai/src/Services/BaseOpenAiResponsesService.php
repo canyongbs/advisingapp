@@ -227,6 +227,83 @@ abstract class BaseOpenAiResponsesService implements AiService
     }
 
     /**
+     * Stream method that yields plain text chunks instead of base64 encoded JSON
+     * Yields arrays with 'type' => 'text'/'response_id' and corresponding content
+     *
+     * @param array<string, mixed> $options
+     */
+    public function streamPlainText(string $prompt, string $content, bool $shouldTrack = true, array $options = []): Closure
+    {
+        $aiSettings = app(AiSettings::class);
+
+        try {
+            $stream = Prism::text()
+                ->using('azure_open_ai', $this->getModel())
+                ->withClientOptions([
+                    'apiKey' => $this->getApiKey(),
+                    'apiVersion' => $this->getApiVersion(),
+                    'deployment' => $this->getDeployment(),
+                ])
+                ->withProviderOptions([
+                    'instructions' => $prompt,
+                    'truncation' => 'auto',
+                    ...$options,
+                ])
+                ->withPrompt($content)
+                ->withMaxTokens($aiSettings->max_tokens->getTokens())
+                ->usingTemperature($this->hasTemperature() ? $aiSettings->temperature : null)
+                ->asStream();
+
+            return function () use ($shouldTrack, $stream): Generator {
+                try {
+                    foreach ($stream as $chunk) {
+                        if (
+                            ($chunk->chunkType === ChunkType::Meta) &&
+                            filled($chunk->meta?->id)
+                        ) {
+                            yield ['type' => 'response_id', 'response_id' => $chunk->meta->id];
+                            continue;
+                        }
+
+                        if ($chunk->chunkType !== ChunkType::Text) {
+                            continue;
+                        }
+
+                        yield ['type' => 'text', 'content' => $chunk->text];
+
+                        if ($chunk->finishReason === FinishReason::Error) {
+                            report(new MessageResponseException('Stream not successful.'));
+                        }
+                    }
+                } catch (PrismRateLimitedException $exception) {
+                    foreach ($exception->rateLimits as $rateLimit) {
+                        if ($rateLimit->resetsAt?->isFuture()) {
+                            throw new MessageResponseException("Rate limit exceeded, retry at {$rateLimit->resetsAt}.");
+                        }
+                    }
+
+                    throw new MessageResponseException('Rate limit exceeded, please try again later.');
+                } catch (Throwable $exception) {
+                    report($exception);
+
+                    throw new MessageResponseException('Failed to complete the prompt: [' . $exception->getMessage() . '].');
+                }
+
+                if ($shouldTrack) {
+                    dispatch(new RecordTrackedEvent(
+                        type: TrackedEventType::AiExchange,
+                        occurredAt: now(),
+                    ));
+                }
+            };
+        } catch (Throwable $exception) {
+            report($exception);
+
+            throw new MessageResponseException('Failed to stream the response: [' . $exception->getMessage() . '].');
+        }
+    }
+
+    /**
      * @return array<string>
      */
     public function getResearchRequestRequestSearchQueries(ResearchRequest $researchRequest, string $prompt, string $content): array

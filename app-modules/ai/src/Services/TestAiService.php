@@ -83,6 +83,25 @@ class TestAiService implements AiService
         };
     }
 
+    public function streamPlainText(string $prompt, string $content, bool $shouldTrack = true, array $options = []): Closure
+    {
+        if ($shouldTrack) {
+            dispatch(new RecordTrackedEvent(
+                type: TrackedEventType::AiExchange,
+                occurredAt: now(),
+            ));
+        }
+
+        $responseContent = fake()->paragraph();
+
+        return function () use ($responseContent): Generator {
+            // Split into character chunks for testing
+            foreach (str_split($responseContent, 5) as $chunk) {
+                yield $chunk;
+            }
+        };
+    }
+
     public function createAssistant(AiAssistant $assistant): void {}
 
     public function updateAssistant(AiAssistant $assistant): void {}
