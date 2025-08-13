@@ -49,15 +49,13 @@ class BasicNeedsProgramResource extends Resource
 {
     protected static ?string $model = BasicNeedsProgram::class;
 
-    protected static ?string $navigationLabel = 'Program';
+    protected static ?string $navigationLabel = 'Support Programs';
 
-    protected static ?string $modelLabel = 'Program';
+    protected static ?string $modelLabel = 'Support Programs';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 20;
 
-    protected static ?string $cluster = ConstituentManagement::class;
-
-    protected static ?string $navigationGroup = 'Basic Needs';
+    protected static ?string $navigationGroup = 'Knowledge Management';
 
     public static function getPages(): array
     {
