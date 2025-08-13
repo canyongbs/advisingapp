@@ -39,7 +39,6 @@ namespace AdvisingApp\Authorization\Http\Controllers;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Http\Requests\GenerateLoginMagicLinkRequest;
 use AdvisingApp\Authorization\Models\LoginMagicLink;
-use App\Models\Authenticatable;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Crypt;
@@ -91,7 +90,7 @@ class GenerateLoginMagicLinkController
                 $user->grantLicense($license);
             }
 
-            $user->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
+            $user->syncRoles($data['type']);
 
             // Remove any existing magic links for this user
             LoginMagicLink::query()
