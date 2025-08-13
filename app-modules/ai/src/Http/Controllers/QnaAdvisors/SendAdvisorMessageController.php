@@ -37,13 +37,14 @@
 namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 
 use AdvisingApp\Ai\Actions\GetQnaAdvisorInstructions;
+use AdvisingApp\Ai\Jobs\SendAdvisorMessage;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
-class SendMessageController
+class SendAdvisorMessageController
 {
     public function __invoke(Request $request, GetQnaAdvisorInstructions $getQnaAdvisorInstructions, QnaAdvisor $advisor): StreamedResponse | JsonResponse
     {
@@ -51,6 +52,22 @@ class SendMessageController
             'content' => ['required', 'string', 'max:25000'],
             'options' => ['nullable', 'array'],
         ]);
+
+        $chatId = $request->query('chat_id');
+
+        if ($chatId) {
+            dispatch(new SendAdvisorMessage(
+                $chatId,
+                $advisor,
+                $data['content'],
+                $data['options'] ?? []
+            ));
+
+            return response()->json([
+                'message' => 'Message dispatched for processing via websockets.',
+                'chat_id' => $chatId,
+            ]);
+        }
 
         $aiService = $advisor->model->getService();
 

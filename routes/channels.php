@@ -60,3 +60,7 @@ Broadcast::channel('research-request-{researchRequestId}', function (User $user,
 Broadcast::channel('user-research-requests-{userId}', function (User $user, string $userId) {
     return User::find($userId)?->is($user);
 });
+
+Broadcast::channel('qna-advisor-chat-{chatId}', function () {
+    return true;
+});

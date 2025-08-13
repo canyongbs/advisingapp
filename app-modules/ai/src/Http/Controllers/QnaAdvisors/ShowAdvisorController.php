@@ -34,24 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace App\Http\Middleware;
+namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
+use AdvisingApp\Ai\Models\QnaAdvisor;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 
-class VerifyCsrfToken extends Middleware
+class ShowAdvisorController
 {
-    /**
-     * The URIs that should be excluded from CSRF verification.
-     *
-     * @var array<int, string>
-     */
-    protected $except = [
-        '/api/forms/*',
-        '/api/applications/*',
-        '/api/surveys/*',
-        '/api/ai/qna-advisors/*',
-        '/api/event-registration/*',
-        '/api/cases/*',
-        '/api/v1/*',
-    ];
+    public function __invoke(QnaAdvisor $advisor): JsonResponse
+    {
+        $chatId = Str::random(32);
+
+        return response()->json([
+            'chat_id' => $chatId,
+            'send_message_url' => URL::to(
+                URL::temporarySignedRoute(
+                    name: 'ai.qna-advisors.messages.send',
+                    expiration: now()->addHours(24),
+                    parameters: ['advisor' => $advisor, 'chat_id' => $chatId],
+                    absolute: false,
+                ),
+            ),
+            'websockets_config' => config('filament.broadcasting.echo'),
+        ]);
+    }
 }

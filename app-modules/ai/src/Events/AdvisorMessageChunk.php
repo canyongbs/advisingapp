@@ -34,24 +34,50 @@
 </COPYRIGHT>
 */
 
-namespace App\Http\Middleware;
+namespace AdvisingApp\Ai\Events;
 
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
+use Illuminate\Broadcasting\Channel;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
+use Illuminate\Foundation\Events\Dispatchable;
 
-class VerifyCsrfToken extends Middleware
+class AdvisorMessageChunk implements ShouldBroadcastNow
 {
+    use Dispatchable;
+    use InteractsWithSockets;
+
+    public function __construct(
+        public string $chatId,
+        public string $content,
+        public bool $isComplete = false,
+        public ?string $error = null,
+    ) {}
+
+    public function broadcastAs(): string
+    {
+        return 'advisor-message.chunk';
+    }
+
     /**
-     * The URIs that should be excluded from CSRF verification.
-     *
-     * @var array<int, string>
+     * @return array<string, mixed>
      */
-    protected $except = [
-        '/api/forms/*',
-        '/api/applications/*',
-        '/api/surveys/*',
-        '/api/ai/qna-advisors/*',
-        '/api/event-registration/*',
-        '/api/cases/*',
-        '/api/v1/*',
-    ];
+    public function broadcastWith(): array
+    {
+        return [
+            'content' => $this->content,
+            'is_complete' => $this->isComplete,
+            'error' => $this->error,
+        ];
+    }
+
+    /**
+     * @return array<int, Channel>
+     */
+    public function broadcastOn(): array
+    {
+        return [
+            new PrivateChannel("qna-advisor-chat-{$this->chatId}"),
+        ];
+    }
 }

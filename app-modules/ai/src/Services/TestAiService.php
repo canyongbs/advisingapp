@@ -46,6 +46,7 @@ use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use AdvisingApp\Research\Models\ResearchRequest;
 use Closure;
+use Exception;
 use Generator;
 
 class TestAiService implements AiService
@@ -69,6 +70,11 @@ class TestAiService implements AiService
      */
     public function stream(string $prompt, string $content, bool $shouldTrack = true, array $options = []): Closure
     {
+        throw new Exception('Plain text streaming is not supported by this service.');
+    }
+
+    public function streamRaw(string $prompt, string $content, bool $shouldTrack = true, array $options = []): Closure
+    {
         if ($shouldTrack) {
             dispatch(new RecordTrackedEvent(
                 type: TrackedEventType::AiExchange,
@@ -79,7 +85,10 @@ class TestAiService implements AiService
         $responseContent = fake()->paragraph();
 
         return function () use ($responseContent): Generator {
-            yield $responseContent;
+            // Split into character chunks for testing
+            foreach (str_split($responseContent, 5) as $chunk) {
+                yield $chunk;
+            }
         };
     }
 

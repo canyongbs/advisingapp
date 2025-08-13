@@ -59,6 +59,13 @@ interface AiService
     public function stream(string $prompt, string $content, bool $shouldTrack = true, array $options = []): Closure;
 
     /**
+     * This method is passed a prompt and message and should return a stream of plain text chunks.
+     *
+     * @param array<string, mixed> $options
+     */
+    public function streamRaw(string $prompt, string $content, bool $shouldTrack = true, array $options = []): Closure;
+
+    /**
      * This method is passed an unsaved `AiAssistant` model and should return
      * the model with any additional data that associates it with
      * the AI service, such as the `assistant_id`.

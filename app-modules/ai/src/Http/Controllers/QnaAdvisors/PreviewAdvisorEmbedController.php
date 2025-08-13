@@ -34,24 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace App\Http\Middleware;
+namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
+use AdvisingApp\Ai\Models\QnaAdvisor;
+use Illuminate\Contracts\View\View;
 
-class VerifyCsrfToken extends Middleware
+class PreviewAdvisorEmbedController
 {
-    /**
-     * The URIs that should be excluded from CSRF verification.
-     *
-     * @var array<int, string>
-     */
-    protected $except = [
-        '/api/forms/*',
-        '/api/applications/*',
-        '/api/surveys/*',
-        '/api/ai/qna-advisors/*',
-        '/api/event-registration/*',
-        '/api/cases/*',
-        '/api/v1/*',
-    ];
+    public function __invoke(QnaAdvisor $advisor): View
+    {
+        return view('ai::qna-advisor-preview', [
+            'advisor' => $advisor,
+        ]);
+    }
 }

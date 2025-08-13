@@ -1,5 +1,3 @@
-<?php
-
 /*
 <COPYRIGHT>
 
@@ -33,25 +31,24 @@
 
 </COPYRIGHT>
 */
+import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
+import App from './App.vue';
+import './widget.css';
 
-namespace App\Http\Middleware;
+customElements.define(
+    'qna-advisor-embed',
+    defineCustomElement({
+        setup(props) {
+            const app = createApp();
 
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
+            app.config.devtools = true;
 
-class VerifyCsrfToken extends Middleware
-{
-    /**
-     * The URIs that should be excluded from CSRF verification.
-     *
-     * @var array<int, string>
-     */
-    protected $except = [
-        '/api/forms/*',
-        '/api/applications/*',
-        '/api/surveys/*',
-        '/api/ai/qna-advisors/*',
-        '/api/event-registration/*',
-        '/api/cases/*',
-        '/api/v1/*',
-    ];
-}
+            const inst = getCurrentInstance();
+            Object.assign(inst.appContext, app._context);
+            Object.assign(inst.provides, app._context.provides);
+
+            return () => h(App, props);
+        },
+        props: ['url'],
+    }),
+);

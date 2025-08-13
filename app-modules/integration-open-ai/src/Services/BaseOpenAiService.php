@@ -132,6 +132,14 @@ abstract class BaseOpenAiService implements AiService
         throw new Exception('Streaming a single response is not supported by this service.');
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
+    public function streamRaw(string $prompt, string $content, bool $shouldTrack = true, array $options = []): Closure
+    {
+        throw new Exception('Plain text streaming is not supported by this service.');
+    }
+
     public function createAssistant(AiAssistant $assistant): void
     {
         $newAssistantResponse = $this->client->assistants()->create([
