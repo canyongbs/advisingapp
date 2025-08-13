@@ -52,7 +52,7 @@ class BasicNeedsCategoryResource extends Resource
 
     protected static ?string $modelLabel = 'Category';
 
-    protected static ?int $navigationSort = 20;
+    protected static ?int $navigationSort = 10;
 
     protected static ?string $cluster = ConstituentManagement::class;
 
