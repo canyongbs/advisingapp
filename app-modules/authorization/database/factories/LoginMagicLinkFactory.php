@@ -34,29 +34,52 @@
 </COPYRIGHT>
 */
 
-namespace App\Http\Middleware;
+namespace AdvisingApp\Authorization\Database\Factories;
 
-use Illuminate\Http\Middleware\TrustProxies as Middleware;
-use Illuminate\Http\Request;
+use AdvisingApp\Authorization\Models\LoginMagicLink;
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
-class TrustProxies extends Middleware
+/**
+ * @extends Factory<LoginMagicLink>
+ */
+class LoginMagicLinkFactory extends Factory
 {
     /**
-     * The trusted proxies for this application.
-     *
-     * @var array<int, string>|string|null
+     * @return array<string, mixed>
      */
-    protected $proxies = '*';
+    public function definition(): array
+    {
+        return [
+            'code' => Hash::make(Str::random()),
+            'user_id' => User::factory(),
+        ];
+    }
 
     /**
-     * The headers that should be used to detect proxies.
-     *
-     * @var int
+     * @return Factory<LoginMagicLink>
      */
-    protected $headers =
-        Request::HEADER_X_FORWARDED_FOR |
-        Request::HEADER_X_FORWARDED_HOST |
-        Request::HEADER_X_FORWARDED_PORT |
-        Request::HEADER_X_FORWARDED_PROTO |
-        Request::HEADER_X_FORWARDED_AWS_ELB;
+    public function withCode(string $code): Factory
+    {
+        return $this->state(function (array $attributes) use ($code) {
+            return [
+                'code' => Hash::make($code),
+            ];
+        });
+    }
+
+    /**
+     * @return Factory<LoginMagicLink>
+     */
+    public function used(?Carbon $when = null): Factory
+    {
+        return $this->state(function (array $attributes) use ($when) {
+            return [
+                'used_at' => $when ?? now(),
+            ];
+        });
+    }
 }

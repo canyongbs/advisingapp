@@ -34,29 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace App\Http\Middleware;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use Illuminate\Http\Middleware\TrustProxies as Middleware;
-use Illuminate\Http\Request;
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::create('login_magic_links', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->text('code');
+            $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
+            $table->timestamp('used_at')->nullable();
+            $table->timestamps();
+        });
+    }
 
-class TrustProxies extends Middleware
-{
-    /**
-     * The trusted proxies for this application.
-     *
-     * @var array<int, string>|string|null
-     */
-    protected $proxies = '*';
-
-    /**
-     * The headers that should be used to detect proxies.
-     *
-     * @var int
-     */
-    protected $headers =
-        Request::HEADER_X_FORWARDED_FOR |
-        Request::HEADER_X_FORWARDED_HOST |
-        Request::HEADER_X_FORWARDED_PORT |
-        Request::HEADER_X_FORWARDED_PROTO |
-        Request::HEADER_X_FORWARDED_AWS_ELB;
-}
+    public function down(): void
+    {
+        Schema::dropIfExists('login_magic_links');
+    }
+};

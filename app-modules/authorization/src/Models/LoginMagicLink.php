@@ -34,29 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace App\Http\Middleware;
+namespace AdvisingApp\Authorization\Models;
 
-use Illuminate\Http\Middleware\TrustProxies as Middleware;
-use Illuminate\Http\Request;
+use AdvisingApp\Authorization\Database\Factories\LoginMagicLinkFactory;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
-class TrustProxies extends Middleware
+/**
+ * @mixin IdeHelperLoginMagicLink
+ */
+class LoginMagicLink extends Model
 {
-    /**
-     * The trusted proxies for this application.
-     *
-     * @var array<int, string>|string|null
-     */
-    protected $proxies = '*';
+    /** @use HasFactory<LoginMagicLinkFactory> */
+    use HasFactory;
+
+    use HasUuids;
+    use UsesTenantConnection;
+
+    protected $fillable = [];
 
     /**
-     * The headers that should be used to detect proxies.
-     *
-     * @var int
+     * @return BelongsTo<User, $this>
      */
-    protected $headers =
-        Request::HEADER_X_FORWARDED_FOR |
-        Request::HEADER_X_FORWARDED_HOST |
-        Request::HEADER_X_FORWARDED_PORT |
-        Request::HEADER_X_FORWARDED_PROTO |
-        Request::HEADER_X_FORWARDED_AWS_ELB;
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 }

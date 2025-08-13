@@ -48,7 +48,7 @@ class CheckOlympusKey
     {
         $key = Landlord::execute(fn (): ?string => app(OlympusSettings::class)->key);
 
-        if ($request->bearerToken() !== $key) {
+        if (is_null($key) || $request->bearerToken() !== $key) {
             if ($request->expectsJson()) {
                 return response()->json([
                     'message' => 'Invalid Olympus key',

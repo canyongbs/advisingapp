@@ -34,29 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace App\Http\Middleware;
+namespace AdvisingApp\Authorization\Http\Requests;
 
-use Illuminate\Http\Middleware\TrustProxies as Middleware;
-use Illuminate\Http\Request;
+use App\Models\Authenticatable;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class TrustProxies extends Middleware
+class GenerateLoginMagicLinkRequest extends FormRequest
 {
     /**
-     * The trusted proxies for this application.
-     *
-     * @var array<int, string>|string|null
+     * @return array<string, array<int, string>>
      */
-    protected $proxies = '*';
-
-    /**
-     * The headers that should be used to detect proxies.
-     *
-     * @var int
-     */
-    protected $headers =
-        Request::HEADER_X_FORWARDED_FOR |
-        Request::HEADER_X_FORWARDED_HOST |
-        Request::HEADER_X_FORWARDED_PORT |
-        Request::HEADER_X_FORWARDED_PROTO |
-        Request::HEADER_X_FORWARDED_AWS_ELB;
+    public function rules(): array
+    {
+        return [
+            'email' => ['required', 'email'],
+            'name' => ['required', 'string', 'max:255'],
+            'type' => ['required', 'string', Rule::in([Authenticatable::SUPER_ADMIN_ROLE, Authenticatable::PARTNER_ADMIN_ROLE])],
+        ];
+    }
 }

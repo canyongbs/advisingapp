@@ -48,6 +48,9 @@ use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
+/**
+ * @mixin IdeHelperProjectFile
+ */
 class ProjectFile extends Model implements HasMedia, Auditable
 {
     /** @use HasFactory<ProjectFileFactory> */

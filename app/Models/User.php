@@ -402,11 +402,13 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
 
     public function getIsAdminAttribute(): bool
     {
-        return $this->roles()->where('name', Authenticatable::SUPER_ADMIN_ROLE)->exists();
+        return $this->roles()->whereIn('name', [Authenticatable::SUPER_ADMIN_ROLE, Authenticatable::PARTNER_ADMIN_ROLE])->exists();
     }
 
     /**
      * @param Builder<User> $query
+     *
+     * TODO: This most likely can be deleted
      *
      * @return Builder<User>
      */

@@ -34,29 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace App\Http\Middleware;
+namespace AdvisingApp\Authorization\Tests\Tenant\Http\Controllers\RequestFactories;
 
-use Illuminate\Http\Middleware\TrustProxies as Middleware;
-use Illuminate\Http\Request;
+use App\Models\Authenticatable;
+use Worksome\RequestFactories\RequestFactory;
 
-class TrustProxies extends Middleware
+class GenerateLoginMagicLinkRequestFactory extends RequestFactory
 {
-    /**
-     * The trusted proxies for this application.
-     *
-     * @var array<int, string>|string|null
-     */
-    protected $proxies = '*';
-
-    /**
-     * The headers that should be used to detect proxies.
-     *
-     * @var int
-     */
-    protected $headers =
-        Request::HEADER_X_FORWARDED_FOR |
-        Request::HEADER_X_FORWARDED_HOST |
-        Request::HEADER_X_FORWARDED_PORT |
-        Request::HEADER_X_FORWARDED_PROTO |
-        Request::HEADER_X_FORWARDED_AWS_ELB;
+    public function definition(): array
+    {
+        return [
+            'email' => $this->faker->safeEmail(),
+            'name' => $this->faker->name(),
+            'type' => $this->faker->randomElement([
+                Authenticatable::SUPER_ADMIN_ROLE,
+                Authenticatable::PARTNER_ADMIN_ROLE,
+            ]),
+        ];
+    }
 }

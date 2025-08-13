@@ -50,6 +50,7 @@ use Illuminate\Auth\Passwords\PasswordResetServiceProvider;
 use Illuminate\Broadcasting\BroadcastServiceProvider;
 use Illuminate\Bus\BusServiceProvider;
 use Illuminate\Cache\CacheServiceProvider;
+use Illuminate\Concurrency\ConcurrencyServiceProvider;
 use Illuminate\Cookie\CookieServiceProvider;
 use Illuminate\Database\DatabaseServiceProvider;
 use Illuminate\Encryption\EncryptionServiceProvider;
@@ -226,6 +227,7 @@ return [
     */
 
     'providers' => [
+        ConcurrencyServiceProvider::class,
         AuthServiceProvider::class,
         BroadcastServiceProvider::class,
         BusServiceProvider::class,
