@@ -138,6 +138,12 @@ class EnrollmentsRelationManager extends RelationManager
                 TextColumn::make('crse_grade_off')
                     ->label('Grade')
                     ->placeholder('N/A'),
+                TextColumn::make('unt_taken')
+                    ->label('Attempted')
+                    ->placeholder('N/A'),
+                TextColumn::make('unt_earned')
+                    ->label('Earned')
+                    ->placeholder('N/A'),
             ])
             ->filters([
                 SelectFilter::make('semester_name')
