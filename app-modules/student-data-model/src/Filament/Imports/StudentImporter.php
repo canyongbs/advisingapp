@@ -172,6 +172,14 @@ class StudentImporter extends Importer
                     'string',
                     'max:255',
                 ]),
+            ImportColumn::make('standing')
+                ->label('Academic Standing')
+                ->example('Suspended')
+                ->rules([
+                    'nullable',
+                    'string',
+                    'max:255',
+                ]),
             ImportColumn::make('firstgen')
                 ->example('true')
                 ->boolean()
@@ -203,6 +211,22 @@ class StudentImporter extends Importer
             ImportColumn::make('mr_e_term')
                 ->label('Most Recent Enrollment Term')
                 ->example('1234')
+                ->rules([
+                    'nullable',
+                    'string',
+                    'max:255',
+                ]),
+            ImportColumn::make('athletics_status')
+                ->label('Athletics Status')
+                ->example('Active')
+                ->rules([
+                    'nullable',
+                    'string',
+                    'max:255',
+                ]),
+            ImportColumn::make('athletic_details')
+                ->label('Athletic Details')
+                ->example('Football, 2024')
                 ->rules([
                     'nullable',
                     'string',
