@@ -41,7 +41,6 @@ use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages\Ed
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages\ListBasicNeedsPrograms;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages\ViewBasicNeedsProgram;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
-use App\Filament\Clusters\ConstituentManagement;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 
@@ -49,15 +48,13 @@ class BasicNeedsProgramResource extends Resource
 {
     protected static ?string $model = BasicNeedsProgram::class;
 
-    protected static ?string $navigationLabel = 'Program';
+    protected static ?string $navigationLabel = 'Support Programs';
 
-    protected static ?string $modelLabel = 'Program';
+    protected static ?string $modelLabel = 'Support Programs';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 20;
 
-    protected static ?string $cluster = ConstituentManagement::class;
-
-    protected static ?string $navigationGroup = 'Basic Needs';
+    protected static ?string $navigationGroup = 'Knowledge Management';
 
     public static function getPages(): array
     {
