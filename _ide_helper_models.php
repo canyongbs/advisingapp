@@ -1,39 +1,5 @@
 <?php
 
-/*
-<COPYRIGHT>
-
-    Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
-
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
-    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
-
-    Notice:
-
-    - You may not provide the software to third parties as a hosted or managed
-      service, where the service provides users with access to any substantial set of
-      the features or functionality of the software.
-    - You may not move, change, disable, or circumvent the license key functionality
-      in the software, and you may not remove or obscure any functionality in the
-      software that is protected by the license key.
-    - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
-      to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
-      vigorously.
-    - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
-    - Use of this software implies agreement to the license terms and conditions as stated
-      in the Elastic License 2.0.
-
-    For more information or inquiries please visit our website at
-    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
-
-</COPYRIGHT>
-*/
-
 // @formatter:off
 // phpcs:ignoreFile
 /**
@@ -1409,6 +1375,10 @@ namespace AdvisingApp\Application\Models{
  * @property-read int|null $steps_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Application\Models\ApplicationSubmission> $submissions
  * @property-read int|null $submissions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Workflow\Models\WorkflowTrigger> $workflowTriggers
+ * @property-read int|null $workflow_triggers_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\AdvisingApp\Workflow\Models\Workflow[] $workflows
+ * @property-read int|null $workflows_count
  * @method static \AdvisingApp\Application\Database\Factories\ApplicationFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Application newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Application newQuery()
@@ -1706,6 +1676,31 @@ namespace AdvisingApp\Authorization\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperLicense {}
+}
+
+namespace AdvisingApp\Authorization\Models{
+/**
+ * @property string $id
+ * @property string $code
+ * @property string $user_id
+ * @property string|null $used_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User $user
+ * @method static \AdvisingApp\Authorization\Database\Factories\LoginMagicLinkFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoginMagicLink newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoginMagicLink newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoginMagicLink query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoginMagicLink whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoginMagicLink whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoginMagicLink whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoginMagicLink whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoginMagicLink whereUsedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoginMagicLink whereUserId($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperLoginMagicLink {}
 }
 
 namespace AdvisingApp\Authorization\Models{
@@ -2682,6 +2677,8 @@ namespace AdvisingApp\CaseManagement\Models{
  * @property \AdvisingApp\CaseManagement\Enums\CaseTypeEmailTemplateRole|null $role
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
  * @property-read \AdvisingApp\CaseManagement\Models\CaseType $caseType
  * @method static \AdvisingApp\CaseManagement\Database\Factories\CaseTypeEmailTemplateFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CaseTypeEmailTemplate newModelQuery()
@@ -4573,6 +4570,8 @@ namespace AdvisingApp\Project\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Model $createdBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Project\Models\ProjectFile> $files
+ * @property-read int|null $files_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Pipeline\Models\Pipeline> $pipelines
  * @property-read int|null $pipelines_count
  * @method static \AdvisingApp\Project\Database\Factories\ProjectFactory factory($count = null, $state = [])
@@ -4594,6 +4593,37 @@ namespace AdvisingApp\Project\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperProject {}
+}
+
+namespace AdvisingApp\Project\Models{
+/**
+ * @property string $id
+ * @property string $project_id
+ * @property string $description
+ * @property string|null $retention_date
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read int|null $media_count
+ * @property-read \AdvisingApp\Project\Models\Project $project
+ * @method static \AdvisingApp\Project\Database\Factories\ProjectFileFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectFile newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectFile newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectFile query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectFile whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectFile whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectFile whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectFile whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectFile whereProjectId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectFile whereRetentionDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectFile whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperProjectFile {}
 }
 
 namespace AdvisingApp\Prospect\Models{
@@ -4994,7 +5024,6 @@ namespace AdvisingApp\Research\Models{
  * @property string|null $deleted_at
  * @property string|null $folder_id
  * @property array<array-key, mixed>|null $links
- * @property string|null $reference_urls
  * @property \AdvisingApp\Ai\Enums\AiModel|null $research_model
  * @property \Carbon\CarbonImmutable|null $started_at
  * @property array<array-key, mixed>|null $search_queries
@@ -5024,7 +5053,6 @@ namespace AdvisingApp\Research\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereLinks($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereOutline($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereReferenceUrls($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereRemainingOutline($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereResearchModel($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereResults($value)
@@ -6532,177 +6560,6 @@ namespace AdvisingApp\Workflow\Models{
 
 namespace AdvisingApp\Workflow\Models{
 /**
- * 
- *
- * @property string $id
- * @property \Illuminate\Support\Carbon|null $started_at
- * @property string $workflow_trigger_id
- * @property string $related_id
- * @property string $related_type
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read covariant \Illuminate\Database\Eloquent\Model $related
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Workflow\Models\WorkflowRunStep> $workflowRunSteps
- * @property-read int|null $workflow_run_steps_count
- * @property-read \AdvisingApp\Workflow\Models\WorkflowTrigger $workflowTrigger
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun whereRelatedId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun whereRelatedType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun whereStartedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun whereWorkflowTriggerId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperWorkflowRun {}
-}
-
-namespace AdvisingApp\Workflow\Models{
-/**
- * 
- *
- * @property string $id
- * @property \Illuminate\Support\Carbon $execute_at
- * @property \Illuminate\Support\Carbon|null $dispatched_at
- * @property \Illuminate\Support\Carbon|null $succeeded_at
- * @property \Illuminate\Support\Carbon|null $last_failed_at
- * @property string $workflow_run_id
- * @property string $details_id
- * @property \AdvisingApp\Workflow\Enums\WorkflowActionType $details_type
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Model $details
- * @property-read \AdvisingApp\Workflow\Models\WorkflowRun $workflowRun
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep whereDetailsId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep whereDetailsType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep whereDispatchedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep whereExecuteAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep whereLastFailedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep whereSucceededAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep whereWorkflowRunId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperWorkflowRunStep {}
-}
-
-namespace AdvisingApp\Workflow\Models{
-/**
- * 
- *
- * @property string $id
- * @property string $workflow_run_step_id
- * @property string $related_type
- * @property string $related_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Model $related
- * @property-read \AdvisingApp\Workflow\Models\WorkflowRunStep $workflowRunStep
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated whereRelatedId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated whereRelatedType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated whereWorkflowRunStepId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperWorkflowRunStepRelated {}
-}
-
-namespace AdvisingApp\Workflow\Models{
-/**
- * 
- *
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \AdvisingApp\Workflow\Models\WorkflowTrigger|null $workflowTrigger
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRun withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperWorkflowRun {}
-}
-
-namespace AdvisingApp\Workflow\Models{
-/**
- * 
- *
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read WorkflowRunStep|null $workflowRunStep
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStep withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperWorkflowRunStep {}
-}
-
-namespace AdvisingApp\Workflow\Models{
-/**
- * 
- *
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \AdvisingApp\Workflow\Models\WorkflowRun|null $workflowRun
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkflowRunStepRelated withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperWorkflowRunStepRelated {}
-}
-
-namespace AdvisingApp\Workflow\Models{
-/**
  * @property string $id
  * @property \Illuminate\Support\Carbon|null $started_at
  * @property string $workflow_trigger_id
@@ -6974,3 +6831,4 @@ namespace AdvisingApp\Workflow\Models{
 	#[\AllowDynamicProperties]
 	class IdeHelperWorkflowTrigger {}
 }
+
