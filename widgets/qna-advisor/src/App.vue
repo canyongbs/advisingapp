@@ -54,7 +54,6 @@ onMounted(async () => {
         sendMessageUrl.value = json.send_message_url;
         chatId.value = json.chat_id;
 
-        // Initialize Laravel Echo for websockets
         setupWebsockets(json.websockets_config);
     } catch (error) {
         console.error(`Advising App Embed QnA Advisor ${error}`);
@@ -81,7 +80,6 @@ function setupWebsockets(config) {
                 .listen('.advisor-message.chunk', (data) => {
                     if (data.error) {
                         console.error('Advisor message error:', data.error);
-                        currentResponse.value += `\n\nError: ${data.error}`;
                         isLoading.value = false;
                         return;
                     }
@@ -91,7 +89,6 @@ function setupWebsockets(config) {
                     }
 
                     if (data.is_complete) {
-                        // Add the completed agent response to messages
                         messages.value.push({
                             from: 'agent',
                             content: currentResponse.value,
@@ -101,7 +98,6 @@ function setupWebsockets(config) {
                     }
                 })
                 .listen('.advisor-message.next-request-options', (data) => {
-                    // Store options for use in next request
                     if (data.options) {
                         nextRequestOptions.value = data.options;
                     }
@@ -115,7 +111,6 @@ function setupWebsockets(config) {
 async function sendMessage() {
     if (!sendMessageUrl.value || !message.value.trim()) return;
 
-    // Add user message to conversation history
     messages.value.push({
         from: 'user',
         content: message.value,
@@ -129,20 +124,18 @@ async function sendMessage() {
             content: message.value,
         };
 
-        // Include next request options if available
         if (nextRequestOptions.value) {
             requestBody.options = nextRequestOptions.value;
         }
 
-        const fetchResponse = await fetch(sendMessageUrl.value, {
+        const sendMessageResponse = await fetch(sendMessageUrl.value, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(requestBody),
         });
 
-        const data = await fetchResponse.json();
+        const data = await sendMessageResponse.json();
 
-        // Clear the message input
         message.value = '';
     } catch (error) {
         console.error('Send message error:', error);

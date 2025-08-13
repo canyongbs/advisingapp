@@ -83,7 +83,7 @@ class SendAdvisorMessage implements ShouldQueue
                 if ($chunk['type'] === 'next_request_options') {
                     event(new AdvisorNextRequestOptions(
                         $this->chatId,
-                        $chunk['options']
+                        $chunk['options'],
                     ));
 
                     continue;
@@ -96,7 +96,7 @@ class SendAdvisorMessage implements ShouldQueue
                     if ($chunkCount >= 30) {
                         event(new AdvisorMessageChunk(
                             $this->chatId,
-                            content: implode('', $chunkBuffer)
+                            content: implode('', $chunkBuffer),
                         ));
 
                         $chunkBuffer = [];
@@ -108,14 +108,14 @@ class SendAdvisorMessage implements ShouldQueue
             if (! empty($chunkBuffer)) {
                 event(new AdvisorMessageChunk(
                     $this->chatId,
-                    content: implode('', $chunkBuffer)
+                    content: implode('', $chunkBuffer),
                 ));
             }
 
             event(new AdvisorMessageChunk(
                 $this->chatId,
                 content: '',
-                isComplete: true
+                isComplete: true,
             ));
         } catch (Throwable $exception) {
             report($exception);
@@ -124,7 +124,7 @@ class SendAdvisorMessage implements ShouldQueue
                 $this->chatId,
                 content: '',
                 isComplete: false,
-                error: 'An error happened when sending your message.'
+                error: 'An error happened when sending your message.',
             ));
         }
     }
