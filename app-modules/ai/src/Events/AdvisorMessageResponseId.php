@@ -44,7 +44,9 @@ use Illuminate\Queue\SerializesModels;
 
 class AdvisorMessageResponseId implements ShouldBroadcastNow
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
 
     public function __construct(
         public string $chatId,

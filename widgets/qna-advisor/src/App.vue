@@ -32,9 +32,9 @@
 </COPYRIGHT>
 -->
 <script setup>
-import { defineProps, ref, onMounted, onUnmounted } from 'vue';
-import Echo from 'laravel-echo'
-import Pusher from 'pusher-js/dist/web/pusher'
+import Echo from 'laravel-echo';
+import Pusher from 'pusher-js/dist/web/pusher';
+import { defineProps, onMounted, onUnmounted, ref } from 'vue';
 
 const props = defineProps(['url']);
 const sendMessageUrl = ref(null);
@@ -52,7 +52,7 @@ onMounted(async () => {
         if (json.error) throw new Error(json.error);
         sendMessageUrl.value = json.send_message_url;
         chatId.value = json.chat_id;
-        
+
         // Initialize Laravel Echo for websockets
         setupWebsockets(json.websockets_config);
     } catch (error) {
@@ -72,8 +72,8 @@ onUnmounted(() => {
 
 function setupWebsockets(config) {
     try {
-        window.Pusher = Pusher
-        window.Echo = new Echo(config)
+        window.Pusher = Pusher;
+        window.Echo = new Echo(config);
 
         if (chatId.value) {
             privateChannel = window.Echo.private(`qna-advisor-chat-${chatId.value}`)
@@ -107,19 +107,19 @@ function setupWebsockets(config) {
 
 async function sendMessage() {
     if (!sendMessageUrl.value || !message.value.trim()) return;
-    
+
     isLoading.value = true;
     response.value = '';
-    
+
     try {
         const requestBody = {
-            content: message.value
+            content: message.value,
         };
 
         // Include previous_response_id in options if available
         if (previousResponseId.value) {
             requestBody.options = {
-                previous_response_id: previousResponseId.value
+                previous_response_id: previousResponseId.value,
             };
         }
 
@@ -128,9 +128,9 @@ async function sendMessage() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(requestBody),
         });
-        
+
         const data = await fetchResponse.json();
-        
+
         // Clear the message input
         message.value = '';
     } catch (error) {
@@ -146,23 +146,14 @@ async function sendMessage() {
             <h3>Response:</h3>
             <div>{{ response }}</div>
         </div>
-        
+
         <div v-if="isLoading">
             <p>AI is typing...</p>
         </div>
-        
+
         <div>
-            <textarea 
-                v-model="message" 
-                placeholder="Ask your question..."
-                :disabled="isLoading"
-            ></textarea>
-            <button 
-                @click="sendMessage" 
-                :disabled="isLoading || !message.trim()"
-            >
-                Send
-            </button>
+            <textarea v-model="message" placeholder="Ask your question..." :disabled="isLoading"></textarea>
+            <button @click="sendMessage" :disabled="isLoading || !message.trim()">Send</button>
         </div>
     </div>
 </template>

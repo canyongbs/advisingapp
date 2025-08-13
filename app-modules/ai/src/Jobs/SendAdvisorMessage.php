@@ -45,7 +45,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Prism\Prism\Enums\ChunkType;
 use Throwable;
 
 class SendAdvisorMessage implements ShouldQueue
@@ -66,7 +65,7 @@ class SendAdvisorMessage implements ShouldQueue
     {
         try {
             $aiService = $this->advisor->model->getService();
-            
+
             // Use the new streamPlainText method to get structured chunks
             $stream = $aiService->streamPlainText(
                 $getQnaAdvisorInstructions->execute($this->advisor),
@@ -77,7 +76,7 @@ class SendAdvisorMessage implements ShouldQueue
 
             $chunkBuffer = [];
             $chunkCount = 0;
-            
+
             foreach ($stream() as $chunk) {
                 if ($chunk['type'] === 'response_id') {
                     // Send response_id as separate event
@@ -85,28 +84,29 @@ class SendAdvisorMessage implements ShouldQueue
                         $this->chatId,
                         $chunk['response_id']
                     );
+
                     continue;
                 }
-                
+
                 if ($chunk['type'] === 'text') {
                     $chunkBuffer[] = $chunk['content'];
                     $chunkCount++;
-                    
+
                     // Send websocket event every 30 chunks
                     if ($chunkCount >= 30) {
                         AdvisorMessageChunk::dispatch(
                             $this->chatId,
                             implode('', $chunkBuffer)
                         );
-                        
+
                         $chunkBuffer = [];
                         $chunkCount = 0;
                     }
                 }
             }
-            
+
             // Send any remaining chunks
-            if (!empty($chunkBuffer)) {
+            if (! empty($chunkBuffer)) {
                 AdvisorMessageChunk::dispatch(
                     $this->chatId,
                     implode('', $chunkBuffer)
@@ -119,10 +119,9 @@ class SendAdvisorMessage implements ShouldQueue
                 '',
                 true
             );
-            
         } catch (Throwable $exception) {
             report($exception);
-            
+
             // Send error event
             AdvisorMessageChunk::dispatch(
                 $this->chatId,
