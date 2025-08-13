@@ -47,9 +47,9 @@ class CalendarEventResource extends Resource
 {
     protected static ?string $model = CalendarEvent::class;
 
-    protected static ?string $navigationGroup = 'Premium Features';
+    protected static ?string $navigationGroup = 'CRM';
 
-    protected static ?int $navigationSort = 80;
+    protected static ?int $navigationSort = 50;
 
     protected static ?string $navigationLabel = 'Schedule & Appointments';
 
