@@ -262,8 +262,8 @@ abstract class BaseOpenAiResponsesService implements AiService
                             filled($chunk->meta?->id)
                         ) {
                             yield [
-                                'type' => 'next_request_options', 
-                                'options' => ['previous_response_id' => $chunk->meta->id]
+                                'type' => 'next_request_options',
+                                'options' => ['previous_response_id' => $chunk->meta->id],
                             ];
 
                             continue;

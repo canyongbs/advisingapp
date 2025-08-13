@@ -94,7 +94,7 @@ function setupWebsockets(config) {
                         // Add the completed agent response to messages
                         messages.value.push({
                             from: 'agent',
-                            content: currentResponse.value
+                            content: currentResponse.value,
                         });
                         currentResponse.value = '';
                         isLoading.value = false;
@@ -118,7 +118,7 @@ async function sendMessage() {
     // Add user message to conversation history
     messages.value.push({
         from: 'user',
-        content: message.value
+        content: message.value,
     });
 
     isLoading.value = true;
@@ -155,18 +155,12 @@ async function sendMessage() {
     <div v-show="sendMessageUrl !== null">
         <div v-if="messages.length > 0">
             <div v-for="(message, index) in messages" :key="index">
-                <div v-if="message.from === 'user'">
-                    <strong>User:</strong> {{ message.content }}
-                </div>
-                <div v-else>
-                    <strong>Agent:</strong> {{ message.content }}
-                </div>
+                <div v-if="message.from === 'user'"><strong>User:</strong> {{ message.content }}</div>
+                <div v-else><strong>Agent:</strong> {{ message.content }}</div>
             </div>
         </div>
 
-        <div v-if="isLoading && currentResponse">
-            <strong>Agent:</strong> {{ currentResponse }}
-        </div>
+        <div v-if="isLoading && currentResponse"><strong>Agent:</strong> {{ currentResponse }}</div>
 
         <div v-if="isLoading">
             <p>AI is typing...</p>
