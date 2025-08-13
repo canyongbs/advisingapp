@@ -38,7 +38,7 @@
         class="flex h-[calc(100dvh-16rem)] flex-col gap-y-3"
         x-data="qnaAdvisorPreview({
             csrfToken: @js(csrf_token()),
-            sendMessageUrl: @js(URL::to(URL::signedRoute('ai.qna-advisors.messages.send', ['advisor' => $this->getrecord()]))),
+            sendMessageUrl: @js(URL::to(URL::signedRoute('ai.qna-advisors.messages.send', ['advisor' => $this->getRecord()]))),
             userId: @js(auth()->user()->id),
         })"
     >
@@ -58,7 +58,7 @@
                                         class="h-8 w-8 rounded-full object-cover object-center"
                                         x-bind:src="message.user_id ? @js(filament()->getUserAvatarUrl(auth()->user())) : @js(\Illuminate\Support\Facades\Vite::asset('resources/images/canyon-ai-headshot.jpg'))"
                                         x-bind:alt="message.user_id ? (@js(auth()->user()->name . ' avatar')) :
-                                            @js($this->getrecord()->name . ' avatar')"
+                                            @js($this->getRecord()->name . ' avatar')"
                                     />
                                 </div>
                                 <div
