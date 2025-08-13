@@ -54,6 +54,8 @@ class SendAdvisorMessage implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    public int $timeout = 600;
+
     /**
      * @param array<string, mixed> $options
      */
@@ -72,7 +74,6 @@ class SendAdvisorMessage implements ShouldQueue
             $stream = $aiService->streamRaw(
                 $getQnaAdvisorInstructions->execute($this->advisor),
                 $this->content,
-                shouldTrack: false,
                 options: $this->options,
             );
 
