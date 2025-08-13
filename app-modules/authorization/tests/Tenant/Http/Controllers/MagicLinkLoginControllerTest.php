@@ -1,6 +1,7 @@
 <?php
 
 use AdvisingApp\Authorization\Models\LoginMagicLink;
+use App\Models\User;
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\URL;
@@ -110,7 +111,34 @@ it('rejects a magic link with an invalid code', function () {
     assertGuest($panel->getAuthGuard());
 });
 
-//it('rejects a magic link with a non-matching user ID', function () {});
+it('rejects a magic link with a non-matching user ID', function () {
+    $code = Str::random();
+
+    $magicLink = LoginMagicLink::factory()->withCode($code)->create();
+
+    $panel = Filament::getPanel('admin');
+
+    $secondUser = User::factory()->create();
+
+    get(URL::temporarySignedRoute(
+        name: 'magic-link.login',
+        expiration: now()->addMinutes(10)->toImmutable(),
+        parameters: [
+            'magicLink' => $magicLink->getKey(),
+            'payload' => urlencode(
+                Crypt::encrypt(
+                    [
+                        'code' => $code,
+                        'user_id' => $secondUser->getKey(),
+                    ]
+                )
+            ),
+        ],
+    ))
+        ->assertForbidden();
+
+    assertGuest($panel->getAuthGuard());
+});
 
 it('logs in the user and redirects to the admin panel home', function () {
     $code = Str::random();
