@@ -44,7 +44,6 @@ use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ManageFiles;
 use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ManageProjectPipelines;
 use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ViewProject;
 use AdvisingApp\Project\Models\Project;
-use App\Models\User;
 use Filament\Navigation\NavigationItem;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
