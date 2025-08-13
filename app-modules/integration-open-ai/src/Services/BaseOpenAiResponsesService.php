@@ -228,7 +228,7 @@ abstract class BaseOpenAiResponsesService implements AiService
 
     /**
      * Stream method that yields plain text chunks instead of base64 encoded JSON
-     * Yields arrays with 'type' => 'text'/'response_id' and corresponding content
+     * Yields arrays with 'type' => 'text'/'next_request_options' and corresponding content
      *
      * @param array<string, mixed> $options
      */
@@ -261,7 +261,10 @@ abstract class BaseOpenAiResponsesService implements AiService
                             ($chunk->chunkType === ChunkType::Meta) &&
                             filled($chunk->meta?->id)
                         ) {
-                            yield ['type' => 'response_id', 'response_id' => $chunk->meta->id];
+                            yield [
+                                'type' => 'next_request_options', 
+                                'options' => ['previous_response_id' => $chunk->meta->id]
+                            ];
 
                             continue;
                         }

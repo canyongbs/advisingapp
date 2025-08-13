@@ -38,7 +38,7 @@ namespace AdvisingApp\Ai\Jobs;
 
 use AdvisingApp\Ai\Actions\GetQnaAdvisorInstructions;
 use AdvisingApp\Ai\Events\AdvisorMessageChunk;
-use AdvisingApp\Ai\Events\AdvisorMessageResponseId;
+use AdvisingApp\Ai\Events\AdvisorNextRequestOptions;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -78,11 +78,11 @@ class SendAdvisorMessage implements ShouldQueue
             $chunkCount = 0;
 
             foreach ($stream() as $chunk) {
-                if ($chunk['type'] === 'response_id') {
-                    // Send response_id as separate event
-                    AdvisorMessageResponseId::dispatch(
+                if ($chunk['type'] === 'next_request_options') {
+                    // Send options as separate event
+                    AdvisorNextRequestOptions::dispatch(
                         $this->chatId,
-                        $chunk['response_id']
+                        $chunk['options']
                     );
 
                     continue;

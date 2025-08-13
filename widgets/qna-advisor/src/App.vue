@@ -43,7 +43,7 @@ const message = ref('');
 const messages = ref([]);
 const currentResponse = ref('');
 const isLoading = ref(false);
-const previousResponseId = ref(null);
+const nextRequestOptions = ref(null);
 let privateChannel = null;
 
 onMounted(async () => {
@@ -64,7 +64,7 @@ onMounted(async () => {
 onUnmounted(() => {
     if (privateChannel) {
         privateChannel.stopListening('advisor-message.chunk');
-        privateChannel.stopListening('advisor-message.response-id');
+        privateChannel.stopListening('advisor-message.next-request-options');
     }
     if (window.Echo) {
         window.Echo.disconnect();
@@ -100,10 +100,10 @@ function setupWebsockets(config) {
                         isLoading.value = false;
                     }
                 })
-                .listen('.advisor-message.response-id', (data) => {
-                    // Store response_id for use in next request
-                    if (data.response_id) {
-                        previousResponseId.value = data.response_id;
+                .listen('.advisor-message.next-request-options', (data) => {
+                    // Store options for use in next request
+                    if (data.options) {
+                        nextRequestOptions.value = data.options;
                     }
                 });
         }
@@ -129,11 +129,9 @@ async function sendMessage() {
             content: message.value,
         };
 
-        // Include previous_response_id in options if available
-        if (previousResponseId.value) {
-            requestBody.options = {
-                previous_response_id: previousResponseId.value,
-            };
+        // Include next request options if available
+        if (nextRequestOptions.value) {
+            requestBody.options = nextRequestOptions.value;
         }
 
         const fetchResponse = await fetch(sendMessageUrl.value, {

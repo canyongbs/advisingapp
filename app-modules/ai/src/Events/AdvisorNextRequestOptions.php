@@ -42,7 +42,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class AdvisorMessageResponseId implements ShouldBroadcastNow
+class AdvisorNextRequestOptions implements ShouldBroadcastNow
 {
     use Dispatchable;
     use InteractsWithSockets;
@@ -50,7 +50,7 @@ class AdvisorMessageResponseId implements ShouldBroadcastNow
 
     public function __construct(
         public string $chatId,
-        public string $responseId,
+        public array $options,
     ) {}
 
     public function broadcastOn(): PrivateChannel
@@ -60,13 +60,13 @@ class AdvisorMessageResponseId implements ShouldBroadcastNow
 
     public function broadcastAs(): string
     {
-        return 'advisor-message.response-id';
+        return 'advisor-message.next-request-options';
     }
 
     public function broadcastWith(): array
     {
         return [
-            'response_id' => $this->responseId,
+            'options' => $this->options,
         ];
     }
 }
