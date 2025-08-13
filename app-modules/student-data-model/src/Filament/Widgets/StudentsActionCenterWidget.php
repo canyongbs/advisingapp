@@ -40,11 +40,9 @@ use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
 use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
-use AdvisingApp\StudentDataModel\Enums\ActionCenterTab;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
-use App\Models\User;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -52,7 +50,6 @@ use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
-use Livewire\Attributes\Reactive;
 
 class StudentsActionCenterWidget extends TableWidget
 {
@@ -63,33 +60,19 @@ class StudentsActionCenterWidget extends TableWidget
      */
     protected int | string | array $columnSpan = 'full';
 
-    #[Reactive]
-    public string $activeTab;
-
     public function table(Table $table): Table
     {
-        /** @var User $user */
-        $user = auth()->user();
-
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
         $segmentId = $this->getSelectedSegment();
 
         return $table
             ->heading('Action Center Records')
-            ->query(function () use ($user, $segmentId, $startDate, $endDate) {
-                $tab = ActionCenterTab::tryFrom($this->activeTab) ?? ActionCenterTab::Subscribed;
-
+            ->query(function () use ($segmentId, $startDate, $endDate) {
                 $query = Student::query()->when(
                     $startDate && $endDate,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 );
-
-                $query = match ($tab) {
-                    ActionCenterTab::All => $query,
-                    ActionCenterTab::CareTeam => $query->whereRelation('careTeam', 'user_id', $user->getKey()),
-                    ActionCenterTab::Subscribed => $query->whereRelation('subscriptions', 'user_id', $user->getKey()),
-                };
 
                 if ($segmentId) {
                     $this->segmentFilter($query, $segmentId);

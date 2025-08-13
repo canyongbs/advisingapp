@@ -43,42 +43,25 @@ use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
-use AdvisingApp\StudentDataModel\Enums\ActionCenterTab;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Models\Task;
-use App\Models\User;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Number;
-use Livewire\Attributes\Reactive;
 
 class StudentStats extends StatsOverviewWidget
 {
     use InteractsWithPageFilters;
 
-    #[Reactive]
-    public string $activeTab;
-
     public function getStats(): array
     {
-        /** @var User $user */
-        $user = auth()->user();
-
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
         $segmentId = $this->getSelectedSegment();
 
-        $tab = ActionCenterTab::tryFrom($this->activeTab) ?? ActionCenterTab::Subscribed;
-
-        $studentQuery = function (Builder $query) use ($user, $tab, $segmentId) {
-            $query = match ($tab) {
-                ActionCenterTab::All => $query,
-                ActionCenterTab::CareTeam => $query->whereRelation('careTeam', 'user_id', $user->getKey()),
-                ActionCenterTab::Subscribed => $query->whereRelation('subscriptions', 'user_id', $user->getKey()),
-            };
-
+        $studentQuery = function (Builder $query) use ($segmentId) {
             if ($segmentId) {
                 $this->segmentFilter($query, $segmentId);
             }
