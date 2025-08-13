@@ -34,34 +34,52 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Models;
+namespace AdvisingApp\Authorization\Database\Factories;
 
-use AdvisingApp\Authorization\Database\Factories\LoginMagicLinkFactory;
+use AdvisingApp\Authorization\Models\LoginMagicLink;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 /**
- * @mixin IdeHelperLoginMagicLink
+ * @extends Factory<LoginMagicLink>
  */
-class LoginMagicLink extends Model
+class LoginMagicLinkFactory extends Factory
 {
-    /** @use HasFactory<LoginMagicLinkFactory> */
-    use HasFactory;
-
-    use HasUuids;
-    use UsesTenantConnection;
-
-    protected $fillable = [];
+    /**
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'code' => Hash::make(Str::random()),
+            'user_id' => User::factory(),
+        ];
+    }
 
     /**
-     * @return BelongsTo<User, $this>
+     * @return Factory<LoginMagicLink>
      */
-    public function user(): BelongsTo
+    public function withCode(string $code): Factory
     {
-        return $this->belongsTo(User::class);
+        return $this->state(function (array $attributes) use ($code) {
+            return [
+                'code' => Hash::make($code),
+            ];
+        });
+    }
+
+    /**
+     * @return Factory<LoginMagicLink>
+     */
+    public function used(?Carbon $when = null): Factory
+    {
+        return $this->state(function (array $attributes) use ($when) {
+            return [
+                'used_at' => $when ?? now(),
+            ];
+        });
     }
 }
