@@ -40,7 +40,7 @@ use Filament\Clusters\Cluster;
 
 class ResourceHub extends Cluster
 {
-    protected static ?string $navigationGroup = 'Settings';
+    protected static ?string $navigationGroup = 'Knowledge Management';
 
-    protected static ?int $navigationSort = 80;
+    protected static ?int $navigationSort = 10;
 }
