@@ -41,13 +41,11 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Queue\SerializesModels;
 
 class AdvisorNextRequestOptions implements ShouldBroadcastNow
 {
     use Dispatchable;
     use InteractsWithSockets;
-    use SerializesModels;
 
     /**
      * @param array<string, mixed> $options
