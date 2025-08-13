@@ -1,6 +1,7 @@
 <?php
 
 use AdvisingApp\Authorization\Models\LoginMagicLink;
+use AdvisingApp\Authorization\Tests\Tenant\Http\Controllers\RequestFactories\GenerateLoginMagicLinkRequestFactory;
 use App\Http\Middleware\CheckOlympusKey;
 use App\Models\Authenticatable;
 use App\Models\User;
@@ -214,4 +215,45 @@ it('deletes existing magic links for a user', function () {
     // TODO: Test that the link parameter decrypts to what we expect
 });
 
-//it('requires valid data', function () {});
+it('requires valid data', function ($data, $errors) {
+    withoutMiddleware(CheckOlympusKey::class)
+        ->post(
+            route('magic-link.generate'),
+            GenerateLoginMagicLinkRequestFactory::new($data)->create()
+        )
+        ->assertInvalid($errors);
+
+    assertDatabaseCount(LoginMagicLink::class, 0);
+})
+    ->with(
+        [
+            'email required' => [
+                GenerateLoginMagicLinkRequestFactory::new()->state(['email' => null]),
+                ['email' => 'required'],
+            ],
+            'email must be valid email' => [
+                GenerateLoginMagicLinkRequestFactory::new()->state(['email' => 'invalid-email']),
+                ['email' => 'email'],
+            ],
+            'name required' => [
+                GenerateLoginMagicLinkRequestFactory::new()->state(['name' => null]),
+                ['name' => 'required'],
+            ],
+            'name string' => [
+                GenerateLoginMagicLinkRequestFactory::new()->state(['name' => 1]),
+                ['name' => 'string'],
+            ],
+            'name max' => [
+                GenerateLoginMagicLinkRequestFactory::new()->state(['name' => str()->random(256)]),
+                ['name' => ['The name may not be greater than 255 characters.']],
+            ],
+            'type required' => [
+                GenerateLoginMagicLinkRequestFactory::new()->state(['type' => null]),
+                ['type' => 'required'],
+            ],
+            'type must be correct value' => [
+                GenerateLoginMagicLinkRequestFactory::new()->state(['type' => 'invalid']),
+                ['type' => 'in'],
+            ],
+        ],
+    );
