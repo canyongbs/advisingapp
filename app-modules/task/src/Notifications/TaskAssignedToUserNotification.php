@@ -37,11 +37,12 @@
 namespace AdvisingApp\Task\Notifications;
 
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectTasks;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspect;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentTasks;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Task\Filament\Resources\TaskResource\Pages\EditTask;
 use AdvisingApp\Task\Models\Task;
 use App\Models\NotificationSetting;
 use App\Models\User;
@@ -79,7 +80,10 @@ class TaskAssignedToUserNotification extends Notification implements ShouldQueue
 
     public function toDatabase(object $notifiable): array
     {
-        $url = EditTask::getUrl(['record' => $this->task]);
+        $url = match (true) {
+            $this->task->concern instanceof Student => ManageStudentTasks::getUrl(['record' => $this->task->concern]),
+            $this->task->concern instanceof Prospect => ManageProspectTasks::getUrl(['record' => $this->task->concern]),
+        };
 
         $title = str($this->task->title)->limit();
 
