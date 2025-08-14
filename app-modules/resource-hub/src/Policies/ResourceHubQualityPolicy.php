@@ -133,6 +133,10 @@ class ResourceHubQualityPolicy implements PerformsChecksBeforeAuthorization
             );
         }
 
+        if(count($resourceHubQuality->resourceHubArticles) !==0 ){
+            return Response::deny('You do not have permissions to delete this resource hub quality.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$resourceHubQuality->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this resource hub quality.'

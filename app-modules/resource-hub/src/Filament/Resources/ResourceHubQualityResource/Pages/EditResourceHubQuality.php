@@ -37,6 +37,7 @@
 namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualityResource\Pages;
 
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualityResource;
+use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
@@ -65,7 +66,8 @@ class EditResourceHubQuality extends EditRecord
     {
         return [
             ViewAction::make(),
-            DeleteAction::make(),
+            DeleteAction::make()
+              ->hidden(fn (ResourceHubQuality $record) => count($record->resourceHubArticles) !== 0),
         ];
     }
 }

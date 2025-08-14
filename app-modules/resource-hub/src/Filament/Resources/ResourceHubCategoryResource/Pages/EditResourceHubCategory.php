@@ -37,6 +37,7 @@
 namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource\Pages;
 
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource;
+use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use App\Filament\Forms\Components\IconSelect;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
@@ -73,7 +74,8 @@ class EditResourceHubCategory extends EditRecord
     {
         return [
             ViewAction::make(),
-            DeleteAction::make(),
+            DeleteAction::make()
+              ->hidden(fn (ResourceHubCategory $record) => count($record->resourceHubArticles) !== 0),
         ];
     }
 }
