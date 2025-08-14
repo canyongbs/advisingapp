@@ -67,7 +67,7 @@ class EditResourceHubStatus extends EditRecord
         return [
             ViewAction::make(),
             DeleteAction::make()
-              ->hidden(fn (ResourceHubStatus $record) => count($record->resourceHubArticles) !== 0),
+                ->hidden(fn (ResourceHubStatus $record) => count($record->resourceHubArticles) !== 0),
         ];
     }
 }

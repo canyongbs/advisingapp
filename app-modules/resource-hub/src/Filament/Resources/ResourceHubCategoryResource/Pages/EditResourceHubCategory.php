@@ -75,7 +75,7 @@ class EditResourceHubCategory extends EditRecord
         return [
             ViewAction::make(),
             DeleteAction::make()
-              ->hidden(fn (ResourceHubCategory $record) => count($record->resourceHubArticles) !== 0),
+                ->hidden(fn (ResourceHubCategory $record) => count($record->resourceHubArticles) !== 0),
         ];
     }
 }

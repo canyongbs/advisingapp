@@ -133,7 +133,7 @@ class ResourceHubCategoryPolicy implements PerformsChecksBeforeAuthorization
             );
         }
 
-        if(count($resourceHubCategory->resourceHubArticles) !==0 ){
+        if (count($resourceHubCategory->resourceHubArticles) !== 0) {
             return Response::deny('You do not have permissions to delete this resource hub category.');
         }
 
