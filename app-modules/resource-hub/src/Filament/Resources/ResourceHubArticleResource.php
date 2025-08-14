@@ -56,9 +56,9 @@ class ResourceHubArticleResource extends Resource
 
     protected static ?string $breadcrumb = 'Resource Hub';
 
-    protected static ?string $navigationGroup = 'CRM';
+    protected static ?string $navigationGroup = 'Knowledge Management';
 
-    protected static ?int $navigationSort = 40;
+    protected static ?int $navigationSort = 10;
 
     protected static ?string $recordTitleAttribute = 'title';
 
