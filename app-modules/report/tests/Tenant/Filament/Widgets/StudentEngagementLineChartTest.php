@@ -37,6 +37,8 @@
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Report\Filament\Widgets\StudentEngagementLineChart;
+use AdvisingApp\Segment\Enums\SegmentModel;
+use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 it('returns correct monthly email and sms engagement data for students within the given date range', function () {
@@ -68,4 +70,83 @@ it('returns correct monthly email and sms engagement data for students within th
     ];
 
     expect($widgetInstance->getData())->toMatchSnapshot();
+});
+
+it('returns correct monthly email and sms engagement data for students based on segment filters', function () {
+    $startDate = now()->subDays(90);
+    $endDate = now()->subDays(5);
+
+    $segment = Segment::factory()->create([
+        'model' => SegmentModel::Student,
+        'filters' => [
+            'queryBuilder' => [
+                'rules' => [
+                    'C0Cy' => [
+                        'type' => 'last',
+                        'data' => [
+                            'operator' => 'contains',
+                            'settings' => [
+                                'text' => 'John',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    $studentOne = Student::factory()->state(['created_at_source' => $startDate, 'last' => 'John'])->create();
+    $studentTwo = Student::factory()->state(['created_at_source' => $endDate, 'last' => 'John'])->create();
+    $studentThree = Student::factory()->state(['created_at_source' => $startDate, 'last' => 'Doe'])->create();
+    $studentFour = Student::factory()->state(['created_at_source' => $endDate, 'last' => 'Doe'])->create();
+
+    Engagement::factory()->count(5)->state([
+        'recipient_id' => $studentOne->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'channel' => NotificationChannel::Email,
+        'created_at' => $startDate,
+    ])->create();
+
+    Engagement::factory()->count(5)->state([
+        'recipient_id' => $studentTwo->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'channel' => NotificationChannel::Sms,
+        'created_at' => $endDate,
+    ])->create();
+
+    Engagement::factory()->count(5)->state([
+        'recipient_id' => $studentThree->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'channel' => NotificationChannel::Email,
+        'created_at' => $startDate,
+    ])->create();
+
+    Engagement::factory()->count(5)->state([
+        'recipient_id' => $studentFour->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'channel' => NotificationChannel::Sms,
+        'created_at' => $endDate,
+    ])->create();
+
+    $widgetInstance = new StudentEngagementLineChart();
+    $widgetInstance->cacheTag = 'report-student-engagement';
+    $widgetInstance->filters = [
+        'populationSegment' => $segment->getKey(),
+    ];
+
+    $dataWithSegment = $widgetInstance->getData();
+
+    expect($dataWithSegment)
+        ->not->toBeEmpty()
+        ->and($dataWithSegment)->toMatchSnapshot();
+
+    $widgetInstance = new StudentEngagementLineChart();
+    $widgetInstance->cacheTag = 'report-student-engagement';
+    $widgetInstance->filters = [];
+
+    $dataWithoutSegment = $widgetInstance->getData();
+
+    expect($dataWithoutSegment)
+        ->not->toBeEmpty()
+        ->and($dataWithoutSegment)->toMatchSnapshot();
 });

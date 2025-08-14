@@ -36,6 +36,8 @@
 
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Report\Filament\Widgets\StudentInteractionLineChart;
+use AdvisingApp\Segment\Enums\SegmentModel;
+use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 it('checks student interactions monthly line chart', function () {
@@ -81,6 +83,60 @@ it('returns correct data for student interactions within the given date range', 
     $widgetInstance->filters = [
         'startDate' => $interactionStartDate->toDateString(),
         'endDate' => $interactionEndDate->toDateString(),
+    ];
+
+    expect($widgetInstance->getData())->toMatchSnapshot();
+});
+
+it('returns correct data for student interactions based on segment filter', function () {
+    $interactionStartDate = now()->subDays(90);
+    $interactionEndDate = now()->subDays(5);
+
+    $segment = Segment::factory()->create([
+        'model' => SegmentModel::Student,
+        'filters' => [
+            'queryBuilder' => [
+                'rules' => [
+                    'C0Cy' => [
+                        'type' => 'last',
+                        'data' => [
+                            'operator' => 'contains',
+                            'settings' => [
+                                'text' => 'John',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    Student::factory()->count(5)->has(
+        Interaction::factory()
+            ->count(5)
+            ->state([
+                'created_at' => $interactionStartDate,
+            ]),
+        'interactions'
+    )->create([
+        'last' => 'John',
+    ]);
+
+    Student::factory()->count(5)->has(
+        Interaction::factory()
+            ->count(5)
+            ->state([
+                'created_at' => $interactionEndDate,
+            ]),
+        'interactions'
+    )->create([
+        'last' => 'Doe',
+    ]);
+
+    $widgetInstance = new StudentInteractionLineChart();
+    $widgetInstance->cacheTag = 'report-student-interaction';
+    $widgetInstance->filters = [
+        'populationSegment' => $segment->getKey(),
     ];
 
     expect($widgetInstance->getData())->toMatchSnapshot();

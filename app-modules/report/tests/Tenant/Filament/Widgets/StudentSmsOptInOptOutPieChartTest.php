@@ -35,6 +35,8 @@
 */
 
 use AdvisingApp\Report\Filament\Widgets\StudentSmsOptInOptOutPieChart;
+use AdvisingApp\Segment\Enums\SegmentModel;
+use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 it('it filters student SMS opt-in/out/null data accurately using start and end dates', function () {
@@ -76,4 +78,93 @@ it('it filters student SMS opt-in/out/null data accurately using start and end d
     expect($stats[0])->toEqual($smsOptIn->count())
         ->and($stats[1])->toEqual($smsOptOut->count())
         ->and($stats[2])->not->toEqual($smsNull->count());
+});
+
+it('it filters student SMS opt-in/out/null data accurately based on segment filter', function () {
+    $count = random_int(1, 10);
+
+    $segment = Segment::factory()->create([
+        'model' => SegmentModel::Student,
+        'filters' => [
+            'queryBuilder' => [
+                'rules' => [
+                    'C0Cy' => [
+                        'type' => 'last',
+                        'data' => [
+                            'operator' => 'contains',
+                            'settings' => [
+                                'text' => 'John',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    $smsOptInWithNameJohn = Student::factory()
+        ->count($count)
+        ->state([
+            'sms_opt_out' => false,
+            'last' => 'John',
+        ])->create();
+
+    $smsOptOutWithNameJohn = Student::factory()
+        ->count($count)
+        ->state([
+            'sms_opt_out' => true,
+            'last' => 'John',
+        ])->create();
+
+    $smsNullWithNameJohn = Student::factory()
+        ->count($count)
+        ->state([
+            'sms_opt_out' => null,
+            'last' => 'John',
+        ])->create();
+
+    $smsOptInWithNameDoe = Student::factory()
+        ->count($count)
+        ->state([
+            'sms_opt_out' => false,
+            'last' => 'Doe',
+        ])->create();
+
+    $smsOptOutWithNameDoe = Student::factory()
+        ->count($count)
+        ->state([
+            'sms_opt_out' => true,
+            'last' => 'Doe',
+        ])->create();
+
+    $smsNullWithNameDoe = Student::factory()
+        ->count($count)
+        ->state([
+            'sms_opt_out' => null,
+            'last' => 'Doe',
+        ])->create();
+
+    // with segment filter
+    $widgetInstance = new StudentSmsOptInOptOutPieChart();
+    $widgetInstance->cacheTag = 'report-student-deliverability';
+    $widgetInstance->filters = [
+        'populationSegment' => $segment->getKey(),
+    ];
+
+    $stats = $widgetInstance->getData()['datasets'][0]['data'];
+
+    expect($stats[0])->toEqual($smsOptInWithNameJohn->count())
+        ->and($stats[1])->toEqual($smsOptOutWithNameJohn->count())
+        ->and($stats[2])->toEqual($smsNullWithNameJohn->count());
+
+    // without segment filter
+    $widgetInstance = new StudentSmsOptInOptOutPieChart();
+    $widgetInstance->cacheTag = 'report-student-deliverability';
+    $widgetInstance->filters = [];
+
+    $stats = $widgetInstance->getData()['datasets'][0]['data'];
+
+    expect($stats[0])->toEqual($smsOptInWithNameJohn->merge($smsOptInWithNameDoe)->count())
+        ->and($stats[1])->toEqual($smsOptOutWithNameJohn->merge($smsOptOutWithNameDoe)->count())
+        ->and($stats[2])->toEqual($smsNullWithNameJohn->merge($smsNullWithNameDoe)->count());
 });

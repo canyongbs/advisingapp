@@ -37,6 +37,8 @@
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Report\Filament\Widgets\StudentEngagementStats;
+use AdvisingApp\Segment\Enums\SegmentModel;
+use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 
@@ -81,4 +83,99 @@ it('returns correct counts of students, emails, texts, and staff engagements wit
         ->and($stats[1]->getValue())->toEqual($emailCount)
         ->and($stats[2]->getValue())->toEqual($textCount)
         ->and($stats[3]->getValue())->toEqual(2);
+});
+
+it('returns correct counts of students, emails, texts, and staff engagements based on segment filters', function () {
+    $startDate = now()->subDays(10);
+    $endDate = now()->subDays(5);
+
+    $segment = Segment::factory()->create([
+        'model' => SegmentModel::Student,
+        'filters' => [
+            'queryBuilder' => [
+                'rules' => [
+                    'C0Cy' => [
+                        'type' => 'last',
+                        'data' => [
+                            'operator' => 'contains',
+                            'settings' => [
+                                'text' => 'John',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    $studentOne = Student::factory()->state(['created_at_source' => $startDate, 'last' => 'John'])->create();
+    $studentTwo = Student::factory()->state(['created_at_source' => $endDate, 'last' => 'John'])->create();
+    $studentThree = Student::factory()->state(['created_at_source' => $startDate, 'last' => 'Doe'])->create();
+    $studentFour = Student::factory()->state(['created_at_source' => $endDate, 'last' => 'Doe'])->create();
+
+    $emailCountForJohnName = 2;
+    $textCountForJohnName = 3;
+    $emailCountForDoeName = 2;
+    $textCountForDoeName = 3;
+
+    $user1 = User::factory()->create();
+    Engagement::factory()->count($emailCountForJohnName)->state([
+        'user_id' => $user1->getKey(),
+        'recipient_id' => $studentOne->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'channel' => NotificationChannel::Email,
+        'created_at' => $startDate,
+    ])->create();
+
+    $user2 = User::factory()->create();
+    Engagement::factory()->count($textCountForJohnName)->state([
+        'user_id' => $user2->getKey(),
+        'recipient_id' => $studentTwo->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'channel' => NotificationChannel::Sms,
+        'created_at' => $endDate,
+    ])->create();
+
+    $user3 = User::factory()->create();
+    Engagement::factory()->count($emailCountForDoeName)->state([
+        'user_id' => $user3->getKey(),
+        'recipient_id' => $studentThree->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'channel' => NotificationChannel::Email,
+        'created_at' => $startDate,
+    ])->create();
+
+    $user4 = User::factory()->create();
+    Engagement::factory()->count($textCountForDoeName)->state([
+        'user_id' => $user4->getKey(),
+        'recipient_id' => $studentFour->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'channel' => NotificationChannel::Sms,
+        'created_at' => $endDate,
+    ])->create();
+
+    $widget = new StudentEngagementStats();
+    $widget->cacheTag = 'report-student-engagement';
+    $widget->filters = [
+        'populationSegment' => $segment->getKey(),
+    ];
+
+    $stats = $widget->getStats();
+
+    expect($stats[0]->getValue())->toEqual(2)
+        ->and($stats[1]->getValue())->toEqual($emailCountForJohnName)
+        ->and($stats[2]->getValue())->toEqual($textCountForJohnName)
+        ->and($stats[3]->getValue())->toEqual(2);
+
+    // without filter
+    $widget = new StudentEngagementStats();
+    $widget->cacheTag = 'report-student-engagement';
+    $widget->filters = [];
+
+    $stats = $widget->getStats();
+
+    expect($stats[0]->getValue())->toEqual(4)
+        ->and($stats[1]->getValue())->toEqual($emailCountForJohnName + $emailCountForDoeName)
+        ->and($stats[2]->getValue())->toEqual($textCountForJohnName + $textCountForDoeName)
+        ->and($stats[3]->getValue())->toEqual(4);
 });

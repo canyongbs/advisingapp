@@ -39,6 +39,7 @@ namespace AdvisingApp\Report\Filament\Widgets;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Support\Colors\Color;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 
 class StudentSmsOptInOptOutPieChart extends PieChartReportWidget
@@ -68,23 +69,24 @@ class StudentSmsOptInOptOutPieChart extends PieChartReportWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
+        $segmentId = $this->getSelectedSegment();
 
-        $shouldBypassCache = filled($startDate) || filled($endDate);
+        $shouldBypassCache = filled($startDate) || filled($endDate) || filled($segmentId);
 
         $smsOptInCount = $shouldBypassCache
-            ? Student::where('sms_opt_out', false)->whereBetween('created_at_source', [$startDate, $endDate])->count()
+            ? Student::where('sms_opt_out', false)->when($startDate && $endDate, fn (Builder $query) => $query->whereBetween('created_at_source', [$startDate, $endDate]))->when($segmentId, fn (Builder $query) => $this->segmentFilter($query, $segmentId))->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember('sms_opt_in_count', now()->addHours(24), function (): int {
                 return Student::where('sms_opt_out', false)->count();
             });
 
         $smsOptOutCount = $shouldBypassCache
-            ? Student::where('sms_opt_out', true)->whereBetween('created_at_source', [$startDate, $endDate])->count()
+            ? Student::where('sms_opt_out', true)->when($startDate && $endDate, fn (Builder $query) => $query->whereBetween('created_at_source', [$startDate, $endDate]))->when($segmentId, fn (Builder $query) => $this->segmentFilter($query, $segmentId))->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember('sms_opt_out_count', now()->addHours(24), function (): int {
                 return Student::where('sms_opt_out', true)->count();
             });
 
         $smsNullCount = $shouldBypassCache
-            ? Student::whereNull('sms_opt_out')->whereBetween('created_at_source', [$startDate, $endDate])->count()
+            ? Student::whereNull('sms_opt_out')->when($startDate && $endDate, fn (Builder $query) => $query->whereBetween('created_at_source', [$startDate, $endDate]))->when($segmentId, fn (Builder $query) => $this->segmentFilter($query, $segmentId))->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember('sms_null_count', now()->addHours(24), function (): int {
                 return Student::whereNull('sms_opt_out')->count();
             });

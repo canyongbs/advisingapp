@@ -38,6 +38,8 @@ use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\Report\Filament\Widgets\StudentCaseTable;
+use AdvisingApp\Segment\Enums\SegmentModel;
+use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 use function Pest\Livewire\livewire;
@@ -94,4 +96,93 @@ it('returns all cases information created for students in given time range', fun
             $inProgressCases,
         ]))
         ->assertCanNotSeeTableRecords(collect([$otherCases]));
+});
+
+it('returns all cases information created for students based on segment filters', function () {
+    $startDate = now()->subDays(10);
+    $endDate = now()->subDays(5);
+    $otherDate = now()->subDays(15);
+
+    $segment = Segment::factory()->create([
+        'model' => SegmentModel::Student,
+        'filters' => [
+            'queryBuilder' => [
+                'rules' => [
+                    'C0Cy' => [
+                        'type' => 'last',
+                        'data' => [
+                            'operator' => 'contains',
+                            'settings' => [
+                                'text' => 'John',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    $openCases = CaseModel::factory()->state([
+        'status_id' => CaseStatus::factory()->create([
+            'classification' => SystemCaseClassification::Open,
+        ])->getKey(),
+        'created_at' => $startDate,
+        'respondent_id' => Student::factory()->create(['last' => 'John']),
+        'respondent_type' => (new Student())->getMorphClass(),
+    ])->create();
+
+    $closedCases = CaseModel::factory()->state([
+        'status_id' => CaseStatus::factory()->create([
+            'classification' => SystemCaseClassification::Closed,
+        ])->getKey(),
+        'created_at' => $startDate,
+        'respondent_id' => Student::factory()->create(['last' => 'John']),
+        'respondent_type' => (new Student())->getMorphClass(),
+    ])->create();
+
+    $inProgressCases = CaseModel::factory()->state([
+        'status_id' => CaseStatus::factory()->create([
+            'classification' => SystemCaseClassification::InProgress,
+        ])->getKey(),
+        'created_at' => $endDate,
+        'respondent_id' => Student::factory()->create(['last' => 'John']),
+        'respondent_type' => (new Student())->getMorphClass(),
+    ])->create();
+
+    $otherCases = CaseModel::factory()->state([
+        'status_id' => CaseStatus::factory()->create([
+            'classification' => SystemCaseClassification::Open,
+        ])->getKey(),
+        'created_at' => $otherDate,
+        'respondent_id' => Student::factory()->create(['last' => 'Doe']),
+        'respondent_type' => (new Student())->getMorphClass(),
+    ])->create();
+
+    $filters = [
+        'populationSegment' => $segment->getKey(),
+    ];
+
+    // with segment filter
+    livewire(StudentCaseTable::class, [
+        'cacheTag' => 'report-student-case',
+        'filters' => $filters,
+    ])
+        ->assertCanSeeTableRecords(collect([
+            $openCases,
+            $closedCases,
+            $inProgressCases,
+        ]))
+        ->assertCanNotSeeTableRecords(collect([$otherCases]));
+
+    // without filter
+    livewire(StudentCaseTable::class, [
+        'cacheTag' => 'report-student-case',
+        'filters' => [],
+    ])
+        ->assertCanSeeTableRecords(collect([
+            $openCases,
+            $closedCases,
+            $inProgressCases,
+            $otherCases,
+        ]));
 });

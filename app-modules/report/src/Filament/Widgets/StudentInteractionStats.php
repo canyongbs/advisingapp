@@ -49,12 +49,18 @@ class StudentInteractionStats extends StatsOverviewReportWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
+        $segmentId = $this->getSelectedSegment();
 
-        $shouldBypassCache = filled($startDate) || filled($endDate);
+        $shouldBypassCache = filled($startDate) || filled($endDate) || filled($segmentId);
 
         $interactionsCount = $shouldBypassCache
             ? Interaction::query()
-                ->whereHasMorph('interactable', Student::class)
+                ->whereHasMorph('interactable', Student::class, function (Builder $query) use ($segmentId) {
+                    $query->when(
+                        $segmentId,
+                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                    );
+                })
                 ->when(
                     $startDate && $endDate,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
@@ -70,7 +76,7 @@ class StudentInteractionStats extends StatsOverviewReportWidget
 
         $studentsWithInteractionsCount = $shouldBypassCache
             ? Student::query()
-                ->whereHas('interactions', function ($query) use ($startDate, $endDate) {
+                ->whereHas('interactions', function (Builder $query) use ($startDate, $endDate) {
                     $query->when(
                         $startDate && $endDate,
                         function (Builder $query) use ($startDate, $endDate): Builder {
@@ -78,6 +84,10 @@ class StudentInteractionStats extends StatsOverviewReportWidget
                         }
                     );
                 })
+                ->when(
+                    $segmentId,
+                    fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                )
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'students-with-interactions',

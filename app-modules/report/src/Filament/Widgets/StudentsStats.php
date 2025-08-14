@@ -37,8 +37,7 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Alert\Models\Alert;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -58,14 +57,19 @@ class StudentsStats extends StatsOverviewReportWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
+        $segmentId = $this->getSelectedSegment();
 
-        $shouldBypassCache = filled($startDate) || filled($endDate);
+        $shouldBypassCache = filled($startDate) || filled($endDate) || filled($segmentId);
 
         $studentsCount = $shouldBypassCache
             ? Student::query()
                 ->when(
                     $startDate && $endDate,
                     fn (Builder $query): Builder => $query->whereBetween('created_at_source', [$startDate, $endDate])
+                )
+                ->when(
+                    $segmentId,
+                    fn (Builder $query) => $this->segmentFilter($query, $segmentId)
                 )
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
@@ -76,7 +80,12 @@ class StudentsStats extends StatsOverviewReportWidget
 
         $alertsCount = $shouldBypassCache
             ? Alert::query()
-                ->whereHasMorph('concern', Student::class)
+                ->whereHasMorph('concern', Student::class, function (Builder $query) use ($segmentId) {
+                    $query->when(
+                        $segmentId,
+                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                    );
+                })
                 ->when(
                     $startDate && $endDate,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
@@ -88,23 +97,33 @@ class StudentsStats extends StatsOverviewReportWidget
                 fn () => Alert::query()->whereHasMorph('concern', Student::class)->count()
             );
 
-        $segmentsCount = $shouldBypassCache
-            ? Segment::query()
-                ->where('model', SegmentModel::Student)
+        $casesCount = $shouldBypassCache
+            ? CaseModel::query()
+                ->whereHasMorph('respondent', Student::class, function (Builder $query) use ($segmentId) {
+                    $query->when(
+                        $segmentId,
+                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                    );
+                })
                 ->when(
                     $startDate && $endDate,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
-                'total-student-segments-count',
+                'total-student-cases-count',
                 now()->addHours(24),
-                fn () => Segment::query()->where('model', SegmentModel::Student)->count()
+                fn () => CaseModel::query()->whereHasMorph('respondent', Student::class)->count()
             );
 
         $tasksCount = $shouldBypassCache
             ? Task::query()
-                ->whereHasMorph('concern', Student::class)
+                ->whereHasMorph('concern', Student::class, function (Builder $query) use ($segmentId) {
+                    $query->when(
+                        $segmentId,
+                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                    );
+                })
                 ->when(
                     $startDate && $endDate,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
@@ -124,7 +143,7 @@ class StudentsStats extends StatsOverviewReportWidget
             : Number::format($studentsCount, maxPrecision: 2)
             ),
             Stat::make('Total Alerts', Number::abbreviate($alertsCount, maxPrecision: 2)),
-            Stat::make('Total Segments', Number::abbreviate($segmentsCount, maxPrecision: 2)),
+            Stat::make('Total Cases', Number::abbreviate($casesCount, maxPrecision: 2)),
             Stat::make('Total Tasks', Number::abbreviate($tasksCount, maxPrecision: 2)),
         ];
     }

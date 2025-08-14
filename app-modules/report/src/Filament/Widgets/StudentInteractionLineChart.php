@@ -39,6 +39,7 @@ namespace AdvisingApp\Report\Filament\Widgets;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 
 class StudentInteractionLineChart extends LineChartReportWidget
@@ -51,11 +52,12 @@ class StudentInteractionLineChart extends LineChartReportWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
+        $segmentId = $this->getSelectedSegment();
 
-        $shouldBypassCache = filled($startDate) || filled($endDate);
+        $shouldBypassCache = filled($startDate) || filled($endDate) || filled($segmentId);
 
         $runningTotalPerMonth = $shouldBypassCache
-            ? $this->getStudentInteractionData($startDate, $endDate)
+            ? $this->getStudentInteractionData($startDate, $endDate, $segmentId)
             : Cache::tags(["{{$this->cacheTag}}"])->remember('student_interactions_line_chart', now()->addHours(24), function () {
                 return $this->getStudentInteractionData();
             });
@@ -92,7 +94,7 @@ class StudentInteractionLineChart extends LineChartReportWidget
     /**
      * @return array<string, int>
      */
-    protected function getStudentInteractionData(?Carbon $startDate = null, ?Carbon $endDate = null): array
+    protected function getStudentInteractionData(?Carbon $startDate = null, ?Carbon $endDate = null, ?string $segmentId = null): array
     {
         $startDate = $startDate ?? Carbon::now()->subMonths(11)->startOfMonth();
         $endDate = $endDate ?? Carbon::now()->endOfMonth();
@@ -101,7 +103,12 @@ class StudentInteractionLineChart extends LineChartReportWidget
 
         $monthlyData = Interaction::query()
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->where('interactable_type', app(Student::class)->getMorphClass())
+            ->whereHasMorph('interactable', Student::class, function (Builder $query) use ($segmentId) {
+                $query->when(
+                    $segmentId,
+                    fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                );
+            })
             ->selectRaw("date_trunc('month', created_at) AS month, COUNT(*) AS monthly_total")
             ->groupByRaw("date_trunc('month', created_at)")
             ->get()

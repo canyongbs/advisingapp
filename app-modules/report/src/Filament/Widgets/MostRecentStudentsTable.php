@@ -41,7 +41,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\On;
 
 class MostRecentStudentsTable extends BaseWidget
@@ -78,21 +78,25 @@ class MostRecentStudentsTable extends BaseWidget
 
                 $startDate = $this->getStartDate();
                 $endDate = $this->getEndDate();
+                $segmentId = $this->getSelectedSegment();
 
-                return Student::whereIn($key, function ($query) use ($key, $startDate, $endDate) {
-                    $query->select($key)
-                        ->from((new Student())->getTable())
-                        ->whereNotNull('created_at_source')
-                        ->whereNull('deleted_at')
-                        ->when(
-                            $startDate && $endDate,
-                            function (Builder $query) use ($startDate, $endDate): Builder {
-                                return $query->whereBetween('created_at_source', [$startDate, $endDate]);
-                            }
-                        )
-                        ->orderBy('created_at_source', 'desc')
-                        ->take(100);
-                })
+                $subQuery = Student::query()
+                    ->select($key)
+                    ->whereNotNull('created_at_source')
+                    ->whereNull('deleted_at')
+                    ->when(
+                        $startDate && $endDate,
+                        fn (Builder $query) => $query->whereBetween('created_at_source', [$startDate, $endDate])
+                    )
+                    ->when(
+                        $segmentId,
+                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                    )
+                    ->orderBy('created_at_source', 'desc')
+                    ->take(100);
+
+                return Student::query()
+                    ->whereIn($key, $subQuery)
                     ->orderBy('created_at_source', 'desc');
             })
             ->columns([

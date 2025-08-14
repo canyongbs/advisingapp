@@ -71,6 +71,7 @@ class StudentDeliverableTable extends BaseWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
+        $segmentId = $this->getSelectedSegment();
 
         return $table
             ->query(
@@ -92,6 +93,10 @@ class StudentDeliverableTable extends BaseWidget
                                     ->orWhere('email_bounce', true);
                             });
                         }
+                    )
+                    ->when(
+                        $segmentId,
+                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
                     )
             )
             ->columns([
