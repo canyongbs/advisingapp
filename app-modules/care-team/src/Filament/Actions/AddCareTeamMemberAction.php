@@ -79,7 +79,9 @@ class AddCareTeamMemberAction
                     ->relationship('careTeamRole', 'name', fn (Builder $query) => $query->where('type', match ($context) {
                         CareTeamRoleType::Student => CareTeamRoleType::Student,
                         CareTeamRoleType::Prospect => CareTeamRoleType::Prospect,
-                    }))
+                    })->orderByDesc('created_at'))
+                    ->preload()
+                    ->optionsLimit(20)
                     ->searchable()
                     ->model(CareTeam::class)
                     ->visible(CareTeamRole::where('type', match ($context) {

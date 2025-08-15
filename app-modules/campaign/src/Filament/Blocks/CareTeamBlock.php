@@ -105,8 +105,10 @@ class CareTeamBlock extends CampaignActionBlock
                                 CareTeamRoleType::Student->getLabel() => CareTeamRoleType::Student,
                                 CareTeamRoleType::Prospect->getLabel() => CareTeamRoleType::Prospect,
                                 default => throw new Exception('The segment population was not of a type that can have a care team role associated with it.'),
-                            });
+                            })->orderByDesc('created_at');
                         })
+                        ->preload()
+                        ->optionsLimit(20)
                         ->searchable()
                         ->default(function (Get $get, $livewire, string $operation) {
                             if ($livewire instanceof CreateCampaign) {
