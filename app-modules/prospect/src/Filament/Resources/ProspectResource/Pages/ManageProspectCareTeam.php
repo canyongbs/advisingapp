@@ -122,7 +122,9 @@ class ManageProspectCareTeam extends ManageRelatedRecords
                             ),
                         Select::make('care_team_role_id')
                             ->label('Role')
-                            ->relationship('careTeamRole', 'name', fn (Builder $query) => $query->where('type', CareTeamRoleType::Prospect))
+                            ->relationship('careTeamRole', 'name', fn (Builder $query) => $query->where('type', CareTeamRoleType::Prospect)->orderByDesc('created_at'))
+                            ->preload()
+                            ->optionsLimit(20)
                             ->searchable()
                             ->model(CareTeam::class)
                             ->visible(CareTeamRole::where('type', CareTeamRoleType::Prospect)->count() > 0),
