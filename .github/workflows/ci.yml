@@ -193,6 +193,10 @@ jobs:
       DB_PASSWORD: root
       DB_DATABASE: testing_landlord
       PENNANT_STORE: array
+      CACHE_DRIVER: array
+      QUEUE_CONNECTION: sync
+      AUDIT_QUEUE_CONNECTION: sync
+      SESSION_DRIVER: array
 
     timeout-minutes: 15
 
@@ -214,12 +218,6 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
-      redis:
-        image: redis
-        ports:
-          - 6379:6379
-        options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - uses: shivammathur/setup-php@v2
