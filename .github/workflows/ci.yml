@@ -239,6 +239,9 @@ jobs:
       - name: Setup Dependencies
         uses: ./.github/actions/composer-dependency-setup
 
+      - name: Generate key
+        run: php artisan key:generate
+
       - name: Migrate Landlord Database
         run: php artisan migrate --database=landlord --path=database/landlord --force
 
