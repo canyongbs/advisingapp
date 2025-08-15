@@ -565,7 +565,7 @@
                         >
                             <h1
                                 x-text="title"
-                                x-show="title.length > 0"
+                                x-show="title?.length > 0"
                             ></h1>
 
                             <h2 x-show="resultsContentsHtml.length > 0">
