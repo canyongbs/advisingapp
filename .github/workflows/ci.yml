@@ -8,10 +8,10 @@ on:
   workflow_dispatch:
 
 jobs:
-  enforce-copyright:
+  code-consistency:
     runs-on: ubuntu-22.04
 
-    timeout-minutes: 10
+    timeout-minutes: 15
 
     steps:
       - name: Checkout code | Internal
@@ -27,53 +27,11 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
 
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-
-      - name: Run Ruby Script
-        run: ruby ./copyright.rb
-
-      - name: Commit changes
-        if: ${{ github.event_name != 'merge_group' && github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
-        # SHA of release v6.0.0
-        uses: stefanzweifel/git-auto-commit-action@3cc016cfc892e0844046da36fc68da4e525e081f
-        with:
-          commit_message: >
-            chore: fix enforcement of copyright on all files
-
-      - name: Check for changes
-        if: ${{ github.event_name == 'merge_group' || github.event.pull_request.head.repo.full_name != github.repository || github.actor == 'dependabot[bot]' }}
-        # SHA of release v20.0.1
-        uses: tj-actions/verify-changed-files@6ed7632824d235029086612d4330d659005af687
-        with:
-          fail-if-changed: "true"
-
-  fix-code-style:
-    runs-on: ubuntu-22.04
-
-    timeout-minutes: 10
-
-    needs: [enforce-copyright]
-
-    steps:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.4"
           coverage: none
           extensions: mailparse
-
-      - name: Checkout code | Internal
-        if: ${{ github.event_name == 'merge_group' || github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
-          token: ${{ secrets.pat-token }}
-
-      - name: Checkout code | External
-        if: ${{ github.event_name != 'merge_group' && github.event.pull_request.head.repo.full_name != github.repository || github.actor == 'dependabot[bot]' }}
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
 
       - name: Setup Dependencies
         uses: ./.github/actions/composer-dependency-setup
@@ -83,6 +41,12 @@ jobs:
           node-version-file: ".nvmrc"
           cache: "npm"
       - run: npm install
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+
+      - name: Run Ruby Script
+        run: ruby ./copyright.rb
 
       - name: Cache PHP CS Fixer
         uses: actions/cache@v4
@@ -109,7 +73,7 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@3cc016cfc892e0844046da36fc68da4e525e081f
         with:
           commit_message: >
-            chore: fix code style
+            chore: fix enforcement of copyright on all files
 
       - name: Check for changes
         if: ${{ github.event_name == 'merge_group' || github.event.pull_request.head.repo.full_name != github.repository || github.actor == 'dependabot[bot]' }}
@@ -121,7 +85,7 @@ jobs:
   test:
     strategy:
       matrix:
-        testsuite: [Landlord, Tenant]
+        testsuite: [ Landlord, Tenant ]
 
     runs-on: ubuntu-22.04
 
@@ -134,8 +98,6 @@ jobs:
       REDIS_HOST: 127.0.0.1
 
     timeout-minutes: 15
-
-    needs: [enforce-copyright, fix-code-style]
 
     services:
       postgres:
@@ -234,8 +196,6 @@ jobs:
 
     timeout-minutes: 15
 
-    needs: [enforce-copyright, fix-code-style]
-
     services:
       postgres:
         # Docker Hub image
@@ -262,11 +222,6 @@ jobs:
         options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-      - name: Create tenant database
-        run: psql -h 127.0.0.1 -d testing_landlord -U root -c 'CREATE DATABASE testing_tenant;'
-        env:
-          PGPASSWORD: root
-
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.4"
@@ -283,6 +238,15 @@ jobs:
 
       - name: Setup Dependencies
         uses: ./.github/actions/composer-dependency-setup
+
+      - name: Migrate Landlord Database
+        run: php artisan migrate --database=landlord --path=database/landlord --force
+
+      - name: Set up Tenant
+        run: php artisan tenants:create test test.advisingapp.local -y
+
+      - name: Generate Helper Files
+        run: php artisan app:generate-helper-files
 
       - name: "Restore result cache"
         uses: actions/cache/restore@v4
