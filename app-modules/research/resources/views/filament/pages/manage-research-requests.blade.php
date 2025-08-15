@@ -565,8 +565,17 @@
                         >
                             <h1
                                 x-text="title"
-                                x-show="title"
+                                x-show="title.length > 0"
                             ></h1>
+
+                            <h2 x-show="resultsContentsHtml.length > 0">
+                                Table of Contents
+                            </h2>
+
+                            <div
+                                x-show="resultsContentsHtml.length > 0"
+                                x-html="resultsContentsHtml"
+                            ></div>
 
                             <div x-html="resultsHtml"></div>
 
