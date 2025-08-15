@@ -125,9 +125,10 @@ abstract class BaseOpenAiService implements AiService
     }
 
     /**
+     * @param array<AiFile> $files
      * @param array<string, mixed> $options
      */
-    public function stream(string $prompt, string $content, bool $shouldTrack = true, array $options = []): Closure
+    public function stream(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = []): Closure
     {
         throw new Exception('Streaming a single response is not supported by this service.');
     }
@@ -449,7 +450,10 @@ abstract class BaseOpenAiService implements AiService
         return true;
     }
 
-    public function isFileReady(AiFile $file): bool
+    /**
+     * @param array<AiFile> $files
+     */
+    public function areFilesReady(array $files): bool
     {
         return true;
     }

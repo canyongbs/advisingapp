@@ -34,22 +34,56 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models\Contracts;
+namespace AdvisingApp\IntegrationOpenAi\Jobs;
 
-interface AiFile
+use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiResponsesService;
+use Illuminate\Bus\Batchable;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
+use Spatie\Multitenancy\Jobs\TenantAware;
+
+class UploadQnaAdvisorLinksToVectorStore implements ShouldQueue, TenantAware, ShouldBeUnique
 {
-    public function getKey(): string;
-
-    public function getName(): ?string;
-
-    public function getMimeType(): ?string;
-
-    public function getFileId(): ?string;
-
-    public function getParsingResults(): ?string;
+    use Batchable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     /**
-     * @deprecated Non-responses-API OpenAI services only.
+     * @var int
      */
-    public function getTemporaryUrl(): ?string;
+    public $tries = 3;
+
+    public function __construct(
+        protected QnaAdvisor $advisor,
+    ) {}
+
+    public function handle(): void
+    {
+        $service = $this->advisor->model->getService();
+
+        if (! ($service instanceof BaseOpenAiResponsesService)) {
+            return;
+        }
+
+        if ($service->areFilesReady($this->advisor->links->all())) {
+            return;
+        }
+
+        Log::info("The Qna Advisor [{$this->advisor->getKey()}] links are not ready for use yet.");
+
+        $this->release(now()->addMinutes(5));
+    }
+
+    public function uniqueId(): string
+    {
+        return $this->advisor->getKey();
+    }
 }

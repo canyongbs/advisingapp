@@ -305,7 +305,7 @@ it('can confirm that a file is ready if it has a stored timestamp', function () 
     expect($file->openAiVectorStore->ready_until->isFuture())
         ->toBeTrue();
 
-    expect($service->isFileReady($file))
+    expect($service->areFilesReady([$file]))
         ->toBeTrue();
 });
 
@@ -328,7 +328,7 @@ it('can confirm that a file is not ready if it is still processing', function ()
         ]))
         ->create();
 
-    expect($service->isFileReady($file))
+    expect($service->areFilesReady([$file]))
         ->toBeFalse();
 });
 
@@ -354,7 +354,7 @@ it('can confirm that a file is ready if all files are finished processing', func
         ]))
         ->create();
 
-    expect($service->isFileReady($file))
+    expect($service->areFilesReady([$file]))
         ->toBeTrue();
 
     expect($file->openAiVectorStore->ready_until->toDateTimeString())
@@ -386,7 +386,7 @@ it('can delete an existing vector store file to ensure storage space is used eff
     expect($file->openAiVectorStore->vector_store_file_id)
         ->not->toBeNull();
 
-    expect($service->isFileReady($file))
+    expect($service->areFilesReady([$file]))
         ->toBeTrue();
 
     expect($file->openAiVectorStore->refresh()->vector_store_file_id)
@@ -414,7 +414,7 @@ it('can upload a file and create a new vector store', function () {
         ]))
         ->create();
 
-    expect($service->isFileReady($file))
+    expect($service->areFilesReady([$file]))
         ->toBeFalse();
 
     expect($file->openAiVectorStore->refresh())
