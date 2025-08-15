@@ -32,7 +32,9 @@
 </COPYRIGHT>
 */
 import DOMPurify from 'dompurify';
+import GithubSlugger from 'github-slugger';
 import { marked } from 'marked';
+import { gfmHeadingId } from 'marked-gfm-heading-id';
 
 document.addEventListener('alpine:init', () => {
     Alpine.data(
@@ -58,6 +60,8 @@ document.addEventListener('alpine:init', () => {
             pendingResults: '',
 
             resultsHtml: '',
+
+            resultsContentsHtml: '',
 
             sourcesHtml: [],
 
@@ -134,7 +138,7 @@ document.addEventListener('alpine:init', () => {
 
                         this.results += this.pendingResults;
                         this.pendingResults = '';
-                        this.renderResults();
+                        this.renderResultsHtml();
 
                         return;
                     }
@@ -162,12 +166,12 @@ document.addEventListener('alpine:init', () => {
                         const combined = chunks.join('');
                         this.results += combined;
                         this.pendingResults = this.pendingResults.slice(combined.length);
-                        this.renderResults();
+                        this.renderResultsHtml();
                     }
                 }, 50);
 
                 this.renderReasoningPoints();
-                this.renderResults();
+                this.renderResultsHtml();
                 this.renderSourcesHtml();
             },
 
@@ -244,14 +248,16 @@ document.addEventListener('alpine:init', () => {
                 );
             },
 
-            renderResults: function () {
+            renderResultsHtml: function () {
                 if (this.results === null || this.results === undefined || this.results?.trim() === '') {
                     this.resultsHtml = '';
 
                     return;
                 }
 
-                const unsafeHtml = marked.parse(this.results);
+                const extensions = this.isFinished ? [gfmHeadingId()] : [];
+
+                const unsafeHtml = marked.use(...extensions).parse(this.results);
 
                 this.resultsHtml = DOMPurify.sanitize(unsafeHtml)
                     .replace('<a', '<a target="_blank" rel="noreferrer" ')
@@ -259,6 +265,54 @@ document.addEventListener('alpine:init', () => {
                         '<h2 class="sr-only" id="footnote-label">Footnotes</h2>',
                         '<h2 id="footnote-label">References</h2>',
                     );
+
+                if (this.isFinished) {
+                    this.renderResultsContentsHtml();
+                }
+            },
+
+            renderResultsContentsHtml: function () {
+                const slugger = new GithubSlugger();
+                const headings = marked.lexer(this.results).filter((node) => node.type === 'heading');
+
+                if (!headings.length) {
+                    this.resultsContentsHtml = '';
+
+                    return;
+                }
+
+                const rootUl = document.createElement('ul');
+                let stack = [{ ul: rootUl, depth: 0 }];
+
+                headings.forEach((heading) => {
+                    const depth = heading.depth;
+                    const li = document.createElement('li');
+                    const anchor = slugger.slug(
+                        heading.text
+                            .toLowerCase()
+                            .trim()
+                            .replace(/<[!\/a-z].*?>/gi, ''),
+                    );
+
+                    li.innerHTML = `<a href="#${anchor}">${heading.text}</a>`;
+
+                    while (stack.length && stack[stack.length - 1].depth >= depth) {
+                        stack.pop();
+                    }
+
+                    const parentUl = stack[stack.length - 1].ul;
+                    parentUl.appendChild(li);
+
+                    const newUl = document.createElement('ul');
+                    li.appendChild(newUl);
+                    stack.push({ ul: newUl, depth });
+                });
+
+                rootUl.querySelectorAll('ul').forEach((ul) => {
+                    if (!ul.children.length) ul.remove();
+                });
+
+                this.resultsContentsHtml = rootUl.outerHTML;
             },
 
             renderSourcesHtml: function () {
