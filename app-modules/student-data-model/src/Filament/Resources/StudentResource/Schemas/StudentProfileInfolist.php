@@ -41,7 +41,6 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentAddress;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
-use App\Features\AcademicStandingFeature;
 use App\Features\AthleticFieldsFeature;
 use App\Infolists\Components\Subsection;
 use Filament\Infolists\Components\Actions\Action;
@@ -126,8 +125,7 @@ class StudentProfileInfolist
                                 ->placeholder('-'),
                             TextEntry::make('standing')
                                 ->label('Academic Standing')
-                                ->placeholder('-')
-                                ->visible(AcademicStandingFeature::active()),
+                                ->placeholder('-'),
                         ]),
                         Subsection::make([
                             TextEntry::make('athletics_status')

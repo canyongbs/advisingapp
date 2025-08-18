@@ -38,7 +38,6 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\AcademicStandingFeature;
 use App\Features\AthleticFieldsFeature;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
@@ -291,8 +290,7 @@ class CreateStudent extends CreateRecord
                             ->maxLength(255),
                         TextInput::make('standing')
                             ->label('Academic Standing')
-                            ->maxLength(255)
-                            ->visible(AcademicStandingFeature::active()),
+                            ->maxLength(255),
                         DatePicker::make('dfw')
                             ->label('DFW')
                             ->native(false)
