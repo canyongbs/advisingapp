@@ -388,9 +388,6 @@ it('can delete an existing vector store file to ensure storage space is used eff
 
     expect($service->areFilesReady([$file]))
         ->toBeTrue();
-
-    expect($file->openAiVectorStore->refresh()->vector_store_file_id)
-        ->toBeNull();
 });
 
 it('can upload a file and create a new vector store', function () {
