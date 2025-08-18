@@ -39,6 +39,7 @@ namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 use AdvisingApp\Ai\Actions\GetQnaAdvisorInstructions;
 use AdvisingApp\Ai\Jobs\SendAdvisorMessage;
 use AdvisingApp\Ai\Models\QnaAdvisor;
+use App\Features\QnaAdvisorLinksFeature;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -78,7 +79,7 @@ class SendAdvisorMessageController
                     content: $data['content'],
                     files: [
                         ...$advisor->files()->whereNotNull('parsing_results')->get()->all(),
-                        ...$advisor->links()->whereNotNull('parsing_results')->get()->all(),
+                        ...QnaAdvisorLinksFeature::active() ? $advisor->links()->whereNotNull('parsing_results')->get()->all() : [],
                     ],
                     shouldTrack: false,
                     options: $data['options'] ?? [],

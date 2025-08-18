@@ -34,43 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Console\Commands;
+namespace App\Features;
 
-use AdvisingApp\Ai\Jobs\FetchAiAssistantFileParsingResults;
-use AdvisingApp\Ai\Jobs\FetchQnaAdvisorFileParsingResults;
-use AdvisingApp\Ai\Jobs\FetchQnaAdvisorLinkParsingResults;
-use AdvisingApp\Ai\Models\AiAssistantFile;
-use AdvisingApp\Ai\Models\QnaAdvisorFile;
-use AdvisingApp\Ai\Models\QnaAdvisorLink;
-use App\Features\QnaAdvisorLinksFeature;
-use Illuminate\Console\Command;
-use Spatie\Multitenancy\Commands\Concerns\TenantAware;
+use App\Support\AbstractFeatureFlag;
 
-class FetchAiFilesParsingResults extends Command
+class QnaAdvisorLinksFeature extends AbstractFeatureFlag
 {
-    use TenantAware;
-
-    protected $signature = 'ai:fetch-files-parsing-results {--tenant=*}';
-
-    protected $description = 'Finds AI files that were uploaded in the past hour and do not yet have parsed results.';
-
-    public function handle(): void
+    public function resolve(mixed $scope): mixed
     {
-        AiAssistantFile::query()
-            ->whereNull('parsing_results')
-            ->where('created_at', '>=', now()->subHour())
-            ->eachById(fn (AiAssistantFile $file) => dispatch(new FetchAiAssistantFileParsingResults($file)));
-
-        QnaAdvisorFile::query()
-            ->whereNull('parsing_results')
-            ->where('created_at', '>=', now()->subHour())
-            ->eachById(fn (QnaAdvisorFile $file) => dispatch(new FetchQnaAdvisorFileParsingResults($file)));
-
-        if (QnaAdvisorLinksFeature::active()) {
-            QnaAdvisorLink::query()
-                ->whereNull('parsing_results')
-                ->where('created_at', '>=', now()->subHour())
-                ->eachById(fn (QnaAdvisorLink $link) => dispatch(new FetchQnaAdvisorLinkParsingResults($link)));
-        }
+        return false;
     }
 }

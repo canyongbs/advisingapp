@@ -38,6 +38,7 @@ namespace AdvisingApp\IntegrationOpenAi\Jobs;
 
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiResponsesService;
+use App\Features\QnaAdvisorLinksFeature;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -75,7 +76,7 @@ class UploadQnaAdvisorFilesToVectorStore implements ShouldQueue, TenantAware, Sh
 
         if (! $service->areFilesReady([
             ...$this->advisor->files()->whereNotNull('parsing_results')->get()->all(),
-            ...$this->advisor->links()->whereNotNull('parsing_results')->get()->all(),
+            ...QnaAdvisorLinksFeature::active() ? $this->advisor->links()->whereNotNull('parsing_results')->get()->all() : [],
         ])) {
             Log::info("The Qna Advisor [{$this->advisor->getKey()}] files and links are not ready for use yet.");
 
@@ -86,7 +87,7 @@ class UploadQnaAdvisorFilesToVectorStore implements ShouldQueue, TenantAware, Sh
 
         if (
             $this->advisor->files()->whereNull('parsing_results')->exists() ||
-            $this->advisor->links()->whereNull('parsing_results')->exists()
+            (QnaAdvisorLinksFeature::active() ? $this->advisor->links()->whereNull('parsing_results')->exists() : false)
         ) {
             Log::info("The Qna Advisor [{$this->advisor->getKey()}] has files or links that are not parsed yet.");
 

@@ -39,6 +39,7 @@ namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource\Pages;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Ai\Models\QnaAdvisorLink;
+use App\Features\QnaAdvisorLinksFeature;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
@@ -104,5 +105,10 @@ class EditQnaAdvisorLinks extends EditRecord
     public function getRedirectUrl(): ?string
     {
         return null;
+    }
+
+    public static function canAccess(array $parameters = []): bool
+    {
+        return QnaAdvisorLinksFeature::active() && parent::canAccess($parameters);
     }
 }
