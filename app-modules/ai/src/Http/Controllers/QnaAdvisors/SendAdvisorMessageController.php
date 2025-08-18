@@ -76,10 +76,10 @@ class SendAdvisorMessageController
                 $aiService->stream(
                     prompt: $getQnaAdvisorInstructions->execute($advisor),
                     content: $data['content'],
-                    files: $advisor->links()
-                        ->whereNotNull('parsing_results')
-                        ->get()
-                        ->all(),
+                    files: [
+                        ...$advisor->files()->whereNotNull('parsing_results')->get()->all(),
+                        ...$advisor->links()->whereNotNull('parsing_results')->get()->all(),
+                    ],
                     shouldTrack: false,
                     options: $data['options'] ?? [],
                 ),

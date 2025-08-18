@@ -48,7 +48,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Spatie\Multitenancy\Jobs\TenantAware;
 
-class UploadQnaAdvisorLinksToVectorStore implements ShouldQueue, TenantAware, ShouldBeUnique
+class UploadQnaAdvisorFilesToVectorStore implements ShouldQueue, TenantAware, ShouldBeUnique
 {
     use Batchable;
     use Dispatchable;
@@ -59,7 +59,7 @@ class UploadQnaAdvisorLinksToVectorStore implements ShouldQueue, TenantAware, Sh
     /**
      * @var int
      */
-    public $tries = 3;
+    public $tries = 15;
 
     public function __construct(
         protected QnaAdvisor $advisor,
@@ -73,13 +73,25 @@ class UploadQnaAdvisorLinksToVectorStore implements ShouldQueue, TenantAware, Sh
             return;
         }
 
-        if ($service->areFilesReady($this->advisor->links->all())) {
+        if (! $service->areFilesReady([
+            ...$this->advisor->files()->whereNotNull('parsing_results')->get()->all(),
+            ...$this->advisor->links()->whereNotNull('parsing_results')->get()->all(),
+        ])) {
+            Log::info("The Qna Advisor [{$this->advisor->getKey()}] files and links are not ready for use yet.");
+
+            $this->release(now()->addMinute());
+
             return;
         }
 
-        Log::info("The Qna Advisor [{$this->advisor->getKey()}] links are not ready for use yet.");
+        if (
+            $this->advisor->files()->whereNull('parsing_results')->exists() ||
+            $this->advisor->links()->whereNull('parsing_results')->exists()
+        ) {
+            Log::info("The Qna Advisor [{$this->advisor->getKey()}] has files or links that are not parsed yet.");
 
-        $this->release(now()->addMinutes(5));
+            $this->release(now()->addMinute());
+        }
     }
 
     public function uniqueId(): string

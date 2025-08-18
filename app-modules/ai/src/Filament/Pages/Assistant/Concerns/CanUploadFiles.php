@@ -58,65 +58,9 @@ trait CanUploadFiles
     #[Locked]
     public array $files = [];
 
-    /**
-     * @var array<string, bool>
-     */
-    protected array $cachedIsFileReady = [];
-
     public function removeUploadedFile(string $key): void
     {
         $this->files = array_filter($this->files, fn (string $file): bool => $file !== $key);
-    }
-
-    public function isFileReady(AiMessageFile $file): bool
-    {
-        $key = $file->getKey();
-
-        if (array_key_exists($key, $this->cachedIsFileReady)) {
-            return $this->cachedIsFileReady[$key];
-        }
-
-        if (
-            (! in_array($key, $this->files))
-            && ($file->message?->thread?->getKey() !== $this->thread?->getKey())
-        ) {
-            return $this->cachedIsFileReady[$key] = false;
-        }
-
-        if (filled($file->parsing_results)) {
-            return $this->cachedIsFileReady[$key] = $this->thread?->assistant?->model->getService()->areFilesReady([
-                ...AiMessageFile::query()
-                    ->whereNotNull('parsing_results')
-                    ->whereHas(
-                        'message',
-                        fn (Builder $query) => $query->whereBelongsTo($this->thread, 'thread'),
-                    )
-                    ->get()
-                    ->all(),
-                $file,
-            ]);
-        }
-
-        $result = app(FetchFileParsingResults::class)->execute($file->file_id, $file->mime_type);
-
-        if (blank($result)) {
-            return $this->cachedIsFileReady[$key] = false;
-        }
-
-        $file->parsing_results = $result;
-        $file->save();
-
-        return $this->cachedIsFileReady[$key] = $this->thread?->assistant?->model->getService()->areFilesReady([
-            ...AiMessageFile::query()
-                ->whereNotNull('parsing_results')
-                ->whereHas(
-                    'message',
-                    fn (Builder $query) => $query->whereBelongsTo($this->thread, 'thread'),
-                )
-                ->get()
-                ->all(),
-            $file,
-        ]);
     }
 
     public function clearFiles(): void
@@ -138,28 +82,49 @@ trait CanUploadFiles
     #[Computed]
     public function isProcessingFiles(): bool
     {
-        foreach ($this->getFiles() as $file) {
-            if (! $this->isFileReady($file)) {
-                return true;
+        $files = $this->getFiles();
+
+        $hasFilesWithoutParsingResults = false;
+
+        foreach ($files as $file) {
+            if (filled($file->parsing_results)) {
+                continue;
             }
+
+            $result = app(FetchFileParsingResults::class)->execute($file->file_id, $file->mime_type);
+
+            if (blank($result)) {
+                $hasFilesWithoutParsingResults = true;
+
+                continue;
+            }
+
+            $file->parsing_results = $result;
+            $file->save();
         }
 
-        $previousThreadMessageFiles = AiMessageFile::query()
-            ->whereNotNull('parsing_results')
-            ->whereHas(
-                'message',
-                fn (Builder $query) => $query->whereBelongsTo($this->thread, 'thread'),
-            )
-            ->get()
-            ->all();
+        $threadFiles = [
+            ...AiMessageFile::query()
+                ->whereNotNull('parsing_results')
+                ->whereHas(
+                    'message',
+                    fn (Builder $query) => $query->whereBelongsTo($this->thread, 'thread'),
+                )
+                ->get()
+                ->all(),
+            ...array_filter(
+                $files,
+                fn (AiMessageFile $file): bool => filled($file->parsing_results),
+            ),
+        ];
 
-        foreach ($previousThreadMessageFiles as $file) {
-            if (! $this->isFileReady($file)) {
-                return true;
-            }
+        $areParsedFilesReady = $this->thread?->assistant?->model->getService()->areFilesReady($threadFiles) ?? true;
+
+        if ($hasFilesWithoutParsingResults) {
+            return true;
         }
 
-        return false;
+        return ! $areParsedFilesReady;
     }
 
     public function uploadFilesAction(): Action

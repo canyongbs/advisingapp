@@ -59,7 +59,7 @@ class UploadAssistantFilesToVectorStore implements ShouldQueue, TenantAware, Sho
     /**
      * @var int
      */
-    public $tries = 3;
+    public $tries = 15;
 
     public function __construct(
         protected AiAssistant $assistant,
@@ -73,13 +73,19 @@ class UploadAssistantFilesToVectorStore implements ShouldQueue, TenantAware, Sho
             return;
         }
 
-        if ($service->areFilesReady($this->assistant->files->all())) {
+        if (! $service->areFilesReady($this->assistant->files()->whereNotNull('parsing_results')->get()->all())) {
+            Log::info("The AI assistant [{$this->assistant->getKey()}] files are not ready for use yet.");
+
+            $this->release(now()->addMinute());
+
             return;
         }
 
-        Log::info("The AI assistant [{$this->assistant->getKey()}] files are not ready for use yet.");
+        if ($this->assistant->files()->whereNull('parsing_results')->exists()) {
+            Log::info("The AI assistant [{$this->assistant->getKey()}] has files that are not parsed yet.");
 
-        $this->release(now()->addMinutes(5));
+            $this->release(now()->addMinute());
+        }
     }
 
     public function uniqueId(): string

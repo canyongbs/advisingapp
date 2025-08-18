@@ -150,7 +150,7 @@ abstract class BaseOpenAiResponsesService implements AiService
         $aiSettings = app(AiSettings::class);
 
         try {
-            $vectorStoreIds = $this->getReadyVectorStoreIds($files);
+            $vectorStoreId = $this->getReadyVectorStoreId($files);
 
             $stream = Prism::text()
                 ->using('azure_open_ai', $this->getModel())
@@ -162,10 +162,10 @@ abstract class BaseOpenAiResponsesService implements AiService
                 ->withProviderOptions([
                     'instructions' => $prompt,
                     'truncation' => 'auto',
-                    ...(filled($vectorStoreIds) ? [
+                    ...(filled($vectorStoreId) ? [
                         'tools' => [[
                             'type' => 'file_search',
-                            'vector_store_ids' => $vectorStoreIds,
+                            'vector_store_ids' => [$vectorStoreId],
                         ]],
                     ] : []),
                     ...$options,
@@ -239,13 +239,16 @@ abstract class BaseOpenAiResponsesService implements AiService
      * Stream method that yields plain text chunks instead of base64 encoded JSON
      * Yields arrays with 'type' => 'text'/'next_request_options' and corresponding content
      *
+     * @param array<AiFile> $files
      * @param array<string, mixed> $options
      */
-    public function streamRaw(string $prompt, string $content, bool $shouldTrack = true, array $options = []): Closure
+    public function streamRaw(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = []): Closure
     {
         $aiSettings = app(AiSettings::class);
 
         try {
+            $vectorStoreId = $this->getReadyVectorStoreId($files);
+
             $stream = Prism::text()
                 ->using('azure_open_ai', $this->getModel())
                 ->withClientOptions([
@@ -256,6 +259,12 @@ abstract class BaseOpenAiResponsesService implements AiService
                 ->withProviderOptions([
                     'instructions' => $prompt,
                     'truncation' => 'auto',
+                    ...(filled($vectorStoreId) ? [
+                        'tools' => [[
+                            'type' => 'file_search',
+                            'vector_store_ids' => [$vectorStoreId],
+                        ]],
+                    ] : []),
                     ...$options,
                 ])
                 ->withPrompt($content)
@@ -548,23 +557,25 @@ abstract class BaseOpenAiResponsesService implements AiService
         $instructions = $this->generateAssistantInstructions($message->thread->assistant, withDynamicContext: true);
 
         try {
-            $vectorStoreIds = $this->getReadyVectorStoreIds([
-                ...$files,
-                ...AiMessageFile::query()
+            $vectorStoreIds = array_values(array_filter([
+                $this->getReadyVectorStoreId([
+                    ...$files,
+                    ...AiMessageFile::query()
+                        ->whereNotNull('parsing_results')
+                        ->whereHas(
+                            'message',
+                            fn (Builder $query) => $query
+                                ->whereKeyNot($message->getKey())
+                                ->whereBelongsTo($message->thread, 'thread'),
+                        )
+                        ->get()
+                        ->all(),
+                ]),
+                $this->getReadyVectorStoreId($message->thread->assistant->files()
                     ->whereNotNull('parsing_results')
-                    ->whereHas(
-                        'message',
-                        fn (Builder $query) => $query
-                            ->whereKeyNot($message->getKey())
-                            ->whereBelongsTo($message->thread, 'thread'),
-                    )
                     ->get()
-                    ->all(),
-                ...$message->thread->assistant->files()
-                    ->whereNotNull('parsing_results')
-                    ->get()
-                    ->all(),
-            ]);
+                    ->all()),
+            ]));
 
             $stream = Prism::text()
                 ->using('azure_open_ai', $this->getModel())
@@ -761,13 +772,11 @@ abstract class BaseOpenAiResponsesService implements AiService
 
     /**
      * @param array<AiFile> $files
-     *
-     * @return array<string>
      */
-    public function getReadyVectorStoreIds(array $files): array
+    public function getReadyVectorStoreId(array $files): ?string
     {
         if (blank($files)) {
-            return [];
+            return null;
         }
 
         return OpenAiVectorStore::query()
@@ -776,10 +785,7 @@ abstract class BaseOpenAiResponsesService implements AiService
             ->whereNotNull('ready_until')
             ->where('ready_until', '>=', now())
             ->whereNotNull('vector_store_id')
-            ->distinct()
-            ->limit(2)
-            ->pluck('vector_store_id')
-            ->all();
+            ->value('vector_store_id');
     }
 
     public function hasReasoning(): bool
@@ -836,6 +842,10 @@ abstract class BaseOpenAiResponsesService implements AiService
      */
     public function areFilesReady(array $files): bool
     {
+        if (! $files) {
+            return true;
+        }
+
         return DB::transaction(function () use ($files): bool {
             $this->deleteExpiredVectorStoresForFiles($files);
 
@@ -845,21 +855,15 @@ abstract class BaseOpenAiResponsesService implements AiService
 
             if (filled($vectorStore)) {
                 $this->deleteOldFilesFromVectorStore($vectorStore, newFiles: $files);
-
-                $vectorStoreState = $this->getVectorStoreState($vectorStore);
-
-                if (blank($vectorStoreState)) {
-                    $vectorStore = null;
-                }
             }
 
-            if (blank($vectorStore) || blank($vectorStoreState ?? null)) {
+            if (blank($vectorStore)) {
                 $this->createVectorStoreForFiles($files);
 
                 return false;
             }
 
-            $hasMissingFiles = false;
+            $missingFiles = [];
 
             foreach ($files as $file) {
                 foreach ($vectorStores as $vectorStore) {
@@ -868,20 +872,36 @@ abstract class BaseOpenAiResponsesService implements AiService
                     }
                 }
 
-                $this->uploadMissingFileToVectorStore($vectorStore, $file);
-
-                $hasMissingFiles = true;
+                $missingFiles[] = $file;
             }
 
-            if ($hasMissingFiles) {
+            $vectorStore = Arr::first($vectorStores);
+
+            if (filled($missingFiles)) {
+                $vectorStoreState = $this->getVectorStoreState($vectorStore);
+
+                if (blank($vectorStoreState)) {
+                    $this->createVectorStoreForFiles($files);
+
+                    return false;
+                }
+
+                foreach ($missingFiles as $missingFile) {
+                    $this->uploadMissingFileToVectorStore($vectorStore, $missingFile);
+                }
+
                 return false;
             }
 
-            if ($vectorStore->ready_until?->isFuture()) {
-                return true;
+            foreach ($vectorStores as $vectorStore) {
+                if (! $vectorStore->ready_until?->isFuture()) {
+                    $vectorStoreState = $this->getVectorStoreState($vectorStore);
+
+                    return $this->evaluateVectorStoreState($vectorStore, $vectorStoreState);
+                }
             }
 
-            return $this->evaluateVectorStoreState($vectorStore, $vectorStoreState);
+            return true;
         });
     }
 
@@ -1255,6 +1275,10 @@ abstract class BaseOpenAiResponsesService implements AiService
      */
     protected function deleteExpiredVectorStoresForFiles(array $files): void
     {
+        if (! $files) {
+            return;
+        }
+
         $vectorStores = OpenAiVectorStore::query()
             ->where('deployment_hash', $this->getDeploymentHash())
             ->whereMorphedTo('file', $files) /** @phpstan-ignore argument.type */
@@ -1275,6 +1299,10 @@ abstract class BaseOpenAiResponsesService implements AiService
      */
     protected function getExistingVectorStoresForFiles(array $files): array
     {
+        if (! $files) {
+            return [];
+        }
+
         return OpenAiVectorStore::query()
             ->where('deployment_hash', $this->getDeploymentHash())
             ->whereMorphedTo('file', $files) /** @phpstan-ignore argument.type */
@@ -1338,6 +1366,10 @@ abstract class BaseOpenAiResponsesService implements AiService
      */
     protected function deleteOldFilesFromVectorStore(OpenAiVectorStore $vectorStore, array $newFiles): void
     {
+        if (! $newFiles) {
+            return;
+        }
+
         $oldFilesInVectorStore = OpenAiVectorStore::query()
             ->where('deployment_hash', $this->getDeploymentHash())
             ->where('vector_store_id', $vectorStore->vector_store_id)
@@ -1488,8 +1520,12 @@ abstract class BaseOpenAiResponsesService implements AiService
             && $vectorStoreState['expires_at']
             && (($vectorStoreExpiresAt = CarbonImmutable::createFromTimestampUTC($vectorStoreState['expires_at']))->diffInHours() < -3)
         ) {
-            $vectorStore->ready_until = $vectorStoreExpiresAt->subHours(2);
-            $vectorStore->save();
+            OpenAiVectorStore::query()
+                ->where('deployment_hash', $this->getDeploymentHash())
+                ->where('vector_store_id', $vectorStore->vector_store_id)
+                ->update([
+                    'ready_until' => $vectorStoreExpiresAt->subHours(2),
+                ]);
 
             return true;
         }

@@ -39,7 +39,7 @@ namespace AdvisingApp\IntegrationOpenAi\Console\Commands;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\IntegrationOpenAi\Jobs\UploadAssistantFilesToVectorStore;
-use AdvisingApp\IntegrationOpenAi\Jobs\UploadQnaAdvisorLinksToVectorStore;
+use AdvisingApp\IntegrationOpenAi\Jobs\UploadQnaAdvisorFilesToVectorStore;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\Multitenancy\Commands\Concerns\TenantAware;
@@ -56,13 +56,7 @@ class UploadFilesToVectorStores extends Command
     public function handle(): void
     {
         AiAssistant::query()
-            ->whereDoesntHave('files', fn (Builder $query) => $query->whereNull('parsing_results'))
-            ->whereHas('files', fn (Builder $query) => $query
-                ->whereDoesntHave('openAiVectorStore')
-                ->orWhereHas('openAiVectorStore', fn (Builder $query) => $query
-                    ->where('ready_until', '<=', now())
-                    ->orWhereNull('ready_until')
-                    ->orWhereNull('vector_store_id')))
+            ->whereHas('files')
             ->eachById(function (AiAssistant $assistant) {
                 try {
                     dispatch(new UploadAssistantFilesToVectorStore($assistant));
@@ -72,16 +66,10 @@ class UploadFilesToVectorStores extends Command
             });
 
         QnaAdvisor::query()
-            ->whereDoesntHave('links', fn (Builder $query) => $query->whereNull('parsing_results'))
-            ->whereHas('links', fn (Builder $query) => $query
-                ->whereDoesntHave('openAiVectorStore')
-                ->orWhereHas('openAiVectorStore', fn (Builder $query) => $query
-                    ->where('ready_until', '<=', now())
-                    ->orWhereNull('ready_until')
-                    ->orWhereNull('vector_store_id')))
+            ->where(fn (Builder $query) => $query->whereHas('files')->orWhereHas('links'))
             ->eachById(function (QnaAdvisor $advisor) {
                 try {
-                    dispatch(new UploadQnaAdvisorLinksToVectorStore($advisor));
+                    dispatch(new UploadQnaAdvisorFilesToVectorStore($advisor));
                 } catch (Throwable $exception) {
                     report($exception);
                 }

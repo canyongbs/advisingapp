@@ -62,9 +62,10 @@ interface AiService
     /**
      * This method is passed a prompt and message and should return a stream of plain text chunks.
      *
+     * @param array<AiFile> $files
      * @param array<string, mixed> $options
      */
-    public function streamRaw(string $prompt, string $content, bool $shouldTrack = true, array $options = []): Closure;
+    public function streamRaw(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = []): Closure;
 
     /**
      * This method is passed an unsaved `AiAssistant` model and should return

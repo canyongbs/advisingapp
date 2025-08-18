@@ -134,9 +134,10 @@ abstract class BaseOpenAiService implements AiService
     }
 
     /**
+     * @param array<AiFile> $files
      * @param array<string, mixed> $options
      */
-    public function streamRaw(string $prompt, string $content, bool $shouldTrack = true, array $options = []): Closure
+    public function streamRaw(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = []): Closure
     {
         throw new Exception('Plain text streaming is not supported by this service.');
     }
