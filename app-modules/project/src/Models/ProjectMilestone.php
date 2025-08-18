@@ -12,6 +12,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
+/**
+ * @mixin IdeHelperProjectMilestone
+ */
 class ProjectMilestone extends Model implements Auditable
 {
     /** @use HasFactory<ProjectMilestoneFactory> */

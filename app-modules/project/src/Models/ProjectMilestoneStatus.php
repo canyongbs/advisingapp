@@ -11,6 +11,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
+/**
+ * @mixin IdeHelperProjectMilestoneStatus
+ */
 class ProjectMilestoneStatus extends Model implements Auditable
 {
     /** @use HasFactory<ProjectMilestoneStatusFactory> */
