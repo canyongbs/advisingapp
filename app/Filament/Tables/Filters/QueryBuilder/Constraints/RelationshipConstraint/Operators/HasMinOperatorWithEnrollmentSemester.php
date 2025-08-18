@@ -3,9 +3,9 @@
 namespace App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators;
 
 use App\Filament\Concerns\SemesterSelectForOperator;
-use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\EqualsOperator;
+use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\HasMinOperator;
 
-class EqualsOperatorWithEnrollmentSemester extends EqualsOperator
+class HasMinOperatorWithEnrollmentSemester extends HasMinOperator
 {
     use SemesterSelectForOperator;
 

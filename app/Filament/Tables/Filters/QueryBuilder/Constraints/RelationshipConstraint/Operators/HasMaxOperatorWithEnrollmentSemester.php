@@ -11,8 +11,11 @@ class HasMaxOperatorWithEnrollmentSemester extends HasMaxOperator
 
     public function getFormSchema(): array
     {
-        return array_merge([
-            $this->semesterSelect(),
-        ], parent::getFormSchema());
+        return array_merge(
+            parent::getFormSchema(),
+            [
+                $this->semesterSelect(),
+            ]
+        );
     }
 }
