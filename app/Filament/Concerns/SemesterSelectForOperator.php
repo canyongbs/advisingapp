@@ -36,10 +36,10 @@
 
 namespace App\Filament\Concerns;
 
-use Filament\Forms\Components\Select;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
+use Filament\Forms\Components\Select;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 trait SemesterSelectForOperator
 {
@@ -70,6 +70,7 @@ trait SemesterSelectForOperator
 
     /**
      * @param  Builder<Model>  $query
+     *
      * @return Builder<Model>
      */
     public function applyToBaseQuery(Builder $query): Builder
