@@ -38,7 +38,6 @@ namespace AdvisingApp\IntegrationAwsSesEventHandling\Filament\Pages;
 
 use AdvisingApp\Engagement\Settings\EngagementSettings;
 use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
-use App\Features\EngagementSettingsFeature;
 use App\Filament\Clusters\ProductIntegrations;
 use App\Models\Tenant;
 use App\Models\User;
@@ -84,8 +83,7 @@ class ManageAmazonSesSettings extends SettingsPage
             ->schema([
                 Toggle::make('are_dynamic_engagements_enabled')
                     ->label('Dynamic Engagements')
-                    ->live()
-                    ->visible(EngagementSettingsFeature::active()),
+                    ->live(),
                 Toggle::make('isDemoModeEnabled')
                     ->label('Demo Mode')
                     ->live(),
@@ -146,13 +144,11 @@ class ManageAmazonSesSettings extends SettingsPage
                 $data['fromName'],
             );
 
-            if (EngagementSettingsFeature::active()) {
-                $engagementSettings = app(EngagementSettings::class);
-                $engagementSettings->are_dynamic_engagements_enabled = $data['are_dynamic_engagements_enabled'];
-                $engagementSettings->save();
+            $engagementSettings = app(EngagementSettings::class);
+            $engagementSettings->are_dynamic_engagements_enabled = $data['are_dynamic_engagements_enabled'];
+            $engagementSettings->save();
 
-                unset($data['are_dynamic_engagements_enabled']);
-            }
+            unset($data['are_dynamic_engagements_enabled']);
 
             $settings = app(static::getSettings());
 
@@ -204,7 +200,7 @@ class ManageAmazonSesSettings extends SettingsPage
         $data = $this->mutateFormDataBeforeFill(
             [
                 ...$settings->toArray(),
-                'are_dynamic_engagements_enabled' => EngagementSettingsFeature::active() ? app(EngagementSettings::class)->are_dynamic_engagements_enabled : false,
+                'are_dynamic_engagements_enabled' => app(EngagementSettings::class)->are_dynamic_engagements_enabled ?? false,
                 'isDemoModeEnabled' => $config->mail->isDemoModeEnabled ?? false,
                 'isExcludingSystemNotificationsFromDemoMode' => $config->mail->isExcludingSystemNotificationsFromDemoMode ?? true,
                 'fromName' => $config->mail->fromName,
