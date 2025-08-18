@@ -392,7 +392,6 @@ it('can delete an existing vector store file to ensure storage space is used eff
 
 it('can upload a file and create a new vector store', function () {
     Http::fake([
-        '*/files/*' => Http::response(null, 404),
         '*/files*' => Http::response([
             'id' => $fileId = fake()->uuid(),
         ], 200),
@@ -403,18 +402,12 @@ it('can upload a file and create a new vector store', function () {
 
     $service = app(OpenAiResponsesGptTestService::class);
 
-    $file = AiMessageFile::factory()
-        ->has(OpenAiVectorStore::factory()->state([
-            'deployment_hash' => $service->getDeploymentHash(),
-            'ready_until' => null,
-            'vector_store_id' => null,
-        ]))
-        ->create();
+    $file = AiMessageFile::factory()->create();
 
     expect($service->areFilesReady([$file]))
         ->toBeFalse();
 
-    expect($file->openAiVectorStore->refresh())
+    expect($file->openAiVectorStore)
         ->vector_store_file_id->toBe($fileId)
         ->vector_store_id->toBe($vectorStoreId);
 });
