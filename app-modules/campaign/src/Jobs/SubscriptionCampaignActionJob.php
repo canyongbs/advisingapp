@@ -39,6 +39,8 @@ namespace AdvisingApp\Campaign\Jobs;
 use AdvisingApp\Notification\Actions\SubscriptionCreate;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Notification\Models\Subscription;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -53,11 +55,13 @@ class SubscriptionCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
 
             $educatable = $this->actionEducatable->educatable;
 
-            throw_if(
-                ! $educatable instanceof Subscribable,
-                new Exception('The educatable model must implement the Subscribable contract.')
-            );
-            /** @var Subscribable $educatable */
+            assert($educatable instanceof Subscribable);
+            assert($educatable instanceof Student || $educatable instanceof Prospect);
+
+            if(!is_null($educatable->deleted_at)) {
+              throw new Exception('This educatable has been deleted.');
+            }
+
             $action = $this->actionEducatable->campaignAction;
 
             if ($action->data['remove_prior']) {
@@ -68,8 +72,14 @@ class SubscriptionCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
             $subscriptions = [];
 
             foreach ($action->data['user_ids'] as $userId) {
+                $user = User::find($userId);
+
+                if(!is_null($user->deleted_at)) {
+                  throw new Exception('This user has been deleted.');
+                }
+
                 $subscriptions[] = resolve(SubscriptionCreate::class)
-                    ->handle(User::find($userId), $educatable);
+                    ->handle($user, $educatable);
             }
 
             foreach ($subscriptions as $subscription) {
