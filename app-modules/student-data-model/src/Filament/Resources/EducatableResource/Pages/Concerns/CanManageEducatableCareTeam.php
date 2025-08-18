@@ -112,7 +112,9 @@ trait CanManageEducatableCareTeam
                             ),
                         Select::make('care_team_role_id')
                             ->label('Role')
-                            ->relationship('careTeamRole', 'name', fn (Builder $query) => $query->where('type', CareTeamRoleType::Student))
+                            ->relationship('careTeamRole', 'name', fn (Builder $query) => $query->where('type', CareTeamRoleType::Student)->orderByDesc('created_at'))
+                            ->preload()
+                            ->optionsLimit(20)
                             ->searchable()
                             ->model(CareTeam::class)
                             ->visible(CareTeamRole::where('type', CareTeamRoleType::Student)->count() > 0),
