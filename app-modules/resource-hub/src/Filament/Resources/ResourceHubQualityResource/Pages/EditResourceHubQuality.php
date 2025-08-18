@@ -66,8 +66,7 @@ class EditResourceHubQuality extends EditRecord
     {
         return [
             ViewAction::make(),
-            DeleteAction::make()
-                ->hidden(fn (ResourceHubQuality $record) => count($record->resourceHubArticles) !== 0),
+            DeleteAction::make(),
         ];
     }
 }
