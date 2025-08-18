@@ -37,7 +37,6 @@
 namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualityResource\Pages;
 
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualityResource;
-use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
