@@ -39,7 +39,6 @@ namespace AdvisingApp\Pipeline\Policies;
 use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\ProjectPipelinesFeature;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
@@ -47,10 +46,6 @@ class PipelinePolicy
 {
     public function before(Authenticatable $authenticatable): ?Response
     {
-        if (! ProjectPipelinesFeature::active()) {
-            return Response::deny('The Project Pipelines feature is not active.');
-        }
-
         if (! $authenticatable->hasLicense(Student::getLicenseType()) && ! $authenticatable->hasLicense(Prospect::getLicenseType())) {
             return Response::deny('You are not licensed for any CRM.');
         }
