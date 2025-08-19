@@ -37,6 +37,7 @@
 namespace AdvisingApp\Ai\Events\Advisors;
 
 use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Models\AiThread;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -51,7 +52,7 @@ class AdvisorMessageChunk implements ShouldBroadcastNow
     use SerializesModels;
 
     public function __construct(
-        public AiMessage $message,
+        public AiThread $thread,
         public string $content,
         public bool $isIncomplete = false,
     ) {}
@@ -78,7 +79,7 @@ class AdvisorMessageChunk implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel("advisor-thread-{$this->message->thread_id}"),
+            new PrivateChannel("advisor-thread-{$this->thread->getKey()}"),
         ];
     }
 }

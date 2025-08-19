@@ -241,15 +241,16 @@ abstract class BaseOpenAiResponsesService implements AiService
      *
      * @param array<AiFile> $files
      * @param array<string, mixed> $options
+     * @param ?array<Message> $messages
      */
-    public function streamRaw(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = []): Closure
+    public function streamRaw(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = [], ?array $messages = null): Closure
     {
         $aiSettings = app(AiSettings::class);
 
         try {
             $vectorStoreId = $this->getReadyVectorStoreId($files);
 
-            $stream = Prism::text()
+            $request = Prism::text()
                 ->using('azure_open_ai', $this->getModel())
                 ->withClientOptions([
                     'apiKey' => $this->getApiKey(),
@@ -266,8 +267,15 @@ abstract class BaseOpenAiResponsesService implements AiService
                         ]],
                     ] : []),
                     ...$options,
-                ])
-                ->withPrompt($content)
+                ]);
+
+            if (filled($messages)) {
+                $request = $request->withMessages($messages);
+            } else {
+                $request = $request->withPrompt($content);
+            }
+
+            $stream = $request
                 ->withMaxTokens($aiSettings->max_tokens->getTokens())
                 ->usingTemperature($this->hasTemperature() ? $aiSettings->temperature : null)
                 ->asStream();
@@ -537,7 +545,7 @@ abstract class BaseOpenAiResponsesService implements AiService
     /**
      * @param array<AiMessageFile> $files
      */
-    public function sendMessage(AiMessage $message, array $files, Closure $saveResponse, ?UserMessage $userMessage = null): Closure
+    public function sendMessage(AiMessage $message, array $files, ?UserMessage $userMessage = null): Closure
     {
         $previousMessages = [];
 
@@ -577,21 +585,16 @@ abstract class BaseOpenAiResponsesService implements AiService
                     ->all()),
             ]));
 
-            $stream = Prism::text()
-                ->using('azure_open_ai', $this->getModel())
-                ->withClientOptions([
-                    'apiKey' => $this->getApiKey(),
-                    'apiVersion' => $this->getApiVersion(),
-                    'deployment' => $this->getDeployment(),
-                ])
-                ->withProviderOptions([
+            return $this->streamRaw(
+                prompt: $instructions,
+                content: $message->content,
+                options: [
                     'previous_response_id' => $previousResponseId,
                     ...($this->hasReasoning() ? [
                         'reasoning' => [
                             'effort' => $aiSettings->reasoning_effort->value,
                         ],
                     ] : []),
-                    'truncation' => 'auto',
                     ...(filled($vectorStoreIds) ? [
                         'tool_choice' => filled($files) ? [
                             'type' => 'file_search',
@@ -601,17 +604,12 @@ abstract class BaseOpenAiResponsesService implements AiService
                             'vector_store_ids' => $vectorStoreIds,
                         ]],
                     ] : []),
-                ])
-                ->withSystemPrompt($instructions)
-                ->withMessages([
+                ],
+                messages: [
                     ...$previousMessages,
                     $userMessage ?? new UserMessage($message->content),
-                ])
-                ->withMaxTokens($aiSettings->max_tokens->getTokens())
-                ->usingTemperature($this->hasTemperature() ? $aiSettings->temperature : null)
-                ->asStream();
-
-            return $this->streamMessageResponse($stream, $message, $saveResponse);
+                ],
+            );
         } catch (Throwable $exception) {
             report($exception);
 
@@ -683,17 +681,17 @@ abstract class BaseOpenAiResponsesService implements AiService
         }
     }
 
-    public function completeResponse(AiMessage $response, Closure $saveResponse): Closure
+    public function completeResponse(AiMessage $response): Closure
     {
-        return $this->sendMessage($response, [], $saveResponse, new UserMessage('Continue generating the response, do not mention that I told you as I will paste it directly after the last message.'));
+        return $this->sendMessage($response, [], new UserMessage('Continue generating the response, do not mention that I told you as I will paste it directly after the last message.'));
     }
 
     /**
      * @param array<AiMessageFile> $files
      */
-    public function retryMessage(AiMessage $message, array $files, Closure $saveResponse): Closure
+    public function retryMessage(AiMessage $message, array $files): Closure
     {
-        return $this->sendMessage($message, $files, $saveResponse);
+        return $this->sendMessage($message, $files);
     }
 
     public function getMaxAssistantInstructionsLength(): int
@@ -1147,64 +1145,6 @@ abstract class BaseOpenAiResponsesService implements AiService
         ])
             ->withQueryParameters(['api-version' => '2024-10-21'])
             ->baseUrl((string) str($this->getDeployment())->beforeLast('/v1'));
-    }
-
-    protected function streamMessageResponse(Generator $stream, AiMessage $message, Closure $saveResponse): Closure
-    {
-        return function () use ($message, $saveResponse, $stream): Generator {
-            try {
-                // If the message was sent by the user, save the response to a new record.
-                // If the message was sent by the assistant, and we are completing the response, save it to the existing record.
-                $response = filled($message->user_id) ? (new AiMessage()) : $message;
-
-                foreach ($stream as $chunk) {
-                    if (
-                        ($chunk->chunkType === ChunkType::Meta) &&
-                        filled($chunk->meta?->id)
-                    ) {
-                        $response->message_id = $chunk->meta->id;
-
-                        continue;
-                    }
-
-                    if ($chunk->chunkType !== ChunkType::Text) {
-                        continue;
-                    }
-
-                    yield json_encode(['type' => 'content', 'content' => base64_encode($chunk->text)]);
-                    $response->content .= $chunk->text;
-
-                    if ($chunk->finishReason === FinishReason::Length) {
-                        yield json_encode(['type' => 'content', 'content' => base64_encode('...'), 'incomplete' => true]);
-                        $response->content .= '...';
-                    }
-
-                    if ($chunk->finishReason === FinishReason::Error) {
-                        yield json_encode(['type' => 'failed', 'message' => 'An error happened when sending your message.']);
-
-                        report(new MessageResponseException('Stream not successful.'));
-                    }
-                }
-
-                $saveResponse($response);
-            } catch (PrismRateLimitedException $exception) {
-                foreach ($exception->rateLimits as $rateLimit) {
-                    if ($rateLimit->resetsAt?->isFuture()) {
-                        yield json_encode(['type' => 'rate_limited', 'message' => 'Heavy traffic, just a few more moments...', 'retry_after_seconds' => now()->diffInSeconds($rateLimit->resetsAt) + 1]);
-
-                        return;
-                    }
-                }
-
-                yield json_encode(['type' => 'failed', 'message' => 'An error happened when sending your message.']);
-
-                report(new MessageResponseException('Thread run was rate limited, but the system was unable to extract the number of retry seconds: [' . $exception->getMessage() . '].'));
-            } catch (Throwable $exception) {
-                yield json_encode(['type' => 'failed', 'message' => 'An error happened when sending your message.']);
-
-                report($exception);
-            }
-        };
     }
 
     protected function generateAssistantInstructions(AiAssistant $assistant, bool $withDynamicContext = false): string
