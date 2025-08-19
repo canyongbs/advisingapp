@@ -34,11 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Http\Requests;
+namespace AdvisingApp\Ai\Http\Requests\Advisors;
 
+use AdvisingApp\Ai\Models\AiMessageFile;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class ShowThreadRequest extends FormRequest
+class RetryMessageRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -46,5 +49,19 @@ class ShowThreadRequest extends FormRequest
     public function authorize(): bool
     {
         return $this->thread->user()->is(auth()->user());
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
+    {
+        return [
+            'content' => ['required', 'string', 'max:1000'],
+            'files' => ['array', 'max:1'],
+            'files.*' => [Rule::exists(AiMessageFile::class, 'id')],
+        ];
     }
 }

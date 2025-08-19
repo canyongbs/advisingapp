@@ -37,8 +37,8 @@
 namespace AdvisingApp\Ai\Jobs;
 
 use AdvisingApp\Ai\Actions\GetQnaAdvisorInstructions;
-use AdvisingApp\Ai\Events\AdvisorMessageChunk;
-use AdvisingApp\Ai\Events\AdvisorNextRequestOptions;
+use AdvisingApp\Ai\Events\QnaAdvisors\QnaAdvisorMessageChunk;
+use AdvisingApp\Ai\Events\QnaAdvisors\QnaAdvisorNextRequestOptions;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -86,7 +86,7 @@ class SendAdvisorMessage implements ShouldQueue
 
             foreach ($stream() as $chunk) {
                 if ($chunk['type'] === 'next_request_options') {
-                    event(new AdvisorNextRequestOptions(
+                    event(new QnaAdvisorNextRequestOptions(
                         $this->chatId,
                         $chunk['options'],
                     ));
@@ -99,7 +99,7 @@ class SendAdvisorMessage implements ShouldQueue
                     $chunkCount++;
 
                     if ($chunkCount >= 30) {
-                        event(new AdvisorMessageChunk(
+                        event(new QnaAdvisorMessageChunk(
                             $this->chatId,
                             content: implode('', $chunkBuffer),
                         ));
@@ -111,13 +111,13 @@ class SendAdvisorMessage implements ShouldQueue
             }
 
             if (! empty($chunkBuffer)) {
-                event(new AdvisorMessageChunk(
+                event(new QnaAdvisorMessageChunk(
                     $this->chatId,
                     content: implode('', $chunkBuffer),
                 ));
             }
 
-            event(new AdvisorMessageChunk(
+            event(new QnaAdvisorMessageChunk(
                 $this->chatId,
                 content: '',
                 isComplete: true,
@@ -125,7 +125,7 @@ class SendAdvisorMessage implements ShouldQueue
         } catch (Throwable $exception) {
             report($exception);
 
-            event(new AdvisorMessageChunk(
+            event(new QnaAdvisorMessageChunk(
                 $this->chatId,
                 content: '',
                 isComplete: false,

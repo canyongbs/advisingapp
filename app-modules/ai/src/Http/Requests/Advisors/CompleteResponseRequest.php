@@ -34,50 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Events;
+namespace AdvisingApp\Ai\Http\Requests\Advisors;
 
-use Illuminate\Broadcasting\Channel;
-use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
-use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Foundation\Http\FormRequest;
 
-class AdvisorMessageChunk implements ShouldBroadcastNow
+class CompleteResponseRequest extends FormRequest
 {
-    use Dispatchable;
-    use InteractsWithSockets;
-
-    public function __construct(
-        public string $chatId,
-        public string $content,
-        public bool $isComplete = false,
-        public ?string $error = null,
-    ) {}
-
-    public function broadcastAs(): string
-    {
-        return 'advisor-message.chunk';
-    }
-
     /**
-     * @return array<string, mixed>
+     * Determine if the user is authorized to make this request.
      */
-    public function broadcastWith(): array
+    public function authorize(): bool
     {
-        return [
-            'content' => $this->content,
-            'is_complete' => $this->isComplete,
-            'error' => $this->error,
-        ];
-    }
-
-    /**
-     * @return array<int, Channel>
-     */
-    public function broadcastOn(): array
-    {
-        return [
-            new PrivateChannel("qna-advisor-chat-{$this->chatId}"),
-        ];
+        return $this->thread->user()->is(auth()->user());
     }
 }

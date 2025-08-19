@@ -34,26 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Http\Controllers;
+namespace AdvisingApp\Ai\Http\Controllers\Advisors;
 
-use AdvisingApp\Ai\Actions\CompleteResponse;
+use AdvisingApp\Ai\Actions\RetryMessage;
 use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
-use AdvisingApp\Ai\Exceptions\AiResponseToCompleteDoesNotExistException;
 use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
-use AdvisingApp\Ai\Http\Requests\CompleteResponseRequest;
+use AdvisingApp\Ai\Http\Requests\Advisors\RetryMessageRequest;
+use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThread;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
-class CompleteResponseController
+class RetryMessageController
 {
-    public function __invoke(CompleteResponseRequest $request, AiThread $thread): StreamedResponse | JsonResponse
+    public function __invoke(RetryMessageRequest $request, AiThread $thread): StreamedResponse | JsonResponse
     {
         try {
             return new StreamedResponse(
-                app(CompleteResponse::class)(
+                app(RetryMessage::class)(
                     $thread,
+                    $request->validated('content'),
+                    AiMessageFile::query()->whereKey($request->validated('files'))->get()->all(),
                 ),
                 headers: [
                     'Content-Type' => 'text/html; charset=utf-8;',
@@ -61,7 +63,7 @@ class CompleteResponseController
                     'X-Accel-Buffering' => 'no',
                 ],
             );
-        } catch (AiAssistantArchivedException | AiResponseToCompleteDoesNotExistException $exception) {
+        } catch (AiAssistantArchivedException $exception) {
             return response()->json([
                 'message' => $exception->getMessage(),
             ], 404);
@@ -74,7 +76,7 @@ class CompleteResponseController
             report($exception);
 
             return response()->json([
-                'message' => 'An error happened when completing the last assistant response.',
+                'message' => 'An error happened when sending your message.',
             ], 503);
         }
     }
