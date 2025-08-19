@@ -53,7 +53,7 @@ use Filament\Pages\SettingsPage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
-class ManageAiICustomAdvisorSettings extends SettingsPage
+class ManageAiCustomAdvisorSettings extends SettingsPage
 {
     protected static string $settings = AiCustomAdvisorSettings::class;
 
