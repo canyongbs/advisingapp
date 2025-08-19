@@ -98,10 +98,11 @@ trait InteractsWithPageFilters
             return;
         }
 
-        $query->whereKey(
+        $query->whereIn(
+            $query->getModel()->getQualifiedKeyName(),
             app(TranslateSegmentFilters::class)
                 ->execute($segmentId)
-                ->pluck($query->getModel()->getQualifiedKeyName()),
+                ->pluck($query->getModel()->getKeyName())
         );
     }
 }

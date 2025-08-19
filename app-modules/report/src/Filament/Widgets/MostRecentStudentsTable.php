@@ -80,24 +80,26 @@ class MostRecentStudentsTable extends BaseWidget
                 $endDate = $this->getEndDate();
                 $segmentId = $this->getSelectedSegment();
 
-                $subQuery = Student::query()
-                    ->select($key)
+                return Student::query()
                     ->whereNotNull('created_at_source')
                     ->whereNull('deleted_at')
                     ->when(
                         $startDate && $endDate,
-                        fn (Builder $query) => $query->whereBetween('created_at_source', [$startDate, $endDate])
+                        function (Builder $query) use ($startDate, $endDate): Builder {
+                            return $query->whereBetween('created_at_source', [$startDate, $endDate]);
+                        }
                     )
                     ->when(
                         $segmentId,
-                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                        function (Builder $query) use ($segmentId): Builder {
+                            $this->segmentFilter($query, $segmentId);
+
+                            return $query;
+                        }
                     )
                     ->orderBy('created_at_source', 'desc')
                     ->take(100);
 
-                return Student::query()
-                    ->whereIn($key, $subQuery)
-                    ->orderBy('created_at_source', 'desc');
             })
             ->columns([
                 TextColumn::make(Student::displayNameKey())
