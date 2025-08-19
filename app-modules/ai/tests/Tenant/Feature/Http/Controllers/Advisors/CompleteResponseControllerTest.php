@@ -72,7 +72,7 @@ it('completes the last response in a thread', function () {
         ->for(auth()->user())
         ->create();
 
-    post(route('ai.threads.messages.complete-response', ['thread' => $thread]))
+    post(route('ai.advisors.threads.messages.complete-response', ['thread' => $thread]))
         ->assertSuccessful()
         ->assertStreamedContent($responseContent);
 });
@@ -97,7 +97,7 @@ it('returns a message if the assistant fails', function () {
         ->for(auth()->user())
         ->create();
 
-    post(route('ai.threads.messages.complete-response', ['thread' => $thread]))
+    post(route('ai.advisors.threads.messages.complete-response', ['thread' => $thread]))
         ->assertServiceUnavailable()
         ->assertJson([
             'message' => 'An error happened when completing the last assistant response.',
@@ -126,7 +126,7 @@ it('returns a message if the thread is locked', function () {
         ->for(auth()->user())
         ->create();
 
-    post(route('ai.threads.messages.complete-response', ['thread' => $thread]))
+    post(route('ai.advisors.threads.messages.complete-response', ['thread' => $thread]))
         ->assertServiceUnavailable()
         ->assertJson([
             'isThreadLocked' => true,
@@ -156,7 +156,7 @@ it('returns a message if the assistant is archived', function () {
         ->for(auth()->user())
         ->create();
 
-    post(route('ai.threads.messages.complete-response', ['thread' => $thread]))
+    post(route('ai.advisors.threads.messages.complete-response', ['thread' => $thread]))
         ->assertNotFound()
         ->assertJson([
             'message' => $exception->getMessage(),
@@ -175,6 +175,6 @@ it('prevents users who do not own the thread from completing the latest assistan
         ->for(User::factory()->create())
         ->create();
 
-    post(route('ai.threads.messages.complete-response', ['thread' => $thread]))
+    post(route('ai.advisors.threads.messages.complete-response', ['thread' => $thread]))
         ->assertForbidden();
 });

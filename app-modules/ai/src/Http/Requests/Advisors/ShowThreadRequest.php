@@ -34,49 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Events;
+namespace AdvisingApp\Ai\Http\Requests\Advisors;
 
-use Illuminate\Broadcasting\Channel;
-use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
-use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Foundation\Http\FormRequest;
 
-class AdvisorNextRequestOptions implements ShouldBroadcastNow
+class ShowThreadRequest extends FormRequest
 {
-    use Dispatchable;
-    use InteractsWithSockets;
-
     /**
-     * @param array<string, mixed> $options
+     * Determine if the user is authorized to make this request.
      */
-    public function __construct(
-        public string $chatId,
-        public array $options,
-    ) {}
-
-    public function broadcastAs(): string
+    public function authorize(): bool
     {
-        return 'advisor-message.next-request-options';
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function broadcastWith(): array
-    {
-        return [
-            'options' => $this->options,
-        ];
-    }
-
-    /**
-     * @return array<int, Channel>
-     */
-    public function broadcastOn(): array
-    {
-        return [
-            new PrivateChannel("qna-advisor-chat-{$this->chatId}"),
-        ];
+        return $this->thread->user()->is(auth()->user());
     }
 }
