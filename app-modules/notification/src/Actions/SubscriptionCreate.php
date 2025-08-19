@@ -49,7 +49,7 @@ class SubscriptionCreate
     {
         assert($subscribable instanceof Student || $subscribable instanceof Prospect);
 
-        throw_if(! is_null($subscribable->deleted_at), new Exception('This sub$subscribable has been deleted.'));
+        throw_if(! is_null($subscribable->deleted_at), new Exception('This subscribable has been deleted.'));
         throw_if(! is_null($user->deleted_at), new Exception('This user has been deleted.'));
 
         return $user->subscriptions()
