@@ -34,34 +34,49 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Http\Requests;
+namespace AdvisingApp\Ai\Events\QnaAdvisors;
 
-use AdvisingApp\Ai\Models\AiMessageFile;
-use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
+use Illuminate\Broadcasting\Channel;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
+use Illuminate\Foundation\Events\Dispatchable;
 
-class RetryMessageRequest extends FormRequest
+class QnaAdvisorNextRequestOptions implements ShouldBroadcastNow
 {
+    use Dispatchable;
+    use InteractsWithSockets;
+
     /**
-     * Determine if the user is authorized to make this request.
+     * @param array<string, mixed> $options
      */
-    public function authorize(): bool
+    public function __construct(
+        public string $chatId,
+        public array $options,
+    ) {}
+
+    public function broadcastAs(): string
     {
-        return $this->thread->user()->is(auth()->user());
+        return 'qna-advisor-message.next-request-options';
     }
 
     /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
+     * @return array<string, mixed>
      */
-    public function rules(): array
+    public function broadcastWith(): array
     {
         return [
-            'content' => ['required', 'string', 'max:1000'],
-            'files' => ['array', 'max:1'],
-            'files.*' => [Rule::exists(AiMessageFile::class, 'id')],
+            'options' => $this->options,
+        ];
+    }
+
+    /**
+     * @return array<int, Channel>
+     */
+    public function broadcastOn(): array
+    {
+        return [
+            new PrivateChannel("qna-advisor-chat-{$this->chatId}"),
         ];
     }
 }

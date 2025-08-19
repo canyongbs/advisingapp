@@ -34,50 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Http\Controllers;
+namespace AdvisingApp\Ai\Http\Requests\Advisors;
 
-use AdvisingApp\Ai\Actions\RetryMessage;
-use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
-use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
-use AdvisingApp\Ai\Http\Requests\RetryMessageRequest;
 use AdvisingApp\Ai\Models\AiMessageFile;
-use AdvisingApp\Ai\Models\AiThread;
-use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\StreamedResponse;
-use Throwable;
+use AdvisingApp\Ai\Models\Prompt;
+use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class RetryMessageController
+class SendMessageRequest extends FormRequest
 {
-    public function __invoke(RetryMessageRequest $request, AiThread $thread): StreamedResponse | JsonResponse
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
     {
-        try {
-            return new StreamedResponse(
-                app(RetryMessage::class)(
-                    $thread,
-                    $request->validated('content'),
-                    AiMessageFile::query()->whereKey($request->validated('files'))->get()->all(),
-                ),
-                headers: [
-                    'Content-Type' => 'text/html; charset=utf-8;',
-                    'Cache-Control' => 'no-cache',
-                    'X-Accel-Buffering' => 'no',
-                ],
-            );
-        } catch (AiAssistantArchivedException $exception) {
-            return response()->json([
-                'message' => $exception->getMessage(),
-            ], 404);
-        } catch (AiThreadLockedException $exception) {
-            return response()->json([
-                'isThreadLocked' => true,
-                'message' => $exception->getMessage(),
-            ], 503);
-        } catch (Throwable $exception) {
-            report($exception);
+        return $this->thread->user()->is(auth()->user());
+    }
 
-            return response()->json([
-                'message' => 'An error happened when sending your message.',
-            ], 503);
-        }
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
+    {
+        return [
+            'content' => ['required_without:prompt_id', 'string', 'max:25000'],
+            'files' => ['array', 'max:1'],
+            'files.*' => [Rule::exists(AiMessageFile::class, 'id')],
+            'prompt_id' => ['nullable', 'uuid', Rule::exists(Prompt::class, 'id')],
+        ];
     }
 }

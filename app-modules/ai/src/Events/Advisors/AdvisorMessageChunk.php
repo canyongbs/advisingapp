@@ -34,36 +34,51 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Http\Requests;
+namespace AdvisingApp\Ai\Events\Advisors;
 
-use AdvisingApp\Ai\Models\AiMessageFile;
-use AdvisingApp\Ai\Models\Prompt;
-use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
+use AdvisingApp\Ai\Models\AiMessage;
+use Illuminate\Broadcasting\Channel;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
 
-class SendMessageRequest extends FormRequest
+class AdvisorMessageChunk implements ShouldBroadcastNow
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
+
+    public function __construct(
+        public AiMessage $message,
+        public string $content,
+        public bool $isIncomplete = false,
+    ) {}
+
+    public function broadcastAs(): string
     {
-        return $this->thread->user()->is(auth()->user());
+        return 'advisor-message.chunk';
     }
 
     /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
+     * @return array<string, mixed>
      */
-    public function rules(): array
+    public function broadcastWith(): array
     {
         return [
-            'content' => ['required_without:prompt_id', 'string', 'max:25000'],
-            'files' => ['array', 'max:1'],
-            'files.*' => [Rule::exists(AiMessageFile::class, 'id')],
-            'prompt_id' => ['nullable', 'uuid', Rule::exists(Prompt::class, 'id')],
+            'content' => $this->content,
+            'is_incomplete' => $this->isIncomplete,
+        ];
+    }
+
+    /**
+     * @return array<int, Channel>
+     */
+    public function broadcastOn(): array
+    {
+        return [
+            new PrivateChannel("advisor-thread-{$this->message->thread_id}"),
         ];
     }
 }

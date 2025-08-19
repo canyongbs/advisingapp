@@ -57,7 +57,7 @@ it('fetches information about a thread', function () {
         ->for(auth()->user())
         ->create();
 
-    get(route('ai.threads.show', ['thread' => $thread]))
+    get(route('ai.advisors.threads.show', ['thread' => $thread]))
         ->assertSuccessful();
 });
 
@@ -74,7 +74,7 @@ it('lists messages in a thread', function () {
         ->has(AiMessage::factory()->count(3), 'messages')
         ->create();
 
-    get(route('ai.threads.show', ['thread' => $thread]))
+    get(route('ai.advisors.threads.show', ['thread' => $thread]))
         ->assertJsonCount(3, 'messages');
 });
 
@@ -93,7 +93,7 @@ it('converts new lines to HTML in messages sent by users', function () {
         ]), 'messages')
         ->create();
 
-    get(route('ai.threads.show', ['thread' => $thread]))
+    get(route('ai.advisors.threads.show', ['thread' => $thread]))
         ->assertJsonFragment([
             'content' => 'Hello, world!<br />' . PHP_EOL . 'How are you?',
         ]);
@@ -114,7 +114,7 @@ it('removes HTML tags from messages sent by users', function () {
         ]), 'messages')
         ->create();
 
-    get(route('ai.threads.show', ['thread' => $thread]))
+    get(route('ai.advisors.threads.show', ['thread' => $thread]))
         ->assertJsonFragment([
             'content' => 'alert(&#34;Hello, world!&#34;)',
         ]);
@@ -136,7 +136,7 @@ it('converts messages sent by assistants into Markdown', function () {
         ]), 'messages')
         ->create();
 
-    get(route('ai.threads.show', ['thread' => $thread]))
+    get(route('ai.advisors.threads.show', ['thread' => $thread]))
         ->assertJsonFragment([
             'content' => '<p>Hello, world!</p>' . PHP_EOL,
         ]);
@@ -158,7 +158,7 @@ it('removes unsafe HTML from messages sent by assistants', function () {
         ]), 'messages')
         ->create();
 
-    get(route('ai.threads.show', ['thread' => $thread]))
+    get(route('ai.advisors.threads.show', ['thread' => $thread]))
         ->assertJsonFragment([
             'content' => '&lt;script&gt;alert(&#34;Hello, world!&#34;)&lt;/script&gt;' . PHP_EOL,
         ]);
@@ -178,7 +178,7 @@ it('lists users involved in a thread once', function () {
         ->has(AiMessage::factory()->for($anotherUser = User::factory()->create())->count(3), 'messages')
         ->create();
 
-    get(route('ai.threads.show', ['thread' => $thread]))
+    get(route('ai.advisors.threads.show', ['thread' => $thread]))
         ->assertJsonCount(2, 'users')
         ->assertJsonFragment([
             'name' => auth()->user()->name,
@@ -202,6 +202,6 @@ it('prevents users who do not own the thread from fetching it', function () {
         ->for(User::factory()->create())
         ->create();
 
-    get(route('ai.threads.show', ['thread' => $thread]))
+    get(route('ai.advisors.threads.show', ['thread' => $thread]))
         ->assertForbidden();
 });

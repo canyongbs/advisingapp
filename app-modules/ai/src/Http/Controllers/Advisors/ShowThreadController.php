@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Http\Controllers;
+namespace AdvisingApp\Ai\Http\Controllers\Advisors;
 
-use AdvisingApp\Ai\Http\Requests\ShowThreadRequest;
+use AdvisingApp\Ai\Http\Requests\Advisors\ShowThreadRequest;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
 use App\Models\User;

@@ -72,7 +72,7 @@ it('sends a message to a thread', function () {
         ->for(auth()->user())
         ->create();
 
-    post(route('ai.threads.messages.send', ['thread' => $thread]), [
+    post(route('ai.advisors.threads.messages.send', ['thread' => $thread]), [
         'content' => AiMessage::factory()->make()->content,
         'files' => [],
     ])
@@ -100,7 +100,7 @@ it('returns a message if the assistant fails', function () {
         ->for(auth()->user())
         ->create();
 
-    post(route('ai.threads.messages.send', ['thread' => $thread]), [
+    post(route('ai.advisors.threads.messages.send', ['thread' => $thread]), [
         'content' => AiMessage::factory()->make()->content,
         'files' => [],
     ])
@@ -132,7 +132,7 @@ it('returns a message if the thread is locked', function () {
         ->for(auth()->user())
         ->create();
 
-    post(route('ai.threads.messages.send', ['thread' => $thread]), [
+    post(route('ai.advisors.threads.messages.send', ['thread' => $thread]), [
         'content' => AiMessage::factory()->make()->content,
         'files' => [],
     ])
@@ -165,7 +165,7 @@ it('returns a message if the assistant is archived', function () {
         ->for(auth()->user())
         ->create();
 
-    post(route('ai.threads.messages.send', ['thread' => $thread]), [
+    post(route('ai.advisors.threads.messages.send', ['thread' => $thread]), [
         'content' => AiMessage::factory()->make()->content,
         'files' => [],
     ])
@@ -187,7 +187,7 @@ it('prevents users who do not own the thread from sending messages to it', funct
         ->for(User::factory()->create())
         ->create();
 
-    post(route('ai.threads.messages.send', ['thread' => $thread]), [
+    post(route('ai.advisors.threads.messages.send', ['thread' => $thread]), [
         'content' => AiMessage::factory()->make()->content,
         'files' => [],
     ])

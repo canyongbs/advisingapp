@@ -85,7 +85,7 @@ function setupWebsockets(config) {
 
         if (chatId.value) {
             privateChannel = window.Echo.private(`qna-advisor-chat-${chatId.value}`)
-                .listen('.advisor-message.chunk', (data) => {
+                .listen('.qna-advisor-message.chunk', (data) => {
                     if (data.error) {
                         console.error('Advisor message error:', data.error);
                         isLoading.value = false;
@@ -105,7 +105,7 @@ function setupWebsockets(config) {
                         isLoading.value = false;
                     }
                 })
-                .listen('.advisor-message.next-request-options', (data) => {
+                .listen('.qna-advisor-message.next-request-options', (data) => {
                     if (data.options) {
                         nextRequestOptions.value = data.options;
                     }

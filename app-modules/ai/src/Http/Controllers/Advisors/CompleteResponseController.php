@@ -34,29 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Http\Controllers;
+namespace AdvisingApp\Ai\Http\Controllers\Advisors;
 
-use AdvisingApp\Ai\Actions\SendMessage;
+use AdvisingApp\Ai\Actions\CompleteResponse;
 use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
+use AdvisingApp\Ai\Exceptions\AiResponseToCompleteDoesNotExistException;
 use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
-use AdvisingApp\Ai\Http\Requests\SendMessageRequest;
-use AdvisingApp\Ai\Models\AiMessageFile;
+use AdvisingApp\Ai\Http\Requests\Advisors\CompleteResponseRequest;
 use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\Prompt;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
-class SendMessageController
+class CompleteResponseController
 {
-    public function __invoke(SendMessageRequest $request, AiThread $thread): StreamedResponse | JsonResponse
+    public function __invoke(CompleteResponseRequest $request, AiThread $thread): StreamedResponse | JsonResponse
     {
         try {
             return new StreamedResponse(
-                app(SendMessage::class)(
+                app(CompleteResponse::class)(
                     $thread,
-                    $request->validated('prompt_id') ? Prompt::find($request->validated('prompt_id')) : $request->validated('content'),
-                    AiMessageFile::query()->whereKey($request->validated('files'))->get()->all(),
                 ),
                 headers: [
                     'Content-Type' => 'text/html; charset=utf-8;',
@@ -64,7 +61,7 @@ class SendMessageController
                     'X-Accel-Buffering' => 'no',
                 ],
             );
-        } catch (AiAssistantArchivedException $exception) {
+        } catch (AiAssistantArchivedException | AiResponseToCompleteDoesNotExistException $exception) {
             return response()->json([
                 'message' => $exception->getMessage(),
             ], 404);
@@ -77,7 +74,7 @@ class SendMessageController
             report($exception);
 
             return response()->json([
-                'message' => 'An error happened when sending your message.',
+                'message' => 'An error happened when completing the last assistant response.',
             ], 503);
         }
     }
