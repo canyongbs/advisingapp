@@ -34,20 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Jobs;
+namespace AdvisingApp\Ai\Jobs\Advisors;
 
 use AdvisingApp\Ai\Models\AiThread;
-use Carbon\CarbonInterface;
+use AdvisingApp\Assistant\Filament\Pages\InstitutionalAdvisor;
+use App\Models\User;
+use Filament\Notifications\Actions\Action;
+use Filament\Notifications\Notification;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\Middleware\WithoutOverlapping;
+use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
 use Illuminate\Queue\SerializesModels;
-use Spatie\Multitenancy\Jobs\TenantAware;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
-class ReInitializeAiThread implements ShouldQueue, TenantAware
+class CloneAiThread implements ShouldQueue
 {
     use Batchable;
     use Dispatchable;
@@ -55,55 +59,62 @@ class ReInitializeAiThread implements ShouldQueue, TenantAware
     use Queueable;
     use SerializesModels;
 
-    /**
-     * Delete the job if its models no longer exist.
-     *
-     * @var bool
-     */
-    public $deleteWhenMissingModels = true;
-
-    public $maxExceptions = 3;
-
-    /**
-     * Create a new job instance.
-     */
     public function __construct(
         protected AiThread $thread,
+        protected User $sender,
+        protected User $recipient,
     ) {}
 
-    /**
-     * Get the middleware the job should pass through.
-     *
-     * @return array<int, object>
-     */
     public function middleware(): array
     {
-        return [(new WithoutOverlapping("reinitialise-{$this->thread->assistant->model->value}"))->releaseAfter(10)];
+        return [new SkipIfBatchCancelled()];
     }
 
-    /**
-     * Determine the time at which the job should timeout.
-     */
-    public function retryUntil(): CarbonInterface
-    {
-        return now()->addDay();
-    }
-
-    /**
-     * Execute the job.
-     */
     public function handle(): void
     {
-        auth()->setUser($this->thread->user);
-
-        $this->thread->locked_at = now();
-        $this->thread->save();
-
         try {
-            $this->thread->assistant->model->getService()->ensureAssistantAndThreadExists($this->thread);
-        } finally {
-            $this->thread->locked_at = null;
+            DB::beginTransaction();
+
+            $threadReplica = $this->thread->replicate(except: ['id', 'thread_id', 'folder_id', 'saved_at', 'emailed_count', 'cloned_count']);
+            $threadReplica->saved_at = now();
+
+            $threadReplica->user()->associate($this->recipient);
+            $threadReplica->save();
+
+            foreach ($this->thread->messages as $message) {
+                $messageReplica = $message->replicate(['id', 'message_id']);
+                $messageReplica->thread()->associate($threadReplica);
+                $messageReplica->save();
+            }
+
+            $aiService = $threadReplica->assistant->model->getService();
+
+            $threadReplica->locked_at = now();
+            $threadReplica->save();
+
+            $this->thread->cloned_count = $this->thread->cloned_count + 1;
             $this->thread->save();
+
+            $aiService->ensureAssistantAndThreadExists($threadReplica);
+
+            $threadReplica->locked_at = null;
+            $threadReplica->save();
+
+            Notification::make()
+                ->title('An AI chat has been cloned to you.')
+                ->success()
+                ->actions([
+                    Action::make('view')
+                        ->link()
+                        ->url(InstitutionalAdvisor::getUrl(['thread' => $threadReplica->getKey()])),
+                ])
+                ->sendToDatabase($this->recipient);
+
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollBack();
+
+            throw $e;
         }
     }
 }

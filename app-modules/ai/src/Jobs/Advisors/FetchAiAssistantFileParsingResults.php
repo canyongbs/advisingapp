@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Jobs;
+namespace AdvisingApp\Ai\Jobs\Advisors;
 
 use AdvisingApp\Ai\Actions\FetchFileParsingResults;
 use AdvisingApp\Ai\Models\AiAssistantFile;

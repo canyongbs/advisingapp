@@ -37,7 +37,7 @@
 namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 
 use AdvisingApp\Ai\Actions\GetQnaAdvisorInstructions;
-use AdvisingApp\Ai\Jobs\SendAdvisorMessage;
+use AdvisingApp\Ai\Jobs\QnaAdvisors\SendQnaAdvisorMessage;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -56,7 +56,7 @@ class SendAdvisorMessageController
         $chatId = $request->query('chat_id');
 
         if ($chatId) {
-            dispatch(new SendAdvisorMessage(
+            dispatch(new SendQnaAdvisorMessage(
                 $chatId,
                 $advisor,
                 $data['content'],

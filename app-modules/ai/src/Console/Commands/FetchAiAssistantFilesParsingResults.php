@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Ai\Console\Commands;
 
-use AdvisingApp\Ai\Jobs\FetchAiAssistantFileParsingResults;
-use AdvisingApp\Ai\Jobs\FetchQnaAdvisorFileParsingResults;
+use AdvisingApp\Ai\Jobs\Advisors\FetchAiAssistantFileParsingResults;
+use AdvisingApp\Ai\Jobs\QnaAdvisors\FetchQnaAdvisorFileParsingResults;
 use AdvisingApp\Ai\Models\AiAssistantFile;
 use AdvisingApp\Ai\Models\QnaAdvisorFile;
 use Illuminate\Console\Command;
