@@ -86,7 +86,7 @@ class SubscribeBulkAction
                     }
 
                     foreach ($userIds as $userId) {
-                      throw_if(! is_null(User::find($userId)->deleted_at), new Exception('This user has been deleted.'));
+                        throw_if(! is_null(User::find($userId)->deleted_at), new Exception('This user has been deleted.'));
 
                         $record->subscriptions()
                             ->firstOrCreate([

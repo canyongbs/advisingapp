@@ -55,7 +55,7 @@ class SubscriptionWorkflowActionJob extends ExecuteWorkflowActionJob
             $educatable = $this->workflowRunStep->workflowRun->related;
 
             assert($educatable instanceof Subscribable);
-            
+
             $details = $this->workflowRunStep->details;
 
             assert($details instanceof WorkflowSubscriptionDetails);
