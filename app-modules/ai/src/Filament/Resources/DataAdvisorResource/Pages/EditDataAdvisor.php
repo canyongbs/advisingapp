@@ -36,12 +36,15 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\DataAdvisorResource\Pages;
 
-use AdvisingApp\Ai\Filament\Resources\DataAdvisorResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use AdvisingApp\Ai\Filament\Resources\DataAdvisorResource;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 
 class EditDataAdvisor extends EditRecord
 {
+    use EditPageRedirection;
+
     protected static string $resource = DataAdvisorResource::class;
 
     protected function getHeaderActions(): array
