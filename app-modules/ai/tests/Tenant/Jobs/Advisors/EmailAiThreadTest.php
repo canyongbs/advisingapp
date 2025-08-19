@@ -34,33 +34,43 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Console\Commands;
+use AdvisingApp\Ai\Enums\AiAssistantApplication;
+use AdvisingApp\Ai\Enums\AiModel;
+use AdvisingApp\Ai\Jobs\Advisors\EmailAiThread;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Notifications\AssistantTranscriptNotification;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Models\User;
+use Illuminate\Support\Facades\Notification;
 
-use AdvisingApp\Ai\Jobs\Advisors\FetchAiAssistantFileParsingResults;
-use AdvisingApp\Ai\Jobs\QnaAdvisors\FetchQnaAdvisorFileParsingResults;
-use AdvisingApp\Ai\Models\AiAssistantFile;
-use AdvisingApp\Ai\Models\QnaAdvisorFile;
-use Illuminate\Console\Command;
-use Spatie\Multitenancy\Commands\Concerns\TenantAware;
+it('can send a notification containing a thread transcript', function () {
+    Notification::fake();
 
-class FetchAiAssistantFilesParsingResults extends Command
-{
-    use TenantAware;
+    $sender = User::factory()->licensed(LicenseType::cases())->create();
+    $recipient = User::factory()->licensed(LicenseType::cases())->create();
 
-    protected $signature = 'ai:fetch-assistant-files-parsing-results {--tenant=*}';
+    $assistant = AiAssistant::factory()->create([
+        'application' => AiAssistantApplication::Test,
+        'is_default' => true,
+        'model' => AiModel::Test,
+    ]);
 
-    protected $description = 'Finds AI assistant files that were uploaded in the past hour and do not yet have parsed results.';
+    $thread = AiThread::factory()
+        ->for($assistant, 'assistant')
+        ->has(AiMessage::factory()->count(3), 'messages')
+        ->for($sender, 'user')
+        ->create();
 
-    public function handle(): void
-    {
-        AiAssistantFile::query()
-            ->whereNull('parsing_results')
-            ->where('created_at', '>=', now()->subHour())
-            ->eachById(fn (AiAssistantFile $file) => dispatch(new FetchAiAssistantFileParsingResults($file)));
+    dispatch(new EmailAiThread($thread, $sender, $recipient));
 
-        QnaAdvisorFile::query()
-            ->whereNull('parsing_results')
-            ->where('created_at', '>=', now()->subHour())
-            ->eachById(fn (QnaAdvisorFile $file) => dispatch(new FetchQnaAdvisorFileParsingResults($file)));
-    }
-}
+    Notification::assertSentTo(
+        $recipient,
+        function (AssistantTranscriptNotification $notification) use ($thread) {
+            $reflectionClass = new ReflectionClass($notification);
+
+            return $reflectionClass->getProperty('thread')->getValue($notification)->is($thread);
+        }
+    );
+});

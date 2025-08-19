@@ -34,52 +34,44 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
+namespace AdvisingApp\Ai\Http\Controllers\Advisors;
 
-use AdvisingApp\Ai\Actions\GetQnaAdvisorInstructions;
-use AdvisingApp\Ai\Jobs\QnaAdvisors\SendQnaAdvisorMessage;
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Actions\RetryMessage;
+use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
+use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
+use AdvisingApp\Ai\Http\Requests\Advisors\RetryMessageRequest;
+use AdvisingApp\Ai\Models\AiMessageFile;
+use AdvisingApp\Ai\Models\AiThread;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
-class SendAdvisorMessageController
+class RetryMessageController
 {
-    public function __invoke(Request $request, GetQnaAdvisorInstructions $getQnaAdvisorInstructions, QnaAdvisor $advisor): StreamedResponse | JsonResponse
+    public function __invoke(RetryMessageRequest $request, AiThread $thread): StreamedResponse | JsonResponse
     {
-        $data = $request->validate([
-            'content' => ['required', 'string', 'max:25000'],
-            'options' => ['nullable', 'array'],
-        ]);
-
-        $chatId = $request->query('chat_id');
-
-        if ($chatId) {
-            dispatch(new SendQnaAdvisorMessage(
-                $chatId,
-                $advisor,
-                $data['content'],
-                $data['options'] ?? []
-            ));
-
-            return response()->json([
-                'message' => 'Message dispatched for processing via websockets.',
-                'chat_id' => $chatId,
-            ]);
-        }
-
-        $aiService = $advisor->model->getService();
-
         try {
             return new StreamedResponse(
-                $aiService->stream($getQnaAdvisorInstructions->execute($advisor), $data['content'], shouldTrack: false, options: $data['options'] ?? []),
+                app(RetryMessage::class)(
+                    $thread,
+                    $request->validated('content'),
+                    AiMessageFile::query()->whereKey($request->validated('files'))->get()->all(),
+                ),
                 headers: [
                     'Content-Type' => 'text/html; charset=utf-8;',
                     'Cache-Control' => 'no-cache',
                     'X-Accel-Buffering' => 'no',
                 ],
             );
+        } catch (AiAssistantArchivedException $exception) {
+            return response()->json([
+                'message' => $exception->getMessage(),
+            ], 404);
+        } catch (AiThreadLockedException $exception) {
+            return response()->json([
+                'isThreadLocked' => true,
+                'message' => $exception->getMessage(),
+            ], 503);
         } catch (Throwable $exception) {
             report($exception);
 

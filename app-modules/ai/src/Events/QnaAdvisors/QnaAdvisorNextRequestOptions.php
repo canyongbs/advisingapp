@@ -34,33 +34,49 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Console\Commands;
+namespace AdvisingApp\Ai\Events\QnaAdvisors;
 
-use AdvisingApp\Ai\Jobs\Advisors\FetchAiAssistantFileParsingResults;
-use AdvisingApp\Ai\Jobs\QnaAdvisors\FetchQnaAdvisorFileParsingResults;
-use AdvisingApp\Ai\Models\AiAssistantFile;
-use AdvisingApp\Ai\Models\QnaAdvisorFile;
-use Illuminate\Console\Command;
-use Spatie\Multitenancy\Commands\Concerns\TenantAware;
+use Illuminate\Broadcasting\Channel;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
+use Illuminate\Foundation\Events\Dispatchable;
 
-class FetchAiAssistantFilesParsingResults extends Command
+class QnaAdvisorNextRequestOptions implements ShouldBroadcastNow
 {
-    use TenantAware;
+    use Dispatchable;
+    use InteractsWithSockets;
 
-    protected $signature = 'ai:fetch-assistant-files-parsing-results {--tenant=*}';
+    /**
+     * @param array<string, mixed> $options
+     */
+    public function __construct(
+        public string $chatId,
+        public array $options,
+    ) {}
 
-    protected $description = 'Finds AI assistant files that were uploaded in the past hour and do not yet have parsed results.';
-
-    public function handle(): void
+    public function broadcastAs(): string
     {
-        AiAssistantFile::query()
-            ->whereNull('parsing_results')
-            ->where('created_at', '>=', now()->subHour())
-            ->eachById(fn (AiAssistantFile $file) => dispatch(new FetchAiAssistantFileParsingResults($file)));
+        return 'qna-advisor-message.next-request-options';
+    }
 
-        QnaAdvisorFile::query()
-            ->whereNull('parsing_results')
-            ->where('created_at', '>=', now()->subHour())
-            ->eachById(fn (QnaAdvisorFile $file) => dispatch(new FetchQnaAdvisorFileParsingResults($file)));
+    /**
+     * @return array<string, mixed>
+     */
+    public function broadcastWith(): array
+    {
+        return [
+            'options' => $this->options,
+        ];
+    }
+
+    /**
+     * @return array<int, Channel>
+     */
+    public function broadcastOn(): array
+    {
+        return [
+            new PrivateChannel("qna-advisor-chat-{$this->chatId}"),
+        ];
     }
 }

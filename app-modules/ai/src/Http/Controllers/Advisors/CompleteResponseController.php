@@ -34,57 +34,47 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
+namespace AdvisingApp\Ai\Http\Controllers\Advisors;
 
-use AdvisingApp\Ai\Actions\GetQnaAdvisorInstructions;
-use AdvisingApp\Ai\Jobs\QnaAdvisors\SendQnaAdvisorMessage;
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Actions\CompleteResponse;
+use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
+use AdvisingApp\Ai\Exceptions\AiResponseToCompleteDoesNotExistException;
+use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
+use AdvisingApp\Ai\Http\Requests\Advisors\CompleteResponseRequest;
+use AdvisingApp\Ai\Models\AiThread;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
-class SendAdvisorMessageController
+class CompleteResponseController
 {
-    public function __invoke(Request $request, GetQnaAdvisorInstructions $getQnaAdvisorInstructions, QnaAdvisor $advisor): StreamedResponse | JsonResponse
+    public function __invoke(CompleteResponseRequest $request, AiThread $thread): StreamedResponse | JsonResponse
     {
-        $data = $request->validate([
-            'content' => ['required', 'string', 'max:25000'],
-            'options' => ['nullable', 'array'],
-        ]);
-
-        $chatId = $request->query('chat_id');
-
-        if ($chatId) {
-            dispatch(new SendQnaAdvisorMessage(
-                $chatId,
-                $advisor,
-                $data['content'],
-                $data['options'] ?? []
-            ));
-
-            return response()->json([
-                'message' => 'Message dispatched for processing via websockets.',
-                'chat_id' => $chatId,
-            ]);
-        }
-
-        $aiService = $advisor->model->getService();
-
         try {
             return new StreamedResponse(
-                $aiService->stream($getQnaAdvisorInstructions->execute($advisor), $data['content'], shouldTrack: false, options: $data['options'] ?? []),
+                app(CompleteResponse::class)(
+                    $thread,
+                ),
                 headers: [
                     'Content-Type' => 'text/html; charset=utf-8;',
                     'Cache-Control' => 'no-cache',
                     'X-Accel-Buffering' => 'no',
                 ],
             );
+        } catch (AiAssistantArchivedException | AiResponseToCompleteDoesNotExistException $exception) {
+            return response()->json([
+                'message' => $exception->getMessage(),
+            ], 404);
+        } catch (AiThreadLockedException $exception) {
+            return response()->json([
+                'isThreadLocked' => true,
+                'message' => $exception->getMessage(),
+            ], 503);
         } catch (Throwable $exception) {
             report($exception);
 
             return response()->json([
-                'message' => 'An error happened when sending your message.',
+                'message' => 'An error happened when completing the last assistant response.',
             ], 503);
         }
     }

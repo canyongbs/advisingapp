@@ -34,33 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Console\Commands;
+namespace AdvisingApp\Ai\Http\Requests\Advisors;
 
-use AdvisingApp\Ai\Jobs\Advisors\FetchAiAssistantFileParsingResults;
-use AdvisingApp\Ai\Jobs\QnaAdvisors\FetchQnaAdvisorFileParsingResults;
-use AdvisingApp\Ai\Models\AiAssistantFile;
-use AdvisingApp\Ai\Models\QnaAdvisorFile;
-use Illuminate\Console\Command;
-use Spatie\Multitenancy\Commands\Concerns\TenantAware;
+use Illuminate\Foundation\Http\FormRequest;
 
-class FetchAiAssistantFilesParsingResults extends Command
+class CompleteResponseRequest extends FormRequest
 {
-    use TenantAware;
-
-    protected $signature = 'ai:fetch-assistant-files-parsing-results {--tenant=*}';
-
-    protected $description = 'Finds AI assistant files that were uploaded in the past hour and do not yet have parsed results.';
-
-    public function handle(): void
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
     {
-        AiAssistantFile::query()
-            ->whereNull('parsing_results')
-            ->where('created_at', '>=', now()->subHour())
-            ->eachById(fn (AiAssistantFile $file) => dispatch(new FetchAiAssistantFileParsingResults($file)));
-
-        QnaAdvisorFile::query()
-            ->whereNull('parsing_results')
-            ->where('created_at', '>=', now()->subHour())
-            ->eachById(fn (QnaAdvisorFile $file) => dispatch(new FetchQnaAdvisorFileParsingResults($file)));
+        return $this->thread->user()->is(auth()->user());
     }
 }

@@ -34,33 +34,52 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Console\Commands;
+namespace AdvisingApp\Ai\Jobs\QnaAdvisors;
 
-use AdvisingApp\Ai\Jobs\Advisors\FetchAiAssistantFileParsingResults;
-use AdvisingApp\Ai\Jobs\QnaAdvisors\FetchQnaAdvisorFileParsingResults;
-use AdvisingApp\Ai\Models\AiAssistantFile;
+use AdvisingApp\Ai\Actions\FetchFileParsingResults;
 use AdvisingApp\Ai\Models\QnaAdvisorFile;
-use Illuminate\Console\Command;
-use Spatie\Multitenancy\Commands\Concerns\TenantAware;
+use Illuminate\Bus\Batchable;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Spatie\Multitenancy\Jobs\TenantAware;
 
-class FetchAiAssistantFilesParsingResults extends Command
+class FetchQnaAdvisorFileParsingResults implements ShouldQueue, TenantAware, ShouldBeUnique
 {
-    use TenantAware;
+    use Batchable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
-    protected $signature = 'ai:fetch-assistant-files-parsing-results {--tenant=*}';
+    public function __construct(
+        protected QnaAdvisorFile $file,
+    ) {}
 
-    protected $description = 'Finds AI assistant files that were uploaded in the past hour and do not yet have parsed results.';
-
-    public function handle(): void
+    public function handle(FetchFileParsingResults $fetchFileParsingResults): void
     {
-        AiAssistantFile::query()
-            ->whereNull('parsing_results')
-            ->where('created_at', '>=', now()->subHour())
-            ->eachById(fn (AiAssistantFile $file) => dispatch(new FetchAiAssistantFileParsingResults($file)));
+        if (filled($this->file->parsing_results)) {
+            return;
+        }
 
-        QnaAdvisorFile::query()
-            ->whereNull('parsing_results')
-            ->where('created_at', '>=', now()->subHour())
-            ->eachById(fn (QnaAdvisorFile $file) => dispatch(new FetchQnaAdvisorFileParsingResults($file)));
+        $result = $fetchFileParsingResults->execute(
+            fileId: $this->file->file_id,
+            mimeType: $this->file->mime_type,
+        );
+
+        if (blank($result)) {
+            return;
+        }
+
+        $this->file->parsing_results = $result;
+        $this->file->save();
+    }
+
+    public function uniqueId(): string
+    {
+        return $this->file->id;
     }
 }

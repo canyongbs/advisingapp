@@ -34,33 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Console\Commands;
+namespace AdvisingApp\Ai\Http\Requests\Advisors;
 
-use AdvisingApp\Ai\Jobs\Advisors\FetchAiAssistantFileParsingResults;
-use AdvisingApp\Ai\Jobs\QnaAdvisors\FetchQnaAdvisorFileParsingResults;
-use AdvisingApp\Ai\Models\AiAssistantFile;
-use AdvisingApp\Ai\Models\QnaAdvisorFile;
-use Illuminate\Console\Command;
-use Spatie\Multitenancy\Commands\Concerns\TenantAware;
+use AdvisingApp\Ai\Models\AiMessageFile;
+use AdvisingApp\Ai\Models\Prompt;
+use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class FetchAiAssistantFilesParsingResults extends Command
+class SendMessageRequest extends FormRequest
 {
-    use TenantAware;
-
-    protected $signature = 'ai:fetch-assistant-files-parsing-results {--tenant=*}';
-
-    protected $description = 'Finds AI assistant files that were uploaded in the past hour and do not yet have parsed results.';
-
-    public function handle(): void
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
     {
-        AiAssistantFile::query()
-            ->whereNull('parsing_results')
-            ->where('created_at', '>=', now()->subHour())
-            ->eachById(fn (AiAssistantFile $file) => dispatch(new FetchAiAssistantFileParsingResults($file)));
+        return $this->thread->user()->is(auth()->user());
+    }
 
-        QnaAdvisorFile::query()
-            ->whereNull('parsing_results')
-            ->where('created_at', '>=', now()->subHour())
-            ->eachById(fn (QnaAdvisorFile $file) => dispatch(new FetchQnaAdvisorFileParsingResults($file)));
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
+    {
+        return [
+            'content' => ['required_without:prompt_id', 'string', 'max:25000'],
+            'files' => ['array', 'max:1'],
+            'files.*' => [Rule::exists(AiMessageFile::class, 'id')],
+            'prompt_id' => ['nullable', 'uuid', Rule::exists(Prompt::class, 'id')],
+        ];
     }
 }

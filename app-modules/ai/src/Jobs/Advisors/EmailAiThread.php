@@ -34,33 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Console\Commands;
+namespace AdvisingApp\Ai\Jobs\Advisors;
 
-use AdvisingApp\Ai\Jobs\Advisors\FetchAiAssistantFileParsingResults;
-use AdvisingApp\Ai\Jobs\QnaAdvisors\FetchQnaAdvisorFileParsingResults;
-use AdvisingApp\Ai\Models\AiAssistantFile;
-use AdvisingApp\Ai\Models\QnaAdvisorFile;
-use Illuminate\Console\Command;
-use Spatie\Multitenancy\Commands\Concerns\TenantAware;
+use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Notifications\AssistantTranscriptNotification;
+use App\Models\User;
+use Illuminate\Bus\Batchable;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
+use Illuminate\Queue\SerializesModels;
 
-class FetchAiAssistantFilesParsingResults extends Command
+class EmailAiThread implements ShouldQueue
 {
-    use TenantAware;
+    use Batchable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
-    protected $signature = 'ai:fetch-assistant-files-parsing-results {--tenant=*}';
+    public function __construct(
+        protected AiThread $thread,
+        protected User $sender,
+        protected User $recipient,
+    ) {}
 
-    protected $description = 'Finds AI assistant files that were uploaded in the past hour and do not yet have parsed results.';
+    public function middleware(): array
+    {
+        return [new SkipIfBatchCancelled()];
+    }
 
     public function handle(): void
     {
-        AiAssistantFile::query()
-            ->whereNull('parsing_results')
-            ->where('created_at', '>=', now()->subHour())
-            ->eachById(fn (AiAssistantFile $file) => dispatch(new FetchAiAssistantFileParsingResults($file)));
-
-        QnaAdvisorFile::query()
-            ->whereNull('parsing_results')
-            ->where('created_at', '>=', now()->subHour())
-            ->eachById(fn (QnaAdvisorFile $file) => dispatch(new FetchQnaAdvisorFileParsingResults($file)));
+        $this->recipient->notify(new AssistantTranscriptNotification($this->thread, $this->sender));
     }
 }

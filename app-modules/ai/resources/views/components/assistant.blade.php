@@ -482,10 +482,10 @@
                 class="col-span-1 flex flex-col gap-2 overflow-hidden pt-3 lg:col-span-2 lg:pt-6 2xl:col-span-3"
                 x-data="chat({
                     csrfToken: @js(csrf_token()),
-                    retryMessageUrl: @js(route('ai.threads.messages.retry', ['thread' => $this->thread])),
-                    sendMessageUrl: @js(route('ai.threads.messages.send', ['thread' => $this->thread])),
-                    completeResponseUrl: @js(route('ai.threads.messages.complete-response', ['thread' => $this->thread])),
-                    showThreadUrl: @js(route('ai.threads.show', ['thread' => $this->thread])),
+                    retryMessageUrl: @js(route('ai.advisors.threads.messages.retry', ['thread' => $this->thread])),
+                    sendMessageUrl: @js(route('ai.advisors.threads.messages.send', ['thread' => $this->thread])),
+                    completeResponseUrl: @js(route('ai.advisors.threads.messages.complete-response', ['thread' => $this->thread])),
+                    showThreadUrl: @js(route('ai.advisors.threads.show', ['thread' => $this->thread])),
                     userId: @js(auth()->user()->id),
                     threadId: @js($this->thread->id)
                 })"
