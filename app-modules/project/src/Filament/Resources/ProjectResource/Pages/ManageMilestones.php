@@ -94,7 +94,8 @@ class ManageMilestones extends ManageRelatedRecords
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('title'),
-                TextColumn::make('description'),
+                TextColumn::make('description')
+                    ->limit(30),
                 TextColumn::make('status.name')
                     ->label('Status'),
                 TextColumn::make('created_at')
