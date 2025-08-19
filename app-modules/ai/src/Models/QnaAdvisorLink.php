@@ -43,13 +43,16 @@ use Exception;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Auditable as AuditableTrait;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @mixin IdeHelperQnaAdvisorLink
  */
-class QnaAdvisorLink extends BaseModel implements AiFile
+class QnaAdvisorLink extends BaseModel implements AiFile, Auditable
 {
     use SoftDeletes;
+    use AuditableTrait;
 
     protected $fillable = [
         'url',
