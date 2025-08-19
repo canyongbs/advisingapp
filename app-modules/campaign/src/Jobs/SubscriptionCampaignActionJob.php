@@ -58,9 +58,7 @@ class SubscriptionCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
             assert($educatable instanceof Subscribable);
             assert($educatable instanceof Student || $educatable instanceof Prospect);
 
-            if (! is_null($educatable->deleted_at)) {
-                throw new Exception('This educatable has been deleted.');
-            }
+            throw_if(!is_null($educatable->deleted_at), new Exception('This educatable has been deleted.'));
 
             $action = $this->actionEducatable->campaignAction;
 
@@ -74,9 +72,7 @@ class SubscriptionCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
             foreach ($action->data['user_ids'] as $userId) {
                 $user = User::find($userId);
 
-                if (! is_null($user->deleted_at)) {
-                    throw new Exception('This user has been deleted.');
-                }
+                throw_if(!is_null($user->deleted_at), new Exception('This user has been deleted.'));
 
                 $subscriptions[] = resolve(SubscriptionCreate::class)
                     ->handle($user, $educatable);
