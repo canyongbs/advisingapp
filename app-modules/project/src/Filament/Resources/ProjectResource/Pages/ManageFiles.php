@@ -38,7 +38,6 @@ namespace AdvisingApp\Project\Filament\Resources\ProjectResource\Pages;
 
 use AdvisingApp\Project\Filament\Resources\ProjectResource;
 use AdvisingApp\Project\Models\ProjectFile;
-use App\Features\ProjectFileFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -62,16 +61,14 @@ class ManageFiles extends ManageRelatedRecords
 
     protected static string $relationship = 'files';
 
+    public static function canAccess(array $arguments = []): bool
+    {
+        return auth()->user()->can('viewAny', [ProjectFile::class, $arguments['record']]);
+    }
+
     public static function getNavigationLabel(): string
     {
         return 'Files';
-    }
-
-    public static function canAccess(array $arguments = []): bool
-    {
-        $user = auth()->user();
-
-        return ProjectFileFeature::active() && $user->can('viewAny', [ProjectFile::class, $arguments['record']]);
     }
 
     public function form(Form $form): Form
