@@ -66,30 +66,21 @@ class TestAiService implements AiService
     }
 
     /**
+     * @param array<AiFile> $files
      * @param array<string, mixed> $options
      */
-    public function stream(string $prompt, string $content, bool $shouldTrack = true, array $options = []): Closure
+    public function stream(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = []): Closure
     {
         throw new Exception('Plain text streaming is not supported by this service.');
     }
 
-    public function streamRaw(string $prompt, string $content, bool $shouldTrack = true, array $options = []): Closure
+    /**
+     * @param array<AiFile> $files
+     * @param array<string, mixed> $options
+     */
+    public function streamRaw(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = []): Closure
     {
-        if ($shouldTrack) {
-            dispatch(new RecordTrackedEvent(
-                type: TrackedEventType::AiExchange,
-                occurredAt: now(),
-            ));
-        }
-
-        $responseContent = fake()->paragraph();
-
-        return function () use ($responseContent): Generator {
-            // Split into character chunks for testing
-            foreach (str_split($responseContent, 5) as $chunk) {
-                yield $chunk;
-            }
-        };
+        throw new Exception('Plain text streaming is not supported by this service.');
     }
 
     public function createAssistant(AiAssistant $assistant): void {}
@@ -180,7 +171,10 @@ class TestAiService implements AiService
         return true;
     }
 
-    public function isFileReady(AiFile $file): bool
+    /**
+     * @param array<AiFile> $files
+     */
+    public function areFilesReady(array $files): bool
     {
         return true;
     }

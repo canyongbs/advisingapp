@@ -1179,6 +1179,8 @@ namespace AdvisingApp\Ai\Models{
  * @property-read int|null $categories_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\QnaAdvisorFile> $files
  * @property-read int|null $files_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\QnaAdvisorLink> $links
+ * @property-read int|null $links_count
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Ai\Models\QnaAdvisorQuestion> $questions
@@ -1276,6 +1278,38 @@ namespace AdvisingApp\Ai\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperQnaAdvisorFile {}
+}
+
+namespace AdvisingApp\Ai\Models{
+/**
+ * @property string $id
+ * @property string $advisor_id
+ * @property string $url
+ * @property string|null $file_id
+ * @property string|null $parsing_results
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \AdvisingApp\Ai\Models\QnaAdvisor $advisor
+ * @property-read \AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore|null $openAiVectorStore
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorLink newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorLink newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorLink onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorLink query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorLink whereAdvisorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorLink whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorLink whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorLink whereFileId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorLink whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorLink whereParsingResults($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorLink whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorLink whereUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorLink withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|QnaAdvisorLink withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperQnaAdvisorLink {}
 }
 
 namespace AdvisingApp\Ai\Models{
@@ -5058,6 +5092,7 @@ namespace AdvisingApp\Research\Models{
  * @property string|null $deleted_at
  * @property string|null $folder_id
  * @property array<array-key, mixed>|null $links
+ * @property string|null $reference_urls
  * @property \AdvisingApp\Ai\Enums\AiModel|null $research_model
  * @property \Carbon\CarbonImmutable|null $started_at
  * @property array<array-key, mixed>|null $search_queries
@@ -5087,6 +5122,7 @@ namespace AdvisingApp\Research\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereLinks($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereOutline($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereReferenceUrls($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereRemainingOutline($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereResearchModel($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ResearchRequest whereResults($value)

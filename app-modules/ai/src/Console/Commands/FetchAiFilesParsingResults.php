@@ -34,50 +34,43 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Console\Commands;
+namespace AdvisingApp\Ai\Console\Commands;
 
+use AdvisingApp\Ai\Jobs\FetchAiAssistantFileParsingResults;
+use AdvisingApp\Ai\Jobs\FetchQnaAdvisorFileParsingResults;
+use AdvisingApp\Ai\Jobs\FetchQnaAdvisorLinkParsingResults;
 use AdvisingApp\Ai\Models\AiAssistantFile;
-use AdvisingApp\IntegrationOpenAi\Jobs\UploadAssistantFileToVectorStore;
-use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiResponsesService;
+use AdvisingApp\Ai\Models\QnaAdvisorFile;
+use AdvisingApp\Ai\Models\QnaAdvisorLink;
+use App\Features\QnaAdvisorLinksFeature;
 use Illuminate\Console\Command;
-use Illuminate\Database\Eloquent\Builder;
 use Spatie\Multitenancy\Commands\Concerns\TenantAware;
-use Throwable;
 
-class UploadAssistantFilesToVectorStores extends Command
+class FetchAiFilesParsingResults extends Command
 {
     use TenantAware;
 
-    protected $signature = 'integration-open-ai:upload-assistant-files-to-vector-stores {--tenant=*}';
+    protected $signature = 'ai:fetch-files-parsing-results {--tenant=*}';
 
-    protected $description = 'Uploads AI assistant files to a vector stores once they have been parsed.';
+    protected $description = 'Finds AI files that were uploaded in the past hour and do not yet have parsed results.';
 
     public function handle(): void
     {
         AiAssistantFile::query()
-            ->whereNotNull('parsing_results')
-            ->where(fn (Builder $query) => $query
-                ->whereDoesntHave('openAiVectorStore')
-                ->orWhereHas('openAiVectorStore', fn (Builder $query) => $query
-                    ->where('ready_until', '<=', now())
-                    ->orWhereNull('ready_until')
-                    ->orWhereNull('vector_store_id')))
-            ->eachById(function (AiAssistantFile $file) {
-                try {
-                    $service = $file->assistant->model->getService();
+            ->whereNull('parsing_results')
+            ->where('created_at', '>=', now()->subHour())
+            ->eachById(fn (AiAssistantFile $file) => dispatch(new FetchAiAssistantFileParsingResults($file)));
 
-                    if (! ($service instanceof BaseOpenAiResponsesService)) {
-                        return;
-                    }
+        QnaAdvisorFile::query()
+            ->whereNull('parsing_results')
+            ->where('created_at', '>=', now()->subHour())
+            ->eachById(fn (QnaAdvisorFile $file) => dispatch(new FetchQnaAdvisorFileParsingResults($file)));
 
-                    $serviceDeploymentHash = $service->getDeploymentHash();
-
-                    if (is_null($file->openAiVectorStore) || $file->openAiVectorStore->deployment_hash !== $serviceDeploymentHash) {
-                        dispatch(new UploadAssistantFileToVectorStore($file));
-                    }
-                } catch (Throwable $exception) {
-                    report($exception);
-                }
-            });
+        if (QnaAdvisorLinksFeature::active()) {
+            QnaAdvisorLink::query()
+                ->whereNull('parsing_results')
+                ->where('created_at', '>=', now()->subHour())
+                ->eachById(fn (QnaAdvisorLink $link) => dispatch(new FetchQnaAdvisorLinkParsingResults($link)));
+        }
     }
 }

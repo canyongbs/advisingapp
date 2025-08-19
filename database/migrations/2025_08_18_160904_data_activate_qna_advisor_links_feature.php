@@ -34,56 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Jobs;
+use App\Features\QnaAdvisorLinksFeature;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\Ai\Models\AiAssistantFile;
-use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiResponsesService;
-use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
-use Spatie\Multitenancy\Jobs\TenantAware;
-
-class UploadAssistantFileToVectorStore implements ShouldQueue, TenantAware, ShouldBeUnique
-{
-    use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
-    /**
-     * @var int
-     */
-    public $tries = 3;
-
-    public function __construct(
-        protected AiAssistantFile $file,
-    ) {}
-
-    public function handle(): void
+return new class () extends Migration {
+    public function up(): void
     {
-        $service = $this->file->assistant->model->getService();
-
-        if (! ($service instanceof BaseOpenAiResponsesService)) {
-            return;
-        }
-
-        if ($service->isFileReady($this->file)) {
-            return;
-        }
-
-        Log::info("The AI assistant file [{$this->file->getKey()}] is not ready for use yet.");
-
-        $this->release(now()->addMinutes(5));
+        QnaAdvisorLinksFeature::activate();
     }
 
-    public function uniqueId(): string
+    public function down(): void
     {
-        return $this->file->id;
+        QnaAdvisorLinksFeature::deactivate();
     }
-}
+};

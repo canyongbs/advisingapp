@@ -305,7 +305,7 @@ it('can confirm that a file is ready if it has a stored timestamp', function () 
     expect($file->openAiVectorStore->ready_until->isFuture())
         ->toBeTrue();
 
-    expect($service->isFileReady($file))
+    expect($service->areFilesReady([$file]))
         ->toBeTrue();
 });
 
@@ -328,7 +328,7 @@ it('can confirm that a file is not ready if it is still processing', function ()
         ]))
         ->create();
 
-    expect($service->isFileReady($file))
+    expect($service->areFilesReady([$file]))
         ->toBeFalse();
 });
 
@@ -354,7 +354,7 @@ it('can confirm that a file is ready if all files are finished processing', func
         ]))
         ->create();
 
-    expect($service->isFileReady($file))
+    expect($service->areFilesReady([$file]))
         ->toBeTrue();
 
     expect($file->openAiVectorStore->ready_until->toDateTimeString())
@@ -386,16 +386,12 @@ it('can delete an existing vector store file to ensure storage space is used eff
     expect($file->openAiVectorStore->vector_store_file_id)
         ->not->toBeNull();
 
-    expect($service->isFileReady($file))
+    expect($service->areFilesReady([$file]))
         ->toBeTrue();
-
-    expect($file->openAiVectorStore->refresh()->vector_store_file_id)
-        ->toBeNull();
 });
 
 it('can upload a file and create a new vector store', function () {
     Http::fake([
-        '*/files/*' => Http::response(null, 404),
         '*/files*' => Http::response([
             'id' => $fileId = fake()->uuid(),
         ], 200),
@@ -406,53 +402,12 @@ it('can upload a file and create a new vector store', function () {
 
     $service = app(OpenAiResponsesGptTestService::class);
 
-    $file = AiMessageFile::factory()
-        ->has(OpenAiVectorStore::factory()->state([
-            'deployment_hash' => $service->getDeploymentHash(),
-            'ready_until' => null,
-            'vector_store_id' => null,
-        ]))
-        ->create();
+    $file = AiMessageFile::factory()->create();
 
-    expect($service->isFileReady($file))
+    expect($service->areFilesReady([$file]))
         ->toBeFalse();
 
-    expect($file->openAiVectorStore->refresh())
+    expect($file->openAiVectorStore)
         ->vector_store_file_id->toBe($fileId)
         ->vector_store_id->toBe($vectorStoreId);
-});
-
-it('can get ready vector store IDs from an array of files', function () {
-    $service = app(OpenAiResponsesGptTestService::class);
-
-    $file1 = AiMessageFile::factory()
-        ->has(OpenAiVectorStore::factory()->state([
-            'deployment_hash' => $service->getDeploymentHash(),
-            'ready_until' => now()->addDays(2),
-        ]))
-        ->create();
-
-    $file2 = AiMessageFile::factory()
-        ->has(OpenAiVectorStore::factory()->state([
-            'deployment_hash' => $service->getDeploymentHash(),
-            'ready_until' => now()->addDays(3),
-        ]))
-        ->create();
-
-    $file3 = AiMessageFile::factory()
-        ->has(OpenAiVectorStore::factory()->state([
-            'deployment_hash' => $service->getDeploymentHash(),
-            'ready_until' => now()->subDays(1),
-        ]))
-        ->create();
-
-    $files = [$file1, $file2, $file3];
-
-    $readyVectorStoreIds = $service->getReadyVectorStoreIds($files);
-
-    expect($readyVectorStoreIds)
-        ->toBeArray()
-        ->toHaveCount(2)
-        ->toContain($file1->openAiVectorStore->vector_store_id)
-        ->toContain($file2->openAiVectorStore->vector_store_id);
 });

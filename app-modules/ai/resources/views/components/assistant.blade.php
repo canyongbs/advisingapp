@@ -539,16 +539,10 @@
                 @php
                     $isInstitutionalAdvisor = $this->thread->assistant->isDefault();
                     $hasMessages = count($this->thread->messages) > 0;
-                    $shouldReverse = $isInstitutionalAdvisor && $hasMessages;
                 @endphp
 
                 <div
-                    class="{{ $shouldReverse ? 'flex-col-reverse' : 'flex-col' }} flex flex-1 overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800">
-
-                    @if (!$hasMessages && $isInstitutionalAdvisor)
-                        @livewire('promptlibrarytabs', ['thread' => $this->thread, 'isSmartPromptsTypePreselected' => true], key('prompt-library-tabs-' . $this->thread->assistant->id))
-                    @endif
-
+                    class="flex flex-1 flex-col-reverse overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800">
                     <div
                         class="bg-danger-100 px-4 py-2 dark:bg-danger-900"
                         x-cloak
@@ -662,6 +656,12 @@
                             </div>
                         </template>
                     </div>
+
+                    @if (!$hasMessages && $isInstitutionalAdvisor)
+                        <div x-show="! isLoading">
+                            @livewire('promptlibrarytabs', ['thread' => $this->thread, 'isSmartPromptsTypePreselected' => true], key('prompt-library-tabs-' . $this->thread->assistant->id))
+                        </div>
+                    @endif
                 </div>
                 @if (!$this->thread->assistant->archived_at)
                     <form x-on:submit.prevent="sendMessage()">
@@ -672,13 +672,13 @@
 
                                 @foreach ($this->getFiles() as $file)
                                     <x-filament::badge
-                                        :tooltip="!$this->isFileReady($file)
+                                        :tooltip="$this->isProcessingFiles
                                             ? 'This file is currently being parsed'
                                             : null"
                                         wire:target="removeUploadedFile('{{ $file->getKey() }}')"
                                     >
                                         <span class="flex items-center gap-1">
-                                            @if (!$this->isFileReady($file))
+                                            @if ($this->isProcessingFiles)
                                                 <x-filament::loading-indicator
                                                     class="h-4 w-4 shrink-0"
                                                     wire:loading.remove

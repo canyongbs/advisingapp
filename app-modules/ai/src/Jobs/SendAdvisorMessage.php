@@ -72,8 +72,12 @@ class SendAdvisorMessage implements ShouldQueue
             $aiService = $this->advisor->model->getService();
 
             $stream = $aiService->streamRaw(
-                $getQnaAdvisorInstructions->execute($this->advisor),
-                $this->content,
+                prompt: $getQnaAdvisorInstructions->execute($this->advisor),
+                content: $this->content,
+                files: [
+                    ...$this->advisor->files()->whereNotNull('parsing_results')->get()->all(),
+                    ...$this->advisor->links()->whereNotNull('parsing_results')->get()->all(),
+                ],
                 options: $this->options,
             );
 

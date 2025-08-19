@@ -34,22 +34,45 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models\Contracts;
+namespace AdvisingApp\IntegrationOpenAi\Console\Commands;
 
-interface AiFile
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\IntegrationOpenAi\Jobs\UploadAssistantFilesToVectorStore;
+use AdvisingApp\IntegrationOpenAi\Jobs\UploadQnaAdvisorFilesToVectorStore;
+use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Builder;
+use Spatie\Multitenancy\Commands\Concerns\TenantAware;
+use Throwable;
+
+class UploadFilesToVectorStores extends Command
 {
-    public function getKey(): string;
+    use TenantAware;
 
-    public function getName(): ?string;
+    protected $signature = 'integration-open-ai:upload-files-to-vector-stores {--tenant=*}';
 
-    public function getMimeType(): ?string;
+    protected $description = 'Uploads AI files to a vector stores once they have been parsed.';
 
-    public function getFileId(): ?string;
+    public function handle(): void
+    {
+        AiAssistant::query()
+            ->whereHas('files')
+            ->eachById(function (AiAssistant $assistant) {
+                try {
+                    dispatch(new UploadAssistantFilesToVectorStore($assistant));
+                } catch (Throwable $exception) {
+                    report($exception);
+                }
+            });
 
-    public function getParsingResults(): ?string;
-
-    /**
-     * @deprecated Non-responses-API OpenAI services only.
-     */
-    public function getTemporaryUrl(): ?string;
+        QnaAdvisor::query()
+            ->where(fn (Builder $query) => $query->whereHas('files')->orWhereHas('links'))
+            ->eachById(function (QnaAdvisor $advisor) {
+                try {
+                    dispatch(new UploadQnaAdvisorFilesToVectorStore($advisor));
+                } catch (Throwable $exception) {
+                    report($exception);
+                }
+            });
+    }
 }

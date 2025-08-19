@@ -130,6 +130,14 @@ class QnaAdvisor extends BaseModel implements HasMedia, Auditable
         return $this->hasMany(QnaAdvisorFile::class, 'advisor_id');
     }
 
+    /**
+     * @return HasMany<QnaAdvisorLink, $this>
+     */
+    public function links(): HasMany
+    {
+        return $this->hasMany(QnaAdvisorLink::class, 'advisor_id');
+    }
+
     public function getInstructionsCacheKey(): string
     {
         return 'qna-advisor-' . $this->getKey() . '-instructions';
