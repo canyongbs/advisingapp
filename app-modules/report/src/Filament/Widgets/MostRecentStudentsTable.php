@@ -99,7 +99,6 @@ class MostRecentStudentsTable extends BaseWidget
                     )
                     ->orderBy('created_at_source', 'desc')
                     ->take(100);
-
             })
             ->columns([
                 TextColumn::make(Student::displayNameKey())
