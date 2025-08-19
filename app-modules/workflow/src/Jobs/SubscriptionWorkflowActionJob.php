@@ -39,12 +39,9 @@ namespace AdvisingApp\Workflow\Jobs;
 use AdvisingApp\Notification\Actions\SubscriptionCreate;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Notification\Models\Subscription;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Workflow\Models\WorkflowRunStepRelated;
 use AdvisingApp\Workflow\Models\WorkflowSubscriptionDetails;
 use App\Models\User;
-use Exception;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
@@ -58,10 +55,7 @@ class SubscriptionWorkflowActionJob extends ExecuteWorkflowActionJob
             $educatable = $this->workflowRunStep->workflowRun->related;
 
             assert($educatable instanceof Subscribable);
-            assert($educatable instanceof Student || $educatable instanceof Prospect);
-
-            throw_if(! is_null($educatable->deleted_at), new Exception('This educatable has been deleted.'));
-
+            
             $details = $this->workflowRunStep->details;
 
             assert($details instanceof WorkflowSubscriptionDetails);
@@ -74,12 +68,8 @@ class SubscriptionWorkflowActionJob extends ExecuteWorkflowActionJob
             $subscriptions = [];
 
             foreach ($details->user_ids as $userId) {
-                $user = User::find($userId);
-
-                throw_if(! is_null($user->deleted_at), new Exception('This user has been deleted.'));
-
                 $subscriptions[] = resolve(SubscriptionCreate::class)
-                    ->handle($user, $educatable);
+                    ->handle(User::find($userId), $educatable);
             }
 
             foreach ($subscriptions as $subscription) {
