@@ -200,7 +200,6 @@ class StudentsTable
                                     HasMaxOperatorWithEnrollmentSemester::class,
                                     HasMinOperatorWithEnrollmentSemester::class,
                                     IsEmptyOperatorWithEnrollmentSemester::class,
-                                    IsRelatedToOperator::class,
                                 ]
                             )
                             ->attributeLabel(fn (array $settings): string => Str::plural('enrollment', $settings['count']))
