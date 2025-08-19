@@ -51,7 +51,6 @@ use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
-use App\Features\EngagementSettingsFeature;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Model;
@@ -84,7 +83,7 @@ class EngagementNotification extends Notification implements ShouldQueue, HasBef
         return MailMessage::make()
             ->to($this->engagement->recipient_route)
             ->when(
-                EngagementSettingsFeature::active() && app(EngagementSettings::class)->are_dynamic_engagements_enabled && $this->engagement->user,
+                app(EngagementSettings::class)->are_dynamic_engagements_enabled && $this->engagement->user,
                 fn (MailMessage $message) => $message->from(name: $this->engagement->user->name),
             )
             ->subject(strip_tags($this->engagement->getSubject()))
