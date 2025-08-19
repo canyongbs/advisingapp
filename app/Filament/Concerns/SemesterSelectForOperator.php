@@ -83,13 +83,13 @@ trait SemesterSelectForOperator
             $semesters = [$semesters];
         }
 
-        $semesters = array_values(array_filter($semesters, fn ($s) => $s !== null && $s !== ''));
-        $lowerSemesters = array_map(fn ($s) => mb_strtolower($s), $semesters);
+        $semesters = array_values(array_filter($semesters, fn ($semester) => $semester !== null && $semester !== ''));
+        $lowerSemesters = array_map(fn ($semester) => mb_strtolower($semester), $semesters);
 
-        return $query->whereHas($relationshipName, function (Builder $q) use ($lowerSemesters) {
+        return $query->whereHas($relationshipName, function (Builder $query) use ($lowerSemesters) {
             if (! empty($lowerSemesters)) {
                 $placeholders = implode(',', array_fill(0, count($lowerSemesters), '?'));
-                $q->whereRaw("LOWER(name) IN ({$placeholders})", $lowerSemesters);
+                $query->whereRaw("LOWER(name) IN ({$placeholders})", $lowerSemesters);
             }
         }, '>=', $count);
     }
