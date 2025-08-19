@@ -34,37 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Database\Factories;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\StudentDataModel\Models\Program;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Factories\Factory;
-
-/**
- * @extends Factory<Program>
- */
-class ProgramFactory extends Factory
-{
-    public function definition(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [
-            'sisid' => Student::factory(),
-            'acad_career' => $this->faker->randomElement(['NC', 'CRED']),
-            'division' => $this->faker->randomElement(['ABC01', 'ABD02', 'ABE03']),
-            'acad_plan' => json_encode([
-                'major' => $this->faker->words(3),
-                'minor' => $this->faker->words(3),
-            ]),
-            'prog_status' => 'AC',
-            'cum_gpa' => $this->faker->randomFloat(3, 0, 4),
-            'semester' => $this->faker->numerify('####'),
-            'descr' => $this->faker->words(2, true),
-            'foi' => $this->faker->randomElement(['', 'FOI ' . $this->faker->words(2, true)]),
-            'change_dt' => $this->faker->dateTime(),
-            'declare_dt' => $this->faker->dateTime(),
-            'graduation_dt' => $this->faker->dateTime(),
-            'conferred_dt' => $this->faker->dateTime(),
-            'catalog_year' => $this->faker->year(),
-        ];
+        Schema::table('programs', function (Blueprint $table) {
+            $table->string('catalog_year')->nullable();
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('programs', function (Blueprint $table) {
+            $table->dropColumn('catalog_year');
+        });
+    }
+};

@@ -5588,6 +5588,7 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property \Illuminate\Support\Carbon|null $declare_dt
  * @property \Illuminate\Support\Carbon|null $graduation_dt
  * @property \Illuminate\Support\Carbon|null $conferred_dt
+ * @property string|null $catalog_year
  * @property-read \AdvisingApp\StudentDataModel\Models\Student|null $student
  * @method static \AdvisingApp\StudentDataModel\Database\Factories\ProgramFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Program newModelQuery()
@@ -5596,6 +5597,7 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Program query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Program whereAcadCareer($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Program whereAcadPlan($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Program whereCatalogYear($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Program whereChangeDt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Program whereConferredDt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Program whereCumGpa($value)

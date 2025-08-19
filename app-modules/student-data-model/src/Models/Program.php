@@ -84,6 +84,7 @@ class Program extends Model
         'declare_dt',
         'graduation_dt',
         'conferred_dt',
+        'catalog_year',
     ];
 
     protected $casts = [

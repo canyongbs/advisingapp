@@ -40,6 +40,7 @@ use AdvisingApp\StudentDataModel\Filament\Imports\ProgramImporter;
 use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
+use App\Features\CatalogYearFeature;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -137,6 +138,10 @@ class ProgramsRelationManager extends RelationManager
                     ->dateTime()
                     ->placeholder('-')
                     ->visible($sisSystem?->hasProgramsGraduationDt() ?? true),
+                TextEntry::make('catalog_year')
+                    ->label('Catalog Year')
+                    ->placeholder('-')
+                    ->visible(CatalogYearFeature::active()),
                 TextEntry::make('conferred_dt')
                     ->label('Conferred Date')
                     ->dateTime()
@@ -172,6 +177,10 @@ class ProgramsRelationManager extends RelationManager
                     ->label('Graduation Date')
                     ->dateTime()
                     ->visible($sisSystem?->hasProgramsGraduationDt() ?? true),
+                TextColumn::make('catalog_year')
+                    ->label('Catalog Year')
+                    ->placeholder('N/A')
+                    ->visible(CatalogYearFeature::active()),
             ])
             ->actions([
                 ViewAction::make(),
@@ -282,6 +291,12 @@ class ProgramsRelationManager extends RelationManager
                     ->closeOnDateSelection()
                     ->format('Y-m-d H:i:s')
                     ->displayFormat('Y-m-d H:i:s'),
+                DateTimePicker::make('graduation_dt')
+                    ->label('Graduration Date')
+                    ->closeOnDateSelection(),
+                TextInput::make('catalog_year')
+                    ->label('Catalog Year')
+                    ->visible(CatalogYearFeature::active()),
             ]);
     }
 }

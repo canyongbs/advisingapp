@@ -34,37 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Database\Factories;
+namespace App\Features;
 
-use AdvisingApp\StudentDataModel\Models\Program;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Support\AbstractFeatureFlag;
 
-/**
- * @extends Factory<Program>
- */
-class ProgramFactory extends Factory
+class CatalogYearFeature extends AbstractFeatureFlag
 {
-    public function definition(): array
+    public function resolve(mixed $scope): mixed
     {
-        return [
-            'sisid' => Student::factory(),
-            'acad_career' => $this->faker->randomElement(['NC', 'CRED']),
-            'division' => $this->faker->randomElement(['ABC01', 'ABD02', 'ABE03']),
-            'acad_plan' => json_encode([
-                'major' => $this->faker->words(3),
-                'minor' => $this->faker->words(3),
-            ]),
-            'prog_status' => 'AC',
-            'cum_gpa' => $this->faker->randomFloat(3, 0, 4),
-            'semester' => $this->faker->numerify('####'),
-            'descr' => $this->faker->words(2, true),
-            'foi' => $this->faker->randomElement(['', 'FOI ' . $this->faker->words(2, true)]),
-            'change_dt' => $this->faker->dateTime(),
-            'declare_dt' => $this->faker->dateTime(),
-            'graduation_dt' => $this->faker->dateTime(),
-            'conferred_dt' => $this->faker->dateTime(),
-            'catalog_year' => $this->faker->year(),
-        ];
+        return false;
     }
 }
