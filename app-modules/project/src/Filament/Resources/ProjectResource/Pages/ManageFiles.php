@@ -61,6 +61,11 @@ class ManageFiles extends ManageRelatedRecords
 
     protected static string $relationship = 'files';
 
+    public static function canAccess(array $arguments = []): bool
+    {
+        return auth()->user()->can('viewAny', [ProjectFile::class, $arguments['record']]);
+    }
+
     public static function getNavigationLabel(): string
     {
         return 'Files';
