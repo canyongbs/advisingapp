@@ -167,6 +167,10 @@ class ResourceHubCategoryPolicy implements PerformsChecksBeforeAuthorization
             );
         }
 
+        if (count($resourceHubCategory->resourceHubArticles) !== 0) {
+            return Response::deny('You do not have permissions to delete this resource hub category.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$resourceHubCategory->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this resource hub category.'

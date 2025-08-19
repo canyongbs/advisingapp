@@ -167,6 +167,10 @@ class ResourceHubStatusPolicy implements PerformsChecksBeforeAuthorization
             );
         }
 
+        if (count($resourceHubStatus->resourceHubArticles) !== 0) {
+            return Response::deny('You do not have permissions to delete this resource hub status.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ["product_admin.{$resourceHubStatus->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this resource hub status.'
