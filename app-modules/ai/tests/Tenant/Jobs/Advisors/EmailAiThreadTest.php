@@ -34,26 +34,43 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Actions;
-
+use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiModel;
+use AdvisingApp\Ai\Jobs\Advisors\EmailAiThread;
 use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Notifications\AssistantTranscriptNotification;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Models\User;
+use Illuminate\Support\Facades\Notification;
 
-class ResetAiServiceIdsForModel
-{
-    public function __invoke(AiModel $model): void
-    {
-        AiAssistant::query()
-            ->where('model', $model)
-            ->update([
-                'assistant_id' => null,
-            ]);
+it('can send a notification containing a thread transcript', function () {
+    Notification::fake();
 
-        AiThread::query()
-            ->whereRelation('assistant', 'model', $model)
-            ->update([
-                'thread_id' => null,
-            ]);
-    }
-}
+    $sender = User::factory()->licensed(LicenseType::cases())->create();
+    $recipient = User::factory()->licensed(LicenseType::cases())->create();
+
+    $assistant = AiAssistant::factory()->create([
+        'application' => AiAssistantApplication::Test,
+        'is_default' => true,
+        'model' => AiModel::Test,
+    ]);
+
+    $thread = AiThread::factory()
+        ->for($assistant, 'assistant')
+        ->has(AiMessage::factory()->count(3), 'messages')
+        ->for($sender, 'user')
+        ->create();
+
+    dispatch(new EmailAiThread($thread, $sender, $recipient));
+
+    Notification::assertSentTo(
+        $recipient,
+        function (AssistantTranscriptNotification $notification) use ($thread) {
+            $reflectionClass = new ReflectionClass($notification);
+
+            return $reflectionClass->getProperty('thread')->getValue($notification)->is($thread);
+        }
+    );
+});

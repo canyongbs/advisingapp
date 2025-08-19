@@ -39,7 +39,7 @@ namespace AdvisingApp\Ai\Filament\Pages;
 use AdvisingApp\Ai\Actions\ResetAiServiceIdsForModel;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
-use AdvisingApp\Ai\Jobs\ReInitializeAiModel;
+use AdvisingApp\Ai\Jobs\Advisors\ReInitializeAiModel;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use App\Features\Gpt5AndMiniAndNanoFeature;
 use App\Filament\Clusters\GlobalArtificialIntelligence;
@@ -419,101 +419,5 @@ class ManageAiIntegrationsSettings extends SettingsPage
                             ]),
                     ]),
             ]);
-    }
-
-    public function getSaveFormAction(): Action
-    {
-        return parent::getSaveFormAction()
-            ->submit(null)
-            ->requiresConfirmation()
-            ->modalHeading('Sync all chats to this new service?')
-            ->modalDescription('If you are moving to a new account, you will need to sync all the data to the new service to minimize disruption. Advising App can do this for you, but if you just want to save the settings and do it yourself, you can choose to do so.')
-            ->modalWidth(MaxWidth::TwoExtraLarge)
-            ->modalSubmitActionLabel('Save and sync all chats')
-            ->modalHidden(function (AiIntegrationsSettings $originalSettings) {
-                $newSettings = $this->form->getRawState();
-
-                if ($originalSettings->open_ai_gpt_4o_base_uri !== $newSettings['open_ai_gpt_4o_base_uri']) {
-                    return false;
-                }
-
-                if ($originalSettings->open_ai_gpt_4o_mini_base_uri !== $newSettings['open_ai_gpt_4o_mini_base_uri']) {
-                    return false;
-                }
-
-                if ($originalSettings->open_ai_gpt_o1_mini_base_uri !== $newSettings['open_ai_gpt_o1_mini_base_uri']) {
-                    return false;
-                }
-
-                if ($originalSettings->open_ai_gpt_o3_base_uri !== ($newSettings['open_ai_gpt_o3_base_uri'] ?? null)) {
-                    return false;
-                }
-
-                if ($originalSettings->open_ai_gpt_o3_mini_base_uri !== $newSettings['open_ai_gpt_o3_mini_base_uri']) {
-                    return false;
-                }
-
-                if ($originalSettings->open_ai_gpt_41_mini_base_uri !== $newSettings['open_ai_gpt_41_mini_base_uri']) {
-                    return false;
-                }
-
-                if ($originalSettings->open_ai_gpt_41_nano_base_uri !== $newSettings['open_ai_gpt_41_nano_base_uri']) {
-                    return false;
-                }
-
-                if ($originalSettings->open_ai_gpt_o4_mini_base_uri !== $newSettings['open_ai_gpt_o4_mini_base_uri']) {
-                    return false;
-                }
-
-                if ($originalSettings->open_ai_gpt_5_base_uri !== $newSettings['open_ai_gpt_5_base_uri']) {
-                    return false;
-                }
-
-                if ($originalSettings->open_ai_gpt_5_mini_base_uri !== $newSettings['open_ai_gpt_5_mini_base_uri']) {
-                    return false;
-                }
-
-                if ($originalSettings->open_ai_gpt_5_nano_base_uri !== $newSettings['open_ai_gpt_5_nano_base_uri']) {
-                    return false;
-                }
-
-                return true;
-            })
-            ->extraModalFooterActions([
-                Action::make('justSave')
-                    ->label('Just save the settings')
-                    ->color('gray')
-                    ->action(fn () => $this->save())
-                    ->cancelParentActions(),
-            ])
-            ->action(function (AiIntegrationsSettings $originalSettings, ResetAiServiceIdsForModel $resetAiServiceIds) {
-                $newSettings = $this->form->getState();
-
-                $changedModels = [
-                    ...(($originalSettings->open_ai_gpt_4o_base_uri !== $newSettings['open_ai_gpt_4o_base_uri']) ? [AiModel::OpenAiGpt4o] : []),
-                    ...(($originalSettings->open_ai_gpt_4o_mini_base_uri !== $newSettings['open_ai_gpt_4o_mini_base_uri']) ? [AiModel::OpenAiGpt4o] : []),
-                    ...(($originalSettings->open_ai_gpt_o1_mini_base_uri !== $newSettings['open_ai_gpt_o1_mini_base_uri']) ? [AiModel::OpenAiGptO1Mini] : []),
-                    ...(($originalSettings->open_ai_gpt_o3_base_uri !== ($newSettings['open_ai_gpt_o3_base_uri'] ?? null)) ? [AiModel::OpenAiGptO3] : []),
-                    ...(($originalSettings->open_ai_gpt_o3_mini_base_uri !== $newSettings['open_ai_gpt_o3_mini_base_uri']) ? [AiModel::OpenAiGptO3Mini] : []),
-                    ...(($originalSettings->open_ai_gpt_41_mini_base_uri !== $newSettings['open_ai_gpt_41_mini_base_uri']) ? [AiModel::OpenAiGpt41Mini] : []),
-                    ...(($originalSettings->open_ai_gpt_41_nano_base_uri !== $newSettings['open_ai_gpt_41_nano_base_uri']) ? [AiModel::OpenAiGpt41Nano] : []),
-                    ...(($originalSettings->open_ai_gpt_o4_mini_base_uri !== $newSettings['open_ai_gpt_o4_mini_base_uri']) ? [AiModel::OpenAiGptO4Mini] : []),
-                    ...(($originalSettings->open_ai_gpt_5_base_uri !== $newSettings['open_ai_gpt_5_base_uri']) ? [AiModel::OpenAiGpt5] : []),
-                    ...(($originalSettings->open_ai_gpt_5_mini_base_uri !== $newSettings['open_ai_gpt_5_mini_base_uri']) ? [AiModel::OpenAiGpt5Mini] : []),
-                    ...(($originalSettings->open_ai_gpt_5_nano_base_uri !== $newSettings['open_ai_gpt_5_nano_base_uri']) ? [AiModel::OpenAiGpt5Nano] : []),
-                ];
-
-                DB::transaction(function () use ($changedModels, $resetAiServiceIds) {
-                    foreach ($changedModels as $changedModel) {
-                        $resetAiServiceIds($changedModel);
-                    }
-                });
-
-                $this->save();
-
-                foreach ($changedModels as $changedModel) {
-                    dispatch(app(ReInitializeAiModel::class, ['model' => $changedModel->value]));
-                }
-            });
     }
 }

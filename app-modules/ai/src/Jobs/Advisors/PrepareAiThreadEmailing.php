@@ -34,13 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Jobs;
+namespace AdvisingApp\Ai\Jobs\Advisors;
 
 use AdvisingApp\Ai\Enums\AiThreadShareTarget;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Team\Models\Team;
 use App\Models\User;
-use Filament\Notifications\Notification;
 use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -74,7 +73,7 @@ class PrepareAiThreadEmailing implements ShouldQueue
 
                     $recipientName = $this->sender->is($recipient) ? 'yourself' : $recipient->name;
 
-                    Notification::make()
+                    FilamentNotification::make()
                         ->success()
                         ->title("You emailed an AI chat to {$recipientName}.")
                         ->sendToDatabase($this->sender);

@@ -36,20 +36,23 @@
 
 use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Jobs\EmailAiThread;
+use AdvisingApp\Ai\Jobs\Advisors\CloneAiThread;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Notifications\AssistantTranscriptNotification;
+use AdvisingApp\Ai\Models\AiThreadFolder;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
+use Filament\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Notification;
 
-it('can send a notification containing a thread transcript', function () {
+it('can clone a thread and its messages', function () {
     Notification::fake();
 
     $sender = User::factory()->licensed(LicenseType::cases())->create();
     $recipient = User::factory()->licensed(LicenseType::cases())->create();
+
+    expect($recipient->aiThreads)->toHaveCount(0);
 
     $assistant = AiAssistant::factory()->create([
         'application' => AiAssistantApplication::Test,
@@ -57,20 +60,46 @@ it('can send a notification containing a thread transcript', function () {
         'model' => AiModel::Test,
     ]);
 
+    $folder = AiThreadFolder::factory()
+        ->for($sender, 'user')
+        ->create([
+            'application' => AiAssistantApplication::PersonalAssistant,
+        ]);
+
     $thread = AiThread::factory()
         ->for($assistant, 'assistant')
+        ->for($folder, 'folder')
         ->has(AiMessage::factory()->count(3), 'messages')
         ->for($sender, 'user')
         ->create();
 
-    dispatch(new EmailAiThread($thread, $sender, $recipient));
+    $originalMessages = $thread->messages;
+    dispatch(new CloneAiThread($thread, $sender, $recipient));
 
-    Notification::assertSentTo(
-        $recipient,
-        function (AssistantTranscriptNotification $notification) use ($thread) {
-            $reflectionClass = new ReflectionClass($notification);
+    $recipient->refresh();
+    $clonedThread = $recipient->aiThreads()->latest()->first();
+    $clonedMessages = $clonedThread->messages;
 
-            return $reflectionClass->getProperty('thread')->getValue($notification)->is($thread);
-        }
-    );
+    expect($clonedThread)->not->toBeNull();
+    expect($clonedThread->getKey())->not->toBe($thread->getKey());
+
+    expect($clonedThread->name)->toBe($thread->name);
+    expect($clonedThread->assistant_id)->toBe($thread->assistant_id);
+    expect($thread->folder_id)->not->toBeNull();
+    expect($clonedThread->folder_id)->toBeNull();
+    expect($clonedThread->folder_id)->not->toBe($thread->folder_id);
+    expect($clonedThread->user_id)->toBe($recipient->getKey());
+
+    expect($clonedMessages)->toHaveCount($originalMessages->count());
+
+    foreach ($originalMessages as $index => $originalMessage) {
+        $clonedMessage = $clonedMessages[$index];
+        expect($clonedMessage->content)->toBe($originalMessage->content);
+    }
+
+    expect($clonedThread->messages)->toHaveCount(3);
+    $thread->refresh();
+    expect($thread->cloned_count)->toBe(1);
+
+    Notification::assertSentTo($recipient, DatabaseNotification::class);
 });

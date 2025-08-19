@@ -34,13 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Jobs;
+namespace AdvisingApp\Ai\Jobs\Advisors;
 
 use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Assistant\Filament\Pages\InstitutionalAdvisor;
+use AdvisingApp\Ai\Notifications\AssistantTranscriptNotification;
 use App\Models\User;
-use Filament\Notifications\Actions\Action;
-use Filament\Notifications\Notification;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -48,10 +46,8 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\DB;
-use Throwable;
 
-class CloneAiThread implements ShouldQueue
+class EmailAiThread implements ShouldQueue
 {
     use Batchable;
     use Dispatchable;
@@ -72,49 +68,6 @@ class CloneAiThread implements ShouldQueue
 
     public function handle(): void
     {
-        try {
-            DB::beginTransaction();
-
-            $threadReplica = $this->thread->replicate(except: ['id', 'thread_id', 'folder_id', 'saved_at', 'emailed_count', 'cloned_count']);
-            $threadReplica->saved_at = now();
-
-            $threadReplica->user()->associate($this->recipient);
-            $threadReplica->save();
-
-            foreach ($this->thread->messages as $message) {
-                $messageReplica = $message->replicate(['id', 'message_id']);
-                $messageReplica->thread()->associate($threadReplica);
-                $messageReplica->save();
-            }
-
-            $aiService = $threadReplica->assistant->model->getService();
-
-            $threadReplica->locked_at = now();
-            $threadReplica->save();
-
-            $this->thread->cloned_count = $this->thread->cloned_count + 1;
-            $this->thread->save();
-
-            $aiService->ensureAssistantAndThreadExists($threadReplica);
-
-            $threadReplica->locked_at = null;
-            $threadReplica->save();
-
-            Notification::make()
-                ->title('An AI chat has been cloned to you.')
-                ->success()
-                ->actions([
-                    Action::make('view')
-                        ->link()
-                        ->url(InstitutionalAdvisor::getUrl(['thread' => $threadReplica->getKey()])),
-                ])
-                ->sendToDatabase($this->recipient);
-
-            DB::commit();
-        } catch (Throwable $e) {
-            DB::rollBack();
-
-            throw $e;
-        }
+        $this->recipient->notify(new AssistantTranscriptNotification($this->thread, $this->sender));
     }
 }

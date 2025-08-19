@@ -148,21 +148,8 @@ class ManageAiICustomAdvisorSettings extends SettingsPage
                         return;
                     }
 
-                    $modelDeploymentIsShared = $assistant->model->isSharedDeployment(AiModel::parse($data['preselected_model']));
-
                     $assistant->model = $data['preselected_model'];
-
-                    if (! $modelDeploymentIsShared) {
-                        app(ResetAiServiceIdsForAssistant::class)(
-                            $assistant,
-                        );
-                    }
-
                     $assistant->save();
-
-                    if (! $modelDeploymentIsShared) {
-                        app(ReInitializeAiServiceAssistant::class)($assistant);
-                    }
                 });
         }
     }

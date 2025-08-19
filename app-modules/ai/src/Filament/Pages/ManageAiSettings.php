@@ -166,55 +166,6 @@ class ManageAiSettings extends SettingsPage
             ->disabled(! auth()->user()->isSuperAdmin());
     }
 
-    public function getSaveFormAction(): Action
-    {
-        return parent::getSaveFormAction()
-            ->submit(null)
-            ->requiresConfirmation()
-            ->modalHeading('Sync all chats to this new service?')
-            ->modalDescription('If you are moving to a new account, you will need to sync all the data to the new service to minimize disruption. Advising App can do this for you, but if you just want to save the settings and do it yourself, you can choose to do so.')
-            ->modalWidth(MaxWidth::ThreeExtraLarge)
-            ->modalSubmitActionLabel('Save and sync all chats')
-            ->modalHidden(function () {
-                $newModelValue = $this->form->getRawState()['defaultAssistant']['model'] ?? null;
-
-                if (blank($newModelValue)) {
-                    return true;
-                }
-
-                $newModel = AiModel::parse($newModelValue);
-
-                return $this->defaultAssistant->model->isSharedDeployment($newModel);
-            })
-            ->extraModalFooterActions([
-                Action::make('justSave')
-                    ->label('Just save the settings')
-                    ->color('gray')
-                    ->action(fn () => $this->save())
-                    ->cancelParentActions(),
-            ])
-            ->action(function (ResetAiServiceIdsForAssistant $resetAiServiceIds, ReInitializeAiServiceAssistant $reInitializeAiServiceAssistant) {
-                $newModelValue = $this->form->getRawState()['defaultAssistant']['model'] ?? null;
-                $newModel = filled($newModelValue) ? AiModel::parse($newModelValue) : null;
-
-                $modelDeploymentIsShared = $newModel ? $this->defaultAssistant->model->isSharedDeployment($newModel) : true;
-
-                if (! $modelDeploymentIsShared) {
-                    $resetAiServiceIds($this->defaultAssistant);
-
-                    $state = $this->form->getRawState();
-                    $state['defaultAssistant']['assistant_id'] = null;
-                    $this->form->fill($state, false, false);
-                }
-
-                $this->save();
-
-                if (! $modelDeploymentIsShared) {
-                    $reInitializeAiServiceAssistant($this->defaultAssistant);
-                }
-            });
-    }
-
     public function save(): void
     {
         if (! auth()->user()->isSuperAdmin()) {
