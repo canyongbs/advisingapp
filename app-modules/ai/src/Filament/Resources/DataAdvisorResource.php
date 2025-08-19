@@ -36,22 +36,16 @@
 
 namespace AdvisingApp\Ai\Filament\Resources;
 
-use Filament\Forms;
-use Filament\Tables;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
-use AdvisingApp\Ai\Models\DataAdvisor;
-use Filament\Tables\Actions\EditAction;
-use Illuminate\Database\Eloquent\Builder;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use AdvisingApp\Ai\Filament\Resources\DataAdvisorResource\Pages;
-use AdvisingApp\Ai\Filament\Resources\DataAdvisorResource\RelationManagers;
+use AdvisingApp\Ai\Filament\Resources\DataAdvisorResource\Pages\CreateDataAdvisor;
 use AdvisingApp\Ai\Filament\Resources\DataAdvisorResource\Pages\EditDataAdvisor;
 use AdvisingApp\Ai\Filament\Resources\DataAdvisorResource\Pages\ListDataAdvisors;
-use AdvisingApp\Ai\Filament\Resources\DataAdvisorResource\Pages\CreateDataAdvisor;
+use AdvisingApp\Ai\Models\DataAdvisor;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Table;
 
 class DataAdvisorResource extends Resource
 {
@@ -67,7 +61,6 @@ class DataAdvisorResource extends Resource
     {
         return $form
             ->schema([
-                //
             ]);
     }
 
@@ -75,10 +68,8 @@ class DataAdvisorResource extends Resource
     {
         return $table
             ->columns([
-                //
             ])
             ->filters([
-                //
             ])
             ->actions([
                 EditAction::make(),

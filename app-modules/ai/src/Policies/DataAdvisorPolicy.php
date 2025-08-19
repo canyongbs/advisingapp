@@ -84,7 +84,7 @@ class DataAdvisorPolicy
 
     public function restore(Authenticatable $authenticatable, DataAdvisor $dataAdvisor): Response
     {
-         return $authenticatable->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ["ai-data-advisors.{$dataAdvisor->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore this data advisor.'
         );
@@ -92,7 +92,7 @@ class DataAdvisorPolicy
 
     public function forceDelete(Authenticatable $authenticatable, DataAdvisor $dataAdvisor): Response
     {
-         return $authenticatable->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ["ai-data-advisors.{$dataAdvisor->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this data advisor.'
         );
