@@ -48,10 +48,8 @@ trait SemesterSelectForOperator
         return Select::make('semesters')
             ->label('Semester')
             ->options(static::getSemesterOptions())
-            ->placeholder('Any semester')
             ->searchable()
-            ->multiple()
-            ->preload();
+            ->multiple();
     }
 
     /**
