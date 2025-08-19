@@ -69,7 +69,7 @@ document.addEventListener('alpine:init', () => {
                 this.messages = thread.messages;
                 this.users = thread.users;
 
-                Echo.private(`advisor-thread-${thread.id}`)
+                Echo.private(`advisor-thread-${threadId}`)
                     .listen('.advisor-message.chunk', (event) => {
                         this.error = null;
                         this.isRateLimited = false;
