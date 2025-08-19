@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Jobs;
+namespace AdvisingApp\Ai\Jobs\QnaAdvisors;
 
 use AdvisingApp\Ai\Actions\GetQnaAdvisorInstructions;
 use AdvisingApp\Ai\Events\QnaAdvisors\QnaAdvisorMessageChunk;
@@ -47,7 +47,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Throwable;
 
-class SendAdvisorMessage implements ShouldQueue
+class SendQnaAdvisorMessage implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;

@@ -34,19 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Jobs;
+namespace AdvisingApp\Ai\Jobs\QnaAdvisors;
 
-use AdvisingApp\Ai\Actions\ReInitializeAiServiceAssistant;
-use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Actions\FetchFileParsingResults;
+use AdvisingApp\Ai\Models\QnaAdvisorFile;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Spatie\Multitenancy\Jobs\TenantAware;
 
-class ReInitializeAiModel implements ShouldQueue, TenantAware
+class FetchQnaAdvisorFileParsingResults implements ShouldQueue, TenantAware, ShouldBeUnique
 {
     use Batchable;
     use Dispatchable;
@@ -55,14 +56,30 @@ class ReInitializeAiModel implements ShouldQueue, TenantAware
     use SerializesModels;
 
     public function __construct(
-        protected string $model,
+        protected QnaAdvisorFile $file,
     ) {}
 
-    public function handle(ReInitializeAiServiceAssistant $reInitializeAiServiceAssistant): void
+    public function handle(FetchFileParsingResults $fetchFileParsingResults): void
     {
-        AiAssistant::query()
-            ->where('model', $this->model)
-            ->whereNull('archived_at')
-            ->eachById($reInitializeAiServiceAssistant(...), 250);
+        if (filled($this->file->parsing_results)) {
+            return;
+        }
+
+        $result = $fetchFileParsingResults->execute(
+            fileId: $this->file->file_id,
+            mimeType: $this->file->mime_type,
+        );
+
+        if (blank($result)) {
+            return;
+        }
+
+        $this->file->parsing_results = $result;
+        $this->file->save();
+    }
+
+    public function uniqueId(): string
+    {
+        return $this->file->id;
     }
 }

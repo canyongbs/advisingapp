@@ -37,8 +37,8 @@
 use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiThreadShareTarget;
-use AdvisingApp\Ai\Jobs\PrepareAiThreadCloning;
-use AdvisingApp\Ai\Jobs\PrepareAiThreadEmailing;
+use AdvisingApp\Ai\Jobs\Advisors\PrepareAiThreadCloning;
+use AdvisingApp\Ai\Jobs\Advisors\PrepareAiThreadEmailing;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
@@ -56,13 +56,7 @@ use App\Models\User;
 use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Bus;
 use Livewire\Livewire;
-
-use function Pest\Laravel\{actingAs,
-    assertDatabaseHas,
-    assertDatabaseMissing,
-    assertNotSoftDeleted,
-    assertSoftDeleted
-};
+use function Pest\Laravel\{actingAs, assertDatabaseHas, assertDatabaseMissing, assertNotSoftDeleted, assertSoftDeleted};
 use function PHPUnit\Framework\assertNotEmpty;
 use function Tests\asSuperAdmin;
 
