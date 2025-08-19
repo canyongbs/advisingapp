@@ -101,7 +101,7 @@ class TestAiService implements AiService
         return true;
     }
 
-    public function sendMessage(AiMessage $message, array $files, Closure $saveResponse): Closure
+    public function sendMessage(AiMessage $message, array $files): Closure
     {
         $message->context = fake()->paragraph();
         $message->save();
@@ -122,32 +122,28 @@ class TestAiService implements AiService
 
         $responseContent = fake()->paragraph();
 
-        return function () use ($responseContent, $saveResponse): Generator {
+        return function () use ($responseContent): Generator {
             $response = new AiMessage();
 
             yield $responseContent;
 
             $response->content = $responseContent;
-
-            $saveResponse($response);
         };
     }
 
-    public function retryMessage(AiMessage $message, array $files, Closure $saveResponse): Closure
+    public function retryMessage(AiMessage $message, array $files): Closure
     {
-        return $this->sendMessage($message, $files, $saveResponse);
+        return $this->sendMessage($message, $files);
     }
 
-    public function completeResponse(AiMessage $response, Closure $saveResponse): Closure
+    public function completeResponse(AiMessage $response): Closure
     {
         $responseContent = fake()->paragraph();
 
-        return function () use ($response, $responseContent, $saveResponse) {
+        return function () use ($response, $responseContent) {
             yield $responseContent;
 
             $response->content .= $responseContent;
-
-            $saveResponse($response);
         };
     }
 

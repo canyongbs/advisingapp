@@ -40,6 +40,7 @@ use AdvisingApp\Ai\Actions\SendMessage;
 use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
 use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
 use AdvisingApp\Ai\Http\Requests\Advisors\SendMessageRequest;
+use AdvisingApp\Ai\Jobs\Advisors\SendAdvisorMessage;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\Prompt;
@@ -49,30 +50,29 @@ use Throwable;
 
 class SendMessageController
 {
-    public function __invoke(SendMessageRequest $request, AiThread $thread): StreamedResponse | JsonResponse
+    public function __invoke(SendMessageRequest $request, AiThread $thread): JsonResponse
     {
         try {
-            return new StreamedResponse(
-                app(SendMessage::class)(
-                    $thread,
-                    $request->validated('prompt_id') ? Prompt::find($request->validated('prompt_id')) : $request->validated('content'),
-                    AiMessageFile::query()->whereKey($request->validated('files'))->get()->all(),
-                ),
-                headers: [
-                    'Content-Type' => 'text/html; charset=utf-8;',
-                    'Cache-Control' => 'no-cache',
-                    'X-Accel-Buffering' => 'no',
-                ],
-            );
-        } catch (AiAssistantArchivedException $exception) {
-            return response()->json([
-                'message' => $exception->getMessage(),
-            ], 404);
-        } catch (AiThreadLockedException $exception) {
-            return response()->json([
-                'isThreadLocked' => true,
-                'message' => $exception->getMessage(),
-            ], 503);
+            if ($thread->locked_at) {
+                return response()->json([
+                    'isThreadLocked' => true,
+                    'message' => 'The assistant is currently undergoing maintenance.',
+                ], 503);
+            }
+
+            if ($thread->assistant->archived_at) {
+                return response()->json([
+                    'message' => 'This assistant has been archived and is no longer available to use.',
+                ], 404);
+            }
+
+            dispatch(new SendAdvisorMessage(
+                $thread,
+                $request->validated('prompt_id') ? Prompt::find($request->validated('prompt_id')) : $request->validated('content'),
+                AiMessageFile::query()->whereKey($request->validated('files'))->get()->all(),
+            ));
+
+            return response()->json([]);
         } catch (Throwable $exception) {
             report($exception);
 
