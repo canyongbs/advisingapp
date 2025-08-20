@@ -49,7 +49,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ steps.extcache.outputs.dir }}
-          key: ${{ runner.os }}-phpext-${{ env.php-version }}-${{ env.php-extensions }}
+          key: ${{ runner.os }}-phpext-${{ env.php-version }}-${{ env.php-extensions-key }}
           restore-keys: ${{ runner.os }}-phpext-${{ env.php-version }}
 
       - uses: shivammathur/setup-php@v2
@@ -94,7 +94,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ steps.extcache.outputs.dir }}
-          key: ${{ runner.os }}-phpext-${{ needs.prepare.outputs.php-version }}-${{ needs.prepare.outputs.php-extensions }}
+          key: ${{ runner.os }}-phpext-${{ needs.prepare.outputs.php-version }}-${{ needs.prepare.outputs.php-extensions-key }}
           restore-keys: ${{ runner.os }}-phpext-${{ needs.prepare.outputs.php-version }}
 
       - uses: shivammathur/setup-php@v2
@@ -214,7 +214,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ steps.extcache.outputs.dir }}
-          key: ${{ runner.os }}-phpext-${{ needs.prepare.outputs.php-version }}-${{ needs.prepare.outputs.php-extensions }}
+          key: ${{ runner.os }}-phpext-${{ needs.prepare.outputs.php-version }}-${{ needs.prepare.outputs.php-extensions-key }}
           restore-keys: ${{ runner.os }}-phpext-${{ needs.prepare.outputs.php-version }}
 
       - uses: shivammathur/setup-php@v2
@@ -321,7 +321,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ steps.extcache.outputs.dir }}
-          key: ${{ runner.os }}-phpext-${{ needs.prepare.outputs.php-version }}-${{ needs.prepare.outputs.php-extensions }}
+          key: ${{ runner.os }}-phpext-${{ needs.prepare.outputs.php-version }}-${{ needs.prepare.outputs.php-extensions-key }}
           restore-keys: ${{ runner.os }}-phpext-${{ needs.prepare.outputs.php-version }}
 
       - uses: shivammathur/setup-php@v2
