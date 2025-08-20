@@ -8,10 +8,18 @@ on:
   workflow_dispatch:
 
 jobs:
-  code-consistency:
+  prepare:
     runs-on: ubuntu-22.04
 
     timeout-minutes: 15
+
+    env:
+      extensions: gd, gmp, redis, mailparse
+      key: ext-cache-20250820
+
+    outputs:
+      extensions: ${{ env.extensions }}
+      key: ${{ env.key }}
 
     steps:
       - name: Checkout code | Internal
@@ -27,11 +35,71 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
 
+      - name: Setup cache environment
+        id: extcache
+        uses: shivammathur/cache-extensions@v1
+        with:
+          php-version: "8.4"
+          extensions: ${{ env.extensions }}
+          key: ${{ env.key }}
+
+      - name: Cache extensions
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.extcache.outputs.dir }}
+          key: ${{ steps.extcache.outputs.key }}
+          restore-keys: ${{ steps.extcache.outputs.key }}
+
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.4"
           coverage: none
-          extensions: mailparse
+          extensions: ${{ env.extensions }}
+
+      - name: Setup Dependencies
+        uses: ./.github/actions/composer-dependency-setup
+
+  code-consistency:
+    runs-on: ubuntu-22.04
+
+    timeout-minutes: 15
+
+    needs: [ prepare ]
+
+    steps:
+      - name: Checkout code | Internal
+        if: ${{ github.event_name == 'merge_group' || github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          token: ${{ secrets.pat-token }}
+
+      - name: Checkout code | External
+        if: ${{ github.event_name != 'merge_group' && github.event.pull_request.head.repo.full_name != github.repository || github.actor == 'dependabot[bot]' }}
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Setup cache environment
+        id: extcache
+        uses: shivammathur/cache-extensions@v1
+        with:
+          php-version: "8.4"
+          extensions: ${{ needs.prepare.outputs.extensions }}
+          key: ${{ needs.prepare.outputs.key }}
+
+      - name: Cache extensions
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.extcache.outputs.dir }}
+          key: ${{ steps.extcache.outputs.key }}
+          restore-keys: ${{ steps.extcache.outputs.key }}
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          coverage: none
+          extensions: ${{ needs.prepare.outputs.extensions }}
 
       - name: Setup Dependencies
         uses: ./.github/actions/composer-dependency-setup
@@ -89,6 +157,8 @@ jobs:
 
     runs-on: ubuntu-22.04
 
+    needs: [ prepare ]
+
     env:
       DB_PORT: 5432
       DB_HOST: 127.0.0.1
@@ -130,11 +200,26 @@ jobs:
         env:
           PGPASSWORD: root
 
+      - name: Setup cache environment
+        id: extcache
+        uses: shivammathur/cache-extensions@v1
+        with:
+          php-version: "8.4"
+          extensions: ${{ needs.prepare.outputs.extensions }}
+          key: ${{ needs.prepare.outputs.key }}
+
+      - name: Cache extensions
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.extcache.outputs.dir }}
+          key: ${{ steps.extcache.outputs.key }}
+          restore-keys: ${{ steps.extcache.outputs.key }}
+
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.4"
           coverage: none
-          extensions: gd, gmp, redis, mailparse
+          extensions: ${{ needs.prepare.outputs.extensions }}
 
       - uses: actions/checkout@v4
         with:
@@ -186,6 +271,8 @@ jobs:
   lint:
     runs-on: ubuntu-22.04
 
+    needs: [ prepare ]
+
     env:
       DB_PORT: 5432
       DB_HOST: 127.0.0.1
@@ -220,11 +307,26 @@ jobs:
           --health-retries 5
 
     steps:
+      - name: Setup cache environment
+        id: extcache
+        uses: shivammathur/cache-extensions@v1
+        with:
+          php-version: "8.4"
+          extensions: ${{ needs.prepare.outputs.extensions }}
+          key: ${{ needs.prepare.outputs.key }}
+
+      - name: Cache extensions
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.extcache.outputs.dir }}
+          key: ${{ steps.extcache.outputs.key }}
+          restore-keys: ${{ steps.extcache.outputs.key }}
+
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.4"
           coverage: none
-          extensions: gd, gmp, redis, mailparse
+          extensions: ${{ needs.prepare.outputs.extensions }}
 
       - uses: actions/checkout@v4
         with:
