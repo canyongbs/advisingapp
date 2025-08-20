@@ -19,7 +19,7 @@ jobs:
 
     outputs:
       extensions: ${{ env.extensions }}
-      key: ${{ env.key }}
+      key: ${{ env.key }} # TODO: Add notes
 
     steps:
       - name: Checkout code | Internal
