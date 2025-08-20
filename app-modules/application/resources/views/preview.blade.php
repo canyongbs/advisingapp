@@ -1,4 +1,4 @@
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -30,33 +30,23 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
-import { defaultConfig, plugin } from '@formkit/vue';
-import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
-import VueSignaturePad from 'vue-signature-pad';
-import App from './App.vue';
-import config from './formkit.config.js';
-import './widget.css';
+--}}
+@php
+    use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
+@endphp
 
-customElements.define(
-    'application-embed',
-    defineCustomElement({
-        setup(props) {
-            const app = createApp();
+<x-layouts.app title="Application Preview">
+    <div class="flex items-center justify-center px-4 py-16">
+        <div class="w-full max-w-4xl">
+            <script
+                src="{{ asset('js/widgets/application/advising-app-application-widget.js') }}"
+                type="module"
+            ></script>
 
-            // install plugins
-            app.use(plugin, defaultConfig(config));
-
-            app.use(VueSignaturePad);
-
-            app.config.devtools = true;
-
-            const inst = getCurrentInstance();
-            Object.assign(inst.appContext, app._context);
-            Object.assign(inst.provides, app._context.provides);
-
-            return () => h(App, props);
-        },
-        props: ['url', 'preview'],
-    }),
-);
+            <application-embed
+                url="{{ route('applications.api.preview', $application) }}"
+                preview="true"
+            ></application-embed>
+        </div>
+    </div>
+</x-layouts.app>

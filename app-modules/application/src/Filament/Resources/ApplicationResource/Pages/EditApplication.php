@@ -65,6 +65,11 @@ class EditApplication extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('preview')
+                ->label('Preview')
+                ->icon('heroicon-o-eye')
+                ->url(fn (Application $application) => route('applications.preview', $application))
+                ->openUrlInNewTab(),
             Action::make('view')
                 ->url(fn (Application $application) => route('applications.show', ['application' => $application]))
                 ->icon('heroicon-m-arrow-top-right-on-square')
