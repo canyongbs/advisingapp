@@ -37,27 +37,23 @@
 namespace AdvisingApp\Project\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Pipeline\Models\Pipeline;
-use AdvisingApp\Project\Database\Factories\ProjectFactory;
-use AdvisingApp\Project\Observers\ProjectObserver;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use AdvisingApp\Project\Database\Factories\ProjectMilestoneStatusFactory;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
-#[ObservedBy([ProjectObserver::class])]
 /**
- * @mixin IdeHelperProject
+ * @mixin IdeHelperProjectMilestoneStatus
  */
-class Project extends BaseModel implements Auditable
+class ProjectMilestoneStatus extends Model implements Auditable
 {
-    /** @use HasFactory<ProjectFactory> */
+    /** @use HasFactory<ProjectMilestoneStatusFactory> */
     use HasFactory;
 
+    use HasUuids;
     use SoftDeletes;
     use AuditableTrait;
 
@@ -67,34 +63,10 @@ class Project extends BaseModel implements Auditable
     ];
 
     /**
-     * @return MorphTo<Model, $this>
-     */
-    public function createdBy(): MorphTo
-    {
-        return $this->morphTo();
-    }
-
-    /**
-     * @return HasMany<ProjectFile, $this>
-     */
-    public function files(): HasMany
-    {
-        return $this->hasMany(ProjectFile::class, 'project_id');
-    }
-
-    /**
-     * @return HasMany<Pipeline, $this>
-     */
-    public function pipelines(): HasMany
-    {
-        return $this->hasMany(Pipeline::class);
-    }
-
-    /**
      * @return HasMany<ProjectMilestone, $this>
      */
     public function milestones(): HasMany
     {
-        return $this->hasMany(ProjectMilestone::class, 'project_id');
+        return $this->hasMany(ProjectMilestone::class, 'status_id');
     }
 }

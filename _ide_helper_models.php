@@ -4640,6 +4640,8 @@ namespace AdvisingApp\Project\Models{
  * @property-read \Illuminate\Database\Eloquent\Model $createdBy
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Project\Models\ProjectFile> $files
  * @property-read int|null $files_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Project\Models\ProjectMilestone> $milestones
+ * @property-read int|null $milestones_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Pipeline\Models\Pipeline> $pipelines
  * @property-read int|null $pipelines_count
  * @method static \AdvisingApp\Project\Database\Factories\ProjectFactory factory($count = null, $state = [])
@@ -4692,6 +4694,75 @@ namespace AdvisingApp\Project\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperProjectFile {}
+}
+
+namespace AdvisingApp\Project\Models{
+/**
+ * @property string $id
+ * @property string $title
+ * @property string|null $description
+ * @property string $project_id
+ * @property string $status_id
+ * @property string|null $created_by_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \App\Models\User|null $createdBy
+ * @property-read \AdvisingApp\Project\Models\Project $project
+ * @property-read \AdvisingApp\Project\Models\ProjectMilestoneStatus $status
+ * @method static \AdvisingApp\Project\Database\Factories\ProjectMilestoneFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectMilestone newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectMilestone newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectMilestone onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectMilestone query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectMilestone whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectMilestone whereCreatedById($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectMilestone whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectMilestone whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectMilestone whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectMilestone whereProjectId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectMilestone whereStatusId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectMilestone whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectMilestone whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectMilestone withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectMilestone withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperProjectMilestone {}
+}
+
+namespace AdvisingApp\Project\Models{
+/**
+ * @property string $id
+ * @property string $name
+ * @property string|null $description
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Project\Models\ProjectMilestone> $milestones
+ * @property-read int|null $milestones_count
+ * @method static \AdvisingApp\Project\Database\Factories\ProjectMilestoneStatusFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectMilestoneStatus newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectMilestoneStatus newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectMilestoneStatus onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectMilestoneStatus query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectMilestoneStatus whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectMilestoneStatus whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectMilestoneStatus whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectMilestoneStatus whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectMilestoneStatus whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectMilestoneStatus whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectMilestoneStatus withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectMilestoneStatus withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperProjectMilestoneStatus {}
 }
 
 namespace AdvisingApp\Prospect\Models{

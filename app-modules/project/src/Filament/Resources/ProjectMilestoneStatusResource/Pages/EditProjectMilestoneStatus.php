@@ -34,67 +34,46 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Models;
+namespace AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatusResource\Pages;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Pipeline\Models\Pipeline;
-use AdvisingApp\Project\Database\Factories\ProjectFactory;
-use AdvisingApp\Project\Observers\ProjectObserver;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatusResource;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\ViewAction;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Resources\Pages\EditRecord;
 
-#[ObservedBy([ProjectObserver::class])]
-/**
- * @mixin IdeHelperProject
- */
-class Project extends BaseModel implements Auditable
+class EditProjectMilestoneStatus extends EditRecord
 {
-    /** @use HasFactory<ProjectFactory> */
-    use HasFactory;
+    use EditPageRedirection;
 
-    use SoftDeletes;
-    use AuditableTrait;
+    protected static string $resource = ProjectMilestoneStatusResource::class;
 
-    protected $fillable = [
-        'name',
-        'description',
-    ];
-
-    /**
-     * @return MorphTo<Model, $this>
-     */
-    public function createdBy(): MorphTo
+    public function form(Form $form): Form
     {
-        return $this->morphTo();
+        return $form
+            ->schema([
+                TextInput::make('name')
+                    ->label('Name')
+                    ->maxLength(255)
+                    ->autofocus()
+                    ->required()
+                    ->string()
+                    ->unique(ignoreRecord: true),
+                Textarea::make('description')
+                    ->label('Description')
+                    ->maxLength(65535)
+                    ->required(),
+            ]);
     }
 
-    /**
-     * @return HasMany<ProjectFile, $this>
-     */
-    public function files(): HasMany
+    protected function getHeaderActions(): array
     {
-        return $this->hasMany(ProjectFile::class, 'project_id');
-    }
-
-    /**
-     * @return HasMany<Pipeline, $this>
-     */
-    public function pipelines(): HasMany
-    {
-        return $this->hasMany(Pipeline::class);
-    }
-
-    /**
-     * @return HasMany<ProjectMilestone, $this>
-     */
-    public function milestones(): HasMany
-    {
-        return $this->hasMany(ProjectMilestone::class, 'project_id');
+        return [
+            ViewAction::make(),
+            DeleteAction::make(),
+        ];
     }
 }
