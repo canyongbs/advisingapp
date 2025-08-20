@@ -68,8 +68,14 @@ class SubscriptionWorkflowActionJob extends ExecuteWorkflowActionJob
             $subscriptions = [];
 
             foreach ($details->user_ids as $userId) {
+                $user = User::find($userId);
+
+                if(is_null($user) || ! is_null($user->deleted_at)) {
+                  continue;
+                }
+
                 $subscriptions[] = resolve(SubscriptionCreate::class)
-                    ->handle(User::find($userId), $educatable);
+                    ->handle($user, $educatable);
             }
 
             foreach ($subscriptions as $subscription) {
