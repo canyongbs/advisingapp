@@ -37,11 +37,14 @@
 namespace AdvisingApp\Ai\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Audit;
+use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class DataAdvisor extends Model
+class DataAdvisor extends Model implements Auditable
 {
     use SoftDeletes;
+    use Audit;
 
     protected $fillable = [];
 }

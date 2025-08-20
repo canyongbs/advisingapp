@@ -53,7 +53,7 @@ class DataAdvisorPolicy
     public function view(Authenticatable $authenticatable, DataAdvisor $dataAdvisor): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["ai-data-advisors.{$dataAdvisor->getKey()}.view"],
+            abilities: ["ai-data-advisors.*.view"],
             denyResponse: 'You do not have permission to view data advisors.'
         );
     }
@@ -69,7 +69,7 @@ class DataAdvisorPolicy
     public function update(Authenticatable $authenticatable, DataAdvisor $dataAdvisor): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["ai-data-advisors.{$dataAdvisor->getKey()}.update"],
+            abilities: ["ai-data-advisors.*.update"],
             denyResponse: 'You do not have permission to create data advisors.'
         );
     }
@@ -77,7 +77,7 @@ class DataAdvisorPolicy
     public function delete(Authenticatable $authenticatable, DataAdvisor $dataAdvisor): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["ai-data-advisors.{$dataAdvisor->getKey()}.delete"],
+            abilities: ["ai-data-advisors.*.delete"],
             denyResponse: 'You do not have permission to delete this data advisor.'
         );
     }
@@ -85,7 +85,7 @@ class DataAdvisorPolicy
     public function restore(Authenticatable $authenticatable, DataAdvisor $dataAdvisor): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["ai-data-advisors.{$dataAdvisor->getKey()}.restore"],
+            abilities: ["ai-data-advisors.*.restore"],
             denyResponse: 'You do not have permission to restore this data advisor.'
         );
     }
@@ -93,7 +93,7 @@ class DataAdvisorPolicy
     public function forceDelete(Authenticatable $authenticatable, DataAdvisor $dataAdvisor): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["ai-data-advisors.{$dataAdvisor->getKey()}.force-delete"],
+            abilities: ["ai-data-advisors.*.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this data advisor.'
         );
     }
