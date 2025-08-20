@@ -47,7 +47,6 @@ use App\Multitenancy\DataTransferObjects\TenantConfig;
 use App\Multitenancy\DataTransferObjects\TenantDatabaseConfig;
 use App\Multitenancy\DataTransferObjects\TenantMailConfig;
 use App\Multitenancy\DataTransferObjects\TenantS3FilesystemConfig;
-use App\Multitenancy\DataTransferObjects\TenantUser;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 use Sqids\Sqids;
@@ -96,11 +95,7 @@ class CreateTenantController
                     fromName: config('mail.from.name')
                 ),
             ),
-            new TenantUser(
-                name: $request->validated('user.name'),
-                email: $request->validated('user.email'),
-                password: $request->validated('user.password'),
-            ),
+            null,
             new LicenseData(
                 updatedAt: now(),
                 subscription: LicenseSubscriptionData::from($request->validated('subscription')),

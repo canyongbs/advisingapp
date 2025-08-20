@@ -50,9 +50,6 @@ class CreateTenantRequest extends FormRequest
         return [
             'domain' => ['required', 'string', 'max:255', Rule::unique(Tenant::class)],
             'database' => ['required', 'string', 'max:255'],
-            'user.name' => ['required', 'string', 'max:255'],
-            'user.email' => ['required', 'email', 'max:255'],
-            'user.password' => ['required', 'string'],
             'limits' => ['required', 'array'],
             'limits.conversationalAiSeats' => ['required', 'integer', 'min:0'],
             'limits.conversationalAiAssistants' => ['required', 'integer', 'min:0'],
