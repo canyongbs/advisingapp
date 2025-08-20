@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  prepare:
+  prep-and-code-consistency:
     runs-on: ubuntu-22.04
 
     timeout-minutes: 15
@@ -57,51 +57,6 @@ jobs:
           php-version: ${{ env.php-version }}
           coverage: none
           extensions: ${{ env.php-extensions }}
-
-      - name: Setup Dependencies
-        uses: ./.github/actions/composer-dependency-setup
-
-  code-consistency:
-    runs-on: ubuntu-22.04
-
-    timeout-minutes: 15
-
-    needs: [ prepare ]
-
-    steps:
-      - name: Checkout code | Internal
-        if: ${{ github.event_name == 'merge_group' || github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
-          token: ${{ secrets.pat-token }}
-
-      - name: Checkout code | External
-        if: ${{ github.event_name != 'merge_group' && github.event.pull_request.head.repo.full_name != github.repository || github.actor == 'dependabot[bot]' }}
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
-
-      - name: Setup cache environment
-        id: extcache
-        uses: shivammathur/cache-extensions@v1
-        with:
-          php-version: ${{ needs.prepare.outputs.php-version }}
-          extensions: ${{ needs.prepare.outputs.php-extensions }}
-          key: ${{ needs.prepare.outputs.php-extensions-key }}
-
-      - name: Cache extensions
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.extcache.outputs.dir }}
-          key: ${{ runner.os }}-phpext-${{ needs.prepare.outputs.php-version }}-${{ needs.prepare.outputs.php-extensions-key }}
-          restore-keys: ${{ runner.os }}-phpext-${{ needs.prepare.outputs.php-version }}
-
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ needs.prepare.outputs.php-version }}
-          coverage: none
-          extensions: ${{ needs.prepare.outputs.php-extensions }}
 
       - name: Setup Dependencies
         uses: ./.github/actions/composer-dependency-setup
@@ -159,7 +114,7 @@ jobs:
 
     runs-on: ubuntu-22.04
 
-    needs: [ prepare ]
+    needs: [ prep-and-code-consistency ]
 
     env:
       DB_PORT: 5432
@@ -206,22 +161,22 @@ jobs:
         id: extcache
         uses: shivammathur/cache-extensions@v1
         with:
-          php-version: ${{ needs.prepare.outputs.php-version }}
-          extensions: ${{ needs.prepare.outputs.php-extensions }}
-          key: ${{ needs.prepare.outputs.php-extensions-key }}
+          php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
+          extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
+          key: ${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
 
       - name: Cache extensions
         uses: actions/cache@v4
         with:
           path: ${{ steps.extcache.outputs.dir }}
-          key: ${{ runner.os }}-phpext-${{ needs.prepare.outputs.php-version }}-${{ needs.prepare.outputs.php-extensions-key }}
-          restore-keys: ${{ runner.os }}-phpext-${{ needs.prepare.outputs.php-version }}
+          key: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}-${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
+          restore-keys: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}
 
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ needs.prepare.outputs.php-version }}
+          php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
           coverage: none
-          extensions: ${{ needs.prepare.outputs.php-extensions }}
+          extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
 
       - uses: actions/checkout@v4
         with:
@@ -273,7 +228,7 @@ jobs:
   lint:
     runs-on: ubuntu-22.04
 
-    needs: [ prepare ]
+    needs: [ prep-and-code-consistency ]
 
     env:
       DB_PORT: 5432
@@ -313,22 +268,22 @@ jobs:
         id: extcache
         uses: shivammathur/cache-extensions@v1
         with:
-          php-version: ${{ needs.prepare.outputs.php-version }}
-          extensions: ${{ needs.prepare.outputs.php-extensions }}
-          key: ${{ needs.prepare.outputs.php-extensions-key }}
+          php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
+          extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
+          key: ${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
 
       - name: Cache extensions
         uses: actions/cache@v4
         with:
           path: ${{ steps.extcache.outputs.dir }}
-          key: ${{ runner.os }}-phpext-${{ needs.prepare.outputs.php-version }}-${{ needs.prepare.outputs.php-extensions-key }}
-          restore-keys: ${{ runner.os }}-phpext-${{ needs.prepare.outputs.php-version }}
+          key: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}-${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
+          restore-keys: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}
 
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ needs.prepare.outputs.php-version }}
+          php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
           coverage: none
-          extensions: ${{ needs.prepare.outputs.php-extensions }}
+          extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
 
       - uses: actions/checkout@v4
         with:
