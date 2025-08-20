@@ -54,7 +54,7 @@ class DataAdvisorPolicy
     {
         return $authenticatable->canOrElse(
             abilities: ["ai-data-advisors.*.view"],
-            denyResponse: 'You do not have permission to view data advisors.'
+            denyResponse: 'You do not have permission to view this data advisor.'
         );
     }
 
