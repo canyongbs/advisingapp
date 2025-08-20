@@ -55,7 +55,7 @@ class DataAdvisorResource extends Resource
 
     protected static ?string $navigationGroup = 'Artificial Intelligence';
 
-    protected static ?int $navigationSort = 35;
+    protected static ?int $navigationSort = 40;
 
     public static function form(Form $form): Form
     {
