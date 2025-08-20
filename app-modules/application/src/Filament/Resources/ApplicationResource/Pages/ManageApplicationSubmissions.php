@@ -197,14 +197,14 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
 
         $ownerRecord = $urlParameters['record'];
 
-        $formSubmissionsCount = Cache::tags('{form-submission-count}')
+        $applicationSubmissionsCount = Cache::tags('{application-submission-count}')
             ->remember(
-                "form-submission-count-{$ownerRecord->getKey()}",
+                "applciation-submission-count-{$ownerRecord->getKey()}",
                 now()->addMinutes(5),
                 fn (): int => $ownerRecord->submissions()->count(),
             );
 
-        $item->badge((string) $formSubmissionsCount);
+        $item->badge((string) $applicationSubmissionsCount);
 
         return [$item];
     }
