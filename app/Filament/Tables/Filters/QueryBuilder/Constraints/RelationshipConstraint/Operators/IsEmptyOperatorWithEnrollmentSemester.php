@@ -52,4 +52,13 @@ class IsEmptyOperatorWithEnrollmentSemester extends IsEmptyOperator
             ]
         );
     }
+
+    public function getOperatorQuery(bool $noSemesterSelected = false): string
+    {
+        if ($noSemesterSelected) {
+            return '>=';
+        }
+
+        return $this->isInverse() ? '>=' : '<';
+    }
 }

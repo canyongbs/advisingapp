@@ -52,4 +52,13 @@ class HasMaxOperatorWithEnrollmentSemester extends HasMaxOperator
             ]
         );
     }
+
+    public function getOperatorQuery(bool $noSemesterSelected = false): string
+    {
+        if ($noSemesterSelected) {
+            return '>=';
+        }
+
+        return $this->isInverse() ? '>' : '<=';
+    }
 }

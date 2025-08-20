@@ -58,11 +58,12 @@ trait SemesterSelectForOperator
     public static function getSemesterOptions(): array
     {
         return Enrollment::query()
-            ->select('name')
+            ->select('semester_name')
+            ->whereNotNull('semester_name')
             ->distinct()
-            ->orderBy('name')
+            ->orderBy('semester_name')
             ->get()
-            ->mapWithKeys(fn ($enrollment) => [$enrollment->name => $enrollment->name])
+            ->mapWithKeys(fn ($enrollment) => [$enrollment->semester_name => $enrollment->semester_name])
             ->toArray();
     }
 
@@ -89,9 +90,9 @@ trait SemesterSelectForOperator
         return $query->whereHas($relationshipName, function (Builder $query) use ($lowerSemesters) {
             if (! empty($lowerSemesters)) {
                 $placeholders = implode(',', array_fill(0, count($lowerSemesters), '?'));
-                $query->whereRaw("LOWER(name) IN ({$placeholders})", $lowerSemesters);
+                $query->whereRaw("LOWER(semester_name) IN ({$placeholders})", $lowerSemesters);
             }
-        }, '>=', $count);
+        }, $this->getOperatorQuery(empty($lowerSemesters)), $count);
     }
 
     public function getSummary(): string

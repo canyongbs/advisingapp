@@ -52,4 +52,13 @@ class HasMinOperatorWithEnrollmentSemester extends HasMinOperator
             ]
         );
     }
+
+    public function getOperatorQuery(bool $noSemesterSelected = false): string
+    {
+        if ($noSemesterSelected) {
+            return '>=';
+        }
+
+        return $this->isInverse() ? '<' : '>=';
+    }
 }
