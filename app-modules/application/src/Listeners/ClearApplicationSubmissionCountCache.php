@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Application\Listeners;
 
-use Illuminate\Support\Facades\Cache;
 use AdvisingApp\Application\Events\ApplicationSubmissionCreated;
+use Illuminate\Support\Facades\Cache;
 
 class ClearApplicationSubmissionCountCache
 {
