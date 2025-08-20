@@ -20,7 +20,7 @@ jobs:
 
     outputs:
       extensions: ${{ env.extensions }}
-      key: ${{ env.key }} # TODO: Add notes
+      key: ${{ env.key }}
       php-version: ${{ env.php-version }}
 
     steps:
@@ -42,8 +42,8 @@ jobs:
         uses: shivammathur/cache-extensions@v1
         with:
           php-version: ${{ env.php-version }}
-          extensions: ${{ env.extensions }}
-          key: ${{ env.key }}
+          extensions: ${{ env.php-extensions }}
+          key: ${{ env.php-extensions-key }}
 
       - name: Cache extensions
         uses: actions/cache@v4
@@ -56,7 +56,7 @@ jobs:
         with:
           php-version: ${{ env.php-version }}
           coverage: none
-          extensions: ${{ env.extensions }}
+          extensions: ${{ env.php-extensions }}
 
       - name: Setup Dependencies
         uses: ./.github/actions/composer-dependency-setup
