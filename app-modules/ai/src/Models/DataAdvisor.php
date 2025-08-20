@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Ai\Models;
 
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 class DataAdvisor extends Model implements Auditable
 {
