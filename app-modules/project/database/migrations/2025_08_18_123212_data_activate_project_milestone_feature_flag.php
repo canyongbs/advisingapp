@@ -34,67 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Models;
+use App\Features\ProjectMilestoneFeature;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Pipeline\Models\Pipeline;
-use AdvisingApp\Project\Database\Factories\ProjectFactory;
-use AdvisingApp\Project\Observers\ProjectObserver;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
-
-#[ObservedBy([ProjectObserver::class])]
-/**
- * @mixin IdeHelperProject
- */
-class Project extends BaseModel implements Auditable
-{
-    /** @use HasFactory<ProjectFactory> */
-    use HasFactory;
-
-    use SoftDeletes;
-    use AuditableTrait;
-
-    protected $fillable = [
-        'name',
-        'description',
-    ];
-
-    /**
-     * @return MorphTo<Model, $this>
-     */
-    public function createdBy(): MorphTo
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->morphTo();
+        ProjectMilestoneFeature::activate();
     }
 
-    /**
-     * @return HasMany<ProjectFile, $this>
-     */
-    public function files(): HasMany
+    public function down(): void
     {
-        return $this->hasMany(ProjectFile::class, 'project_id');
+        ProjectMilestoneFeature::deactivate();
     }
-
-    /**
-     * @return HasMany<Pipeline, $this>
-     */
-    public function pipelines(): HasMany
-    {
-        return $this->hasMany(Pipeline::class);
-    }
-
-    /**
-     * @return HasMany<ProjectMilestone, $this>
-     */
-    public function milestones(): HasMany
-    {
-        return $this->hasMany(ProjectMilestone::class, 'project_id');
-    }
-}
+};

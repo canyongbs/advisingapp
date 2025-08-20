@@ -34,31 +34,57 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Providers;
+namespace AdvisingApp\Project\Policies;
 
 use AdvisingApp\Project\Models\Project;
-use AdvisingApp\Project\Models\ProjectFile;
 use AdvisingApp\Project\Models\ProjectMilestone;
-use AdvisingApp\Project\Models\ProjectMilestoneStatus;
-use AdvisingApp\Project\ProjectPlugin;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use App\Models\Authenticatable;
+use Illuminate\Auth\Access\Response;
 
-class ProjectServiceProvider extends ServiceProvider
+class ProjectMilestonePolicy
 {
-    public function register()
+    public function viewAny(Authenticatable $authenticatable, Project $project): Response
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new ProjectPlugin()));
+        if ($authenticatable->cannot('view', $project)) {
+            return Response::deny('You do not have permission to view milestones.');
+        }
+
+        return Response::allow();
     }
 
-    public function boot(): void
+    public function view(Authenticatable $authenticatable, ProjectMilestone $projectMilestone): Response
     {
-        Relation::morphMap([
-            'project' => Project::class,
-            'project_file' => ProjectFile::class,
-            'project_milestone' => ProjectMilestone::class,
-            'project_milestone_status' => ProjectMilestoneStatus::class,
-        ]);
+        if ($authenticatable->cannot('view', $projectMilestone->project)) {
+            return Response::deny('You do not have permission to view this milestone.');
+        }
+
+        return Response::allow();
+    }
+
+    public function create(Authenticatable $authenticatable, Project $project): Response
+    {
+        if ($authenticatable->cannot('update', $project)) {
+            return Response::deny('You do not have permission to create milestones.');
+        }
+
+        return Response::allow();
+    }
+
+    public function update(Authenticatable $authenticatable, ProjectMilestone $projectMilestone): Response
+    {
+        if ($authenticatable->cannot('update', $projectMilestone->project)) {
+            return Response::deny('You do not have permission to update this milestone.');
+        }
+
+        return Response::allow();
+    }
+
+    public function delete(Authenticatable $authenticatable, ProjectMilestone $projectMilestone): Response
+    {
+        if ($authenticatable->cannot('update', $projectMilestone->project)) {
+            return Response::deny('You do not have permission to delete this milestone.');
+        }
+
+        return Response::allow();
     }
 }

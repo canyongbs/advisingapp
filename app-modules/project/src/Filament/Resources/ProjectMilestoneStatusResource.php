@@ -34,67 +34,41 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Models;
+namespace AdvisingApp\Project\Filament\Resources;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Pipeline\Models\Pipeline;
-use AdvisingApp\Project\Database\Factories\ProjectFactory;
-use AdvisingApp\Project\Observers\ProjectObserver;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatusResource\Pages\CreateProjectMilestoneStatus;
+use AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatusResource\Pages\EditProjectMilestoneStatus;
+use AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatusResource\Pages\ListProjectMilestoneStatuses;
+use AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatusResource\Pages\ViewProjectMilestoneStatus;
+use AdvisingApp\Project\Models\ProjectMilestoneStatus;
+use App\Features\ProjectMilestoneFeature;
+use App\Filament\Clusters\ProjectManagement;
+use Filament\Resources\Resource;
 
-#[ObservedBy([ProjectObserver::class])]
-/**
- * @mixin IdeHelperProject
- */
-class Project extends BaseModel implements Auditable
+class ProjectMilestoneStatusResource extends Resource
 {
-    /** @use HasFactory<ProjectFactory> */
-    use HasFactory;
+    protected static ?string $model = ProjectMilestoneStatus::class;
 
-    use SoftDeletes;
-    use AuditableTrait;
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected $fillable = [
-        'name',
-        'description',
-    ];
+    protected static ?string $navigationLabel = 'Statuses';
 
-    /**
-     * @return MorphTo<Model, $this>
-     */
-    public function createdBy(): MorphTo
+    protected static ?string $cluster = ProjectManagement::class;
+
+    protected static ?int $navigationSort = 20;
+
+    public static function canAccess(): bool
     {
-        return $this->morphTo();
+        return ProjectMilestoneFeature::active() && parent::canAccess();
     }
 
-    /**
-     * @return HasMany<ProjectFile, $this>
-     */
-    public function files(): HasMany
+    public static function getPages(): array
     {
-        return $this->hasMany(ProjectFile::class, 'project_id');
-    }
-
-    /**
-     * @return HasMany<Pipeline, $this>
-     */
-    public function pipelines(): HasMany
-    {
-        return $this->hasMany(Pipeline::class);
-    }
-
-    /**
-     * @return HasMany<ProjectMilestone, $this>
-     */
-    public function milestones(): HasMany
-    {
-        return $this->hasMany(ProjectMilestone::class, 'project_id');
+        return [
+            'index' => ListProjectMilestoneStatuses::route('/'),
+            'create' => CreateProjectMilestoneStatus::route('/create'),
+            'edit' => EditProjectMilestoneStatus::route('/{record}/edit'),
+            'view' => ViewProjectMilestoneStatus::route('/{record}'),
+        ];
     }
 }

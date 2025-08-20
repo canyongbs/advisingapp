@@ -34,67 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Models;
+namespace AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatusResource\Pages;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Pipeline\Models\Pipeline;
-use AdvisingApp\Project\Database\Factories\ProjectFactory;
-use AdvisingApp\Project\Observers\ProjectObserver;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatusResource;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Resources\Pages\CreateRecord;
 
-#[ObservedBy([ProjectObserver::class])]
-/**
- * @mixin IdeHelperProject
- */
-class Project extends BaseModel implements Auditable
+class CreateProjectMilestoneStatus extends CreateRecord
 {
-    /** @use HasFactory<ProjectFactory> */
-    use HasFactory;
+    protected static string $resource = ProjectMilestoneStatusResource::class;
 
-    use SoftDeletes;
-    use AuditableTrait;
-
-    protected $fillable = [
-        'name',
-        'description',
-    ];
-
-    /**
-     * @return MorphTo<Model, $this>
-     */
-    public function createdBy(): MorphTo
+    public function form(Form $form): Form
     {
-        return $this->morphTo();
-    }
-
-    /**
-     * @return HasMany<ProjectFile, $this>
-     */
-    public function files(): HasMany
-    {
-        return $this->hasMany(ProjectFile::class, 'project_id');
-    }
-
-    /**
-     * @return HasMany<Pipeline, $this>
-     */
-    public function pipelines(): HasMany
-    {
-        return $this->hasMany(Pipeline::class);
-    }
-
-    /**
-     * @return HasMany<ProjectMilestone, $this>
-     */
-    public function milestones(): HasMany
-    {
-        return $this->hasMany(ProjectMilestone::class, 'project_id');
+        return $form
+            ->schema([
+                TextInput::make('name')
+                    ->label('Name')
+                    ->maxLength(255)
+                    ->autofocus()
+                    ->required()
+                    ->string()
+                    ->unique(),
+                Textarea::make('description')
+                    ->label('Description')
+                    ->maxLength(65535)
+                    ->required(),
+            ]);
     }
 }

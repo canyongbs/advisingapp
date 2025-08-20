@@ -34,67 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Models;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Pipeline\Models\Pipeline;
-use AdvisingApp\Project\Database\Factories\ProjectFactory;
-use AdvisingApp\Project\Observers\ProjectObserver;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
-
-#[ObservedBy([ProjectObserver::class])]
-/**
- * @mixin IdeHelperProject
- */
-class Project extends BaseModel implements Auditable
-{
-    /** @use HasFactory<ProjectFactory> */
-    use HasFactory;
-
-    use SoftDeletes;
-    use AuditableTrait;
-
-    protected $fillable = [
-        'name',
-        'description',
-    ];
-
-    /**
-     * @return MorphTo<Model, $this>
-     */
-    public function createdBy(): MorphTo
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->morphTo();
+        Schema::create('project_milestones', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('title')->unique();
+            $table->string('description')->nullable();
+            $table->foreignUuid('project_id')->constrained('projects')->cascadeOnDelete();
+            $table->foreignUuid('status_id')->constrained('project_milestone_statuses');
+            $table->foreignUuid('created_by_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->timestamps();
+            $table->softDeletes();
+        });
     }
 
-    /**
-     * @return HasMany<ProjectFile, $this>
-     */
-    public function files(): HasMany
+    public function down(): void
     {
-        return $this->hasMany(ProjectFile::class, 'project_id');
+        Schema::dropIfExists('project_milestones');
     }
-
-    /**
-     * @return HasMany<Pipeline, $this>
-     */
-    public function pipelines(): HasMany
-    {
-        return $this->hasMany(Pipeline::class);
-    }
-
-    /**
-     * @return HasMany<ProjectMilestone, $this>
-     */
-    public function milestones(): HasMany
-    {
-        return $this->hasMany(ProjectMilestone::class, 'project_id');
-    }
-}
+};

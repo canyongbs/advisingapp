@@ -37,64 +37,54 @@
 namespace AdvisingApp\Project\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Pipeline\Models\Pipeline;
-use AdvisingApp\Project\Database\Factories\ProjectFactory;
-use AdvisingApp\Project\Observers\ProjectObserver;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use AdvisingApp\Project\Database\Factories\ProjectMilestoneFactory;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
-#[ObservedBy([ProjectObserver::class])]
 /**
- * @mixin IdeHelperProject
+ * @mixin IdeHelperProjectMilestone
  */
-class Project extends BaseModel implements Auditable
+class ProjectMilestone extends Model implements Auditable
 {
-    /** @use HasFactory<ProjectFactory> */
+    /** @use HasFactory<ProjectMilestoneFactory> */
     use HasFactory;
 
+    use HasUuids;
     use SoftDeletes;
     use AuditableTrait;
 
     protected $fillable = [
-        'name',
+        'title',
         'description',
+        'status_id',
     ];
 
     /**
-     * @return MorphTo<Model, $this>
+     * @return BelongsTo<User, $this>
      */
-    public function createdBy(): MorphTo
+    public function createdBy(): BelongsTo
     {
-        return $this->morphTo();
+        return $this->belongsTo(User::class, 'created_by_id');
     }
 
     /**
-     * @return HasMany<ProjectFile, $this>
+     * @return BelongsTo<ProjectMilestoneStatus, $this>
      */
-    public function files(): HasMany
+    public function status(): BelongsTo
     {
-        return $this->hasMany(ProjectFile::class, 'project_id');
+        return $this->belongsTo(ProjectMilestoneStatus::class, 'status_id');
     }
 
     /**
-     * @return HasMany<Pipeline, $this>
+     * @return BelongsTo<Project, $this>
      */
-    public function pipelines(): HasMany
+    public function project(): BelongsTo
     {
-        return $this->hasMany(Pipeline::class);
-    }
-
-    /**
-     * @return HasMany<ProjectMilestone, $this>
-     */
-    public function milestones(): HasMany
-    {
-        return $this->hasMany(ProjectMilestone::class, 'project_id');
+        return $this->belongsTo(Project::class);
     }
 }

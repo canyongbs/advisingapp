@@ -34,67 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Models;
+namespace AdvisingApp\Project\Database\Factories;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Pipeline\Models\Pipeline;
-use AdvisingApp\Project\Database\Factories\ProjectFactory;
-use AdvisingApp\Project\Observers\ProjectObserver;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Project\Models\Project;
+use AdvisingApp\Project\Models\ProjectMilestone;
+use AdvisingApp\Project\Models\ProjectMilestoneStatus;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-#[ObservedBy([ProjectObserver::class])]
 /**
- * @mixin IdeHelperProject
+ * @extends Factory<ProjectMilestone>
  */
-class Project extends BaseModel implements Auditable
+class ProjectMilestoneFactory extends Factory
 {
-    /** @use HasFactory<ProjectFactory> */
-    use HasFactory;
-
-    use SoftDeletes;
-    use AuditableTrait;
-
-    protected $fillable = [
-        'name',
-        'description',
-    ];
-
     /**
-     * @return MorphTo<Model, $this>
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
      */
-    public function createdBy(): MorphTo
+    public function definition(): array
     {
-        return $this->morphTo();
-    }
-
-    /**
-     * @return HasMany<ProjectFile, $this>
-     */
-    public function files(): HasMany
-    {
-        return $this->hasMany(ProjectFile::class, 'project_id');
-    }
-
-    /**
-     * @return HasMany<Pipeline, $this>
-     */
-    public function pipelines(): HasMany
-    {
-        return $this->hasMany(Pipeline::class);
-    }
-
-    /**
-     * @return HasMany<ProjectMilestone, $this>
-     */
-    public function milestones(): HasMany
-    {
-        return $this->hasMany(ProjectMilestone::class, 'project_id');
+        return [
+            'project_id' => Project::factory(),
+            'title' => str($this->faker->words(asText: true))->headline()->toString(),
+            'description' => $this->faker->sentence(3),
+            'status_id' => ProjectMilestoneStatus::factory(),
+            'created_by_id' => User::factory(),
+        ];
     }
 }
