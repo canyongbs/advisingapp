@@ -36,19 +36,20 @@
 
 namespace AdvisingApp\Application\Providers;
 
-use AdvisingApp\Application\ApplicationPlugin;
-use AdvisingApp\Application\Events\ApplicationSubmissionCreated;
-use AdvisingApp\Application\Listeners\NotifySubscribersOfApplicationSubmission;
-use AdvisingApp\Application\Models\Application;
-use AdvisingApp\Application\Models\ApplicationAuthentication;
-use AdvisingApp\Application\Models\ApplicationField;
-use AdvisingApp\Application\Models\ApplicationStep;
-use AdvisingApp\Application\Models\ApplicationSubmission;
-use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use AdvisingApp\Application\ApplicationPlugin;
+use AdvisingApp\Application\Models\Application;
+use AdvisingApp\Application\Models\ApplicationStep;
+use AdvisingApp\Application\Models\ApplicationField;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Application\Models\ApplicationSubmission;
+use AdvisingApp\Application\Models\ApplicationAuthentication;
+use AdvisingApp\Application\Models\ApplicationSubmissionState;
+use AdvisingApp\Application\Events\ApplicationSubmissionCreated;
+use AdvisingApp\Application\Listeners\ClearApplicationSubmissionCountCache;
+use AdvisingApp\Application\Listeners\NotifySubscribersOfApplicationSubmission;
 
 class ApplicationServiceProvider extends ServiceProvider
 {
@@ -75,6 +76,11 @@ class ApplicationServiceProvider extends ServiceProvider
         Event::listen(
             events: ApplicationSubmissionCreated::class,
             listener: NotifySubscribersOfApplicationSubmission::class
+        );
+
+        Event::listen(
+            events: ApplicationSubmissionCreated::class,
+            listener: ClearApplicationSubmissionCountCache::class
         );
     }
 }
