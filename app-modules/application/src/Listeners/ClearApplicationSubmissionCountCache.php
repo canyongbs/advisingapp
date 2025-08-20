@@ -45,7 +45,7 @@ class ClearApplicationSubmissionCountCache
     {
         Cache::tags('{application-submission-count}')
             ->forget(
-                "applciation-submission-count-{$event->submission->submissible->getKey()}"
+                "application-submission-count-{$event->submission->submissible->getKey()}"
             );
     }
 }
