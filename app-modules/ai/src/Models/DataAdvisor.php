@@ -37,9 +37,9 @@
 namespace AdvisingApp\Ai\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Audit;
 use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DataAdvisor extends Model implements Auditable
 {
