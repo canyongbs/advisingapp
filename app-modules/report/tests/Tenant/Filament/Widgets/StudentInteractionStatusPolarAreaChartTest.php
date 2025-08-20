@@ -37,6 +37,8 @@
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Report\Filament\Widgets\StudentInteractionStatusPolarAreaChart;
+use AdvisingApp\Segment\Enums\SegmentModel;
+use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 it('checks student interaction status polar area chart', function () {
@@ -124,4 +126,78 @@ it('returns correct interaction counts by status for students within the selecte
     expect($interactionsCount)->toEqual($stats[0])
         ->and($interactionsCount)->toEqual($stats[1])
         ->and($interactionsCount)->not->toEqual($stats[2]);
+});
+
+it('returns correct interaction counts by status for students based on segment filter', function () {
+    $interactionsCount = random_int(1, 10);
+    $interactionsCountForDoe = random_int(1, 10);
+
+    $interactionStatusFirst = InteractionStatus::factory()->create();
+    $interactionStatusSecond = InteractionStatus::factory()->create();
+
+    $segment = Segment::factory()->create([
+        'model' => SegmentModel::Student,
+        'filters' => [
+            'queryBuilder' => [
+                'rules' => [
+                    'C0Cy' => [
+                        'type' => 'last',
+                        'data' => [
+                            'operator' => 'contains',
+                            'settings' => [
+                                'text' => 'John',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    Student::factory()
+        ->has(
+            Interaction::factory()
+                ->count($interactionsCount)
+                ->for(
+                    $interactionStatusFirst,
+                    'status'
+                ),
+            'interactions'
+        )->create([
+            'last' => 'John',
+        ]);
+
+    Student::factory()
+        ->has(
+            Interaction::factory()
+                ->count($interactionsCountForDoe)
+                ->for(
+                    $interactionStatusSecond,
+                    'status'
+                ),
+            'interactions'
+        )->create([
+            'last' => 'Doe',
+        ]);
+
+    $widgetInstance = new StudentInteractionStatusPolarAreaChart();
+    $widgetInstance->cacheTag = 'report-student-interaction';
+    $widgetInstance->filters = [
+        'populationSegment' => $segment->getKey(),
+    ];
+
+    $stats = $widgetInstance->getData()['datasets'][0]['data'];
+
+    expect($interactionsCount)->toEqual($stats[0])
+        ->and($interactionsCount)->not->toEqual($stats[1]);
+
+    $widgetInstance = new StudentInteractionStatusPolarAreaChart();
+    $widgetInstance->cacheTag = 'report-student-interaction';
+    $widgetInstance->filters = [];
+
+    $stats = $widgetInstance->getData()['datasets'][0]['data'];
+
+    expect($interactionsCount)->toEqual($stats[0])
+        ->and($interactionsCountForDoe)->toEqual($stats[1])
+        ->and($interactionsCount + $interactionsCountForDoe)->toEqual($stats->sum());
 });

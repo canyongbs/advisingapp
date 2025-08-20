@@ -35,6 +35,8 @@
 */
 
 use AdvisingApp\Report\Filament\Widgets\StudentCumulativeCountLineChart;
+use AdvisingApp\Segment\Enums\SegmentModel;
+use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 it('returns correct cumulative student counts grouped by month within the given date range', function () {
@@ -55,6 +57,56 @@ it('returns correct cumulative student counts grouped by month within the given 
         'startDate' => $startDate->toDateString(),
         'endDate' => $endDate->toDateString(),
     ];
+
+    expect($widgetInstance->getData())->toMatchSnapshot();
+});
+
+it('returns correct cumulative student counts grouped by month based on segment filters', function () {
+    $startDate = now()->subDays(90);
+    $endDate = now()->subDays(5);
+
+    $segment = Segment::factory()->create([
+        'model' => SegmentModel::Student,
+        'filters' => [
+            'queryBuilder' => [
+                'rules' => [
+                    'C0Cy' => [
+                        'type' => 'last',
+                        'data' => [
+                            'operator' => 'contains',
+                            'settings' => [
+                                'text' => 'John',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    Student::factory()->count(5)->state([
+        'created_at_source' => $startDate,
+        'last' => 'John',
+    ])->create();
+
+    Student::factory()->count(5)->state([
+        'created_at_source' => $endDate,
+        'last' => 'Doe',
+    ])->create();
+
+    // with filter
+    $widgetInstance = new StudentCumulativeCountLineChart();
+    $widgetInstance->cacheTag = 'report-student';
+    $widgetInstance->filters = [
+        'populationSegment' => $segment->getKey(),
+    ];
+
+    expect($widgetInstance->getData())->toMatchSnapshot();
+
+    // without filter
+    $widgetInstance = new StudentCumulativeCountLineChart();
+    $widgetInstance->cacheTag = 'report-student';
+    $widgetInstance->filters = [];
 
     expect($widgetInstance->getData())->toMatchSnapshot();
 });

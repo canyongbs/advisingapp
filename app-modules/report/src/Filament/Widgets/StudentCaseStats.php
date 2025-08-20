@@ -51,12 +51,18 @@ class StudentCaseStats extends StatsOverviewReportWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
+        $segmentId = $this->getSelectedSegment();
 
-        $shouldBypassCache = filled($startDate) || filled($endDate);
+        $shouldBypassCache = filled($startDate) || filled($endDate) || filled($segmentId);
 
         $casesCount = $shouldBypassCache
             ? CaseModel::query()
-                ->whereHasMorph('respondent', Student::class)
+                ->whereHasMorph('respondent', Student::class, function (Builder $query) use ($segmentId) {
+                    $query->when(
+                        $segmentId,
+                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                    );
+                })
                 ->when(
                     $startDate && $endDate,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
@@ -72,7 +78,12 @@ class StudentCaseStats extends StatsOverviewReportWidget
 
         $openCases = $shouldBypassCache
             ? CaseModel::query()
-                ->whereHasMorph('respondent', Student::class)
+                ->whereHasMorph('respondent', Student::class, function (Builder $query) use ($segmentId) {
+                    $query->when(
+                        $segmentId,
+                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                    );
+                })
                 ->when(
                     $startDate && $endDate,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
@@ -90,7 +101,12 @@ class StudentCaseStats extends StatsOverviewReportWidget
 
         $closedCases = $shouldBypassCache
             ? CaseModel::query()
-                ->whereHasMorph('respondent', Student::class)
+                ->whereHasMorph('respondent', Student::class, function (Builder $query) use ($segmentId) {
+                    $query->when(
+                        $segmentId,
+                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                    );
+                })
                 ->when(
                     $startDate && $endDate,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
@@ -115,8 +131,16 @@ class StudentCaseStats extends StatsOverviewReportWidget
                 }
             }
             $recentCasesCount = CaseModel::query()
-                ->whereHasMorph('respondent', Student::class)
-                ->whereBetween('created_at', [$startDate, $endDate])
+                ->whereHasMorph('respondent', Student::class, function (Builder $query) use ($segmentId) {
+                    $query->when(
+                        $segmentId,
+                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                    );
+                })
+                ->when(
+                    $startDate && $endDate,
+                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                )
                 ->count();
         } else {
             $recentCasesCount = Cache::tags(["{{$this->cacheTag}}"])->remember(

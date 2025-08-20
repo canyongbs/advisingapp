@@ -42,70 +42,100 @@ use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
 use AdvisingApp\Engagement\Models\EngagementResponse;
-use AdvisingApp\StudentDataModel\Enums\ActionCenterTab;
+use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Models\Task;
-use App\Models\User;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Number;
-use Livewire\Attributes\Reactive;
 
 class StudentStats extends StatsOverviewWidget
 {
-    #[Reactive]
-    public string $activeTab;
+    use InteractsWithPageFilters;
 
     public function getStats(): array
     {
-        /** @var User $user */
-        $user = auth()->user();
+        $startDate = $this->getStartDate();
+        $endDate = $this->getEndDate();
+        $segmentId = $this->getSelectedSegment();
 
-        $tab = ActionCenterTab::tryFrom($this->activeTab) ?? ActionCenterTab::Subscribed;
+        $studentQuery = function (Builder $query) use ($segmentId) {
+            if ($segmentId) {
+                $this->segmentFilter($query, $segmentId);
+            }
 
-        $studentQuery = fn (Builder $query) => match ($tab) {
-            ActionCenterTab::All => $query,
-            ActionCenterTab::CareTeam => $query->whereRelation('careTeam', 'user_id', $user->getKey()),
-            ActionCenterTab::Subscribed => $query->whereRelation('subscriptions', 'user_id', $user->getKey()),
+            return $query;
         };
 
         return [
             Stat::make('New Messages', Number::format(EngagementResponse::query()
                 ->whereHasMorph('sender', Student::class, $studentQuery)
                 ->where('status', EngagementResponseStatus::New)
+                ->when(
+                    $startDate && $endDate,
+                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                )
                 ->count())),
             Stat::make('Open Alerts', Number::format(Alert::query()
                 ->whereHasMorph('concern', Student::class, $studentQuery)
                 ->whereHas('status', fn (Builder $query) => $query->whereNotIn('classification', [SystemAlertStatusClassification::Resolved, SystemAlertStatusClassification::Canceled]))
+                ->when(
+                    $startDate && $endDate,
+                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                )
                 ->count())),
             Stat::make('Open Tasks', Number::format(Task::query()
                 ->whereHasMorph('concern', Student::class, $studentQuery)
                 ->whereNotIn('status', [TaskStatus::Completed, TaskStatus::Canceled])
+                ->when(
+                    $startDate && $endDate,
+                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                )
                 ->count())),
             Stat::make('Open Cases', Number::format(CaseModel::query()
                 ->whereHasMorph('respondent', Student::class, $studentQuery)
                 ->whereRelation('status', 'classification', '!=', SystemCaseClassification::Closed)
+                ->when(
+                    $startDate && $endDate,
+                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                )
                 ->count())),
             Stat::make('Actioned Messages', Number::format(EngagementResponse::query()
                 ->whereHasMorph('sender', Student::class, $studentQuery)
                 ->where('status', EngagementResponseStatus::Actioned)
+                ->when(
+                    $startDate && $endDate,
+                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                )
                 ->count()))
                 ->extraAttributes(['class' => 'fi-wi-stats-overview-stat-primary']),
             Stat::make('Closed Alerts', Number::format(Alert::query()
                 ->whereHasMorph('concern', Student::class, $studentQuery)
                 ->whereHas('status', fn (Builder $query) => $query->whereIn('classification', [SystemAlertStatusClassification::Resolved, SystemAlertStatusClassification::Canceled]))
+                ->when(
+                    $startDate && $endDate,
+                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                )
                 ->count()))
                 ->extraAttributes(['class' => 'fi-wi-stats-overview-stat-primary']),
             Stat::make('Closed Tasks', Number::format(Task::query()
                 ->whereHasMorph('concern', Student::class, $studentQuery)
                 ->whereIn('status', [TaskStatus::Completed, TaskStatus::Canceled])
+                ->when(
+                    $startDate && $endDate,
+                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                )
                 ->count()))
                 ->extraAttributes(['class' => 'fi-wi-stats-overview-stat-primary']),
             Stat::make('Closed Cases', Number::format(CaseModel::query()
                 ->whereHasMorph('respondent', Student::class, $studentQuery)
                 ->whereRelation('status', 'classification', SystemCaseClassification::Closed)
+                ->when(
+                    $startDate && $endDate,
+                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                )
                 ->count()))
                 ->extraAttributes(['class' => 'fi-wi-stats-overview-stat-primary']),
         ];
