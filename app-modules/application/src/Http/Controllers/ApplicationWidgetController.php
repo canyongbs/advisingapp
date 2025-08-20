@@ -83,6 +83,20 @@ class ApplicationWidgetController extends Controller
         );
     }
 
+    public function preview(GenerateFormKitSchema $generateSchema, Application $application): JsonResponse
+    {
+        return response()->json(
+            [
+                'name' => $application->name,
+                'description' => $application->description,
+                'authentication_url' => null,
+                'schema' => $generateSchema($application),
+                'primary_color' => Color::all()[$application->primary_color ?? 'blue'],
+                'rounding' => $application->rounding,
+            ],
+        );
+    }
+
     public function requestAuthentication(Request $request, ResolveSubmissionAuthorFromEmail $resolveSubmissionAuthorFromEmail, Application $application): JsonResponse
     {
         $data = $request->validate([
