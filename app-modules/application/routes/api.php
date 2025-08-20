@@ -68,3 +68,14 @@ Route::prefix('api')
                     ->name('register-prospect');
             });
     });
+
+Route::prefix('api')
+    ->middleware([
+        'web',
+        'auth',
+        EnsureOnlineAdmissionsFeatureIsActive::class,
+    ])
+    ->group(function () {
+        Route::get('/applications/{application}/preview', [ApplicationWidgetController::class, 'preview'])
+            ->name('applications.api.preview');
+    });

@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,32 +33,20 @@
 
 </COPYRIGHT>
 */
-import { defaultConfig, plugin } from '@formkit/vue';
-import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
-import VueSignaturePad from 'vue-signature-pad';
-import App from './App.vue';
-import config from './formkit.config.js';
-import './widget.css';
 
-customElements.define(
-    'application-embed',
-    defineCustomElement({
-        setup(props) {
-            const app = createApp();
+namespace AdvisingApp\Application\Http\Controllers;
 
-            // install plugins
-            app.use(plugin, defaultConfig(config));
+use AdvisingApp\Application\Models\Application;
+use App\Http\Controllers\Controller;
+use Illuminate\View\View;
 
-            app.use(VueSignaturePad);
-
-            app.config.devtools = true;
-
-            const inst = getCurrentInstance();
-            Object.assign(inst.appContext, app._context);
-            Object.assign(inst.provides, app._context.provides);
-
-            return () => h(App, props);
-        },
-        props: ['url', 'preview'],
-    }),
-);
+class ApplicationPreviewController extends Controller
+{
+    public function __invoke(Application $application): View
+    {
+        return view('application::preview', [
+            'application' => $application,
+            'preview' => true,
+        ]);
+    }
+}

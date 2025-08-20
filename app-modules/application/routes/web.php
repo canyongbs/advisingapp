@@ -34,7 +34,9 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Application\Http\Controllers\ApplicationPreviewController;
 use AdvisingApp\Application\Livewire\RenderApplication;
+use Illuminate\Support\Facades\Route;
 
 Route::middleware('web')
     ->prefix('applications')
@@ -42,4 +44,7 @@ Route::middleware('web')
     ->group(function () {
         Route::get('/{application}/respond', RenderApplication::class)
             ->name('show');
+
+        Route::get('/{application}/preview', ApplicationPreviewController::class)
+            ->name('preview');
     });
