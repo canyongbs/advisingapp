@@ -70,7 +70,7 @@ class DataAdvisorPolicy
     {
         return $authenticatable->canOrElse(
             abilities: ["ai-data-advisors.*.update"],
-            denyResponse: 'You do not have permission to create data advisors.'
+            denyResponse: 'You do not have permission to update this data advisor.'
         );
     }
 
