@@ -58,6 +58,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Cache;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ManageApplicationSubmissions extends ManageRelatedRecords
@@ -188,5 +189,23 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
                     DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    public static function getNavigationItems(array $urlParameters = []): array
+    {
+        $item = parent::getNavigationItems($urlParameters)[0];
+
+        $ownerRecord = $urlParameters['record'];
+
+        $applicationSubmissionsCount = Cache::tags('{application-submission-count}')
+            ->remember(
+                "application-submission-count-{$ownerRecord->getKey()}",
+                now()->addMinutes(5),
+                fn (): int => $ownerRecord->submissions()->count(),
+            );
+
+        $item->badge((string) $applicationSubmissionsCount);
+
+        return [$item];
     }
 }
