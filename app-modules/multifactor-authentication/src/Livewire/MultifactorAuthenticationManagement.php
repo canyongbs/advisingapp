@@ -187,7 +187,7 @@ class MultifactorAuthenticationManagement extends Component implements HasAction
             Toggle::make('is_sso_enabled')
                 ->helperText('Your account is configured using enterprise single sign-on (SSO) so multifactor authentication is handled by
         your institution, rather than by this product.')
-                ->label('Product MFA Disabled')
+                ->label(fn() => $this->user->is_external ? 'Product MFA Disabled' : 'SSO Enabled')
                 ->default(false)
                 ->disabled(),
         ];
