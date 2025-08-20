@@ -69,7 +69,7 @@ class UploadFormFieldBlock extends FormFieldBlock
             'accept' => $field->config['accept'] ?? '',
             'limit' => $field->config['limit'] ?? null,
             'size' => $field->config['size'] ?? null,
-            'uploadUrl' => route('api.portal.service-request.request-upload-url'),
+            'uploadUrl' => route('forms.form-upload-url'),
         ];
     }
 
