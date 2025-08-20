@@ -76,7 +76,7 @@ class SubscribeBulkAction
                 $records->each(function ($record) use ($data, $context) {
                     throw_unless($record instanceof Student || $record instanceof Prospect, new Exception("Record must be of type {$context}."));
 
-                    if(! is_null($record->deleted_at)) {
+                    if (! is_null($record->deleted_at)) {
                         return;
                     }
 
@@ -88,7 +88,7 @@ class SubscribeBulkAction
                     }
 
                     foreach ($userIds as $userId) {
-                        if(! is_null(User::find($userId)->deleted_at)) {
+                        if (! is_null(User::find($userId)->deleted_at)) {
                             continue;
                         }
 

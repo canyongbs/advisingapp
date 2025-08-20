@@ -70,8 +70,8 @@ class SubscriptionCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
             foreach ($action->data['user_ids'] as $userId) {
                 $user = User::find($userId);
 
-                if(is_null($user) || ! is_null($user->deleted_at)) {
-                  continue;
+                if (is_null($user) || ! is_null($user->deleted_at)) {
+                    continue;
                 }
 
                 $subscriptions[] = resolve(SubscriptionCreate::class)
