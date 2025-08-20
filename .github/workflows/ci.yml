@@ -14,12 +14,14 @@ jobs:
     timeout-minutes: 15
 
     env:
-      extensions: gd, gmp, redis, mailparse
-      key: ext-cache-20250820
+      php-extensions: gd, gmp, redis, mailparse
+      php-extensions-key: ext-cache-20250820
+      php-version: "8.4"
 
     outputs:
       extensions: ${{ env.extensions }}
       key: ${{ env.key }} # TODO: Add notes
+      php-version: ${{ env.php-version }}
 
     steps:
       - name: Checkout code | Internal
@@ -39,7 +41,7 @@ jobs:
         id: extcache
         uses: shivammathur/cache-extensions@v1
         with:
-          php-version: "8.4"
+          php-version: ${{ env.php-version }}
           extensions: ${{ env.extensions }}
           key: ${{ env.key }}
 
@@ -47,12 +49,12 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ steps.extcache.outputs.dir }}
-          key: ${{ steps.extcache.outputs.key }}
-          restore-keys: ${{ steps.extcache.outputs.key }}
+          key: ${{ runner.os }}-phpext-${{ env.php-version }}-${{ env.php-extensions }}
+          restore-keys: ${{ runner.os }}-phpext-${{ env.php-version }}
 
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: "8.4"
+          php-version: ${{ env.php-version }}
           coverage: none
           extensions: ${{ env.extensions }}
 
@@ -84,22 +86,22 @@ jobs:
         id: extcache
         uses: shivammathur/cache-extensions@v1
         with:
-          php-version: "8.4"
-          extensions: ${{ needs.prepare.outputs.extensions }}
-          key: ${{ needs.prepare.outputs.key }}
+          php-version: ${{ needs.prepare.outputs.php-version }}
+          extensions: ${{ needs.prepare.outputs.php-extensions }}
+          key: ${{ needs.prepare.outputs.php-extensions-key }}
 
       - name: Cache extensions
         uses: actions/cache@v4
         with:
           path: ${{ steps.extcache.outputs.dir }}
-          key: ${{ steps.extcache.outputs.key }}
-          restore-keys: ${{ steps.extcache.outputs.key }}
+          key: ${{ runner.os }}-phpext-${{ needs.prepare.outputs.php-version }}-${{ needs.prepare.outputs.php-extensions }}
+          restore-keys: ${{ runner.os }}-phpext-${{ needs.prepare.outputs.php-version }}
 
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: "8.4"
+          php-version: ${{ needs.prepare.outputs.php-version }}
           coverage: none
-          extensions: ${{ needs.prepare.outputs.extensions }}
+          extensions: ${{ needs.prepare.outputs.php-extensions }}
 
       - name: Setup Dependencies
         uses: ./.github/actions/composer-dependency-setup
@@ -204,22 +206,22 @@ jobs:
         id: extcache
         uses: shivammathur/cache-extensions@v1
         with:
-          php-version: "8.4"
-          extensions: ${{ needs.prepare.outputs.extensions }}
-          key: ${{ needs.prepare.outputs.key }}
+          php-version: ${{ needs.prepare.outputs.php-version }}
+          extensions: ${{ needs.prepare.outputs.php-extensions }}
+          key: ${{ needs.prepare.outputs.php-extensions-key }}
 
       - name: Cache extensions
         uses: actions/cache@v4
         with:
           path: ${{ steps.extcache.outputs.dir }}
-          key: ${{ steps.extcache.outputs.key }}
-          restore-keys: ${{ steps.extcache.outputs.key }}
+          key: ${{ runner.os }}-phpext-${{ needs.prepare.outputs.php-version }}-${{ needs.prepare.outputs.php-extensions }}
+          restore-keys: ${{ runner.os }}-phpext-${{ needs.prepare.outputs.php-version }}
 
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: "8.4"
+          php-version: ${{ needs.prepare.outputs.php-version }}
           coverage: none
-          extensions: ${{ needs.prepare.outputs.extensions }}
+          extensions: ${{ needs.prepare.outputs.php-extensions }}
 
       - uses: actions/checkout@v4
         with:
@@ -311,22 +313,22 @@ jobs:
         id: extcache
         uses: shivammathur/cache-extensions@v1
         with:
-          php-version: "8.4"
-          extensions: ${{ needs.prepare.outputs.extensions }}
-          key: ${{ needs.prepare.outputs.key }}
+          php-version: ${{ needs.prepare.outputs.php-version }}
+          extensions: ${{ needs.prepare.outputs.php-extensions }}
+          key: ${{ needs.prepare.outputs.php-extensions-key }}
 
       - name: Cache extensions
         uses: actions/cache@v4
         with:
           path: ${{ steps.extcache.outputs.dir }}
-          key: ${{ steps.extcache.outputs.key }}
-          restore-keys: ${{ steps.extcache.outputs.key }}
+          key: ${{ runner.os }}-phpext-${{ needs.prepare.outputs.php-version }}-${{ needs.prepare.outputs.php-extensions }}
+          restore-keys: ${{ runner.os }}-phpext-${{ needs.prepare.outputs.php-version }}
 
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: "8.4"
+          php-version: ${{ needs.prepare.outputs.php-version }}
           coverage: none
-          extensions: ${{ needs.prepare.outputs.extensions }}
+          extensions: ${{ needs.prepare.outputs.php-extensions }}
 
       - uses: actions/checkout@v4
         with:
