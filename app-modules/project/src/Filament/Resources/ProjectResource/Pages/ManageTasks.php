@@ -38,7 +38,6 @@ namespace AdvisingApp\Project\Filament\Resources\ProjectResource\Pages;
 
 use AdvisingApp\Project\Filament\Resources\ProjectResource;
 use App\Features\AssociateTasksWithProjectsFeature;
-use Filament\Actions;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables\Actions\AssociateAction;
 use Filament\Tables\Actions\BulkActionGroup;
@@ -77,7 +76,7 @@ class ManageTasks extends ManageRelatedRecords
             ])
             ->headerActions([
                 AssociateAction::make()
-                    ->recordSelectOptionsQuery(fn(Builder $query) => $query->whereNull('project_id'))
+                    ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereNull('project_id'))
                     ->preloadRecordSelect()
                     ->authorize(fn () => auth()->user()->can('update', $this->getOwnerRecord())),
             ])
@@ -89,7 +88,7 @@ class ManageTasks extends ManageRelatedRecords
                 BulkActionGroup::make([
                     DissociateBulkAction::make()
                         ->authorize(fn () => auth()->user()->can('update', $this->getOwnerRecord())),
-                ])
-                ]);
+                ]),
+            ]);
     }
 }

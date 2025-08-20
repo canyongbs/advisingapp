@@ -49,7 +49,7 @@ use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
-it('can render with proper permission', function() {
+it('can render with proper permission', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user);

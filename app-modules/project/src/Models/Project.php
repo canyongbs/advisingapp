@@ -104,6 +104,6 @@ class Project extends BaseModel implements Auditable
      */
     public function tasks(): HasMany
     {
-      return $this->hasMany(Task::class);
+        return $this->hasMany(Task::class);
     }
 }
