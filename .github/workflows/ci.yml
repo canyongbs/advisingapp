@@ -19,8 +19,8 @@ jobs:
       php-version: "8.4"
 
     outputs:
-      extensions: ${{ env.extensions }}
-      key: ${{ env.key }}
+      php-extensions: ${{ env.php-extensions }}
+      php-extensions-key: ${{ env.php-extensions-key }}
       php-version: ${{ env.php-version }}
 
     steps:
