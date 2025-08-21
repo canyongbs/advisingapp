@@ -58,8 +58,17 @@ jobs:
           coverage: none
           extensions: ${{ env.php-extensions }}
 
-      - name: Setup Dependencies
-        uses: ./.github/actions/composer-dependency-setup
+      - name: Cache dependencies
+        id: cache-composer
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 #4.2.4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock', 'app-modules/**/composer.lock') }}
+
+      - if: ${{ steps.cache-composer.outputs.cache-hit != 'true' }}
+        name: Install Dependencies
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
+        shell: bash
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 #4.4.0
         with:
@@ -184,8 +193,17 @@ jobs:
       - name: Copy .env
         run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
-      - name: Setup Dependencies
-        uses: ./.github/actions/composer-dependency-setup
+      - name: Cache dependencies
+        id: cache-composer
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 #4.2.4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock', 'app-modules/**/composer.lock') }}
+
+      - if: ${{ steps.cache-composer.outputs.cache-hit != 'true' }}
+        name: Install Dependencies
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
+        shell: bash
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 #4.4.0
         with:
@@ -291,8 +309,17 @@ jobs:
       - name: Copy .env
         run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
-      - name: Setup Dependencies
-        uses: ./.github/actions/composer-dependency-setup
+      - name: Cache dependencies
+        id: cache-composer
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 #4.2.4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock', 'app-modules/**/composer.lock') }}
+
+      - if: ${{ steps.cache-composer.outputs.cache-hit != 'true' }}
+        name: Install Dependencies
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
+        shell: bash
 
       - name: Generate key
         run: php artisan key:generate
