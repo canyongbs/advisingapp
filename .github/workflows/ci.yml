@@ -118,6 +118,7 @@ jobs:
     strategy:
       matrix:
         testsuite: [ Landlord, Tenant ]
+        shard: [ 1, 2, 3, 4, 5 ]
 
     runs-on: ubuntu-22.04
 
@@ -239,7 +240,7 @@ jobs:
         run: php artisan route:list
 
       - name: Execute tests (Unit and Feature tests) via PHPUnit
-        run: php artisan test --configuration phpunit-ci.xml --parallel --testsuite=${{ matrix.testsuite }}
+        run: php artisan test --configuration phpunit-ci.xml --parallel --testsuite=${{ matrix.testsuite }} --shard=${{ matrix.shard }}/5
 
   lint:
     runs-on: ubuntu-22.04
