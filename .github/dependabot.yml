@@ -13,4 +13,4 @@ updates:
           - "minor"
           - "patch" # Only groups minor and patch updates
     assignees:
-      - @Orrison
+      - "@Orrison"
