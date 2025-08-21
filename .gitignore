@@ -23,6 +23,8 @@ public/css/
 public/js/
 /.php-cs-fixer.cache
 /_ide_helper.php
+/_ide_helper.macros.php
+/_ide_helper_models.php
 /.phpstorm.meta.php
 /phpstan.neon
 /.phpunit.result.cache
