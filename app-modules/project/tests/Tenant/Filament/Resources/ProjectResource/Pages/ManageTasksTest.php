@@ -37,6 +37,7 @@
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ManageTasks;
 use AdvisingApp\Project\Models\Project;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
 use App\Models\User;
 use Filament\Forms\Components\Select;
@@ -125,7 +126,7 @@ it('can list tasks', function () {
 
     $project = Project::factory()->create();
 
-    Task::factory()->count(5)->for($project)->create();
+    Task::factory()->count(5)->for($project)->concerningStudent(Student::factory()->create())->create();
 
     livewire(ManageTasks::class, [
         'record' => $project->getRouteKey(),
@@ -133,13 +134,24 @@ it('can list tasks', function () {
         ->assertCanSeeTableRecords($project->tasks);
 });
 
-it('does not list tasks already associated with another project in task search', function () {
+it('does not list tasks already associated with a project in task search', function () {
     asSuperAdmin();
 
     $project1 = Project::factory()->create();
     $project2 = Project::factory()->create();
 
-    $task = Task::factory()->for($project1)->create();
+    $task = Task::factory()->for($project1)->concerningStudent(Student::factory()->create())->create();
+
+    livewire(ManageTasks::class, [
+        'record' => $project1->getRouteKey(),
+    ])
+        ->mountTableAction(AssociateAction::class)
+        ->assertFormFieldExists('recordId', 'mountedTableActionForm', function (Select $select) use ($task) {
+            $options = $select->getSearchResults($task->title);
+
+            return empty($options);
+        })
+        ->assertSuccessful();
 
     livewire(ManageTasks::class, [
         'record' => $project2->getRouteKey(),
