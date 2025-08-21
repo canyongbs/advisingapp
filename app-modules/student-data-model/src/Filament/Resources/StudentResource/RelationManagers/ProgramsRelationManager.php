@@ -40,7 +40,6 @@ use AdvisingApp\StudentDataModel\Filament\Imports\ProgramImporter;
 use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
-use App\Features\CatalogYearFeature;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -140,8 +139,7 @@ class ProgramsRelationManager extends RelationManager
                     ->visible($sisSystem?->hasProgramsGraduationDt() ?? true),
                 TextEntry::make('catalog_year')
                     ->label('Catalog Year')
-                    ->placeholder('-')
-                    ->visible(CatalogYearFeature::active()),
+                    ->placeholder('-'),
                 TextEntry::make('conferred_dt')
                     ->label('Conferred Date')
                     ->dateTime()
@@ -179,8 +177,7 @@ class ProgramsRelationManager extends RelationManager
                     ->visible($sisSystem?->hasProgramsGraduationDt() ?? true),
                 TextColumn::make('catalog_year')
                     ->label('Catalog Year')
-                    ->placeholder('N/A')
-                    ->visible(CatalogYearFeature::active()),
+                    ->placeholder('N/A'),
             ])
             ->actions([
                 ViewAction::make(),
@@ -295,8 +292,7 @@ class ProgramsRelationManager extends RelationManager
                     ->label('Graduration Date')
                     ->closeOnDateSelection(),
                 TextInput::make('catalog_year')
-                    ->label('Catalog Year')
-                    ->visible(CatalogYearFeature::active()),
+                    ->label('Catalog Year'),
             ]);
     }
 }
