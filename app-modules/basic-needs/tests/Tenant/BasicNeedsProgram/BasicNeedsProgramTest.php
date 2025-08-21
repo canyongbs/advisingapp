@@ -376,7 +376,7 @@ it('is gated with proper access control', function () {
 
     $user->revokePermissionTo('settings.view-any');
     $user->revokePermissionTo('settings.*.view');
-    
+
     get(BasicNeedsProgramResource::getUrl('index'))->assertForbidden();
 
     $user->givePermissionTo('settings.view-any');
