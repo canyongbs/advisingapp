@@ -52,6 +52,8 @@ enum Feature: string
 
     case ResourceHub = 'resource-hub';
 
+    case BasicNeeds = 'basic-needs-programs';
+
     case EventManagement = 'event-management';
     case RealtimeChat = 'realtime-chat';
 

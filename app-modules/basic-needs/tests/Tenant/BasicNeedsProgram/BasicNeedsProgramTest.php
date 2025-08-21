@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages\CreateBasicNeedsProgram;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages\EditBasicNeedsProgram;
@@ -41,12 +42,14 @@ use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages\Li
 use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
+use App\Settings\LicenseSettings;
 use Filament\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertSoftDeleted;
+use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
 
 it('can render list page', function () {
@@ -351,4 +354,33 @@ it('can filter basic needs program by `program category`', function () {
         ->filterTable('basic_category_id', $basic_needs_category_id)
         ->assertCanSeeTableRecords($basicNeedsPrograms->where('basic_needs_category_id', $basic_needs_category_id))
         ->assertCanNotSeeTableRecords($basicNeedsPrograms->where('basic_needs_category_id', '!=', $basic_needs_category_id));
+});
+
+it('is gated with proper access control', function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->basicNeedsPrograms = false;
+
+    $settings->save();
+
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+
+    $user->givePermissionTo('settings.view-any');
+
+    actingAs($user);
+
+    get(BasicNeedsProgramResource::getUrl('index'))->assertForbidden();
+
+    $settings->data->addons->basicNeedsPrograms = true;
+    $settings->save();
+
+    $user->revokePermissionTo('settings.view-any');
+    $user->revokePermissionTo('settings.*.view');
+    
+    get(BasicNeedsProgramResource::getUrl('index'))->assertForbidden();
+
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.*.view');
+
+    get(BasicNeedsProgramResource::getUrl('index'))->assertSuccessful();
 });
