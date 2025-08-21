@@ -26,33 +26,33 @@ jobs:
     steps:
       - name: Checkout code | Internal
         if: ${{ github.event_name == 'merge_group' || github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #5.0.0
         with:
           ref: ${{ github.head_ref }}
           token: ${{ secrets.pat-token }}
 
       - name: Checkout code | External
         if: ${{ github.event_name != 'merge_group' && github.event.pull_request.head.repo.full_name != github.repository || github.actor == 'dependabot[bot]' }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #5.0.0
         with:
           ref: ${{ github.head_ref }}
 
       - name: Setup cache environment
         id: extcache
-        uses: shivammathur/cache-extensions@ed47a55c463bf49c0de08e5290a3d55208e2c287
+        uses: shivammathur/cache-extensions@ed47a55c463bf49c0de08e5290a3d55208e2c287 #1.13.0
         with:
           php-version: ${{ env.php-version }}
           extensions: ${{ env.php-extensions }}
           key: ${{ env.php-extensions-key }}
 
       - name: Cache extensions
-        uses: actions/cache@v4
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 #4.2.4
         with:
           path: ${{ steps.extcache.outputs.dir }}
           key: ${{ runner.os }}-phpext-${{ env.php-version }}-${{ env.php-extensions-key }}
           restore-keys: ${{ runner.os }}-phpext-${{ env.php-version }}
 
-      - uses: shivammathur/setup-php@v2
+      - uses: shivammathur/setup-php@20529878ed81ef8e78ddf08b480401e6101a850f #2.35.3
         with:
           php-version: ${{ env.php-version }}
           coverage: none
@@ -61,20 +61,20 @@ jobs:
       - name: Setup Dependencies
         uses: ./.github/actions/composer-dependency-setup
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 #4.4.0
         with:
           node-version-file: ".nvmrc"
           cache: "npm"
       - run: npm install
 
       - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
+        uses: ruby/setup-ruby@efbf473cab83af4468e8606cc33eca9281bb213f #1.256.0
 
       - name: Run Ruby Script
         run: ruby ./copyright.rb
 
       - name: Cache PHP CS Fixer
-        uses: actions/cache@v4
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 #4.2.4
         with:
           path: .php-cs-fixer.cache
           key: ${{ runner.OS }}-${{ github.repository }}-phpcsfixer-${{ github.run_id }}
@@ -82,7 +82,7 @@ jobs:
             ${{ runner.OS }}-${{ github.repository }}-phpcsfixer-
 
       - name: Cache Prettier
-        uses: actions/cache@v4
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 #4.2.4
         with:
           path: ./node_modules/.cache/prettier/.prettier-cache
           key: ${{ runner.OS }}-${{ github.repository }}-prettier-${{ github.run_id }}
@@ -94,16 +94,14 @@ jobs:
 
       - name: Commit changes
         if: ${{ github.event_name != 'merge_group' && github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
-        # SHA of release v6.0.0
-        uses: stefanzweifel/git-auto-commit-action@3cc016cfc892e0844046da36fc68da4e525e081f
+        uses: stefanzweifel/git-auto-commit-action@778341af668090896ca464160c2def5d1d1a3eb0 #6.0.1
         with:
           commit_message: >
             Update code formatting and copyright headers
 
       - name: Check for changes
         if: ${{ github.event_name == 'merge_group' || github.event.pull_request.head.repo.full_name != github.repository || github.actor == 'dependabot[bot]' }}
-        # SHA of release v20.0.1
-        uses: tj-actions/verify-changed-files@6ed7632824d235029086612d4330d659005af687
+        uses: tj-actions/verify-changed-files@a1c6acee9df209257a246f2cc6ae8cb6581c1edf #20.0.4
         with:
           fail-if-changed: "true"
 
@@ -159,26 +157,26 @@ jobs:
 
       - name: Setup cache environment
         id: extcache
-        uses: shivammathur/cache-extensions@ed47a55c463bf49c0de08e5290a3d55208e2c287
+        uses: shivammathur/cache-extensions@ed47a55c463bf49c0de08e5290a3d55208e2c287 #1.13.0
         with:
           php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
           extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
           key: ${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
 
       - name: Cache extensions
-        uses: actions/cache@v4
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 #4.2.4
         with:
           path: ${{ steps.extcache.outputs.dir }}
           key: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}-${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
           restore-keys: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}
 
-      - uses: shivammathur/setup-php@v2
+      - uses: shivammathur/setup-php@20529878ed81ef8e78ddf08b480401e6101a850f #2.35.3
         with:
           php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
           coverage: none
           extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #5.0.0
         with:
           fetch-depth: 0
           fetch-tags: true
@@ -189,7 +187,7 @@ jobs:
       - name: Setup Dependencies
         uses: ./.github/actions/composer-dependency-setup
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 #4.4.0
         with:
           node-version-file: ".nvmrc"
           cache: "npm"
@@ -266,26 +264,26 @@ jobs:
     steps:
       - name: Setup cache environment
         id: extcache
-        uses: shivammathur/cache-extensions@ed47a55c463bf49c0de08e5290a3d55208e2c287
+        uses: shivammathur/cache-extensions@ed47a55c463bf49c0de08e5290a3d55208e2c287 #1.13.0
         with:
           php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
           extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
           key: ${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
 
       - name: Cache extensions
-        uses: actions/cache@v4
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 #4.2.4
         with:
           path: ${{ steps.extcache.outputs.dir }}
           key: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}-${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
           restore-keys: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}
 
-      - uses: shivammathur/setup-php@v2
+      - uses: shivammathur/setup-php@20529878ed81ef8e78ddf08b480401e6101a850f #2.35.3
         with:
           php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
           coverage: none
           extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #5.0.0
         with:
           fetch-depth: 0
           fetch-tags: true
@@ -309,7 +307,7 @@ jobs:
         run: php artisan app:generate-helper-files
 
       - name: "Restore result cache"
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@0400d5f644dc74513175e3cd8d07132dd4860809 #4.2.4
         with:
           path: tmp
           key: "linting-result-cache-${{ github.run_id }}"
@@ -323,7 +321,7 @@ jobs:
         run: ./vendor/bin/phpmd app/,app-modules/,database/,tests/,routes/ github phpmd.ruleset.xml --cache
 
       - name: "Save result cache"
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@0400d5f644dc74513175e3cd8d07132dd4860809 #4.2.4
         if: ${{ !cancelled() }}
         with:
           path: tmp
