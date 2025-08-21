@@ -2,7 +2,7 @@ name: Deploy to Production Environment
 
 on:
   release:
-    types: [released]
+    types: [ released ]
 
 env:
   AWS_REGION: "us-west-2"
@@ -17,7 +17,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #5.0.0
         with:
           submodules: true
           ref: ${{ github.head_ref }}
@@ -53,12 +53,12 @@ jobs:
   deploy-web:
     name: Deploy Web Service
     runs-on: ubuntu-22.04
-    needs: [build-web, deploy-worker]
+    needs: [ build-web, deploy-worker ]
     environment: production
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #5.0.0
         with:
           submodules: true
           ref: ${{ github.head_ref }}
@@ -112,7 +112,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #5.0.0
         with:
           submodules: true
           ref: ${{ github.head_ref }}
@@ -148,12 +148,12 @@ jobs:
   deploy-worker:
     name: Deploy Worker Service
     runs-on: ubuntu-22.04
-    needs: [build-worker]
+    needs: [ build-worker ]
     environment: production
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #5.0.0
         with:
           submodules: true
           ref: ${{ github.head_ref }}
@@ -207,7 +207,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #5.0.0
         with:
           submodules: true
           ref: ${{ github.head_ref }}
@@ -243,12 +243,12 @@ jobs:
   deploy-scheduler:
     name: Deploy Scheduler Service
     runs-on: ubuntu-22.04
-    needs: [build-scheduler, deploy-worker]
+    needs: [ build-scheduler, deploy-worker ]
     environment: production
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #5.0.0
         with:
           submodules: true
           ref: ${{ github.head_ref }}
@@ -302,7 +302,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #5.0.0
         with:
           submodules: true
           ref: ${{ github.head_ref }}
@@ -337,13 +337,13 @@ jobs:
 
   deploy-release-automation:
     name: Deploy and Run Release Automation Service
-    needs: [deploy-web, deploy-worker, deploy-scheduler, build-release-automation]
+    needs: [ deploy-web, deploy-worker, deploy-scheduler, build-release-automation ]
     runs-on: ubuntu-22.04
     environment: production
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #5.0.0
         with:
           submodules: true
           ref: ${{ github.head_ref }}
