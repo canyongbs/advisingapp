@@ -38,8 +38,10 @@ namespace AdvisingApp\Authorization\Models;
 
 use AdvisingApp\Authorization\Database\Factories\LoginMagicLinkFactory;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
@@ -54,6 +56,7 @@ class LoginMagicLink extends Model
 
     use HasUuids;
     use UsesTenantConnection;
+    use MassPrunable;
 
     protected $fillable = [];
 
@@ -63,5 +66,14 @@ class LoginMagicLink extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * @return Builder<LoginMagicLink>
+     */
+    public function prunable(): Builder
+    {
+        return static::where('created_at', '<=', now()->subMinutes(15))
+            ->orWhereNotNull('used_at');
     }
 }

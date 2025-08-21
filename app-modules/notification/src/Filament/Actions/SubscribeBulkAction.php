@@ -76,6 +76,10 @@ class SubscribeBulkAction
                 $records->each(function ($record) use ($data, $context) {
                     throw_unless($record instanceof Student || $record instanceof Prospect, new Exception("Record must be of type {$context}."));
 
+                    if (! is_null($record->deleted_at)) {
+                        return;
+                    }
+
                     $removePrior = $data['remove_prior'];
                     $userIds = $data['user_ids'] ?? [];
 
@@ -84,6 +88,10 @@ class SubscribeBulkAction
                     }
 
                     foreach ($userIds as $userId) {
+                        if (! is_null(User::find($userId)->deleted_at)) {
+                            continue;
+                        }
+
                         $record->subscriptions()
                             ->firstOrCreate([
                                 'subscribable_id' => $record->getKey(),

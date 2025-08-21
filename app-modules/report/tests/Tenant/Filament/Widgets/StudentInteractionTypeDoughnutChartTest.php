@@ -37,6 +37,8 @@
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Report\Filament\Widgets\StudentInteractionTypeDoughnutChart;
+use AdvisingApp\Segment\Enums\SegmentModel;
+use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 it('checks student interaction types doughnut chart', function () {
@@ -124,4 +126,80 @@ it('returns correct interaction counts by type for students within the selected 
     expect($interactionsCount)->toEqual($stats[0])
         ->and($interactionsCount)->toEqual($stats[1])
         ->and($interactionsCount)->not->toEqual($stats[2]);
+});
+
+it('returns correct interaction counts by type for students based on segment filter', function () {
+    $interactionsCount = random_int(1, 10);
+    $interactionsCountForDoe = random_int(1, 10);
+
+    $interactionTypeFirst = InteractionType::factory()->create();
+    $interactionTypeSecond = InteractionType::factory()->create();
+
+    $segment = Segment::factory()->create([
+        'model' => SegmentModel::Student,
+        'filters' => [
+            'queryBuilder' => [
+                'rules' => [
+                    'C0Cy' => [
+                        'type' => 'last',
+                        'data' => [
+                            'operator' => 'contains',
+                            'settings' => [
+                                'text' => 'John',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    Student::factory()
+        ->has(
+            Interaction::factory()
+                ->count($interactionsCount)
+                ->for(
+                    $interactionTypeFirst,
+                    'type'
+                ),
+            'interactions'
+        )->create([
+            'last' => 'John',
+        ]);
+
+    Student::factory()
+        ->has(
+            Interaction::factory()
+                ->count($interactionsCountForDoe)
+                ->for(
+                    $interactionTypeSecond,
+                    'type'
+                ),
+            'interactions'
+        )->create([
+            'last' => 'Doe',
+        ]);
+
+    //  with segment filter
+    $widgetInstance = new StudentInteractionTypeDoughnutChart();
+    $widgetInstance->cacheTag = 'report-student-interaction';
+    $widgetInstance->filters = [
+        'populationSegment' => $segment->getKey(),
+    ];
+
+    $stats = $widgetInstance->getData()['datasets'][0]['data'];
+
+    expect($interactionsCount)->toEqual($stats[0])
+        ->and($interactionsCount)->not->toEqual($stats[1]);
+
+    //  with segment filter
+    $widgetInstance = new StudentInteractionTypeDoughnutChart();
+    $widgetInstance->cacheTag = 'report-student-interaction';
+    $widgetInstance->filters = [];
+
+    $stats = $widgetInstance->getData()['datasets'][0]['data'];
+
+    expect($interactionsCount)->toEqual($stats[0])
+        ->and($interactionsCountForDoe)->toEqual($stats[1])
+        ->and($interactionsCount + $interactionsCountForDoe)->toEqual($stats->sum());
 });

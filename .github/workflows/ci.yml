@@ -8,84 +8,82 @@ on:
   workflow_dispatch:
 
 jobs:
-  enforce-copyright:
+  prep-and-code-consistency:
     runs-on: ubuntu-22.04
 
-    timeout-minutes: 10
+    timeout-minutes: 15
+
+    env:
+      php-extensions: gd, gmp, redis, mailparse
+      php-extensions-key: ext-cache-20250820
+      php-version: "8.4"
+
+    outputs:
+      php-extensions: ${{ env.php-extensions }}
+      php-extensions-key: ${{ env.php-extensions-key }}
+      php-version: ${{ env.php-version }}
 
     steps:
       - name: Checkout code | Internal
         if: ${{ github.event_name == 'merge_group' || github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #5.0.0
         with:
           ref: ${{ github.head_ref }}
           token: ${{ secrets.pat-token }}
 
       - name: Checkout code | External
         if: ${{ github.event_name != 'merge_group' && github.event.pull_request.head.repo.full_name != github.repository || github.actor == 'dependabot[bot]' }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #5.0.0
         with:
           ref: ${{ github.head_ref }}
 
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-
-      - name: Run Ruby Script
-        run: ruby ./copyright.rb
-
-      - name: Commit changes
-        if: ${{ github.event_name != 'merge_group' && github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
-        # SHA of release v6.0.0
-        uses: stefanzweifel/git-auto-commit-action@3cc016cfc892e0844046da36fc68da4e525e081f
+      - name: Setup cache environment
+        id: extcache
+        uses: shivammathur/cache-extensions@ed47a55c463bf49c0de08e5290a3d55208e2c287 #1.13.0
         with:
-          commit_message: >
-            chore: fix enforcement of copyright on all files
+          php-version: ${{ env.php-version }}
+          extensions: ${{ env.php-extensions }}
+          key: ${{ env.php-extensions-key }}
 
-      - name: Check for changes
-        if: ${{ github.event_name == 'merge_group' || github.event.pull_request.head.repo.full_name != github.repository || github.actor == 'dependabot[bot]' }}
-        # SHA of release v20.0.1
-        uses: tj-actions/verify-changed-files@6ed7632824d235029086612d4330d659005af687
+      - name: Cache extensions
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 #4.2.4
         with:
-          fail-if-changed: "true"
+          path: ${{ steps.extcache.outputs.dir }}
+          key: ${{ runner.os }}-phpext-${{ env.php-version }}-${{ env.php-extensions-key }}
+          restore-keys: ${{ runner.os }}-phpext-${{ env.php-version }}
 
-  fix-code-style:
-    runs-on: ubuntu-22.04
-
-    timeout-minutes: 10
-
-    needs: [enforce-copyright]
-
-    steps:
-      - uses: shivammathur/setup-php@v2
+      - uses: shivammathur/setup-php@20529878ed81ef8e78ddf08b480401e6101a850f #2.35.3
         with:
-          php-version: "8.4"
+          php-version: ${{ env.php-version }}
           coverage: none
-          extensions: mailparse
+          extensions: ${{ env.php-extensions }}
 
-      - name: Checkout code | Internal
-        if: ${{ github.event_name == 'merge_group' || github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
-        uses: actions/checkout@v4
+      - name: Cache dependencies
+        id: cache-composer
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 #4.2.4
         with:
-          ref: ${{ github.head_ref }}
-          token: ${{ secrets.pat-token }}
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock', 'app-modules/**/composer.lock') }}
 
-      - name: Checkout code | External
-        if: ${{ github.event_name != 'merge_group' && github.event.pull_request.head.repo.full_name != github.repository || github.actor == 'dependabot[bot]' }}
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
+      - if: ${{ steps.cache-composer.outputs.cache-hit != 'true' }}
+        name: Install Dependencies
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
+        shell: bash
 
-      - name: Setup Dependencies
-        uses: ./.github/actions/composer-dependency-setup
-
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 #4.4.0
         with:
           node-version-file: ".nvmrc"
           cache: "npm"
       - run: npm install
 
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@efbf473cab83af4468e8606cc33eca9281bb213f #1.256.0
+
+      - name: Run Ruby Script
+        run: ruby ./copyright.rb
+
       - name: Cache PHP CS Fixer
-        uses: actions/cache@v4
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 #4.2.4
         with:
           path: .php-cs-fixer.cache
           key: ${{ runner.OS }}-${{ github.repository }}-phpcsfixer-${{ github.run_id }}
@@ -93,7 +91,7 @@ jobs:
             ${{ runner.OS }}-${{ github.repository }}-phpcsfixer-
 
       - name: Cache Prettier
-        uses: actions/cache@v4
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 #4.2.4
         with:
           path: ./node_modules/.cache/prettier/.prettier-cache
           key: ${{ runner.OS }}-${{ github.repository }}-prettier-${{ github.run_id }}
@@ -105,25 +103,25 @@ jobs:
 
       - name: Commit changes
         if: ${{ github.event_name != 'merge_group' && github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
-        # SHA of release v6.0.0
-        uses: stefanzweifel/git-auto-commit-action@3cc016cfc892e0844046da36fc68da4e525e081f
+        uses: stefanzweifel/git-auto-commit-action@778341af668090896ca464160c2def5d1d1a3eb0 #6.0.1
         with:
           commit_message: >
-            chore: fix code style
+            Update code formatting and copyright headers
 
       - name: Check for changes
         if: ${{ github.event_name == 'merge_group' || github.event.pull_request.head.repo.full_name != github.repository || github.actor == 'dependabot[bot]' }}
-        # SHA of release v20.0.1
-        uses: tj-actions/verify-changed-files@6ed7632824d235029086612d4330d659005af687
+        uses: tj-actions/verify-changed-files@a1c6acee9df209257a246f2cc6ae8cb6581c1edf #20.0.4
         with:
           fail-if-changed: "true"
 
   test:
     strategy:
       matrix:
-        testsuite: [Landlord, Tenant]
+        testsuite: [ Landlord, Tenant ]
 
     runs-on: ubuntu-22.04
+
+    needs: [ prep-and-code-consistency ]
 
     env:
       DB_PORT: 5432
@@ -134,8 +132,6 @@ jobs:
       REDIS_HOST: 127.0.0.1
 
     timeout-minutes: 15
-
-    needs: [enforce-copyright, fix-code-style]
 
     services:
       postgres:
@@ -168,13 +164,28 @@ jobs:
         env:
           PGPASSWORD: root
 
-      - uses: shivammathur/setup-php@v2
+      - name: Setup cache environment
+        id: extcache
+        uses: shivammathur/cache-extensions@ed47a55c463bf49c0de08e5290a3d55208e2c287 #1.13.0
         with:
-          php-version: "8.4"
-          coverage: none
-          extensions: gd, gmp, redis, mailparse
+          php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
+          extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
+          key: ${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
 
-      - uses: actions/checkout@v4
+      - name: Cache extensions
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 #4.2.4
+        with:
+          path: ${{ steps.extcache.outputs.dir }}
+          key: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}-${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
+          restore-keys: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}
+
+      - uses: shivammathur/setup-php@20529878ed81ef8e78ddf08b480401e6101a850f #2.35.3
+        with:
+          php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
+          coverage: none
+          extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
+
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #5.0.0
         with:
           fetch-depth: 0
           fetch-tags: true
@@ -182,10 +193,19 @@ jobs:
       - name: Copy .env
         run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
-      - name: Setup Dependencies
-        uses: ./.github/actions/composer-dependency-setup
+      - name: Cache dependencies
+        id: cache-composer
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 #4.2.4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock', 'app-modules/**/composer.lock') }}
 
-      - uses: actions/setup-node@v4
+      - if: ${{ steps.cache-composer.outputs.cache-hit != 'true' }}
+        name: Install Dependencies
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
+        shell: bash
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 #4.4.0
         with:
           node-version-file: ".nvmrc"
           cache: "npm"
@@ -224,6 +244,8 @@ jobs:
   lint:
     runs-on: ubuntu-22.04
 
+    needs: [ prep-and-code-consistency ]
+
     env:
       DB_PORT: 5432
       DB_HOST: 127.0.0.1
@@ -231,10 +253,12 @@ jobs:
       DB_PASSWORD: root
       DB_DATABASE: testing_landlord
       PENNANT_STORE: array
+      CACHE_DRIVER: array
+      QUEUE_CONNECTION: sync
+      AUDIT_QUEUE_CONNECTION: sync
+      SESSION_DRIVER: array
 
     timeout-minutes: 15
-
-    needs: [enforce-copyright, fix-code-style]
 
     services:
       postgres:
@@ -255,25 +279,29 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
-      redis:
-        image: redis
-        ports:
-          - 6379:6379
-        options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
-
     steps:
-      - name: Create tenant database
-        run: psql -h 127.0.0.1 -d testing_landlord -U root -c 'CREATE DATABASE testing_tenant;'
-        env:
-          PGPASSWORD: root
-
-      - uses: shivammathur/setup-php@v2
+      - name: Setup cache environment
+        id: extcache
+        uses: shivammathur/cache-extensions@ed47a55c463bf49c0de08e5290a3d55208e2c287 #1.13.0
         with:
-          php-version: "8.4"
-          coverage: none
-          extensions: gd, gmp, redis, mailparse
+          php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
+          extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
+          key: ${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
 
-      - uses: actions/checkout@v4
+      - name: Cache extensions
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 #4.2.4
+        with:
+          path: ${{ steps.extcache.outputs.dir }}
+          key: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}-${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
+          restore-keys: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}
+
+      - uses: shivammathur/setup-php@20529878ed81ef8e78ddf08b480401e6101a850f #2.35.3
+        with:
+          php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
+          coverage: none
+          extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
+
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #5.0.0
         with:
           fetch-depth: 0
           fetch-tags: true
@@ -281,11 +309,32 @@ jobs:
       - name: Copy .env
         run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
-      - name: Setup Dependencies
-        uses: ./.github/actions/composer-dependency-setup
+      - name: Cache dependencies
+        id: cache-composer
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 #4.2.4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock', 'app-modules/**/composer.lock') }}
+
+      - if: ${{ steps.cache-composer.outputs.cache-hit != 'true' }}
+        name: Install Dependencies
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
+        shell: bash
+
+      - name: Generate key
+        run: php artisan key:generate
+
+      - name: Migrate Landlord Database
+        run: php artisan migrate --database=landlord --path=database/landlord --force
+
+      - name: Set up Tenant
+        run: php artisan tenants:create test test.advisingapp.local -y
+
+      - name: Generate Helper Files
+        run: php artisan app:generate-helper-files
 
       - name: "Restore result cache"
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@0400d5f644dc74513175e3cd8d07132dd4860809 #4.2.4
         with:
           path: tmp
           key: "linting-result-cache-${{ github.run_id }}"
@@ -299,7 +348,7 @@ jobs:
         run: ./vendor/bin/phpmd app/,app-modules/,database/,tests/,routes/ github phpmd.ruleset.xml --cache
 
       - name: "Save result cache"
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@0400d5f644dc74513175e3cd8d07132dd4860809 #4.2.4
         if: ${{ !cancelled() }}
         with:
           path: tmp

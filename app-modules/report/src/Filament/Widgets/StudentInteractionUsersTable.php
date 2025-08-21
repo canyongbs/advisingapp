@@ -83,13 +83,20 @@ class StudentInteractionUsersTable extends BaseWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
+        $segmentId = $this->getSelectedSegment();
 
         return $table
             ->query(
-                function () use ($startDate, $endDate): Builder {
+                function () use ($startDate, $endDate, $segmentId): Builder {
                     return User::query()
-                        ->whereHas('interactions', function (Builder $query) use ($startDate, $endDate): Builder {
-                            return $query->whereHasMorph('interactable', Student::class)
+                        ->whereHas('interactions', function (Builder $query) use ($startDate, $endDate, $segmentId): Builder {
+                            return $query
+                                ->whereHasMorph('interactable', Student::class, function (Builder $query) use ($segmentId) {
+                                    $query->when(
+                                        $segmentId,
+                                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                                    );
+                                })
                                 ->when(
                                     $startDate && $endDate,
                                     function (Builder $query) use ($startDate, $endDate): Builder {

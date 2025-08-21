@@ -34,28 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace Filament\Forms\Components {
-    use App\Models\User;
+namespace AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatusResource\Pages;
 
-    class Checkbox
+use AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatusResource;
+use Filament\Actions\EditAction;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Pages\ViewRecord;
+
+class ViewProjectMilestoneStatus extends ViewRecord
+{
+    protected static string $resource = ProjectMilestoneStatusResource::class;
+
+    public function infolist(Infolist $infolist): Infolist
     {
-        /**
-         * @see app/Providers/FilamentServiceProvider.php
-         */
-        public function lockedWithoutAnyLicenses(User $user, array $licenses): self
-        {
-            return $this;
-        }
+        return $infolist
+            ->schema([
+                Section::make()
+                    ->schema([
+                        TextEntry::make('name')
+                            ->label('Name'),
+                        TextEntry::make('description')
+                            ->label('Description'),
+                    ]),
+            ]);
     }
 
-    class Toggle
+    protected function getHeaderActions(): array
     {
-        /**
-         * @see app/Providers/FilamentServiceProvider.php
-         */
-        public function lockedWithoutAnyLicenses(User $user, array $licenses): self
-        {
-            return $this;
-        }
+        return [
+            EditAction::make(),
+        ];
     }
 }

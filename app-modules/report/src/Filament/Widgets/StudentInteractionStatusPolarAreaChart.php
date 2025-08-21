@@ -40,6 +40,7 @@ use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
 
@@ -72,11 +73,12 @@ class StudentInteractionStatusPolarAreaChart extends ChartReportWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
+        $segmentId = $this->getSelectedSegment();
 
-        $shouldBypassCache = filled($startDate) || filled($endDate);
+        $shouldBypassCache = filled($startDate) || filled($endDate) || filled($segmentId);
 
         $interactionsByStatus = $shouldBypassCache
-            ? $this->getInteractionStatusData($startDate, $endDate)
+            ? $this->getInteractionStatusData($startDate, $endDate, $segmentId)
             : Cache::tags(["{{$this->cacheTag}}"])->remember('student_interactions_by_status', now()->addHours(24), function () {
                 return $this->getInteractionStatusData();
             });
@@ -124,11 +126,17 @@ class StudentInteractionStatusPolarAreaChart extends ChartReportWidget
     /**
      * @return Collection<int, InteractionStatus>
      */
-    protected function getInteractionStatusData(?Carbon $startDate = null, ?Carbon $endDate = null): Collection
+    protected function getInteractionStatusData(?Carbon $startDate = null, ?Carbon $endDate = null, ?string $segmentId = null): Collection
     {
         return InteractionStatus::withCount([
-            'interactions' => function ($query) use ($startDate, $endDate) {
-                $query->whereHasMorph('interactable', Student::class)
+            'interactions' => function ($query) use ($startDate, $endDate, $segmentId) {
+                $query
+                    ->whereHasMorph('interactable', Student::class, function (Builder $query) use ($segmentId) {
+                        $query->when(
+                            $segmentId,
+                            fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                        );
+                    })
                     ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
                         $query->whereBetween('created_at', [$startDate, $endDate]);
                     });

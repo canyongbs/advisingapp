@@ -39,6 +39,7 @@ namespace AdvisingApp\Report\Filament\Widgets;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 
 class StudentCumulativeCountLineChart extends LineChartReportWidget
@@ -71,11 +72,12 @@ class StudentCumulativeCountLineChart extends LineChartReportWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
+        $segmentId = $this->getSelectedSegment();
 
-        $shouldBypassCache = filled($startDate) || filled($endDate);
+        $shouldBypassCache = filled($startDate) || filled($endDate) || $segmentId;
 
         $runningTotalPerMonth = $shouldBypassCache
-            ? $this->getStudentRunningTotalData($startDate, $endDate)
+            ? $this->getStudentRunningTotalData($startDate, $endDate, $segmentId)
             : Cache::tags(["{{$this->cacheTag}}"])
                 ->remember('student-cumulative-count-line-chart', now()->addHours(24), function (): array {
                     return $this->getStudentRunningTotalData();
@@ -110,7 +112,7 @@ class StudentCumulativeCountLineChart extends LineChartReportWidget
     /**
      * @return array<string, int>
      */
-    protected function getStudentRunningTotalData(?Carbon $startDate = null, ?Carbon $endDate = null): array
+    protected function getStudentRunningTotalData(?Carbon $startDate = null, ?Carbon $endDate = null, ?string $segmentId = null): array
     {
         $startDate = $startDate ?? Carbon::now()->subMonths(11)->startOfMonth();
         $endDate = $endDate ?? Carbon::now()->endOfMonth();
@@ -119,6 +121,10 @@ class StudentCumulativeCountLineChart extends LineChartReportWidget
 
         $monthlyData = Student::query()
             ->whereBetween('created_at_source', [$startDate, $endDate])
+            ->when(
+                $segmentId,
+                fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+            )
             ->selectRaw("date_trunc('month', created_at_source) as month, COUNT(*) as monthly_total")
             ->groupByRaw("date_trunc('month', created_at_source)")
             ->get()

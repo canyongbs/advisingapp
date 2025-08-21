@@ -44,6 +44,7 @@ use AdvisingApp\CaseManagement\Database\Seeders\CaseTypeSeeder;
 use AdvisingApp\Consent\Database\Seeders\ConsentAgreementSeeder;
 use AdvisingApp\Division\Database\Seeders\DivisionSeeder;
 use AdvisingApp\Interaction\Database\Seeders\InteractionSeeder;
+use AdvisingApp\Project\Database\Seeders\ProjectMilestoneStatusSeeder;
 use AdvisingApp\Prospect\Database\Seeders\ProspectSourceSeeder;
 use AdvisingApp\Prospect\Database\Seeders\ProspectStatusSeeder;
 use AdvisingApp\ResourceHub\Database\Seeders\ResourceHubCategorySeeder;
@@ -81,6 +82,7 @@ class NewTenantSeeder extends Seeder
             PronounsSeeder::class,
             ApplicationSubmissionStateSeeder::class,
             AlertStatusSeeder::class,
+            ProjectMilestoneStatusSeeder::class,
         ]);
     }
 }

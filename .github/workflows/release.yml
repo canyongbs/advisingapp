@@ -2,7 +2,7 @@ name: Deploy to Production Environment
 
 on:
   release:
-    types: [released]
+    types: [ released ]
 
 env:
   AWS_REGION: "us-west-2"
@@ -17,15 +17,14 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #5.0.0
         with:
           submodules: true
           ref: ${{ github.head_ref }}
           token: ${{ secrets.PAT }}
 
       - name: Configure AWS credentials
-        # SHA of release v4.0.2
-        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a #4.3.1
         with:
           aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
@@ -33,8 +32,7 @@ jobs:
 
       - name: Login to Amazon ECR
         id: login-ecr
-        # SHA of release v2.0.1
-        uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076
+        uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076 #2.0.1
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
@@ -53,20 +51,19 @@ jobs:
   deploy-web:
     name: Deploy Web Service
     runs-on: ubuntu-22.04
-    needs: [build-web, deploy-worker]
+    needs: [ build-web, deploy-worker ]
     environment: production
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #5.0.0
         with:
           submodules: true
           ref: ${{ github.head_ref }}
           token: ${{ secrets.PAT }}
 
       - name: Configure AWS credentials
-        # SHA of release v4.0.2
-        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a #4.3.1
         with:
           aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
@@ -74,8 +71,7 @@ jobs:
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
-        # SHA of release v1.6.1
-        uses: aws-actions/amazon-ecs-render-task-definition@469db592f4341616e992bf7f231e19b3ab9b4efa
+        uses: aws-actions/amazon-ecs-render-task-definition@5cb8c74c1b1ecaec4c8ea82eff82c009333509ce #1.8.0
         with:
           task-definition: "docker/devops/ecs/advisingapp/advisingapp-prod-task-definition.json"
           container-name: "app"
@@ -83,8 +79,7 @@ jobs:
 
       - name: Deploy Amazon ECS task definition
         id: task-deploy
-        # SHA of release v2.2.0
-        uses: aws-actions/amazon-ecs-deploy-task-definition@0e82244a9c6dac43d70151a94c67ebc4bab18fc5
+        uses: aws-actions/amazon-ecs-deploy-task-definition@4b08990e8909cf36bc2ca95f994312f090c41865 #2.3.4
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: "advisingapp-p-crm-ecs-service"
@@ -112,15 +107,14 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #5.0.0
         with:
           submodules: true
           ref: ${{ github.head_ref }}
           token: ${{ secrets.PAT }}
 
       - name: Configure AWS credentials
-        # SHA of release v4.0.2
-        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a #4.3.1
         with:
           aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
@@ -128,8 +122,7 @@ jobs:
 
       - name: Login to Amazon ECR
         id: login-ecr
-        # SHA of release v2.0.1
-        uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076
+        uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076 #2.0.1
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
@@ -148,20 +141,19 @@ jobs:
   deploy-worker:
     name: Deploy Worker Service
     runs-on: ubuntu-22.04
-    needs: [build-worker]
+    needs: [ build-worker ]
     environment: production
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #5.0.0
         with:
           submodules: true
           ref: ${{ github.head_ref }}
           token: ${{ secrets.PAT }}
 
       - name: Configure AWS credentials
-        # SHA of release v4.0.2
-        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a #4.3.1
         with:
           aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
@@ -169,8 +161,7 @@ jobs:
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
-        # SHA of release v1.6.1
-        uses: aws-actions/amazon-ecs-render-task-definition@469db592f4341616e992bf7f231e19b3ab9b4efa
+        uses: aws-actions/amazon-ecs-render-task-definition@5cb8c74c1b1ecaec4c8ea82eff82c009333509ce #1.8.0
         with:
           task-definition: "docker/devops/ecs/advisingapp/advisingapp-worker-prod-task-definition.json"
           container-name: "worker"
@@ -178,8 +169,7 @@ jobs:
 
       - name: Deploy Amazon ECS task definition
         id: task-deploy
-        # SHA of release v2.2.0
-        uses: aws-actions/amazon-ecs-deploy-task-definition@0e82244a9c6dac43d70151a94c67ebc4bab18fc5
+        uses: aws-actions/amazon-ecs-deploy-task-definition@4b08990e8909cf36bc2ca95f994312f090c41865 #2.3.4
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: "advisingapp-worker-prod-service"
@@ -207,15 +197,14 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #5.0.0
         with:
           submodules: true
           ref: ${{ github.head_ref }}
           token: ${{ secrets.PAT }}
 
       - name: Configure AWS credentials
-        # SHA of release v4.0.2
-        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a #4.3.1
         with:
           aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
@@ -223,8 +212,7 @@ jobs:
 
       - name: Login to Amazon ECR
         id: login-ecr
-        # SHA of release v2.0.1
-        uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076
+        uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076 #2.0.1
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
@@ -243,20 +231,19 @@ jobs:
   deploy-scheduler:
     name: Deploy Scheduler Service
     runs-on: ubuntu-22.04
-    needs: [build-scheduler, deploy-worker]
+    needs: [ build-scheduler, deploy-worker ]
     environment: production
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #5.0.0
         with:
           submodules: true
           ref: ${{ github.head_ref }}
           token: ${{ secrets.PAT }}
 
       - name: Configure AWS credentials
-        # SHA of release v4.0.2
-        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a #4.3.1
         with:
           aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
@@ -264,8 +251,7 @@ jobs:
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
-        # SHA of release v1.6.1
-        uses: aws-actions/amazon-ecs-render-task-definition@469db592f4341616e992bf7f231e19b3ab9b4efa
+        uses: aws-actions/amazon-ecs-render-task-definition@5cb8c74c1b1ecaec4c8ea82eff82c009333509ce #1.8.0
         with:
           task-definition: "docker/devops/ecs/advisingapp/advisingapp-scheduler-prod-task-definition.json"
           container-name: "scheduler"
@@ -273,8 +259,7 @@ jobs:
 
       - name: Deploy Amazon ECS task definition
         id: task-deploy
-        # SHA of release v2.2.0
-        uses: aws-actions/amazon-ecs-deploy-task-definition@0e82244a9c6dac43d70151a94c67ebc4bab18fc5
+        uses: aws-actions/amazon-ecs-deploy-task-definition@4b08990e8909cf36bc2ca95f994312f090c41865 #2.3.4
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: "advisingapp-scheduler-prod-service"
@@ -302,15 +287,14 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #5.0.0
         with:
           submodules: true
           ref: ${{ github.head_ref }}
           token: ${{ secrets.PAT }}
 
       - name: Configure AWS credentials
-        # SHA of release v4.0.2
-        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a #4.3.1
         with:
           aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
@@ -318,8 +302,7 @@ jobs:
 
       - name: Login to Amazon ECR
         id: login-ecr
-        # SHA of release v2.0.1
-        uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076
+        uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076 #2.0.1
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
@@ -337,21 +320,20 @@ jobs:
 
   deploy-release-automation:
     name: Deploy and Run Release Automation Service
-    needs: [deploy-web, deploy-worker, deploy-scheduler, build-release-automation]
+    needs: [ deploy-web, deploy-worker, deploy-scheduler, build-release-automation ]
     runs-on: ubuntu-22.04
     environment: production
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #5.0.0
         with:
           submodules: true
           ref: ${{ github.head_ref }}
           token: ${{ secrets.PAT }}
 
       - name: Configure AWS credentials
-        # SHA of release v4.0.2
-        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a #4.3.1
         with:
           aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
@@ -359,16 +341,14 @@ jobs:
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
-        # SHA of release v1.6.1
-        uses: aws-actions/amazon-ecs-render-task-definition@469db592f4341616e992bf7f231e19b3ab9b4efa
+        uses: aws-actions/amazon-ecs-render-task-definition@5cb8c74c1b1ecaec4c8ea82eff82c009333509ce #1.8.0
         with:
           task-definition: "docker/devops/ecs/advisingapp/advisingapp-release-automation-prod-task-definition.json"
           container-name: "release-automation"
           image: ${{ needs.build-release-automation.outputs.image }}
 
       - name: Deploy Amazon ECS task definition
-        # SHA of release v2.2.0
-        uses: aws-actions/amazon-ecs-deploy-task-definition@0e82244a9c6dac43d70151a94c67ebc4bab18fc5
+        uses: aws-actions/amazon-ecs-deploy-task-definition@4b08990e8909cf36bc2ca95f994312f090c41865 #2.3.4
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           cluster: "advisingapp-prod"

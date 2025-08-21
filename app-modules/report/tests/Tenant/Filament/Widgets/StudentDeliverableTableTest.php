@@ -35,6 +35,8 @@
 */
 
 use AdvisingApp\Report\Filament\Widgets\StudentDeliverableTable;
+use AdvisingApp\Segment\Enums\SegmentModel;
+use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 use function Pest\Livewire\livewire;
@@ -86,4 +88,76 @@ it('it returns deliverability data only for students created within the given da
     ])
         ->assertCanSeeTableRecords($optInStartDateStudents->merge($optInEndDateStudents))
         ->assertCanNotSeeTableRecords($optOutStartDateStudents->merge($optOutEndDateStudents));
+});
+
+it('it returns deliverability data only for students based on segment filters', function () {
+    $segment = Segment::factory()->create([
+        'model' => SegmentModel::Student,
+        'filters' => [
+            'queryBuilder' => [
+                'rules' => [
+                    'C0Cy' => [
+                        'type' => 'last',
+                        'data' => [
+                            'operator' => 'contains',
+                            'settings' => [
+                                'text' => 'John',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    $optOutStudentWithJoeName = Student::factory()
+        ->count(2)
+        ->create([
+            'email_bounce' => false,
+            'sms_opt_out' => false,
+            'last' => 'John',
+        ]);
+
+    $optOutStudentWithDoeName = Student::factory()
+        ->count(2)
+        ->create([
+            'email_bounce' => false,
+            'sms_opt_out' => false,
+            'last' => 'Doe',
+        ]);
+
+    $optInStudentWithJoeName = Student::factory()
+        ->count(2)
+        ->create([
+            'email_bounce' => true,
+            'sms_opt_out' => false,
+            'last' => 'John',
+        ]);
+
+    $optInStudentWithDoeName = Student::factory()
+        ->count(2)
+        ->create([
+            'email_bounce' => false,
+            'sms_opt_out' => true,
+            'last' => 'Doe',
+        ]);
+
+    $filters = [
+        'populationSegment' => $segment->getKey(),
+    ];
+
+    livewire(StudentDeliverableTable::class, [
+        'cacheTag' => 'report-student-deliverability',
+        'filters' => $filters,
+    ])
+        ->assertCanSeeTableRecords($optInStudentWithJoeName)
+        ->assertCanNotSeeTableRecords($optOutStudentWithJoeName->merge($optOutStudentWithDoeName)->merge($optInStudentWithDoeName));
+
+    // without filter
+    livewire(StudentDeliverableTable::class, [
+        'cacheTag' => 'report-student-deliverability',
+        'filters' => [],
+    ])
+        ->assertCanSeeTableRecords($optInStudentWithJoeName->merge($optInStudentWithDoeName))
+        ->assertCanNotSeeTableRecords($optOutStudentWithJoeName->merge($optOutStudentWithDoeName));
 });

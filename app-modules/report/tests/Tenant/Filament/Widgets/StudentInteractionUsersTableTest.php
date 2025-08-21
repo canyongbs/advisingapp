@@ -36,6 +36,8 @@
 
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Report\Filament\Widgets\StudentInteractionUsersTable;
+use AdvisingApp\Segment\Enums\SegmentModel;
+use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Team\Models\Team;
 use App\Models\User;
@@ -293,6 +295,79 @@ it('displays only users with student interactions within the selected date range
         ->assertCanSeeTableRecords(collect([
             $userWithOldInteractions,
             $userWithRecentAndOtherInteractions,
+        ]))
+        ->assertCanNotSeeTableRecords(collect([$userWithoutInteractions]));
+});
+
+it('displays only users with student interactions based on segment filter', function () {
+    $segment = Segment::factory()->create([
+        'model' => SegmentModel::Student,
+        'filters' => [
+            'queryBuilder' => [
+                'rules' => [
+                    'C0Cy' => [
+                        'type' => 'last',
+                        'data' => [
+                            'operator' => 'contains',
+                            'settings' => [
+                                'text' => 'John',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    $team = Team::factory()->create();
+
+    $userWithOldInteractions = User::factory()->create();
+
+    $userWithRecentAndOtherInteractions = User::factory()->for($team, 'team')->create();
+
+    $userWithoutInteractions = User::factory()->create();
+
+    $studentOne = Student::factory()->create([
+        'last' => 'John',
+    ]);
+
+    $studentTwo = Student::factory()->create([
+        'last' => 'Doe',
+    ]);
+
+    Interaction::factory()
+        ->count(5)
+        ->for($studentOne, 'interactable')
+        ->for($userWithOldInteractions, 'user')
+        ->create();
+
+    Interaction::factory()
+        ->count(10)
+        ->for($studentTwo, 'interactable')
+        ->for($userWithRecentAndOtherInteractions, 'user')
+        ->create();
+
+    $filters = [
+        'populationSegment' => $segment->getKey(),
+    ];
+
+    // with segment filter
+    livewire(StudentInteractionUsersTable::class, [
+        'cacheTag' => 'report-student-interaction',
+        'filters' => $filters,
+    ])
+        ->assertCanSeeTableRecords(collect([
+            $userWithOldInteractions,
+        ]))
+        ->assertCanNotSeeTableRecords(collect([$userWithoutInteractions, $userWithRecentAndOtherInteractions]));
+
+    // without filter
+    livewire(StudentInteractionUsersTable::class, [
+        'cacheTag' => 'report-student-interaction',
+        'filters' => [],
+    ])
+        ->assertCanSeeTableRecords(collect([
+            $userWithOldInteractions, $userWithRecentAndOtherInteractions,
         ]))
         ->assertCanNotSeeTableRecords(collect([$userWithoutInteractions]));
 });

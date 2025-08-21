@@ -38,6 +38,7 @@ namespace AdvisingApp\Application\Providers;
 
 use AdvisingApp\Application\ApplicationPlugin;
 use AdvisingApp\Application\Events\ApplicationSubmissionCreated;
+use AdvisingApp\Application\Listeners\ClearApplicationSubmissionCountCache;
 use AdvisingApp\Application\Listeners\NotifySubscribersOfApplicationSubmission;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationAuthentication;
@@ -75,6 +76,11 @@ class ApplicationServiceProvider extends ServiceProvider
         Event::listen(
             events: ApplicationSubmissionCreated::class,
             listener: NotifySubscribersOfApplicationSubmission::class
+        );
+
+        Event::listen(
+            events: ApplicationSubmissionCreated::class,
+            listener: ClearApplicationSubmissionCountCache::class
         );
     }
 }

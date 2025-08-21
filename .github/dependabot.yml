@@ -1,0 +1,16 @@
+version: 2
+updates:
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      github-actions-group:
+        patterns:
+          - "*" # Groups all GitHub Actions updates
+        update-types:
+          - "minor"
+          - "patch" # Only groups minor and patch updates
+    assignees:
+      - "@Orrison"
