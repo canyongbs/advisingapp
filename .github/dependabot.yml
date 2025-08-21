@@ -12,3 +12,5 @@ updates:
         update-types:
           - "minor"
           - "patch" # Only groups minor and patch updates
+    assignees:
+      - @Orrison
