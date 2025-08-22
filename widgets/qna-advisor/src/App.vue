@@ -80,11 +80,11 @@ function setupWebsockets(config) {
         window.Pusher = Pusher;
         window.Echo = new Echo(config);
 
-        console.log(chatId.value)
+        console.log(chatId.value);
         if (chatId.value) {
             privateChannel = window.Echo.private(`qna-advisor-chat-${chatId.value}`)
                 .listen('.advisor-message.chunk', (data) => {
-                    console.log(data)
+                    console.log(data);
                     if (data.error) {
                         console.error('Advisor message error:', data.error);
                         isLoading.value = false;
@@ -154,26 +154,39 @@ async function sendMessage() {
 <template>
     <div v-show="sendMessageUrl !== null" class="flex h-[calc(100dvh-6rem)] flex-col gap-y-3 w-11/12 mx-auto bg-white">
         <link rel="stylesheet" v-bind:href="hostUrl + '/js/widgets/qna-advisor/style.css'" />
-        <div  class="flex flex-1 flex-col justify-end overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800">
+        <div
+            class="flex flex-1 flex-col justify-end overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800"
+        >
             <!-- <div v-if="messages.length > 0" class="divide-y dark:divide-gray-800">
                 <div v-for="(message, index) in messages" :key="index" class="m-auto justify-center px-4 py-4 text-base md:gap-6 md:py-6">
                     <div v-if="message.from === 'user'"><strong>User:</strong> {{ message.content }}</div>
                     <div v-else><strong>Agent:</strong> {{ message.content }}</div>
                 </div>
             </div> -->
-            <div v-if="messages.length > 0" >
-            <div class="mx-auto flex gap-4 text-base w-full items-start bg-gray-50 border-t border-gray-200 px-10 py-3" v-for="(message, index) in messages" :key="index">
-                <div class="relative flex flex-shrink-0 flex-col items-end">
-                    <img class="h-8 w-8 object-cover object-center" style="border-radius:40px;" :src="hostUrl + '/images/canyon-ai-headshot.jpg'" alt="" title="" />
-                </div>
-                <div class="relative flex w-full flex-col gap-1 md:gap-3">
-                    {{ message.content }}
+            <div v-if="messages.length > 0">
+                <div
+                    class="mx-auto flex gap-4 text-base w-full items-start bg-gray-50 border-t border-gray-200 px-10 py-3"
+                    v-for="(message, index) in messages"
+                    :key="index"
+                >
+                    <div class="relative flex flex-shrink-0 flex-col items-end">
+                        <img
+                            class="h-8 w-8 object-cover object-center"
+                            style="border-radius: 40px"
+                            :src="hostUrl + '/images/canyon-ai-headshot.jpg'"
+                            alt=""
+                            title=""
+                        />
+                    </div>
+                    <div class="relative flex w-full flex-col gap-1 md:gap-3">
+                        {{ message.content }}
+                    </div>
                 </div>
             </div>
+
+            <div v-if="isLoading && currentResponse" class="m-auto justify-center px-4 py-4 text-base md:gap-6 md:py-6">
+                <strong>Agent:</strong> {{ currentResponse }}
             </div>
-
-
-            <div v-if="isLoading && currentResponse" class="m-auto justify-center px-4 py-4 text-base md:gap-6 md:py-6"><strong>Agent:</strong> {{ currentResponse }}</div>
 
             <div v-if="isLoading" class="justify-center px-4 py-4 text-base md:gap-6 md:py-6">
                 <p>AI is typing...</p>
@@ -181,19 +194,29 @@ async function sendMessage() {
         </div>
 
         <div
-            class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
+            class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700"
+        >
             <div class="bg-white dark:bg-gray-800">
-                <label
-                    class="sr-only text-red-600"
-                    for="message_input"
-                >Type here</label>
-                <textarea v-model="message" placeholder="Ask your question..." :disabled="isLoading"
-                 class="min-h-20 w-full resize-none border-0 bg-white p-4 text-sm text-gray-900 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"></textarea>
+                <label class="sr-only text-red-600" for="message_input">Type here</label>
+                <textarea
+                    v-model="message"
+                    placeholder="Ask your question..."
+                    :disabled="isLoading"
+                    class="min-h-20 w-full resize-none border-0 bg-white p-4 text-sm text-gray-900 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
+                ></textarea>
             </div>
             <div
-                class="flex flex-col items-center border-t px-3 py-2 dark:border-gray-600 sm:flex-row sm:justify-between">
+                class="flex flex-col items-center border-t px-3 py-2 dark:border-gray-600 sm:flex-row sm:justify-between"
+            >
                 <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
-                   <button @click="sendMessage" :disabled="isLoading || !message.trim()" style="border-radius:12px;" class="relative font-semibold outline-none focus-visible:ring-2 px-3 py-2 text-sm bg-gray-600 text-white hover:bg-gray-500 focus-visible:ring-gray-500/50 dark:bg-gray-500 dark:hover:bg-gray-400 dark:focus-visible:ring-gray-400/50 w-full sm:w-auto">Send</button>
+                    <button
+                        @click="sendMessage"
+                        :disabled="isLoading || !message.trim()"
+                        style="border-radius: 12px"
+                        class="relative font-semibold outline-none focus-visible:ring-2 px-3 py-2 text-sm bg-gray-600 text-white hover:bg-gray-500 focus-visible:ring-gray-500/50 dark:bg-gray-500 dark:hover:bg-gray-400 dark:focus-visible:ring-gray-400/50 w-full sm:w-auto"
+                    >
+                        Send
+                    </button>
                 </div>
             </div>
         </div>

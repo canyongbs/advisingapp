@@ -34,8 +34,8 @@
 import { defaultConfig, plugin } from '@formkit/vue';
 import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
 import App from './App.vue';
-import './widget.css';
 import config from './formkit.config.js';
+import './widget.css';
 
 customElements.define(
     'qna-advisor-embed',
