@@ -31,6 +31,9 @@
 
 </COPYRIGHT>
 */
+
+@import '../../form/src/FormKit/index.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
