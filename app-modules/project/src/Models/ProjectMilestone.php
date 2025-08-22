@@ -62,6 +62,7 @@ class ProjectMilestone extends Model implements Auditable
         'title',
         'description',
         'status_id',
+        'target_date',
     ];
 
     /**
