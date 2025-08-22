@@ -31,11 +31,11 @@
 
 </COPYRIGHT>
 */
+import { upload } from '@formkit/icons';
 import { createInput } from '@formkit/vue';
 import OneTimePassword from './OneTimePassword.vue';
 import Signature from './Signature.vue';
 import Upload from './Upload.vue';
-import { upload } from '@formkit/icons';
 
 export default {
     otp: createInput(OneTimePassword, {
@@ -48,5 +48,4 @@ export default {
         props: ['accept', 'multiple'],
         icon: upload,
     }),
-
 };
