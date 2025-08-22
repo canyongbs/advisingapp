@@ -42,7 +42,6 @@ use AdvisingApp\Ai\Jobs\FetchQnaAdvisorLinkParsingResults;
 use AdvisingApp\Ai\Models\AiAssistantFile;
 use AdvisingApp\Ai\Models\QnaAdvisorFile;
 use AdvisingApp\Ai\Models\QnaAdvisorLink;
-use App\Features\QnaAdvisorLinksFeature;
 use Illuminate\Console\Command;
 use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 
@@ -66,11 +65,9 @@ class FetchAiFilesParsingResults extends Command
             ->where('created_at', '>=', now()->subHour())
             ->eachById(fn (QnaAdvisorFile $file) => dispatch(new FetchQnaAdvisorFileParsingResults($file)));
 
-        if (QnaAdvisorLinksFeature::active()) {
-            QnaAdvisorLink::query()
-                ->whereNull('parsing_results')
-                ->where('created_at', '>=', now()->subHour())
-                ->eachById(fn (QnaAdvisorLink $link) => dispatch(new FetchQnaAdvisorLinkParsingResults($link)));
-        }
+        QnaAdvisorLink::query()
+            ->whereNull('parsing_results')
+            ->where('created_at', '>=', now()->subHour())
+            ->eachById(fn (QnaAdvisorLink $link) => dispatch(new FetchQnaAdvisorLinkParsingResults($link)));
     }
 }
