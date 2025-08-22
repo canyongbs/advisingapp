@@ -137,13 +137,13 @@ it('can list tasks', function () {
 it('does not list tasks already associated with a project in task search', function () {
     asSuperAdmin();
 
-    $project1 = Project::factory()->create();
-    $project2 = Project::factory()->create();
+    $projectOne = Project::factory()->create();
+    $projectTwo = Project::factory()->create();
 
-    $task = Task::factory()->for($project1)->concerningStudent(Student::factory()->create())->create();
+    $task = Task::factory()->for($projectOne)->concerningStudent(Student::factory()->create())->create();
 
     livewire(ManageTasks::class, [
-        'record' => $project1->getRouteKey(),
+        'record' => $projectOne->getRouteKey(),
     ])
         ->mountTableAction(AssociateAction::class)
         ->assertFormFieldExists('recordId', 'mountedTableActionForm', function (Select $select) use ($task) {
@@ -154,7 +154,7 @@ it('does not list tasks already associated with a project in task search', funct
         ->assertSuccessful();
 
     livewire(ManageTasks::class, [
-        'record' => $project2->getRouteKey(),
+        'record' => $projectTwo->getRouteKey(),
     ])
         ->mountTableAction(AssociateAction::class)
         ->assertFormFieldExists('recordId', 'mountedTableActionForm', function (Select $select) use ($task) {

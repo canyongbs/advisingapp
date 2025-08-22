@@ -60,9 +60,7 @@ class ManageTasks extends ManageRelatedRecords
 
     public static function canAccess(array $parameters = []): bool
     {
-        $user = auth()->user();
-
-        return AssociateTasksWithProjectsFeature::active() && $user->can(['project.*.view']) && parent::canAccess($parameters);
+        return AssociateTasksWithProjectsFeature::active() && parent::canAccess($parameters);
     }
 
     public function table(Table $table): Table
