@@ -55,7 +55,7 @@ class BasicNeedsCategoryPolicy
             return Response::deny('You are not licensed for the Retention or Recruitment CRM.');
         }
 
-        if(! is_null($response = $this->hasFeatures())) {
+        if (! is_null($response = $this->hasFeatures())) {
             return $response;
         }
 
