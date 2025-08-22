@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,21 +33,51 @@
 
 </COPYRIGHT>
 */
-import { upload } from '@formkit/icons';
-import { createInput } from '@formkit/vue';
-import OneTimePassword from './OneTimePassword.vue';
-import Signature from './Signature.vue';
-import Upload from './Upload.vue';
 
-export default {
-    otp: createInput(OneTimePassword, {
-        props: ['digits'],
-    }),
-    signature: createInput(Signature, {
-        props: [],
-    }),
-    upload: createInput(Upload, {
-        props: ['accept', 'multiple'],
-        icon: upload,
-    }),
-};
+namespace AdvisingApp\Form\Filament\Blocks;
+
+use AdvisingApp\Form\Models\SubmissibleField;
+
+class UploadFormFieldBlock extends FormFieldBlock
+{
+    public ?string $icon = 'heroicon-m-document-arrow-up';
+
+    //Don't use in filament
+    public static bool $internal = true;
+
+    public static function type(): string
+    {
+        return 'upload';
+    }
+
+    public function fields(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public static function getFormKitSchema(SubmissibleField $field): array
+    {
+        return [
+            '$formkit' => 'upload',
+            'label' => $field->label,
+            'name' => $field->getKey(),
+            ...($field->is_required ? ['validation' => 'required'] : []),
+            'multiple' => $field->config['multiple'] ?? false,
+            'accept' => $field->config['accept'] ?? '',
+            'limit' => $field->config['limit'] ?? null,
+            'size' => $field->config['size'] ?? null,
+            'uploadUrl' => route('forms.form-upload-url'),
+        ];
+    }
+
+    /**
+     * @return array<string>
+     */
+    public static function getValidationRules(SubmissibleField $field): array
+    {
+        return [];
+    }
+}
