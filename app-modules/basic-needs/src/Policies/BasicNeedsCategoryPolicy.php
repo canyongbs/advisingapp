@@ -39,16 +39,24 @@ namespace AdvisingApp\BasicNeeds\Policies;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsCategory;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Concerns\PerformsFeatureChecks;
+use App\Enums\Feature;
 use App\Features\SettingsPermissions;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
 class BasicNeedsCategoryPolicy
 {
+    use PerformsFeatureChecks;
+
     public function before(Authenticatable $authenticatable): ?Response
     {
         if (! $authenticatable->hasAnyLicense([Student::getLicenseType(), Prospect::getLicenseType()])) {
             return Response::deny('You are not licensed for the Retention or Recruitment CRM.');
+        }
+
+        if(! is_null($response = $this->hasFeatures())) {
+            return $response;
         }
 
         return null;
@@ -157,5 +165,10 @@ class BasicNeedsCategoryPolicy
             abilities: ["product_admin.{$basicNeedsCategory->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to force delete this basic needs category.'
         );
+    }
+
+    protected function requiredFeatures(): array
+    {
+        return [Feature::SupportPrograms];
     }
 }

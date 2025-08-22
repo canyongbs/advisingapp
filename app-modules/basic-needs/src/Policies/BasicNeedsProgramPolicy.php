@@ -169,6 +169,6 @@ class BasicNeedsProgramPolicy
 
     protected function requiredFeatures(): array
     {
-        return [Feature::BasicNeeds];
+        return [Feature::SupportPrograms];
     }
 }

@@ -359,7 +359,7 @@ it('can filter basic needs program by `program category`', function () {
 it('is gated with proper access control', function () {
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->basicNeedsPrograms = false;
+    $settings->data->addons->supportPrograms = false;
 
     $settings->save();
 
@@ -371,7 +371,7 @@ it('is gated with proper access control', function () {
 
     get(BasicNeedsProgramResource::getUrl('index'))->assertForbidden();
 
-    $settings->data->addons->basicNeedsPrograms = true;
+    $settings->data->addons->supportPrograms = true;
     $settings->save();
 
     $user->revokePermissionTo('settings.view-any');
