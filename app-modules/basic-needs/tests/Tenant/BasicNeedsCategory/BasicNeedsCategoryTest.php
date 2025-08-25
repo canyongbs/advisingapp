@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource\Pages\CreateBasicNeedsCategory;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource\Pages\EditBasicNeedsCategory;
@@ -41,12 +42,14 @@ use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource\Pages\L
 use AdvisingApp\BasicNeeds\Models\BasicNeedsCategory;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
+use App\Settings\LicenseSettings;
 use Filament\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertSoftDeleted;
+use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
 
 it('can render list page', function () {
@@ -56,7 +59,7 @@ it('can render list page', function () {
             BasicNeedsCategoryResource::getUrl('index')
         )->assertForbidden();
 
-    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('support_category.view-any');
 
     actingAs($user)->get(BasicNeedsCategoryResource::getUrl('index'))
         ->assertSuccessful();
@@ -67,7 +70,7 @@ it('can render data in list page', function () {
 
     actingAs($user);
 
-    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('support_category.view-any');
 
     $basicNeedsCategories = BasicNeedsCategory::factory()->count(10)->create();
 
@@ -84,8 +87,8 @@ it('can render create page', function () {
             BasicNeedsCategoryResource::getUrl('create')
         )->assertForbidden();
 
-    $user->givePermissionTo('settings.view-any');
-    $user->givePermissionTo('settings.create');
+    $user->givePermissionTo('support_category.view-any');
+    $user->givePermissionTo('support_category.create');
 
     actingAs($user)->get(BasicNeedsCategoryResource::getUrl('create'))
         ->assertSuccessful();
@@ -99,8 +102,8 @@ it('can validate input on create page', function () {
             BasicNeedsCategoryResource::getUrl('create')
         )->assertForbidden();
 
-    $user->givePermissionTo('settings.view-any');
-    $user->givePermissionTo('settings.create');
+    $user->givePermissionTo('support_category.view-any');
+    $user->givePermissionTo('support_category.create');
 
     livewire(CreateBasicNeedsCategory::class)
         ->fillForm([
@@ -115,8 +118,8 @@ it('can create basic needs catgory', function () {
 
     actingAs($user);
 
-    $user->givePermissionTo('settings.view-any');
-    $user->givePermissionTo('settings.create');
+    $user->givePermissionTo('support_category.view-any');
+    $user->givePermissionTo('support_category.create');
 
     $basicNeedsCategory = BasicNeedsCategory::factory()->make();
 
@@ -144,8 +147,8 @@ it('can render edit page', function () {
         ])
     )->assertForbidden();
 
-    $user->givePermissionTo('settings.view-any');
-    $user->givePermissionTo('settings.*.update');
+    $user->givePermissionTo('support_category.view-any');
+    $user->givePermissionTo('support_category.*.update');
 
     actingAs($user)->get(BasicNeedsCategoryResource::getUrl('edit', [
         'record' => $basicNeedsCategory->getRouteKey(),
@@ -162,8 +165,8 @@ it('can retrieve data', function () {
         ])
     )->assertForbidden();
 
-    $user->givePermissionTo('settings.view-any');
-    $user->givePermissionTo('settings.*.update');
+    $user->givePermissionTo('support_category.view-any');
+    $user->givePermissionTo('support_category.*.update');
 
     livewire(EditBasicNeedsCategory::class, [
         'record' => $basicNeedsCategory->getRouteKey(),
@@ -184,8 +187,8 @@ it('can validate input on edit page', function () {
         ])
     )->assertForbidden();
 
-    $user->givePermissionTo('settings.view-any');
-    $user->givePermissionTo('settings.*.update');
+    $user->givePermissionTo('support_category.view-any');
+    $user->givePermissionTo('support_category.*.update');
 
     livewire(EditBasicNeedsCategory::class, [
         'record' => $basicNeedsCategory->getRouteKey(),
@@ -208,8 +211,8 @@ it('can save basic needs category', function () {
         ])
     )->assertForbidden();
 
-    $user->givePermissionTo('settings.view-any');
-    $user->givePermissionTo('settings.*.update');
+    $user->givePermissionTo('support_category.view-any');
+    $user->givePermissionTo('support_category.*.update');
 
     livewire(EditBasicNeedsCategory::class, [
         'record' => $oldBasicNeedsCategory->getRouteKey(),
@@ -236,8 +239,8 @@ it('can render view page', function () {
         ])
     )->assertForbidden();
 
-    $user->givePermissionTo('settings.view-any');
-    $user->givePermissionTo('settings.*.view');
+    $user->givePermissionTo('support_category.view-any');
+    $user->givePermissionTo('support_category.*.view');
 
     actingAs($user)->get(BasicNeedsCategoryResource::getUrl('view', [
         'record' => $basicNeedsCategory->getRouteKey(),
@@ -254,9 +257,9 @@ it('can delete basic needs category', function () {
         ])
     )->assertForbidden();
 
-    $user->givePermissionTo('settings.view-any');
-    $user->givePermissionTo('settings.*.update');
-    $user->givePermissionTo('settings.*.delete');
+    $user->givePermissionTo('support_category.view-any');
+    $user->givePermissionTo('support_category.*.update');
+    $user->givePermissionTo('support_category.*.delete');
 
     livewire(EditBasicNeedsCategory::class, [
         'record' => $basicNeedsCategory->getRouteKey(),
@@ -277,9 +280,9 @@ it('can bulk delete basic needs categories', function () {
             BasicNeedsCategoryResource::getUrl('index')
         )->assertForbidden();
 
-    $user->givePermissionTo('settings.view-any');
-    $user->givePermissionTo('settings.*.update');
-    $user->givePermissionTo('settings.*.delete');
+    $user->givePermissionTo('support_category.view-any');
+    $user->givePermissionTo('support_category.*.update');
+    $user->givePermissionTo('support_category.*.delete');
 
     livewire(ListBasicNeedsCategories::class)
         ->set('tableRecordsPerPage', 10)
@@ -288,4 +291,31 @@ it('can bulk delete basic needs categories', function () {
     foreach ($basicNeedsCategories as $basicNeedsCategory) {
         assertSoftDeleted($basicNeedsCategory);
     }
+});
+
+it('is gated with proper access control', function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->supportPrograms = false;
+
+    $settings->save();
+
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+
+    $user->givePermissionTo('support_category.view-any');
+
+    actingAs($user);
+
+    get(BasicNeedsCategoryResource::getUrl('index'))->assertForbidden();
+
+    $settings->data->addons->supportPrograms = true;
+    $settings->save();
+
+    $user->revokePermissionTo('support_category.view-any');
+
+    get(BasicNeedsCategoryResource::getUrl('index'))->assertForbidden();
+
+    $user->givePermissionTo('support_category.view-any');
+
+    get(BasicNeedsCategoryResource::getUrl('index'))->assertSuccessful();
 });
