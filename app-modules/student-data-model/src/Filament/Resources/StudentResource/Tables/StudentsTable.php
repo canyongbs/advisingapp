@@ -39,6 +39,10 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Tables
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\ExistingValuesSelectConstraint;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\EqualsOperatorWithEnrollmentSemester;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\HasMaxOperatorWithEnrollmentSemester;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\HasMinOperatorWithEnrollmentSemester;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsEmptyOperatorWithEnrollmentSemester;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
@@ -190,6 +194,14 @@ class StudentsTable
                             ->relationship('programs', 'cum_gpa'),
                         RelationshipConstraint::make('enrollments')
                             ->multiple()
+                            ->operators(
+                                [
+                                    EqualsOperatorWithEnrollmentSemester::class,
+                                    HasMaxOperatorWithEnrollmentSemester::class,
+                                    HasMinOperatorWithEnrollmentSemester::class,
+                                    IsEmptyOperatorWithEnrollmentSemester::class,
+                                ]
+                            )
                             ->attributeLabel(fn (array $settings): string => Str::plural('enrollment', $settings['count']))
                             ->icon('heroicon-m-folder-open'),
                         TextConstraint::make('enrollmentSisid')
