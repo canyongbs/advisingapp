@@ -31,10 +31,19 @@
 
 </COPYRIGHT>
 */
-import forms from '@tailwindcss/forms';
-import typography from '@tailwindcss/typography';
+// import forms from '@tailwindcss/forms';
+// import typography from '@tailwindcss/typography';
+// import preset from './tailwind.config.preset.js';
+
+// export default {
+//     content: ['./src/**/*.vue'],
+//     plugins: [forms, typography],
+//     presets: [preset],
+// };
+
+import preset from './tailwind.config.preset.js';
 
 export default {
-    content: ['./src/**/*.vue'],
-    plugins: [forms, typography],
+    presets: [preset],
+    content: ['./src/**/*.vue', '../form/src/**/*.vue', '../form/src/FormKit/theme.js'],
 };

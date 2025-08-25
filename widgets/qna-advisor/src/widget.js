@@ -31,8 +31,10 @@
 
 </COPYRIGHT>
 */
+import { defaultConfig, plugin } from '@formkit/vue';
 import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
 import App from './App.vue';
+import config from './formkit.config.js';
 import './widget.css';
 
 customElements.define(
@@ -42,6 +44,7 @@ customElements.define(
             const app = createApp();
 
             app.config.devtools = true;
+            app.use(plugin, defaultConfig(config));
 
             const inst = getCurrentInstance();
             Object.assign(inst.appContext, app._context);
