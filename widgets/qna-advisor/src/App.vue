@@ -37,7 +37,6 @@ import Pusher from 'pusher-js/dist/web/pusher';
 import { defineProps, onMounted, onUnmounted, ref } from 'vue';
 import headshotAgent from '../../../resources/images/canyon-ai-headshot.jpg?url';
 
-
 const props = defineProps(['url']);
 const sendMessageUrl = ref(null);
 const chatId = ref(null);
@@ -157,9 +156,11 @@ async function sendMessage() {
     <div>
         <div v-show="sendMessageUrl !== null" class="flex flex-col gap-y-3 w-11/12 mx-auto bg-white">
             <link rel="stylesheet" v-bind:href="hostUrl + '/js/widgets/qna-advisor/style.css'" />
-            <div class="flex h-[calc(100dvh-16rem)] flex-col gap-y-3" >
-                <div class="flex flex-1 flex-col-reverse overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800">
-                    <div class="divide-y dark:divide-gray-800" v-if="messages.length > 0" >
+            <div class="flex h-[calc(100dvh-16rem)] flex-col gap-y-3">
+                <div
+                    class="flex flex-1 flex-col-reverse overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800"
+                >
+                    <div class="divide-y dark:divide-gray-800" v-if="messages.length > 0">
                         <div
                             class="mx-auto flex gap-4 text-base w-full items-start bg-gray-50 border-t border-gray-200 px-10 py-3"
                             v-for="(message, index) in messages"
@@ -180,7 +181,9 @@ async function sendMessage() {
                         </div>
                     </div>
                 </div>
-                <div class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
+                <div
+                    class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700"
+                >
                     <div v-if="isLoading" class="justify-center px-4 py-4 text-base md:gap-6 md:py-6">
                         <p>AI is typing...</p>
                     </div>
@@ -190,10 +193,13 @@ async function sendMessage() {
                             v-model="message"
                             placeholder="Ask your question..."
                             :disabled="isLoading"
-                            class="min-h-20 w-full resize-none border-0 bg-white p-4 text-sm text-gray-900 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"  style="height: min(80px, 25dvh);"
+                            class="min-h-20 w-full resize-none border-0 bg-white p-4 text-sm text-gray-900 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
+                            style="height: min(80px, 25dvh)"
                         ></textarea>
                     </div>
-                    <div class="flex flex-col items-center border-t px-3 py-2 dark:border-gray-600 sm:flex-row sm:justify-between">
+                    <div
+                        class="flex flex-col items-center border-t px-3 py-2 dark:border-gray-600 sm:flex-row sm:justify-between"
+                    >
                         <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
                             <button
                                 @click="sendMessage"
@@ -216,7 +222,8 @@ async function sendMessage() {
                         style="border-radius: 40px"
                         :src="loadingSpinner"
                         alt="spinner"
-                        title="spinner" />
+                        title="spinner"
+                    />
                     <span class="sr-only">Loading...</span>
                 </div>
             </div>
